@@ -5182,18 +5182,57 @@ function bootGoulaicaiExtension() {
     .st-px-bar-fill.thirst { background: var(--px-bar-thirst, #9fb5c9); }
     .st-px-bar-fill.mood { background: var(--px-bar-mood, #cf99ad); }
     .st-px-diary-canvas { display: block; width: 100%; max-width: 280px; height: 116px; margin: 4px auto 6px; image-rendering: pixelated; border: 2px solid var(--px-border, #bfa4ae); background: #fffdf9; }
-    .st-px-tone-sel {
-      height: 22px;
-      box-sizing: border-box;
-      border: 2px solid var(--px-border, #bfa4ae);
-      background: var(--px-card, #ffffff);
-      color: var(--px-fg, #54444a);
-      font-family: inherit;
-      font-size: 10px;
-      padding: 0 5px;
-      line-height: 18px;
-      cursor: pointer;
-      outline: none;
+    .st-px-tone-sel,
+    #st-tb-root select#st-tb-pup-tone-sel.st-px-tone-sel {
+      height: 22px !important;
+      min-height: 22px !important;
+      box-sizing: border-box !important;
+      border: 2px solid var(--px-border, #bfa4ae) !important;
+      border-radius: 0 !important;
+      background: var(--px-card, #ffffff) !important;
+      background-color: var(--px-card, #ffffff) !important;
+      color: var(--px-fg, #54444a) !important;
+      font-family: inherit !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      padding: 0 6px !important;
+      line-height: 18px !important;
+      box-shadow: none !important;
+      cursor: pointer !important;
+      outline: none !important;
+    }
+    #st-tb-root select#st-tb-pup-tone-sel.st-px-tone-sel option {
+      background-color: var(--px-card, #ffffff) !important;
+      color: var(--px-fg, #54444a) !important;
+    }
+    #st-tb-root #st-tb-pup-bag input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+    #st-tb-root #st-tb-pup-bag select,
+    #st-tb-root #st-tb-pup-bag textarea {
+      background: var(--px-card, #ffffff) !important;
+      background-color: var(--px-card, #ffffff) !important;
+      color: var(--px-fg, #54444a) !important;
+      border: 2px solid var(--px-border, #bfa4ae) !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      font-family: inherit !important;
+      box-sizing: border-box !important;
+      outline: none !important;
+    }
+    #st-tb-root #st-tb-pup-bag input::placeholder,
+    #st-tb-root #st-tb-pup-bag textarea::placeholder {
+      color: var(--px-fg, #54444a) !important;
+      -webkit-text-fill-color: var(--px-fg, #54444a) !important;
+      opacity: 0.52 !important;
+    }
+    #st-tb-root #st-tb-pup-bag input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):focus,
+    #st-tb-root #st-tb-pup-bag select:focus,
+    #st-tb-root #st-tb-pup-bag textarea:focus {
+      border-color: var(--px-head2, var(--px-border, #bfa4ae)) !important;
+      background-color: var(--px-card, #ffffff) !important;
+    }
+    #st-tb-root #st-tb-pup-bag select option {
+      background-color: var(--px-card, #ffffff) !important;
+      color: var(--px-fg, #54444a) !important;
     }
 
     .st-px-stat-num {
@@ -7526,10 +7565,19 @@ function bootGoulaicaiExtension() {
             </div>
             <div class="st-tb-row" style="margin-bottom:0;">
               <select class="st-tb-select" id="st-tb-perf-fold">
-                <option value="0">楼层折叠：关</option>
-                <option value="20">仅显最近 20 层</option>
-                <option value="40">仅显最近 40 层</option>
-                <option value="60">仅显最近 60 层</option>
+                <option value="0">仅显示层数：全部</option>
+                <option value="3">仅显示最近 3 层</option>
+                <option value="5">仅显示最近 5 层</option>
+                <option value="8">仅显示最近 8 层</option>
+                <option value="10">仅显示最近 10 层</option>
+                <option value="15">仅显示最近 15 层</option>
+                <option value="20">仅显示最近 20 层</option>
+                <option value="30">仅显示最近 30 层</option>
+                <option value="40">仅显示最近 40 层</option>
+                <option value="50">仅显示最近 50 层</option>
+                <option value="60">仅显示最近 60 层</option>
+                <option value="80">仅显示最近 80 层</option>
+                <option value="100">仅显示最近 100 层</option>
               </select>
             </div>
           </div>
@@ -28011,52 +28059,68 @@ function bootGoulaicaiExtension() {
 
   const BG_NOTIFY_BY_PERS = {
     sleepyhead: [
-      '呼啊... {owner}快回来，AI 回复已经写好躺在屏幕里等你啦~',
-      '{owner}别在外面逛太久哦，新剧情生成完咯，回来窝着一起看吧~',
-      '轻轻摇一下小铃铛，新回复到了呢，{self}眯着眼帮你守着页面~',
-      '醒一醒醒一醒，热乎乎的新剧情已经写完啦，快切回来看看~',
+      '呼啊，{owner}快回来，新内容已经写好躺在屏幕里等你了，咱们窝着一起看吧',
+      '{owner}，{self}眯着眼睛帮你守好了，回复已经出炉，快切回来舒舒服服接着看',
+      '轻晃两下小铃铛喊你回来，剧情刚更新完，再不来{self}就要趴着睡着了',
+      '外面逛够了就回来吧{owner}，新的段落热乎乎的，回来靠着一起慢慢看',
+      '伸个懒腰提醒你一声，新回复已经安静等在页面里了，快回来吧',
+      '{owner}快切回酒馆，新消息写好了，{self}帮你留好位置了',
     ],
     clingy: [
-      '{owner}快回来嘛!! 新回复已经写好啦，{self}一个人守着屏幕好想你!',
-      '叮铃铃呼叫最喜欢的{owner}! 回复生成完毕，快回来陪{self}一起看!',
-      '外面有什么比我还好看的呀! 新剧情都出来了，快切回来贴贴!',
-      '{owner}我帮你把新回复盯好啦，快点回来摸摸我顺便看剧情!',
+      '{owner}快回来嘛！新回复已经写好了，{self}一个人守着屏幕好想你',
+      '外面有什么比我还好看的呀！新剧情都出来了，快切回来陪{self}一起看',
+      '叮铃铃呼叫最喜欢的{owner}！回复早就到了，快点回来贴贴顺便看剧情',
+      '{owner}你走太久了啦，新消息已经摆在眼前了，快回来摸摸{self}的头',
+      '人家一直乖乖蹲在屏幕里等你呢，回复写完了，快点切回来好不好',
+      '铃铛摇不停！{owner}快回来，再不回来{self}就要对着屏幕委屈啦',
     ],
     tsundere: [
-      '喂!! 切屏出去干嘛去了! 新回复早就写好了，快点滚回来看啦!',
-      '哼，才不是因为想你才叫你回来的，只是新剧情生成完了通知一声而已!',
-      '别让本汪一直帮你看家好不好! 回复好了，三秒内切回酒馆!',
-      '叮铃铃! 回复都晾凉了笨蛋{owner}，还不快回来看!',
+      '喂！切屏出去干嘛去了，新回复早就写好了，快点切回来看',
+      '哼，才不是想你才叫你回来的，只是剧情更新完了顺手通知你一声',
+      '别让本汪一直帮你看家行不行！回复好了，三秒内快切回酒馆',
+      '回复都快放凉了笨蛋{owner}，还不赶紧回来接着看',
+      '我都替你盯这么久了你还不回来，新消息已经出来了，快点过来看',
+      '哼，本汪第一时间跑来喊你回去，回来记得好好夸我两句',
     ],
     foodie: [
-      '诶{owner}快回来呀! 新回复写好啦，我这次牢牢记着没忘提醒你!',
-      '叮铃铃! 热乎乎的新剧情已经写完咯，快切回来看看吧~',
-      '咦你在外面逛什么呀，新回复在屏幕里等你半天啦!',
-      '小迷糊准时上线报信: 新篇章送达啦，快回来一起看!',
+      '诶{owner}快回来呀！新回复写好了，我这次牢牢记着没忘喊你',
+      '你在外面逛什么呢，新剧情在屏幕里等你半天了，快切回来看看',
+      '叮铃铃！刚反应过来回复已经生成完了，{owner}快回来一起看吧',
+      '我一直盯着屏幕没走神哦，新的故事已经写好了，快回来瞧瞧',
+      '呀，差点把铃铛摇丢了，总之回复好了，{owner}快回酒馆呀',
+      '新段落热乎乎出炉了，{self}在页面里原地转圈等你回来呢',
     ],
     explorer: [
-      '叮铃铃! {owner}快回来呀，新回复已经热乎乎写好啦!',
-      '好消息好消息! 新的故事段落亮堂堂送达，快切回来看看吧!',
-      '摇铃喊你啦{owner}! 屏幕里的新内容已经就绪，等你一起看哦!',
-      '元气播报! 刚生成完新回复，快回来继续开心阅读吧!',
+      '好消息{owner}！新回复已经热乎乎写好了，快切回来看看吧',
+      '摇铃喊你归队啦{owner}！新的故事进展已经送达，{self}在页面里等你',
+      '快回来一起看新剧情！刚生成完的新内容亮堂堂躺在这里等你呢',
+      '元气召唤！回复已经完整送达，随时欢迎{owner}切回来继续阅读',
+      '{owner}快回来呀，新的一段故事写好了，回来一起开开心心往下看',
+      '叮咚报信！酒馆这边已经准备就绪，快切回来继续你的故事吧',
     ],
     fashionista: [
-      '咳，{owner}，新回复写好了，有空就切回来看看吧。',
-      '我不是在催你……只是新剧情已经出来了，提醒你一声。',
-      '回复好了。屏幕里挺安静的，你回来会热闹一点。',
-      '叮铃铃。新内容到了，我在页面里等你。',
+      '咳，{owner}，新回复写好了，有空就切回来看看吧',
+      '我不是在催你，只是新剧情已经出来了，顺便叫你一声',
+      '回复好了。屏幕里太安静了，你回来会热闹一点',
+      '轻摇一下铃铛，新内容到了，我在页面里等你回来',
+      '外面忙完了就回来吧，新的一段已经写好放着了',
+      '好了，别在别处待太久，快切回来看看新回复吧',
     ],
     gamer: [
-      '嘿{owner}快回来! 新回复新鲜出炉啦，火速查收!',
-      '叮铃铃! 剧情写完咯，别在别的窗口逛太久快回来!',
-      '新内容已经躺好等你翻牌啦，速度切回来看看!',
-      '机灵鬼准点报信: 回复生成完毕，快回来接着看!',
+      '嘿{owner}快回来！新回复新鲜出炉，火速切回酒馆查收',
+      '剧情写完了，别在别的窗口逛太久，赶紧归位接着看',
+      '新内容已经摆好等你翻牌了，速度切回来先睹为快',
+      '准点报信！回复已经完整生成，快回来继续推进剧情',
+      '叮咚召唤！你的新回复已送达，快切回页面别错过精彩部分',
+      '搞定了{owner}，新的一楼已经落位，火速回来开看',
     ],
     philosopher: [
-      '叮咚，回复已经写完了，{owner}可以切回来看看。',
-      '新消息到了，确认已经完整生成，放心看吧。',
-      '回复好了{owner}，你慢慢读，我在下面守着。',
-      '回复写好了，{self}在这边等你回来慢慢看。',
+      '{owner}，回复已经写完了，有空可以切回来看看',
+      '新消息已经完整生成，没有出岔子，回来放心看吧',
+      '回复好了{owner}，先喝口水再切回来慢慢读，我在下面守着',
+      '这边已经就绪，新的段落写好了，等你回来继续往下看',
+      '按时通知你一声，回复已经到达，随时可以切回页面',
+      '剧情更新完毕了{owner}，回来接着看吧，{self}一直在这里',
     ],
   };
 
@@ -28132,7 +28196,7 @@ function bootGoulaicaiExtension() {
       const bgPool = BG_NOTIFY_BY_PERS[curBellP] || BG_NOTIFY_BY_PERS.sleepyhead;
       const bodyTxt = formatPupText(pick(bgPool));
       const pName = (PUP_PERSONALITIES.find(p => p.id === curBellP) || {}).name || '';
-      const notifyTitle = `${getPupName()}${pName ? ' · ' + pName : ''} 摇铃喊你回去啦`;
+      const notifyTitle = getPupName();
       let iconUrl = '';
       try { if (puppyCanvas) iconUrl = puppyCanvas.toDataURL('image/png'); } catch (_) {}
 
