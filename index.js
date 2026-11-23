@@ -5427,6 +5427,74 @@ function bootGoulaicaiExtension() {
     #st-px-game-canvas {
       transform: translateZ(0);
     }
+    #st-tb-quick-dock {
+      position: fixed;
+      z-index: 2147483645;
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px;
+      border-radius: 999px;
+      background: var(--tb-bg);
+      border: 1px solid var(--tb-border);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+      pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #st-tb-quick-dock.open {
+      display: inline-flex;
+    }
+    #st-tb-root .st-tb-qd-btn {
+      height: 24px !important;
+      min-height: 24px !important;
+      padding: 0 8px !important;
+      border-radius: 999px !important;
+      border: 1px solid var(--tb-border) !important;
+      background: var(--tb-surface) !important;
+      color: var(--tb-text) !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      touch-action: manipulation !important;
+    }
+    #st-tb-root .st-tb-qd-btn.active {
+      background: var(--tb-accent) !important;
+      color: var(--tb-accent-text) !important;
+      border-color: var(--tb-accent) !important;
+    }
+    #st-tb-reader-mini-pill {
+      position: fixed;
+      right: 12px;
+      bottom: 92px;
+      z-index: 2147483644;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      height: 28px;
+      max-width: 132px;
+      padding: 0 11px;
+      border-radius: 999px;
+      background: var(--tb-bg);
+      color: var(--tb-text);
+      border: 1px solid var(--tb-border);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: grab;
+      pointer-events: auto;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #st-tb-reader-mini-pill.show {
+      display: inline-flex;
+    }
     #st-tb-shop-grid[data-own-filter="owned"] > [data-own="0"],
     #st-tb-shop-grid[data-own-filter="unowned"] > [data-own="1"] {
       display: none !important;
@@ -7252,6 +7320,7 @@ function bootGoulaicaiExtension() {
         <div class="st-tb-header-actions">
           <button class="st-tb-mini-btn" id="st-tb-reader-fs-down" type="button">A-</button>
           <button class="st-tb-mini-btn" id="st-tb-reader-fs-up" type="button">A+</button>
+          <button class="st-tb-mini-btn" id="st-tb-reader-min-btn" type="button">收起</button>
           <button class="st-tb-mini-btn" id="st-tb-reader-full-btn" type="button">全屏</button>
           <button class="st-tb-mini-btn" id="st-tb-reader-close" type="button">关闭</button>
         </div>
@@ -7407,7 +7476,15 @@ function bootGoulaicaiExtension() {
       </div>
     </div>
 
-        <div id="st-tb-badge" title="点击展开，按住拖动">
+        <div id="st-tb-quick-dock" aria-label="快捷功能">
+      <button class="st-tb-qd-btn" data-qd="imm" type="button">沉浸</button>
+      <button class="st-tb-qd-btn" data-qd="mask" type="button">打码</button>
+      <button class="st-tb-qd-btn" data-qd="reader" type="button">阅读</button>
+      <button class="st-tb-qd-btn" data-qd="bag" type="button">小狗</button>
+      <button class="st-tb-qd-btn" data-qd="hide" type="button">隐藏</button>
+    </div>
+    <div id="st-tb-reader-mini-pill" title="点击继续阅读，按住拖动">继续阅读</div>
+        <div id="st-tb-badge" title="点击展开，长按快捷菜单，按住拖动">
       <span class="st-tb-dot"></span>
       <span id="st-tb-floor-text">0 层</span>
     </div>
@@ -9069,6 +9146,11 @@ function bootGoulaicaiExtension() {
   resizeBR.addEventListener('dblclick', resetPanelLayout);
 
   let dragState = null;
+  let badgeLongPressTimer = null;
+  badge.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    if (typeof toggleQuickDock === 'function') toggleQuickDock(true);
+  });
   badge.addEventListener('pointerdown', (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
     badge.setPointerCapture(e.pointerId);
@@ -9082,7 +9164,15 @@ function bootGoulaicaiExtension() {
       origX: config.posX ?? rect.left,
       origY: config.posY ?? rect.top,
       moved: false,
+      longPressed: false,
     };
+    clearTimeout(badgeLongPressTimer);
+    badgeLongPressTimer = setTimeout(() => {
+      if (dragState && !dragState.moved) {
+        dragState.longPressed = true;
+        if (typeof toggleQuickDock === 'function') toggleQuickDock(true);
+      }
+    }, 360);
   });
 
   badge.addEventListener('pointermove', (e) => {
@@ -9091,6 +9181,8 @@ function bootGoulaicaiExtension() {
     const dy = e.clientY - dragState.startY;
     if (!dragState.moved && Math.hypot(dx, dy) > 6) {
       dragState.moved = true;
+      clearTimeout(badgeLongPressTimer);
+      if (typeof toggleQuickDock === 'function') toggleQuickDock(false);
       badge.classList.add('dragging');
     }
     if (dragState.moved) {
@@ -9102,7 +9194,9 @@ function bootGoulaicaiExtension() {
 
   const finishDrag = (e) => {
     if (!dragState || dragState.id !== e.pointerId) return;
+    clearTimeout(badgeLongPressTimer);
     const wasMoved = dragState.moved;
+    const wasLong = dragState.longPressed;
     dragState = null;
     badge.classList.remove('dragging');
     try { badge.releasePointerCapture(e.pointerId); } catch (_) {}
@@ -9111,7 +9205,8 @@ function bootGoulaicaiExtension() {
       config.dockSide = (config.posX + (cachedBadgeW / 2)) < (win.innerWidth / 2) ? 'left' : 'right';
       saveConfig();
       applyBadgePosition(false);
-    } else {
+    } else if (!wasLong) {
+      if (typeof toggleQuickDock === 'function') toggleQuickDock(false);
       togglePanel(!panelOpen);
     }
   };
@@ -39857,6 +39952,146 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     delete win.__stToolboxCleanup;
   };
 
+  // ==================== 阅读器最小化 + 悬浮球长按快捷工具条 ====================
+  const readerMinBtn = root.querySelector('#st-tb-reader-min-btn');
+  const readerMiniPill = root.querySelector('#st-tb-reader-mini-pill');
+  const quickDockEl = root.querySelector('#st-tb-quick-dock');
+  let readerMinimized = false;
+  let readerSavedScrollTop = 0;
+
+  const updateReaderMiniPillLabel = () => {
+    if (!readerMiniPill) return;
+    const curBook = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+    const shortNm = curBook && curBook.name ? String(curBook.name).replace(/\.txt$/i, '').slice(0, 6) : '';
+    readerMiniPill.textContent = shortNm ? `读 · ${shortNm}` : '继续阅读';
+  };
+
+  const minimizeReader = () => {
+    if (readerContentEl) readerSavedScrollTop = readerContentEl.scrollTop || 0;
+    readerOpen = false;
+    readerMinimized = true;
+    readerEl.classList.remove('open');
+    updateReaderMiniPillLabel();
+    if (readerMiniPill) readerMiniPill.classList.add('show');
+  };
+
+  const restoreMinimizedReader = () => {
+    if (readerMiniPill) readerMiniPill.classList.remove('show');
+    readerMinimized = false;
+    readerOpen = true;
+    readerEl.classList.add('open');
+    applyReaderLayout();
+    if (readerContentEl && readerContentEl.textContent && readerContentEl.textContent.trim().length > 20) {
+      win.requestAnimationFrame(() => {
+        if (readerContentEl) readerContentEl.scrollTop = readerSavedScrollTop;
+      });
+    } else {
+      loadActiveNovel();
+    }
+  };
+
+  if (readerMinBtn) {
+    readerMinBtn.addEventListener('click', () => { minimizeReader(); });
+  }
+  if (readerCloseBtn) {
+    readerCloseBtn.addEventListener('click', () => {
+      readerMinimized = false;
+      if (readerMiniPill) readerMiniPill.classList.remove('show');
+    });
+  }
+  if (readerMiniPill) {
+    let mpDrag = null;
+    readerMiniPill.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      readerMiniPill.setPointerCapture(e.pointerId);
+      const r = readerMiniPill.getBoundingClientRect();
+      mpDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top, moved: false };
+    });
+    readerMiniPill.addEventListener('pointermove', (e) => {
+      if (!mpDrag || mpDrag.id !== e.pointerId) return;
+      const dx = e.clientX - mpDrag.sx;
+      const dy = e.clientY - mpDrag.sy;
+      if (!mpDrag.moved && Math.hypot(dx, dy) > 6) mpDrag.moved = true;
+      if (mpDrag.moved) {
+        const w = readerMiniPill.offsetWidth || 96;
+        const h = readerMiniPill.offsetHeight || 28;
+        const nx = clamp(mpDrag.ox + dx, 6, Math.max(6, win.innerWidth - w - 6));
+        const ny = clamp(mpDrag.oy + dy, 8, Math.max(8, win.innerHeight - h - 8));
+        readerMiniPill.style.left = `${Math.round(nx)}px`;
+        readerMiniPill.style.top = `${Math.round(ny)}px`;
+        readerMiniPill.style.right = 'auto';
+        readerMiniPill.style.bottom = 'auto';
+      }
+    });
+    const endMpDrag = (e) => {
+      if (!mpDrag || mpDrag.id !== e.pointerId) return;
+      const wasMoved = mpDrag.moved;
+      mpDrag = null;
+      try { readerMiniPill.releasePointerCapture(e.pointerId); } catch (_) {}
+      if (!wasMoved) restoreMinimizedReader();
+    };
+    readerMiniPill.addEventListener('pointerup', endMpDrag);
+    readerMiniPill.addEventListener('pointercancel', endMpDrag);
+  }
+
+  const syncQuickDockUI = () => {
+    if (!quickDockEl) return;
+    quickDockEl.querySelector('[data-qd="imm"]')?.classList.toggle('active', Boolean(config.immersive));
+    quickDockEl.querySelector('[data-qd="mask"]')?.classList.toggle('active', Boolean(config.maskEnabled));
+    quickDockEl.querySelector('[data-qd="reader"]')?.classList.toggle('active', Boolean(readerOpen || readerMinimized));
+    quickDockEl.querySelector('[data-qd="bag"]')?.classList.toggle('active', Boolean(pupBagOpen));
+  };
+
+  const toggleQuickDock = (open) => {
+    if (!quickDockEl) return;
+    if (!open) {
+      quickDockEl.classList.remove('open');
+      return;
+    }
+    syncQuickDockUI();
+    quickDockEl.classList.add('open');
+    const br = badge.getBoundingClientRect();
+    const dw = quickDockEl.offsetWidth || 226;
+    const dh = quickDockEl.offsetHeight || 34;
+    let left = br.left + br.width / 2 - dw / 2;
+    left = clamp(left, 8, Math.max(8, win.innerWidth - dw - 8));
+    let top = br.bottom + 8;
+    if (top + dh > win.innerHeight - 10) top = Math.max(8, br.top - dh - 8);
+    quickDockEl.style.left = `${Math.round(left)}px`;
+    quickDockEl.style.top = `${Math.round(top)}px`;
+  };
+
+  if (quickDockEl) {
+    quickDockEl.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('[data-qd]') : null;
+      if (!btn) return;
+      const act = btn.dataset.qd;
+      if (act === 'imm') {
+        toggleImmersive();
+        syncQuickDockUI();
+      } else if (act === 'mask') {
+        toggleMaskState();
+        syncQuickDockUI();
+      } else if (act === 'reader') {
+        toggleQuickDock(false);
+        if (readerMinimized) restoreMinimizedReader();
+        else toggleReader(!readerOpen);
+      } else if (act === 'bag') {
+        toggleQuickDock(false);
+        togglePupBag(!pupBagOpen);
+      } else if (act === 'hide') {
+        toggleQuickDock(false);
+        if (fullHideBtn) fullHideBtn.click();
+      }
+    });
+  }
+  const onOutsideQuickDock = (e) => {
+    if (!quickDockEl || !quickDockEl.classList.contains('open')) return;
+    if (quickDockEl.contains(e.target) || badge.contains(e.target)) return;
+    toggleQuickDock(false);
+  };
+  doc.addEventListener('pointerdown', onOutsideQuickDock);
+
   // ==================== 狗来财扩展入口 + 自动检测更新 + 一键更新自动刷新 ====================
   const GLC_EXT_VERSION = '2.0.56';
   let glcUpdateTimer = null;
@@ -40116,6 +40351,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
     clearTimeout(win.__stPupMusicPlayTimer);
     try { if (win.__stPupMusicAudio) { win.__stPupMusicAudio.pause(); win.__stPupMusicAudio.src = ''; } } catch (_) {}
+    doc.removeEventListener('pointerdown', onOutsideQuickDock);
     doc.getElementById('st-glc-ext-wrap')?.remove();
     doc.getElementById('st-glc-ext-drawer')?.remove();
     doc.getElementById('st-glc-wand-item')?.remove();
