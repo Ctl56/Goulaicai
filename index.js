@@ -6858,11 +6858,9 @@ function bootGoulaicaiExtension() {
     /* 1) 墨水屏：真实 Carta 哑光防眩微粒 + 四周内嵌屏压影 + 柔和墨水字迹 */
     .st-tb-reader-content.tex-eink {
       box-shadow:
-        inset 0 3px 8px rgba(0, 0, 0, calc(0.28 * var(--r-tex-str, 0.6))),
-        inset 0 -3px 8px rgba(0, 0, 0, calc(0.18 * var(--r-tex-str, 0.6))),
-        inset 3px 0 8px rgba(0, 0, 0, calc(0.20 * var(--r-tex-str, 0.6))),
-        inset -3px 0 8px rgba(0, 0, 0, calc(0.20 * var(--r-tex-str, 0.6))),
-        inset 0 0 22px rgba(0, 0, 0, calc(0.14 * var(--r-tex-str, 0.6)));
+        inset 0 3px 8px rgba(0, 0, 0, calc(0.24 * var(--r-tex-str, 0.6))),
+        inset 3px 0 8px rgba(0, 0, 0, calc(0.18 * var(--r-tex-str, 0.6))),
+        inset -3px 0 8px rgba(0, 0, 0, calc(0.18 * var(--r-tex-str, 0.6)));
       text-shadow: 0 0 0.45px rgba(0, 0, 0, calc(0.22 * var(--r-tex-str, 0.6)));
       -webkit-font-smoothing: antialiased;
     }
@@ -7112,9 +7110,9 @@ function bootGoulaicaiExtension() {
       position: relative;
       touch-action: pan-y;
       box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, 0.16),
-        inset 0 0 14px rgba(0, 0, 0, 0.09),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+        inset 0 2px 6px rgba(0, 0, 0, 0.14),
+        inset 2px 0 5px -2px rgba(0, 0, 0, 0.08),
+        inset -2px 0 5px -2px rgba(0, 0, 0, 0.08);
     }
     #st-tb-reader.kindle-mode .st-tb-kd-page-view {
       width: 100%;
@@ -7150,30 +7148,39 @@ function bootGoulaicaiExtension() {
       line-height: 1.35;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-status {
+      position: relative;
       display: flex;
-      align-items: flex-start !important;
+      align-items: center;
       justify-content: space-between;
       gap: 6px;
-      height: auto !important;
-      box-sizing: border-box !important;
-      padding: 0 var(--r-padx, 16px) 7px var(--r-padx, 16px) !important;
-      line-height: 1 !important;
+      height: 22px;
+      box-sizing: border-box;
+      padding: 0 var(--r-padx, 16px);
       border-radius: 0 0 4px 4px;
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
       font-size: 10px;
-      opacity: 0.92;
+      line-height: 1;
+      opacity: 0.96;
       flex-shrink: 0;
       font-variant-numeric: tabular-nums;
       user-select: none;
-      box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.08);
+      box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.10), inset 2px 0 4px -2px rgba(0, 0, 0, 0.08), inset -2px 0 4px -2px rgba(0, 0, 0, 0.08);
     }
     #st-tb-reader.kindle-mode .st-tb-kd-status > span:first-child {
-      max-width: 48%;
+      max-width: 38%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       opacity: 0.72;
+    }
+    #st-tb-reader.kindle-mode #st-tb-kd-page-lbl {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      white-space: nowrap;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-side-btn {
       display: block;
@@ -41309,12 +41316,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }
       const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
       const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
+      const pyBot = Math.max(2, py - 6);
       readerContentEl.style.setProperty('padding-top', `${py}px`, 'important');
-      readerContentEl.style.setProperty('padding-bottom', `${py}px`, 'important');
+      readerContentEl.style.setProperty('padding-bottom', `${pyBot}px`, 'important');
       readerContentEl.style.setProperty('padding-left', `${px}px`, 'important');
       readerContentEl.style.setProperty('padding-right', `${px}px`, 'important');
       const innerW = Math.max(150, readerContentEl.clientWidth - px * 2);
-      const innerH = Math.max(96, readerContentEl.clientHeight - py * 2);
+      const innerH = Math.max(96, readerContentEl.clientHeight - py - pyBot);
       const cs = win.getComputedStyle(readerContentEl);
       const chapData = win.__stKdChapData;
       if (!chapData) return;
