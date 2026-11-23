@@ -1,4 +1,4 @@
-// SillyTavern UI Extension: 狗来财 (v2.0.94)
+// SillyTavern UI Extension: 狗来财 (v2.0.95)
 let __goulaicaiExtBooted = false;
 
 function bootGoulaicaiExtension() {
@@ -2843,6 +2843,8 @@ function bootGoulaicaiExtension() {
   if (!Number.isFinite(Number(config.puppyCoins))) config.puppyCoins = 0;
   if (!Number.isFinite(Number(config.puppySpeed))) config.puppySpeed = 1.0;
   if (!Number.isFinite(Number(config.puppyOpacity))) config.puppyOpacity = 1.0;
+  if (!Number.isFinite(Number(config.puppyTrailDensity))) config.puppyTrailDensity = 1.0;
+  if (!Number.isFinite(Number(config.puppyTrailOpacity))) config.puppyTrailOpacity = 0.9;
   if (!Number.isFinite(Number(config.puppyHunger))) config.puppyHunger = 84;
   if (!Number.isFinite(Number(config.puppyThirst))) config.puppyThirst = 84;
   if (!Number.isFinite(Number(config.puppyMood))) config.puppyMood = 86;
@@ -17508,25 +17510,33 @@ function bootGoulaicaiExtension() {
             const actId = (config.puppyWalkTrail && config.puppyWalkTrail !== 'trail_none') ? config.puppyWalkTrail : 'trail_paw';
             const dVal = clamp(Number(config.puppyTrailDensity ?? 1.0), 0.4, 2.4);
             const cnt = Math.max(2, Math.min(12, Math.round(5 * dVal)));
-            const step = Math.max(7, Math.round(16 / dVal));
+            const step = Math.max(7, Math.round(20 / dVal));
             const gap = Math.max(50, Math.round(115 / dVal));
             for (let k = 0; k < cnt; k++) setTimeout(() => spawnWalkTrailDot(actId, k * step), k * gap);
           }, 180);
         };
-        if (sD) sD.addEventListener('input', () => {
+        const applyTrailDensityInput = (saveNow) => {
           config.puppyTrailDensity = clamp(parseFloat(sD.value) || 1.0, 0.4, 2.4);
           sD.style.setProperty('--val-pct', `${Math.round(((config.puppyTrailDensity - 0.4) / 2.0) * 100)}%`);
           if (sDV) sDV.textContent = `${config.puppyTrailDensity.toFixed(1)}x`;
-          scheduleSaveConfig();
+          if (saveNow) saveConfig(); else scheduleSaveConfig();
           triggerTrailDemo();
-        });
-        if (sO) sO.addEventListener('input', () => {
+        };
+        const applyTrailOpacityInput = (saveNow) => {
           config.puppyTrailOpacity = clamp(parseFloat(sO.value) || 0.9, 0.15, 1.0);
           sO.style.setProperty('--val-pct', `${Math.round(((config.puppyTrailOpacity - 0.15) / 0.85) * 100)}%`);
           if (sOV) sOV.textContent = `${Math.round(config.puppyTrailOpacity * 100)}%`;
-          scheduleSaveConfig();
+          if (saveNow) saveConfig(); else scheduleSaveConfig();
           triggerTrailDemo();
-        });
+        };
+        if (sD) {
+          sD.addEventListener('input', () => applyTrailDensityInput(false));
+          sD.addEventListener('change', () => applyTrailDensityInput(true));
+        }
+        if (sO) {
+          sO.addEventListener('input', () => applyTrailOpacityInput(false));
+          sO.addEventListener('change', () => applyTrailOpacityInput(true));
+        }
       }
       if (shopSubCat === 'bubskin') {
         const bar = doc.createElement('div');
@@ -17637,7 +17647,7 @@ function bootGoulaicaiExtension() {
             applyPupCosmeticSkins();
             const _dPrev = clamp(Number(config.puppyTrailDensity ?? 1.0), 0.4, 2.4);
             const _cntPrev = Math.max(2, Math.min(12, Math.round(5 * _dPrev)));
-            const _stepPrev = Math.max(7, Math.round(16 / _dPrev));
+            const _stepPrev = Math.max(7, Math.round(20 / _dPrev));
             const _gapPrev = Math.max(50, Math.round(115 / _dPrev));
             for (let k = 0; k < _cntPrev; k++) setTimeout(() => spawnWalkTrailDot(item.id, k * _stepPrev), k * _gapPrev);
             if (config.puppyEnabled) showPuppyBubble(`[试看特效] ${item.name} (${_dPrev.toFixed(1)}x / ${Math.round(clamp(Number(config.puppyTrailOpacity ?? 0.9), 0.15, 1.0) * 100)}%)`, 1800);
@@ -19892,6 +19902,12 @@ function bootGoulaicaiExtension() {
             pup.x += (dx / dist) * stepLen;
             pup.y += (dy / dist) * stepLen;
             pup.dir = dx >= 0 ? 1 : -1;
+            const _trStepS = Math.max(7, Math.round(20 / clamp(Number(config.puppyTrailDensity ?? 1.0), 0.4, 2.4)));
+            pup._trailDistAcc = (pup._trailDistAcc || 0) + stepLen;
+            if (pup._trailDistAcc >= _trStepS) {
+              pup._trailDistAcc = pup._trailDistAcc % _trStepS;
+              spawnWalkTrailDot();
+            }
             pup.timer -= 1;
             if (pup.timer <= 0) {
               pup.homeY = clamp(Math.round(pup.y), 12, maxY);
@@ -19918,14 +19934,22 @@ function bootGoulaicaiExtension() {
             )
           ) {
             const mult = pup.state === 'ball' ? 1.55 : (pup.state === 'snowroll' ? 0.6 : 0.85);
-            pup.x += pup.dir * mult * pSpd;
-            if (pup.tick % Math.max(4, Math.round(13 / clamp(Number(config.puppyTrailDensity ?? 1.0), 0.4, 2.4))) === 0) spawnWalkTrailDot();
+            const _moveDx = mult * pSpd;
+            pup.x += pup.dir * _moveDx;
+            const _trStep = Math.max(7, Math.round(20 / clamp(Number(config.puppyTrailDensity ?? 1.0), 0.4, 2.4)));
+            pup._trailDistAcc = (pup._trailDistAcc || 0) + _moveDx;
+            if (pup._trailDistAcc >= _trStep) {
+              pup._trailDistAcc = pup._trailDistAcc % _trStep;
+              spawnWalkTrailDot();
+            }
             if (pup.x <= 12) {
               pup.x = 12;
               pup.dir = 1;
+              pup._trailDistAcc = 0;
             } else if (pup.x >= maxX) {
               pup.x = maxX;
               pup.dir = -1;
+              pup._trailDistAcc = 0;
             }
           }
 
@@ -27497,6 +27521,8 @@ function bootGoulaicaiExtension() {
     cv.style.width = '16px';
     cv.style.height = '16px';
     const g = cv.getContext('2d');
+    const trailOp = clamp(Number(config.puppyTrailOpacity ?? 0.9), 0.15, 1.0);
+    g.globalAlpha = trailOp;
     const c1 = pick(tr.cols);
     const c2 = '#ffffff';
     const grid = TRAIL_PX_SHAPES[trId] || TRAIL_PX_SHAPES.trail_paw;
@@ -27516,7 +27542,7 @@ function bootGoulaicaiExtension() {
     const footY = pup.y + 56 + (trailStepAlt === 0 ? 0 : 4);
     cv.style.left = `${Math.round(backX)}px`;
     cv.style.top = `${Math.round(footY)}px`;
-    cv.style.opacity = String(clamp(Number(config.puppyTrailOpacity ?? 0.9), 0.15, 1.0));
+    cv.style.opacity = '1';
     root.appendChild(cv);
     setTimeout(() => {
       cv.style.opacity = '0';
@@ -39269,76 +39295,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   }
   renderPupCheckinUI();
 
-
-  // ==================== 扩展管理页与底栏魔法棒入口 ====================
-  const mountExtMenuEntries = () => {
-    try {
-      const extMenu = doc.querySelector('#extensionsMenu');
-      if (extMenu && !doc.querySelector('#st-goulaicai-ext-menu-item')) {
-        const item = doc.createElement('div');
-        item.id = 'st-goulaicai-ext-menu-item';
-        item.className = 'list-group-item flex-container flexGap5 interactable';
-        item.tabIndex = 0;
-        item.innerHTML = '<i class="fa-solid fa-paw"></i><span>狗来财</span>';
-        item.addEventListener('click', (e) => {
-          e.stopPropagation();
-          try { if (win.$) win.$('#extensionsMenu').hide(); } catch (_) {}
-          togglePanel(true);
-        });
-        extMenu.appendChild(item);
-      }
-
-      const extSettings = doc.querySelector('#extensions_settings2') || doc.querySelector('#extensions_settings');
-      if (extSettings && !doc.querySelector('#st-goulaicai-ext-settings')) {
-        const box = doc.createElement('div');
-        box.id = 'st-goulaicai-ext-settings';
-        box.className = 'inline-drawer';
-        box.innerHTML = `
-          <div class="inline-drawer-toggle inline-drawer-header">
-            <b>狗来财</b>
-            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
-          </div>
-          <div class="inline-drawer-content" style="padding:8px 4px;">
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <div id="st-glc-ext-open-panel" class="menu_button menu_button_icon" style="flex:1;min-width:110px;justify-content:center;">
-                <i class="fa-solid fa-toolbox"></i><span>打开狗来财面板</span>
-              </div>
-              <div id="st-glc-ext-toggle-pup" class="menu_button menu_button_icon" style="flex:1;min-width:110px;justify-content:center;">
-                <i class="fa-solid fa-paw"></i><span>${config.puppyEnabled ? '收起小狗' : '呼出小狗'}</span>
-              </div>
-            </div>
-          </div>
-        `;
-        extSettings.appendChild(box);
-        const openBtn = box.querySelector('#st-glc-ext-open-panel');
-        const pupBtn = box.querySelector('#st-glc-ext-toggle-pup');
-        if (openBtn) {
-          openBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            togglePanel(true);
-          });
-        }
-        if (pupBtn) {
-          pupBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            config.puppyEnabled = !config.puppyEnabled;
-            saveConfig();
-            syncUI();
-            if (config.puppyEnabled) startPuppy();
-            else stopPuppy();
-            const sp = pupBtn.querySelector('span');
-            if (sp) sp.textContent = config.puppyEnabled ? '收起小狗' : '呼出小狗';
-          });
-        }
-      }
-    } catch (_) {}
-  };
-  mountExtMenuEntries();
-  setTimeout(mountExtMenuEntries, 800);
-  setTimeout(mountExtMenuEntries, 2500);
-
   const cleanup = () => {
-    doc.querySelectorAll('#st-goulaicai-ext-menu-item, #st-goulaicai-ext-settings').forEach(el => el.remove());
     doc.removeEventListener('click', onChatParaClick);
     exitSeMultiMode();
     doc.documentElement.classList.remove('st-tb-char-gallery');
