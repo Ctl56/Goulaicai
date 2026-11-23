@@ -4017,7 +4017,46 @@ function bootGoulaicaiExtension() {
       height: 100vh !important;
       max-height: 100vh !important;
       padding-top: 14px !important;
-      padding-bottom: 24px !important;
+      padding-bottom: 34px !important;
+    }
+    html.st-tb-immersive.st-tb-imm-show-input #form_sheld,
+    html.st-tb-immersive.st-tb-imm-show-input #send_form {
+      display: flex !important;
+      position: fixed !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      z-index: 2147483610 !important;
+    }
+    #st-tb-imm-dock-trigger {
+      position: fixed;
+      left: 50%;
+      bottom: max(6px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      z-index: 2147483615;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--tb-border);
+      background: var(--tb-bg);
+      color: var(--tb-sub);
+      font-size: 10.5px;
+      font-weight: 600;
+      opacity: 0.72;
+      cursor: pointer;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+    html.st-tb-immersive #st-tb-imm-dock-trigger {
+      display: inline-flex;
+    }
+    html.st-tb-immersive.st-tb-imm-show-input #st-tb-imm-dock-trigger {
+      bottom: auto;
+      top: max(8px, env(safe-area-inset-top));
+      opacity: 0.85;
     }
 
     /* 悬浮胶囊（轻量合成层，避免隐藏/召唤时重建模糊层导致卡顿） */
@@ -4665,7 +4704,7 @@ function bootGoulaicaiExtension() {
       pointer-events: auto;
       cursor: grab;
       touch-action: none;
-      z-index: 9985;
+      z-index: 2147483643 !important;
     }
 
     #st-tb-puppy.active { display: block; }
@@ -6720,6 +6759,213 @@ function bootGoulaicaiExtension() {
     .st-tb-rset-toggles .st-tb-r-act {
       flex: 1;
     }
+    #st-tb-reader-set-btn.st-tb-r-ico {
+      font-size: 16px !important;
+      line-height: 1 !important;
+    }
+    .st-tb-reader-set-bar {
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .st-tb-rset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      flex: 1;
+    }
+    #st-tb-root .st-tb-r-chip {
+      height: 21px !important;
+      min-height: 21px !important;
+      padding: 0 7px !important;
+      margin: 0 !important;
+      border-radius: 5px !important;
+      border: 1px solid var(--tb-border) !important;
+      background: var(--tb-bg) !important;
+      color: var(--tb-text) !important;
+      font-size: 10.5px !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      cursor: pointer !important;
+    }
+    #st-tb-root .st-tb-r-chip.accent {
+      background: var(--tb-accent) !important;
+      color: var(--tb-accent-text) !important;
+      border-color: var(--tb-accent) !important;
+    }
+    .st-tb-reader-content {
+      font-family: var(--r-font, inherit);
+      text-align: justify !important;
+      text-justify: inter-ideograph;
+      background-color: var(--r-bg, transparent);
+      color: var(--r-fg, inherit);
+    }
+    .st-tb-reader-content .st-tb-r-dropcap {
+      float: left;
+      font-size: 3.1em;
+      line-height: 0.96;
+      margin: 0.05em 0.14em 0 0;
+      font-weight: 700;
+    }
+    .st-tb-kd-status,
+    .st-tb-kd-side-btn,
+    .st-tb-kd-chin,
+    .st-tb-kd-only-row {
+      display: none;
+    }
+    /* ==================== Kindle 硬件外观与真实分页模式 ==================== */
+    #st-tb-reader.kindle-mode {
+      background: #1b1b1b !important;
+      border: 1px solid #3a3a3a !important;
+      border-radius: 12px !important;
+      padding: 16px 16px 0 16px !important;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.36) !important;
+      overflow: visible !important;
+    }
+    #st-tb-reader.kindle-mode.fullscreen {
+      border-radius: 0 !important;
+      padding-top: max(16px, env(safe-area-inset-top)) !important;
+    }
+    #st-tb-reader.kindle-mode .st-tb-reader-head,
+    #st-tb-reader.kindle-mode .st-tb-reader-foot {
+      display: none !important;
+    }
+    #st-tb-reader.kindle-mode .st-tb-reader-bar {
+      display: none;
+      border-radius: 4px 4px 0 0;
+    }
+    #st-tb-reader.kindle-mode .st-tb-reader-bar.kd-bar-open {
+      display: flex;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-only-row {
+      display: flex;
+    }
+    #st-tb-reader.kindle-mode .st-tb-reader-set-bar {
+      border-radius: 4px 4px 0 0;
+      border: none;
+      border-bottom: 1px solid rgba(0,0,0,0.12);
+    }
+    #st-tb-reader.kindle-mode .st-tb-reader-toc {
+      border-radius: 4px 4px 0 0;
+      background: var(--r-bg, #dedede);
+      color: var(--r-fg, #3a3a3a);
+    }
+    #st-tb-reader.kindle-mode .st-tb-reader-content {
+      border-radius: 4px 4px 0 0;
+      background-color: var(--r-bg, #dedede);
+      color: var(--r-fg, #3a3a3a);
+      overflow: hidden !important;
+      padding: 18px var(--r-padx, 18px) 10px var(--r-padx, 18px) !important;
+      position: relative;
+      touch-action: pan-y;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-page-track {
+      height: 100%;
+      column-fill: auto;
+      transition: transform 0.22s ease-out;
+      will-change: transform;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-chap-top {
+      font-family: "Songti SC", "Noto Serif SC", Georgia, serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-align: center;
+      opacity: 0.65;
+      margin-bottom: 4px;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-chap-title {
+      font-family: "Songti SC", "Noto Serif SC", Georgia, serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.1em;
+      margin-bottom: 14px;
+      line-height: 1.35;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      height: 22px;
+      padding: 0 14px;
+      border-radius: 0 0 4px 4px;
+      background-color: var(--r-bg, #dedede);
+      color: var(--r-fg, #3a3a3a);
+      font-size: 10px;
+      opacity: 0.92;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+      user-select: none;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-status > span:first-child {
+      max-width: 48%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0.72;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-side-btn {
+      display: block;
+      position: absolute;
+      right: -4px;
+      top: 52px;
+      width: 5px;
+      height: 30px;
+      background: #111111;
+      border-radius: 0 3px 3px 0;
+      cursor: pointer;
+      z-index: 20;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-side-btn::after {
+      content: '';
+      position: absolute;
+      inset: -10px -10px -10px -8px;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-chin {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 34px;
+      padding: 0 2px;
+      cursor: grab;
+      touch-action: none;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-brand {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #4d4d4d;
+      line-height: 1;
+      pointer-events: none;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-chin-acts {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    #st-tb-root #st-tb-reader.kindle-mode .st-tb-kd-chin-btn {
+      width: 22px !important;
+      height: 22px !important;
+      min-width: 22px !important;
+      min-height: 22px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      background: transparent !important;
+      color: #5a5a5a !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    #st-tb-root #st-tb-reader.kindle-mode .st-tb-kd-chin-btn:hover {
+      color: #9a9a9a !important;
+    }
     .st-tb-reader-toc {
       display: none;
       flex: 1;
@@ -7519,6 +7765,45 @@ function bootGoulaicaiExtension() {
         <button class="st-tb-r-act" id="st-tb-reader-rename-cancel" type="button">取消</button>
       </div>
       <div class="st-tb-reader-set-bar" id="st-tb-reader-set-bar">
+        <div class="st-tb-rset-toggles">
+          <button class="st-tb-r-act" id="st-tb-rset-kindle" type="button">Kindle外观</button>
+          <button class="st-tb-r-act" id="st-tb-rset-indent" type="button">首行缩进</button>
+          <button class="st-tb-r-act" id="st-tb-rset-dropcap" type="button">首字下沉</button>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>纸张预设</span>
+          <div class="st-tb-rset-chips" id="st-tb-rset-papers">
+            <button class="st-tb-r-chip" data-rpaper="theme" type="button">主题</button>
+            <button class="st-tb-r-chip" data-rpaper="eink_light" type="button">墨水浅</button>
+            <button class="st-tb-r-chip" data-rpaper="eink_warm" type="button">墨水暖</button>
+            <button class="st-tb-r-chip" data-rpaper="eink_dark" type="button">墨水暗</button>
+            <button class="st-tb-r-chip" data-rpaper="paper_cream" type="button">米白纸</button>
+            <button class="st-tb-r-chip" data-rpaper="paper_matcha" type="button">豆沙绿</button>
+            <button class="st-tb-r-chip" data-rpaper="paper_kraft" type="button">牛皮纸</button>
+          </div>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>正文字体</span>
+          <div class="st-tb-rset-chips" id="st-tb-rset-fonts">
+            <button class="st-tb-r-chip" data-rfont="default" type="button">默认</button>
+            <button class="st-tb-r-chip" data-rfont="serif" type="button">宋体</button>
+            <button class="st-tb-r-chip" data-rfont="sans" type="button">黑体</button>
+            <button class="st-tb-r-chip" data-rfont="kaiti" type="button">楷体</button>
+          </div>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>自选配色</span>
+          <div style="display:flex;align-items:center;gap:6px;flex:1;">
+            <label style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;">底色<input type="color" id="st-tb-rset-bgcol" style="width:22px;height:18px;padding:0;border:1px solid var(--tb-border);background:none;cursor:pointer;" /></label>
+            <label style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;">字色<input type="color" id="st-tb-rset-fgcol" style="width:22px;height:18px;padding:0;border:1px solid var(--tb-border);background:none;cursor:pointer;" /></label>
+            <button class="st-tb-r-act" id="st-tb-rset-col-reset" type="button" style="margin-left:auto !important;">重置</button>
+          </div>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>背景透明</span>
+          <input class="st-tb-range" id="st-tb-rset-bgop" type="range" min="0.25" max="1.0" step="0.05" />
+          <span id="st-tb-rset-bgop-val">100%</span>
+        </div>
         <div class="st-tb-rset-row">
           <span>左右边距</span>
           <input class="st-tb-range" id="st-tb-rset-padx" type="range" min="6" max="48" step="2" />
@@ -7534,21 +7819,42 @@ function bootGoulaicaiExtension() {
           <input class="st-tb-range" id="st-tb-rset-gap" type="range" min="2" max="28" step="2" />
           <span id="st-tb-rset-gap-val">10px</span>
         </div>
-        <div class="st-tb-rset-toggles">
-          <button class="st-tb-r-act" id="st-tb-rset-justify" type="button">两端对齐</button>
-          <button class="st-tb-r-act" id="st-tb-rset-indent" type="button">首行缩进</button>
-          <button class="st-tb-r-act" id="st-tb-rset-paper" type="button">护眼纸色</button>
+        <div class="st-tb-rset-toggles st-tb-kd-only-row">
+          <button class="st-tb-r-act" id="st-tb-rset-kd-fsd" type="button">A-</button>
+          <button class="st-tb-r-act" id="st-tb-rset-kd-fsu" type="button">A+</button>
+          <button class="st-tb-r-act" id="st-tb-rset-kd-bar" type="button">书单</button>
+          <button class="st-tb-r-act" id="st-tb-rset-kd-done" type="button">收起设置</button>
         </div>
       </div>
       <div class="st-tb-reader-toc" id="st-tb-reader-toc"></div>
       <div class="st-tb-reader-content" id="st-tb-reader-content">
         <div class="st-tb-empty">点击上方「导入TXT」导入本地小说，等酒馆回复时可浮窗或全屏阅读。</div>
       </div>
+      <div class="st-tb-kd-status" id="st-tb-kd-status">
+        <span id="st-tb-kd-chap-lbl">第 1 章</span>
+        <span id="st-tb-kd-page-lbl">1 / 1</span>
+        <span id="st-tb-kd-pct-lbl">0%</span>
+      </div>
       <div class="st-tb-reader-foot">
-        <button class="st-tb-mini-btn" id="st-tb-reader-prev" type="button">上一章</button>
-        <button class="st-tb-mini-btn" id="st-tb-reader-toc-btn" type="button">目录</button>
-        <span id="st-tb-reader-prog" style="font-size:11px;color:var(--tb-sub);">0/0</span>
-        <button class="st-tb-mini-btn" id="st-tb-reader-next" type="button">下一章</button>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="st-tb-mini-btn" id="st-tb-reader-prev" type="button">上一章</button>
+          <button class="st-tb-mini-btn" id="st-tb-reader-toc-btn" type="button">目录</button>
+          <button class="st-tb-mini-btn" id="st-tb-reader-next" type="button">下一章</button>
+        </div>
+        <span id="st-tb-reader-prog" style="font-size:11px;color:var(--tb-sub);font-variant-numeric:tabular-nums;">0/0</span>
+      </div>
+      <div class="st-tb-kd-side-btn" id="st-tb-kd-side-btn" title="Kindle 阅读设置"></div>
+      <div class="st-tb-kd-chin" id="st-tb-kd-chin" title="按住拖动阅读器">
+        <div class="st-tb-kd-chin-acts">
+          <button class="st-tb-kd-chin-btn" id="st-tb-kd-toc" type="button" title="目录">≡</button>
+          <button class="st-tb-kd-chin-btn" id="st-tb-kd-books" type="button" title="书单">书</button>
+        </div>
+        <span class="st-tb-kd-brand">kindle</span>
+        <div class="st-tb-kd-chin-acts">
+          <button class="st-tb-kd-chin-btn" id="st-tb-kd-min" type="button" title="最小化">−</button>
+          <button class="st-tb-kd-chin-btn" id="st-tb-kd-full" type="button" title="全屏">□</button>
+          <button class="st-tb-kd-chin-btn" id="st-tb-kd-close" type="button" title="关闭">×</button>
+        </div>
       </div>
     </div>
 
@@ -7692,6 +7998,7 @@ function bootGoulaicaiExtension() {
       <button class="st-tb-qd-btn" data-qd="bag" type="button">小狗</button>
       <button class="st-tb-qd-btn" data-qd="hide" type="button">隐藏</button>
     </div>
+    <button id="st-tb-imm-dock-trigger" type="button" title="点击召唤底部输入框">回复</button>
     <div id="st-tb-reader-mini-pill" title="点击继续阅读，按住拖动">继续阅读</div>
         <div id="st-tb-badge" title="点击展开，长按快捷菜单，按住拖动">
       <span class="st-tb-dot"></span>
@@ -8999,23 +9306,48 @@ function bootGoulaicaiExtension() {
     const mode = 'strong';
     acquireWebLock();
 
+    let kaBeatN = 0;
+    const tryResumeKaAudio = () => {
+      if (!config.keepAlive) return;
+      if (kaAudioEl && kaAudioEl.paused) kaAudioEl.play().catch(() => {});
+      if (kaAudioCtx && kaAudioCtx.state === 'suspended') kaAudioCtx.resume().catch(() => {});
+    };
     if (typeof win.Worker === 'function') {
       try {
         const wBlob = new Blob([
-          'let t=setInterval(()=>{postMessage(Date.now());},6000);onmessage=()=>{clearInterval(t);};'
+          'let t=setInterval(()=>{postMessage(Date.now());},4000);onmessage=()=>{clearInterval(t);};'
         ], { type: 'application/javascript' });
         kaWorkerUrl = win.URL.createObjectURL(wBlob);
         kaWorker = new win.Worker(kaWorkerUrl);
         kaWorker.onmessage = () => {
           if (!config.keepAlive) return;
-          if (kaAudioEl && kaAudioEl.paused) kaAudioEl.play().catch(() => {});
-          if (kaAudioCtx && kaAudioCtx.state === 'suspended') kaAudioCtx.resume().catch(() => {});
+          kaBeatN += 1;
+          tryResumeKaAudio();
+          if (kaBeatN % 3 === 0) {
+            try { win.fetch('/csrf-token', { cache: 'no-store' }).catch(() => {}); } catch (_) {}
+          }
         };
       } catch (_) {}
     }
 
+    // 叠加微弱 WebAudio 脉冲作为音频中断时的底层兜底
+    const AC_Ka = win.AudioContext || win.webkitAudioContext;
+    if (AC_Ka) {
+      try {
+        kaAudioCtx = new AC_Ka();
+        const gKa = kaAudioCtx.createGain();
+        gKa.gain.value = 0.00001;
+        kaOsc = kaAudioCtx.createOscillator();
+        kaOsc.frequency.value = 1;
+        kaOsc.connect(gKa);
+        gKa.connect(kaAudioCtx.destination);
+        kaOsc.start();
+        if (kaAudioCtx.state === 'suspended') kaAudioCtx.resume().catch(() => {});
+      } catch (_) {}
+    }
+
     if (mode === 'strong') {
-      // 强效 5分钟+ 保活：静音循环音频保活 + 清空 MediaSession 元数据减少干扰
+      // 强效保活：静音循环音频 + 监听系统音频打断后自动抢回重播
       kaAudioUrl = createSilentWavUrl();
       kaAudioEl = doc.createElement('audio');
       kaAudioEl.src = kaAudioUrl;
@@ -9024,6 +9356,16 @@ function bootGoulaicaiExtension() {
       kaAudioEl.setAttribute('playsinline', '');
       kaAudioEl.setAttribute('webkit-playsinline', '');
       kaAudioEl.style.display = 'none';
+      const onKaInterrupted = () => {
+        if (!config.keepAlive) return;
+        setTimeout(tryResumeKaAudio, 350);
+        setTimeout(tryResumeKaAudio, 1200);
+        setTimeout(tryResumeKaAudio, 3000);
+      };
+      kaAudioEl.addEventListener('pause', onKaInterrupted);
+      kaAudioEl.addEventListener('stalled', onKaInterrupted);
+      kaAudioEl.addEventListener('suspend', onKaInterrupted);
+      kaAudioEl.addEventListener('ended', onKaInterrupted);
       doc.body.appendChild(kaAudioEl);
       try {
         if (win.navigator?.mediaSession) {
@@ -33380,6 +33722,9 @@ function bootGoulaicaiExtension() {
   const onOutsidePupBagClick = (e) => {
     if (!pupBagOpen) return;
     if (pupBagEl.contains(e.target) || puppyEl.contains(e.target)) return;
+    if (readerEl && readerEl.contains(e.target)) return;
+    const _rMini = doc.getElementById('st-tb-reader-mini-pill');
+    if (_rMini && _rMini.contains(e.target)) return;
     if (gachaModalEl && gachaModalEl.contains(e.target)) return;
     if (confirmMask && confirmMask.contains(e.target)) return;
     togglePupBag(false);
@@ -33962,21 +34307,54 @@ function bootGoulaicaiExtension() {
     readerProgEl.textContent = `${idx + 1}/${currentChapters.length}`;
 
     readerContentEl.innerHTML = '';
-    const h = doc.createElement('div');
-    h.style.fontWeight = '700';
-    h.style.marginBottom = '10px';
-    h.style.fontSize = '1.08em';
-    h.textContent = ch.title;
-    readerContentEl.appendChild(h);
+    const isKd = Boolean(config.readerKindleMode);
+    const useDropCap = Boolean(config.readerDropCap);
+    const host = isKd ? doc.createElement('div') : readerContentEl;
+    if (isKd) {
+      host.className = 'st-tb-kd-page-track';
+      const topLbl = doc.createElement('div');
+      topLbl.className = 'st-tb-kd-chap-top';
+      topLbl.textContent = `Chapter ${idx + 1}`;
+      const titleEl = doc.createElement('div');
+      titleEl.className = 'st-tb-kd-chap-title';
+      titleEl.textContent = ch.title;
+      host.append(topLbl, titleEl);
+    } else {
+      const h = doc.createElement('div');
+      h.style.fontWeight = '700';
+      h.style.marginBottom = '10px';
+      h.style.fontSize = '1.08em';
+      h.textContent = ch.title;
+      host.appendChild(h);
+    }
 
+    let firstPara = true;
     ch.body.split('\n').forEach(line => {
       const t = line.trim();
       if (!t) return;
       const p = doc.createElement('p');
-      p.textContent = t;
-      readerContentEl.appendChild(p);
+      if (firstPara && useDropCap && t.length > 0) {
+        const chars = Array.from(t);
+        const dc = doc.createElement('span');
+        dc.className = 'st-tb-r-dropcap';
+        dc.textContent = chars[0];
+        p.style.textIndent = '0';
+        p.appendChild(dc);
+        p.appendChild(doc.createTextNode(chars.slice(1).join('')));
+      } else {
+        p.textContent = t;
+      }
+      firstPara = false;
+      host.appendChild(p);
     });
-    readerContentEl.scrollTop = restoreScroll || 0;
+    if (isKd) {
+      readerContentEl.appendChild(host);
+      if (typeof syncKindlePagination === 'function') {
+        syncKindlePagination(restoreScroll === -1 ? -1 : (Number(book.kdPageIdx) || 0));
+      }
+    } else {
+      readerContentEl.scrollTop = restoreScroll || 0;
+    }
     scheduleSaveConfig();
   };
 
@@ -40312,24 +40690,173 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const rsetLhVal = root.querySelector('#st-tb-rset-lh-val');
   const rsetGap = root.querySelector('#st-tb-rset-gap');
   const rsetGapVal = root.querySelector('#st-tb-rset-gap-val');
-  const rsetJustifyBtn = root.querySelector('#st-tb-rset-justify');
+  const rsetBgOp = root.querySelector('#st-tb-rset-bgop');
+  const rsetBgOpVal = root.querySelector('#st-tb-rset-bgop-val');
+  const rsetBgCol = root.querySelector('#st-tb-rset-bgcol');
+  const rsetFgCol = root.querySelector('#st-tb-rset-fgcol');
+  const rsetColReset = root.querySelector('#st-tb-rset-col-reset');
+  const rsetKindleBtn = root.querySelector('#st-tb-rset-kindle');
   const rsetIndentBtn = root.querySelector('#st-tb-rset-indent');
-  const rsetPaperBtn = root.querySelector('#st-tb-rset-paper');
+  const rsetDropCapBtn = root.querySelector('#st-tb-rset-dropcap');
+  const rsetPaperBtns = Array.from(root.querySelectorAll('[data-rpaper]'));
+  const rsetFontBtns = Array.from(root.querySelectorAll('[data-rfont]'));
+  const kdSideBtn = root.querySelector('#st-tb-kd-side-btn');
+  const kdChinEl = root.querySelector('#st-tb-kd-chin');
+  const kdChapLbl = root.querySelector('#st-tb-kd-chap-lbl');
+  const kdPageLbl = root.querySelector('#st-tb-kd-page-lbl');
+  const kdPctLbl = root.querySelector('#st-tb-kd-pct-lbl');
+  const kdFullBtn = root.querySelector('#st-tb-kd-full');
+  const readerBarEl = root.querySelector('.st-tb-reader-bar');
 
-  const applyReaderTypoSettings = () => {
+  const READER_PAPER_PRESETS = {
+    theme: { bg: '', fg: '' },
+    eink_light: { bg: '#dedede', fg: '#2f2f2f' },
+    eink_warm: { bg: '#e8e3d8', fg: '#302b24' },
+    eink_dark: { bg: '#1c1c1c', fg: '#d6d6d6' },
+    paper_cream: { bg: '#f6efe2', fg: '#362e26' },
+    paper_matcha: { bg: '#dce8dc', fg: '#28362a' },
+    paper_kraft: { bg: '#eadcc5', fg: '#3d2f22' },
+  };
+  const READER_FONT_MAP = {
+    default: 'inherit',
+    serif: '"Songti SC", "Noto Serif SC", "STSong", Georgia, serif',
+    sans: '-apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif',
+    kaiti: '"Kaiti SC", "STKaiti", "KaiTi", serif',
+  };
+  const hexToRgbaStr = (hex, alpha) => {
+    const h = String(hex || '').replace('#', '').trim();
+    if (h.length !== 6) return '';
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) return '';
+    return `rgba(${r}, ${g}, ${b}, ${clamp(alpha, 0.25, 1).toFixed(2)})`;
+  };
+
+  // Kindle 横向真实分页引擎
+  let kdCurPage = 0;
+  let kdTotalPages = 1;
+  let kdPageStride = 300;
+  const syncKindlePagination = (targetPage = null) => {
+    if (!config.readerKindleMode || !readerContentEl) return;
+    const track = readerContentEl.querySelector('.st-tb-kd-page-track');
+    if (!track) return;
+    win.requestAnimationFrame(() => {
+      const px = clamp(Number(config.readerPadX ?? 18), 6, 48);
+      const innerW = Math.max(160, readerContentEl.clientWidth - px * 2);
+      const innerH = Math.max(120, readerContentEl.clientHeight - 28);
+      const colGap = px * 2;
+      kdPageStride = innerW + colGap;
+      track.style.width = `${innerW}px`;
+      track.style.height = `${innerH}px`;
+      track.style.columnWidth = `${innerW}px`;
+      track.style.columnGap = `${colGap}px`;
+      const sw = track.scrollWidth || innerW;
+      kdTotalPages = Math.max(1, Math.round((sw + colGap) / Math.max(1, kdPageStride)));
+      if (targetPage === -1) kdCurPage = kdTotalPages - 1;
+      else if (typeof targetPage === 'number' && Number.isFinite(targetPage)) kdCurPage = clamp(targetPage, 0, kdTotalPages - 1);
+      else kdCurPage = clamp(kdCurPage, 0, kdTotalPages - 1);
+      track.style.transform = `translate3d(${-Math.round(kdCurPage * kdPageStride)}px, 0, 0)`;
+
+      const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+      if (book) book.kdPageIdx = kdCurPage;
+      const chapIdx = book ? (book.chapIdx || 0) : 0;
+      const totalCh = Math.max(1, currentChapters.length);
+      const chObj = currentChapters[chapIdx];
+      if (kdChapLbl) kdChapLbl.textContent = chObj ? chObj.title : '阅读中';
+      if (kdPageLbl) kdPageLbl.textContent = `${kdCurPage + 1} / ${kdTotalPages}`;
+      const overallPct = Math.min(100, Math.max(0, Math.round(((chapIdx + (kdCurPage + 1) / kdTotalPages) / totalCh) * 100)));
+      if (kdPctLbl) kdPctLbl.textContent = `${overallPct}%`;
+    });
+  };
+
+  const turnKindlePage = (delta) => {
+    if (!config.readerKindleMode || !currentChapters.length) return;
+    const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+    const chapIdx = book ? (book.chapIdx || 0) : 0;
+    if (delta > 0) {
+      if (kdCurPage + 1 < kdTotalPages) {
+        syncKindlePagination(kdCurPage + 1);
+      } else if (chapIdx + 1 < currentChapters.length) {
+        if (book) book.kdPageIdx = 0;
+        renderReaderChapter(chapIdx + 1, 0);
+      }
+    } else if (delta < 0) {
+      if (kdCurPage > 0) {
+        syncKindlePagination(kdCurPage - 1);
+      } else if (chapIdx > 0) {
+        renderReaderChapter(chapIdx - 1, -1);
+      }
+    }
+  };
+
+  // Kindle 屏幕左右滑动翻页 + 左右轻点翻页
+  if (readerContentEl) {
+    let kdSwipe = null;
+    readerContentEl.addEventListener('pointerdown', (e) => {
+      if (!config.readerKindleMode) return;
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      kdSwipe = { x: e.clientX, y: e.clientY, t: Date.now() };
+    });
+    readerContentEl.addEventListener('pointerup', (e) => {
+      if (!config.readerKindleMode || !kdSwipe) { kdSwipe = null; return; }
+      const dx = e.clientX - kdSwipe.x;
+      const dy = e.clientY - kdSwipe.y;
+      const dt = Date.now() - kdSwipe.t;
+      kdSwipe = null;
+      if (Math.abs(dx) >= 34 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+        turnKindlePage(dx < 0 ? 1 : -1);
+      } else if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && dt < 320) {
+        const sel = String(win.getSelection?.()?.toString() || '').trim();
+        if (sel) return;
+        const r = readerContentEl.getBoundingClientRect();
+        const rel = (e.clientX - r.left) / Math.max(1, r.width);
+        if (rel < 0.28) turnKindlePage(-1);
+        else if (rel > 0.72) turnKindlePage(1);
+      }
+    });
+    if (typeof ResizeObserver !== 'undefined') {
+      const kdRo = new ResizeObserver(() => {
+        if (config.readerKindleMode && readerOpen) syncKindlePagination(kdCurPage);
+      });
+      kdRo.observe(readerContentEl);
+    }
+  }
+
+  const applyReaderTypoSettings = (reRenderChap = false) => {
+    const isKd = Boolean(config.readerKindleMode);
     const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
     const lh = clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6);
     const gp = clamp(Number(config.readerParaGap ?? 10), 2, 28);
-    const just = config.readerJustify !== false;
+    const bgOp = clamp(Number(config.readerBgOpacity ?? 1.0), 0.25, 1.0);
     const ind = config.readerIndent !== false;
-    const paper = Boolean(config.readerPaperBg);
+    const dropCap = Boolean(config.readerDropCap);
+    const presetKey = config.readerPaperPreset || (isKd ? 'eink_light' : 'theme');
+    const presetObj = READER_PAPER_PRESETS[presetKey] || READER_PAPER_PRESETS.theme;
+    const fontKey = config.readerFontFamily || (isKd ? 'serif' : 'default');
+    const bgHex = config.readerBgColor || presetObj.bg;
+    const fgHex = config.readerTextColor || presetObj.fg;
+
+    if (readerEl) {
+      readerEl.classList.toggle('kindle-mode', isKd);
+      if (bgHex) {
+        const bgRgba = hexToRgbaStr(bgHex, bgOp) || bgHex;
+        readerEl.style.setProperty('--r-bg', bgRgba);
+        if (!isKd) readerEl.style.backgroundColor = bgRgba;
+        else readerEl.style.backgroundColor = '';
+      } else {
+        readerEl.style.removeProperty('--r-bg');
+        readerEl.style.backgroundColor = '';
+      }
+      if (fgHex) readerEl.style.setProperty('--r-fg', fgHex);
+      else readerEl.style.removeProperty('--r-fg');
+    }
     if (readerContentEl) {
       readerContentEl.style.setProperty('--r-padx', `${px}px`);
       readerContentEl.style.setProperty('--r-lh', String(lh));
       readerContentEl.style.setProperty('--r-gap', `${gp}px`);
-      readerContentEl.style.setProperty('--r-align', just ? 'justify' : 'left');
       readerContentEl.style.setProperty('--r-indent', ind ? '2em' : '0');
-      readerContentEl.classList.toggle('paper-bg', paper);
+      readerContentEl.style.setProperty('--r-font', READER_FONT_MAP[fontKey] || 'inherit');
     }
     if (rsetPadX) rsetPadX.value = String(px);
     if (rsetPadXVal) rsetPadXVal.textContent = `${px}px`;
@@ -40337,139 +40864,211 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (rsetLhVal) rsetLhVal.textContent = lh.toFixed(2);
     if (rsetGap) rsetGap.value = String(gp);
     if (rsetGapVal) rsetGapVal.textContent = `${gp}px`;
-    if (rsetJustifyBtn) rsetJustifyBtn.classList.toggle('accent', just);
+    if (rsetBgOp) rsetBgOp.value = String(bgOp);
+    if (rsetBgOpVal) rsetBgOpVal.textContent = `${Math.round(bgOp * 100)}%`;
+    if (rsetBgCol && bgHex) rsetBgCol.value = bgHex;
+    if (rsetFgCol && fgHex) rsetFgCol.value = fgHex;
+    if (rsetKindleBtn) rsetKindleBtn.classList.toggle('accent', isKd);
     if (rsetIndentBtn) rsetIndentBtn.classList.toggle('accent', ind);
-    if (rsetPaperBtn) rsetPaperBtn.classList.toggle('accent', paper);
-  };
-  applyReaderTypoSettings();
+    if (rsetDropCapBtn) rsetDropCapBtn.classList.toggle('accent', dropCap);
+    rsetPaperBtns.forEach(b => b.classList.toggle('accent', !config.readerBgColor && b.dataset.rpaper === presetKey));
+    rsetFontBtns.forEach(b => b.classList.toggle('accent', b.dataset.rfont === fontKey));
+    if (kdFullBtn) kdFullBtn.textContent = config.readerFull ? '◫' : '□';
 
-  if (readerSetBtn && readerSetBar) {
-    readerSetBtn.addEventListener('click', () => {
-      const opening = !readerSetBar.classList.contains('open');
-      readerSetBar.classList.toggle('open', opening);
-      readerSetBtn.classList.toggle('active', opening);
-      if (opening) applyReaderTypoSettings();
+    if (reRenderChap && currentChapters.length) {
+      const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+      renderReaderChapter(book?.chapIdx || 0, 0);
+    } else if (isKd && readerOpen) {
+      syncKindlePagination(kdCurPage);
+    }
+  };
+  applyReaderTypoSettings(false);
+
+  const toggleReaderSetBar = () => {
+    if (!readerSetBar) return;
+    const opening = !readerSetBar.classList.contains('open');
+    readerSetBar.classList.toggle('open', opening);
+    if (readerSetBtn) readerSetBtn.classList.toggle('active', opening);
+    if (opening) applyReaderTypoSettings(false);
+    else if (config.readerKindleMode) syncKindlePagination(kdCurPage);
+  };
+  if (readerSetBtn) readerSetBtn.addEventListener('click', toggleReaderSetBar);
+  if (kdSideBtn) kdSideBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleReaderSetBar(); });
+  root.querySelector('#st-tb-rset-kd-done')?.addEventListener('click', () => {
+    if (readerSetBar) readerSetBar.classList.remove('open');
+    if (readerSetBtn) readerSetBtn.classList.remove('active');
+    if (config.readerKindleMode) syncKindlePagination(kdCurPage);
+  });
+  root.querySelector('#st-tb-rset-kd-fsd')?.addEventListener('click', () => {
+    readerFsDownBtn?.click();
+    if (config.readerKindleMode) syncKindlePagination(kdCurPage);
+  });
+  root.querySelector('#st-tb-rset-kd-fsu')?.addEventListener('click', () => {
+    readerFsUpBtn?.click();
+    if (config.readerKindleMode) syncKindlePagination(kdCurPage);
+  });
+  root.querySelector('#st-tb-rset-kd-bar')?.addEventListener('click', () => {
+    if (readerBarEl) readerBarEl.classList.toggle('kd-bar-open');
+    if (config.readerKindleMode) syncKindlePagination(kdCurPage);
+  });
+  root.querySelector('#st-tb-kd-books')?.addEventListener('click', () => {
+    if (readerBarEl) readerBarEl.classList.toggle('kd-bar-open');
+    if (config.readerKindleMode) syncKindlePagination(kdCurPage);
+  });
+  root.querySelector('#st-tb-kd-toc')?.addEventListener('click', () => { readerTocBtn?.click(); });
+  root.querySelector('#st-tb-kd-min')?.addEventListener('click', () => { minimizeReader(); });
+  root.querySelector('#st-tb-kd-full')?.addEventListener('click', () => {
+    readerFullBtn?.click();
+    if (kdFullBtn) kdFullBtn.textContent = config.readerFull ? '◫' : '□';
+    if (config.readerKindleMode) setTimeout(() => syncKindlePagination(kdCurPage), 60);
+  });
+  root.querySelector('#st-tb-kd-close')?.addEventListener('click', () => { readerCloseBtn?.click(); });
+
+  // Kindle 底部边框支持按住拖动整个阅读器
+  if (kdChinEl) {
+    let kdDrag = null;
+    kdChinEl.addEventListener('pointerdown', (e) => {
+      if (config.readerFull || (e.button !== 0 && e.pointerType === 'mouse') || e.target.closest('button')) return;
+      kdChinEl.setPointerCapture(e.pointerId);
+      const rect = readerEl.getBoundingClientRect();
+      kdDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ol: rect.left, ot: rect.top, w: rect.width, h: rect.height };
     });
+    kdChinEl.addEventListener('pointermove', (e) => {
+      if (!kdDrag || kdDrag.id !== e.pointerId) return;
+      config.readerX = clamp(kdDrag.ol + (e.clientX - kdDrag.sx), 6, Math.max(6, win.innerWidth - kdDrag.w - 6));
+      config.readerY = clamp(kdDrag.ot + (e.clientY - kdDrag.sy), 8, Math.max(8, win.innerHeight - kdDrag.h - 8));
+      readerEl.style.left = `${Math.round(config.readerX)}px`;
+      readerEl.style.top = `${Math.round(config.readerY)}px`;
+    });
+    const endKdDrag = (e) => {
+      if (!kdDrag || kdDrag.id !== e.pointerId) return;
+      kdDrag = null;
+      try { kdChinEl.releasePointerCapture(e.pointerId); } catch (_) {}
+      saveConfig();
+    };
+    kdChinEl.addEventListener('pointerup', endKdDrag);
+    kdChinEl.addEventListener('pointercancel', endKdDrag);
   }
-  if (rsetPadX) {
-    rsetPadX.addEventListener('input', () => { config.readerPadX = Number(rsetPadX.value); applyReaderTypoSettings(); scheduleSaveConfig(); });
-    rsetPadX.addEventListener('change', () => { saveConfig(); });
-  }
-  if (rsetLh) {
-    rsetLh.addEventListener('input', () => { config.readerLineHeight = Number(rsetLh.value); applyReaderTypoSettings(); scheduleSaveConfig(); });
-    rsetLh.addEventListener('change', () => { saveConfig(); });
-  }
-  if (rsetGap) {
-    rsetGap.addEventListener('input', () => { config.readerParaGap = Number(rsetGap.value); applyReaderTypoSettings(); scheduleSaveConfig(); });
-    rsetGap.addEventListener('change', () => { saveConfig(); });
-  }
-  if (rsetJustifyBtn) {
-    rsetJustifyBtn.addEventListener('click', () => { config.readerJustify = !(config.readerJustify !== false); saveConfig(); applyReaderTypoSettings(); });
+
+  if (rsetKindleBtn) {
+    rsetKindleBtn.addEventListener('click', () => {
+      config.readerKindleMode = !config.readerKindleMode;
+      if (config.readerKindleMode && (!config.readerPaperPreset || config.readerPaperPreset === 'theme')) {
+        config.readerPaperPreset = 'eink_light';
+      }
+      saveConfig();
+      applyReaderTypoSettings(true);
+    });
   }
   if (rsetIndentBtn) {
-    rsetIndentBtn.addEventListener('click', () => { config.readerIndent = !(config.readerIndent !== false); saveConfig(); applyReaderTypoSettings(); });
-  }
-  if (rsetPaperBtn) {
-    rsetPaperBtn.addEventListener('click', () => { config.readerPaperBg = !config.readerPaperBg; saveConfig(); applyReaderTypoSettings(); });
-  }
-  if (readerCloseBtn) {
-    readerCloseBtn.addEventListener('click', () => {
-      readerMinimized = false;
-      if (readerMiniPill) readerMiniPill.classList.remove('show');
+    rsetIndentBtn.addEventListener('click', () => {
+      config.readerIndent = !(config.readerIndent !== false);
+      saveConfig();
+      applyReaderTypoSettings(false);
     });
   }
-  if (readerMiniPill) {
-    let mpDrag = null;
-    readerMiniPill.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      readerMiniPill.setPointerCapture(e.pointerId);
-      const r = readerMiniPill.getBoundingClientRect();
-      mpDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top, moved: false };
+  if (rsetDropCapBtn) {
+    rsetDropCapBtn.addEventListener('click', () => {
+      config.readerDropCap = !config.readerDropCap;
+      saveConfig();
+      applyReaderTypoSettings(true);
     });
-    readerMiniPill.addEventListener('pointermove', (e) => {
-      if (!mpDrag || mpDrag.id !== e.pointerId) return;
-      const dx = e.clientX - mpDrag.sx;
-      const dy = e.clientY - mpDrag.sy;
-      if (!mpDrag.moved && Math.hypot(dx, dy) > 6) mpDrag.moved = true;
-      if (mpDrag.moved) {
-        const w = readerMiniPill.offsetWidth || 96;
-        const h = readerMiniPill.offsetHeight || 28;
-        const nx = clamp(mpDrag.ox + dx, 6, Math.max(6, win.innerWidth - w - 6));
-        const ny = clamp(mpDrag.oy + dy, 8, Math.max(8, win.innerHeight - h - 8));
-        readerMiniPill.style.left = `${Math.round(nx)}px`;
-        readerMiniPill.style.top = `${Math.round(ny)}px`;
-        readerMiniPill.style.right = 'auto';
-        readerMiniPill.style.bottom = 'auto';
-      }
+  }
+  rsetPaperBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      config.readerPaperPreset = btn.dataset.rpaper;
+      config.readerBgColor = '';
+      config.readerTextColor = '';
+      saveConfig();
+      applyReaderTypoSettings(false);
     });
-    const endMpDrag = (e) => {
-      if (!mpDrag || mpDrag.id !== e.pointerId) return;
-      const wasMoved = mpDrag.moved;
-      mpDrag = null;
-      try { readerMiniPill.releasePointerCapture(e.pointerId); } catch (_) {}
-      if (!wasMoved) restoreMinimizedReader();
-    };
-    readerMiniPill.addEventListener('pointerup', endMpDrag);
-    readerMiniPill.addEventListener('pointercancel', endMpDrag);
+  });
+  rsetFontBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      config.readerFontFamily = btn.dataset.rfont;
+      saveConfig();
+      applyReaderTypoSettings(false);
+    });
+  });
+  if (rsetBgCol) {
+    rsetBgCol.addEventListener('input', () => {
+      config.readerBgColor = rsetBgCol.value;
+      applyReaderTypoSettings(false);
+      scheduleSaveConfig();
+    });
+    rsetBgCol.addEventListener('change', () => saveConfig());
+  }
+  if (rsetFgCol) {
+    rsetFgCol.addEventListener('input', () => {
+      config.readerTextColor = rsetFgCol.value;
+      applyReaderTypoSettings(false);
+      scheduleSaveConfig();
+    });
+    rsetFgCol.addEventListener('change', () => saveConfig());
+  }
+  if (rsetColReset) {
+    rsetColReset.addEventListener('click', () => {
+      config.readerBgColor = '';
+      config.readerTextColor = '';
+      config.readerBgOpacity = 1.0;
+      saveConfig();
+      applyReaderTypoSettings(false);
+    });
+  }
+  if (rsetBgOp) {
+    rsetBgOp.addEventListener('input', () => { config.readerBgOpacity = Number(rsetBgOp.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
+    rsetBgOp.addEventListener('change', () => saveConfig());
+  }
+  if (rsetPadX) {
+    rsetPadX.addEventListener('input', () => { config.readerPadX = Number(rsetPadX.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
+    rsetPadX.addEventListener('change', () => saveConfig());
+  }
+  if (rsetLh) {
+    rsetLh.addEventListener('input', () => { config.readerLineHeight = Number(rsetLh.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
+    rsetLh.addEventListener('change', () => saveConfig());
+  }
+  if (rsetGap) {
+    rsetGap.addEventListener('input', () => { config.readerParaGap = Number(rsetGap.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
+    rsetGap.addEventListener('change', () => saveConfig());
   }
 
-  const syncQuickDockUI = () => {
-    if (!quickDockEl) return;
-    quickDockEl.querySelector('[data-qd="imm"]')?.classList.toggle('active', Boolean(config.immersive));
-    quickDockEl.querySelector('[data-qd="mask"]')?.classList.toggle('active', Boolean(config.maskEnabled));
-    quickDockEl.querySelector('[data-qd="reader"]')?.classList.toggle('active', Boolean(readerOpen || readerMinimized));
-    quickDockEl.querySelector('[data-qd="bag"]')?.classList.toggle('active', Boolean(pupBagOpen));
-  };
-
-  const toggleQuickDock = (open) => {
-    if (!quickDockEl) return;
-    if (!open) {
-      quickDockEl.classList.remove('open');
-      return;
+  // ==================== 沉浸模式一键召唤/收起底部输入栏 ====================
+  const immDockTrigger = root.querySelector('#st-tb-imm-dock-trigger');
+  const setImmInputOpen = (open) => {
+    doc.documentElement.classList.toggle('st-tb-imm-show-input', Boolean(open));
+    if (immDockTrigger) immDockTrigger.textContent = open ? '收起底栏' : '回复';
+    if (open) {
+      setTimeout(() => {
+        const ta = doc.getElementById('send_textarea');
+        if (ta) ta.focus();
+      }, 60);
     }
-    syncQuickDockUI();
-    quickDockEl.classList.add('open');
-    const br = badge.getBoundingClientRect();
-    const dw = quickDockEl.offsetWidth || 226;
-    const dh = quickDockEl.offsetHeight || 34;
-    let left = br.left + br.width / 2 - dw / 2;
-    left = clamp(left, 8, Math.max(8, win.innerWidth - dw - 8));
-    let top = br.bottom + 8;
-    if (top + dh > win.innerHeight - 10) top = Math.max(8, br.top - dh - 8);
-    quickDockEl.style.left = `${Math.round(left)}px`;
-    quickDockEl.style.top = `${Math.round(top)}px`;
   };
-
-  if (quickDockEl) {
-    quickDockEl.addEventListener('click', (e) => {
-      const btn = e.target && e.target.closest ? e.target.closest('[data-qd]') : null;
-      if (!btn) return;
-      const act = btn.dataset.qd;
-      if (act === 'imm') {
-        toggleImmersive();
-        syncQuickDockUI();
-      } else if (act === 'mask') {
-        toggleMaskState();
-        syncQuickDockUI();
-      } else if (act === 'reader') {
-        toggleQuickDock(false);
-        if (readerMinimized) restoreMinimizedReader();
-        else toggleReader(!readerOpen);
-      } else if (act === 'bag') {
-        toggleQuickDock(false);
-        togglePupBag(!pupBagOpen);
-      } else if (act === 'hide') {
-        toggleQuickDock(false);
-        if (fullHideBtn) fullHideBtn.click();
-      }
+  if (immDockTrigger) {
+    immDockTrigger.addEventListener('click', () => {
+      const next = !doc.documentElement.classList.contains('st-tb-imm-show-input');
+      setImmInputOpen(next);
     });
   }
-  const onOutsideQuickDock = (e) => {
-    if (!quickDockEl || !quickDockEl.classList.contains('open')) return;
-    if (quickDockEl.contains(e.target) || badge.contains(e.target)) return;
-    toggleQuickDock(false);
+  const onImmSendClick = (e) => {
+    if (!doc.documentElement.classList.contains('st-tb-imm-show-input')) return;
+    if (e.target && e.target.closest && e.target.closest('#send_but')) {
+      setTimeout(() => setImmInputOpen(false), 180);
+    }
   };
-  doc.addEventListener('pointerdown', onOutsideQuickDock);
+  doc.addEventListener('click', onImmSendClick, true);
+
+  // ==================== 浮窗动态置顶层级（小狗永远最上，背包与阅读器谁后点谁在上） ====================
+  let floatTopZ = 2147483622;
+  const bringFloatFront = (el) => {
+    if (!el) return;
+    floatTopZ = Math.min(2147483640, floatTopZ + 1);
+    el.style.zIndex = String(floatTopZ);
+  };
+  [readerEl, pupBagEl, panel].forEach(el => {
+    if (el) el.addEventListener('pointerdown', () => bringFloatFront(el), true);
+  });
+  if (readerMiniPill) readerMiniPill.addEventListener('click', () => bringFloatFront(readerEl));
 
   // ==================== 狗来财扩展入口 + 自动检测更新 + 一键更新自动刷新 ====================
   const GLC_EXT_VERSION = '2.0.56';
@@ -40731,6 +41330,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     clearTimeout(win.__stPupMusicPlayTimer);
     try { if (win.__stPupMusicAudio) { win.__stPupMusicAudio.pause(); win.__stPupMusicAudio.src = ''; } } catch (_) {}
     clearTimeout(pupAutoDressTimer);
+    doc.removeEventListener('click', onImmSendClick, true);
+    doc.documentElement.classList.remove('st-tb-imm-show-input');
     doc.removeEventListener('pointerdown', onOutsideQuickDock);
     doc.getElementById('st-glc-ext-wrap')?.remove();
     doc.getElementById('st-glc-ext-drawer')?.remove();
