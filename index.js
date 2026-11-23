@@ -28410,6 +28410,20 @@ function bootGoulaicaiExtension() {
       const ch = getCurrentCharacter();
       pushArr(ch?.data?.extensions?.regex_scripts);
       pushArr(ctx?.chatCompletionSettings?.extensions?.regex_scripts);
+      try {
+        const pm = typeof ctx?.getPresetManager === 'function' ? ctx.getPresetManager() : null;
+        const cp = typeof pm?.getCompletionPreset === 'function' ? pm.getCompletionPreset() : null;
+        pushArr(cp?.extensions?.regex_scripts);
+      } catch (_) {}
+      if (ctx?.groupId && Array.isArray(ctx?.groups) && Array.isArray(ctx?.characters)) {
+        const grp = ctx.groups.find(g => String(g?.id) === String(ctx.groupId));
+        if (grp && Array.isArray(grp.members)) {
+          grp.members.forEach(m => {
+            const mc = ctx.characters.find(c => c && (c.avatar === m || c.name === m));
+            if (mc) pushArr(mc?.data?.extensions?.regex_scripts);
+          });
+        }
+      }
     } catch (_) {}
     return list;
   };
@@ -34403,19 +34417,30 @@ function bootGoulaicaiExtension() {
 
     preloadAllSwapRefs().then(() => {
       applyAllImgSwaps();
+      if (typeof syncImgObserverState === 'function') syncImgObserverState();
       renderImgSwapUI();
     });
-    try {
-      const chatNode = doc.querySelector('#chat');
-      imgObserver = new MutationObserver(() => {
-        if (config.imgSwapEnabled === false || stWasGenerating) return;
+    const syncImgObserverState = () => {
+      try {
+        if (!imgObserver) return;
         const cMap = config.imgSwapByChat && Object.keys(config.imgSwapByChat).length;
         const tMap = config.imgSwapByTheme && Object.keys(config.imgSwapByTheme).length;
-        if (!cMap && !tMap) return;
+        if (config.imgSwapEnabled !== false && (cMap || tMap)) {
+          const chatNode = doc.querySelector('#chat');
+          imgObserver.disconnect();
+          if (chatNode) imgObserver.observe(chatNode, { childList: true, subtree: true });
+          if (doc.head) imgObserver.observe(doc.head, { childList: true, subtree: true });
+        } else {
+          imgObserver.disconnect();
+        }
+      } catch (_) {}
+    };
+    try {
+      imgObserver = new MutationObserver(() => {
+        if (config.imgSwapEnabled === false || stWasGenerating) return;
         scheduleApplyImgSwaps();
       });
-      if (chatNode) imgObserver.observe(chatNode, { childList: true, subtree: true });
-      if (doc.head) imgObserver.observe(doc.head, { childList: true, subtree: true });
+      syncImgObserverState();
     } catch {}
 
   // ==================== 卸载清理 ====================
