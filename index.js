@@ -19547,11 +19547,11 @@ function bootGoulaicaiExtension() {
                 gl: ['Norah Jones', 'Laufey', 'IU', '宇多田ヒカル', '藤井風', '手嶌葵', 'TAEYEON', 'Billie Eilish'],
               },
               clingy: {
-                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '林俊杰', '林宥嘉', '田馥甄', '告五人', '韦礼安', '汪苏泷', '王心凌', '颜人中'],
+                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '容祖儿', '林俊杰', '林宥嘉', '田馥甄', '告五人', '韦礼安', '汪苏泷', '王心凌', '颜人中'],
                 gl: ['Taylor Swift', 'Ed Sheeran', 'IU', '백예린', '星野源', '米津玄師', 'LANY', 'Lauv'],
               },
               tsundere: {
-                zh: ['孙燕姿', '陈奕迅', '徐佳莹', '张惠妹', '蔡依林', '杨乃文', '邓紫棋', '莫文蔚', '戴佩妮', '王菲', '苏打绿', '五月天'],
+                zh: ['孙燕姿', '陈奕迅', '徐佳莹', '容祖儿', '张惠妹', '蔡依林', '杨乃文', '邓紫棋', '莫文蔚', '戴佩妮', '王菲', '苏打绿', '五月天'],
                 gl: ['Avril Lavigne', 'Olivia Rodrigo', 'YOASOBI', 'Dua Lipa', 'BLACKPINK', 'あいみょん', 'TAEYEON', 'Paramore'],
               },
               foodie: {
@@ -19563,7 +19563,7 @@ function bootGoulaicaiExtension() {
                 gl: ['Coldplay', 'RADWIMPS', 'Mrs. GREEN APPLE', 'DAY6', 'OneRepublic', 'ヨルシカ', 'Bruno Mars'],
               },
               fashionista: {
-                zh: ['陈奕迅', '王菲', '林忆莲', '莫文蔚', '方大同', '孙燕姿', '徐佳莹', '田馥甄', '林宥嘉', '单依纯', '袁娅维', 'A-Lin'],
+                zh: ['陈奕迅', '容祖儿', '王菲', '林忆莲', '莫文蔚', '方大同', '孙燕姿', '徐佳莹', '田馥甄', '林宥嘉', '单依纯', '袁娅维', 'A-Lin'],
                 gl: ['Lana Del Rey', 'The Weeknd', 'SZA', '宇多田ヒカル', '藤井風', 'DEAN', 'Adele', 'TAEYEON'],
               },
               gamer: {
@@ -19571,7 +19571,7 @@ function bootGoulaicaiExtension() {
                 gl: ['YOASOBI', '米津玄師', 'Bruno Mars', 'NewJeans', 'aespa', 'Charlie Puth', 'Official髭男dism'],
               },
               philosopher: {
-                zh: ['陈奕迅', '徐佳莹', '孙燕姿', '梁静茹', '李宗盛', '林宥嘉', '毛不易', '李荣浩', '张学友', '王菲', '朴树', '蔡健雅'],
+                zh: ['陈奕迅', '徐佳莹', '孙燕姿', '梁静茹', '容祖儿', '李宗盛', '林宥嘉', '毛不易', '李荣浩', '张学友', '王菲', '朴树', '蔡健雅'],
                 gl: ['Adele', 'John Mayer', '玉置浩二', '中島みゆき', '宇多田ヒカル', 'IU', 'Coldplay', 'Norah Jones'],
               },
             };
@@ -19612,36 +19612,52 @@ function bootGoulaicaiExtension() {
             const { title, artist, previewUrl } = pickedSong;
             const REC_BY_PERS = {
               sleepyhead: [
-                `呼啊，刚随手翻到 ${artist} 的《${title}》，现在放给你听，{owner}和我一起窝着听吧`,
-                `分你一半耳机，今天随机到的是 ${artist} 的《${title}》，马上播放给你听`,
+                `呼啊，刚随手翻到 ${artist} 的《${title}》，现在放给你听，{owner}和我一起窝着慢慢听吧`,
+                `分你一半耳机，今天随机到的是 ${artist} 的《${title}》，旋律软软的好舒服`,
+                `把下巴靠在手边放一首 ${artist} 的《${title}》，{owner}累了就闭眼听完这段吧`,
+                `刚打了个哈欠刚好刷到 ${artist} 的《${title}》，放出来陪{owner}一起发呆`,
               ],
               clingy: [
-                `{owner}快戴上耳机！今天随机抽到 ${artist} 的《${title}》，这就放起来和你一起听`,
-                `刚帮你挑中了 ${artist} 的《${title}》，我按下播放啦，快陪我一起摇尾巴`,
+                `{owner}快戴上耳机！今天抽到 ${artist} 的《${title}》，想和你贴在一起听完`,
+                `刚帮你挑中了 ${artist} 的《${title}》，我按下播放啦，快陪{self}一起摇尾巴`,
+                `分最喜欢的{owner}一半小耳机！这首 ${artist} 的《${title}》超级适合咱们俩一起听`,
+                `找到啦！现在放 ${artist} 的《${title}》给你听，听完记得摸摸{self}的头哦`,
               ],
               tsundere: [
                 `哼，随便给你搜了一首 ${artist} 的《${title}》，这就放给你听，不许说不好听`,
-                `才不是特意帮你挑的，刚好刷到 ${artist} 的《${title}》，勉强放给你听一段`,
+                `才不是特意帮你挑的，刚好刷到 ${artist} 的《${title}》，勉强分你一半耳机`,
+                `诺，这首 ${artist} 的《${title}》品味还行吧？快认真听，别走神`,
+                `难得大发慈悲给你放歌，今天是 ${artist} 的《${title}》，记得夸我眼光好`,
               ],
               foodie: [
                 `诶！刚随机转盘停在了 ${artist} 的《${title}》上面，马上放出来给{owner}听听看`,
-                `差点按错键，结果翻出一首 ${artist} 的《${title}》，我现在就播放啦`,
+                `差点按错键，结果翻出一首 ${artist} 的《${title}》，感觉还挺好听的呀`,
+                `哇！抽到了 ${artist} 的《${title}》，{owner}快戴上耳机一起听吧`,
+                `刚刚脑袋放空随手一点就是 ${artist} 的《${title}》，快听听合不合你胃口`,
               ],
               explorer: [
-                `今日随机音乐盲盒开出 ${artist} 的《${title}》！马上放起来一起听`,
-                `刚在音乐海里捞到一首 ${artist} 的《${title}》，分{owner}一半耳机，开始播放`,
+                `今日音乐盲盒开出 ${artist} 的《${title}》！马上放起来和{owner}一起听`,
+                `刚在曲库里淘到一首 ${artist} 的《${title}》，分{owner}一半耳机，开始播放`,
+                `好歌来啦！今天听 ${artist} 的《${title}》，希望这段旋律能让{owner}心情变好`,
+                `摇着尾巴给你按下播放键！这首 ${artist} 的《${title}》送给今天的{owner}`,
               ],
               fashionista: [
-                `刚好挑到 ${artist} 的《${title}》，品味还不错，放给你听听看`,
-                `分你一半耳机。今天随机到的是 ${artist} 的《${title}》，现在放起来`,
+                `刚好挑到 ${artist} 的《${title}》，质感不错，放给你听听看`,
+                `分你一半耳机。今天选的是 ${artist} 的《${title}》，挺适合此刻的氛围`,
+                `这首 ${artist} 的《${title}》我挺喜欢的，有空就一起听完这段吧`,
+                `顺手放一首 ${artist} 的《${title}》，不用客气，安静听就好`,
               ],
               gamer: [
-                `随机抽歌命中 ${artist} 的《${title}》！这就开始放歌当背景音`,
+                `随机抽歌命中 ${artist} 的《${title}》！这就放起来当今天的背景音乐`,
                 `盲盒开歌成功，这轮是 ${artist} 的《${title}》，马上播放给{owner}听`,
+                `点歌机启动！刚刷到 ${artist} 的《${title}》，节奏超带感，快听听`,
+                `叮咚，本轮推荐 ${artist} 的《${title}》，戴上耳机一起跟着节拍晃脑袋`,
               ],
               philosopher: [
-                `随机选到一首 ${artist} 的《${title}》，这就放给你听，{owner}看文的时候可以听一段`,
-                `今天随缘挑到的是 ${artist} 的《${title}》，现在放起来静静听一会儿`,
+                `随缘选到一首 ${artist} 的《${title}》，放给你听，{owner}看文时可以配着听一段`,
+                `今天挑到的是 ${artist} 的《${title}》，戴上耳机静静听完这三十秒挺好的`,
+                `这首 ${artist} 的《${title}》很耐听，放出来陪{owner}歇一歇`,
+                `刚翻到 ${artist} 的《${title}》，节奏刚刚好，陪你一起听完吧`,
               ],
             };
             const pool = REC_BY_PERS[pId] || REC_BY_PERS.sleepyhead;
@@ -19655,16 +19671,8 @@ function bootGoulaicaiExtension() {
                 au.pause();
                 au.volume = 0.58;
                 au.src = previewUrl;
-                let replayCount = 0;
                 au.onended = () => {
-                  if (replayCount < 1 && au.src === previewUrl) {
-                    replayCount += 1;
-                    au.currentTime = 0;
-                    setPuppyState('music', 480);
-                    au.play().catch(() => {});
-                  } else if (pup.state === 'music') {
-                    setPuppyState('idle', 120);
-                  }
+                  if (pup.state === 'music') setPuppyState('idle', 120);
                 };
                 au.play().catch(() => {});
               } catch (_) {}
