@@ -5379,6 +5379,9 @@ function bootGoulaicaiExtension() {
       touch-action: none !important;
       overscroll-behavior: contain;
     }
+    #st-px-game-canvas {
+      transform: translateZ(0);
+    }
     #st-tb-shop-grid[data-own-filter="owned"] > [data-own="0"],
     #st-tb-shop-grid[data-own-filter="unowned"] > [data-own="1"] {
       display: none !important;
@@ -28487,6 +28490,9 @@ function bootGoulaicaiExtension() {
     const adaptOn = config.perfStreamAdapt !== false;
     const noBlur = Boolean(config.perfNoBlur);
     const rules = ['.st-tb-folded-mes { display: none !important; }'];
+    if (adaptOn) {
+      rules.push('#chat .mes:not(:nth-last-child(-n+4)) { content-visibility: auto; contain-intrinsic-size: auto 240px; }');
+    }
     if (noBlur) {
       rules.push('#sheld, #chat .mes, #send_form, #top-bar { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }');
     }
@@ -28578,6 +28584,7 @@ function bootGoulaicaiExtension() {
         ctxEv.eventSource.on(ctxEv.eventTypes.MESSAGE_RECEIVED, () => {
           if (stWasGenerating) stGenGotMessage = true;
           restoreStRegexAfterStream(true);
+          setTimeout(applyLazyChatImages, 200);
         });
       }
       if (ctxEv.eventTypes.GENERATION_ENDED) {
@@ -28595,6 +28602,7 @@ function bootGoulaicaiExtension() {
         ctxEv.eventSource.on(ctxEv.eventTypes.CHAT_CHANGED, () => {
           resetReplyTrack();
           restoreStRegexAfterStream(false);
+          setTimeout(() => { applyLazyChatImages(); applyChatFold(); }, 260);
         });
       }
     }
@@ -32502,6 +32510,12 @@ function bootGoulaicaiExtension() {
       pxGameTimeEl.textContent = '已恢复进度';
       pxGameMsgEl.textContent = '继续游玩';
       draw2048();
+      win.requestAnimationFrame(() => {
+        if (activeGameId === 'g2048') draw2048();
+      });
+      setTimeout(() => {
+        if (activeGameId === 'g2048' && pupBagOpen && pupBagTab === 'game') draw2048();
+      }, 60);
     } else if (activeGameId === 'catch') {
       drawCatch();
     } else if (activeGameId === 'g2048') {
@@ -34386,7 +34400,11 @@ function bootGoulaicaiExtension() {
     try {
       const chatNode = doc.querySelector('#chat');
       imgObserver = new MutationObserver(() => {
-        if (config.imgSwapEnabled !== false) scheduleApplyImgSwaps();
+        if (config.imgSwapEnabled === false || stWasGenerating) return;
+        const cMap = config.imgSwapByChat && Object.keys(config.imgSwapByChat).length;
+        const tMap = config.imgSwapByTheme && Object.keys(config.imgSwapByTheme).length;
+        if (!cMap && !tMap) return;
+        scheduleApplyImgSwaps();
       });
       if (chatNode) imgObserver.observe(chatNode, { childList: true, subtree: true });
       if (doc.head) imgObserver.observe(doc.head, { childList: true, subtree: true });
@@ -37824,6 +37842,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   };
 
   let lastSeParaTap = { para: null, time: 0 };
+  let sePendingTapTimer = null;
   const onChatParaClick = (e) => {
     if (config.storyQuickBarEnabled === false) return;
     if (e.target && e.target.closest && e.target.closest('#st-tb-root')) return;
@@ -37893,29 +37912,41 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       return;
     }
 
+    if (sePendingTapTimer) {
+      clearTimeout(sePendingTapTimer);
+      sePendingTapTimer = null;
+      lastSeParaTap = { para: null, time: 0 };
+      hideSeFloatBar();
+      return;
+    }
     if (!isRapidSecondTap) {
       lastSeParaTap = { para, time: nowSeTap };
       if (seFloatBar && seFloatBar.classList.contains('show')) hideSeFloatBar();
       return;
     }
     lastSeParaTap = { para: null, time: 0 };
-    try { win.getSelection?.()?.removeAllRanges?.(); } catch (_) {}
-    if (seFloatBar && seFloatBar.classList.contains('show') && seActiveParaEl === para) {
-      hideSeFloatBar();
-      return;
-    }
-    seActiveParaEl = para;
-    seActiveMesId = mesId;
-    if (seFloatBar) {
-      seFloatBar.classList.add('show');
-      const rect = para.getBoundingClientRect();
-      const barW = seFloatBar.offsetWidth || 260;
-      const barH = seFloatBar.offsetHeight || 34;
-      const left = clamp(rect.left + rect.width / 2 - barW / 2, 8, win.innerWidth - barW - 8);
-      const top = rect.top > barH + 14 ? (rect.top - barH - 6) : Math.min(rect.bottom + 6, win.innerHeight - barH - 12);
-      seFloatBar.style.left = left + 'px';
-      seFloatBar.style.top = top + 'px';
-    }
+    if (config.fullHidden) return;
+    sePendingTapTimer = setTimeout(() => {
+      sePendingTapTimer = null;
+      if (config.fullHidden) return;
+      try { win.getSelection?.()?.removeAllRanges?.(); } catch (_) {}
+      if (seFloatBar && seFloatBar.classList.contains('show') && seActiveParaEl === para) {
+        hideSeFloatBar();
+        return;
+      }
+      seActiveParaEl = para;
+      seActiveMesId = mesId;
+      if (seFloatBar) {
+        seFloatBar.classList.add('show');
+        const rect = para.getBoundingClientRect();
+        const barW = seFloatBar.offsetWidth || 260;
+        const barH = seFloatBar.offsetHeight || 34;
+        const left = clamp(rect.left + rect.width / 2 - barW / 2, 8, win.innerWidth - barW - 8);
+        const top = rect.top > barH + 14 ? (rect.top - barH - 6) : Math.min(rect.bottom + 6, win.innerHeight - barH - 12);
+        seFloatBar.style.left = left + 'px';
+        seFloatBar.style.top = top + 'px';
+      }
+    }, 240);
   };
   doc.addEventListener('click', onChatParaClick);
 
