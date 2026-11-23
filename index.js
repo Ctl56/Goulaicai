@@ -4891,17 +4891,25 @@ function bootGoulaicaiExtension() {
     }
 
     #st-tb-pup-bag.open { display: flex; }
-    .st-px-lim-info-btn {
+    #st-tb-root button.st-px-btn.st-px-lim-info-btn {
       width: 20px !important;
       min-width: 20px !important;
       height: 20px !important;
       padding: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      line-height: 0 !important;
       font-size: 10px !important;
       font-weight: 700 !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
       margin-left: auto;
+    }
+    #st-tb-root button.st-px-btn.st-px-lim-info-btn svg {
+      display: block !important;
+      margin: 0 !important;
+      flex-shrink: 0;
     }
     .st-px-lim-pop-mask {
       position: absolute;
@@ -17753,7 +17761,7 @@ function bootGoulaicaiExtension() {
       });
       pupWardBodyEl.appendChild(grid);
     } else if (wardTab === 'outfit') {
-      pupWardHeadEl.textContent = '衣服 / 睡衣 / 蓬蓬裙';
+      pupWardHeadEl.textContent = '服装';
       renderWardSubTabs('outfit');
       const curSub = wardSubCat.outfit || 'all';
       const LIM_OUTFIT_REAL_CAT = {
@@ -39496,10 +39504,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       return;
     }
     lastSeParaTap = { para: null, time: 0 };
-    if (config.fullHidden) return;
     sePendingTapTimer = setTimeout(() => {
       sePendingTapTimer = null;
-      if (config.fullHidden) return;
       try { win.getSelection?.()?.removeAllRanges?.(); } catch (_) {}
       if (seFloatBar && seFloatBar.classList.contains('show') && seActiveParaEl === para) {
         hideSeFloatBar();
