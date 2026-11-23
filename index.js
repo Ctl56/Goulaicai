@@ -7010,9 +7010,11 @@ function bootGoulaicaiExtension() {
     }
     #st-tb-root #st-tb-reader.reader-dark .st-tb-select,
     #st-tb-root #st-tb-reader.reader-dark .st-tb-input {
-      background: #2a2a27 !important;
-      color: #dcdbd4 !important;
-      border: 1px solid rgba(255, 255, 255, 0.09) !important;
+      background-color: #2a2a27 !important;
+      color: #ebeae3 !important;
+      -webkit-text-fill-color: #ebeae3 !important;
+      border: none !important;
+      box-shadow: none !important;
     }
     #st-tb-root #st-tb-reader.reader-dark .st-tb-r-colpick {
       border-color: rgba(255, 255, 255, 0.16) !important;
@@ -7081,8 +7083,9 @@ function bootGoulaicaiExtension() {
     }
     #st-tb-root #st-tb-reader.kindle-mode .st-tb-reader-bar .st-tb-select,
     #st-tb-root #st-tb-reader.kindle-mode .st-tb-reader-rename-bar .st-tb-input {
-      background: #30302d !important;
-      color: #f0efe9 !important;
+      background-color: #30302d !important;
+      color: #f4f3ee !important;
+      -webkit-text-fill-color: #f4f3ee !important;
       border: none !important;
       box-shadow: none !important;
       outline: none !important;
@@ -7113,20 +7116,20 @@ function bootGoulaicaiExtension() {
         inset 0 0 14px rgba(0, 0, 0, 0.09),
         inset 0 0 0 1px rgba(0, 0, 0, 0.06);
     }
-    #st-tb-reader.kindle-mode .st-tb-kd-page-track {
+    #st-tb-reader.kindle-mode .st-tb-kd-page-view {
+      width: 100%;
       height: 100%;
-      column-fill: auto;
-      transition: transform 0.22s ease-out;
-      will-change: transform;
+      overflow: hidden;
       position: relative;
       z-index: 1;
+      box-sizing: border-box;
     }
-    #st-tb-reader.kindle-mode .st-tb-kd-page-track p,
-    #st-tb-reader.kindle-mode .st-tb-kd-page-track div {
-      orphans: 1 !important;
-      widows: 1 !important;
-      break-inside: auto !important;
-      -webkit-column-break-inside: auto !important;
+    #st-tb-reader.kindle-mode .st-tb-kd-page-view p.kd-split-end {
+      margin-bottom: 0 !important;
+      text-align-last: justify !important;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-page-view p.kd-split-cont {
+      text-indent: 0 !important;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-chap-top {
       font-size: 12px;
@@ -34616,56 +34619,47 @@ function bootGoulaicaiExtension() {
     const idx = clamp(chapIdx, 0, currentChapters.length - 1);
     book.chapIdx = idx;
     const ch = currentChapters[idx];
-    readerTitleEl.textContent = '阅读中';
+    readerTitleEl.textContent = String(book.name || '').replace(/\.txt$/i, '').trim() || '阅读中';
     readerProgEl.textContent = `${idx + 1}/${currentChapters.length}`;
 
     readerContentEl.innerHTML = '';
     const isKd = Boolean(config.readerKindleMode);
     const useDropCap = Boolean(config.readerDropCap);
-    const host = isKd ? doc.createElement('div') : readerContentEl;
     if (isKd) {
-      host.className = 'st-tb-kd-page-track';
-      const topLbl = doc.createElement('div');
-      topLbl.className = 'st-tb-kd-chap-top';
-      topLbl.textContent = `Chapter ${idx + 1}`;
-      const titleEl = doc.createElement('div');
-      titleEl.className = 'st-tb-kd-chap-title';
-      titleEl.textContent = ch.title;
-      host.append(topLbl, titleEl);
+      win.__stKdChapData = {
+        idx,
+        title: ch.title,
+        paras: ch.body.split('\n').map(l => l.trim()).filter(Boolean),
+      };
+      if (typeof syncKindlePagination === 'function') {
+        syncKindlePagination(restoreScroll === -1 ? -1 : (Number(book.kdPageIdx) || 0), true);
+      }
     } else {
       const h = doc.createElement('div');
       h.style.fontWeight = '700';
       h.style.marginBottom = '10px';
       h.style.fontSize = '1.08em';
       h.textContent = ch.title;
-      host.appendChild(h);
-    }
-
-    let firstPara = true;
-    ch.body.split('\n').forEach(line => {
-      const t = line.trim();
-      if (!t) return;
-      const p = doc.createElement('p');
-      if (firstPara && useDropCap && t.length > 0) {
-        const chars = Array.from(t);
-        const dc = doc.createElement('span');
-        dc.className = 'st-tb-r-dropcap';
-        dc.textContent = chars[0];
-        p.style.textIndent = '0';
-        p.appendChild(dc);
-        p.appendChild(doc.createTextNode(chars.slice(1).join('')));
-      } else {
-        p.textContent = t;
-      }
-      firstPara = false;
-      host.appendChild(p);
-    });
-    if (isKd) {
-      readerContentEl.appendChild(host);
-      if (typeof syncKindlePagination === 'function') {
-        syncKindlePagination(restoreScroll === -1 ? -1 : (Number(book.kdPageIdx) || 0));
-      }
-    } else {
+      readerContentEl.appendChild(h);
+      let firstPara = true;
+      ch.body.split('\n').forEach(line => {
+        const t = line.trim();
+        if (!t) return;
+        const p = doc.createElement('p');
+        if (firstPara && useDropCap && t.length > 0) {
+          const chars = Array.from(t);
+          const dc = doc.createElement('span');
+          dc.className = 'st-tb-r-dropcap';
+          dc.textContent = chars[0];
+          p.style.textIndent = '0';
+          p.appendChild(dc);
+          p.appendChild(doc.createTextNode(chars.slice(1).join('')));
+        } else {
+          p.textContent = t;
+        }
+        firstPara = false;
+        readerContentEl.appendChild(p);
+      });
       readerContentEl.scrollTop = restoreScroll || 0;
     }
     scheduleSaveConfig();
@@ -41150,33 +41144,187 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     } catch (_) {}
   };
 
-  // Kindle 横向真实分页引擎
+  // Kindle 精确行级段落拆分分页引擎（自动在页尾拆分长短段落，彻底保证上下边距完全一致）
   let kdCurPage = 0;
   let kdTotalPages = 1;
-  let kdPageStride = 300;
-  const syncKindlePagination = (targetPage = null) => {
+  let kdPagesCache = [];
+  let kdLastLayoutSig = '';
+  let kdPaginateRaf = 0;
+
+  const renderKdPageDom = (pageItems) => {
+    const view = doc.createElement('div');
+    view.className = 'st-tb-kd-page-view';
+    (pageItems || []).forEach(it => {
+      if (it.type === 'head') {
+        const topLbl = doc.createElement('div');
+        topLbl.className = 'st-tb-kd-chap-top';
+        topLbl.textContent = `Chapter ${it.idx + 1}`;
+        const titleEl = doc.createElement('div');
+        titleEl.className = 'st-tb-kd-chap-title';
+        titleEl.textContent = it.title;
+        view.append(topLbl, titleEl);
+      } else {
+        const p = doc.createElement('p');
+        if (it.cont) p.classList.add('kd-split-cont');
+        if (it.splitEnd) p.classList.add('kd-split-end');
+        if (it.dropCap && it.text.length > 0) {
+          const chars = Array.from(it.text);
+          const dc = doc.createElement('span');
+          dc.className = 'st-tb-r-dropcap';
+          dc.textContent = chars[0];
+          p.style.textIndent = '0';
+          p.appendChild(dc);
+          p.appendChild(doc.createTextNode(chars.slice(1).join('')));
+        } else {
+          p.textContent = it.text;
+        }
+        view.appendChild(p);
+      }
+    });
+    return view;
+  };
+
+  const buildKdPages = (chapData, innerW, innerH) => {
+    const pages = [];
+    if (!chapData || !chapData.paras || !chapData.paras.length) return [[]];
+    const useDropCap = Boolean(config.readerDropCap);
+    const box = doc.createElement('div');
+    const cs = win.getComputedStyle(readerContentEl);
+    box.className = 'st-tb-kd-page-view';
+    box.style.cssText = `position:fixed;left:-99999px;top:0;visibility:hidden;pointer-events:none;width:${innerW}px;height:auto;overflow:visible;font-size:${cs.fontSize};line-height:${cs.lineHeight};font-family:${cs.fontFamily};text-align:justify;text-justify:inter-ideograph;box-sizing:border-box;`;
+    readerContentEl.appendChild(box);
+
+    let curItems = [];
+    const flushPage = () => {
+      if (curItems.length) pages.push(curItems);
+      curItems = [];
+      box.innerHTML = '';
+    };
+    const makePNode = (txt, cont, dropCap, splitEnd) => {
+      const p = doc.createElement('p');
+      if (cont) p.classList.add('kd-split-cont');
+      if (splitEnd) p.classList.add('kd-split-end');
+      if (dropCap && txt.length > 0) {
+        const chars = Array.from(txt);
+        const dc = doc.createElement('span');
+        dc.className = 'st-tb-r-dropcap';
+        dc.textContent = chars[0];
+        p.style.textIndent = '0';
+        p.appendChild(dc);
+        p.appendChild(doc.createTextNode(chars.slice(1).join('')));
+      } else {
+        p.textContent = txt;
+      }
+      return p;
+    };
+
+    // 章节标题放首页顶部
+    const headItem = { type: 'head', idx: chapData.idx, title: chapData.title };
+    curItems.push(headItem);
+    const topLbl = doc.createElement('div');
+    topLbl.className = 'st-tb-kd-chap-top';
+    topLbl.textContent = `Chapter ${chapData.idx + 1}`;
+    const titleEl = doc.createElement('div');
+    titleEl.className = 'st-tb-kd-chap-title';
+    titleEl.textContent = chapData.title;
+    box.append(topLbl, titleEl);
+
+    const queue = chapData.paras.map((text, pi) => ({
+      text,
+      cont: false,
+      dropCap: useDropCap && pi === 0,
+    }));
+
+    let guard = 0;
+    while (queue.length && guard < 3000) {
+      guard += 1;
+      const item = queue.shift();
+      const pNode = makePNode(item.text, item.cont, item.dropCap, false);
+      box.appendChild(pNode);
+      if (box.scrollHeight <= innerH + 1) {
+        curItems.push({ type: 'p', text: item.text, cont: item.cont, dropCap: item.dropCap, splitEnd: false });
+        continue;
+      }
+      // 整段放不下时，二分查找当前页能精准放下的最大字数（拆分段落，上下边距严丝合缝）
+      box.removeChild(pNode);
+      const chars = Array.from(item.text);
+      let lo = 0;
+      let hi = chars.length;
+      const testP = makePNode('', item.cont, false, true);
+      box.appendChild(testP);
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        const sub = chars.slice(0, mid).join('');
+        if (item.dropCap) {
+          testP.innerHTML = '';
+          const dc = doc.createElement('span');
+          dc.className = 'st-tb-r-dropcap';
+          dc.textContent = chars[0];
+          testP.style.textIndent = '0';
+          testP.appendChild(dc);
+          testP.appendChild(doc.createTextNode(chars.slice(1, mid).join('')));
+        } else {
+          testP.textContent = sub;
+        }
+        if (box.scrollHeight <= innerH + 1) lo = mid;
+        else hi = mid - 1;
+      }
+      box.removeChild(testP);
+
+      if (lo <= 0) {
+        if (curItems.length > 0) {
+          flushPage();
+          queue.unshift(item);
+        } else {
+          curItems.push({ type: 'p', text: chars[0] || item.text, cont: item.cont, dropCap: item.dropCap, splitEnd: true });
+          const rest = chars.slice(1).join('');
+          flushPage();
+          if (rest) queue.unshift({ text: rest, cont: true, dropCap: false });
+        }
+      } else {
+        const fitText = chars.slice(0, lo).join('');
+        const restText = chars.slice(lo).join('');
+        curItems.push({ type: 'p', text: fitText, cont: item.cont, dropCap: item.dropCap, splitEnd: Boolean(restText) });
+        flushPage();
+        if (restText) queue.unshift({ text: restText, cont: true, dropCap: false });
+      }
+    }
+    if (curItems.length) pages.push(curItems);
+    box.remove();
+    return pages.length ? pages : [[]];
+  };
+
+  const syncKindlePagination = (targetPage = null, forceRebuild = false) => {
     if (!config.readerKindleMode || !readerContentEl) return;
-    const track = readerContentEl.querySelector('.st-tb-kd-page-track');
-    if (!track) return;
-    win.requestAnimationFrame(() => {
+    cancelAnimationFrame(kdPaginateRaf);
+    kdPaginateRaf = win.requestAnimationFrame(() => {
       const px = clamp(Number(config.readerPadX ?? 18), 6, 48);
       const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
       readerContentEl.style.setProperty('padding-top', `${py}px`, 'important');
       readerContentEl.style.setProperty('padding-bottom', `${py}px`, 'important');
-      const innerW = Math.max(160, readerContentEl.clientWidth - px * 2);
-      const innerH = Math.max(100, readerContentEl.clientHeight - py * 2);
-      const colGap = px * 2;
-      kdPageStride = innerW + colGap;
-      track.style.width = `${innerW}px`;
-      track.style.height = `${innerH}px`;
-      track.style.columnWidth = `${innerW}px`;
-      track.style.columnGap = `${colGap}px`;
-      const sw = track.scrollWidth || innerW;
-      kdTotalPages = Math.max(1, Math.round((sw + colGap) / Math.max(1, kdPageStride)));
+      const innerW = Math.max(150, readerContentEl.clientWidth - px * 2);
+      const innerH = Math.max(96, readerContentEl.clientHeight - py * 2);
+      const cs = win.getComputedStyle(readerContentEl);
+      const chapData = win.__stKdChapData;
+      if (!chapData) return;
+
+      const sig = `${chapData.idx}|${innerW}|${innerH}|${cs.fontSize}|${config.readerLineHeight}|${config.readerParaGap}|${config.readerIndent}|${config.readerDropCap}|${config.readerCustomFontName || ''}`;
+      if (forceRebuild || sig !== kdLastLayoutSig || !kdPagesCache.length) {
+        const prevRatio = kdTotalPages > 1 ? (kdCurPage / (kdTotalPages - 1)) : 0;
+        kdPagesCache = buildKdPages(chapData, innerW, innerH);
+        kdLastLayoutSig = sig;
+        kdTotalPages = Math.max(1, kdPagesCache.length);
+        if (targetPage === null && !forceRebuild) {
+          targetPage = Math.round(prevRatio * (kdTotalPages - 1));
+        }
+      }
+      kdTotalPages = Math.max(1, kdPagesCache.length);
       if (targetPage === -1) kdCurPage = kdTotalPages - 1;
       else if (typeof targetPage === 'number' && Number.isFinite(targetPage)) kdCurPage = clamp(targetPage, 0, kdTotalPages - 1);
       else kdCurPage = clamp(kdCurPage, 0, kdTotalPages - 1);
-      track.style.transform = `translate3d(${-Math.round(kdCurPage * kdPageStride)}px, 0, 0)`;
+
+      readerContentEl.innerHTML = '';
+      readerContentEl.appendChild(renderKdPageDom(kdPagesCache[kdCurPage]));
 
       const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
       if (book) book.kdPageIdx = kdCurPage;
