@@ -19513,13 +19513,31 @@ function bootGoulaicaiExtension() {
           if (!win.__stPupMusicAudio) {
             win.__stPupMusicAudio = new win.Audio();
             win.__stPupMusicAudio.preload = 'auto';
-            win.__stPupMusicAudio.volume = 0.55;
+            win.__stPupMusicAudio.volume = 0.58;
           }
           const au = win.__stPupMusicAudio;
           au.pause();
           au.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
           au.play().then(() => { au.pause(); }).catch(() => {});
         } catch (_) {}
+        const _loadJsonp = (url, cbParam = 'callback', timeoutMs = 5500) => new Promise((resolve) => {
+          const cbName = `__stGlcMusicCb_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+          const s = doc.createElement('script');
+          let done = false;
+          const finish = (val) => {
+            if (done) return;
+            done = true;
+            clearTimeout(timer);
+            try { delete win[cbName]; } catch (_) { win[cbName] = undefined; }
+            try { s.remove(); } catch (_) {}
+            resolve(val);
+          };
+          const timer = setTimeout(() => finish(null), timeoutMs);
+          win[cbName] = (data) => finish(data);
+          s.onerror = () => finish(null);
+          s.src = `${url}${url.includes('?') ? '&' : '?'}${cbParam}=${cbName}`;
+          (doc.head || doc.documentElement).appendChild(s);
+        });
         (async () => {
           try {
             const REGIONS = [
@@ -19536,24 +19554,38 @@ function bootGoulaicaiExtension() {
               { cc: 'BR', terms: ['noite', 'lua', 'mar', 'sol', 'vento', 'amor', 'chuva', 'ceu', 'flor', 'verao'] },
               { cc: 'SE', terms: ['night', 'light', 'northern', 'snow', 'dream', 'ocean', 'glow', 'silver', 'midnight'] },
             ];
-            let list = [];
-            for (let attempt = 0; attempt < 2 && !list.length; attempt++) {
+            let pickedSong = null;
+            // 1. Primary: iTunes Search JSONP (bypasses CORS, global multi-language catalog with 30s previews)
+            for (let attempt = 0; attempt < 2 && !pickedSong; attempt++) {
               const reg = pick(REGIONS);
               const term = pick(reg.terms);
-              const offset = randInt(0, 60);
-              const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-              const tId = ctrl ? setTimeout(() => ctrl.abort(), 4500) : null;
+              const offset = randInt(0, 50);
               const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${reg.cc}&media=music&entity=song&limit=25&offset=${offset}`;
-              const resp = await win.fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
-              if (tId) clearTimeout(tId);
-              if (!resp.ok) continue;
-              const data = await resp.json();
-              list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental version/i.test(it.trackName));
+              const data = await _loadJsonp(url, 'callback', 5500);
+              const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental version/i.test(it.trackName));
+              if (list.length) {
+                const s = pick(list);
+                pickedSong = { title: String(s.trackName).trim(), artist: String(s.artistName).trim(), previewUrl: String(s.previewUrl) };
+              }
             }
-            if (!list.length) return;
-            const song = pick(list);
-            const title = String(song.trackName).trim();
-            const artist = String(song.artistName).trim();
+            // 2. Fallback: Deezer Track Search JSONP (also CORS-free with 30s highlight previews)
+            if (!pickedSong) {
+              const reg = pick(REGIONS);
+              const term = pick(reg.terms);
+              const idx = randInt(0, 40);
+              const url = `https://api.deezer.com/search/track?q=${encodeURIComponent(term)}&limit=25&index=${idx}&output=jsonp`;
+              const data = await _loadJsonp(url, 'callback', 5500);
+              const list = (Array.isArray(data?.data) ? data.data : []).filter(it => it && it.title && it.artist?.name && it.preview);
+              if (list.length) {
+                const s = pick(list);
+                pickedSong = { title: String(s.title).trim(), artist: String(s.artist.name).trim(), previewUrl: String(s.preview) };
+              }
+            }
+            if (!pickedSong) {
+              showPuppyBubble('刚才没连上随机电台，稍后再点一次一起听歌试试吧', 3200, true);
+              return;
+            }
+            const { title, artist, previewUrl } = pickedSong;
             const pId = config.puppyPersonality || 'sleepyhead';
             const REC_BY_PERS = {
               sleepyhead: [
@@ -19590,22 +19622,22 @@ function bootGoulaicaiExtension() {
               ],
             };
             const pool = REC_BY_PERS[pId] || REC_BY_PERS.sleepyhead;
-            showPuppyBubble(formatPupText(pick(pool)), 7200, true);
-            setPuppyState('music', 420);
+            showPuppyBubble(formatPupText(pick(pool)), 8200, true);
+            setPuppyState('music', 480);
             clearTimeout(win.__stPupMusicPlayTimer);
             win.__stPupMusicPlayTimer = setTimeout(() => {
               try {
                 const au = win.__stPupMusicAudio || new win.Audio();
                 win.__stPupMusicAudio = au;
                 au.pause();
-                au.volume = 0.55;
-                au.src = song.previewUrl;
+                au.volume = 0.58;
+                au.src = previewUrl;
                 au.onended = () => {
                   if (pup.state === 'music') setPuppyState('idle', 120);
                 };
                 au.play().catch(() => {});
               } catch (_) {}
-            }, 500);
+            }, 600);
           } catch (_) {}
         })();
       }
