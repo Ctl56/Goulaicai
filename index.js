@@ -28277,13 +28277,17 @@ function bootGoulaicaiExtension() {
   };
 
   const isStopBtnVisible = () => {
+    if (doc.body && doc.body.classList.contains('is_generating')) return true;
     const stopBtn = cachedStopBtn();
     if (!stopBtn) return false;
     if (stopBtn.classList.contains('displayNone')) return false;
     const inlineD = stopBtn.style.display;
     if (inlineD === 'none') return false;
     if (inlineD === 'flex' || inlineD === 'block' || inlineD === 'inline-flex') return true;
-    if (doc.body && doc.body.classList.contains('is_generating')) return true;
+    try {
+      const compD = win.getComputedStyle(stopBtn).display;
+      if (compD && compD !== 'none') return true;
+    } catch (_) {}
     return false;
   };
 
@@ -28376,16 +28380,26 @@ function bootGoulaicaiExtension() {
   // 生成结束瞬间立刻恢复全部正则并触发最后一条消息刷新一次，彻底告别流式正则卡顿！
   let pausedRegexRefs = [];
   let regexSafetyTimer = null;
+  let stRegexPausedByGenEvent = false;
 
   const collectActiveStRegexes = () => {
     const list = [];
+    const seen = new Set();
+    const pushArr = (arr) => {
+      if (!Array.isArray(arr)) return;
+      arr.forEach(r => {
+        if (r && !r.disabled && !seen.has(r)) {
+          seen.add(r);
+          list.push(r);
+        }
+      });
+    };
     try {
       const ctx = getContext();
-      const globalArr = ctx?.extensionSettings?.regex;
-      if (Array.isArray(globalArr)) globalArr.forEach(r => { if (r && !r.disabled) list.push(r); });
+      pushArr(ctx?.extensionSettings?.regex);
       const ch = getCurrentCharacter();
-      const charArr = ch?.data?.extensions?.regex_scripts;
-      if (Array.isArray(charArr)) charArr.forEach(r => { if (r && !r.disabled) list.push(r); });
+      pushArr(ch?.data?.extensions?.regex_scripts);
+      pushArr(ctx?.chatCompletionSettings?.extensions?.regex_scripts);
     } catch (_) {}
     return list;
   };
@@ -28420,6 +28434,7 @@ function bootGoulaicaiExtension() {
   };
 
   const restoreStRegexAfterStream = (refreshLastMsg = true) => {
+    stRegexPausedByGenEvent = false;
     clearTimeout(regexSafetyTimer);
     regexSafetyTimer = null;
     if (!pausedRegexRefs.length) return;
@@ -28497,8 +28512,11 @@ function bootGoulaicaiExtension() {
   const syncStreamingPerfClass = (isGen) => {
     doc.documentElement.classList.remove('st-tb-perf-stream');
     syncChatPaintPause();
-    if (isGen) pauseStRegexDuringStream();
-    else restoreStRegexAfterStream(true);
+    if (isGen) {
+      pauseStRegexDuringStream();
+    } else if (!stRegexPausedByGenEvent || (stWasGenerating && (Date.now() - stGenStartedAt) > 1500)) {
+      restoreStRegexAfterStream(true);
+    }
   };
   if (perfNoBlurBtn) {
     perfNoBlurBtn.addEventListener('click', () => {
@@ -28543,8 +28561,17 @@ function bootGoulaicaiExtension() {
       if (ctxEv.eventTypes.GENERATION_STARTED) {
         ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_STARTED, (type, options, dryRun) => {
           if (dryRun === true || type === 'quiet' || type === 'impersonate' || (options && options.quiet_prompt)) return;
+          stRegexPausedByGenEvent = true;
           beginReplyTrack();
           pauseStRegexDuringStream();
+        });
+      }
+      if (ctxEv.eventTypes.STREAM_TOKEN_RECEIVED) {
+        ctxEv.eventSource.on(ctxEv.eventTypes.STREAM_TOKEN_RECEIVED, () => {
+          if (config.perfStreamAdapt !== false) {
+            stRegexPausedByGenEvent = true;
+            if (!pausedRegexRefs.length) pauseStRegexDuringStream();
+          }
         });
       }
       if (ctxEv.eventTypes.MESSAGE_RECEIVED) {
