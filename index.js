@@ -19540,40 +19540,77 @@ function bootGoulaicaiExtension() {
         });
         (async () => {
           try {
-            const REGIONS = [
-              { cc: 'CN', terms: ['夜', '风', '海', '星', '梦', '光', '雨', '夏', '花', '云', '月', '街', '秋', '雪', '蓝', '雾', '城', '灯', '春', '空', '影', '路', '晚', '暖', '山', '河', '白', '甜', '心', '岛'] },
-              { cc: 'TW', terms: ['夏', '海', '风', '星', '月', '梦', '雨', '花', '夜', '光', '晴', '云', '城', '慢', '暖', '歌', '路', '日', '蓝', '心'] },
-              { cc: 'HK', terms: ['夜', '海', '风', '星', '雨', '梦', '花', '月', '城', '光', '天', '雪', '心', '街', '秋'] },
-              { cc: 'JP', terms: ['夜', '空', '風', '星', '夢', '花', '海', '雨', '光', '夏', '月', '街', '青', '春', '雪', '恋', '君', '朝', '雲', '音'] },
-              { cc: 'KR', terms: ['밤', '별', '바람', '꿈', '사랑', '바다', '비', '꽃', '하늘', '달', '여름', '빛', '눈', '길', '구름', '봄', '겨울', '노래'] },
-              { cc: 'US', terms: ['night', 'moon', 'star', 'rain', 'blue', 'dream', 'love', 'sun', 'wind', 'sea', 'city', 'gold', 'time', 'light', 'sky', 'slow', 'home', 'wave', 'rose', 'summer', 'winter', 'jazz', 'soul', 'velvet'] },
-              { cc: 'GB', terms: ['rain', 'london', 'night', 'blue', 'silver', 'dream', 'echo', 'heart', 'glass', 'fire', 'water', 'cloud', 'river', 'gold'] },
-              { cc: 'FR', terms: ['nuit', 'lune', 'mer', 'vent', 'soleil', 'amour', 'pluie', 'etoile', 'paris', 'reve', 'bleu', 'matin'] },
-              { cc: 'ES', terms: ['noche', 'luna', 'mar', 'sol', 'viento', 'lluvia', 'amor', 'cielo', 'flor', 'tiempo', 'azul', 'estrella'] },
-              { cc: 'DE', terms: ['nacht', 'mond', 'meer', 'wind', 'stern', 'traum', 'regen', 'licht', 'sommer', 'zeit'] },
-              { cc: 'BR', terms: ['noite', 'lua', 'mar', 'sol', 'vento', 'amor', 'chuva', 'ceu', 'flor', 'verao'] },
-              { cc: 'SE', terms: ['night', 'light', 'northern', 'snow', 'dream', 'ocean', 'glow', 'silver', 'midnight'] },
+            const pId = config.puppyPersonality || 'sleepyhead';
+            const PERS_MUSIC_POOLS = {
+              sleepyhead: {
+                zh: ['孙燕姿', '徐佳莹', '陈奕迅', '梁静茹', '陈绮贞', '蔡健雅', '魏如萱', '方大同', '卢广仲', '安溥', '房东的猫', '雷光夏'],
+                gl: ['Norah Jones', 'Laufey', 'Cigarettes After Sex', '藤井風', 'IU', '宇多田ヒカル', 'Clairo', 'Billie Eilish'],
+              },
+              clingy: {
+                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '林俊杰', '周杰伦', '田馥甄', '告五人', '韦礼安', '汪苏泷', '王心凌', '颜人中'],
+                gl: ['Taylor Swift', 'Ed Sheeran', 'IU', '백예린', '星野源', '米津玄師', 'LANY', 'Lauv'],
+              },
+              tsundere: {
+                zh: ['孙燕姿', '陈奕迅', '徐佳莹', '张惠妹', '蔡依林', '杨乃文', '邓紫棋', '莫文蔚', '戴佩妮', '王菲', '苏打绿', '五月天'],
+                gl: ['Avril Lavigne', 'Olivia Rodrigo', '椎名林檎', 'Ado', 'YOASOBI', 'Paramore', 'Dua Lipa', 'BLACKPINK'],
+              },
+              foodie: {
+                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '王心凌', '周杰伦', '卢广仲', '郭静', '张韶涵', '苏打绿', '魏如萱', '五月天'],
+                gl: ['AKMU', 'NewJeans', 'あいみょん', 'Official髭男dism', 'Bruno Mars', 'Carly Rae Jepsen', 'Vaundy'],
+              },
+              explorer: {
+                zh: ['孙燕姿', '陈奕迅', '徐佳莹', '梁静茹', '五月天', '周杰伦', '林俊杰', '苏打绿', '张韶涵', '告五人', '许巍', '毛不易'],
+                gl: ['Coldplay', 'RADWIMPS', 'Mrs. GREEN APPLE', 'DAY6', 'OneRepublic', 'ヨルシカ', 'Imagine Dragons'],
+              },
+              fashionista: {
+                zh: ['陈奕迅', '王菲', '林忆莲', '莫文蔚', '方大同', '孙燕姿', '徐佳莹', '田馥甄', '林宥嘉', '单依纯', '袁娅维', '窦靖童'],
+                gl: ['Frank Ocean', 'SZA', 'The Weeknd', 'Lana Del Rey', '宇多田ヒカル', 'DEAN', '藤井風', 'Daft Punk'],
+              },
+              gamer: {
+                zh: ['周杰伦', '陈奕迅', '孙燕姿', '徐佳莹', '梁静茹', '蔡依林', '陶喆', '林俊杰', '王力宏', '邓紫棋', '告五人', '方大同'],
+                gl: ['YOASOBI', '米津玄師', 'Eve', 'Bruno Mars', 'The Weeknd', 'NewJeans', 'aespa', 'Charlie Puth'],
+              },
+              philosopher: {
+                zh: ['陈奕迅', '徐佳莹', '孙燕姿', '梁静茹', '李宗盛', '林宥嘉', '毛不易', '李荣浩', '张学友', '王菲', '朴树', '蔡健雅'],
+                gl: ['John Mayer', 'Radiohead', '玉置浩二', '中島みゆき', 'Adele', 'Sufjan Stevens', 'Bon Iver'],
+              },
+            };
+            const WILD_SEEDS = [
+              { cc: 'TW', terms: ['孙燕姿', '徐佳莹', '陈奕迅', '梁静茹', '夜', '海', '风', '夏', '雨'] },
+              { cc: 'HK', terms: ['陈奕迅', '王菲', '张学友', '林忆莲', '莫文蔚', '夜', '海'] },
+              { cc: 'JP', terms: ['夜', '空', '風', '星', '夢', '海', '雨', '夏'] },
+              { cc: 'KR', terms: ['밤', '별', '바람', '꿈', '사랑', '바다', '비'] },
+              { cc: 'US', terms: ['night', 'moon', 'rain', 'blue', 'dream', 'jazz', 'soul'] },
+              { cc: 'FR', terms: ['nuit', 'lune', 'mer', 'soleil', 'amour'] },
             ];
+            const persPool = PERS_MUSIC_POOLS[pId] || PERS_MUSIC_POOLS.sleepyhead;
+            const pickQuerySeed = () => {
+              const r = Math.random();
+              if (r < 0.68) {
+                return { cc: pick(['TW', 'HK', 'CN']), term: pick(persPool.zh), maxOff: 30 };
+              } else if (r < 0.90) {
+                return { cc: pick(['US', 'JP', 'KR', 'GB', 'TW']), term: pick(persPool.gl), maxOff: 25 };
+              } else {
+                const w = pick(WILD_SEEDS);
+                return { cc: w.cc, term: pick(w.terms), maxOff: 45 };
+              }
+            };
             let pickedSong = null;
-            // 1. Primary: iTunes Search JSONP (bypasses CORS, global multi-language catalog with 30s previews)
             for (let attempt = 0; attempt < 2 && !pickedSong; attempt++) {
-              const reg = pick(REGIONS);
-              const term = pick(reg.terms);
-              const offset = randInt(0, 50);
-              const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${reg.cc}&media=music&entity=song&limit=25&offset=${offset}`;
+              const seed = pickQuerySeed();
+              const offset = randInt(0, seed.maxOff);
+              const url = `https://itunes.apple.com/search?term=${encodeURIComponent(seed.term)}&country=${seed.cc}&media=music&entity=song&limit=25&offset=${offset}`;
               const data = await _loadJsonp(url, 'callback', 5500);
-              const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental version/i.test(it.trackName));
+              const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental|伴奏|纯音乐/i.test(it.trackName));
               if (list.length) {
                 const s = pick(list);
                 pickedSong = { title: String(s.trackName).trim(), artist: String(s.artistName).trim(), previewUrl: String(s.previewUrl) };
               }
             }
-            // 2. Fallback: Deezer Track Search JSONP (also CORS-free with 30s highlight previews)
             if (!pickedSong) {
-              const reg = pick(REGIONS);
-              const term = pick(reg.terms);
-              const idx = randInt(0, 40);
-              const url = `https://api.deezer.com/search/track?q=${encodeURIComponent(term)}&limit=25&index=${idx}&output=jsonp`;
+              const seed = pickQuerySeed();
+              const idx = randInt(0, 20);
+              const url = `https://api.deezer.com/search/track?q=${encodeURIComponent(seed.term)}&limit=25&index=${idx}&output=jsonp`;
               const data = await _loadJsonp(url, 'callback', 5500);
               const list = (Array.isArray(data?.data) ? data.data : []).filter(it => it && it.title && it.artist?.name && it.preview);
               if (list.length) {
@@ -19586,7 +19623,6 @@ function bootGoulaicaiExtension() {
               return;
             }
             const { title, artist, previewUrl } = pickedSong;
-            const pId = config.puppyPersonality || 'sleepyhead';
             const REC_BY_PERS = {
               sleepyhead: [
                 `呼啊，刚随手翻到 ${artist} 的《${title}》，现在放给你听，{owner}和我一起窝着听吧`,
