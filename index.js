@@ -6908,8 +6908,92 @@ function bootGoulaicaiExtension() {
     .st-tb-kd-status,
     .st-tb-kd-side-btn,
     .st-tb-kd-chin,
-    .st-tb-kd-only-row {
+    .st-tb-kd-only-btn {
+      display: none !important;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-only-btn {
+      display: inline-flex !important;
+    }
+    /* 普通模式书单行默认收进设置，点「书单」召唤，展开时跟随纸张主题色 */
+    #st-tb-reader .st-tb-reader-bar {
       display: none;
+    }
+    #st-tb-reader .st-tb-reader-bar.kd-bar-open {
+      display: flex;
+    }
+    /* 纸张底色统一融合顶栏、底栏、书单栏、设置栏与目录 */
+    #st-tb-reader.reader-paper-styled .st-tb-reader-head,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-foot,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-bar,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-rename-bar,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-set-bar,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-toc {
+      background: var(--r-bg, var(--tb-bg)) !important;
+      color: var(--r-fg, var(--tb-text)) !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    #st-tb-reader.reader-paper-styled .st-tb-title,
+    #st-tb-reader.reader-paper-styled #st-tb-reader-prog,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-set-bar span,
+    #st-tb-reader.reader-paper-styled .st-tb-reader-set-bar label {
+      color: var(--r-fg, var(--tb-text)) !important;
+    }
+    #st-tb-reader.reader-paper-styled .st-tb-reader-toc .st-tb-list-item {
+      background: rgba(0, 0, 0, 0.04) !important;
+      border-color: rgba(0, 0, 0, 0.08) !important;
+      color: var(--r-fg, var(--tb-text)) !important;
+    }
+    #st-tb-reader.reader-paper-styled .st-tb-reader-toc .st-tb-list-link {
+      color: var(--r-fg, var(--tb-text)) !important;
+    }
+    /* 暗夜模式全套适配：无白边、无暗字（涵盖顶栏、底栏、书单、设置、目录全部控件） */
+    #st-tb-reader.reader-dark .st-tb-reader-head,
+    #st-tb-reader.reader-dark .st-tb-reader-foot,
+    #st-tb-reader.reader-dark .st-tb-reader-bar,
+    #st-tb-reader.reader-dark .st-tb-reader-rename-bar,
+    #st-tb-reader.reader-dark .st-tb-reader-set-bar,
+    #st-tb-reader.reader-dark .st-tb-reader-toc {
+      background: #1e1e1c !important;
+      color: #d6d5ce !important;
+      border-color: rgba(255, 255, 255, 0.07) !important;
+    }
+    #st-tb-reader.reader-dark .st-tb-title,
+    #st-tb-reader.reader-dark #st-tb-reader-prog,
+    #st-tb-reader.reader-dark .st-tb-reader-set-bar span,
+    #st-tb-reader.reader-dark .st-tb-reader-set-bar label {
+      color: #d0cfc8 !important;
+    }
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-mini-btn,
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-r-act,
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-r-chip {
+      background: #2c2c29 !important;
+      color: #dcdbd4 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-mini-btn.active,
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-r-act.accent,
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-r-chip.accent {
+      background: #dcdbd4 !important;
+      color: #1a1a19 !important;
+      border: none !important;
+    }
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-select,
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-input {
+      background: #2a2a27 !important;
+      color: #dcdbd4 !important;
+      border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    }
+    #st-tb-root #st-tb-reader.reader-dark .st-tb-r-colpick {
+      border-color: rgba(255, 255, 255, 0.16) !important;
+    }
+    #st-tb-reader.reader-dark .st-tb-reader-toc .st-tb-list-item {
+      background: #262624 !important;
+      border: 1px solid rgba(255, 255, 255, 0.07) !important;
+      color: #d6d5ce !important;
+    }
+    #st-tb-reader.reader-dark .st-tb-reader-toc .st-tb-list-link {
+      color: #d6d5ce !important;
     }
     /* ==================== Kindle 硬件外观与真实分页模式 ==================== */
     #st-tb-reader.kindle-mode {
@@ -6938,9 +7022,7 @@ function bootGoulaicaiExtension() {
     #st-tb-reader.kindle-mode .st-tb-reader-bar.kd-bar-open {
       display: flex;
     }
-    #st-tb-reader.kindle-mode .st-tb-kd-only-row {
-      display: flex;
-    }
+
     /* Kindle 模式设置栏：无白色边框，贴合机身哑光深灰 */
     #st-tb-reader.kindle-mode .st-tb-reader-set-bar {
       border-radius: 4px 4px 0 0;
@@ -6981,7 +7063,7 @@ function bootGoulaicaiExtension() {
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
       overflow: hidden !important;
-      padding: 18px var(--r-padx, 18px) 10px var(--r-padx, 18px) !important;
+      padding: 16px var(--r-padx, 18px) 16px var(--r-padx, 18px) !important;
       position: relative;
       touch-action: pan-y;
       box-shadow:
@@ -6996,6 +7078,13 @@ function bootGoulaicaiExtension() {
       will-change: transform;
       position: relative;
       z-index: 1;
+    }
+    #st-tb-reader.kindle-mode .st-tb-kd-page-track p,
+    #st-tb-reader.kindle-mode .st-tb-kd-page-track div {
+      orphans: 1 !important;
+      widows: 1 !important;
+      break-inside: auto !important;
+      -webkit-column-break-inside: auto !important;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-chap-top {
       font-size: 12px;
@@ -7980,9 +8069,9 @@ function bootGoulaicaiExtension() {
           <input class="st-tb-range" id="st-tb-rset-gap" type="range" min="2" max="28" step="2" />
           <span id="st-tb-rset-gap-val">10px</span>
         </div>
-        <div class="st-tb-rset-toggles st-tb-kd-only-row">
-          <button class="st-tb-r-act" id="st-tb-rset-kd-fsd" type="button">A-</button>
-          <button class="st-tb-r-act" id="st-tb-rset-kd-fsu" type="button">A+</button>
+        <div class="st-tb-rset-toggles">
+          <button class="st-tb-r-act st-tb-kd-only-btn" id="st-tb-rset-kd-fsd" type="button">A-</button>
+          <button class="st-tb-r-act st-tb-kd-only-btn" id="st-tb-rset-kd-fsu" type="button">A+</button>
           <button class="st-tb-r-act" id="st-tb-rset-kd-bar" type="button">书单</button>
           <button class="st-tb-r-act" id="st-tb-rset-kd-done" type="button">收起设置</button>
         </div>
@@ -9474,12 +9563,7 @@ function bootGoulaicaiExtension() {
 
     try {
       if (win.navigator && win.navigator.audioSession) {
-        win.navigator.audioSession.type = 'ambient';
-      }
-    } catch (_) {}
-    try {
-      if (win.navigator && win.navigator.mediaSession) {
-        win.navigator.mediaSession.playbackState = 'none';
+        win.navigator.audioSession.type = 'playback';
       }
     } catch (_) {}
 
@@ -41045,8 +41129,17 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (!track) return;
     win.requestAnimationFrame(() => {
       const px = clamp(Number(config.readerPadX ?? 18), 6, 48);
+      const cs = win.getComputedStyle(readerContentEl);
+      const fs = parseFloat(cs.fontSize) || 15;
+      const lh = clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6);
+      const linePx = Math.max(14, fs * lh);
+      const rawInnerH = Math.max(120, readerContentEl.clientHeight - 32);
+      const linesFit = Math.max(4, Math.floor(rawInnerH / linePx));
+      const innerH = Math.max(120, Math.floor(linesFit * linePx));
+      const padV = Math.max(12, Math.floor((readerContentEl.clientHeight - innerH) / 2));
+      readerContentEl.style.setProperty('padding-top', `${padV}px`, 'important');
+      readerContentEl.style.setProperty('padding-bottom', `${padV}px`, 'important');
       const innerW = Math.max(160, readerContentEl.clientWidth - px * 2);
-      const innerH = Math.max(120, readerContentEl.clientHeight - 28);
       const colGap = px * 2;
       kdPageStride = innerW + colGap;
       track.style.width = `${innerW}px`;
@@ -41139,8 +41232,23 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const texMode = config.readerTexture || 'none';
     const texStr = clamp(Number(config.readerTextureStrength ?? 60), 10, 100);
 
+    let isReaderDark = (presetKey === 'eink_dark');
+    if (bgHex && bgHex.startsWith('#') && bgHex.length === 7) {
+      const rr = parseInt(bgHex.slice(1, 3), 16);
+      const gg = parseInt(bgHex.slice(3, 5), 16);
+      const bb = parseInt(bgHex.slice(5, 7), 16);
+      if (Number.isFinite(rr) && Number.isFinite(gg) && Number.isFinite(bb)) {
+        isReaderDark = (0.299 * rr + 0.587 * gg + 0.114 * bb) < 115;
+      }
+    }
     if (readerEl) {
       readerEl.classList.toggle('kindle-mode', isKd);
+      readerEl.classList.toggle('reader-dark', isReaderDark);
+      readerEl.classList.toggle('reader-paper-styled', Boolean(bgHex) && !isKd);
+      if (!isKd && readerContentEl) {
+        readerContentEl.style.removeProperty('padding-top');
+        readerContentEl.style.removeProperty('padding-bottom');
+      }
       if (bgHex) {
         const bgRgba = hexToRgbaStr(bgHex, bgOp) || bgHex;
         readerEl.style.setProperty('--r-bg', bgRgba);
