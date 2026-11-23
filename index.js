@@ -5366,10 +5366,18 @@ function bootGoulaicaiExtension() {
       border: 2px solid var(--px-border, #bfa4ae);
       color: var(--px-fg, #3a2d24);
     }
-    #st-tb-pup-bag,
-    #st-tb-pup-bag * {
-      touch-action: manipulation !important;
-      -webkit-tap-highlight-color: transparent !important;
+    #st-tb-pup-bag button,
+    #st-tb-pup-bag .st-px-tab,
+    #st-tb-pup-bag .st-px-card,
+    #st-tb-pup-bag .st-px-mini-act {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #st-tb-pup-bag #st-px-game-canvas,
+    #st-tb-pup-bag .st-px-head,
+    #st-tb-pup-bag .st-px-resize-br {
+      touch-action: none !important;
+      overscroll-behavior: contain;
     }
     #st-tb-shop-grid[data-own-filter="owned"] > [data-own="0"],
     #st-tb-shop-grid[data-own-filter="unowned"] > [data-own="1"] {
@@ -8194,6 +8202,7 @@ function bootGoulaicaiExtension() {
   const presetAddBtn = root.querySelector('#st-tb-preset-add');
   const pupTreasureCntEl = root.querySelector('#st-px-treasure-cnt');
   const pxGameCanvas = root.querySelector('#st-px-game-canvas');
+  if (pxGameCanvas) pxGameCanvas.addEventListener('touchmove', (e) => { if (e.cancelable) e.preventDefault(); }, { passive: false });
   const pxGameCtx = pxGameCanvas.getContext('2d');
   const pxGameScoreEl = root.querySelector('#st-px-game-score');
   const pxGameTimeEl = root.querySelector('#st-px-game-time');
