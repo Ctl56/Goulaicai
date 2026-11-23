@@ -4891,6 +4891,64 @@ function bootGoulaicaiExtension() {
     }
 
     #st-tb-pup-bag.open { display: flex; }
+    .st-px-lim-info-btn {
+      width: 20px !important;
+      min-width: 20px !important;
+      height: 20px !important;
+      padding: 0 !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin-left: auto;
+    }
+    .st-px-lim-pop-mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.28);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      z-index: 45;
+    }
+    .st-px-lim-pop-mask.open {
+      display: flex;
+    }
+    .st-px-lim-pop-box {
+      width: 100%;
+      max-width: 268px;
+      border-width: 2px;
+      border-style: solid;
+      box-sizing: border-box;
+      font-size: 10.5px;
+      line-height: 1.55;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.18);
+    }
+    .st-px-lim-pop-body {
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .st-px-lim-pop-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .st-px-lim-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      font-weight: 700;
+      font-size: 11px;
+      border: 1px solid currentColor;
+      opacity: 0.9;
+    }
 
     .st-px-head {
       display: flex;
@@ -7109,10 +7167,8 @@ function bootGoulaicaiExtension() {
       padding: var(--r-pady, 14px) var(--r-padx, 18px) var(--r-pady, 14px) var(--r-padx, 18px) !important;
       position: relative;
       touch-action: pan-y;
-      box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, 0.14),
-        inset 2px 0 5px -2px rgba(0, 0, 0, 0.08),
-        inset -2px 0 5px -2px rgba(0, 0, 0, 0.08);
+      box-shadow: none !important;
+      border-bottom: none !important;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-page-view {
       width: 100%;
@@ -7153,9 +7209,9 @@ function bootGoulaicaiExtension() {
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      height: 22px;
+      height: 20px;
       box-sizing: border-box;
-      padding: 0 var(--r-padx, 16px);
+      padding: 0 var(--r-padx, 16px) 2px var(--r-padx, 16px);
       border-radius: 0 0 4px 4px;
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
@@ -7165,7 +7221,8 @@ function bootGoulaicaiExtension() {
       flex-shrink: 0;
       font-variant-numeric: tabular-nums;
       user-select: none;
-      box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.10), inset 2px 0 4px -2px rgba(0, 0, 0, 0.08), inset -2px 0 4px -2px rgba(0, 0, 0, 0.08);
+      box-shadow: none !important;
+      border-top: none !important;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-status > span:first-child {
       max-width: 38%;
@@ -17568,7 +17625,53 @@ function bootGoulaicaiExtension() {
       });
       bar.appendChild(b);
     });
+    const infoBtn = doc.createElement('button');
+    infoBtn.type = 'button';
+    infoBtn.className = 'st-px-btn st-px-lim-info-btn';
+    infoBtn.title = '限定前缀来源说明';
+    infoBtn.innerHTML = '<svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><circle cx="8" cy="8" r="6"/><line x1="8" y1="7.2" x2="8" y2="11.2"/><circle cx="8" cy="4.8" r="0.6" fill="currentColor" stroke="none"/></svg>';
+    infoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openPupLimInfoModal();
+    });
+    bar.appendChild(infoBtn);
     pupWardBodyEl.appendChild(bar);
+  };
+
+  const openPupLimInfoModal = () => {
+    if (!pupBagEl) return;
+    let mask = pupBagEl.querySelector('#st-px-lim-info-pop');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-px-lim-info-pop';
+      mask.className = 'st-px-lim-pop-mask';
+      mask.innerHTML = `
+        <div class="st-px-lim-pop-box">
+          <div class="st-px-head" style="cursor:default;">
+            <span>限定前缀获取途径</span>
+            <button class="st-px-btn" id="st-px-lim-pop-close" type="button" style="height:18px;padding:0 6px;font-size:9px;">关闭</button>
+          </div>
+          <div class="st-px-lim-pop-body">
+            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">*</span><span>桌面挖宝隐藏限定、连续与累计签到、生日或节日彩蛋、好感满级纪念</span></div>
+            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">+</span><span>背包像素小游戏达标自动赢取限定</span></div>
+            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">^</span><span>像素扭蛋机抽取限定</span></div>
+          </div>
+        </div>`;
+      mask.addEventListener('click', (e) => {
+        if (e.target === mask || (e.target && e.target.closest && e.target.closest('#st-px-lim-pop-close'))) {
+          mask.classList.remove('open');
+        }
+      });
+      pupBagEl.appendChild(mask);
+    }
+    const box = mask.querySelector('.st-px-lim-pop-box');
+    const bagCs = win.getComputedStyle(pupBagEl);
+    if (box) {
+      box.style.background = bagCs.backgroundColor || '#faf6f7';
+      box.style.borderColor = bagCs.borderTopColor || '#bfa4ae';
+      box.style.color = bagCs.color || '#54444a';
+    }
+    mask.classList.add('open');
   };
 
   const renderPupWardrobe = () => {
@@ -17600,15 +17703,26 @@ function bootGoulaicaiExtension() {
       pupWardHeadEl.textContent = '配饰（最多同时戴 3 个）';
       renderWardSubTabs('acc');
       const curSub = wardSubCat.acc || 'all';
+      const LIM_ACC_REAL_CAT = {
+        acc_bond_lv7: 'neck', treasure_rainbow_ribbon: 'neck', game_snake_scarf: 'neck',
+        gacha_neck_star_cape: 'neck', gacha_duck_ring: 'neck', gacha_bear_scarf: 'neck',
+        gacha_pearl_necklace: 'neck', gacha_neck_fried_egg_bib: 'neck', gacha_donut_ring: 'neck', gacha_cat_paw_scarf: 'neck',
+        treasure_star_halo: 'aura', treasure_angel_halo: 'aura',
+        gacha_magic_aura: 'aura', gacha_aura_aurora_ring: 'aura', gacha_star_orbit: 'aura',
+        gacha_angel_halo: 'aura', gacha_aura_sushi: 'aura', gacha_aura_tiny_planet: 'aura',
+        gacha_crystal_wings: 'wing', gacha_wing_jellyfish: 'wing', gacha_wing_rainbow_ribbon: 'wing',
+        gacha_wing_cardboard: 'wing', gacha_bowtie_wing: 'wing', gacha_bow_ribbon_tail: 'wing', gacha_wing_candy_cloud: 'wing',
+        gacha_cat_bag: 'bag', gacha_berry_pack: 'bag', gacha_bag_dumpling: 'bag', gacha_bag_cat_cloud: 'bag', gacha_mini_camera_bag: 'bag',
+      };
       const allAccOwned = [
-        ...FREE_PUP_ACCS.map(i => ({ ...i, _wcat: i.id === 'none' ? 'all' : 'head' })),
-        ...SHOP_PUP_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, _wcat: i.cat || 'head' })),
-        ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
-        ...GAME_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcat: 'limited' })),
-        ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
-        ...GACHA_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcat: 'limited' })),
+        ...FREE_PUP_ACCS.map(i => ({ ...i, _wcats: i.id === 'none' ? ['all'] : ['head'] })),
+        ...SHOP_PUP_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, _wcats: [i.cat || 'head'] })),
+        ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
+        ...GAME_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
+        ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', 'head'] })),
+        ...GACHA_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
       ];
-      const list = curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcat === curSub);
+      const list = curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcats.includes(curSub));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
       wardPage.acc = clamp(wardPage.acc, 0, totalPages - 1);
@@ -17642,15 +17756,32 @@ function bootGoulaicaiExtension() {
       pupWardHeadEl.textContent = '衣服 / 睡衣 / 蓬蓬裙';
       renderWardSubTabs('outfit');
       const curSub = wardSubCat.outfit || 'all';
+      const LIM_OUTFIT_REAL_CAT = {
+        treasure_gold_gown: 'skirt', treasure_aurora_gown: 'skirt', game_arcade_dress: 'skirt',
+        outfit_bond_lv10: 'skirt', bday_cake_dress: 'skirt',
+        gacha_stellar_gown: 'skirt', gacha_aurora_dress: 'skirt', gacha_moon_empress: 'skirt',
+        gacha_swan_ballet: 'skirt', gacha_starlight_cape_dress: 'skirt', gacha_star_witch_dress: 'skirt',
+        gacha_strawberry_maid: 'skirt', gacha_matcha_plaid: 'skirt', gacha_lilac_lolita: 'skirt', gacha_strawberry_cake_dress: 'skirt',
+        treasure_sakura_haori: 'trad', fest_lucky_cape: 'trad',
+        gacha_cloud_hanfu: 'trad', gacha_cherry_blossom_kimono: 'trad',
+        treasure_star_pajama: 'onesie', gacha_fried_shrimp: 'onesie', gacha_cat_hoodie: 'onesie',
+        gacha_cloud_pajama: 'onesie', gacha_frog_raincoat: 'onesie', gacha_bread_toast: 'onesie',
+        gacha_banana_suit: 'onesie', gacha_milk_cow_onesie: 'onesie', gacha_star_raincoat: 'onesie',
+        treasure_clover_cloak: 'daily', game_crown_cape: 'daily',
+        ck_outfit_knit_cardigan: 'daily', ck_outfit_century_cloak: 'daily',
+        gacha_peach_preppy: 'daily', gacha_sailor_cream: 'daily', gacha_honey_bear_coat: 'daily',
+        gacha_strawberry_overalls: 'daily', gacha_cloud_sweater: 'daily', gacha_strawberry_sweater: 'daily',
+        gacha_egg_plush: 'daily', gacha_strawberry_cape: 'daily',
+      };
       const allOutfitOwned = [
-        ...FREE_PUP_OUTFITS.map(i => ({ ...i, _wcat: i.id === 'none' ? 'all' : 'daily' })),
-        ...SHOP_PUP_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, _wcat: i.cat || 'daily' })),
-        ...TREASURE_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
-        ...GAME_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcat: 'limited' })),
-        ...GACHA_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcat: 'limited' })),
-        ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
+        ...FREE_PUP_OUTFITS.map(i => ({ ...i, _wcats: i.id === 'none' ? ['all'] : ['daily'] })),
+        ...SHOP_PUP_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, _wcats: [i.cat || 'daily'] })),
+        ...TREASURE_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
+        ...GAME_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
+        ...GACHA_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
+        ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
       ];
-      const list = curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcat === curSub);
+      const list = curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcats.includes(curSub));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
       wardPage.outfit = clamp(wardPage.outfit, 0, totalPages - 1);
@@ -41316,7 +41447,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }
       const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
       const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
-      const pyBot = Math.max(2, py - 6);
+      const pyBot = Math.max(0, py - 12);
       readerContentEl.style.setProperty('padding-top', `${py}px`, 'important');
       readerContentEl.style.setProperty('padding-bottom', `${pyBot}px`, 'important');
       readerContentEl.style.setProperty('padding-left', `${px}px`, 'important');
