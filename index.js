@@ -19508,7 +19508,18 @@ function bootGoulaicaiExtension() {
       else if (act === 'heart_pose') msg = pick([`${sf}举起像素爱心牌送给${ow}!`, `这份心意只给${ow}一个人看~`]);
       else if (act === 'star_wish') msg = pick([`和${ow}一起看像素流星雨, 许个愿吧!`, `${sf}许愿一直陪着${ow}~`]);
       else if (act === 'listen_music') {
-        msg = pick([`分${ow}一半小耳机，我来随机挑一首歌一起听`, `戴上耳机吧${ow}，正在帮你随机搜一首歌`]);
+        msg = pick([`分${ow}一半小耳机，正在随机挑一首歌`, `戴上耳机吧${ow}，我先去搜一首随机好歌`]);
+        try {
+          if (!win.__stPupMusicAudio) {
+            win.__stPupMusicAudio = new win.Audio();
+            win.__stPupMusicAudio.preload = 'auto';
+            win.__stPupMusicAudio.volume = 0.55;
+          }
+          const au = win.__stPupMusicAudio;
+          au.pause();
+          au.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+          au.play().then(() => { au.pause(); }).catch(() => {});
+        } catch (_) {}
         (async () => {
           try {
             const REGIONS = [
@@ -19525,17 +19536,20 @@ function bootGoulaicaiExtension() {
               { cc: 'BR', terms: ['noite', 'lua', 'mar', 'sol', 'vento', 'amor', 'chuva', 'ceu', 'flor', 'verao'] },
               { cc: 'SE', terms: ['night', 'light', 'northern', 'snow', 'dream', 'ocean', 'glow', 'silver', 'midnight'] },
             ];
-            const reg = pick(REGIONS);
-            const term = pick(reg.terms);
-            const offset = randInt(0, 80);
-            const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-            const tId = ctrl ? setTimeout(() => ctrl.abort(), 4500) : null;
-            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${reg.cc}&media=music&entity=song&limit=25&offset=${offset}`;
-            const resp = await win.fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
-            if (tId) clearTimeout(tId);
-            if (!resp.ok) return;
-            const data = await resp.json();
-            const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && !/karaoke|instrumental version/i.test(it.trackName));
+            let list = [];
+            for (let attempt = 0; attempt < 2 && !list.length; attempt++) {
+              const reg = pick(REGIONS);
+              const term = pick(reg.terms);
+              const offset = randInt(0, 60);
+              const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+              const tId = ctrl ? setTimeout(() => ctrl.abort(), 4500) : null;
+              const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${reg.cc}&media=music&entity=song&limit=25&offset=${offset}`;
+              const resp = await win.fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
+              if (tId) clearTimeout(tId);
+              if (!resp.ok) continue;
+              const data = await resp.json();
+              list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental version/i.test(it.trackName));
+            }
             if (!list.length) return;
             const song = pick(list);
             const title = String(song.trackName).trim();
@@ -19543,40 +19557,55 @@ function bootGoulaicaiExtension() {
             const pId = config.puppyPersonality || 'sleepyhead';
             const REC_BY_PERS = {
               sleepyhead: [
-                `呼啊，刚随手翻到 ${artist} 的《${title}》，{owner}和我一起窝着听听看吧`,
-                `分你一半耳机，今天随机到的是 ${artist} 的《${title}》，听着好舒服`,
+                `呼啊，刚随手翻到 ${artist} 的《${title}》，现在放给你听，{owner}和我一起窝着听吧`,
+                `分你一半耳机，今天随机到的是 ${artist} 的《${title}》，马上播放给你听`,
               ],
               clingy: [
-                `{owner}快戴上耳机！今天随机抽到 ${artist} 的《${title}》，想和你贴在一起听`,
-                `刚帮你挑中了 ${artist} 的《${title}》，快去搜来听听，我陪着你一起摇尾巴`,
+                `{owner}快戴上耳机！今天随机抽到 ${artist} 的《${title}》，这就放起来和你一起听`,
+                `刚帮你挑中了 ${artist} 的《${title}》，我按下播放啦，快陪我一起摇尾巴`,
               ],
               tsundere: [
-                `哼，随便给你搜了一首 ${artist} 的《${title}》，难得推荐一次，去听听看吧`,
-                `才不是特意帮你挑的，刚好刷到 ${artist} 的《${title}》，勉强分你一半耳机`,
+                `哼，随便给你搜了一首 ${artist} 的《${title}》，这就放给你听，不许说不好听`,
+                `才不是特意帮你挑的，刚好刷到 ${artist} 的《${title}》，勉强放给你听一段`,
               ],
               foodie: [
-                `诶！刚随机转盘停在了 ${artist} 的《${title}》上面，{owner}快听听看好不好听`,
-                `差点按错键，结果翻出一首 ${artist} 的《${title}》，听起来感觉不错呀`,
+                `诶！刚随机转盘停在了 ${artist} 的《${title}》上面，马上放出来给{owner}听听看`,
+                `差点按错键，结果翻出一首 ${artist} 的《${title}》，我现在就播放啦`,
               ],
               explorer: [
-                `今日随机音乐盲盒开出 ${artist} 的《${title}》！{owner}快一起去听听看`,
-                `刚在音乐海里捞到一首 ${artist} 的《${title}》，分{owner}一半耳机一起听`,
+                `今日随机音乐盲盒开出 ${artist} 的《${title}》！马上放起来一起听`,
+                `刚在音乐海里捞到一首 ${artist} 的《${title}》，分{owner}一半耳机，开始播放`,
               ],
               fashionista: [
-                `刚好挑到 ${artist} 的《${title}》，品味还不错，有空可以听听`,
-                `分你一半耳机。今天随机到的是 ${artist} 的《${title}》，挺适合现在听`,
+                `刚好挑到 ${artist} 的《${title}》，品味还不错，放给你听听看`,
+                `分你一半耳机。今天随机到的是 ${artist} 的《${title}》，现在放起来`,
               ],
               gamer: [
-                `随机抽歌命中 ${artist} 的《${title}》！快去搜来当今天的背景音乐吧`,
-                `盲盒开歌成功，这轮是 ${artist} 的《${title}》，{owner}快试试合不合胃口`,
+                `随机抽歌命中 ${artist} 的《${title}》！这就开始放歌当背景音`,
+                `盲盒开歌成功，这轮是 ${artist} 的《${title}》，马上播放给{owner}听`,
               ],
               philosopher: [
-                `随机选到一首 ${artist} 的《${title}》，{owner}看文的时候可以放来听听`,
-                `今天随缘挑到的是 ${artist} 的《${title}》，戴上耳机静静听一会儿挺好的`,
+                `随机选到一首 ${artist} 的《${title}》，这就放给你听，{owner}看文的时候可以听一段`,
+                `今天随缘挑到的是 ${artist} 的《${title}》，现在放起来静静听一会儿`,
               ],
             };
             const pool = REC_BY_PERS[pId] || REC_BY_PERS.sleepyhead;
-            showPuppyBubble(formatPupText(pick(pool)), 6800, true);
+            showPuppyBubble(formatPupText(pick(pool)), 7200, true);
+            setPuppyState('music', 420);
+            clearTimeout(win.__stPupMusicPlayTimer);
+            win.__stPupMusicPlayTimer = setTimeout(() => {
+              try {
+                const au = win.__stPupMusicAudio || new win.Audio();
+                win.__stPupMusicAudio = au;
+                au.pause();
+                au.volume = 0.55;
+                au.src = song.previewUrl;
+                au.onended = () => {
+                  if (pup.state === 'music') setPuppyState('idle', 120);
+                };
+                au.play().catch(() => {});
+              } catch (_) {}
+            }, 500);
           } catch (_) {}
         })();
       }
@@ -32464,7 +32493,7 @@ function bootGoulaicaiExtension() {
   ];
   const mem = { mode: 'normal', cols: 4, totalPairs: 8, maxMoves: 24, cards: [], open: [], matched: 0, moves: 24, lock: false };
   const ensureMemCanvasSize = () => {
-    if (!pxGameCanvas) return;
+    if (!pxGameCanvas || activeGameId === 'tetris' || activeGameId === 'g2048') return;
     const isMem = activeGameId === 'memory';
     const isHardMem = isMem && mem.mode === 'hard';
     const want = isHardMem ? 640 : (isMem ? 576 : 144);
@@ -40014,6 +40043,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (win.fetch && win.fetch.__glcUpdateWatched && typeof _origGlcFetch === 'function') {
       win.fetch = _origGlcFetch;
     }
+    clearTimeout(win.__stPupMusicPlayTimer);
+    try { if (win.__stPupMusicAudio) { win.__stPupMusicAudio.pause(); win.__stPupMusicAudio.src = ''; } } catch (_) {}
     doc.getElementById('st-glc-ext-wrap')?.remove();
     doc.getElementById('st-glc-ext-drawer')?.remove();
     doc.getElementById('st-glc-wand-item')?.remove();
