@@ -7131,6 +7131,9 @@ function bootGoulaicaiExtension() {
     #st-tb-reader.kindle-mode .st-tb-kd-page-view p.kd-split-cont {
       text-indent: 0 !important;
     }
+    #st-tb-reader.kindle-mode .st-tb-kd-page-view > p:last-child {
+      margin-bottom: 0 !important;
+    }
     #st-tb-reader.kindle-mode .st-tb-kd-chap-top {
       font-size: 12px;
       letter-spacing: 0.08em;
@@ -7151,8 +7154,10 @@ function bootGoulaicaiExtension() {
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      height: 19px;
-      padding: 0 var(--r-padx, 18px) 3px var(--r-padx, 18px);
+      height: 18px;
+      padding: 0 var(--r-padx, 16px) 5px var(--r-padx, 16px);
+      align-items: flex-end;
+      line-height: 1;
       border-radius: 0 0 4px 4px;
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
@@ -41191,7 +41196,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const box = doc.createElement('div');
     const cs = win.getComputedStyle(readerContentEl);
     box.className = 'st-tb-kd-page-view';
-    box.style.cssText = `position:fixed;left:-99999px;top:0;visibility:hidden;pointer-events:none;width:${innerW}px;height:auto;overflow:visible;font-size:${cs.fontSize};line-height:${cs.lineHeight};font-family:${cs.fontFamily};text-align:justify;text-justify:inter-ideograph;box-sizing:border-box;`;
+    box.style.cssText = `position:fixed;left:-99999px;top:0;visibility:hidden;pointer-events:none;display:flow-root;width:${innerW}px;height:auto;overflow:visible;padding:0;margin:0;border:0;font-size:${cs.fontSize};line-height:${cs.lineHeight};font-family:${cs.fontFamily};text-align:justify;text-justify:inter-ideograph;box-sizing:border-box;`;
     readerContentEl.appendChild(box);
 
     let curItems = [];
@@ -41298,10 +41303,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (!config.readerKindleMode || !readerContentEl) return;
     cancelAnimationFrame(kdPaginateRaf);
     kdPaginateRaf = win.requestAnimationFrame(() => {
-      const px = clamp(Number(config.readerPadX ?? 18), 6, 48);
+      const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
       const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
       readerContentEl.style.setProperty('padding-top', `${py}px`, 'important');
       readerContentEl.style.setProperty('padding-bottom', `${py}px`, 'important');
+      readerContentEl.style.setProperty('padding-left', `${px}px`, 'important');
+      readerContentEl.style.setProperty('padding-right', `${px}px`, 'important');
       const innerW = Math.max(150, readerContentEl.clientWidth - px * 2);
       const innerH = Math.max(96, readerContentEl.clientHeight - py * 2);
       const cs = win.getComputedStyle(readerContentEl);
@@ -41324,7 +41331,27 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       else kdCurPage = clamp(kdCurPage, 0, kdTotalPages - 1);
 
       readerContentEl.innerHTML = '';
-      readerContentEl.appendChild(renderKdPageDom(kdPagesCache[kdCurPage]));
+      const pageView = renderKdPageDom(kdPagesCache[kdCurPage]);
+      pageView.style.height = 'auto';
+      readerContentEl.appendChild(pageView);
+      // 垂直齐底排版（非章末页自动微调本页行高填满剩余像素，确保每一页下边距都与上边距完全一致）
+      if (kdCurPage < kdTotalPages - 1) {
+        const baseLhPx = parseFloat(cs.lineHeight) || ((parseFloat(cs.fontSize) || 15) * clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6));
+        const usedH = pageView.scrollHeight;
+        const slack = innerH - usedH;
+        if (slack > 1 && slack < baseLhPx * 3.5 && usedH > innerH * 0.65) {
+          let loLh = baseLhPx;
+          let hiLh = baseLhPx * 1.45;
+          for (let step = 0; step < 8; step++) {
+            const midLh = (loLh + hiLh) / 2;
+            pageView.style.lineHeight = `${midLh.toFixed(2)}px`;
+            if (pageView.scrollHeight <= innerH) loLh = midLh;
+            else hiLh = midLh;
+          }
+          pageView.style.lineHeight = `${loLh.toFixed(2)}px`;
+        }
+      }
+      pageView.style.height = `${innerH}px`;
 
       const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
       if (book) book.kdPageIdx = kdCurPage;
