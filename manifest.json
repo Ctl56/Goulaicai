@@ -1,0 +1,11 @@
+{
+  "display_name": "狗来财",
+  "loading_order": 100,
+  "requires": [],
+  "optional": [],
+  "dependencies": [],
+  "js": "index.js",
+  "author": "狗来财",
+  "version": "2.0.79",
+  "auto_update": true
+}
