@@ -19544,56 +19544,43 @@ function bootGoulaicaiExtension() {
             const PERS_MUSIC_POOLS = {
               sleepyhead: {
                 zh: ['孙燕姿', '徐佳莹', '陈奕迅', '梁静茹', '陈绮贞', '蔡健雅', '魏如萱', '方大同', '卢广仲', '安溥', '房东的猫', '雷光夏'],
-                gl: ['Norah Jones', 'Laufey', 'Cigarettes After Sex', '藤井風', 'IU', '宇多田ヒカル', 'Clairo', 'Billie Eilish'],
+                gl: ['Norah Jones', 'Laufey', 'IU', '宇多田ヒカル', '藤井風', '手嶌葵', 'TAEYEON', 'Billie Eilish'],
               },
               clingy: {
-                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '林俊杰', '周杰伦', '田馥甄', '告五人', '韦礼安', '汪苏泷', '王心凌', '颜人中'],
+                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '林俊杰', '林宥嘉', '田馥甄', '告五人', '韦礼安', '汪苏泷', '王心凌', '颜人中'],
                 gl: ['Taylor Swift', 'Ed Sheeran', 'IU', '백예린', '星野源', '米津玄師', 'LANY', 'Lauv'],
               },
               tsundere: {
                 zh: ['孙燕姿', '陈奕迅', '徐佳莹', '张惠妹', '蔡依林', '杨乃文', '邓紫棋', '莫文蔚', '戴佩妮', '王菲', '苏打绿', '五月天'],
-                gl: ['Avril Lavigne', 'Olivia Rodrigo', '椎名林檎', 'Ado', 'YOASOBI', 'Paramore', 'Dua Lipa', 'BLACKPINK'],
+                gl: ['Avril Lavigne', 'Olivia Rodrigo', 'YOASOBI', 'Dua Lipa', 'BLACKPINK', 'あいみょん', 'TAEYEON', 'Paramore'],
               },
               foodie: {
-                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '王心凌', '周杰伦', '卢广仲', '郭静', '张韶涵', '苏打绿', '魏如萱', '五月天'],
-                gl: ['AKMU', 'NewJeans', 'あいみょん', 'Official髭男dism', 'Bruno Mars', 'Carly Rae Jepsen', 'Vaundy'],
+                zh: ['梁静茹', '孙燕姿', '徐佳莹', '陈奕迅', '王心凌', 'A-Lin', '卢广仲', '郭静', '张韶涵', '苏打绿', '魏如萱', '五月天'],
+                gl: ['AKMU', 'NewJeans', 'あいみょん', 'Official髭男dism', 'Bruno Mars', 'Carly Rae Jepsen', 'IU'],
               },
               explorer: {
-                zh: ['孙燕姿', '陈奕迅', '徐佳莹', '梁静茹', '五月天', '周杰伦', '林俊杰', '苏打绿', '张韶涵', '告五人', '许巍', '毛不易'],
-                gl: ['Coldplay', 'RADWIMPS', 'Mrs. GREEN APPLE', 'DAY6', 'OneRepublic', 'ヨルシカ', 'Imagine Dragons'],
+                zh: ['孙燕姿', '陈奕迅', '徐佳莹', '梁静茹', '五月天', 'A-Lin', '林俊杰', '苏打绿', '张韶涵', '告五人', '许巍', '毛不易'],
+                gl: ['Coldplay', 'RADWIMPS', 'Mrs. GREEN APPLE', 'DAY6', 'OneRepublic', 'ヨルシカ', 'Bruno Mars'],
               },
               fashionista: {
-                zh: ['陈奕迅', '王菲', '林忆莲', '莫文蔚', '方大同', '孙燕姿', '徐佳莹', '田馥甄', '林宥嘉', '单依纯', '袁娅维', '窦靖童'],
-                gl: ['Frank Ocean', 'SZA', 'The Weeknd', 'Lana Del Rey', '宇多田ヒカル', 'DEAN', '藤井風', 'Daft Punk'],
+                zh: ['陈奕迅', '王菲', '林忆莲', '莫文蔚', '方大同', '孙燕姿', '徐佳莹', '田馥甄', '林宥嘉', '单依纯', '袁娅维', 'A-Lin'],
+                gl: ['Lana Del Rey', 'The Weeknd', 'SZA', '宇多田ヒカル', '藤井風', 'DEAN', 'Adele', 'TAEYEON'],
               },
               gamer: {
-                zh: ['周杰伦', '陈奕迅', '孙燕姿', '徐佳莹', '梁静茹', '蔡依林', '陶喆', '林俊杰', '王力宏', '邓紫棋', '告五人', '方大同'],
-                gl: ['YOASOBI', '米津玄師', 'Eve', 'Bruno Mars', 'The Weeknd', 'NewJeans', 'aespa', 'Charlie Puth'],
+                zh: ['陶喆', '陈奕迅', '孙燕姿', '徐佳莹', '梁静茹', '蔡依林', '林俊杰', '王力宏', '邓紫棋', '告五人', '方大同', '林宥嘉'],
+                gl: ['YOASOBI', '米津玄師', 'Bruno Mars', 'NewJeans', 'aespa', 'Charlie Puth', 'Official髭男dism'],
               },
               philosopher: {
                 zh: ['陈奕迅', '徐佳莹', '孙燕姿', '梁静茹', '李宗盛', '林宥嘉', '毛不易', '李荣浩', '张学友', '王菲', '朴树', '蔡健雅'],
-                gl: ['John Mayer', 'Radiohead', '玉置浩二', '中島みゆき', 'Adele', 'Sufjan Stevens', 'Bon Iver'],
+                gl: ['Adele', 'John Mayer', '玉置浩二', '中島みゆき', '宇多田ヒカル', 'IU', 'Coldplay', 'Norah Jones'],
               },
             };
-            const WILD_SEEDS = [
-              { cc: 'TW', terms: ['孙燕姿', '徐佳莹', '陈奕迅', '梁静茹', '夜', '海', '风', '夏', '雨'] },
-              { cc: 'HK', terms: ['陈奕迅', '王菲', '张学友', '林忆莲', '莫文蔚', '夜', '海'] },
-              { cc: 'JP', terms: ['夜', '空', '風', '星', '夢', '海', '雨', '夏'] },
-              { cc: 'KR', terms: ['밤', '별', '바람', '꿈', '사랑', '바다', '비'] },
-              { cc: 'US', terms: ['night', 'moon', 'rain', 'blue', 'dream', 'jazz', 'soul'] },
-              { cc: 'FR', terms: ['nuit', 'lune', 'mer', 'soleil', 'amour'] },
-            ];
             const persPool = PERS_MUSIC_POOLS[pId] || PERS_MUSIC_POOLS.sleepyhead;
             const pickQuerySeed = () => {
-              const r = Math.random();
-              if (r < 0.68) {
+              if (Math.random() < 0.80) {
                 return { cc: pick(['TW', 'HK', 'CN']), term: pick(persPool.zh), maxOff: 30 };
-              } else if (r < 0.90) {
-                return { cc: pick(['US', 'JP', 'KR', 'GB', 'TW']), term: pick(persPool.gl), maxOff: 25 };
-              } else {
-                const w = pick(WILD_SEEDS);
-                return { cc: w.cc, term: pick(w.terms), maxOff: 45 };
               }
+              return { cc: pick(['US', 'JP', 'KR', 'GB', 'TW']), term: pick(persPool.gl), maxOff: 25 };
             };
             let pickedSong = null;
             for (let attempt = 0; attempt < 2 && !pickedSong; attempt++) {
@@ -19601,7 +19588,7 @@ function bootGoulaicaiExtension() {
               const offset = randInt(0, seed.maxOff);
               const url = `https://itunes.apple.com/search?term=${encodeURIComponent(seed.term)}&country=${seed.cc}&media=music&entity=song&limit=25&offset=${offset}`;
               const data = await _loadJsonp(url, 'callback', 5500);
-              const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental|伴奏|纯音乐/i.test(it.trackName));
+              const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && it.previewUrl && !/karaoke|instrumental|伴奏|纯音乐/i.test(it.trackName) && !/周杰伦|周杰倫|jay\s*chou/i.test(it.artistName));
               if (list.length) {
                 const s = pick(list);
                 pickedSong = { title: String(s.trackName).trim(), artist: String(s.artistName).trim(), previewUrl: String(s.previewUrl) };
@@ -19612,7 +19599,7 @@ function bootGoulaicaiExtension() {
               const idx = randInt(0, 20);
               const url = `https://api.deezer.com/search/track?q=${encodeURIComponent(seed.term)}&limit=25&index=${idx}&output=jsonp`;
               const data = await _loadJsonp(url, 'callback', 5500);
-              const list = (Array.isArray(data?.data) ? data.data : []).filter(it => it && it.title && it.artist?.name && it.preview);
+              const list = (Array.isArray(data?.data) ? data.data : []).filter(it => it && it.title && it.artist?.name && it.preview && !/周杰伦|周杰倫|jay\s*chou/i.test(it.artist.name));
               if (list.length) {
                 const s = pick(list);
                 pickedSong = { title: String(s.title).trim(), artist: String(s.artist.name).trim(), previewUrl: String(s.preview) };
@@ -19668,8 +19655,16 @@ function bootGoulaicaiExtension() {
                 au.pause();
                 au.volume = 0.58;
                 au.src = previewUrl;
+                let replayCount = 0;
                 au.onended = () => {
-                  if (pup.state === 'music') setPuppyState('idle', 120);
+                  if (replayCount < 1 && au.src === previewUrl) {
+                    replayCount += 1;
+                    au.currentTime = 0;
+                    setPuppyState('music', 480);
+                    au.play().catch(() => {});
+                  } else if (pup.state === 'music') {
+                    setPuppyState('idle', 120);
+                  }
                 };
                 au.play().catch(() => {});
               } catch (_) {}
