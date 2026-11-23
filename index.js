@@ -6907,7 +6907,9 @@ function bootGoulaicaiExtension() {
     }
     .st-tb-kd-status,
     .st-tb-kd-side-btn,
-    .st-tb-kd-chin,
+    .st-tb-kd-chin {
+      display: none;
+    }
     .st-tb-kd-only-btn {
       display: none !important;
     }
@@ -9561,13 +9563,6 @@ function bootGoulaicaiExtension() {
     const mode = 'strong';
     acquireWebLock();
 
-    try {
-      if (win.navigator && win.navigator.audioSession) {
-        win.navigator.audioSession.type = 'playback';
-      }
-    } catch (_) {}
-
-    let kaBeatN = 0;
     const tryResumeKaAudio = () => {
       if (!config.keepAlive) return;
       if (kaAudioEl) {
@@ -9584,7 +9579,7 @@ function bootGoulaicaiExtension() {
         kaAudioCtx.resume().catch(() => {});
       }
     };
-    const kaKeepInterval = setInterval(tryResumeKaAudio, 2500);
+    const kaKeepInterval = setInterval(tryResumeKaAudio, 3000);
     const onKaWakeEvt = () => { if (!doc.hidden) tryResumeKaAudio(); };
     doc.addEventListener('visibilitychange', onKaWakeEvt);
     win.addEventListener('focus', tryResumeKaAudio);
@@ -9603,37 +9598,19 @@ function bootGoulaicaiExtension() {
     if (typeof win.Worker === 'function') {
       try {
         const wBlob = new Blob([
-          'let t=setInterval(()=>{postMessage(Date.now());},2500);onmessage=()=>{clearInterval(t);};'
+          'let t=setInterval(()=>{postMessage(Date.now());},3000);onmessage=()=>{clearInterval(t);};'
         ], { type: 'application/javascript' });
         kaWorkerUrl = win.URL.createObjectURL(wBlob);
         kaWorker = new win.Worker(kaWorkerUrl);
         kaWorker.onmessage = () => {
           if (!config.keepAlive) return;
-          kaBeatN += 1;
           tryResumeKaAudio();
-          if (kaBeatN % 5 === 0) {
-            try { win.fetch('/csrf-token', { cache: 'no-store' }).catch(() => {}); } catch (_) {}
-          }
         };
       } catch (_) {}
     }
 
-    const AC_Ka = win.AudioContext || win.webkitAudioContext;
-    if (AC_Ka) {
-      try {
-        kaAudioCtx = new AC_Ka();
-        const gKa = kaAudioCtx.createGain();
-        gKa.gain.value = 0.00001;
-        kaOsc = kaAudioCtx.createOscillator();
-        kaOsc.frequency.value = 1;
-        kaOsc.connect(gKa);
-        gKa.connect(kaAudioCtx.destination);
-        kaOsc.start();
-        if (kaAudioCtx.state === 'suspended') kaAudioCtx.resume().catch(() => {});
-      } catch (_) {}
-    }
-
     if (mode === 'strong') {
+      // 原版最强静音循环音频保活 + 被其他软件打断后持续自动续播恢复
       kaAudioUrl = createSilentWavUrl();
       kaAudioEl = doc.createElement('audio');
       kaAudioEl.src = kaAudioUrl;
