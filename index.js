@@ -7369,7 +7369,7 @@ function bootGoulaicaiExtension() {
           <button class="st-tb-mini-btn" id="st-tb-quick-imm" type="button">沉浸</button>
           <button class="st-tb-mini-btn" id="st-tb-quick-mask" type="button">打码</button>
           <button class="st-tb-mini-btn" id="st-tb-hide-btn" type="button">贴边</button>
-          <button class="st-tb-mini-btn" id="st-tb-fullhide-btn" type="button" title="完全隐藏，双击空白处召唤">隐藏</button>
+          <button class="st-tb-mini-btn" id="st-tb-fullhide-btn" type="button" title="完全隐藏，三击空白处召唤">隐藏</button>
           <button class="st-tb-mini-btn" id="st-tb-close-btn" type="button">关闭</button>
         </div>
       </div>
@@ -7554,6 +7554,17 @@ function bootGoulaicaiExtension() {
         <!-- 聊天管理（含聊天文件与一键打码） -->
         <div class="st-tb-pane" data-pane="chats">
           <div class="st-tb-section">
+            <div class="st-tb-label">
+              <span>正文快捷编辑与复制</span>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <button class="st-tb-mini-btn" id="st-se-fmt-btn" type="button" title="切换复制时是否保留加粗、斜体等格式">带格式</button>
+                <button class="st-tb-mini-btn" id="st-se-toggle-btn" type="button">已开启</button>
+                <button class="st-tb-mini-btn" id="st-se-edit-last-btn" type="button">改最新一层</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="st-tb-section">
             <div class="st-tb-chat-meta">
               <span id="st-tb-chat-char-info">正在读取...</span>
               <button class="st-tb-mini-btn" id="st-tb-chat-refresh" type="button">刷新</button>
@@ -7606,17 +7617,6 @@ function bootGoulaicaiExtension() {
               </div>
               <textarea class="st-tb-textarea" id="st-tb-mask-words" placeholder="输入需要打码的词汇，用换行或逗号隔开"></textarea>
               <div class="st-tb-tip">仅遮挡页面显示，不改动原聊天记录。点击已打码的词可临时查看。</div>
-            </div>
-          </div>
-
-          <div class="st-tb-section">
-            <div class="st-tb-label">
-              <span>正文快捷编辑与复制</span>
-              <div style="display:flex;gap:4px;align-items:center;">
-                <button class="st-tb-mini-btn" id="st-se-fmt-btn" type="button" title="切换复制时是否保留加粗、斜体等格式">带格式</button>
-                <button class="st-tb-mini-btn" id="st-se-toggle-btn" type="button">已开启</button>
-                <button class="st-tb-mini-btn" id="st-se-edit-last-btn" type="button">改最新一层</button>
-              </div>
             </div>
           </div>
 
@@ -8811,26 +8811,50 @@ function bootGoulaicaiExtension() {
     return Boolean(el.closest('input, textarea, select, button, a, [contenteditable="true"], #st-tb-root'));
   };
 
+  let lastSummonTouchEndAt = 0;
+  let desktopSummonTap = { count: 0, time: 0, x: 0, y: 0 };
   const onDocDblClick = (e) => {
     if (!config.fullHidden) return;
     if (isInteractiveTarget(e.target)) return;
-    e.preventDefault();
-    summonFromFullHidden();
+    const now = Date.now();
+    if (now - lastSummonTouchEndAt < 650) return;
+    if (now - desktopSummonTap.time < 480 && Math.hypot(e.clientX - desktopSummonTap.x, e.clientY - desktopSummonTap.y) < 45) {
+      desktopSummonTap.count += 1;
+      desktopSummonTap.time = now;
+      desktopSummonTap.x = e.clientX;
+      desktopSummonTap.y = e.clientY;
+    } else {
+      desktopSummonTap = { count: 1, time: now, x: e.clientX, y: e.clientY };
+    }
+    if (desktopSummonTap.count >= 3) {
+      desktopSummonTap.count = 0;
+      desktopSummonTap.time = 0;
+      e.preventDefault();
+      summonFromFullHidden();
+    }
   };
-  doc.addEventListener('dblclick', onDocDblClick);
+  doc.addEventListener('click', onDocDblClick);
 
-  let lastTouchTap = { time: 0, x: 0, y: 0 };
+  let lastTouchTap = { count: 0, time: 0, x: 0, y: 0 };
   const onDocTouchEnd = (e) => {
     if (!config.fullHidden) return;
     if (isInteractiveTarget(e.target)) return;
     const t = e.changedTouches?.[0];
     if (!t) return;
     const now = Date.now();
-    if (now - lastTouchTap.time < 320 && Math.hypot(t.clientX - lastTouchTap.x, t.clientY - lastTouchTap.y) < 32) {
+    lastSummonTouchEndAt = now;
+    if (now - lastTouchTap.time < 480 && Math.hypot(t.clientX - lastTouchTap.x, t.clientY - lastTouchTap.y) < 45) {
+      lastTouchTap.count += 1;
+      lastTouchTap.time = now;
+      lastTouchTap.x = t.clientX;
+      lastTouchTap.y = t.clientY;
+    } else {
+      lastTouchTap = { count: 1, time: now, x: t.clientX, y: t.clientY };
+    }
+    if (lastTouchTap.count >= 3) {
+      lastTouchTap.count = 0;
       lastTouchTap.time = 0;
       summonFromFullHidden();
-    } else {
-      lastTouchTap = { time: now, x: t.clientX, y: t.clientY };
     }
   };
   doc.addEventListener('touchend', onDocTouchEnd, { passive: true });
@@ -32693,10 +32717,17 @@ function bootGoulaicaiExtension() {
   });
 
   fullHideBtn.addEventListener('click', () => {
-    togglePanel(false);
-    config.fullHidden = true;
-    saveConfig();
-    applyBadgePosition(false);
+    openGuardConfirm(
+      '开启完全隐藏',
+      '悬浮按钮隐藏后，如果要再次召唤，可以连续点击页面空白处三下。',
+      () => {
+        togglePanel(false);
+        config.fullHidden = true;
+        saveConfig();
+        applyBadgePosition(false);
+      },
+      '知道了，立即隐藏'
+    );
   });
 
   const toggleImmersive = () => {
@@ -37751,18 +37782,21 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
   };
 
+  let lastSeParaTap = { para: null, time: 0 };
   const onChatParaClick = (e) => {
     if (config.storyQuickBarEnabled === false) return;
     if (e.target && e.target.closest && e.target.closest('#st-tb-root')) return;
-    // 如果用户正在拖选文字，不弹出快捷条
-    const selTxt = String(win.getSelection?.()?.toString() || '').trim();
-    if (selTxt) return;
 
     const para = e.target && e.target.closest ? e.target.closest('#chat .mes_text p, #chat .mes_text blockquote') : null;
     if (!para) {
+      lastSeParaTap = { para: null, time: 0 };
       if (!seMultiMode) hideSeFloatBar();
       return;
     }
+    const nowSeTap = Date.now();
+    const isRapidSecondTap = !seMultiMode && lastSeParaTap.para === para && (nowSeTap - lastSeParaTap.time) < 460;
+    const selTxt = String(win.getSelection?.()?.toString() || '').trim();
+    if (selTxt && !isRapidSecondTap) return;
     if (e.target.closest('a, button, input, textarea, select, details, summary, .st-tb-masked')) return;
 
     const mesNode = para.closest('.mes[mesid]');
@@ -37818,6 +37852,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       return;
     }
 
+    if (!isRapidSecondTap) {
+      lastSeParaTap = { para, time: nowSeTap };
+      if (seFloatBar && seFloatBar.classList.contains('show')) hideSeFloatBar();
+      return;
+    }
+    lastSeParaTap = { para: null, time: 0 };
+    try { win.getSelection?.()?.removeAllRanges?.(); } catch (_) {}
     if (seFloatBar && seFloatBar.classList.contains('show') && seActiveParaEl === para) {
       hideSeFloatBar();
       return;
@@ -39348,7 +39389,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     doc.removeEventListener('keydown', onGuardKeyDownCapture, true);
     doc.removeEventListener('touchstart', onGuardTouchStartCapture, { capture: true });
     doc.removeEventListener('touchend', onGuardTouchEndCapture, true);
-    doc.removeEventListener('dblclick', onDocDblClick);
+    doc.removeEventListener('click', onDocDblClick);
     doc.removeEventListener('touchend', onDocTouchEnd);
     doc.removeEventListener('pointerdown', onOutsidePupBagClick);
     doc.removeEventListener('visibilitychange', onKeepAliveVisibility);
@@ -39461,6 +39502,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       setGlcUpdateUI(false, '未找到扩展目录，请在管理扩展中更新');
       return;
     }
+    glcOwnUpdateRunning = true;
     if (updBtn) { updBtn.style.pointerEvents = 'none'; updBtn.textContent = '正在更新'; }
     setGlcUpdateUI(true, '正在拉取最新版本');
     try {
@@ -39471,6 +39513,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         try { win.location.reload(); } catch (_) {}
       }, 600);
     } catch (_) {
+      glcOwnUpdateRunning = false;
       if (updBtn) { updBtn.style.pointerEvents = ''; updBtn.textContent = '立即更新并刷新'; }
       setGlcUpdateUI(true, '更新失败，请检查网络或重试');
     }
@@ -39565,10 +39608,65 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (!doc.hidden) checkGlcUpdate(false);
   }, 30 * 60 * 1000);
 
+  // 监听酒馆原生「管理拓展」更新请求：更新成功后在关闭弹窗时自动刷新页面
+  let glcPendingReload = false;
+  let glcReloadWatchTimer = null;
+  let glcOwnUpdateRunning = false;
+  const hasOpenStModal = () => {
+    try {
+      if (doc.querySelector('dialog[open].popup, dialog[open]')) return true;
+      const pops = doc.querySelectorAll('.popup, #dialogue_popup, #shadow_popup');
+      for (const el of pops) {
+        const st = win.getComputedStyle(el);
+        if (st && st.display !== 'none' && st.visibility !== 'hidden' && el.offsetWidth > 0 && el.offsetHeight > 0) return true;
+      }
+    } catch (_) {}
+    return false;
+  };
+  const scheduleReloadAfterManageClose = () => {
+    if (glcOwnUpdateRunning || glcPendingReload) return;
+    glcPendingReload = true;
+    clearInterval(glcReloadWatchTimer);
+    const startAt = Date.now();
+    glcReloadWatchTimer = setInterval(() => {
+      if (!hasOpenStModal()) {
+        clearInterval(glcReloadWatchTimer);
+        glcReloadWatchTimer = null;
+        try { win.location.reload(); } catch (_) {}
+      } else if (Date.now() - startAt > 10 * 60 * 1000) {
+        clearInterval(glcReloadWatchTimer);
+        glcReloadWatchTimer = null;
+        glcPendingReload = false;
+      }
+    }, 350);
+  };
+
+  const _origGlcFetch = win.fetch;
+  if (typeof _origGlcFetch === 'function' && !_origGlcFetch.__glcUpdateWatched) {
+    const _watchedFetch = function (...args) {
+      const p = _origGlcFetch.apply(this, args);
+      try {
+        const reqUrl = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url ? String(args[0].url) : '');
+        if (reqUrl.includes('/api/extensions/update')) {
+          p.then((res) => {
+            if (res && res.ok) scheduleReloadAfterManageClose();
+          }).catch(() => {});
+        }
+      } catch (_) {}
+      return p;
+    };
+    _watchedFetch.__glcUpdateWatched = true;
+    win.fetch = _watchedFetch;
+  }
+
   const _origCleanupGlc = cleanup;
   const _wrappedCleanupGlc = () => {
     clearTimeout(glcUpdateBootTimer);
     clearInterval(glcUpdateTimer);
+    clearInterval(glcReloadWatchTimer);
+    if (win.fetch && win.fetch.__glcUpdateWatched && typeof _origGlcFetch === 'function') {
+      win.fetch = _origGlcFetch;
+    }
     doc.getElementById('st-glc-ext-wrap')?.remove();
     doc.getElementById('st-glc-ext-drawer')?.remove();
     doc.getElementById('st-glc-wand-item')?.remove();
