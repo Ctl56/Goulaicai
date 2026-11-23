@@ -32357,7 +32357,7 @@ function bootGoulaicaiExtension() {
     if (!pxGameCanvas) return;
     const isMem = activeGameId === 'memory';
     const isHardMem = isMem && mem.mode === 'hard';
-    const want = isHardMem ? 320 : (isMem ? 288 : 144);
+    const want = isHardMem ? 640 : (isMem ? 576 : 144);
     if (pxGameCanvas.width !== want || pxGameCanvas.height !== want) {
       pxGameCanvas.width = want;
       pxGameCanvas.height = want;
@@ -32381,10 +32381,12 @@ function bootGoulaicaiExtension() {
   const drawMemory = () => {
     ensureMemCanvasSize();
     const g = pxGameCtx;
-    const cw = pxGameCanvas.width;
-    g.imageSmoothingEnabled = true;
-    g.fillStyle = '#cbbba0'; g.fillRect(0, 0, cw, cw);
     const n = mem.cols;
+    const boardW = n === 8 ? 320 : 288;
+    g.save();
+    g.scale(2, 2);
+    g.imageSmoothingEnabled = true;
+    g.fillStyle = '#cbbba0'; g.fillRect(0, 0, boardW, boardW);
     const total = n * n;
     const pad = n === 8 ? 2 : 6;
     const step = n === 8 ? 40 : 70;
@@ -32411,6 +32413,7 @@ function bootGoulaicaiExtension() {
         g.fillStyle = '#b89674'; g.fillRect(x + dotOff, y + dotOff, sz - dotOff * 2, sz - dotOff * 2);
       }
     }
+    g.restore();
   };
   const clickMemory = (idx) => {
     if (!gameRunning || activeGameId !== 'memory' || mem.lock) return;
@@ -32735,10 +32738,13 @@ function bootGoulaicaiExtension() {
       }
     } else if (activeGameId === 'memory') {
       const n = mem.cols;
+      const boardW = n === 8 ? 320 : 288;
+      const mx = ((e.clientX - rect.left) / Math.max(1, rect.width)) * boardW;
+      const my = ((e.clientY - rect.top) / Math.max(1, rect.height)) * boardW;
       const pad = n === 8 ? 2 : 6;
       const step = n === 8 ? 40 : 70;
-      const col = Math.floor((rx - pad) / step);
-      const row = Math.floor((ry - pad) / step);
+      const col = Math.floor((mx - pad) / step);
+      const row = Math.floor((my - pad) / step);
       if (row >= 0 && row < n && col >= 0 && col < n) clickMemory(row * n + col);
     } else {
       gameSwipeStart = { x: e.clientX, y: e.clientY };
