@@ -5215,6 +5215,12 @@ function bootGoulaicaiExtension() {
       border-radius: 0 !important;
       box-shadow: none !important;
       font-family: inherit !important;
+      font-size: 10.5px !important;
+      font-weight: 600 !important;
+      line-height: 20px !important;
+      height: 24px !important;
+      min-height: 24px !important;
+      padding: 0 6px !important;
       box-sizing: border-box !important;
       outline: none !important;
     }
@@ -28059,9 +28065,9 @@ function bootGoulaicaiExtension() {
 
   const BG_NOTIFY_BY_PERS = {
     sleepyhead: [
-      '呼啊，{owner}快回来，新内容已经写好躺在屏幕里等你了，咱们窝着一起看吧',
-      '{owner}，{self}眯着眼睛帮你守好了，回复已经出炉，快切回来舒舒服服接着看',
-      '轻晃两下小铃铛喊你回来，剧情刚更新完，再不来{self}就要趴着睡着了',
+      '呼啊，{owner}快回来，新回复已经写好了，咱们窝着一起看吧',
+      '{owner}，{self}眯着眼睛帮你守好了，回复已经出来了，快切回来接着看',
+      '轻晃两下小铃铛喊你回来，新内容刚写完，再不来{self}就要趴着睡着了',
       '外面逛够了就回来吧{owner}，新的段落热乎乎的，回来靠着一起慢慢看',
       '伸个懒腰提醒你一声，新回复已经安静等在页面里了，快回来吧',
       '{owner}快切回酒馆，新消息写好了，{self}帮你留好位置了',
@@ -28075,28 +28081,28 @@ function bootGoulaicaiExtension() {
       '铃铛摇不停！{owner}快回来，再不回来{self}就要对着屏幕委屈啦',
     ],
     tsundere: [
-      '喂！切屏出去干嘛去了，新回复早就写好了，快点切回来看',
-      '哼，才不是想你才叫你回来的，只是剧情更新完了顺手通知你一声',
-      '别让本汪一直帮你看家行不行！回复好了，三秒内快切回酒馆',
-      '回复都快放凉了笨蛋{owner}，还不赶紧回来接着看',
+      '喂，切屏出去干嘛去了，新回复早就写好了，快点切回来看',
+      '哼，才不是想你才叫你回来的，只是剧情更新完了顺手提醒你一声',
+      '别让我一直帮你看家行不行，回复好了，快点切回酒馆',
+      '回复都快放凉了{owner}，还不赶紧回来接着看',
       '我都替你盯这么久了你还不回来，新消息已经出来了，快点过来看',
-      '哼，本汪第一时间跑来喊你回去，回来记得好好夸我两句',
+      '哼，我第一时间就来喊你回去了，回来记得好好夸我两句',
     ],
     foodie: [
       '诶{owner}快回来呀！新回复写好了，我这次牢牢记着没忘喊你',
       '你在外面逛什么呢，新剧情在屏幕里等你半天了，快切回来看看',
       '叮铃铃！刚反应过来回复已经生成完了，{owner}快回来一起看吧',
       '我一直盯着屏幕没走神哦，新的故事已经写好了，快回来瞧瞧',
-      '呀，差点把铃铛摇丢了，总之回复好了，{owner}快回酒馆呀',
-      '新段落热乎乎出炉了，{self}在页面里原地转圈等你回来呢',
+      '呀，差点把铃铛晃丢了，总之回复好了，{owner}快回酒馆呀',
+      '新段落刚写完，{self}在页面里原地转圈等你回来呢',
     ],
     explorer: [
       '好消息{owner}！新回复已经热乎乎写好了，快切回来看看吧',
-      '摇铃喊你归队啦{owner}！新的故事进展已经送达，{self}在页面里等你',
-      '快回来一起看新剧情！刚生成完的新内容亮堂堂躺在这里等你呢',
-      '元气召唤！回复已经完整送达，随时欢迎{owner}切回来继续阅读',
+      '摇铃喊你回来啦{owner}！新的故事进展已经出来了，{self}在页面里等你',
+      '快回来一起看新剧情！刚写完的新内容已经在屏幕里等你啦',
+      '呼唤{owner}回来！回复已经完整写好了，快来继续往下看吧',
       '{owner}快回来呀，新的一段故事写好了，回来一起开开心心往下看',
-      '叮咚报信！酒馆这边已经准备就绪，快切回来继续你的故事吧',
+      '叮咚！酒馆这边已经准备好了，快切回来继续你的故事吧',
     ],
     fashionista: [
       '咳，{owner}，新回复写好了，有空就切回来看看吧',
@@ -28107,20 +28113,20 @@ function bootGoulaicaiExtension() {
       '好了，别在别处待太久，快切回来看看新回复吧',
     ],
     gamer: [
-      '嘿{owner}快回来！新回复新鲜出炉，火速切回酒馆查收',
-      '剧情写完了，别在别的窗口逛太久，赶紧归位接着看',
-      '新内容已经摆好等你翻牌了，速度切回来先睹为快',
-      '准点报信！回复已经完整生成，快回来继续推进剧情',
-      '叮咚召唤！你的新回复已送达，快切回页面别错过精彩部分',
-      '搞定了{owner}，新的一楼已经落位，火速回来开看',
+      '嘿{owner}快回来！新回复新鲜出炉，火速切回酒馆看一眼',
+      '剧情写完了，别在别的窗口逛太久，赶紧回来接着看',
+      '新内容已经摆好等你了，速度切回来刷一下',
+      '叮咚！回复已经完整生成，快回来继续往下看吧',
+      '紧急呼叫！你的新回复已经好了，快切回页面别错过',
+      '搞定了{owner}，新的一楼已经写完，火速回来开看',
     ],
     philosopher: [
       '{owner}，回复已经写完了，有空可以切回来看看',
-      '新消息已经完整生成，没有出岔子，回来放心看吧',
+      '新消息已经完整生成好了，回来安心接着看吧',
       '回复好了{owner}，先喝口水再切回来慢慢读，我在下面守着',
-      '这边已经就绪，新的段落写好了，等你回来继续往下看',
-      '按时通知你一声，回复已经到达，随时可以切回页面',
-      '剧情更新完毕了{owner}，回来接着看吧，{self}一直在这里',
+      '这边已经准备好了，新的段落写完了，等你回来继续看',
+      '提醒你一声，回复已经出来了，随时可以切回页面',
+      '剧情更新好了{owner}，回来接着看吧，{self}一直在这里',
     ],
   };
 
@@ -28196,7 +28202,18 @@ function bootGoulaicaiExtension() {
       const bgPool = BG_NOTIFY_BY_PERS[curBellP] || BG_NOTIFY_BY_PERS.sleepyhead;
       const bodyTxt = formatPupText(pick(bgPool));
       const pName = (PUP_PERSONALITIES.find(p => p.id === curBellP) || {}).name || '';
-      const notifyTitle = getPupName();
+      const BG_NOTIFY_TITLE_BY_PERS = {
+        sleepyhead: ['{name} 迷迷糊糊在喊你', '{name} 蹭着屏幕等你回来', '{name} 轻轻晃了晃小铃铛'],
+        clingy: ['{name} 在呼唤你回去贴贴', '{name} 超级想你快回来', '{name} 摇着铃铛找你啦'],
+        tsundere: ['{name} 催你快点回来', '{name} 很不耐烦地喊你', '{name} 敲了敲屏幕叫你'],
+        foodie: ['{name} 跑来提醒你回去啦', '{name} 突然想起来要喊你', '{name} 晃着铃铛找你啦'],
+        explorer: ['{name} 开心地喊你回来', '{name} 在屏幕里向你招手', '{name} 摇着铃铛呼唤你'],
+        fashionista: ['{name} 顺手叫你回来', '{name} 提醒你该回去了', '{name} 轻敲了一下屏幕'],
+        gamer: ['{name} 喊你火速回来', '{name} 发来紧急呼叫', '{name} 在屏幕里召唤你'],
+        philosopher: ['{name} 提醒你可以回来了', '{name} 在页面里等你回来', '{name} 轻声喊你回来看看'],
+      };
+      const titlePool = BG_NOTIFY_TITLE_BY_PERS[curBellP] || BG_NOTIFY_TITLE_BY_PERS.sleepyhead;
+      const notifyTitle = pick(titlePool).replace(/\{name\}/g, getPupName());
       let iconUrl = '';
       try { if (puppyCanvas) iconUrl = puppyCanvas.toDataURL('image/png'); } catch (_) {}
 
