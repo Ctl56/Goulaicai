@@ -28491,7 +28491,8 @@ function bootGoulaicaiExtension() {
     const noBlur = Boolean(config.perfNoBlur);
     const rules = ['.st-tb-folded-mes { display: none !important; }'];
     if (adaptOn) {
-      rules.push('#chat .mes:not(:nth-last-child(-n+4)) { content-visibility: auto; contain-intrinsic-size: auto 240px; }');
+      rules.push('#chat { will-change: scroll-position; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }');
+      rules.push('#chat .mes { contain: style; }');
     }
     if (noBlur) {
       rules.push('#sheld, #chat .mes, #send_form, #top-bar { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }');
