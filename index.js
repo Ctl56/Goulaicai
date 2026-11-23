@@ -4689,7 +4689,7 @@ function bootGoulaicaiExtension() {
       pointer-events: auto;
       cursor: grab;
       touch-action: none;
-      z-index: 2147483643 !important;
+      z-index: 9997 !important;
     }
 
     #st-tb-puppy.active { display: block; }
@@ -6789,16 +6789,46 @@ function bootGoulaicaiExtension() {
       background-position: center;
       color: var(--r-fg, inherit);
     }
-    /* 真实墨水屏颗粒纹理与微凹屏影 */
+    /* 纯净哑光 Carta 墨水屏质感（无格纹、无噪点斑驳，仅保留微弱内嵌屏边影） */
     .st-tb-reader-content.eink-texture {
-      background-image:
-        radial-gradient(rgba(0, 0, 0, 0.045) 0.6px, transparent 0.6px),
-        radial-gradient(rgba(255, 255, 255, 0.06) 0.6px, transparent 0.6px),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.025) 0%, rgba(255, 255, 255, 0.015) 50%, rgba(0, 0, 0, 0.03) 100%);
-      background-size: 4px 4px, 6px 6px, 100% 100%;
-      background-position: 0 0, 2px 2px, 0 0;
-      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.16), inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      background-image: none;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.09), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
       -webkit-font-smoothing: antialiased;
+    }
+    #st-tb-badge {
+      -webkit-touch-callout: none !important;
+    }
+    #st-tb-root input[type="color"].st-tb-r-colpick {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      width: 20px !important;
+      height: 20px !important;
+      min-width: 20px !important;
+      min-height: 20px !important;
+      max-width: 20px !important;
+      max-height: 20px !important;
+      flex: 0 0 20px !important;
+      aspect-ratio: 1 / 1 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 50% !important;
+      border: 1.5px solid var(--tb-border) !important;
+      background: transparent !important;
+      overflow: hidden !important;
+      cursor: pointer !important;
+      box-sizing: border-box !important;
+      vertical-align: middle !important;
+    }
+    #st-tb-root input[type="color"].st-tb-r-colpick::-webkit-color-swatch-wrapper {
+      padding: 0 !important;
+    }
+    #st-tb-root input[type="color"].st-tb-r-colpick::-webkit-color-swatch {
+      border: none !important;
+      border-radius: 50% !important;
+    }
+    #st-tb-root input[type="color"].st-tb-r-colpick::-moz-color-swatch {
+      border: none !important;
+      border-radius: 50% !important;
     }
     .st-tb-reader-content.has-bg-img {
       background-image: linear-gradient(var(--r-bg-veil, rgba(255,255,255,0)), var(--r-bg-veil, rgba(255,255,255,0))), var(--r-bg-img, none) !important;
@@ -7798,7 +7828,7 @@ function bootGoulaicaiExtension() {
             <button class="st-tb-r-act" id="st-tb-rset-font-imp" type="button">导入字体</button>
             <button class="st-tb-r-act" id="st-tb-rset-font-clr" type="button">还原默认</button>
             <span id="st-tb-rset-font-lbl" style="font-size:10px;color:var(--tb-sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:right;">默认</span>
-            <input id="st-tb-rset-font-file" type="file" accept=".ttf,.otf,.woff,.woff2" style="display:none;" />
+            <input id="st-tb-rset-font-file" type="file" accept=".ttf,.otf,.woff,.woff2,.ttc" style="display:none;" />
           </div>
         </div>
         <div class="st-tb-rset-row">
@@ -7812,9 +7842,9 @@ function bootGoulaicaiExtension() {
         </div>
         <div class="st-tb-rset-row">
           <span>自选配色</span>
-          <div style="display:flex;align-items:center;gap:6px;flex:1;">
-            <label style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;">底色<input type="color" id="st-tb-rset-bgcol" style="width:22px;height:18px;padding:0;border:1px solid var(--tb-border);background:none;cursor:pointer;" /></label>
-            <label style="display:inline-flex;align-items:center;gap:3px;font-size:10.5px;">字色<input type="color" id="st-tb-rset-fgcol" style="width:22px;height:18px;padding:0;border:1px solid var(--tb-border);background:none;cursor:pointer;" /></label>
+          <div style="display:flex;align-items:center;gap:8px;flex:1;">
+            <label style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;">底色<input type="color" class="st-tb-r-colpick" id="st-tb-rset-bgcol" /></label>
+            <label style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;">字色<input type="color" class="st-tb-r-colpick" id="st-tb-rset-fgcol" /></label>
             <button class="st-tb-r-act" id="st-tb-rset-col-reset" type="button" style="margin-left:auto !important;">重置</button>
           </div>
         </div>
@@ -40651,9 +40681,14 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     readerOpen = true;
     readerEl.classList.add('open');
     applyReaderLayout();
+    if (typeof bringFloatFront === 'function') bringFloatFront(readerEl);
     if (readerContentEl && readerContentEl.textContent && readerContentEl.textContent.trim().length > 20) {
       win.requestAnimationFrame(() => {
-        if (readerContentEl) readerContentEl.scrollTop = readerSavedScrollTop;
+        if (config.readerKindleMode && typeof syncKindlePagination === 'function') {
+          syncKindlePagination(kdCurPage);
+        } else if (readerContentEl) {
+          readerContentEl.scrollTop = readerSavedScrollTop;
+        }
       });
     } else {
       loadActiveNovel();
@@ -40735,9 +40770,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
 
   const READER_PAPER_PRESETS = {
     theme: { bg: '', fg: '', eink: false },
-    eink_light: { bg: '#e3e2dc', fg: '#262624', eink: true },
-    eink_warm: { bg: '#ebe6da', fg: '#2d2822', eink: true },
-    eink_dark: { bg: '#191918', fg: '#cfcec8', eink: true },
+    eink_light: { bg: '#e8e7e2', fg: '#242422', eink: true },
+    eink_warm: { bg: '#efe9dc', fg: '#2c261f', eink: true },
+    eink_dark: { bg: '#1c1c1b', fg: '#d0cfc8', eink: true },
     paper_cream: { bg: '#f6efe2', fg: '#362e26', eink: false },
     paper_matcha: { bg: '#dce8dc', fg: '#28362a', eink: false },
     paper_kraft: { bg: '#eadcc5', fg: '#3d2f22', eink: false },
@@ -40766,8 +40801,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         if (rsetFontLbl) rsetFontLbl.textContent = '默认';
         return;
       }
-      const blob = await getFontBlobFromDB(READER_FONT_DB_KEY);
-      if (!blob) return;
+      const blob = await dbGetFont(READER_FONT_DB_KEY);
+      if (!blob) {
+        if (rsetFontLbl) rsetFontLbl.textContent = '默认';
+        return;
+      }
       if (readerCustomFontObjUrl) try { win.URL.revokeObjectURL(readerCustomFontObjUrl); } catch (_) {}
       readerCustomFontObjUrl = win.URL.createObjectURL(blob);
       if (!readerCustomFontStyleEl) {
@@ -40776,6 +40814,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         doc.head.appendChild(readerCustomFontStyleEl);
       }
       readerCustomFontStyleEl.textContent = `@font-face { font-family: "StReaderCustomFont"; src: url("${readerCustomFontObjUrl}"); font-display: swap; }`;
+      if (doc.fonts && typeof doc.fonts.load === 'function') {
+        doc.fonts.load('14px "StReaderCustomFont"').catch(() => {});
+      }
       if (rsetFontLbl) rsetFontLbl.textContent = String(config.readerCustomFontName).slice(0, 12);
       if (readerContentEl) readerContentEl.style.setProperty('--r-font', '"StReaderCustomFont", inherit');
     } catch (_) {}
@@ -40791,7 +40832,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         if (rsetBgImgLbl) rsetBgImgLbl.textContent = '无';
         return;
       }
-      const blob = await getFontBlobFromDB(READER_BGIMG_DB_KEY);
+      const blob = await dbGetFont(READER_BGIMG_DB_KEY);
       if (!blob) return;
       if (readerCustomBgObjUrl) try { win.URL.revokeObjectURL(readerCustomBgObjUrl); } catch (_) {}
       readerCustomBgObjUrl = win.URL.createObjectURL(blob);
@@ -40966,7 +41007,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       rsetFontFile.value = '';
       if (!f) return;
       try {
-        await putFontBlobToDB(READER_FONT_DB_KEY, f);
+        await dbPutFont(READER_FONT_DB_KEY, f);
         config.readerCustomFontName = String(f.name || '自定义字体').replace(/\.[^.]+$/, '');
         saveConfig();
         await loadReaderCustomFont();
@@ -40978,7 +41019,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     rsetFontClrBtn.addEventListener('click', async () => {
       config.readerCustomFontName = '';
       saveConfig();
-      try { await delFontBlobFromDB(READER_FONT_DB_KEY); } catch (_) {}
+      try { await dbDeleteFont(READER_FONT_DB_KEY); } catch (_) {}
       await loadReaderCustomFont();
       applyReaderTypoSettings(false);
     });
@@ -40990,7 +41031,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       rsetBgImgFile.value = '';
       if (!f) return;
       try {
-        await putFontBlobToDB(READER_BGIMG_DB_KEY, f);
+        await dbPutFont(READER_BGIMG_DB_KEY, f);
         config.readerCustomBgName = String(f.name || '背景图').replace(/\.[^.]+$/, '');
         saveConfig();
         await loadReaderCustomBgImg();
@@ -41002,7 +41043,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     rsetBgImgClrBtn.addEventListener('click', async () => {
       config.readerCustomBgName = '';
       saveConfig();
-      try { await delFontBlobFromDB(READER_BGIMG_DB_KEY); } catch (_) {}
+      try { await dbDeleteFont(READER_BGIMG_DB_KEY); } catch (_) {}
       await loadReaderCustomBgImg();
       applyReaderTypoSettings(false);
     });
@@ -41180,17 +41221,128 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   };
   doc.addEventListener('click', onImmDocClick, true);
 
-  // ==================== 浮窗动态置顶层级（小狗永远最上，背包与阅读器谁后点谁在上） ====================
-  let floatTopZ = 2147483622;
+  // ==================== 浮窗动态置顶层级（严格控制在 9991-9995，永不遮挡工具箱各类弹窗，小狗 9997 始终在阅读器与背包上方） ====================
+  const floatOrder = [panel, pupBagEl, readerEl].filter(Boolean);
   const bringFloatFront = (el) => {
     if (!el) return;
-    floatTopZ = Math.min(2147483640, floatTopZ + 1);
-    el.style.zIndex = String(floatTopZ);
+    const idx = floatOrder.indexOf(el);
+    if (idx !== -1) {
+      floatOrder.splice(idx, 1);
+      floatOrder.push(el);
+    }
+    const baseZ = [9991, 9993, 9995];
+    floatOrder.forEach((node, i) => {
+      if (node) node.style.zIndex = String(baseZ[i] || 9995);
+    });
   };
-  [readerEl, pupBagEl, panel].forEach(el => {
-    if (el) el.addEventListener('pointerdown', () => bringFloatFront(el), true);
+  floatOrder.forEach(el => {
+    el.addEventListener('pointerdown', () => bringFloatFront(el), true);
   });
-  if (readerMiniPill) readerMiniPill.addEventListener('click', () => bringFloatFront(readerEl));
+
+  if (readerCloseBtn) {
+    readerCloseBtn.addEventListener('click', () => {
+      readerMinimized = false;
+      if (readerMiniPill) readerMiniPill.classList.remove('show');
+    });
+  }
+  if (readerMiniPill) {
+    let mpDrag = null;
+    readerMiniPill.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      readerMiniPill.setPointerCapture(e.pointerId);
+      const r = readerMiniPill.getBoundingClientRect();
+      mpDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top, moved: false };
+    });
+    readerMiniPill.addEventListener('pointermove', (e) => {
+      if (!mpDrag || mpDrag.id !== e.pointerId) return;
+      const dx = e.clientX - mpDrag.sx;
+      const dy = e.clientY - mpDrag.sy;
+      if (!mpDrag.moved && Math.hypot(dx, dy) > 6) mpDrag.moved = true;
+      if (mpDrag.moved) {
+        const w = readerMiniPill.offsetWidth || 96;
+        const h = readerMiniPill.offsetHeight || 28;
+        const nx = clamp(mpDrag.ox + dx, 6, Math.max(6, win.innerWidth - w - 6));
+        const ny = clamp(mpDrag.oy + dy, 8, Math.max(8, win.innerHeight - h - 8));
+        readerMiniPill.style.left = `${Math.round(nx)}px`;
+        readerMiniPill.style.top = `${Math.round(ny)}px`;
+        readerMiniPill.style.right = 'auto';
+        readerMiniPill.style.bottom = 'auto';
+      }
+    });
+    const endMpDrag = (e) => {
+      if (!mpDrag || mpDrag.id !== e.pointerId) return;
+      const wasMoved = mpDrag.moved;
+      mpDrag = null;
+      try { readerMiniPill.releasePointerCapture(e.pointerId); } catch (_) {}
+      if (!wasMoved) restoreMinimizedReader();
+    };
+    readerMiniPill.addEventListener('pointerup', endMpDrag);
+    readerMiniPill.addEventListener('pointercancel', endMpDrag);
+  }
+
+  const syncQuickDockUI = () => {
+    if (!quickDockEl) return;
+    quickDockEl.querySelector('[data-qd="imm"]')?.classList.toggle('active', Boolean(config.immersive));
+    quickDockEl.querySelector('[data-qd="mask"]')?.classList.toggle('active', Boolean(config.maskEnabled));
+    quickDockEl.querySelector('[data-qd="reader"]')?.classList.toggle('active', Boolean(readerOpen || readerMinimized));
+    quickDockEl.querySelector('[data-qd="bag"]')?.classList.toggle('active', Boolean(pupBagOpen));
+  };
+
+  const toggleQuickDock = (open) => {
+    if (!quickDockEl) return;
+    if (!open) {
+      quickDockEl.classList.remove('open');
+      return;
+    }
+    syncQuickDockUI();
+    quickDockEl.classList.add('open');
+    const br = badge.getBoundingClientRect();
+    const dw = quickDockEl.offsetWidth || 226;
+    const dh = quickDockEl.offsetHeight || 34;
+    let left = br.left + br.width / 2 - dw / 2;
+    left = clamp(left, 8, Math.max(8, win.innerWidth - dw - 8));
+    let top = br.bottom + 8;
+    if (top + dh > win.innerHeight - 10) top = Math.max(8, br.top - dh - 8);
+    quickDockEl.style.left = `${Math.round(left)}px`;
+    quickDockEl.style.top = `${Math.round(top)}px`;
+  };
+
+  if (quickDockEl) {
+    quickDockEl.addEventListener('click', (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('[data-qd]') : null;
+      if (!btn) return;
+      const act = btn.dataset.qd;
+      if (act === 'imm') {
+        toggleImmersive();
+        syncQuickDockUI();
+      } else if (act === 'imminp') {
+        toggleQuickDock(false);
+        if (!config.immersive) toggleImmersive();
+        if (typeof setImmInputOpen === 'function') {
+          setImmInputOpen(!doc.documentElement.classList.contains('st-tb-imm-show-input'));
+        }
+      } else if (act === 'mask') {
+        toggleMaskState();
+        syncQuickDockUI();
+      } else if (act === 'reader') {
+        toggleQuickDock(false);
+        if (readerMinimized) restoreMinimizedReader();
+        else toggleReader(!readerOpen);
+      } else if (act === 'bag') {
+        toggleQuickDock(false);
+        togglePupBag(!pupBagOpen);
+      } else if (act === 'hide') {
+        toggleQuickDock(false);
+        if (fullHideBtn) fullHideBtn.click();
+      }
+    });
+  }
+  const onOutsideQuickDock = (e) => {
+    if (!quickDockEl || !quickDockEl.classList.contains('open')) return;
+    if (quickDockEl.contains(e.target) || badge.contains(e.target)) return;
+    toggleQuickDock(false);
+  };
+  doc.addEventListener('pointerdown', onOutsideQuickDock);
 
   // ==================== 狗来财扩展入口 + 自动检测更新 + 一键更新自动刷新 ====================
   const GLC_EXT_VERSION = '2.0.56';
