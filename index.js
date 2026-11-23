@@ -7151,13 +7151,13 @@ function bootGoulaicaiExtension() {
     }
     #st-tb-reader.kindle-mode .st-tb-kd-status {
       display: flex;
-      align-items: center;
+      align-items: flex-start !important;
       justify-content: space-between;
       gap: 6px;
-      height: 18px;
-      padding: 0 var(--r-padx, 16px) 5px var(--r-padx, 16px);
-      align-items: flex-end;
-      line-height: 1;
+      height: auto !important;
+      box-sizing: border-box !important;
+      padding: 0 var(--r-padx, 16px) 7px var(--r-padx, 16px) !important;
+      line-height: 1 !important;
       border-radius: 0 0 4px 4px;
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
@@ -41303,6 +41303,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (!config.readerKindleMode || !readerContentEl) return;
     cancelAnimationFrame(kdPaginateRaf);
     kdPaginateRaf = win.requestAnimationFrame(() => {
+      if (readerContentEl.clientHeight < 80 || readerContentEl.clientWidth < 120) {
+        setTimeout(() => syncKindlePagination(targetPage, true), 60);
+        return;
+      }
       const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
       const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
       readerContentEl.style.setProperty('padding-top', `${py}px`, 'important');
@@ -41334,18 +41338,18 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const pageView = renderKdPageDom(kdPagesCache[kdCurPage]);
       pageView.style.height = 'auto';
       readerContentEl.appendChild(pageView);
-      // 垂直齐底排版（非章末页自动微调本页行高填满剩余像素，确保每一页下边距都与上边距完全一致）
+      // 垂直齐底排版：以亚像素高度精准对齐底部，消除所有页尾剩余空隙，使正文到第几章顶部的距离严格等于正文到屏幕上沿的距离
       if (kdCurPage < kdTotalPages - 1) {
         const baseLhPx = parseFloat(cs.lineHeight) || ((parseFloat(cs.fontSize) || 15) * clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6));
-        const usedH = pageView.scrollHeight;
+        const usedH = pageView.getBoundingClientRect().height;
         const slack = innerH - usedH;
-        if (slack > 1 && slack < baseLhPx * 3.5 && usedH > innerH * 0.65) {
+        if (slack > 0.5 && slack < baseLhPx * 4 && usedH > innerH * 0.55) {
           let loLh = baseLhPx;
-          let hiLh = baseLhPx * 1.45;
-          for (let step = 0; step < 8; step++) {
+          let hiLh = baseLhPx * 1.5;
+          for (let step = 0; step < 10; step++) {
             const midLh = (loLh + hiLh) / 2;
             pageView.style.lineHeight = `${midLh.toFixed(2)}px`;
-            if (pageView.scrollHeight <= innerH) loLh = midLh;
+            if (pageView.getBoundingClientRect().height <= innerH + 0.2) loLh = midLh;
             else hiLh = midLh;
           }
           pageView.style.lineHeight = `${loLh.toFixed(2)}px`;
