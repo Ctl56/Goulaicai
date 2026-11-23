@@ -31717,7 +31717,7 @@ function bootGoulaicaiExtension() {
   // ==================== 像素游乐厅：6 款像素小游戏（2048支持断点续玩，每日每款前3次免费） ====================
   let gameRaf = null;
   let gameRunning = false;
-  let activeGameId = 'catch'; // 'catch' | 'g2048' | 'tetris' | 'match3' | 'snake' | 'memory'
+  let activeGameId = (config.puppySaved2048 && config.puppySaved2048.inProgress) ? 'g2048' : 'catch'; // 'catch' | 'g2048' | 'tetris' | 'match3' | 'snake' | 'memory'
 
   const getTodayStr = () => {
     const d = new Date();
@@ -31884,7 +31884,7 @@ function bootGoulaicaiExtension() {
     return true;
   };
   const draw2048 = () => {
-    syncGameCanvasSize();
+    if (pxGameCanvas.width !== 720 || pxGameCanvas.height !== 720 || !pxGameCanvas.classList.contains('g2048-mode')) syncGameCanvasSize();
     const g = pxGameCtx;
     const N = g2048.size || 5;
     const W = 360;
@@ -32463,8 +32463,13 @@ function bootGoulaicaiExtension() {
   const restoreGameView = () => {
     syncGameCanvasSize();
     if (activeGameId === 'g2048' && config.puppySaved2048?.inProgress) {
-      g2048.grid = [...config.puppySaved2048.grid];
+      const _svSz = [4, 5, 6].includes(config.puppySaved2048.size) ? config.puppySaved2048.size : 5;
+      if (Array.isArray(config.puppySaved2048.grid) && config.puppySaved2048.grid.length === _svSz * _svSz) {
+        g2048.size = _svSz;
+        g2048.grid = [...config.puppySaved2048.grid];
+      }
       g2048.score = Number(config.puppySaved2048.score) || 0;
+      g2048.milestones = Array.isArray(config.puppySaved2048.milestones) ? [...config.puppySaved2048.milestones] : [];
       gameRunning = true;
       pxGameScoreEl.textContent = `得分: ${g2048.score}`;
       pxGameTimeEl.textContent = '已恢复进度';
