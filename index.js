@@ -4017,7 +4017,7 @@ function bootGoulaicaiExtension() {
       height: 100vh !important;
       max-height: 100vh !important;
       padding-top: 14px !important;
-      padding-bottom: 34px !important;
+      padding-bottom: 24px !important;
     }
     html.st-tb-immersive.st-tb-imm-show-input #form_sheld,
     html.st-tb-immersive.st-tb-imm-show-input #send_form {
@@ -4028,35 +4028,20 @@ function bootGoulaicaiExtension() {
       bottom: 0 !important;
       z-index: 2147483610 !important;
     }
-    #st-tb-imm-dock-trigger {
+    #st-tb-imm-hotzone {
       position: fixed;
-      left: 50%;
-      bottom: max(6px, env(safe-area-inset-bottom));
-      transform: translateX(-50%);
-      z-index: 2147483615;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: max(22px, env(safe-area-inset-bottom));
+      background: transparent;
       display: none;
-      align-items: center;
-      justify-content: center;
-      height: 22px;
-      padding: 0 14px;
-      border-radius: 999px;
-      border: 1px solid var(--tb-border);
-      background: var(--tb-bg);
-      color: var(--tb-sub);
-      font-size: 10.5px;
-      font-weight: 600;
-      opacity: 0.72;
-      cursor: pointer;
       pointer-events: auto;
+      z-index: 2147483605;
       touch-action: manipulation;
     }
-    html.st-tb-immersive #st-tb-imm-dock-trigger {
-      display: inline-flex;
-    }
-    html.st-tb-immersive.st-tb-imm-show-input #st-tb-imm-dock-trigger {
-      bottom: auto;
-      top: max(8px, env(safe-area-inset-top));
-      opacity: 0.85;
+    html.st-tb-immersive:not(.st-tb-imm-show-input) #st-tb-imm-hotzone {
+      display: block;
     }
 
     /* 悬浮胶囊（轻量合成层，避免隐藏/召唤时重建模糊层导致卡顿） */
@@ -5482,7 +5467,7 @@ function bootGoulaicaiExtension() {
       -webkit-user-select: none;
     }
     #st-tb-quick-dock.open {
-      display: inline-flex;
+      display: inline-flex !important;
     }
     #st-tb-root .st-tb-qd-btn {
       height: 24px !important;
@@ -6760,11 +6745,13 @@ function bootGoulaicaiExtension() {
       flex: 1;
     }
     #st-tb-reader-set-btn.st-tb-r-ico {
-      font-size: 16px !important;
-      line-height: 1 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
     }
     .st-tb-reader-set-bar {
-      max-height: 240px;
+      max-height: 250px;
       overflow-y: auto;
     }
     .st-tb-rset-chips {
@@ -6797,7 +6784,26 @@ function bootGoulaicaiExtension() {
       text-align: justify !important;
       text-justify: inter-ideograph;
       background-color: var(--r-bg, transparent);
+      background-image: var(--r-bg-img, none);
+      background-size: cover;
+      background-position: center;
       color: var(--r-fg, inherit);
+    }
+    /* 真实墨水屏颗粒纹理与微凹屏影 */
+    .st-tb-reader-content.eink-texture {
+      background-image:
+        radial-gradient(rgba(0, 0, 0, 0.045) 0.6px, transparent 0.6px),
+        radial-gradient(rgba(255, 255, 255, 0.06) 0.6px, transparent 0.6px),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.025) 0%, rgba(255, 255, 255, 0.015) 50%, rgba(0, 0, 0, 0.03) 100%);
+      background-size: 4px 4px, 6px 6px, 100% 100%;
+      background-position: 0 0, 2px 2px, 0 0;
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.16), inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+      -webkit-font-smoothing: antialiased;
+    }
+    .st-tb-reader-content.has-bg-img {
+      background-image: linear-gradient(var(--r-bg-veil, rgba(255,255,255,0)), var(--r-bg-veil, rgba(255,255,255,0))), var(--r-bg-img, none) !important;
+      background-size: cover !important;
+      background-position: center !important;
     }
     .st-tb-reader-content .st-tb-r-dropcap {
       float: left;
@@ -6846,13 +6852,13 @@ function bootGoulaicaiExtension() {
     }
     #st-tb-reader.kindle-mode .st-tb-reader-toc {
       border-radius: 4px 4px 0 0;
-      background: var(--r-bg, #dedede);
-      color: var(--r-fg, #3a3a3a);
+      background: var(--r-bg, #e3e2dc);
+      color: var(--r-fg, #262624);
     }
     #st-tb-reader.kindle-mode .st-tb-reader-content {
       border-radius: 4px 4px 0 0;
-      background-color: var(--r-bg, #dedede);
-      color: var(--r-fg, #3a3a3a);
+      background-color: var(--r-bg, #e3e2dc);
+      color: var(--r-fg, #262624);
       overflow: hidden !important;
       padding: 18px var(--r-padx, 18px) 10px var(--r-padx, 18px) !important;
       position: relative;
@@ -6865,15 +6871,13 @@ function bootGoulaicaiExtension() {
       will-change: transform;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-chap-top {
-      font-family: "Songti SC", "Noto Serif SC", Georgia, serif;
       font-size: 12px;
       letter-spacing: 0.08em;
       text-align: center;
-      opacity: 0.65;
+      opacity: 0.62;
       margin-bottom: 4px;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-chap-title {
-      font-family: "Songti SC", "Noto Serif SC", Georgia, serif;
       font-size: 16px;
       font-weight: 700;
       text-align: center;
@@ -6889,8 +6893,8 @@ function bootGoulaicaiExtension() {
       height: 22px;
       padding: 0 14px;
       border-radius: 0 0 4px 4px;
-      background-color: var(--r-bg, #dedede);
-      color: var(--r-fg, #3a3a3a);
+      background-color: var(--r-bg, #e3e2dc);
+      color: var(--r-fg, #262624);
       font-size: 10px;
       opacity: 0.92;
       flex-shrink: 0;
@@ -6922,6 +6926,7 @@ function bootGoulaicaiExtension() {
       inset: -10px -10px -10px -8px;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-chin {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -6933,6 +6938,10 @@ function bootGoulaicaiExtension() {
       user-select: none;
     }
     #st-tb-reader.kindle-mode .st-tb-kd-brand {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       font-size: 18px;
       font-weight: 600;
       letter-spacing: -0.5px;
@@ -6944,6 +6953,7 @@ function bootGoulaicaiExtension() {
       display: flex;
       align-items: center;
       gap: 4px;
+      z-index: 2;
     }
     #st-tb-root #st-tb-reader.kindle-mode .st-tb-kd-chin-btn {
       width: 22px !important;
@@ -7746,7 +7756,7 @@ function bootGoulaicaiExtension() {
         <div class="st-tb-header-actions">
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-fs-down" type="button" title="减小字号">A-</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-fs-up" type="button" title="增大字号">A+</button>
-          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-set-btn" type="button" title="阅读排版设置">≡</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-set-btn" type="button" title="阅读排版设置"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" style="display:block;"><line x1="2.5" y1="4" x2="13.5" y2="4"/><line x1="2.5" y1="8" x2="13.5" y2="8"/><line x1="2.5" y1="12" x2="13.5" y2="12"/></svg></button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-min-btn" type="button" title="最小化">−</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-full-btn" type="button" title="切换全屏">□</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-close" type="button" title="关闭">×</button>
@@ -7783,12 +7793,21 @@ function bootGoulaicaiExtension() {
           </div>
         </div>
         <div class="st-tb-rset-row">
-          <span>正文字体</span>
-          <div class="st-tb-rset-chips" id="st-tb-rset-fonts">
-            <button class="st-tb-r-chip" data-rfont="default" type="button">默认</button>
-            <button class="st-tb-r-chip" data-rfont="serif" type="button">宋体</button>
-            <button class="st-tb-r-chip" data-rfont="sans" type="button">黑体</button>
-            <button class="st-tb-r-chip" data-rfont="kaiti" type="button">楷体</button>
+          <span>导入字体</span>
+          <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
+            <button class="st-tb-r-act" id="st-tb-rset-font-imp" type="button">导入字体</button>
+            <button class="st-tb-r-act" id="st-tb-rset-font-clr" type="button">还原默认</button>
+            <span id="st-tb-rset-font-lbl" style="font-size:10px;color:var(--tb-sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:right;">默认</span>
+            <input id="st-tb-rset-font-file" type="file" accept=".ttf,.otf,.woff,.woff2" style="display:none;" />
+          </div>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>导入背景</span>
+          <div style="display:flex;align-items:center;gap:5px;flex:1;min-width:0;">
+            <button class="st-tb-r-act" id="st-tb-rset-bgimg-imp" type="button">导入图片</button>
+            <button class="st-tb-r-act" id="st-tb-rset-bgimg-clr" type="button">清除图片</button>
+            <span id="st-tb-rset-bgimg-lbl" style="font-size:10px;color:var(--tb-sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:right;">无</span>
+            <input id="st-tb-rset-bgimg-file" type="file" accept="image/*" style="display:none;" />
           </div>
         </div>
         <div class="st-tb-rset-row">
@@ -7993,12 +8012,13 @@ function bootGoulaicaiExtension() {
 
         <div id="st-tb-quick-dock" aria-label="快捷功能">
       <button class="st-tb-qd-btn" data-qd="imm" type="button">沉浸</button>
+      <button class="st-tb-qd-btn" data-qd="imminp" type="button">底栏</button>
       <button class="st-tb-qd-btn" data-qd="mask" type="button">打码</button>
       <button class="st-tb-qd-btn" data-qd="reader" type="button">阅读</button>
       <button class="st-tb-qd-btn" data-qd="bag" type="button">小狗</button>
       <button class="st-tb-qd-btn" data-qd="hide" type="button">隐藏</button>
     </div>
-    <button id="st-tb-imm-dock-trigger" type="button" title="点击召唤底部输入框">回复</button>
+    <div id="st-tb-imm-hotzone" aria-hidden="true"></div>
     <div id="st-tb-reader-mini-pill" title="点击继续阅读，按住拖动">继续阅读</div>
         <div id="st-tb-badge" title="点击展开，长按快捷菜单，按住拖动">
       <span class="st-tb-dot"></span>
@@ -9330,7 +9350,6 @@ function bootGoulaicaiExtension() {
       } catch (_) {}
     }
 
-    // 叠加微弱 WebAudio 脉冲作为音频中断时的底层兜底
     const AC_Ka = win.AudioContext || win.webkitAudioContext;
     if (AC_Ka) {
       try {
@@ -9347,7 +9366,6 @@ function bootGoulaicaiExtension() {
     }
 
     if (mode === 'strong') {
-      // 强效保活：静音循环音频 + 监听系统音频打断后自动抢回重播
       kaAudioUrl = createSilentWavUrl();
       kaAudioEl = doc.createElement('audio');
       kaAudioEl.src = kaAudioUrl;
@@ -9727,14 +9745,14 @@ function bootGoulaicaiExtension() {
         dragState.longPressed = true;
         if (typeof toggleQuickDock === 'function') toggleQuickDock(true);
       }
-    }, 360);
+    }, 280);
   });
 
   badge.addEventListener('pointermove', (e) => {
     if (!dragState || dragState.id !== e.pointerId) return;
     const dx = e.clientX - dragState.startX;
     const dy = e.clientY - dragState.startY;
-    if (!dragState.moved && Math.hypot(dx, dy) > 6) {
+    if (!dragState.moved && Math.hypot(dx, dy) > 14) {
       dragState.moved = true;
       clearTimeout(badgeLongPressTimer);
       if (typeof toggleQuickDock === 'function') toggleQuickDock(false);
@@ -40699,7 +40717,14 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const rsetIndentBtn = root.querySelector('#st-tb-rset-indent');
   const rsetDropCapBtn = root.querySelector('#st-tb-rset-dropcap');
   const rsetPaperBtns = Array.from(root.querySelectorAll('[data-rpaper]'));
-  const rsetFontBtns = Array.from(root.querySelectorAll('[data-rfont]'));
+  const rsetFontImpBtn = root.querySelector('#st-tb-rset-font-imp');
+  const rsetFontClrBtn = root.querySelector('#st-tb-rset-font-clr');
+  const rsetFontFile = root.querySelector('#st-tb-rset-font-file');
+  const rsetFontLbl = root.querySelector('#st-tb-rset-font-lbl');
+  const rsetBgImgImpBtn = root.querySelector('#st-tb-rset-bgimg-imp');
+  const rsetBgImgClrBtn = root.querySelector('#st-tb-rset-bgimg-clr');
+  const rsetBgImgFile = root.querySelector('#st-tb-rset-bgimg-file');
+  const rsetBgImgLbl = root.querySelector('#st-tb-rset-bgimg-lbl');
   const kdSideBtn = root.querySelector('#st-tb-kd-side-btn');
   const kdChinEl = root.querySelector('#st-tb-kd-chin');
   const kdChapLbl = root.querySelector('#st-tb-kd-chap-lbl');
@@ -40709,19 +40734,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const readerBarEl = root.querySelector('.st-tb-reader-bar');
 
   const READER_PAPER_PRESETS = {
-    theme: { bg: '', fg: '' },
-    eink_light: { bg: '#dedede', fg: '#2f2f2f' },
-    eink_warm: { bg: '#e8e3d8', fg: '#302b24' },
-    eink_dark: { bg: '#1c1c1c', fg: '#d6d6d6' },
-    paper_cream: { bg: '#f6efe2', fg: '#362e26' },
-    paper_matcha: { bg: '#dce8dc', fg: '#28362a' },
-    paper_kraft: { bg: '#eadcc5', fg: '#3d2f22' },
-  };
-  const READER_FONT_MAP = {
-    default: 'inherit',
-    serif: '"Songti SC", "Noto Serif SC", "STSong", Georgia, serif',
-    sans: '-apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif',
-    kaiti: '"Kaiti SC", "STKaiti", "KaiTi", serif',
+    theme: { bg: '', fg: '', eink: false },
+    eink_light: { bg: '#e3e2dc', fg: '#262624', eink: true },
+    eink_warm: { bg: '#ebe6da', fg: '#2d2822', eink: true },
+    eink_dark: { bg: '#191918', fg: '#cfcec8', eink: true },
+    paper_cream: { bg: '#f6efe2', fg: '#362e26', eink: false },
+    paper_matcha: { bg: '#dce8dc', fg: '#28362a', eink: false },
+    paper_kraft: { bg: '#eadcc5', fg: '#3d2f22', eink: false },
   };
   const hexToRgbaStr = (hex, alpha) => {
     const h = String(hex || '').replace('#', '').trim();
@@ -40731,6 +40750,57 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const b = parseInt(h.slice(4, 6), 16);
     if (!Number.isFinite(r) || !Number.isFinite(g) || !Number.isFinite(b)) return '';
     return `rgba(${r}, ${g}, ${b}, ${clamp(alpha, 0.25, 1).toFixed(2)})`;
+  };
+
+  // 阅读器自定义字体与自定义背景图 IndexedDB 持久化
+  const READER_FONT_DB_KEY = '__st_reader_custom_font__';
+  const READER_BGIMG_DB_KEY = '__st_reader_custom_bgimg__';
+  let readerCustomFontObjUrl = '';
+  let readerCustomBgObjUrl = '';
+  let readerCustomFontStyleEl = null;
+
+  const loadReaderCustomFont = async () => {
+    try {
+      if (!config.readerCustomFontName) {
+        if (readerCustomFontStyleEl) readerCustomFontStyleEl.textContent = '';
+        if (rsetFontLbl) rsetFontLbl.textContent = '默认';
+        return;
+      }
+      const blob = await getFontBlobFromDB(READER_FONT_DB_KEY);
+      if (!blob) return;
+      if (readerCustomFontObjUrl) try { win.URL.revokeObjectURL(readerCustomFontObjUrl); } catch (_) {}
+      readerCustomFontObjUrl = win.URL.createObjectURL(blob);
+      if (!readerCustomFontStyleEl) {
+        readerCustomFontStyleEl = doc.createElement('style');
+        readerCustomFontStyleEl.id = 'st-tb-reader-custom-font-style';
+        doc.head.appendChild(readerCustomFontStyleEl);
+      }
+      readerCustomFontStyleEl.textContent = `@font-face { font-family: "StReaderCustomFont"; src: url("${readerCustomFontObjUrl}"); font-display: swap; }`;
+      if (rsetFontLbl) rsetFontLbl.textContent = String(config.readerCustomFontName).slice(0, 12);
+      if (readerContentEl) readerContentEl.style.setProperty('--r-font', '"StReaderCustomFont", inherit');
+    } catch (_) {}
+  };
+
+  const loadReaderCustomBgImg = async () => {
+    try {
+      if (!config.readerCustomBgName) {
+        if (readerContentEl) {
+          readerContentEl.style.removeProperty('--r-bg-img');
+          readerContentEl.classList.remove('has-bg-img');
+        }
+        if (rsetBgImgLbl) rsetBgImgLbl.textContent = '无';
+        return;
+      }
+      const blob = await getFontBlobFromDB(READER_BGIMG_DB_KEY);
+      if (!blob) return;
+      if (readerCustomBgObjUrl) try { win.URL.revokeObjectURL(readerCustomBgObjUrl); } catch (_) {}
+      readerCustomBgObjUrl = win.URL.createObjectURL(blob);
+      if (readerContentEl) {
+        readerContentEl.style.setProperty('--r-bg-img', `url("${readerCustomBgObjUrl}")`);
+        readerContentEl.classList.add('has-bg-img');
+      }
+      if (rsetBgImgLbl) rsetBgImgLbl.textContent = String(config.readerCustomBgName).slice(0, 12);
+    } catch (_) {}
   };
 
   // Kindle 横向真实分页引擎
@@ -40790,7 +40860,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
   };
 
-  // Kindle 屏幕左右滑动翻页 + 左右轻点翻页
   if (readerContentEl) {
     let kdSwipe = null;
     readerContentEl.addEventListener('pointerdown', (e) => {
@@ -40833,9 +40902,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const dropCap = Boolean(config.readerDropCap);
     const presetKey = config.readerPaperPreset || (isKd ? 'eink_light' : 'theme');
     const presetObj = READER_PAPER_PRESETS[presetKey] || READER_PAPER_PRESETS.theme;
-    const fontKey = config.readerFontFamily || (isKd ? 'serif' : 'default');
     const bgHex = config.readerBgColor || presetObj.bg;
     const fgHex = config.readerTextColor || presetObj.fg;
+    const useEinkTex = Boolean(presetObj.eink && !config.readerCustomBgName && !config.readerBgColor);
 
     if (readerEl) {
       readerEl.classList.toggle('kindle-mode', isKd);
@@ -40856,7 +40925,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       readerContentEl.style.setProperty('--r-lh', String(lh));
       readerContentEl.style.setProperty('--r-gap', `${gp}px`);
       readerContentEl.style.setProperty('--r-indent', ind ? '2em' : '0');
-      readerContentEl.style.setProperty('--r-font', READER_FONT_MAP[fontKey] || 'inherit');
+      readerContentEl.style.setProperty('--r-font', config.readerCustomFontName ? '"StReaderCustomFont", inherit' : 'inherit');
+      readerContentEl.classList.toggle('eink-texture', useEinkTex);
+      if (config.readerCustomBgName) {
+        const veilA = clamp(1 - bgOp, 0, 0.75);
+        readerContentEl.style.setProperty('--r-bg-veil', `rgba(255,255,255,${veilA.toFixed(2)})`);
+      }
     }
     if (rsetPadX) rsetPadX.value = String(px);
     if (rsetPadXVal) rsetPadXVal.textContent = `${px}px`;
@@ -40871,8 +40945,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (rsetKindleBtn) rsetKindleBtn.classList.toggle('accent', isKd);
     if (rsetIndentBtn) rsetIndentBtn.classList.toggle('accent', ind);
     if (rsetDropCapBtn) rsetDropCapBtn.classList.toggle('accent', dropCap);
-    rsetPaperBtns.forEach(b => b.classList.toggle('accent', !config.readerBgColor && b.dataset.rpaper === presetKey));
-    rsetFontBtns.forEach(b => b.classList.toggle('accent', b.dataset.rfont === fontKey));
+    rsetPaperBtns.forEach(b => b.classList.toggle('accent', !config.readerBgColor && !config.readerCustomBgName && b.dataset.rpaper === presetKey));
     if (kdFullBtn) kdFullBtn.textContent = config.readerFull ? '◫' : '□';
 
     if (reRenderChap && currentChapters.length) {
@@ -40883,6 +40956,57 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
   };
   applyReaderTypoSettings(false);
+  loadReaderCustomFont();
+  loadReaderCustomBgImg();
+
+  if (rsetFontImpBtn && rsetFontFile) {
+    rsetFontImpBtn.addEventListener('click', () => rsetFontFile.click());
+    rsetFontFile.addEventListener('change', async () => {
+      const f = rsetFontFile.files?.[0];
+      rsetFontFile.value = '';
+      if (!f) return;
+      try {
+        await putFontBlobToDB(READER_FONT_DB_KEY, f);
+        config.readerCustomFontName = String(f.name || '自定义字体').replace(/\.[^.]+$/, '');
+        saveConfig();
+        await loadReaderCustomFont();
+        applyReaderTypoSettings(false);
+      } catch (_) {}
+    });
+  }
+  if (rsetFontClrBtn) {
+    rsetFontClrBtn.addEventListener('click', async () => {
+      config.readerCustomFontName = '';
+      saveConfig();
+      try { await delFontBlobFromDB(READER_FONT_DB_KEY); } catch (_) {}
+      await loadReaderCustomFont();
+      applyReaderTypoSettings(false);
+    });
+  }
+  if (rsetBgImgImpBtn && rsetBgImgFile) {
+    rsetBgImgImpBtn.addEventListener('click', () => rsetBgImgFile.click());
+    rsetBgImgFile.addEventListener('change', async () => {
+      const f = rsetBgImgFile.files?.[0];
+      rsetBgImgFile.value = '';
+      if (!f) return;
+      try {
+        await putFontBlobToDB(READER_BGIMG_DB_KEY, f);
+        config.readerCustomBgName = String(f.name || '背景图').replace(/\.[^.]+$/, '');
+        saveConfig();
+        await loadReaderCustomBgImg();
+        applyReaderTypoSettings(false);
+      } catch (_) {}
+    });
+  }
+  if (rsetBgImgClrBtn) {
+    rsetBgImgClrBtn.addEventListener('click', async () => {
+      config.readerCustomBgName = '';
+      saveConfig();
+      try { await delFontBlobFromDB(READER_BGIMG_DB_KEY); } catch (_) {}
+      await loadReaderCustomBgImg();
+      applyReaderTypoSettings(false);
+    });
+  }
 
   const toggleReaderSetBar = () => {
     if (!readerSetBar) return;
@@ -40924,7 +41048,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   });
   root.querySelector('#st-tb-kd-close')?.addEventListener('click', () => { readerCloseBtn?.click(); });
 
-  // Kindle 底部边框支持按住拖动整个阅读器
   if (kdChinEl) {
     let kdDrag = null;
     kdChinEl.addEventListener('pointerdown', (e) => {
@@ -40983,13 +41106,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       applyReaderTypoSettings(false);
     });
   });
-  rsetFontBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      config.readerFontFamily = btn.dataset.rfont;
-      saveConfig();
-      applyReaderTypoSettings(false);
-    });
-  });
   if (rsetBgCol) {
     rsetBgCol.addEventListener('input', () => {
       config.readerBgColor = rsetBgCol.value;
@@ -41032,11 +41148,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     rsetGap.addEventListener('change', () => saveConfig());
   }
 
-  // ==================== 沉浸模式一键召唤/收起底部输入栏 ====================
-  const immDockTrigger = root.querySelector('#st-tb-imm-dock-trigger');
+  // ==================== 沉浸模式隐形底边热区召唤底栏（页面零按钮、零遮挡） ====================
+  const immHotzone = root.querySelector('#st-tb-imm-hotzone');
   const setImmInputOpen = (open) => {
     doc.documentElement.classList.toggle('st-tb-imm-show-input', Boolean(open));
-    if (immDockTrigger) immDockTrigger.textContent = open ? '收起底栏' : '回复';
     if (open) {
       setTimeout(() => {
         const ta = doc.getElementById('send_textarea');
@@ -41044,19 +41159,26 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }, 60);
     }
   };
-  if (immDockTrigger) {
-    immDockTrigger.addEventListener('click', () => {
-      const next = !doc.documentElement.classList.contains('st-tb-imm-show-input');
-      setImmInputOpen(next);
+  if (immHotzone) {
+    let hzY = 0;
+    immHotzone.addEventListener('pointerdown', (e) => { hzY = e.clientY; });
+    immHotzone.addEventListener('pointerup', (e) => {
+      if (!config.immersive) return;
+      if (Math.abs(e.clientY - hzY) < 12 || (hzY - e.clientY) > 14) {
+        setImmInputOpen(true);
+      }
     });
   }
-  const onImmSendClick = (e) => {
+  const onImmDocClick = (e) => {
     if (!doc.documentElement.classList.contains('st-tb-imm-show-input')) return;
     if (e.target && e.target.closest && e.target.closest('#send_but')) {
       setTimeout(() => setImmInputOpen(false), 180);
+      return;
     }
+    if (e.target && e.target.closest && (e.target.closest('#send_form') || e.target.closest('#form_sheld') || e.target.closest('#st-tb-root'))) return;
+    setImmInputOpen(false);
   };
-  doc.addEventListener('click', onImmSendClick, true);
+  doc.addEventListener('click', onImmDocClick, true);
 
   // ==================== 浮窗动态置顶层级（小狗永远最上，背包与阅读器谁后点谁在上） ====================
   let floatTopZ = 2147483622;
@@ -41330,7 +41452,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     clearTimeout(win.__stPupMusicPlayTimer);
     try { if (win.__stPupMusicAudio) { win.__stPupMusicAudio.pause(); win.__stPupMusicAudio.src = ''; } } catch (_) {}
     clearTimeout(pupAutoDressTimer);
-    doc.removeEventListener('click', onImmSendClick, true);
+    doc.removeEventListener('click', onImmDocClick, true);
     doc.documentElement.classList.remove('st-tb-imm-show-input');
     doc.removeEventListener('pointerdown', onOutsideQuickDock);
     doc.getElementById('st-glc-ext-wrap')?.remove();
