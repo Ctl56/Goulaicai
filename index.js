@@ -1,4 +1,4 @@
-// SillyTavern UI Extension: 狗来财 (v2.0.80)
+// SillyTavern UI Extension: 狗来财 (v2.0.94)
 let __goulaicaiExtBooted = false;
 
 function bootGoulaicaiExtension() {
@@ -961,6 +961,11 @@ function bootGoulaicaiExtension() {
     { id: 'ach_dig_lucky_3', title: '黄金铲土官', desc: '累计从桌面挖宝集齐至少 3 件限定装扮', reward: 12, tier: 3, frame: 'bells', bg: 'linear-gradient(120deg,#fff7d6,#ffeed6,#fff9e3)', bd: '#e0a63e', fg: '#6b4308', icon: 'gold_shovel' },
     { id: 'hidden_midnight_snack', title: '夜宵偷吃贼', desc: '在凌晨 0 点到 5 点之间给小狗喂过食', reward: 6, tier: 2, hidden: true, frame: 'moons', bg: 'linear-gradient(120deg,#eaf0ff,#f0eaff,#e8f6ff)', bd: '#7e94e0', fg: '#25346e', icon: 'night_cookie' },
     { id: 'hidden_trail_20', title: '步步生花汪', desc: '解锁 3 款以上足迹并开启足迹陪伴散步', reward: 6, tier: 2, hidden: true, frame: 'ribbons', bg: 'linear-gradient(120deg,#ffecf3,#fff5e8,#ffeef6)', bd: '#e688ab', fg: '#782444', icon: 'step_ribbon' },
+    { id: 'ach_ck_30', title: '三十日之约', desc: '连续签到满 30 天，收获暖绒针织开衫与扭蛋券', reward: 8, tier: 2, frame: 'ribbons', bg: 'linear-gradient(120deg,#fff4e6,#ffece6,#fff8ee)', bd: '#d9986a', fg: '#6b3b18', icon: 'ck_calendar_30' },
+    { id: 'ach_ck_52', title: '五十二天心动', desc: '连续签到满 52 天，收获头顶小情书与扭蛋券', reward: 10, tier: 3, frame: 'hearts', bg: 'linear-gradient(120deg,#ffecf2,#fff4f7,#ffe8ee)', bd: '#e07a94', fg: '#752239', icon: 'ck_wax_envelope' },
+    { id: 'ach_ck_60', title: '双月同行', desc: '连续签到满 60 天，收获邮戳明信片动态气泡', reward: 10, tier: 3, frame: 'clouds', bg: 'linear-gradient(120deg,#f5efe6,#eef4ff,#fffaf0)', bd: '#b88a68', fg: '#543520', icon: 'ck_hourglass_gold' },
+    { id: 'ach_ck_99', title: '九十九日长情', desc: '连续签到满 99 天，收获琥珀标本动态头像框', reward: 12, tier: 3, frame: 'petals', bg: 'linear-gradient(120deg,#fff6db,#fae4b4,#fff8e6)', bd: '#d49642', fg: '#69410a', icon: 'ck_amber_ginkgo' },
+    { id: 'ach_ck_100', title: '百日纪念章', desc: '累计签到满 100 天，收获百日纪念斗篷与扭蛋券', reward: 15, tier: 4, frame: 'pearl_lace', bg: 'linear-gradient(115deg,#ffe8ec,#fff2d6,#ffe4e8,#fff5e0)', bd: '#c9566b', fg: '#6e192a', icon: 'ck_century_medal' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -2549,10 +2554,13 @@ function bootGoulaicaiExtension() {
     { id: 'outfit_bond_lv10', name: '[好感Lv10] 十级星纱礼裙' },
     { id: 'bday_cake_dress', name: '奶油生日礼裙' },
     { id: 'fest_lucky_cape', name: '瑞雪福运披风' },
+    { id: 'ck_outfit_knit_cardigan', name: '暖绒针织开衫' },
+    { id: 'ck_outfit_century_cloak', name: '百日纪念斗篷' },
   ];
   const SPECIAL_EVENT_BUBBLES = [
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'strawberry', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'dot_heart' }], desc: '生日当天专属限定：奶油草莓金边生日纪念气泡框' },
+    { id: 'bub_ck_vintage_post', name: '[签到60天] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
     { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
@@ -2562,6 +2570,7 @@ function bootGoulaicaiExtension() {
   const SPECIAL_EVENT_AVATAR_FRAMES = [
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'sakura', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'berry' }], desc: '生日当天专属动态限定：奶油草莓小皇冠飘彩头像框' },
+    { id: 'af_ck_amber_press', name: '[签到99天] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
   ];
   const SECRET_ADV_TRAILS = [
@@ -2624,6 +2633,7 @@ function bootGoulaicaiExtension() {
     presetPinnedIds: [],
     presetSnapshots: {},
     charPreferredPreset: {},
+    puppyCheckin: { lastDate: '', streak: 0, total: 0 },
     charSortMode: 'default',
     effect: 'none', // 'none' | 'petal' | 'rain' | 'snow' | 'leaf' | 'firefly'
     puppyEnabled: false,
@@ -3457,6 +3467,36 @@ function bootGoulaicaiExtension() {
       border: solid var(--tb-bg, #fff) !important;
       border-width: 0 2px 2px 0 !important;
       transform: rotate(45deg) !important;
+    }
+    .st-pr-edit-top-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    #st-pr-edit-name,
+    #st-pr-edit-role {
+      height: 30px !important;
+      min-height: 30px !important;
+      max-height: 30px !important;
+      margin: 0 !important;
+      padding: 0 8px !important;
+      line-height: 28px !important;
+      box-sizing: border-box !important;
+    }
+    #st-pr-edit-name { flex: 1; min-width: 0; }
+    #st-pr-edit-role { width: 98px; flex: none; }
+    .st-pr-edit-find-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      gap: 4px;
+      align-items: center;
+    }
+    .st-pr-edit-find-row .st-tb-input {
+      height: 28px !important;
+      min-height: 28px !important;
+      margin: 0 !important;
+      padding: 0 7px !important;
+      box-sizing: border-box !important;
     }
     .st-pr-flash-highlight {
       outline: 2px solid #7aa2f7 !important;
@@ -5320,8 +5360,18 @@ function bootGoulaicaiExtension() {
       align-items: center;
       gap: 8px;
       padding: 6px;
-      background: #f5ecdc;
-      border: 2px solid #3b2a22;
+      background: var(--px-card, #ffffff);
+      border: 2px solid var(--px-border, #bfa4ae);
+      color: var(--px-fg, #3a2d24);
+    }
+    #st-tb-pup-bag,
+    #st-tb-pup-bag * {
+      touch-action: manipulation !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+    #st-tb-shop-grid[data-own-filter="owned"] > [data-own="0"],
+    #st-tb-shop-grid[data-own-filter="unowned"] > [data-own="1"] {
+      display: none !important;
     }
     #st-px-shop-preview {
       width: 66px;
@@ -5949,6 +5999,9 @@ function bootGoulaicaiExtension() {
     #st-tb-puppy-bubble.bub-bday-cake { background: linear-gradient(125deg,#fcf6ea,#faeff3,#fffdf7); border-color: #d4b07e; color: #6b4938; box-shadow: 0 2px 9px rgba(212,176,126,0.4); }
     #st-tb-puppy-bubble.bub-bday-cake::after { background: #fbf2ee; border-color: #d4b07e; }
     #st-tb-puppy-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
+        #st-tb-puppy-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
+    #st-tb-puppy-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
+    .af-ck-amber-press { border-color: #d49642; background: linear-gradient(135deg,#fff8e6,#fae3b4,#f5cf84); box-shadow: 0 0 0 1px #fffdf5, 0 2px 10px rgba(212,150,66,0.46); }
     #st-tb-puppy-bubble.bub-fest-lantern::after { background: #f8ece1; border-color: #c97e7e; }
     .st-px-gacha-res-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin: 6px 0; text-align: left; }
     .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: #4f3a43; line-height: 1.3; }
@@ -6575,6 +6628,10 @@ function bootGoulaicaiExtension() {
           <div id="st-px-act-daily-view">
           <div class="st-px-adv-card" id="st-px-festival-box" style="display:none;background:#f3ebee;border-color:#e07a94;"></div>
           <div class="st-px-subhead"><span>日常互动</span></div>
+          <div id="st-px-checkin-bar" class="st-px-adv-card" style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 7px;margin-bottom:5px;font-size:10.5px;">
+            <span id="st-px-checkin-txt" style="font-weight:700;color:inherit;">每日签到领小狗币</span>
+            <button class="st-px-btn care" id="st-px-checkin-btn" type="button" style="height:20px;padding:0 8px;font-size:10px;line-height:18px;">签到领币</button>
+          </div>
           <div class="st-px-grid-3" style="margin-bottom:5px;">
             <button class="st-px-btn care" data-pup-act="feed" type="button">喂狗粮</button>
             <button class="st-px-btn care" data-pup-act="drink" type="button">喂喝水</button>
@@ -6674,7 +6731,7 @@ function bootGoulaicaiExtension() {
               <div id="st-px-diary-note-show" style="display:none;font-size:10px;padding:4px 6px;border-left:2px solid var(--px-border,#bfa4ae);background:var(--px-bg-soft,#f3ebee);margin-bottom:5px;"></div>
             </div>
             <div style="display:flex;gap:4px;">
-              <input id="st-px-diary-note-inp" class="st-px-inp" type="text" maxlength="40" placeholder="给今天的像素手账贴一句心情补记..." style="flex:1;height:24px;font-size:10px;" />
+              <input id="st-px-diary-note-inp" class="st-px-inp" type="text" maxlength="40" placeholder="给今天的像素手账贴一句心情补记" style="flex:1;height:24px;font-size:10px;" />
               <button class="st-px-btn care" id="st-px-diary-note-save" type="button" style="height:24px;padding:0 8px;font-size:10px;">贴上</button>
             </div>
           </div>
@@ -6934,6 +6991,10 @@ function bootGoulaicaiExtension() {
               <button class="st-px-btn" data-2048-size="4" type="button">经典 4x4</button>
               <button class="st-px-btn active" data-2048-size="5" type="button">初级 5x5</button>
               <button class="st-px-btn" data-2048-size="6" type="button">进阶 6x6</button>
+            </div>
+            <div class="st-px-grid-2" id="st-px-mem-mode-bar" style="display:none;margin-bottom:4px;gap:4px;">
+              <button class="st-px-btn active" data-mem-mode="normal" type="button">普通 4x4</button>
+              <button class="st-px-btn" data-mem-mode="hard" type="button">困难 8x8</button>
             </div>
             <canvas id="st-px-game-canvas" width="144" height="144"></canvas>
             <div class="st-px-gamepad-bar" id="st-px-game-ctrl">
@@ -7244,7 +7305,7 @@ function bootGoulaicaiExtension() {
             <button class="st-tb-mini-btn" id="st-se-delword-btn" type="button">删词</button>
           </div>
           <div class="st-tb-tip" id="st-se-shield-tip" style="margin:0;"></div>
-          <textarea class="st-tb-textarea" id="st-se-textarea" style="min-height:260px;line-height:1.65;font-size:12.5px;" placeholder="这里只显示可见正文，支持自由敲空行和删改..."></textarea>
+          <textarea class="st-tb-textarea" id="st-se-textarea" style="min-height:260px;line-height:1.65;font-size:12.5px;" placeholder="这里只显示可见正文，支持自由敲空行和删改"></textarea>
         </div>
         <div class="st-cm-modal-foot">
           <button class="st-tb-btn" id="st-se-modal-cancel" type="button">取消</button>
@@ -7254,24 +7315,32 @@ function bootGoulaicaiExtension() {
     </div>
 
         <div class="st-cm-modal-mask" id="st-pr-edit-modal" style="z-index:10042;">
-      <div class="st-cm-modal" style="width:min(440px,100%);">
+      <div class="st-cm-modal" style="width:min(560px,calc(100vw - 20px));max-height:88vh;">
         <div class="st-cm-modal-head">
-          <span id="st-pr-edit-title">编辑预设条目</span>
-          <div style="display:flex;gap:4px;align-items:center;">
+          <span id="st-pr-edit-title" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">编辑预设条目</span>
+          <div style="display:flex;gap:4px;align-items:center;flex-shrink:0;">
+            <button class="st-tb-mini-btn" id="st-pr-edit-undo" type="button" style="display:none;">撤回</button>
+            <button class="st-tb-mini-btn" id="st-pr-edit-redo" type="button" style="display:none;">前进</button>
             <button class="st-tb-mini-btn" id="st-pr-edit-native" type="button">原生编辑</button>
             <button class="st-tb-mini-btn" id="st-pr-edit-close" type="button">关闭</button>
           </div>
         </div>
         <div class="st-cm-modal-body">
-          <div class="st-tb-row">
+          <div class="st-pr-edit-top-row">
             <input class="st-tb-input" id="st-pr-edit-name" type="text" placeholder="条目名称" />
-            <select class="st-tb-select" id="st-pr-edit-role" style="width:96px;flex:none;">
+            <select class="st-tb-select" id="st-pr-edit-role">
               <option value="system">System</option>
               <option value="user">User</option>
               <option value="assistant">Assistant</option>
             </select>
           </div>
-          <textarea class="st-tb-textarea" id="st-pr-edit-content" style="min-height:240px;line-height:1.6;font-size:12px;" placeholder="预设条目正文内容..."></textarea>
+          <div class="st-pr-edit-find-row">
+            <input class="st-tb-input" id="st-pr-edit-find" type="text" placeholder="查找" />
+            <button class="st-tb-mini-btn" id="st-pr-edit-find-next" type="button">查找</button>
+            <input class="st-tb-input" id="st-pr-edit-rep" type="text" placeholder="替换为" />
+            <button class="st-tb-mini-btn" id="st-pr-edit-rep-all" type="button">替换</button>
+          </div>
+          <textarea class="st-tb-textarea" id="st-pr-edit-content" style="min-height:340px;height:46vh;line-height:1.65;font-size:12.5px;" placeholder="预设条目正文内容"></textarea>
         </div>
         <div class="st-cm-modal-foot">
           <button class="st-tb-btn" id="st-pr-edit-cancel" type="button">取消</button>
@@ -7352,20 +7421,36 @@ function bootGoulaicaiExtension() {
             </div>
             <div class="st-pr-snap-box" id="st-pr-snap-box">
               <div class="st-tb-row">
-                <input class="st-tb-input" id="st-pr-snap-name" type="text" placeholder="输入方案名..." />
+                <input class="st-tb-input" id="st-pr-snap-name" type="text" placeholder="输入方案名" />
                 <button class="st-tb-mini-btn active" id="st-pr-snap-save" type="button">存当前开关</button>
               </div>
               <div class="st-pr-snap-list" id="st-pr-snap-list"></div>
             </div>
             <div class="st-tb-row">
               <div class="st-pr-search-wrap">
-                <input class="st-tb-input" id="st-pr-search" type="text" placeholder="搜预设条目..." />
+                <input class="st-tb-input" id="st-pr-search" type="text" placeholder="搜预设条目" />
                 <button class="st-pr-search-clear" id="st-pr-search-clear" type="button" title="清空搜索">×</button>
               </div>
               <button class="st-tb-mini-btn" id="st-pr-only-on" type="button" title="仅显示已开启的条目">仅已开</button>
               <button class="st-tb-mini-btn" id="st-pr-list-toggle" type="button">展开</button>
             </div>
             <div class="st-pr-list" id="st-pr-list"></div>
+          </div>
+
+          <div class="st-tb-section">
+            <div class="st-tb-label">
+              <span>正则快捷开关</span>
+              <button class="st-tb-mini-btn" id="st-rx-refresh" type="button">刷新</button>
+            </div>
+            <div class="st-tb-row">
+              <div class="st-pr-search-wrap">
+                <input class="st-tb-input" id="st-rx-search" type="text" placeholder="搜索正则" />
+                <button class="st-pr-search-clear" id="st-rx-search-clear" type="button" title="清空搜索">×</button>
+              </div>
+              <button class="st-tb-mini-btn" id="st-rx-only-on" type="button">仅已开</button>
+              <button class="st-tb-mini-btn" id="st-rx-toggle" type="button">展开</button>
+            </div>
+            <div class="st-pr-list" id="st-rx-list"></div>
           </div>
 
           <div class="st-tb-section">
@@ -7472,7 +7557,7 @@ function bootGoulaicaiExtension() {
               <button class="st-tb-mini-btn" id="st-tb-chat-refresh" type="button">刷新</button>
             </div>
             <div class="st-tb-row">
-              <input class="st-tb-input" id="st-tb-chat-filter" type="text" placeholder="筛选聊天名称..." />
+              <input class="st-tb-input" id="st-tb-chat-filter" type="text" placeholder="筛选聊天名称" />
             </div>
             <div class="st-tb-chat-list" id="st-tb-chat-list"></div>
           </div>
@@ -7576,7 +7661,7 @@ function bootGoulaicaiExtension() {
               <div class="st-tb-field-box">
                 <span>主页头像链接（或传本地）</span>
                 <div class="st-tb-row">
-                  <input class="st-tb-input" id="st-ig-avatar-url" type="text" placeholder="粘贴头像图片链接..." />
+                  <input class="st-tb-input" id="st-ig-avatar-url" type="text" placeholder="粘贴头像图片链接" />
                   <button class="st-tb-mini-btn" id="st-ig-avatar-upload" type="button">传本地</button>
                   <input id="st-ig-avatar-file" type="file" accept="image/*" style="display:none;" />
                 </div>
@@ -7603,7 +7688,7 @@ function bootGoulaicaiExtension() {
               </div>
               <div class="st-tb-field-box">
                 <span>热切换圆环文字（逗号或换行隔开，不限数量，可一直加）</span>
-                <textarea class="st-tb-textarea" id="st-ig-stories" style="min-height:48px;" placeholder="Story 1, Story 2, Story 3..."></textarea>
+                <textarea class="st-tb-textarea" id="st-ig-stories" style="min-height:48px;" placeholder="Story 1, Story 2, Story 3"></textarea>
               </div>
               <div class="st-tb-row" style="justify-content:space-between;align-items:center;">
                 <span style="font-size:11px;color:var(--tb-sub);">卡片圆角：<span id="st-ig-radius-val">4px</span></span>
@@ -7654,7 +7739,7 @@ function bootGoulaicaiExtension() {
             </div>
             <div class="st-cm-grp-mgr" id="st-cm-grp-mgr"></div>
             <div class="st-cm-search-row">
-              <input class="st-tb-input" id="st-cm-search-input" type="text" placeholder="搜索角色名、标签或世界书..." />
+              <input class="st-tb-input" id="st-cm-search-input" type="text" placeholder="搜索角色名、标签或世界书" />
               <select class="st-tb-select" id="st-cm-sort-select" title="角色卡列表排序方式">
                 <option value="default">默认排序</option>
                 <option value="newest">最新导入</option>
@@ -7690,7 +7775,7 @@ function bootGoulaicaiExtension() {
               </div>
               <div class="st-cm-grp-mgr" id="st-pm-grp-mgr"></div>
               <div class="st-tb-row" style="margin-bottom:6px;">
-                <input class="st-tb-input" id="st-pm-search-input" type="text" placeholder="搜索面具名、备注或设定..." />
+                <input class="st-tb-input" id="st-pm-search-input" type="text" placeholder="搜索面具名、备注或设定" />
               </div>
               <div class="st-cm-filter-bar" id="st-pm-filter-bar"></div>
               <div class="st-cm-char-list" id="st-pm-list"></div>
@@ -8119,6 +8204,8 @@ function bootGoulaicaiExtension() {
   const pxGameCtrlEl = root.querySelector('#st-px-game-ctrl');
   const pxGame2048ModeBar = root.querySelector('#st-px-2048-mode-bar');
   const pxGame2048ModeBtns = Array.from(root.querySelectorAll('[data-2048-size]'));
+  const pxGameMemModeBar = root.querySelector('#st-px-mem-mode-bar');
+  const pxGameMemModeBtns = Array.from(root.querySelectorAll('[data-mem-mode]'));
   const pxGameRotBtn = root.querySelector('#st-px-game-rot');
   const pxGameStartBtn = root.querySelector('#st-px-game-start');
   const pxGameFinishBtn = root.querySelector('#st-px-game-finish');
@@ -11953,6 +12040,18 @@ function bootGoulaicaiExtension() {
       for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#ffd1e1' : '#ffffff');
       for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffe478' : '#ff9eb5');
       for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#ffe8c2');
+    } else if (outfit === 'ck_outfit_knit_cardigan') {
+      // [签到30天限定] 暖绒针织开衫：燕麦奶咖针织纹理配中间小木扣
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#f5efe6' : '#d6b494');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#7a4e32' : (x % 2 === 0 ? '#e3c7ab' : '#cfa882'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x === 4 ? '#f5efe6' : (x % 2 === 0 ? '#cfa882' : '#e3c7ab'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x === 4 ? '#7a4e32' : '#c29972');
+    } else if (outfit === 'ck_outfit_century_cloak') {
+      // [累计100天限定] 百日纪念斗篷：深酒红绒边配鎏金领扣
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#f5d26b' : '#fff6e8');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#f5d26b' : '#8f263b');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#f5d26b' : '#a8324a');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#fff6e8');
     } else if (outfit === 'fest_lucky_cape') {
       // [节日限定] 瑞雪福运披风：绯红暖绒金边节日披风
       for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#ffffff');
@@ -13746,6 +13845,15 @@ function bootGoulaicaiExtension() {
       // 莓果卷卷马尾：左右对称莓粉卷发双马尾配薄荷蝴蝶发圈
       px(hc - 4, hy - 1, '#8be0b8'); px(hc - 5, hy, '#ff8fb1'); px(hc - 4, hy, '#ffa8c3'); px(hc - 6, hy + 1, '#ff7aa3'); px(hc - 5, hy + 1, '#ffa8c3'); px(hc - 5, hy + 2, '#ff8fb1');
       px(hc + 5, hy - 1, '#8be0b8'); px(hc + 6, hy, '#ff8fb1'); px(hc + 5, hy, '#ffa8c3'); px(hc + 7, hy + 1, '#ff7aa3'); px(hc + 6, hy + 1, '#ffa8c3'); px(hc + 6, hy + 2, '#ff8fb1');
+    } else if (acc === 'ck_acc_love_letter') {
+      // [签到52天限定] 头顶小情书：米白折叠信封配正中绯红小蜡封（严格锚定 hc, hy）
+      for (let x = -2; x <= 2; x++) {
+        px(hc + x, hy - 3, '#d6c3b2');
+        px(hc + x, hy - 2, '#fffaf2');
+        px(hc + x, hy - 1, '#f5eadc');
+      }
+      px(hc - 1, hy - 2, '#e3d0be'); px(hc + 1, hy - 2, '#e3d0be');
+      px(hc, hy - 2, '#d9485b');
     } else if (acc === 'gacha_head_egg_tart') {
       // 头顶蛋挞：紧贴头顶正中央的金黄酥皮与焦糖蛋液（严格锚定 hc, hy）
       px(hc - 2, hy - 1, '#d9964e'); px(hc - 1, hy - 1, '#e8ad66'); px(hc, hy - 1, '#e8ad66'); px(hc + 1, hy - 1, '#e8ad66'); px(hc + 2, hy - 1, '#d9964e');
@@ -14780,6 +14888,11 @@ function bootGoulaicaiExtension() {
 
   // 绘制 20 款完全不重样的 9x9 像素成就专属小图标
   const ACH_ICON_GRIDS = {
+    ck_calendar_30:   ['.rrrrrrr.','.rwwwwwr.','.ooooooo.','.owwwwwо.','.owwggwo.','.owggwwo.','.owwwwwо.','.ooooooo.','.........'].map(r => r.replace(/о/g, 'o')),
+    ck_wax_envelope:  ['.........','.ooooooo.','.owwwwwo.','.oowwwoo.','.owwrwwo.','.owwwwwo.','.ooooooo.','.........','.........'],
+    ck_hourglass_gold:['.ooooooo.','..oyyyo..','...oyo...','....o....','...oyo...','..oyyyo..','.ooooooo.','.........','.........'],
+    ck_amber_ginkgo:  ['.ooooooo.','.oyyyyyo.','.oygggyo.','.oygggyo.','.oyygyyo.','.oyyoyyo.','.ooooooo.','.........','.........'],
+    ck_century_medal: ['..rr.rr..','..rr.rr..','..ooooo..','.oyyyyyo.','.oywywyo.','.oyyyyyo.','..ooooo..','.........','.........'],
     tag:       ['.........','.ooooooo.','.oyyyyyo.','.oywyyyo.','.oyyyyyo.','.ooooooo.','.........','.........','.........'],
     paw:       ['..oo.oo..','..oo.oo..','oo.....oo','oo.ooo.oo','..ooooo..','..ooooo..','...ooo...','.........','.........'],
     hearts:    ['.pp...pp.','pppp.pppp','ppppppppp','.ppppppp.','..ppppp..','...ppp...','....p....','.........','.........'],
@@ -15566,6 +15679,11 @@ function bootGoulaicaiExtension() {
       ach_dig_lucky_3: ALL_TREASURE_ITEMS.filter(({ kind, item }) => kind === 'outfit' ? (config.puppyOwnedOutfits || []).includes(item.id) : kind === 'acc' ? (config.puppyOwnedAccs || []).includes(item.id) : (config.puppyOwnedCompanions || []).includes(item.id)).length >= 3,
       hidden_midnight_snack: (new Date().getHours() >= 0 && new Date().getHours() < 5 && ((st.feeds || 0) >= 1)),
       hidden_trail_20: (config.puppyOwnedTrails || []).length >= 3 && Boolean(config.puppyWalkTrail && config.puppyWalkTrail !== 'trail_none'),
+      ach_ck_30: Math.max(Number(config.puppyCheckin?.maxStreak || 0), Number(config.puppyCheckin?.streak || 0)) >= 30,
+      ach_ck_52: Math.max(Number(config.puppyCheckin?.maxStreak || 0), Number(config.puppyCheckin?.streak || 0)) >= 52,
+      ach_ck_60: Math.max(Number(config.puppyCheckin?.maxStreak || 0), Number(config.puppyCheckin?.streak || 0)) >= 60,
+      ach_ck_99: Math.max(Number(config.puppyCheckin?.maxStreak || 0), Number(config.puppyCheckin?.streak || 0)) >= 99,
+      ach_ck_100: Number(config.puppyCheckin?.total || 0) >= 100,
     };
 
     const newlyUnlocked = [];
@@ -15689,6 +15807,7 @@ function bootGoulaicaiExtension() {
     { key: 'daily', name: '日常、花盆、厨房与玩具', ids: ['pin_home', 'sit_zen', 'chef_owner', 'ach_big_eater', 'care_legend_200', 'rich_pup', 'fun_coin_saver', 'rich_tycoon_500', 'lt_coins_5000', 'fun_weather_kid', 'garden_bloom', 'fun_flower_gifter', 'garden_collector_15', 'garden_collector_30', 'garden_bloom_100', 'garden_all_42', 'kitchen_first', 'kitchen_lv5', 'kitchen_dex_10', 'kitchen_lv10_master', 'lt_cook_100', 'kitchen_dex_all', 'toy_first', 'toy_all_4', 'toy_marathon_100', 'lt_toy_100', 'job_worker', 'fun_job_pro', 'job_legend_50', 'fun_diary_keeper', 'fun_fortune_fan', 'visitor_pal', 'visitor_host_30', 'festival_egg'] },
     { key: 'adv', name: '冒险与图鉴', ids: ['adv_first_trip', 'fun_photo_snap', 'adv_album_half', 'adv_curio_20', 'adv_album_all', 'adv_curio_all', 'adv_hidden_curio', 'treasure_hunter', 'ach_dig_lucky_3', 'adv_legend_50'] },
     { key: 'game', name: '游乐厅与扭蛋', ids: ['arcade_fan', 'arcade_pro', 'fun_game_all', 'game_legend_100', 'game_champ', 'ach_2048_512', 'ach_2048_2048', 'gacha_first', 'gacha_count_30', 'gacha_count_100', 'gacha_count_300', 'gacha_count_1000'] },
+    { key: 'checkin', name: '签到打卡', ids: ['ach_ck_30', 'ach_ck_52', 'ach_ck_60', 'ach_ck_99', 'ach_ck_100'] },
     { key: 'hidden', name: '隐藏彩蛋（可买线索）', ids: [] },
   ];
 
@@ -15731,7 +15850,8 @@ function bootGoulaicaiExtension() {
     hidden_all_master: ['站在所有荣誉的终点才会点亮', '解锁除此之外的其余全部成就自动获得'],
   };
 
-  let achFilterMode = 'all'; // 'all' | 'unlocked' | 'locked'
+  let achFilterMode = 'all';
+  let achCatFilter = 'all'; // 'all' | 'unlocked' | 'locked'
 
   const renderPupAchievements = () => {
     if (!achListEl) return;
@@ -15763,6 +15883,33 @@ function bootGoulaicaiExtension() {
     });
     achListEl.appendChild(filterBar);
 
+    // 分类筛选条：全部类型 / 各单独分类（不用反复上下滑动）
+    const catBar = doc.createElement('div');
+    catBar.style.cssText = 'display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;';
+    const catDefs = [
+      { key: 'all', lbl: '全部类型' },
+      { key: 'bond', lbl: '陪伴' },
+      { key: 'wardrobe', lbl: '衣橱' },
+      { key: 'daily', lbl: '日常' },
+      { key: 'adv', lbl: '冒险' },
+      { key: 'game', lbl: '游乐' },
+      { key: 'checkin', lbl: '签到' },
+      { key: 'hidden', lbl: '隐藏' },
+    ];
+    catDefs.forEach(cd => {
+      const cb = doc.createElement('button');
+      cb.type = 'button';
+      cb.className = `st-px-btn${achCatFilter === cd.key ? ' active care' : ''}`;
+      cb.style.cssText = 'height:20px;font-size:9px;padding:0 6px;flex:0 0 auto;';
+      cb.textContent = cd.lbl;
+      cb.addEventListener('click', () => {
+        achCatFilter = cd.key;
+        renderPupAchievements();
+      });
+      catBar.appendChild(cb);
+    });
+    achListEl.appendChild(catBar);
+
     const achById = new Map(PUP_ACHIEVEMENTS.map(a => [a.id, a]));
     const placed = new Set();
     const groupsToRender = ACH_GROUPS.map(g => {
@@ -15775,14 +15922,18 @@ function bootGoulaicaiExtension() {
           if (a && !a.hidden && !placed.has(a.id)) { items.push(a); placed.add(a.id); }
         });
       }
-      return { name: g.name, items };
+      return { key: g.key, name: g.name, items };
     });
-    // 兜底任何未归类的普通成就
+    // 未显式归类的普通成就自动并入“日常”而非另起“其他趣味成就”，且永远在隐藏成就前面
     const leftover = PUP_ACHIEVEMENTS.filter(a => !placed.has(a.id));
-    if (leftover.length) groupsToRender.push({ name: '其他趣味成就', items: leftover });
+    if (leftover.length) {
+      const dailyGrp = groupsToRender.find(x => x.key === 'daily') || groupsToRender[0];
+      if (dailyGrp) dailyGrp.items.push(...leftover);
+    }
 
     let renderedAny = false;
     groupsToRender.forEach(grp => {
+      if (achCatFilter !== 'all' && grp.key !== achCatFilter) return;
       const filtered = grp.items.filter(ach => {
         const u = unlockedSet.has(ach.id);
         if (achFilterMode === 'unlocked') return u;
@@ -16387,6 +16538,7 @@ function bootGoulaicaiExtension() {
         ...SHOP_PUP_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, _wcat: i.cat || 'head' })),
         ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
         ...GAME_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcat: 'limited' })),
+        ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
         ...GACHA_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcat: 'limited' })),
       ];
       const list = curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcat === curSub);
@@ -16657,6 +16809,7 @@ function bootGoulaicaiExtension() {
   let shopSubCat = 'skirt'; // { kind: 'outfit' | 'acc' | 'comp', item }
 
   const drawShopPreview = () => {
+    try { applyShopOwnFilterToGrid(); } catch (_) {}
     const pal = getPupPalette();
     const ox = 4;
     const oy = 10;
@@ -16718,6 +16871,10 @@ function bootGoulaicaiExtension() {
       return;
     }
     if (kind === 'badge') {
+      if (pupIdShopBadgeEl) {
+        pupIdShopBadgeEl.style.display = 'inline-flex';
+        fillAchBadgeEl(pupIdShopBadgeEl, item, false);
+      }
       const ownedB = (config.puppyOwnedBadges || []).includes(item.id);
       const wearingB = config.puppyActiveShopBadge === item.id;
       shopPreviewTitle.textContent = `[流光铭牌] ${item.title}`;
@@ -16972,10 +17129,231 @@ function bootGoulaicaiExtension() {
   shopPreviewResetBtn.addEventListener('click', () => {
     shopPreviewItem = null;
     applyPupCosmeticSkins();
+    updatePupStatBars();
     renderPupShop();
   });
 
+  let shopOwnFilter = 'all';
+  const syncShopOwnFilterUI = (hideBar) => {
+    if (!pupShopGridEl || !pupShopGridEl.parentElement) return;
+    let bar = root.querySelector('#st-px-shop-own-filter');
+    if (!bar) {
+      bar = doc.createElement('div');
+      bar.id = 'st-px-shop-own-filter';
+      bar.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:5px;';
+      [
+        { id: 'all', lbl: '全部' },
+        { id: 'unowned', lbl: '未购买' },
+        { id: 'owned', lbl: '已拥有' },
+      ].forEach(f => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-px-btn';
+        b.dataset.shopOwn = f.id;
+        b.style.cssText = 'height:20px;font-size:9px;padding:0 4px;line-height:18px;';
+        b.textContent = f.lbl;
+        b.addEventListener('click', () => {
+          if (shopOwnFilter === f.id) return;
+          shopOwnFilter = f.id;
+          syncShopOwnFilterUI(false);
+          if (pupShopGridEl) pupShopGridEl.dataset.ownFilter = shopOwnFilter;
+        });
+        bar.appendChild(b);
+      });
+      pupShopGridEl.parentElement.insertBefore(bar, pupShopGridEl);
+    }
+    bar.style.display = hideBar ? 'none' : 'grid';
+    Array.from(bar.querySelectorAll('[data-shop-own]')).forEach(b => {
+      b.classList.toggle('active', b.dataset.shopOwn === shopOwnFilter);
+      b.classList.toggle('care', b.dataset.shopOwn === shopOwnFilter);
+    });
+  };
+  const applyShopOwnFilterToGrid = () => {
+    if (!pupShopGridEl) return;
+    const isConsumable = shopMainCat === 'goods' && (shopSubCat === 'gear' || shopSubCat === 'snack');
+    const isGacha = shopMainCat === 'gacha';
+    syncShopOwnFilterUI(isGacha || isConsumable);
+    if (isGacha || isConsumable) {
+      pupShopGridEl.dataset.ownFilter = 'all';
+      return;
+    }
+    // 仅在卡片尚未打标时标记一次 data-own，之后切筛选只需改一个 CSS 属性，0 延迟！
+    const kids = pupShopGridEl.children;
+    for (let i = 0; i < kids.length; i++) {
+      const card = kids[i];
+      if (card.dataset.own !== undefined) continue;
+      const txt = String(card.textContent || '');
+      const isOwned = card.classList.contains('equipped') || /已有|戴着|用着|免费|默认|已购|已拥有|已解锁/.test(txt) || !/\d+\s*币/.test(txt);
+      card.dataset.own = isOwned ? '1' : '0';
+    }
+    pupShopGridEl.dataset.ownFilter = shopOwnFilter;
+  };
+
+  const ensureMerchantState = () => {
+    if (!config.puppyMerchant || typeof config.puppyMerchant !== 'object') {
+      config.puppyMerchant = { nextAppearAt: Date.now() + (18 + Math.random() * 18) * 3600000, expireAt: 0, ticketsLeft: 0, items: [], notified: false };
+    }
+    return config.puppyMerchant;
+  };
+
+  const buildMerchantStock = () => {
+    const ownedO = new Set(config.puppyOwnedOutfits || []);
+    const ownedA = new Set(config.puppyOwnedAccs || []);
+    const ownedC = new Set(config.puppyOwnedCompanions || []);
+    const ownedB = new Set(config.puppyOwnedBadges || []);
+    const ownedT = new Set(config.puppyOwnedTrails || []);
+    const ownedU = new Set(config.puppyOwnedBubbles || []);
+    const ownedF = new Set(config.puppyOwnedAvatarFrames || []);
+    const pool = [];
+    (SHOP_PUP_OUTFITS || []).forEach(x => { if (!ownedO.has(x.id) && x.price > 0) pool.push({ kind: 'outfit', id: x.id, name: x.name, origPrice: x.price }); });
+    (SHOP_PUP_ACCS || []).forEach(x => { if (!ownedA.has(x.id) && x.price > 0) pool.push({ kind: 'acc', id: x.id, name: x.name, origPrice: x.price }); });
+    (SHOP_PUP_COMPANIONS || []).forEach(x => { if (!ownedC.has(x.id) && x.price > 0) pool.push({ kind: 'comp', id: x.id, name: x.name, origPrice: x.price }); });
+    (SHOP_PUP_BADGES || []).forEach(x => { if (!ownedB.has(x.id) && x.price > 0) pool.push({ kind: 'badge', id: x.id, name: x.title || x.name, origPrice: x.price }); });
+    (SHOP_PUP_TRAILS || []).forEach(x => { if (!ownedT.has(x.id) && x.price > 0) pool.push({ kind: 'trail', id: x.id, name: x.name, origPrice: x.price }); });
+    (SHOP_PUP_BUBBLES || []).forEach(x => { if (!ownedU.has(x.id) && x.price > 0) pool.push({ kind: 'bubble', id: x.id, name: x.name, origPrice: x.price }); });
+    (SHOP_PUP_AVATAR_FRAMES || []).forEach(x => { if (!ownedF.has(x.id) && x.price > 0) pool.push({ kind: 'avatarframe', id: x.id, name: x.name, origPrice: x.price }); });
+    pool.sort(() => Math.random() - 0.5);
+    const cnt = Math.random() < 0.5 ? 2 : 3;
+    return pool.slice(0, cnt).map(it => {
+      const rate = 0.85 + Math.random() * 0.07; // 85折 ~ 92折，克制不夸张
+      const salePrice = Math.max(1, Math.min(it.origPrice - 1, Math.round(it.origPrice * rate)));
+      return { ...it, salePrice, sold: false };
+    });
+  };
+
+  const tickMerchantLifecycle = () => {
+    const m = ensureMerchantState();
+    const now = Date.now();
+    if (m.expireAt > 0 && now >= m.expireAt) {
+      // 本次停留结束，安排下一次 18~36 小时后随机出现
+      m.expireAt = 0;
+      m.items = [];
+      m.ticketsLeft = 0;
+      m.notified = false;
+      m.nextAppearAt = now + (18 + Math.random() * 18) * 3600000;
+      saveConfig();
+      return false;
+    }
+    if (m.expireAt === 0 && now >= (m.nextAppearAt || 0)) {
+      m.expireAt = now + 25 * 60000; // 停留 25 分钟
+      m.ticketsLeft = 5;
+      m.items = buildMerchantStock();
+      m.notified = true;
+      saveConfig();
+      if (config.puppyEnabled && typeof showPuppyBubble === 'function') {
+        showPuppyBubble('神秘商人的小推车难得路过，快去商城看看！', 3400);
+      }
+      return true;
+    }
+    return m.expireAt > now;
+  };
+
+  const renderMerchantBannerInShop = () => {
+    if (!pupShopGridEl || !pupShopGridEl.parentElement) return;
+    const isActive = tickMerchantLifecycle();
+    let box = root.querySelector('#st-px-merchant-box');
+    if (!isActive || shopMainCat === 'gacha') {
+      if (box) box.style.display = 'none';
+      return;
+    }
+    const m = ensureMerchantState();
+    if (!box) {
+      box = doc.createElement('div');
+      box.id = 'st-px-merchant-box';
+      box.className = 'st-px-adv-card';
+      box.style.cssText = 'margin-bottom:6px;padding:6px 7px;';
+      const filterEl = root.querySelector('#st-px-shop-own-filter');
+      pupShopGridEl.parentElement.insertBefore(box, filterEl || pupShopGridEl);
+    }
+    box.style.display = 'block';
+    const leftMin = Math.max(1, Math.ceil((m.expireAt - Date.now()) / 60000));
+    box.innerHTML = '';
+
+    const head = doc.createElement('div');
+    head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-weight:700;font-size:10.5px;';
+    head.innerHTML = `<span>神秘商人小推车</span><span style="opacity:0.75;font-weight:400;">剩余 ${leftMin} 分钟</span>`;
+    box.appendChild(head);
+
+    const list = doc.createElement('div');
+    list.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+
+    // 1. 85折扭蛋券（限购5张，8币/张）
+    const tRow = doc.createElement('div');
+    tRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:10px;';
+    const tLeft = Math.max(0, Math.floor(m.ticketsLeft || 0));
+    const tName = doc.createElement('span');
+    tName.textContent = `85折扭蛋券 · 8币/张 · 限购余 ${tLeft}/5`;
+    const tBtn = doc.createElement('button');
+    tBtn.type = 'button';
+    tBtn.className = 'st-px-btn' + (tLeft > 0 ? ' care' : '');
+    tBtn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;';
+    tBtn.textContent = tLeft > 0 ? '买1张 (8币)' : '已售罄';
+    tBtn.disabled = tLeft <= 0;
+    tBtn.addEventListener('click', () => {
+      const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
+      if (curC < 8) { setShopNotice(`小狗币不足，还差 ${8 - curC} 币`); return; }
+      openGuardConfirm('确认购买神秘商人扭蛋券？', `花费 8 枚小狗币购买 1 张85折扭蛋券（余额 ${curC} 币）。`, () => {
+        if ((m.ticketsLeft || 0) <= 0) return;
+        config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - 8;
+        config.puppyInventory = config.puppyInventory || {};
+        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+        m.ticketsLeft -= 1;
+        saveConfig();
+        updatePupStatBars();
+        renderMerchantBannerInShop();
+        setShopNotice('已购入 1 张85折扭蛋券');
+      }, '确认购买', true);
+    });
+    tRow.append(tName, tBtn);
+    list.appendChild(tRow);
+
+    // 2. 随机 2-3 件未拥有的打折商品
+    (m.items || []).forEach(it => {
+      const row = doc.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:10px;';
+      const nm = doc.createElement('span');
+      nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      nm.textContent = `${it.name} · 原${it.origPrice}币 → ${it.salePrice}币`;
+      const btn = doc.createElement('button');
+      btn.type = 'button';
+      btn.className = 'st-px-btn' + (!it.sold ? ' care' : '');
+      btn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;flex-shrink:0;';
+      btn.textContent = it.sold ? '已购' : `买 (${it.salePrice}币)`;
+      btn.disabled = Boolean(it.sold);
+      btn.addEventListener('click', () => {
+        const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
+        if (curC < it.salePrice) { setShopNotice(`小狗币不足，还差 ${it.salePrice - curC} 币`); return; }
+        openGuardConfirm('确认购买神秘商人特惠？', `花费 ${it.salePrice} 枚小狗币购入【${it.name}】（原价 ${it.origPrice} 币，余额 ${curC} 币）。`, () => {
+          if (it.sold) return;
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - it.salePrice;
+          if (it.kind === 'outfit') { config.puppyOwnedOutfits = config.puppyOwnedOutfits || []; if (!config.puppyOwnedOutfits.includes(it.id)) config.puppyOwnedOutfits.push(it.id); }
+          else if (it.kind === 'acc') { config.puppyOwnedAccs = config.puppyOwnedAccs || []; if (!config.puppyOwnedAccs.includes(it.id)) config.puppyOwnedAccs.push(it.id); }
+          else if (it.kind === 'comp') { config.puppyOwnedCompanions = config.puppyOwnedCompanions || []; if (!config.puppyOwnedCompanions.includes(it.id)) config.puppyOwnedCompanions.push(it.id); }
+          else if (it.kind === 'badge') { config.puppyOwnedBadges = config.puppyOwnedBadges || []; if (!config.puppyOwnedBadges.includes(it.id)) config.puppyOwnedBadges.push(it.id); }
+          else if (it.kind === 'trail') { config.puppyOwnedTrails = config.puppyOwnedTrails || []; if (!config.puppyOwnedTrails.includes(it.id)) config.puppyOwnedTrails.push(it.id); }
+          else if (it.kind === 'bubble') { config.puppyOwnedBubbles = config.puppyOwnedBubbles || []; if (!config.puppyOwnedBubbles.includes(it.id)) config.puppyOwnedBubbles.push(it.id); }
+          else if (it.kind === 'avatarframe') { config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || []; if (!config.puppyOwnedAvatarFrames.includes(it.id)) config.puppyOwnedAvatarFrames.push(it.id); }
+          it.sold = true;
+          saveConfig();
+          updatePupStatBars();
+          checkPupAchievements();
+          renderPupShop();
+          setShopNotice(`已特惠购入【${it.name}】`);
+        }, '确认购买', true);
+      });
+      row.append(nm, btn);
+      list.appendChild(row);
+    });
+
+    box.appendChild(list);
+  };
+
+  setInterval(() => {
+    try { tickMerchantLifecycle(); } catch (_) {}
+  }, 60000);
+
   const renderPupShop = () => {
+    try { renderMerchantBannerInShop(); } catch (_) {}
     const ownedOutfitSet = new Set(config.puppyOwnedOutfits || []);
     const ownedAccSet = new Set(config.puppyOwnedAccs || []);
     const ownedCompSet = new Set(config.puppyOwnedCompanions || []);
@@ -17007,10 +17385,16 @@ function bootGoulaicaiExtension() {
       `;
       if (isGoods) card.prepend(makeGoodsIconCanvas(item.id, false));
       card.addEventListener('click', () => {
-        clearTimeout(bubPreviewRevertTimer);
-        applyPupCosmeticSkins();
+        if (bubPreviewRevertTimer) {
+          clearTimeout(bubPreviewRevertTimer);
+          bubPreviewRevertTimer = null;
+          applyPupCosmeticSkins();
+        }
+        if (shopPreviewItem && shopPreviewItem.kind === 'badge') updatePupStatBars();
         shopPreviewItem = { kind, item };
-        renderPupShop();
+        if (pupShopGridEl) pupShopGridEl.querySelectorAll('.previewing').forEach(el => el.classList.remove('previewing'));
+        card.classList.add('previewing');
+        drawShopPreview();
       });
       return card;
     };
@@ -17292,7 +17676,9 @@ function bootGoulaicaiExtension() {
         card.append(pill, meta);
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: 'badge', item };
-          renderPupShop();
+          if (pupShopGridEl) pupShopGridEl.querySelectorAll('.previewing').forEach(el => el.classList.remove('previewing'));
+          card.classList.add('previewing');
+          drawShopPreview();
         });
         pupShopGridEl.appendChild(card);
       });
@@ -17365,8 +17751,11 @@ function bootGoulaicaiExtension() {
     }
     pupBagTabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.pxTab === pupBagTab));
     pupBagPanes.forEach(pane => pane.classList.toggle('active', pane.dataset.pxPane === pupBagTab));
-    if (pupBagTab === 'wardrobe') renderPupPresets();
-    if (pupBagTab === 'ach') renderPupAchievements();
+    if (achHeadEl) {
+      const _uCnt = new Set(config.puppyUnlockedTitles || []).size;
+      achHeadEl.innerHTML = `成就称号 (${_uCnt}/${PUP_ACHIEVEMENTS.length})${freshNewAchs.size > 0 ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+    }
+    if (achListEl && achListEl.classList.contains('open')) renderPupAchievements();
     pupFurInput.value = config.puppyFur || '#fffdf7';
     pupEarInput.value = config.puppyEar || '#e2ae74';
     pupCollarInput.value = config.puppyCollar || '#d66565';
@@ -17383,17 +17772,23 @@ function bootGoulaicaiExtension() {
     pupSpeedVal.textContent = `${Number(pupSpeedRange.value).toFixed(1)}x`;
     pupOpacityRange.value = clamp(Number(config.puppyOpacity) || 1.0, 0.2, 1.0);
     pupOpacityVal.textContent = `${Math.round(Number(pupOpacityRange.value) * 100)}%`;
-    renderPupWardrobe();
-    renderPupShop();
-    renderFortuneBox();
-    renderSnackBar();
-    renderActSubTab();
-    applyPupCosmeticSkins();
-    renderBagSkinCustomizer();
-    renderPersonalityPanel();
-    syncBellToggleUI();
-    syncPeekToggleUI();
-    renderPupColorPresets();
+    if (pupBagTab === 'acc') {
+      renderPupPresets();
+      renderPupWardrobe();
+    } else if (pupBagTab === 'shop') {
+      renderPupShop();
+    } else if (pupBagTab === 'act') {
+      renderFortuneBox();
+      renderSnackBar();
+      renderActSubTab();
+    } else if (pupBagTab === 'look') {
+      renderBagSkinCustomizer();
+      renderPersonalityPanel();
+      syncBellToggleUI();
+      syncPeekToggleUI();
+      renderPupColorPresets();
+    }
+    if (!pupBagOpen) applyPupCosmeticSkins();
   };
 
   const drawPuppyScene = () => {
@@ -21112,6 +21507,11 @@ function bootGoulaicaiExtension() {
       }
     }
 
+    if (Math.random() < 0.025) {
+      config.puppyInventory = config.puppyInventory || {};
+      config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+      secretNotice = secretNotice ? `${secretNotice} 顺手捡到扭蛋券×1` : '旅途超小概率惊喜：捡到扭蛋券×1';
+    }
     config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + coinGain;
     config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coinGain;
     config.puppyStats.trips = (config.puppyStats.trips || 0) + 1;
@@ -25479,6 +25879,16 @@ function bootGoulaicaiExtension() {
         px(x + 1, wy, 'rgba(255,255,255,0.9)', 2, 1);
       }
       px(W - 9, H - 5, '#ffbfd4', 5, 3); px(W - 8, H - 6, '#ffe4ec', 3, 1); px(W - 7, H - 4, '#ffffff', 1, 1);
+    } else if (m === 'poststamp') {
+      // [签到60天限定] 邮戳明信片泡：顶底红蓝航空细纹 + 右侧轻晃像素小邮票
+      for (let sx = 4; sx < W - 4; sx += 8) {
+        px(sx, 1, '#d96459', 3, 1);
+        px(sx + 4, 1, '#5b8cc4', 3, 1);
+      }
+      const bob = Math.floor(t / 12) % 2;
+      px(W - 10, 4 + bob, '#c97a63', 6, 5);
+      px(W - 9, 5 + bob, '#fff9ee', 4, 3);
+      px(W - 8, 6 + bob, '#d96459', 2, 1);
     } else if (m === 'lanternglow') {
       // 孔明暖灯泡：暖橘孔明灯带着柔和光晕缓缓升起
       for (let i = 0; i < 4; i++) {
@@ -25717,6 +26127,16 @@ function bootGoulaicaiExtension() {
         const hop = Math.abs(Math.floor(Math.sin((t + i * 3) * 0.45) * 4));
         g.fillStyle = cCols[i]; g.fillRect(cx, 55 - hop, 4, 4);
         g.fillStyle = '#ffffff'; g.fillRect(cx + 1, 56 - hop, 1, 1);
+      }
+    } else if (m === 'amberleaf') {
+      // [签到99天限定] 琥珀标本框：右下压花小银杏叶轻晃 + 暖琥珀微光气泡缓缓上浮
+      const sway = Math.floor(t / 14) % 2;
+      drawGridAt(46 + sway, 46, ['.yyy.','yyyyy','.yyy.','..o..'], { y: '#f2b838', o: '#9c621c' });
+      for (let i = 0; i < 3; i++) {
+        const ay = 52 - ((t + i * 16) % 44);
+        const ax = i === 0 ? 4 : (i === 1 ? 54 : 8);
+        g.fillStyle = 'rgba(255,244,210,0.72)';
+        g.fillRect(ax, ay, 2, 2);
       }
     } else if (m === 'mooncloud') {
       // 底部两朵饱满小白云悠闲飘过
@@ -28245,7 +28665,8 @@ function bootGoulaicaiExtension() {
     }
     const gachaDexHeadEl = root.querySelector('#st-px-gacha-dex-head');
     if (gachaDexHeadEl) gachaDexHeadEl.textContent = `扭蛋限定图鉴 (${gotCnt}/${ALL_GACHA_EXCLUSIVES.length})`;
-    if (gachaInfoEl) gachaInfoEl.textContent = `限定 ${gotCnt}/${ALL_GACHA_EXCLUSIVES.length} · 累计 ${totalPulls} 抽 · 距SSR保底 ${ssrPityLeft} 抽`;
+        const tktCnt = Math.max(0, Math.floor(config.puppyInventory?.gacha_ticket || 0));
+    if (gachaInfoEl) gachaInfoEl.textContent = `扭蛋券 ${tktCnt} 张 · 限定 ${gotCnt}/${ALL_GACHA_EXCLUSIVES.length} · 累计 ${totalPulls} 抽 · 距SSR保底 ${ssrPityLeft}`;
     if (gachaDexEl) {
       gachaDexEl.innerHTML = '';
       ALL_GACHA_EXCLUSIVES.forEach(entry => {
@@ -28530,6 +28951,11 @@ function bootGoulaicaiExtension() {
       if (isHardPitySsr) config.puppyStats.gachaUnluckyHit = true;
       config.puppyGachaSsrPity = 0;
       config.puppyGachaNoSsrStreak = 0;
+      if (Math.random() < 0.012) {
+        config.puppyInventory = config.puppyInventory || {};
+        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 10;
+        return { tier: 'SSR', col: '#ffe066', iconType: 'coins', itemId: 'gacha_ticket_10', name: '传说扭蛋券 ×10', sub: '超低概率传说惊喜 · 已存入扭蛋机', label: '[SSR] 扭蛋券×10' };
+      }
       if (Math.random() < 0.12) {
         config.puppyInventory = config.puppyInventory || {};
         config.puppyInventory.personality_potion = (config.puppyInventory.personality_potion || 0) + 1;
@@ -28547,6 +28973,11 @@ function bootGoulaicaiExtension() {
     }
 
     if (hitSr) {
+      if (Math.random() < 0.015) {
+        config.puppyInventory = config.puppyInventory || {};
+        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 2;
+        return { tier: 'SR', col: '#c4a8ff', iconType: 'coins', itemId: 'gacha_ticket', name: '豪华扭蛋券 ×2', sub: '超低概率惊喜 · 已存入扭蛋机', label: '[SR] 扭蛋券×2' };
+      }
       const prize = pick(unownedSr.length ? unownedSr : srPool);
       const cleanName = prize.item.name.replace('[扭蛋] ', '');
       const isNew = grantGachaExclusive(prize);
@@ -28560,7 +28991,12 @@ function bootGoulaicaiExtension() {
 
     // R 奖池多元化：鲜花礼袋 / 厨艺心得 / 好感甜心 / 实用道具 / 扭蛋零食 / 返币（不再总是零食！）
     const rKind = Math.random();
-    if (rKind < 0.28) {
+    if (rKind < 0.035) {
+      config.puppyInventory = config.puppyInventory || {};
+      config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+      return { tier: 'R', col: '#cfe8ff', iconType: 'coins', itemId: 'gacha_ticket', name: '幸运扭蛋券 ×1', sub: '低概率惊喜 · 已存入扭蛋机', label: '[R] 扭蛋券×1' };
+    }
+    if (rKind < 0.30) {
       if (!config.puppyGarden) config.puppyGarden = { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {}, dex: {} };
       if (!config.puppyGarden.unlocked) config.puppyGarden.unlocked = {};
       if (!config.puppyGarden.dex) config.puppyGarden.dex = {};
@@ -28599,15 +29035,29 @@ function bootGoulaicaiExtension() {
     return { tier: 'R', col: '#d8e4f0', iconType: 'coin', name: `幸运返币 +${refund}`, sub: '已存入钱包', label: `[R] 幸运返币 +${refund}` };
   };
 
+  const calcGachaCostWithTickets = (count, baseCost) => {
+    const availTickets = Math.max(0, Math.floor(config.puppyInventory?.gacha_ticket || 0));
+    const useTickets = Math.min(availTickets, count);
+    const perPull = count === 10 ? 9 : baseCost;
+    const coinCost = useTickets >= count ? 0 : Math.max(0, baseCost - useTickets * perPull);
+    return { availTickets, useTickets, coinCost };
+  };
+
   const runGachaPull = (count, cost) => {
     if (gachaBusy) return;
     const curCoins = Math.max(0, Math.floor(config.puppyCoins || 0));
-    if (curCoins < cost) {
-      if (gachaMsgEl) gachaMsgEl.textContent = `小狗币不够 ${cost} 枚（还差 ${cost - curCoins} 枚）`;
+    const { useTickets, coinCost } = calcGachaCostWithTickets(count, cost);
+    if (curCoins < coinCost) {
+      if (gachaMsgEl) gachaMsgEl.textContent = `小狗币不够 ${coinCost} 枚（还差 ${coinCost - curCoins} 枚）`;
       return;
     }
     gachaBusy = true;
-    config.puppyCoins = curCoins - cost;
+    if (useTickets > 0) {
+      config.puppyInventory = config.puppyInventory || {};
+      config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0) - useTickets);
+    }
+    config.puppyCoins = curCoins - coinCost;
+    saveConfig();
     updatePupStatBars();
     if (gachaPullBtn) gachaPullBtn.disabled = true;
     if (gachaPull10Btn) gachaPull10Btn.disabled = true;
@@ -28680,13 +29130,23 @@ function bootGoulaicaiExtension() {
 
   if (gachaPullBtn) gachaPullBtn.addEventListener('click', () => {
     const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
-    if (curC < 10) { runGachaPull(1, 10); return; }
-    openGuardConfirm('确认单抽扭蛋？', `本次将花费 10 枚小狗币（当前余额 ${curC} 币）。`, () => runGachaPull(1, 10), '确认抽奖', true);
+    const { availTickets, useTickets, coinCost } = calcGachaCostWithTickets(1, 10);
+    if (curC < coinCost) { runGachaPull(1, 10); return; }
+    const desc = useTickets > 0
+      ? `本次将自动扣除 1 张扭蛋券（当前余 ${availTickets} 张，不花小狗币）。`
+      : `本次将花费 10 枚小狗币（当前余额 ${curC} 币）。`;
+    openGuardConfirm('确认单抽扭蛋？', desc, () => runGachaPull(1, 10), '确认抽奖', true);
   });
   if (gachaPull10Btn) gachaPull10Btn.addEventListener('click', () => {
     const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
-    if (curC < 90) { runGachaPull(10, 90); return; }
-    openGuardConfirm('确认十连扭蛋？', `本次将花费 90 枚小狗币（当前余额 ${curC} 币），十连保底 SR。`, () => runGachaPull(10, 90), '确认十连', true);
+    const { availTickets, useTickets, coinCost } = calcGachaCostWithTickets(10, 90);
+    if (curC < coinCost) { runGachaPull(10, 90); return; }
+    const desc = useTickets > 0
+      ? (coinCost === 0
+          ? `本次将自动扣除 10 张扭蛋券（当前余 ${availTickets} 张），十连保底 SR。`
+          : `本次将自动抵扣 ${useTickets} 张扭蛋券并花费 ${coinCost} 枚小狗币（余额 ${curC} 币），十连保底 SR。`)
+      : `本次将花费 90 枚小狗币（当前余额 ${curC} 币），十连保底 SR。`;
+    openGuardConfirm('确认十连扭蛋？', desc, () => runGachaPull(10, 90), '确认十连', true);
   });
 
   // --- 随机串门小伙伴桌面偶遇系统（12 位含穿搭限定 + 偷钱/送道具/送零食 + 降低频率） ---
@@ -29061,6 +29521,13 @@ function bootGoulaicaiExtension() {
         config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coinGift;
         adjustPupStats(0, 0, 8);
         evSuffix = ` +${coinGift}币`;
+      }
+
+      if (evType !== 'mischief_steal' && Math.random() < 0.08) {
+        const vt = Math.random() < 0.72 ? 1 : 2;
+        config.puppyInventory = config.puppyInventory || {};
+        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + vt;
+        evSuffix += ` +扭蛋券×${vt}`;
       }
 
       saveConfig();
@@ -29600,14 +30067,31 @@ function bootGoulaicaiExtension() {
           const ev = useExtra ? pick(extras) : persEv;
           const rkBefore = getJobRankInfo(jObj);
           const baseWage = rkBefore.wage[0] + Math.floor(Math.random() * (rkBefore.wage[1] - rkBefore.wage[0] + 1));
-          const tip = typeof ev.tip === 'number' ? ev.tip : (ev.star ? (3 + Math.floor(Math.random() * 2)) : (Math.random() < 0.65 ? (1 + Math.floor(Math.random() * 2)) : 0));
-          const totalWage = baseWage + tip;
+          const isAptitude = Boolean(ev.star);
+          // 性格只影响概率：优势性格搞砸率低(10%)且小费率高(52%)；普通性格搞砸率20%、小费率24%
+          const jobRoll = Math.random();
+          const failRate = isAptitude ? 0.10 : 0.20;
+          const tipRate = isAptitude ? 0.52 : 0.24;
+          const messedUp = jobRoll < failRate;
+          const gotTip = !messedUp && (jobRoll < failRate + tipRate);
+          const penalty = messedUp ? (2 + Math.floor(Math.random() * 2)) : 0;
+          const tip = gotTip ? (isAptitude ? (2 + Math.floor(Math.random() * 3)) : (1 + Math.floor(Math.random() * 2))) : 0;
+          const totalWage = Math.max(1, baseWage + tip - penalty);
+          const failMsgs = {
+            boba: '{self}摇奶茶时盖子没扣紧甩了一桌珍珠，被店长扣了工资。',
+            bakery: '{self}盯着烤箱走了神，一盘可颂烤成了炭，扣了点赔偿金。',
+            florist: '{self}修剪花枝一不小心剪秃了半束，被扣了点损耗费。',
+            bookshop: '{self}踮脚放书碰塌了整排书山，重新理完被扣了点工资。',
+          };
+          if (messedUp) {
+            ev.msg = failMsgs[jObj.id] || '{self}今天打工手忙脚乱搞砸了一点小活，被扣了点工资。';
+          }
           config.puppyCoins = (config.puppyCoins || 0) + totalWage;
-          config.puppyMood = Math.min(100, (config.puppyMood || 80) + (ev.star ? 6 : 3));
+          config.puppyMood = Math.max(0, Math.min(100, (config.puppyMood || 80) + (messedUp ? -3 : (gotTip ? 6 : 3))));
           config.puppyStats = config.puppyStats || {};
           config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + totalWage;
           config.puppyStats.jobsDone = (config.puppyStats.jobsDone || 0) + 1;
-          if (ev.star) config.puppyStats.jobStars = (config.puppyStats.jobStars || 0) + 1;
+          if (gotTip) config.puppyStats.jobStars = (config.puppyStats.jobStars || 0) + 1;
           config.puppyJobLevels = config.puppyJobLevels || {};
           config.puppyJobLevels[jObj.id] = (config.puppyJobLevels[jObj.id] || 0) + 1;
           const rkAfter = getJobRankInfo(jObj);
@@ -29616,9 +30100,14 @@ function bootGoulaicaiExtension() {
           config.puppyJobCooldownUntil = Date.now() + 600000;
           saveConfig();
           checkPupAchievements();
-          if (pup.state !== 'drag' && pup.state !== 'sleep') setPuppyState(promoted ? 'love_firework' : 'happy', 110);
-          logDiaryEvent(`在${jObj.name}打工赚了${totalWage}币`);
-          showPuppyBubble(promoted ? getPersExtra('jobPromote', { shop: jObj.name, lv: rkAfter.lv, title: rkAfter.title, wage: totalWage }) : getPersTalk('jobBack', totalWage), 3400);
+          if (pup.state !== 'drag' && pup.state !== 'sleep') setPuppyState(messedUp ? 'speechless' : (promoted ? 'love_firework' : 'happy'), 110);
+          logDiaryEvent(messedUp ? `在${jObj.name}打工搞砸被扣${penalty}币，实领${totalWage}币` : `在${jObj.name}打工赚了${totalWage}币${gotTip ? `（含小费${tip}币）` : ''}`);
+          showPuppyBubble(
+            messedUp
+              ? `呜，在${jObj.name}不小心搞砸被扣了 ${penalty} 币，只领回 ${totalWage} 币`
+              : (promoted ? getPersExtra('jobPromote', { shop: jObj.name, lv: rkAfter.lv, title: rkAfter.title, wage: totalWage }) : getPersTalk('jobBack', totalWage)),
+            3400
+          );
           const promoHtml = promoted ? `<div style="font-size:11px;font-weight:700;color:#b8456c;margin-top:3px;">恭喜晋升本店 Lv.${rkAfter.lv}【${rkAfter.title}】! 后续单次基础工资升至 ${rkAfter.wage[0]}~${rkAfter.wage[1]} 币!</div>` : '';
           statusEl.innerHTML = `
             <div style="font-weight:700;color:#8c4e1f;margin-bottom:4px;">[${jObj.name} Lv.${rkAfter.lv} 结算小剧场] ${ev.star ? '(金牌好评)' : ''}</div>
@@ -31049,6 +31538,10 @@ function bootGoulaicaiExtension() {
         bubPreviewRevertTimer = null;
         applyPupCosmeticSkins();
       }
+      if (shopPreviewItem && shopPreviewItem.kind === 'badge') {
+        shopPreviewItem = null;
+        updatePupStatBars();
+      }
       pupBagTab = btn.dataset.pxTab;
       syncPuppyBagUI();
       if (pupBagTab === 'game') restoreGameView();
@@ -31256,6 +31749,13 @@ function bootGoulaicaiExtension() {
     }
     if (pxGame2048ModeBar) {
       pxGame2048ModeBar.style.display = activeGameId === 'g2048' ? 'grid' : 'none';
+    }
+    if (pxGameMemModeBar) {
+      pxGameMemModeBar.style.display = activeGameId === 'memory' ? 'grid' : 'none';
+      pxGameMemModeBtns.forEach(b => b.classList.toggle('active', b.dataset.memMode === mem.mode));
+    }
+    if (typeof ensureMemCanvasSize === 'function') ensureMemCanvasSize();
+    if (false) {
       pxGame2048ModeBtns.forEach(b => b.classList.toggle('active', Number(b.dataset['2048Size']) === (g2048.size || 4)));
     }
   };
@@ -31648,28 +32148,70 @@ function bootGoulaicaiExtension() {
     if (opp[d] !== snk.dir) snk.nextDir = d;
   };
 
-  // --- 游戏6: 像素翻牌配对 (4x4, 8对, 24步) ---
-  const MEM_COLS = ['#f26b8a', '#7bb8f5', '#f5d25d', '#7ac46a', '#b89ce6', '#f29b5c', '#5cc4ba', '#d94854'];
-  const mem = { cards: [], open: [], matched: 0, moves: 24, lock: false };
+  // --- 游戏6: 像素翻牌配对 (高清 288x288 画布: 普通 4x4 8对24步 / 困难 8x8 32对88步高奖励) ---
+  const MEM_COLS = [
+    '#e85d75', '#4f9be8', '#e6b830', '#5eb352', '#9d7be0', '#e8823c', '#3db3a6', '#c9384a',
+    '#d962b0', '#3f76d9', '#82b83b', '#d9902b', '#6d62db', '#3ca67a', '#cf5c4c', '#459ec9',
+    '#b8743b', '#8654cc', '#e0728f', '#5a8be0', '#d9a426', '#4da362', '#a86bd4', '#de7647',
+    '#349e99', '#bf4563', '#c4629c', '#4e6ec9', '#6fa844', '#cc8335', '#7b62c9', '#3d8fa6'
+  ];
+  const mem = { mode: 'normal', cols: 4, totalPairs: 8, maxMoves: 24, cards: [], open: [], matched: 0, moves: 24, lock: false };
+  const ensureMemCanvasSize = () => {
+    if (!pxGameCanvas) return;
+    const isMem = activeGameId === 'memory';
+    const isHardMem = isMem && mem.mode === 'hard';
+    const want = isHardMem ? 320 : (isMem ? 288 : 144);
+    if (pxGameCanvas.width !== want || pxGameCanvas.height !== want) {
+      pxGameCanvas.width = want;
+      pxGameCanvas.height = want;
+    }
+    pxGameCanvas.style.maxWidth = isHardMem ? '100%' : '284px';
+    pxGameCanvas.style.imageRendering = isMem ? 'auto' : 'pixelated';
+  };
+  const initMemDeck = () => {
+    mem.cols = mem.mode === 'hard' ? 8 : 4;
+    mem.totalPairs = mem.mode === 'hard' ? 32 : 8;
+    mem.maxMoves = mem.mode === 'hard' ? 88 : 24;
+    const deck = [];
+    for (let i = 0; i < mem.totalPairs; i++) { deck.push(i, i); }
+    deck.sort(() => Math.random() - 0.5);
+    mem.cards = deck.map(id => ({ id, matched: false }));
+    mem.open = [];
+    mem.matched = 0;
+    mem.moves = mem.maxMoves;
+    mem.lock = false;
+  };
   const drawMemory = () => {
+    ensureMemCanvasSize();
     const g = pxGameCtx;
-    g.fillStyle = '#cbbba0'; g.fillRect(0, 0, 144, 144);
-    for (let i = 0; i < 16; i++) {
-      const r = Math.floor(i / 4), c = i % 4;
-      const x = 4 + c * 35, y = 4 + r * 35;
+    const cw = pxGameCanvas.width;
+    g.imageSmoothingEnabled = true;
+    g.fillStyle = '#cbbba0'; g.fillRect(0, 0, cw, cw);
+    const n = mem.cols;
+    const total = n * n;
+    const pad = n === 8 ? 2 : 6;
+    const step = n === 8 ? 40 : 70;
+    const sz = n === 8 ? 38 : 66;
+    for (let i = 0; i < total; i++) {
+      const r = Math.floor(i / n), col = i % n;
+      const x = pad + col * step, y = pad + r * step;
       const card = mem.cards[i];
       const isUp = card && (card.matched || mem.open.includes(i));
-      g.fillStyle = '#3b2a22'; g.fillRect(x, y, 31, 31);
+      g.fillStyle = '#3b2a22'; g.fillRect(x, y, sz, sz);
       g.fillStyle = isUp ? '#fffdf7' : '#8f6f52';
-      g.fillRect(x + 2, y + 2, 27, 27);
+      const bd = n === 8 ? 2 : 3;
+      g.fillRect(x + bd, y + bd, sz - bd * 2, sz - bd * 2);
       if (isUp) {
-        g.fillStyle = MEM_COLS[card.id % 8];
-        g.fillRect(x + 7, y + 7, 17, 17);
-        g.fillStyle = '#fffdf7';
-        g.font = 'bold 11px monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
-        g.fillText(String(card.id + 1), x + 15.5, y + 16);
+        g.fillStyle = MEM_COLS[card.id % MEM_COLS.length];
+        const innerOff = n === 8 ? 4 : 10;
+        g.fillRect(x + innerOff, y + innerOff, sz - innerOff * 2, sz - innerOff * 2);
+        g.fillStyle = '#ffffff';
+        g.font = n === 8 ? 'bold 16px -apple-system, BlinkMacSystemFont, sans-serif' : 'bold 24px -apple-system, BlinkMacSystemFont, sans-serif';
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(String(card.id + 1), x + sz / 2, y + sz / 2 + 1);
       } else {
-        g.fillStyle = '#b89674'; g.fillRect(x + 11, y + 11, 9, 9);
+        const dotOff = n === 8 ? 13 : 22;
+        g.fillStyle = '#b89674'; g.fillRect(x + dotOff, y + dotOff, sz - dotOff * 2, sz - dotOff * 2);
       }
     }
   };
@@ -31688,9 +32230,9 @@ function bootGoulaicaiExtension() {
         mem.cards[i2].matched = true;
         mem.open = [];
         mem.matched += 1;
-        pxGameScoreEl.textContent = `配对: ${mem.matched}/8`;
+        pxGameScoreEl.textContent = `配对: ${mem.matched}/${mem.totalPairs}`;
         drawMemory();
-        if (mem.matched >= 8 || mem.moves <= 0) settleCurrentGame();
+        if (mem.matched >= mem.totalPairs || mem.moves <= 0) settleCurrentGame();
       } else {
         mem.lock = true;
         setTimeout(() => {
@@ -31731,9 +32273,14 @@ function bootGoulaicaiExtension() {
       if (s >= 18) unlocked = tryUnlockGameReward('snake');
     } else if (activeGameId === 'memory') {
       const p = mem.matched;
-      const usedMoves = 24 - mem.moves;
-      coins = p >= 8 ? (usedMoves <= 16 ? 4 : 3) : (p >= 6 ? 2 : (p >= 4 ? 1 : 0));
-      if (p >= 8 && usedMoves <= 16) unlocked = tryUnlockGameReward('memory');
+      const usedMoves = mem.maxMoves - mem.moves;
+      if (mem.mode === 'hard') {
+        coins = p >= 32 ? (usedMoves <= 68 ? 15 : 12) : (p >= 24 ? 7 : (p >= 16 ? 4 : (p >= 10 ? 2 : (p >= 6 ? 1 : 0))));
+        if (p >= 24) unlocked = tryUnlockGameReward('memory');
+      } else {
+        coins = p >= 8 ? (usedMoves <= 16 ? 4 : 3) : (p >= 6 ? 2 : (p >= 4 ? 1 : 0));
+        if (p >= 8 && usedMoves <= 16) unlocked = tryUnlockGameReward('memory');
+      }
     }
     grantGameResult(activeGameId, coins, unlocked);
   };
@@ -31846,11 +32393,9 @@ function bootGoulaicaiExtension() {
       };
       gameRaf = win.requestAnimationFrame(loopSnk);
     } else if (activeGameId === 'memory') {
-      const deck = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7].sort(() => Math.random() - 0.5);
-      mem.cards = deck.map(id => ({ id, matched: false }));
-      mem.open = []; mem.matched = 0; mem.moves = 24; mem.lock = false;
-      pxGameScoreEl.textContent = '配对: 0/8';
-      pxGameTimeEl.textContent = '剩余: 24步';
+      initMemDeck();
+      pxGameScoreEl.textContent = `配对: 0/${mem.totalPairs}`;
+      pxGameTimeEl.textContent = `剩余: ${mem.maxMoves}步`;
       drawMemory();
     }
     updateGameButtonsUI();
@@ -31880,7 +32425,7 @@ function bootGoulaicaiExtension() {
       if (!snk.body.length) snk.body = [{ x: 5, y: 6 }, { x: 4, y: 6 }, { x: 3, y: 6 }];
       drawSnake();
     } else if (activeGameId === 'memory') {
-      if (!mem.cards.length) mem.cards = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7].map(id => ({ id, matched: false }));
+      if (!mem.cards.length || mem.cards.length !== mem.cols * mem.cols) initMemDeck();
       drawMemory();
     }
     updateGameButtonsUI();
@@ -31894,6 +32439,21 @@ function bootGoulaicaiExtension() {
       pxGameScoreEl.textContent = activeGameId === 'tetris' ? '消行: 0' : (activeGameId === 'snake' ? '吃骨: 0' : (activeGameId === 'memory' ? '配对: 0/8' : '得分: 0'));
       pxGameMsgEl.textContent = '准备开始';
       restoreGameView();
+    });
+  });
+
+  pxGameMemModeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nextM = btn.dataset.memMode === 'hard' ? 'hard' : 'normal';
+      if (mem.mode === nextM) return;
+      stopPixelGame();
+      mem.mode = nextM;
+      pxGameMemModeBtns.forEach(b => b.classList.toggle('active', b.dataset.memMode === mem.mode));
+      initMemDeck();
+      pxGameScoreEl.textContent = `配对: 0/${mem.totalPairs}`;
+      pxGameTimeEl.textContent = `剩余: ${mem.maxMoves}步`;
+      pxGameMsgEl.textContent = mem.mode === 'hard' ? '困难 8x8' : '普通 4x4';
+      drawMemory();
     });
   });
 
@@ -31966,9 +32526,12 @@ function bootGoulaicaiExtension() {
         gameSwipeStart = { x: e.clientX, y: e.clientY, r, c };
       }
     } else if (activeGameId === 'memory') {
-      const c = Math.floor((rx - 4) / 35);
-      const r = Math.floor((ry - 4) / 35);
-      if (r >= 0 && r < 4 && c >= 0 && c < 4) clickMemory(r * 4 + c);
+      const n = mem.cols;
+      const pad = n === 8 ? 2 : 6;
+      const step = n === 8 ? 40 : 70;
+      const col = Math.floor((rx - pad) / step);
+      const row = Math.floor((ry - pad) / step);
+      if (row >= 0 && row < n && col >= 0 && col < n) clickMemory(row * n + col);
     } else {
       gameSwipeStart = { x: e.clientX, y: e.clientY };
     }
@@ -37532,6 +38095,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const prEditName = root.querySelector('#st-pr-edit-name');
   const prEditRole = root.querySelector('#st-pr-edit-role');
   const prEditContent = root.querySelector('#st-pr-edit-content');
+  const prEditUndoBtn = root.querySelector('#st-pr-edit-undo');
+  const prEditRedoBtn = root.querySelector('#st-pr-edit-redo');
+  const prEditFindInp = root.querySelector('#st-pr-edit-find');
+  const prEditFindNextBtn = root.querySelector('#st-pr-edit-find-next');
+  const prEditRepInp = root.querySelector('#st-pr-edit-rep');
+  const prEditRepAllBtn = root.querySelector('#st-pr-edit-rep-all');
   const prEditNativeBtn = root.querySelector('#st-pr-edit-native');
   const prEditCloseBtn = root.querySelector('#st-pr-edit-close');
   const prEditCancelBtn = root.querySelector('#st-pr-edit-cancel');
@@ -37545,6 +38114,25 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   let prOnlyEnabled = false;
   let prSnapOpen = false;
   let prEditingId = '';
+  let prEditingName = '';
+  let prEditUndoStack = [];
+  let prEditRedoStack = [];
+  let prEditLastVal = '';
+  let prEditSnapTimer = null;
+  let prEditFindPos = 0;
+
+  const syncPrEditHistoryBtns = () => {
+    if (prEditUndoBtn) prEditUndoBtn.style.display = prEditUndoStack.length ? '' : 'none';
+    if (prEditRedoBtn) prEditRedoBtn.style.display = prEditRedoStack.length ? '' : 'none';
+  };
+  const pushPrEditSnap = (val) => {
+    const s = String(val ?? '');
+    if (prEditUndoStack.length && prEditUndoStack[prEditUndoStack.length - 1] === s) return;
+    prEditUndoStack.push(s);
+    if (prEditUndoStack.length > 40) prEditUndoStack.shift();
+    prEditRedoStack = [];
+    syncPrEditHistoryBtns();
+  };
 
   const findActivePresetSelect = () => {
     const candidates = [
@@ -37727,6 +38315,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const openPrEditModal = (it) => {
     if (!prEditModal || !it) return;
     prEditingId = it.id || '';
+    prEditingName = it.name || '';
     if (prEditTitle) prEditTitle.textContent = '编辑预设：' + it.name;
     if (prEditName) prEditName.value = it.promptObj ? String(it.promptObj.name || '') : it.name;
     if (prEditRole) prEditRole.value = (it.promptObj && it.promptObj.role) ? String(it.promptObj.role) : 'system';
@@ -37736,31 +38325,208 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       prEditContent.placeholder = it.isMarker ? '该条目为系统占位标记，无正文内容' : '预设条目正文内容...';
     }
     if (prEditSaveBtn) prEditSaveBtn.style.display = it.promptObj ? '' : 'none';
+    prEditUndoStack = [];
+    prEditRedoStack = [];
+    prEditLastVal = prEditContent ? prEditContent.value : '';
+    prEditFindPos = 0;
+    if (prEditFindInp) prEditFindInp.value = '';
+    if (prEditRepInp) prEditRepInp.value = '';
+    syncPrEditHistoryBtns();
     prEditModal.classList.add('show');
   };
 
   const closePrEditModal = () => {
     if (prEditModal) prEditModal.classList.remove('show');
     prEditingId = '';
+    prEditingName = '';
   };
 
-  const triggerNativePromptInspect = async (id) => {
+  const findPromptRowInDom = (id, name) => {
+    const listRoot = doc.querySelector('#completion_prompt_manager_list') || doc.querySelector('#left-nav-panel');
+    if (!listRoot) return null;
+    if (id) {
+      const byId = listRoot.querySelector(`[data-pm-identifier="${CSS.escape(id)}"]`);
+      if (byId) return byId;
+    }
+    if (name) {
+      const norm = String(name).trim();
+      const rows = Array.from(listRoot.querySelectorAll('.completion_prompt_manager_prompt, li'));
+      const exact = rows.find(r => {
+        const n = r.querySelector('.completion_prompt_manager_prompt_name a, .completion_prompt_manager_prompt_name, .prompt_manager_prompt_name');
+        return String(n?.textContent || '').trim() === norm;
+      });
+      if (exact) return exact;
+      const fuzzy = rows.find(r => r.classList.contains('completion_prompt_manager_prompt') && String(r.textContent || '').includes(norm));
+      if (fuzzy) return fuzzy;
+    }
+    return null;
+  };
+
+  const isPromptRowVisible = (el) => {
+    if (!el || !el.isConnected) return false;
+    const st = win.getComputedStyle(el);
+    return st.display !== 'none' && st.visibility !== 'hidden' && el.offsetHeight > 0;
+  };
+
+  const revealHiddenRowInGroup = async (row) => {
+    if (!row) return;
+    expandCollapsedParentsForRow(row);
+    if (isPromptRowVisible(row)) return;
+    let prev = row.previousElementSibling;
+    let guard = 0;
+    while (prev && guard++ < 80) {
+      const isPrompt = prev.classList && prev.classList.contains('completion_prompt_manager_prompt');
+      const hasFoldIcon = Boolean(prev.querySelector && prev.querySelector('.fa-chevron-right, .fa-caret-right, .fa-angle-right, .fa-folder, .inline-drawer-icon, .fa-plus'));
+      if (!isPrompt || hasFoldIcon) {
+        const clickTarget = prev.querySelector('.inline-drawer-toggle, .folder-header, .group-header, summary, [class*="toggle"], [class*="header"]') || prev;
+        try { if (win.$) win.$(clickTarget).trigger('click'); else clickTarget.click(); } catch (_) { try { clickTarget.click(); } catch (__) {} }
+        await new Promise(r => setTimeout(r, 90));
+        if (isPromptRowVisible(row)) return;
+      }
+      prev = prev.previousElementSibling;
+    }
+    if (!isPromptRowVisible(row)) {
+      row.classList.remove('hidden', 'd-none', 'collapsed', 'closed');
+      row.style.setProperty('display', 'flex', 'important');
+    }
+  };
+
+  const stripFolderKey = (el) => {
+    if (!el) return '';
+    const attrKey = el.getAttribute('data-folder') || el.getAttribute('data-group') || el.getAttribute('data-name') || el.id || '';
+    if (attrKey) return 'attr:' + attrKey;
+    return 'txt:' + String(el.textContent || '').replace(/[▶▼▸▾►◄+−\-•·\s()（）\d]/g, '').slice(0, 36);
+  };
+
+  const getFolderHeaders = () => {
+    const lr = doc.querySelector('#completion_prompt_manager_list');
+    if (!lr) return [];
+    const raw = [];
+    const seenEl = new Set();
+    const pushUniq = (el) => {
+      if (!el || seenEl.has(el)) return;
+      if (el.classList.contains('completion_prompt_manager_prompt') || el.hasAttribute('data-pm-identifier')) return;
+      if (el.offsetHeight < 10) return;
+      seenEl.add(el);
+      raw.push(el);
+    };
+    Array.from(lr.querySelectorAll(
+      'details > summary, .inline-drawer-toggle, .folder-header, .group-header, .prompt-group-header, .pm-folder-header, .st-folder-header, [class*="folder-head"], [class*="group-head"]'
+    )).forEach(pushUniq);
+    if (!raw.length) {
+      Array.from(lr.children).forEach(pushUniq);
+    }
+    return raw;
+  };
+
+  const getHeaderClickTarget = (el) => {
+    if (!el) return null;
+    return el.querySelector('.inline-drawer-toggle, summary, [class*="toggle"], [class*="header"], .fa-chevron-right, .fa-chevron-down, .fa-caret-right, .fa-caret-down') || el;
+  };
+
+  const countVisiblePrompts = () => {
+    const lr = doc.querySelector('#completion_prompt_manager_list');
+    if (!lr) return 0;
+    return Array.from(lr.querySelectorAll('.completion_prompt_manager_prompt')).filter(isPromptRowVisible).length;
+  };
+
+  const findHeaderByCleanKey = (cleanKey) => {
+    const list = getFolderHeaders();
+    const found = list.find(el => stripFolderKey(el) === cleanKey);
+    return found ? getHeaderClickTarget(found) : null;
+  };
+
+  const locatePromptRowInDrawer = async (id, name) => {
     togglePanel(false);
     await openLeftPresetDrawer();
-    const row = id ? doc.querySelector(`#completion_prompt_manager_list .completion_prompt_manager_prompt[data-pm-identifier="${CSS.escape(id)}"]`) : null;
-    if (!row) {
-      cmNotify('该条目被预设分组插件折叠，未在原生列表展开，请直接使用内置编辑');
+    let freshRow = findPromptRowInDom(id, name);
+    if (freshRow && isPromptRowVisible(freshRow)) {
+      return freshRow;
+    }
+    if (freshRow) {
+      await revealHiddenRowInGroup(freshRow);
+      return freshRow;
+    }
+    const visited = new Set();
+    for (let step = 0; step < 50; step++) {
+      const lr = doc.querySelector('#completion_prompt_manager_list');
+      if (!lr) break;
+      const headers = getFolderHeaders();
+      let chosenEl = null;
+      let chosenKey = '';
+      for (let i = 0; i < headers.length; i++) {
+        const el = headers[i];
+        const k = stripFolderKey(el);
+        if (!k || k === 'txt:' || visited.has(k)) continue;
+        visited.add(k);
+        chosenEl = el;
+        chosenKey = k;
+        break;
+      }
+      if (!chosenEl) break;
+      const clickEl = getHeaderClickTarget(chosenEl);
+      const beforeCnt = countVisiblePrompts();
+      const beforeH = lr.scrollHeight;
+      try { if (win.$) win.$(clickEl).trigger('click'); else clickEl.click(); } catch (_) { try { clickEl.click(); } catch (__) {} }
+      await new Promise(r => setTimeout(r, 150));
+      const afterCnt = countVisiblePrompts();
+      const afterH = (doc.querySelector('#completion_prompt_manager_list') || lr).scrollHeight;
+
+      freshRow = findPromptRowInDom(id, name);
+      if (freshRow && isPromptRowVisible(freshRow)) {
+        return freshRow;
+      }
+      if (freshRow) {
+        await revealHiddenRowInGroup(freshRow);
+        return freshRow;
+      }
+      if (afterH > beforeH + 4 || afterCnt > beforeCnt) {
+        const refoldEl = findHeaderByCleanKey(chosenKey) || (clickEl && clickEl.isConnected ? clickEl : null);
+        if (refoldEl) {
+          try { if (win.$) win.$(refoldEl).trigger('click'); else refoldEl.click(); } catch (_) { try { refoldEl.click(); } catch (__) {} }
+          await new Promise(r => setTimeout(r, 95));
+        }
+      }
+    }
+    return null;
+  };
+
+  const runLocatePrompt = async (id, name, openNativeEdit) => {
+    const freshRow = await locatePromptRowInDrawer(id, name);
+    if (!freshRow) {
+      cmNotify(openNativeEdit ? '未在当前列表中找到该条目，请直接使用内置编辑' : '未在当前列表中找到该条目，可直接点“编辑”修改');
       return false;
     }
-    expandCollapsedParentsForRow(row);
-    row.scrollIntoView({ behavior: 'auto', block: 'center' });
-    const btn = row.querySelector('.prompt-manager-inspect-action, .completion_prompt_manager_prompt_name a');
-    if (btn) {
-      try { if (win.$) win.$(btn).trigger('click'); else btn.click(); } catch (_) { btn.click(); }
-      return true;
+    const focusRow = () => {
+      const r = (freshRow && freshRow.isConnected) ? freshRow : findPromptRowInDom(id, name);
+      if (!r) return;
+      try { r.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+      r.classList.add('st-pr-flash-highlight');
+    };
+    setTimeout(focusRow, 60);
+    setTimeout(focusRow, 240);
+    setTimeout(() => {
+      const r = (freshRow && freshRow.isConnected) ? freshRow : findPromptRowInDom(id, name);
+      if (r) r.classList.remove('st-pr-flash-highlight');
+    }, 2600);
+
+    if (openNativeEdit) {
+      setTimeout(() => {
+        const latestRow = (freshRow && freshRow.isConnected) ? freshRow : findPromptRowInDom(id, name);
+        if (!latestRow) return;
+        const btn = latestRow.querySelector('.completion_prompt_manager_prompt_controls .fa-pencil, .completion_prompt_manager_prompt_controls .fa-pen-to-square, .completion_prompt_manager_prompt_controls .fa-pen, .completion_prompt_manager_prompt_controls [title*="编辑"], .completion_prompt_manager_prompt_controls [title*="Edit"], .prompt-manager-edit-action, .fa-pencil') ||
+          latestRow.querySelector('.prompt-manager-inspect-action');
+        if (btn) {
+          btn.click();
+        } else {
+          cmNotify('已定位到条目，但未找到原生编辑按钮');
+        }
+      }, 280);
     }
-    return false;
+    return true;
   };
+
+  const triggerNativePromptInspect = async (id, name) => runLocatePrompt(id, name, true);
 
   const syncPresetCharBindUI = () => {
     if (!prBindCharBtn) return;
@@ -37970,190 +38736,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       locBtn.type = 'button';
       locBtn.className = 'st-tb-mini-btn';
       locBtn.textContent = '定位';
-      const findPromptRowInDom = (id, name) => {
-        const listRoot = doc.querySelector('#completion_prompt_manager_list') || doc.querySelector('#left-nav-panel');
-        if (!listRoot) return null;
-        if (id) {
-          const byId = listRoot.querySelector(`[data-pm-identifier="${CSS.escape(id)}"]`);
-          if (byId) return byId;
-        }
-        if (name) {
-          const norm = String(name).trim();
-          const rows = Array.from(listRoot.querySelectorAll('.completion_prompt_manager_prompt, li'));
-          const exact = rows.find(r => {
-            const n = r.querySelector('.completion_prompt_manager_prompt_name a, .completion_prompt_manager_prompt_name, .prompt_manager_prompt_name');
-            return String(n?.textContent || '').trim() === norm;
-          });
-          if (exact) return exact;
-          const fuzzy = rows.find(r => r.classList.contains('completion_prompt_manager_prompt') && String(r.textContent || '').includes(norm));
-          if (fuzzy) return fuzzy;
-        }
-        return null;
-      };
-
-      const isRowVisible = (el) => {
-        if (!el || !el.isConnected) return false;
-        const st = win.getComputedStyle(el);
-        return st.display !== 'none' && st.visibility !== 'hidden' && el.offsetHeight > 0;
-      };
-
-      const revealHiddenRowInGroup = async (row) => {
-        if (!row) return;
-        expandCollapsedParentsForRow(row);
-        if (isRowVisible(row)) return;
-        // 情况 A：行在 DOM 中但被前面的同级折叠分组头隐藏（display:none / class）
-        let prev = row.previousElementSibling;
-        let guard = 0;
-        while (prev && guard++ < 80) {
-          const isPrompt = prev.classList && prev.classList.contains('completion_prompt_manager_prompt');
-          const hasFoldIcon = Boolean(prev.querySelector && prev.querySelector('.fa-chevron-right, .fa-caret-right, .fa-angle-right, .fa-folder, .inline-drawer-icon, .fa-plus'));
-          if (!isPrompt || hasFoldIcon) {
-            const clickTarget = prev.querySelector('.inline-drawer-toggle, .folder-header, .group-header, summary, [class*="toggle"], [class*="header"]') || prev;
-            try { if (win.$) win.$(clickTarget).trigger('click'); else clickTarget.click(); } catch (_) { try { clickTarget.click(); } catch (__) {} }
-            await new Promise(r => setTimeout(r, 90));
-            if (isRowVisible(row)) return;
-          }
-          prev = prev.previousElementSibling;
-        }
-        // 最终兜底：强行显示目标行，确保一定能滚动并高亮看到
-        if (!isRowVisible(row)) {
-          row.classList.remove('hidden', 'd-none', 'collapsed', 'closed');
-          row.style.setProperty('display', 'flex', 'important');
-        }
-      };
-
-      const stripFolderKey = (el) => {
-        if (!el) return '';
-        const attrKey = el.getAttribute('data-folder') || el.getAttribute('data-group') || el.getAttribute('data-name') || el.id || '';
-        if (attrKey) return 'attr:' + attrKey;
-        return 'txt:' + String(el.textContent || '').replace(/[▶▼▸▾►◄+−\-•·\s()（）\d]/g, '').slice(0, 36);
-      };
-
-      const getFolderHeaders = () => {
-        const lr = doc.querySelector('#completion_prompt_manager_list');
-        if (!lr) return [];
-        const raw = [];
-        const seenEl = new Set();
-        const pushUniq = (el) => {
-          if (!el || seenEl.has(el)) return;
-          if (el.classList.contains('completion_prompt_manager_prompt') || el.hasAttribute('data-pm-identifier')) return;
-          if (el.offsetHeight < 10) return;
-          seenEl.add(el);
-          raw.push(el);
-        };
-        Array.from(lr.querySelectorAll(
-          'details > summary, .inline-drawer-toggle, .folder-header, .group-header, .prompt-group-header, .pm-folder-header, .st-folder-header, [class*="folder-head"], [class*="group-head"]'
-        )).forEach(pushUniq);
-        if (!raw.length) {
-          Array.from(lr.children).forEach(pushUniq);
-        }
-        return raw;
-      };
-
-      const getHeaderClickTarget = (el) => {
-        if (!el) return null;
-        return el.querySelector('.inline-drawer-toggle, summary, [class*="toggle"], [class*="header"], .fa-chevron-right, .fa-chevron-down, .fa-caret-right, .fa-caret-down') || el;
-      };
-
-      const countVisiblePrompts = () => {
-        const lr = doc.querySelector('#completion_prompt_manager_list');
-        if (!lr) return 0;
-        return Array.from(lr.querySelectorAll('.completion_prompt_manager_prompt')).filter(isRowVisible).length;
-      };
-
-      const findHeaderByCleanKey = (cleanKey) => {
-        const list = getFolderHeaders();
-        const found = list.find(el => stripFolderKey(el) === cleanKey);
-        return found ? getHeaderClickTarget(found) : null;
-      };
-
-      const isHeaderVisiblyOpen = (el) => {
-        if (!el) return false;
-        if (el.getAttribute('aria-expanded') === 'true') return true;
-        if (el.parentElement && el.parentElement.tagName === 'DETAILS' && el.parentElement.open) return true;
-        if (el.classList.contains('open') || el.classList.contains('expanded')) return true;
-        if (el.querySelector && el.querySelector('.fa-chevron-down, .fa-caret-down, .fa-angle-down, .fa-folder-open, .fa-minus, .inline-drawer-icon.up')) return true;
-        const txt = String(el.textContent || '');
-        if (/[▼▾]/.test(txt)) return true;
-        return false;
-      };
-
-      const isHeaderVisiblyClosed = (el) => {
-        if (!el) return false;
-        if (el.getAttribute('aria-expanded') === 'false') return true;
-        if (el.parentElement && el.parentElement.tagName === 'DETAILS' && !el.parentElement.open) return true;
-        if (el.classList.contains('collapsed') || el.classList.contains('closed')) return true;
-        if (el.querySelector && el.querySelector('.fa-chevron-right, .fa-caret-right, .fa-angle-right, .fa-folder:not(.fa-folder-open), .fa-plus, .inline-drawer-icon.down')) return true;
-        const txt = String(el.textContent || '');
-        if (/[▶▸►]/.test(txt)) return true;
-        return false;
-      };
-
-      locBtn.addEventListener('click', async () => {
-        togglePanel(false);
-        await openLeftPresetDrawer();
-        let freshRow = findPromptRowInDom(it.id, it.name);
-        if (freshRow && isRowVisible(freshRow)) {
-          // 已可见，直接滚动高亮
-        } else if (freshRow) {
-          await revealHiddenRowInGroup(freshRow);
-        } else {
-          // 只试探当前折叠着的分组；用列表总高度 scrollHeight + 条目数双重判断，未命中必折回，绝不残留展开
-          const visited = new Set();
-          for (let step = 0; step < 50; step++) {
-            const lr = doc.querySelector('#completion_prompt_manager_list');
-            if (!lr) break;
-            const headers = getFolderHeaders();
-            let chosenEl = null;
-            let chosenKey = '';
-            for (let i = 0; i < headers.length; i++) {
-              const el = headers[i];
-              const k = stripFolderKey(el);
-              if (!k || k === 'txt:' || visited.has(k)) continue;
-              visited.add(k);
-              chosenEl = el;
-              chosenKey = k;
-              break;
-            }
-            if (!chosenEl) break;
-            const wasExplicitlyClosed = isHeaderVisiblyClosed(chosenEl);
-            const clickEl = getHeaderClickTarget(chosenEl);
-            const beforeCnt = countVisiblePrompts();
-            const beforeH = lr.scrollHeight;
-            try { if (win.$) win.$(clickEl).trigger('click'); else clickEl.click(); } catch (_) { try { clickEl.click(); } catch (__) {} }
-            await new Promise(r => setTimeout(r, 150));
-            const afterCnt = countVisiblePrompts();
-            const afterH = (doc.querySelector('#completion_prompt_manager_list') || lr).scrollHeight;
-
-            freshRow = findPromptRowInDom(it.id, it.name);
-            if (freshRow && isRowVisible(freshRow)) {
-              break;
-            }
-            if (freshRow) {
-              await revealHiddenRowInGroup(freshRow);
-              break;
-            }
-            // 未命中：只要原本是折叠状态，或点击后列表高度/可见数增加了，就无条件立即复折回去
-            if (afterH > beforeH + 4 || afterCnt > beforeCnt) {
-              const refoldEl = findHeaderByCleanKey(chosenKey) || (clickEl && clickEl.isConnected ? clickEl : null);
-              if (refoldEl) {
-                try { if (win.$) win.$(refoldEl).trigger('click'); else refoldEl.click(); } catch (_) { try { refoldEl.click(); } catch (__) {} }
-                await new Promise(r => setTimeout(r, 95));
-              }
-            }
-          }
-        }
-        if (freshRow) {
-          const focusRow = () => {
-            try { freshRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
-            freshRow.classList.add('st-pr-flash-highlight');
-          };
-          setTimeout(focusRow, 60);
-          setTimeout(focusRow, 240);
-          setTimeout(() => freshRow.classList.remove('st-pr-flash-highlight'), 2600);
-        } else {
-          cmNotify('未在当前列表中找到该条目，可直接点“编辑”修改');
-        }
+      locBtn.addEventListener('click', () => {
+        runLocatePrompt(it.id, it.name, false);
       });
       acts.appendChild(locBtn);
 
@@ -38165,7 +38749,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         if (it.promptObj) {
           openPrEditModal(it);
         } else {
-          triggerNativePromptInspect(it.id);
+          triggerNativePromptInspect(it.id, it.name);
         }
       });
       acts.appendChild(edBtn);
@@ -38185,11 +38769,94 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (e.target === prEditModal) closePrEditModal();
     });
   }
+  if (prEditContent) {
+    prEditContent.addEventListener('input', () => {
+      const prev = prEditLastVal;
+      clearTimeout(prEditSnapTimer);
+      prEditSnapTimer = setTimeout(() => {
+        if (prEditContent.value !== prev) {
+          pushPrEditSnap(prev);
+          prEditLastVal = prEditContent.value;
+        }
+      }, 320);
+    });
+  }
+  if (prEditUndoBtn) {
+    prEditUndoBtn.addEventListener('click', () => {
+      if (!prEditContent || !prEditUndoStack.length) return;
+      clearTimeout(prEditSnapTimer);
+      prEditRedoStack.push(prEditContent.value);
+      const prev = prEditUndoStack.pop();
+      prEditContent.value = prev;
+      prEditLastVal = prev;
+      syncPrEditHistoryBtns();
+    });
+  }
+  if (prEditRedoBtn) {
+    prEditRedoBtn.addEventListener('click', () => {
+      if (!prEditContent || !prEditRedoStack.length) return;
+      clearTimeout(prEditSnapTimer);
+      prEditUndoStack.push(prEditContent.value);
+      const next = prEditRedoStack.pop();
+      prEditContent.value = next;
+      prEditLastVal = next;
+      syncPrEditHistoryBtns();
+    });
+  }
+  const runPrEditFindNext = () => {
+    if (!prEditContent || !prEditFindInp) return;
+    const kw = prEditFindInp.value;
+    if (!kw) {
+      cmNotify('请先输入查找内容');
+      return;
+    }
+    const text = prEditContent.value;
+    let idx = text.indexOf(kw, prEditFindPos);
+    if (idx === -1 && prEditFindPos > 0) idx = text.indexOf(kw, 0);
+    if (idx === -1) {
+      cmNotify('未找到匹配内容');
+      return;
+    }
+    prEditFindPos = idx + kw.length;
+    prEditContent.focus();
+    prEditContent.setSelectionRange(idx, idx + kw.length);
+    const linesBefore = text.slice(0, idx).split('\n').length;
+    prEditContent.scrollTop = Math.max(0, (linesBefore - 4) * 20);
+  };
+  if (prEditFindNextBtn) prEditFindNextBtn.addEventListener('click', runPrEditFindNext);
+  if (prEditFindInp) {
+    prEditFindInp.addEventListener('input', () => { prEditFindPos = 0; });
+    prEditFindInp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); runPrEditFindNext(); }
+    });
+  }
+  if (prEditRepAllBtn) {
+    prEditRepAllBtn.addEventListener('click', () => {
+      if (!prEditContent || !prEditFindInp) return;
+      const kw = prEditFindInp.value;
+      if (!kw) {
+        cmNotify('请先输入要替换的内容');
+        return;
+      }
+      const rep = prEditRepInp ? prEditRepInp.value : '';
+      const cur = prEditContent.value;
+      const parts = cur.split(kw);
+      if (parts.length <= 1) {
+        cmNotify('未找到可替换的内容');
+        return;
+      }
+      pushPrEditSnap(cur);
+      prEditContent.value = parts.join(rep);
+      prEditLastVal = prEditContent.value;
+      cmNotify(`已替换 ${parts.length - 1} 处`);
+    });
+  }
   if (prEditNativeBtn) {
     prEditNativeBtn.addEventListener('click', async () => {
       const id = prEditingId;
+      const nm = prEditingName;
       closePrEditModal();
-      await triggerNativePromptInspect(id);
+      await triggerNativePromptInspect(id, nm);
     });
   }
   if (prEditSaveBtn) {
@@ -38357,11 +39024,255 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
   }, 450);
 
+  // ==================== 正则快捷开关引擎 ====================
+  const rxRefreshBtn = root.querySelector('#st-rx-refresh');
+  const rxSearchInp = root.querySelector('#st-rx-search');
+  const rxSearchClear = root.querySelector('#st-rx-search-clear');
+  const rxOnlyOnBtn = root.querySelector('#st-rx-only-on');
+  const rxToggleBtn = root.querySelector('#st-rx-toggle');
+  const rxListEl = root.querySelector('#st-rx-list');
+
+  let rxListOpen = false;
+  let rxOnlyOn = false;
+
+  const collectRegexScripts = () => {
+    const ctx = getContext();
+    const out = [];
+    const globalList = Array.isArray(ctx?.extensionSettings?.regex) ? ctx.extensionSettings.regex : [];
+    globalList.forEach((s, idx) => {
+      if (!s || !s.scriptName) return;
+      out.push({ scope: '全局', obj: s, idx, name: String(s.scriptName).trim(), enabled: !s.disabled });
+    });
+    const chid = Number(ctx?.characterId);
+    const curChar = Number.isFinite(chid) && Array.isArray(ctx?.characters) ? ctx.characters[chid] : null;
+    const scopedList = Array.isArray(curChar?.data?.extensions?.regex_scripts) ? curChar.data.extensions.regex_scripts : [];
+    scopedList.forEach((s, idx) => {
+      if (!s || !s.scriptName) return;
+      out.push({ scope: '角色', obj: s, idx, name: String(s.scriptName).trim(), enabled: !s.disabled, chid });
+    });
+    return out;
+  };
+
+  const renderRegexList = () => {
+    if (!rxListEl) return;
+    const q = String(rxSearchInp?.value || '').trim().toLowerCase();
+    rxListEl.classList.toggle('show', rxListOpen);
+    if (rxToggleBtn) rxToggleBtn.textContent = rxListOpen ? '收起' : '展开';
+    if (rxOnlyOnBtn) rxOnlyOnBtn.classList.toggle('active', rxOnlyOn);
+    if (!rxListOpen) return;
+
+    const all = collectRegexScripts();
+    rxListEl.innerHTML = '';
+    if (!all.length) {
+      rxListEl.innerHTML = '<div class="st-tb-tip" style="margin:2px 0;">未读取到正则脚本</div>';
+      return;
+    }
+    const filtered = all.filter(it => {
+      if (rxOnlyOn && !it.enabled) return false;
+      if (!q) return true;
+      return it.name.toLowerCase().includes(q) || it.scope.includes(q);
+    });
+    if (!filtered.length) {
+      rxListEl.innerHTML = '<div class="st-tb-tip" style="margin:2px 0;">没有匹配的正则</div>';
+      return;
+    }
+
+    const frag = doc.createDocumentFragment();
+    filtered.forEach(it => {
+      const div = doc.createElement('div');
+      div.className = 'st-pr-item';
+      const nm = doc.createElement('span');
+      nm.className = 'st-pr-item-name';
+      nm.textContent = `[${it.scope}] ${it.name}`;
+      nm.title = nm.textContent;
+      if (!it.enabled) nm.style.opacity = '0.52';
+
+      const acts = doc.createElement('div');
+      acts.className = 'st-pr-item-acts';
+      const sw = doc.createElement('button');
+      sw.type = 'button';
+      sw.className = 'st-tb-mini-btn' + (it.enabled ? ' active' : '');
+      sw.textContent = it.enabled ? '开' : '关';
+      sw.addEventListener('click', async () => {
+        const nextEnabled = !it.enabled;
+        it.obj.disabled = !nextEnabled;
+        try {
+          const ctx = getContext();
+          if (it.scope === '全局') {
+            if (typeof ctx?.saveSettingsDebounced === 'function') ctx.saveSettingsDebounced();
+            else if (typeof win.saveSettingsDebounced === 'function') win.saveSettingsDebounced();
+          } else if (typeof ctx?.writeExtensionField === 'function' && Number.isFinite(it.chid)) {
+            const ch = ctx.characters?.[it.chid];
+            const list = ch?.data?.extensions?.regex_scripts;
+            if (Array.isArray(list)) await ctx.writeExtensionField(it.chid, 'regex_scripts', list);
+          }
+          if (it.obj.id) {
+            const cb = doc.querySelector(`.regex-script-label[id="${CSS.escape(it.obj.id)}"] .disable_regex`);
+            if (cb) cb.checked = !nextEnabled;
+          }
+        } catch (_) {}
+        renderRegexList();
+        cmNotify(`${it.name} 已${nextEnabled ? '开启' : '关闭'}`);
+      });
+      acts.appendChild(sw);
+      div.append(nm, acts);
+      frag.appendChild(div);
+    });
+    rxListEl.appendChild(frag);
+  };
+
+  const syncRxClear = () => {
+    if (rxSearchClear && rxSearchInp) rxSearchClear.classList.toggle('show', Boolean(rxSearchInp.value));
+  };
+  if (rxSearchInp) {
+    rxSearchInp.addEventListener('input', () => {
+      if (String(rxSearchInp.value || '').trim()) rxListOpen = true;
+      syncRxClear();
+      renderRegexList();
+    });
+  }
+  if (rxSearchClear) {
+    rxSearchClear.addEventListener('click', () => {
+      if (rxSearchInp) { rxSearchInp.value = ''; rxSearchInp.focus(); }
+      syncRxClear();
+      renderRegexList();
+    });
+  }
+  if (rxOnlyOnBtn) {
+    rxOnlyOnBtn.addEventListener('click', () => {
+      rxOnlyOn = !rxOnlyOn;
+      if (rxOnlyOn) rxListOpen = true;
+      renderRegexList();
+    });
+  }
+  if (rxToggleBtn) {
+    rxToggleBtn.addEventListener('click', () => {
+      rxListOpen = !rxListOpen;
+      renderRegexList();
+    });
+  }
+  if (rxRefreshBtn) rxRefreshBtn.addEventListener('click', renderRegexList);
+
+  // ==================== 小狗每日签到与连续打卡 ====================
+  const pupCheckinTxt = root.querySelector('#st-px-checkin-txt');
+  const pupCheckinBtn = root.querySelector('#st-px-checkin-btn');
+
+  const getLocalDateStr = (offsetDays = 0) => {
+    const d = new Date(Date.now() + offsetDays * 86400000);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  const ensurePupCheckin = () => {
+    if (!config.puppyCheckin || typeof config.puppyCheckin !== 'object') {
+      config.puppyCheckin = { lastDate: '', streak: 0, total: 0 };
+    }
+    return config.puppyCheckin;
+  };
+
+  const renderPupCheckinUI = () => {
+    if (!pupCheckinTxt || !pupCheckinBtn) return;
+    const ck = ensurePupCheckin();
+    const today = getLocalDateStr(0);
+    const done = ck.lastDate === today;
+    const streak = Math.max(0, Number(ck.streak || 0));
+    const totalDays = Math.max(0, Number(ck.total || 0));
+    pupCheckinTxt.textContent = done
+      ? `已签到 · 连签 ${streak} 天 / 累计 ${totalDays} 天`
+      : (totalDays > 0 ? `待签到 · 连签 ${streak} 天 / 累计 ${totalDays} 天` : '每日签到领小狗币');
+    pupCheckinBtn.textContent = done ? '已签到' : '签到领币';
+    pupCheckinBtn.disabled = done;
+    pupCheckinBtn.classList.toggle('care', !done);
+  };
+
+  if (pupCheckinBtn) {
+    pupCheckinBtn.addEventListener('click', () => {
+      const ck = ensurePupCheckin();
+      if (!Array.isArray(ck.claimed)) ck.claimed = [];
+      const today = getLocalDateStr(0);
+      if (ck.lastDate === today) return;
+      const yesterday = getLocalDateStr(-1);
+      ck.streak = ck.lastDate === yesterday ? (Number(ck.streak || 0) + 1) : 1;
+      ck.maxStreak = Math.max(Number(ck.maxStreak || 0), ck.streak);
+      ck.lastDate = today;
+      ck.total = Number(ck.total || 0) + 1;
+
+      const cycleDay = ((ck.streak - 1) % 7) + 1;
+      let coinGain = cycleDay === 7 ? 15 : (cycleDay === 3 ? 8 : (cycleDay >= 4 ? 6 : 4 + (cycleDay - 1)));
+      const affGain = cycleDay === 7 ? 6 : (cycleDay === 3 ? 3 : 2);
+      let ticketGain = 0;
+      const specialGot = [];
+
+      config.puppyInventory = config.puppyInventory || {};
+      config.puppyOwnedOutfits = config.puppyOwnedOutfits || [];
+      config.puppyOwnedAccs = config.puppyOwnedAccs || [];
+      config.puppyOwnedBubbles = config.puppyOwnedBubbles || [];
+      config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || [];
+
+      const grantMilestone = (key, coins, tickets, fn, label) => {
+        if (ck.claimed.includes(key)) return;
+        ck.claimed.push(key);
+        coinGain += coins;
+        ticketGain += tickets;
+        if (typeof fn === 'function') fn();
+        if (label) specialGot.push(label);
+      };
+
+      if (ck.streak >= 30) {
+        grantMilestone('s30', 15, 1, () => {
+          if (!config.puppyOwnedOutfits.includes('ck_outfit_knit_cardigan')) config.puppyOwnedOutfits.push('ck_outfit_knit_cardigan');
+        }, '连签30天礼：暖绒针织开衫 + 扭蛋券×1');
+      }
+      if (ck.streak >= 52) {
+        grantMilestone('s52', 20, 1, () => {
+          if (!config.puppyOwnedAccs.includes('ck_acc_love_letter')) config.puppyOwnedAccs.push('ck_acc_love_letter');
+        }, '连签52天礼：头顶小情书 + 扭蛋券×1');
+      }
+      if (ck.streak >= 60) {
+        grantMilestone('s60', 20, 1, () => {
+          if (!config.puppyOwnedBubbles.includes('bub_ck_vintage_post')) config.puppyOwnedBubbles.push('bub_ck_vintage_post');
+        }, '连签60天礼：邮戳明信片泡 + 扭蛋券×1');
+      }
+      if (ck.streak >= 99) {
+        grantMilestone('s99', 25, 2, () => {
+          if (!config.puppyOwnedAvatarFrames.includes('af_ck_amber_press')) config.puppyOwnedAvatarFrames.push('af_ck_amber_press');
+        }, '连签99天礼：琥珀标本框 + 扭蛋券×2');
+      }
+      if (ck.total >= 100) {
+        grantMilestone('t100', 30, 2, () => {
+          if (!config.puppyOwnedOutfits.includes('ck_outfit_century_cloak')) config.puppyOwnedOutfits.push('ck_outfit_century_cloak');
+        }, '累计100天礼：百日纪念斗篷 + 扭蛋券×2');
+      }
+
+      if (ticketGain > 0) {
+        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + ticketGain;
+      }
+      config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + coinGain;
+      saveConfig();
+      if (typeof addPupAffinity === 'function') addPupAffinity(affGain, 'checkin');
+      if (typeof checkPupAchievements === 'function') checkPupAchievements();
+      if (typeof updatePupStatBars === 'function') updatePupStatBars();
+      if (typeof renderGachaView === 'function') renderGachaView();
+      renderPupCheckinUI();
+
+      const extraMsg = specialGot.length ? `，解锁【${specialGot.join('；')}】` : '';
+      const bonusNote = !specialGot.length ? (cycleDay === 7 ? '（7天连签）' : (cycleDay === 3 ? '（3天连签）' : '')) : '';
+      if (config.puppyEnabled && typeof showPuppyBubble === 'function') {
+        if (typeof setPuppyState === 'function') setPuppyState(specialGot.length ? 'love_firework' : 'happy', 120);
+        showPuppyBubble(`签到成功${bonusNote}，+${coinGain} 币、+${affGain} 好感${extraMsg}`, specialGot.length ? 4200 : 2800);
+      } else {
+        cmNotify(`签到成功${bonusNote}：+${coinGain} 币，+${affGain} 好感${extraMsg}`);
+      }
+    });
+  }
+  renderPupCheckinUI();
+
 
   // ==================== 扩展管理页与底栏魔法棒入口 ====================
   const mountExtMenuEntries = () => {
     try {
-      // 1. 底栏魔法棒拓展菜单 (#extensionsMenu) 入口：点击召唤平时那个面板
       const extMenu = doc.querySelector('#extensionsMenu');
       if (extMenu && !doc.querySelector('#st-goulaicai-ext-menu-item')) {
         const item = doc.createElement('div');
@@ -38377,7 +39288,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         extMenu.appendChild(item);
       }
 
-      // 2. 顶部扩展设置页 (#extensions_settings2 / #extensions_settings) 入口
       const extSettings = doc.querySelector('#extensions_settings2') || doc.querySelector('#extensions_settings');
       if (extSettings && !doc.querySelector('#st-goulaicai-ext-settings')) {
         const box = doc.createElement('div');
