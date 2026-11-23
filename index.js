@@ -6655,16 +6655,70 @@ function bootGoulaicaiExtension() {
       min-height: 0;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding: 14px 16px 24px;
-      line-height: 1.85;
+      box-sizing: border-box;
+      padding: 14px var(--r-padx, 16px) 24px var(--r-padx, 16px);
+      line-height: var(--r-lh, 1.85);
       font-size: 15px;
+      text-align: var(--r-align, justify);
+      text-justify: inter-ideograph;
+      scrollbar-width: none;
       user-select: text;
       -webkit-user-select: text;
     }
+    .st-tb-reader-content::-webkit-scrollbar {
+      width: 0;
+      display: none;
+    }
+    .st-tb-reader-content.paper-bg {
+      background: #f5eedc;
+      color: #362e26;
+    }
     .st-tb-reader-content p {
-      margin: 0 0 10px;
-      text-indent: 2em;
+      margin: 0 0 var(--r-gap, 10px);
+      text-indent: var(--r-indent, 2em);
       word-break: break-word;
+    }
+    .st-tb-reader-set-bar {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--tb-border);
+      background: var(--tb-surface);
+      flex-shrink: 0;
+    }
+    .st-tb-reader-set-bar.open {
+      display: flex;
+    }
+    .st-tb-rset-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--tb-text);
+    }
+    .st-tb-rset-row > span:first-child {
+      min-width: 48px;
+      color: var(--tb-sub);
+    }
+    .st-tb-rset-row > input[type="range"] {
+      flex: 1;
+      min-width: 0;
+    }
+    .st-tb-rset-row > span:last-child {
+      min-width: 34px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--tb-sub);
+    }
+    .st-tb-rset-toggles {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-top: 2px;
+    }
+    .st-tb-rset-toggles .st-tb-r-act {
+      flex: 1;
     }
     .st-tb-reader-toc {
       display: none;
@@ -7446,6 +7500,7 @@ function bootGoulaicaiExtension() {
         <div class="st-tb-header-actions">
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-fs-down" type="button" title="减小字号">A-</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-fs-up" type="button" title="增大字号">A+</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-set-btn" type="button" title="阅读排版设置">≡</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-min-btn" type="button" title="最小化">−</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-full-btn" type="button" title="切换全屏">□</button>
           <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-close" type="button" title="关闭">×</button>
@@ -7462,6 +7517,28 @@ function bootGoulaicaiExtension() {
         <input class="st-tb-input" id="st-tb-reader-rename-inp" type="text" maxlength="40" placeholder="输入新的书名" />
         <button class="st-tb-r-act accent" id="st-tb-reader-rename-ok" type="button">保存</button>
         <button class="st-tb-r-act" id="st-tb-reader-rename-cancel" type="button">取消</button>
+      </div>
+      <div class="st-tb-reader-set-bar" id="st-tb-reader-set-bar">
+        <div class="st-tb-rset-row">
+          <span>左右边距</span>
+          <input class="st-tb-range" id="st-tb-rset-padx" type="range" min="6" max="48" step="2" />
+          <span id="st-tb-rset-padx-val">16px</span>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>正文行距</span>
+          <input class="st-tb-range" id="st-tb-rset-lh" type="range" min="1.3" max="2.6" step="0.05" />
+          <span id="st-tb-rset-lh-val">1.85</span>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>段落间距</span>
+          <input class="st-tb-range" id="st-tb-rset-gap" type="range" min="2" max="28" step="2" />
+          <span id="st-tb-rset-gap-val">10px</span>
+        </div>
+        <div class="st-tb-rset-toggles">
+          <button class="st-tb-r-act" id="st-tb-rset-justify" type="button">两端对齐</button>
+          <button class="st-tb-r-act" id="st-tb-rset-indent" type="button">首行缩进</button>
+          <button class="st-tb-r-act" id="st-tb-rset-paper" type="button">护眼纸色</button>
+        </div>
       </div>
       <div class="st-tb-reader-toc" id="st-tb-reader-toc"></div>
       <div class="st-tb-reader-content" id="st-tb-reader-content">
@@ -40226,6 +40303,74 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (e.key === 'Enter') { e.preventDefault(); saveReaderRename(); }
       else if (e.key === 'Escape') { e.preventDefault(); closeReaderRename(); }
     });
+  }
+  const readerSetBtn = root.querySelector('#st-tb-reader-set-btn');
+  const readerSetBar = root.querySelector('#st-tb-reader-set-bar');
+  const rsetPadX = root.querySelector('#st-tb-rset-padx');
+  const rsetPadXVal = root.querySelector('#st-tb-rset-padx-val');
+  const rsetLh = root.querySelector('#st-tb-rset-lh');
+  const rsetLhVal = root.querySelector('#st-tb-rset-lh-val');
+  const rsetGap = root.querySelector('#st-tb-rset-gap');
+  const rsetGapVal = root.querySelector('#st-tb-rset-gap-val');
+  const rsetJustifyBtn = root.querySelector('#st-tb-rset-justify');
+  const rsetIndentBtn = root.querySelector('#st-tb-rset-indent');
+  const rsetPaperBtn = root.querySelector('#st-tb-rset-paper');
+
+  const applyReaderTypoSettings = () => {
+    const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
+    const lh = clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6);
+    const gp = clamp(Number(config.readerParaGap ?? 10), 2, 28);
+    const just = config.readerJustify !== false;
+    const ind = config.readerIndent !== false;
+    const paper = Boolean(config.readerPaperBg);
+    if (readerContentEl) {
+      readerContentEl.style.setProperty('--r-padx', `${px}px`);
+      readerContentEl.style.setProperty('--r-lh', String(lh));
+      readerContentEl.style.setProperty('--r-gap', `${gp}px`);
+      readerContentEl.style.setProperty('--r-align', just ? 'justify' : 'left');
+      readerContentEl.style.setProperty('--r-indent', ind ? '2em' : '0');
+      readerContentEl.classList.toggle('paper-bg', paper);
+    }
+    if (rsetPadX) rsetPadX.value = String(px);
+    if (rsetPadXVal) rsetPadXVal.textContent = `${px}px`;
+    if (rsetLh) rsetLh.value = String(lh);
+    if (rsetLhVal) rsetLhVal.textContent = lh.toFixed(2);
+    if (rsetGap) rsetGap.value = String(gp);
+    if (rsetGapVal) rsetGapVal.textContent = `${gp}px`;
+    if (rsetJustifyBtn) rsetJustifyBtn.classList.toggle('accent', just);
+    if (rsetIndentBtn) rsetIndentBtn.classList.toggle('accent', ind);
+    if (rsetPaperBtn) rsetPaperBtn.classList.toggle('accent', paper);
+  };
+  applyReaderTypoSettings();
+
+  if (readerSetBtn && readerSetBar) {
+    readerSetBtn.addEventListener('click', () => {
+      const opening = !readerSetBar.classList.contains('open');
+      readerSetBar.classList.toggle('open', opening);
+      readerSetBtn.classList.toggle('active', opening);
+      if (opening) applyReaderTypoSettings();
+    });
+  }
+  if (rsetPadX) {
+    rsetPadX.addEventListener('input', () => { config.readerPadX = Number(rsetPadX.value); applyReaderTypoSettings(); scheduleSaveConfig(); });
+    rsetPadX.addEventListener('change', () => { saveConfig(); });
+  }
+  if (rsetLh) {
+    rsetLh.addEventListener('input', () => { config.readerLineHeight = Number(rsetLh.value); applyReaderTypoSettings(); scheduleSaveConfig(); });
+    rsetLh.addEventListener('change', () => { saveConfig(); });
+  }
+  if (rsetGap) {
+    rsetGap.addEventListener('input', () => { config.readerParaGap = Number(rsetGap.value); applyReaderTypoSettings(); scheduleSaveConfig(); });
+    rsetGap.addEventListener('change', () => { saveConfig(); });
+  }
+  if (rsetJustifyBtn) {
+    rsetJustifyBtn.addEventListener('click', () => { config.readerJustify = !(config.readerJustify !== false); saveConfig(); applyReaderTypoSettings(); });
+  }
+  if (rsetIndentBtn) {
+    rsetIndentBtn.addEventListener('click', () => { config.readerIndent = !(config.readerIndent !== false); saveConfig(); applyReaderTypoSettings(); });
+  }
+  if (rsetPaperBtn) {
+    rsetPaperBtn.addEventListener('click', () => { config.readerPaperBg = !config.readerPaperBg; saveConfig(); applyReaderTypoSettings(); });
   }
   if (readerCloseBtn) {
     readerCloseBtn.addEventListener('click', () => {
