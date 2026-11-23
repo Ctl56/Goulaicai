@@ -1,4 +1,4 @@
-// SillyTavern UI Extension: 狗来财 (v2.0.96)
+// SillyTavern UI Extension: 狗来财 (v5.6.69)
 let __goulaicaiExtBooted = false;
 
 function bootGoulaicaiExtension() {
@@ -39369,12 +39369,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     delete win.__stToolboxCleanup;
   };
 
-  // ==================== 狗来财扩展入口 + 自动检测更新 + 小狗提醒 + 一键更新自动刷新 ====================
-  const GLC_EXT_VERSION = '2.0.96';
+  // ==================== 狗来财扩展入口 + 自动检测更新 + 一键更新自动刷新 ====================
+  const GLC_EXT_VERSION = '5.6.69';
   let glcUpdateTimer = null;
   let glcUpdateBootTimer = null;
   let glcExtInfo = null;
-  let glcHasAnnouncedUpdate = false;
 
   const getStAuthHeaders = async () => {
     try {
@@ -39406,20 +39405,21 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             if (!nm.startsWith('third-party/')) continue;
             const isG = item?.type === 'global';
             const folder = nm.slice('third-party/'.length);
-            if (item?.manifest?.display_name === '狗来财' || /goulaicai|狗来财/i.test(folder)) {
-              glcExtInfo = { extensionName: folder, fullName: nm, global: isG };
-              return glcExtInfo;
-            }
+            let localVer = GLC_EXT_VERSION;
+            let matched = item?.manifest?.display_name === '狗来财' || /goulaicai|狗来财/i.test(folder);
+            if (item?.manifest?.version) localVer = String(item.manifest.version);
             try {
-              const mr = await win.fetch(`/scripts/extensions/${nm}/manifest.json`);
+              const mr = await win.fetch(`/scripts/extensions/${nm}/manifest.json?t=${Date.now()}`);
               if (mr.ok) {
                 const mj = await mr.json();
-                if (mj && mj.display_name === '狗来财') {
-                  glcExtInfo = { extensionName: folder, fullName: nm, global: isG };
-                  return glcExtInfo;
-                }
+                if (mj && mj.display_name === '狗来财') matched = true;
+                if (mj && mj.version) localVer = String(mj.version);
               }
             } catch (_) {}
+            if (matched) {
+              glcExtInfo = { extensionName: folder, fullName: nm, global: isG, localVer };
+              return glcExtInfo;
+            }
           }
         }
       }
@@ -39436,22 +39436,23 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (b2) b2.style.display = hasUpdate ? 'inline-block' : 'none';
     if (verEl && statusText) verEl.textContent = `当前版本 v${GLC_EXT_VERSION} · ${statusText}`;
     if (updBtn) updBtn.style.display = hasUpdate ? 'inline-flex' : 'none';
-    const topBtn = doc.getElementById('extensions-settings-button');
-    if (topBtn) {
-      let dot = doc.getElementById('st-glc-top-upd-dot');
-      if (hasUpdate) {
-        if (!dot) {
-          if (win.getComputedStyle(topBtn).position === 'static') topBtn.style.position = 'relative';
-          dot = doc.createElement('span');
-          dot.id = 'st-glc-top-upd-dot';
-          dot.title = '狗来财有新版本可更新';
-          dot.style.cssText = 'position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#e05656;box-shadow:0 0 0 1.5px rgba(255,255,255,0.85);pointer-events:none;z-index:5;';
-          topBtn.appendChild(dot);
-        }
-      } else if (dot) {
-        dot.remove();
-      }
+  };
+
+  const callStExtEndpoint = async (url, info) => {
+    const headers = await getStAuthHeaders();
+    let resp = await win.fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ extensionName: info.extensionName, global: info.global }),
+    });
+    if (!resp.ok) {
+      resp = await win.fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ extensionName: info.fullName, global: info.global }),
+      });
     }
+    return resp;
   };
 
   const runGlcUpdateNow = async () => {
@@ -39461,25 +39462,17 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       setGlcUpdateUI(false, '未找到扩展目录，请在管理扩展中更新');
       return;
     }
-    if (updBtn) { updBtn.disabled = true; updBtn.textContent = '正在更新'; }
+    if (updBtn) { updBtn.style.pointerEvents = 'none'; updBtn.textContent = '正在更新'; }
     setGlcUpdateUI(true, '正在拉取最新版本');
     try {
-      const headers = await getStAuthHeaders();
-      const resp = await win.fetch('/api/extensions/update', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ extensionName: info.extensionName, global: info.global }),
-      });
+      const resp = await callStExtEndpoint('/api/extensions/update', info);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       setGlcUpdateUI(false, '更新完成，正在刷新页面');
-      if (config.puppyEnabled && typeof showPuppyBubble === 'function') {
-        showPuppyBubble('更新好了，马上帮你刷新页面！', 2500, true);
-      }
       setTimeout(() => {
         try { win.location.reload(); } catch (_) {}
-      }, 900);
+      }, 600);
     } catch (_) {
-      if (updBtn) { updBtn.disabled = false; updBtn.textContent = '立即更新并刷新'; }
+      if (updBtn) { updBtn.style.pointerEvents = ''; updBtn.textContent = '立即更新并刷新'; }
       setGlcUpdateUI(true, '更新失败，请检查网络或重试');
     }
   };
@@ -39489,33 +39482,34 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const info = await discoverGoulaicaiExt();
     if (!info) {
       if (manual) setGlcUpdateUI(false, '未检测到已安装的扩展目录');
-      else {
-        const verEl = doc.getElementById('st-glc-ext-ver-line');
-        if (verEl) verEl.textContent = `当前版本 v${GLC_EXT_VERSION}`;
-      }
       return;
     }
     try {
-      const headers = await getStAuthHeaders();
-      const resp = await win.fetch('/api/extensions/version', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ extensionName: info.extensionName, global: info.global }),
-      });
+      const resp = await callStExtEndpoint('/api/extensions/version', info);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
-      const needUpdate = data && data.isUpToDate === false;
-      if (needUpdate) {
-        setGlcUpdateUI(true, '发现新版本，可以点击下方更新');
-        if ((manual || !glcHasAnnouncedUpdate) && config.puppyEnabled && typeof showPuppyBubble === 'function') {
-          glcHasAnnouncedUpdate = true;
-          showPuppyBubble('汪，狗来财有新版本了，去拓展里点一下更新吧！', 5500, true);
+      let needUpdate = Boolean(data && data.isUpToDate === false);
+      if (!needUpdate && data && data.remoteUrl) {
+        const m = String(data.remoteUrl).match(/github\.com[:/]([^/]+)\/([^/.]+)(?:\.git)?/i);
+        if (m) {
+          const owner = m[1];
+          const repo = m[2];
+          const branch = data.currentBranchName || 'main';
+          try {
+            const rr = await win.fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/manifest.json?t=${Date.now()}`);
+            if (rr.ok) {
+              const rm = await rr.json();
+              if (rm && rm.version && String(rm.version).trim() !== String(info.localVer || GLC_EXT_VERSION).trim()) {
+                needUpdate = true;
+              }
+            }
+          } catch (_) {}
         }
+      }
+      if (needUpdate) {
+        setGlcUpdateUI(true, '发现新版本');
       } else {
         setGlcUpdateUI(false, '已是最新版本');
-        if (manual && config.puppyEnabled && typeof showPuppyBubble === 'function') {
-          showPuppyBubble('狗来财已经是最新版本啦！', 2600, true);
-        }
       }
     } catch (_) {
       if (manual) setGlcUpdateUI(false, '检查失败，请稍后再试');
@@ -39525,47 +39519,30 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const mountGoulaicaiStEntries = () => {
     try {
       const extContainer = doc.getElementById('extensions_settings2') || doc.getElementById('extensions_settings');
-      if (extContainer && !doc.getElementById('st-glc-ext-drawer')) {
-        const drawer = doc.createElement('div');
-        drawer.id = 'st-glc-ext-drawer';
-        drawer.className = 'inline-drawer';
-        drawer.innerHTML = `<div class="inline-drawer-toggle inline-drawer-header">
-          <b style="display:inline-flex;align-items:center;gap:6px;">
-            <span>狗来财</span>
-            <span id="st-glc-ext-upd-badge" style="display:none;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;background:#e05656;color:#fff;line-height:1.4;">需要更新</span>
-          </b>
-          <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
-        </div>
-        <div class="inline-drawer-content" style="padding:8px 4px;display:none;">
-          <div id="st-glc-ext-ver-line" style="font-size:12px;margin-bottom:8px;opacity:0.85;">当前版本 v${GLC_EXT_VERSION} · 正在检测更新</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            <button type="button" id="st-glc-ext-open-panel" class="menu_button">打开工具箱</button>
-            <button type="button" id="st-glc-ext-open-bag" class="menu_button">打开小狗背包</button>
-            <button type="button" id="st-glc-ext-check-btn" class="menu_button">检查更新</button>
-            <button type="button" id="st-glc-ext-update-btn" class="menu_button" style="display:none;background:#e05656;color:#fff;">立即更新并刷新</button>
+      if (extContainer && !doc.getElementById('st-glc-ext-wrap')) {
+        const wrap = doc.createElement('div');
+        wrap.id = 'st-glc-ext-wrap';
+        wrap.className = 'goulaicai_settings';
+        wrap.innerHTML = `<div class="inline-drawer">
+          <div class="inline-drawer-toggle inline-drawer-header">
+            <b>狗来财<span id="st-glc-ext-upd-badge" style="display:none;margin-left:6px;font-size:10px;font-weight:700;padding:0 5px;border-radius:4px;background:#e05656;color:#fff;vertical-align:middle;">NEW</span></b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+          </div>
+          <div class="inline-drawer-content">
+            <div id="st-glc-ext-ver-line" style="font-size:12px;margin:6px 0;opacity:0.85;">当前版本 v${GLC_EXT_VERSION}</div>
+            <div class="flex-container flexGap5" style="flex-wrap:wrap;">
+              <div id="st-glc-ext-open-panel" class="menu_button">打开工具箱</div>
+              <div id="st-glc-ext-open-bag" class="menu_button">打开小狗背包</div>
+              <div id="st-glc-ext-check-btn" class="menu_button">检查更新</div>
+              <div id="st-glc-ext-update-btn" class="menu_button" style="display:none;background:#e05656;color:#fff;">立即更新并刷新</div>
+            </div>
           </div>
         </div>`;
-        extContainer.appendChild(drawer);
-        const hdr = drawer.querySelector('.inline-drawer-toggle');
-        const body = drawer.querySelector('.inline-drawer-content');
-        const ico = drawer.querySelector('.inline-drawer-icon');
-        if (hdr && body) {
-          hdr.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const open = body.style.display === 'none';
-            body.style.display = open ? 'block' : 'none';
-            if (ico) {
-              ico.classList.toggle('down', !open);
-              ico.classList.toggle('up', open);
-              ico.classList.toggle('fa-circle-chevron-down', !open);
-              ico.classList.toggle('fa-circle-chevron-up', open);
-            }
-          });
-        }
-        drawer.querySelector('#st-glc-ext-open-panel')?.addEventListener('click', () => { togglePanel(true); });
-        drawer.querySelector('#st-glc-ext-open-bag')?.addEventListener('click', () => { togglePupBag(true); });
-        drawer.querySelector('#st-glc-ext-check-btn')?.addEventListener('click', () => { checkGlcUpdate(true); });
-        drawer.querySelector('#st-glc-ext-update-btn')?.addEventListener('click', () => { runGlcUpdateNow(); });
+        extContainer.appendChild(wrap);
+        wrap.querySelector('#st-glc-ext-open-panel')?.addEventListener('click', () => { togglePanel(true); });
+        wrap.querySelector('#st-glc-ext-open-bag')?.addEventListener('click', () => { togglePupBag(true); });
+        wrap.querySelector('#st-glc-ext-check-btn')?.addEventListener('click', () => { checkGlcUpdate(true); });
+        wrap.querySelector('#st-glc-ext-update-btn')?.addEventListener('click', () => { runGlcUpdateNow(); });
       }
       const wandMenu = doc.getElementById('extensionsMenu');
       if (wandMenu && !doc.getElementById('st-glc-wand-item')) {
@@ -39573,7 +39550,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         wItem.id = 'st-glc-wand-item';
         wItem.className = 'list-group-item flex-container flexGap5 interactable';
         wItem.tabIndex = 0;
-        wItem.innerHTML = `<i class="fa-solid fa-paw"></i><span>狗来财</span><span id="st-glc-wand-upd-badge" style="display:none;margin-left:auto;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;background:#e05656;color:#fff;line-height:1.4;">需要更新</span>`;
+        wItem.innerHTML = `<i class="fa-solid fa-paw"></i><span>狗来财</span><span id="st-glc-wand-upd-badge" style="display:none;margin-left:auto;font-size:10px;font-weight:700;padding:0 5px;border-radius:4px;background:#e05656;color:#fff;">NEW</span>`;
         wItem.addEventListener('click', () => { togglePanel(true); });
         wandMenu.appendChild(wItem);
       }
@@ -39584,7 +39561,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   glcUpdateBootTimer = setTimeout(() => {
     mountGoulaicaiStEntries();
     checkGlcUpdate(false);
-  }, 4500);
+  }, 4000);
   glcUpdateTimer = setInterval(() => {
     if (!doc.hidden) checkGlcUpdate(false);
   }, 30 * 60 * 1000);
@@ -39593,6 +39570,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const _wrappedCleanupGlc = () => {
     clearTimeout(glcUpdateBootTimer);
     clearInterval(glcUpdateTimer);
+    doc.getElementById('st-glc-ext-wrap')?.remove();
     doc.getElementById('st-glc-ext-drawer')?.remove();
     doc.getElementById('st-glc-wand-item')?.remove();
     doc.getElementById('st-glc-top-upd-dot')?.remove();
