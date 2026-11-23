@@ -6835,7 +6835,18 @@ function bootGoulaicaiExtension() {
       background-size: cover !important;
       background-position: center !important;
     }
-    /* 独立质感覆层：基于 SVG 有机自然微粒噪点（零格纹），强度由 --r-tex-str 控制 */
+    #st-tb-reader-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
+    }
+    .st-tb-reader-content {
+      padding-top: var(--r-pady, 14px);
+      padding-bottom: var(--r-pady, 14px);
+    }
+    /* 独立质感覆层：高对比度有机微粒与纸纤维（零格纹），强度随 --r-tex-str 明显变化 */
     .st-tb-reader-content::before {
       content: '';
       position: absolute;
@@ -6844,39 +6855,56 @@ function bootGoulaicaiExtension() {
       z-index: 2;
       opacity: 0;
     }
-    /* 1) 墨水屏：超细均匀哑光 Carta 微粒 + 四周柔和内嵌屏阴影 */
+    /* 1) 墨水屏：真实 Carta 哑光防眩微粒 + 四周内嵌屏压影 + 柔和墨水字迹 */
     .st-tb-reader-content.tex-eink {
       box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, calc(0.18 * var(--r-tex-str, 0.6))),
-        inset 0 0 16px rgba(0, 0, 0, calc(0.13 * var(--r-tex-str, 0.6))),
-        inset 0 0 0 1px rgba(0, 0, 0, calc(0.08 * var(--r-tex-str, 0.6)));
+        inset 0 3px 8px rgba(0, 0, 0, calc(0.28 * var(--r-tex-str, 0.6))),
+        inset 0 -3px 8px rgba(0, 0, 0, calc(0.18 * var(--r-tex-str, 0.6))),
+        inset 3px 0 8px rgba(0, 0, 0, calc(0.20 * var(--r-tex-str, 0.6))),
+        inset -3px 0 8px rgba(0, 0, 0, calc(0.20 * var(--r-tex-str, 0.6))),
+        inset 0 0 22px rgba(0, 0, 0, calc(0.14 * var(--r-tex-str, 0.6)));
+      text-shadow: 0 0 0.45px rgba(0, 0, 0, calc(0.22 * var(--r-tex-str, 0.6)));
       -webkit-font-smoothing: antialiased;
     }
     .st-tb-reader-content.tex-eink::before {
-      opacity: calc(0.22 * var(--r-tex-str, 0.6));
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-      background-size: 180px 180px;
+      opacity: calc(0.58 * var(--r-tex-str, 0.6));
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='e'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.68' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.7' intercept='-0.35'/%3E%3CfeFuncG type='linear' slope='1.7' intercept='-0.35'/%3E%3CfeFuncB type='linear' slope='1.7' intercept='-0.35'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23e)' opacity='0.42'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
       mix-blend-mode: multiply;
     }
-    /* 2) 真实书页：纸面纤维微粒 + 书脊两侧自然折页微影 */
+    #st-tb-reader.reader-dark .st-tb-reader-content.tex-eink::before {
+      mix-blend-mode: screen;
+      opacity: calc(0.18 * var(--r-tex-str, 0.6));
+    }
+    /* 2) 真实书页：左侧书脊折页渐变阴影 + 纸页高光曲面 + 横向纸浆纤维 */
     .st-tb-reader-content.tex-book {
       box-shadow:
-        inset 14px 0 18px -12px rgba(72, 50, 26, calc(0.28 * var(--r-tex-str, 0.6))),
-        inset -10px 0 14px -10px rgba(72, 50, 26, calc(0.16 * var(--r-tex-str, 0.6))),
-        inset 0 0 8px rgba(90, 68, 42, calc(0.08 * var(--r-tex-str, 0.6)));
+        inset 24px 0 24px -12px rgba(62, 42, 20, calc(0.46 * var(--r-tex-str, 0.6))),
+        inset -14px 0 16px -10px rgba(62, 42, 20, calc(0.24 * var(--r-tex-str, 0.6))),
+        inset 0 0 14px rgba(85, 62, 36, calc(0.14 * var(--r-tex-str, 0.6)));
     }
     .st-tb-reader-content.tex-book::before {
-      opacity: calc(0.26 * var(--r-tex-str, 0.6));
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23b)' opacity='0.52'/%3E%3C/svg%3E");
-      background-size: 220px 220px;
+      opacity: calc(0.68 * var(--r-tex-str, 0.6));
+      background-image:
+        linear-gradient(90deg, rgba(64, 44, 22, 0.22) 0%, rgba(64, 44, 22, 0.08) 5%, rgba(255, 252, 242, 0.16) 12%, transparent 22%, transparent 91%, rgba(64, 44, 22, 0.12) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.06 0.42' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.8' intercept='-0.4'/%3E%3CfeFuncG type='linear' slope='1.8' intercept='-0.4'/%3E%3CfeFuncB type='linear' slope='1.8' intercept='-0.4'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23b)' opacity='0.36'/%3E%3C/svg%3E");
+      background-size: 100% 100%, 220px 220px;
       mix-blend-mode: multiply;
     }
-    /* 3) 纸张纹理：细腻棉质手抄纸肌理，无书脊阴影 */
+    /* 3) 纸张纹理：细腻棉质手工纸纤维肌理 + 柔和边角暗晕 */
+    .st-tb-reader-content.tex-paper {
+      box-shadow: inset 0 0 18px rgba(78, 60, 38, calc(0.14 * var(--r-tex-str, 0.6)));
+    }
     .st-tb-reader-content.tex-paper::before {
-      opacity: calc(0.32 * var(--r-tex-str, 0.6));
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.6'/%3E%3C/svg%3E");
+      opacity: calc(0.75 * var(--r-tex-str, 0.6));
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.38' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-0.45'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-0.45'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-0.45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.44'/%3E%3C/svg%3E");
       background-size: 200px 200px;
       mix-blend-mode: multiply;
+    }
+    #st-tb-reader.reader-dark .st-tb-reader-content.tex-paper::before,
+    #st-tb-reader.reader-dark .st-tb-reader-content.tex-book::before {
+      mix-blend-mode: screen;
+      opacity: calc(0.16 * var(--r-tex-str, 0.6));
     }
     .st-tb-reader-content .st-tb-r-dropcap {
       float: left;
@@ -7051,6 +7079,18 @@ function bootGoulaicaiExtension() {
       color: #1b1b1b !important;
       border: none !important;
     }
+    #st-tb-root #st-tb-reader.kindle-mode .st-tb-reader-bar .st-tb-select,
+    #st-tb-root #st-tb-reader.kindle-mode .st-tb-reader-rename-bar .st-tb-input {
+      background: #30302d !important;
+      color: #f0efe9 !important;
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+    #st-tb-root #st-tb-reader.kindle-mode .st-tb-reader-bar .st-tb-select option {
+      background: #242422 !important;
+      color: #f0efe9 !important;
+    }
     #st-tb-root #st-tb-reader.kindle-mode .st-tb-r-colpick {
       border-color: #4a4a46 !important;
     }
@@ -7065,7 +7105,7 @@ function bootGoulaicaiExtension() {
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
       overflow: hidden !important;
-      padding: 16px var(--r-padx, 18px) 16px var(--r-padx, 18px) !important;
+      padding: var(--r-pady, 14px) var(--r-padx, 18px) var(--r-pady, 14px) var(--r-padx, 18px) !important;
       position: relative;
       touch-action: pan-y;
       box-shadow:
@@ -7108,8 +7148,8 @@ function bootGoulaicaiExtension() {
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      height: 22px;
-      padding: 0 14px;
+      height: 19px;
+      padding: 0 var(--r-padx, 18px) 3px var(--r-padx, 18px);
       border-radius: 0 0 4px 4px;
       background-color: var(--r-bg, #e8e7e2);
       color: var(--r-fg, #242422);
@@ -8060,6 +8100,11 @@ function bootGoulaicaiExtension() {
           <span>左右边距</span>
           <input class="st-tb-range" id="st-tb-rset-padx" type="range" min="6" max="48" step="2" />
           <span id="st-tb-rset-padx-val">16px</span>
+        </div>
+        <div class="st-tb-rset-row">
+          <span>上下边距</span>
+          <input class="st-tb-range" id="st-tb-rset-pady" type="range" min="6" max="40" step="2" />
+          <span id="st-tb-rset-pady-val">14px</span>
         </div>
         <div class="st-tb-rset-row">
           <span>正文行距</span>
@@ -34552,6 +34597,11 @@ function bootGoulaicaiExtension() {
       config.activeNovelId = config.novelBooks[0].id;
     }
     readerSelect.value = config.activeNovelId;
+    if (readerTitleEl) {
+      const _cb = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+      const _bn = _cb && _cb.name ? String(_cb.name).replace(/\.txt$/i, '').trim() : '';
+      readerTitleEl.textContent = _bn || '阅读中';
+    }
     novelStatusEl.textContent = `${config.novelBooks.length} 本`;
   };
 
@@ -40877,8 +40927,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const updateReaderMiniPillLabel = () => {
     if (!readerMiniPill) return;
     const curBook = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
-    const shortNm = curBook && curBook.name ? String(curBook.name).replace(/\.txt$/i, '').slice(0, 6) : '';
+    const fullNm = curBook && curBook.name ? String(curBook.name).replace(/\.txt$/i, '').trim() : '';
+    const shortNm = fullNm ? fullNm.slice(0, 6) : '';
     readerMiniPill.textContent = shortNm ? `读 · ${shortNm}` : '继续阅读';
+    if (readerTitleEl) readerTitleEl.textContent = fullNm || '阅读中';
   };
 
   const minimizeReader = () => {
@@ -40954,6 +41006,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const readerSetBar = root.querySelector('#st-tb-reader-set-bar');
   const rsetPadX = root.querySelector('#st-tb-rset-padx');
   const rsetPadXVal = root.querySelector('#st-tb-rset-padx-val');
+  const rsetPadY = root.querySelector('#st-tb-rset-pady');
+  const rsetPadYVal = root.querySelector('#st-tb-rset-pady-val');
   const rsetLh = root.querySelector('#st-tb-rset-lh');
   const rsetLhVal = root.querySelector('#st-tb-rset-lh-val');
   const rsetGap = root.querySelector('#st-tb-rset-gap');
@@ -41106,17 +41160,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (!track) return;
     win.requestAnimationFrame(() => {
       const px = clamp(Number(config.readerPadX ?? 18), 6, 48);
-      const cs = win.getComputedStyle(readerContentEl);
-      const fs = parseFloat(cs.fontSize) || 15;
-      const lh = clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6);
-      const linePx = Math.max(14, fs * lh);
-      const rawInnerH = Math.max(120, readerContentEl.clientHeight - 32);
-      const linesFit = Math.max(4, Math.floor(rawInnerH / linePx));
-      const innerH = Math.max(120, Math.floor(linesFit * linePx));
-      const padV = Math.max(12, Math.floor((readerContentEl.clientHeight - innerH) / 2));
-      readerContentEl.style.setProperty('padding-top', `${padV}px`, 'important');
-      readerContentEl.style.setProperty('padding-bottom', `${padV}px`, 'important');
+      const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
+      readerContentEl.style.setProperty('padding-top', `${py}px`, 'important');
+      readerContentEl.style.setProperty('padding-bottom', `${py}px`, 'important');
       const innerW = Math.max(160, readerContentEl.clientWidth - px * 2);
+      const innerH = Math.max(100, readerContentEl.clientHeight - py * 2);
       const colGap = px * 2;
       kdPageStride = innerW + colGap;
       track.style.width = `${innerW}px`;
@@ -41197,6 +41245,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const applyReaderTypoSettings = (reRenderChap = false) => {
     const isKd = Boolean(config.readerKindleMode);
     const px = clamp(Number(config.readerPadX ?? 16), 6, 48);
+    const py = clamp(Number(config.readerPadY ?? 14), 6, 40);
     const lh = clamp(Number(config.readerLineHeight ?? 1.85), 1.3, 2.6);
     const gp = clamp(Number(config.readerParaGap ?? 10), 2, 28);
     const bgOp = clamp(Number(config.readerBgOpacity ?? 1.0), 0.25, 1.0);
@@ -41240,6 +41289,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
     if (readerContentEl) {
       readerContentEl.style.setProperty('--r-padx', `${px}px`);
+      readerContentEl.style.setProperty('--r-pady', `${py}px`);
       readerContentEl.style.setProperty('--r-lh', String(lh));
       readerContentEl.style.setProperty('--r-gap', `${gp}px`);
       readerContentEl.style.setProperty('--r-indent', ind ? '2em' : '0');
@@ -41254,6 +41304,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
     if (rsetPadX) rsetPadX.value = String(px);
     if (rsetPadXVal) rsetPadXVal.textContent = `${px}px`;
+    if (rsetPadY) rsetPadY.value = String(py);
+    if (rsetPadYVal) rsetPadYVal.textContent = `${py}px`;
     if (rsetLh) rsetLh.value = String(lh);
     if (rsetLhVal) rsetLhVal.textContent = lh.toFixed(2);
     if (rsetGap) rsetGap.value = String(gp);
@@ -41408,9 +41460,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         config.readerPaperPreset = 'eink_light';
       }
       saveConfig();
-      applyReaderTypoSettings(true);
       if (config.readerKindleMode) {
         if (readerSetBar) readerSetBar.classList.remove('open');
+        if (readerSetBtn) readerSetBtn.classList.remove('active');
+      }
+      applyReaderTypoSettings(true);
+      if (config.readerKindleMode) {
+        setTimeout(() => syncKindlePagination(kdCurPage), 80);
         showKdToast('已切换 Kindle 外观，点击机身右侧电源键可打开设置');
       }
     });
@@ -41481,6 +41537,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   if (rsetPadX) {
     rsetPadX.addEventListener('input', () => { config.readerPadX = Number(rsetPadX.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
     rsetPadX.addEventListener('change', () => saveConfig());
+  }
+  if (rsetPadY) {
+    rsetPadY.addEventListener('input', () => { config.readerPadY = Number(rsetPadY.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
+    rsetPadY.addEventListener('change', () => saveConfig());
   }
   if (rsetLh) {
     rsetLh.addEventListener('input', () => { config.readerLineHeight = Number(rsetLh.value); applyReaderTypoSettings(false); scheduleSaveConfig(); });
