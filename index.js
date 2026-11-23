@@ -1,4 +1,4 @@
-// SillyTavern UI Extension: 狗来财 (v5.6.69)
+// SillyTavern UI Extension: 狗来财 (v2.0.56)
 let __goulaicaiExtBooted = false;
 
 function bootGoulaicaiExtension() {
@@ -39370,7 +39370,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   };
 
   // ==================== 狗来财扩展入口 + 自动检测更新 + 一键更新自动刷新 ====================
-  const GLC_EXT_VERSION = '5.6.69';
+  const GLC_EXT_VERSION = '2.0.56';
   let glcUpdateTimer = null;
   let glcUpdateBootTimer = null;
   let glcExtInfo = null;
@@ -39405,19 +39405,18 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             if (!nm.startsWith('third-party/')) continue;
             const isG = item?.type === 'global';
             const folder = nm.slice('third-party/'.length);
-            let localVer = GLC_EXT_VERSION;
             let matched = item?.manifest?.display_name === '狗来财' || /goulaicai|狗来财/i.test(folder);
-            if (item?.manifest?.version) localVer = String(item.manifest.version);
-            try {
-              const mr = await win.fetch(`/scripts/extensions/${nm}/manifest.json?t=${Date.now()}`);
-              if (mr.ok) {
-                const mj = await mr.json();
-                if (mj && mj.display_name === '狗来财') matched = true;
-                if (mj && mj.version) localVer = String(mj.version);
-              }
-            } catch (_) {}
+            if (!matched) {
+              try {
+                const mr = await win.fetch(`/scripts/extensions/${nm}/manifest.json?t=${Date.now()}`);
+                if (mr.ok) {
+                  const mj = await mr.json();
+                  if (mj && mj.display_name === '狗来财') matched = true;
+                }
+              } catch (_) {}
+            }
             if (matched) {
-              glcExtInfo = { extensionName: folder, fullName: nm, global: isG, localVer };
+              glcExtInfo = { extensionName: folder, fullName: nm, global: isG };
               return glcExtInfo;
             }
           }
@@ -39488,18 +39487,18 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const resp = await callStExtEndpoint('/api/extensions/version', info);
       if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data = await resp.json();
-      let needUpdate = Boolean(data && data.isUpToDate === false);
-      if (!needUpdate && data && data.remoteUrl) {
+      let needUpdate = false;
+      if (typeof data?.isUpToDate === 'boolean') {
+        needUpdate = !data.isUpToDate;
+      } else if (data?.remoteUrl && data?.currentCommitHash) {
         const m = String(data.remoteUrl).match(/github\.com[:/]([^/]+)\/([^/.]+)(?:\.git)?/i);
         if (m) {
-          const owner = m[1];
-          const repo = m[2];
           const branch = data.currentBranchName || 'main';
           try {
-            const rr = await win.fetch(`https://raw.githubusercontent.com/${owner}/${repo}/${branch}/manifest.json?t=${Date.now()}`);
-            if (rr.ok) {
-              const rm = await rr.json();
-              if (rm && rm.version && String(rm.version).trim() !== String(info.localVer || GLC_EXT_VERSION).trim()) {
+            const cr = await win.fetch(`https://api.github.com/repos/${m[1]}/${m[2]}/commits/${encodeURIComponent(branch)}`);
+            if (cr.ok) {
+              const cj = await cr.json();
+              if (cj && cj.sha && !String(cj.sha).startsWith(String(data.currentCommitHash))) {
                 needUpdate = true;
               }
             }
@@ -39525,7 +39524,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         wrap.className = 'goulaicai_settings';
         wrap.innerHTML = `<div class="inline-drawer">
           <div class="inline-drawer-toggle inline-drawer-header">
-            <b>狗来财<span id="st-glc-ext-upd-badge" style="display:none;margin-left:6px;font-size:10px;font-weight:700;padding:0 5px;border-radius:4px;background:#e05656;color:#fff;vertical-align:middle;">NEW</span></b>
+            <b><span style="display:inline-flex;align-items:center;gap:6px;line-height:1.2;"><span>狗来财</span><span id="st-glc-ext-upd-badge" style="display:none;font-size:10px;font-weight:700;letter-spacing:0.5px;opacity:0.78;line-height:1;">NEW</span></span></b>
             <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
           </div>
           <div class="inline-drawer-content">
@@ -39534,7 +39533,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               <div id="st-glc-ext-open-panel" class="menu_button">打开工具箱</div>
               <div id="st-glc-ext-open-bag" class="menu_button">打开小狗背包</div>
               <div id="st-glc-ext-check-btn" class="menu_button">检查更新</div>
-              <div id="st-glc-ext-update-btn" class="menu_button" style="display:none;background:#e05656;color:#fff;">立即更新并刷新</div>
+              <div id="st-glc-ext-update-btn" class="menu_button" style="display:none;">立即更新并刷新</div>
             </div>
           </div>
         </div>`;
@@ -39550,7 +39549,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         wItem.id = 'st-glc-wand-item';
         wItem.className = 'list-group-item flex-container flexGap5 interactable';
         wItem.tabIndex = 0;
-        wItem.innerHTML = `<i class="fa-solid fa-paw"></i><span>狗来财</span><span id="st-glc-wand-upd-badge" style="display:none;margin-left:auto;font-size:10px;font-weight:700;padding:0 5px;border-radius:4px;background:#e05656;color:#fff;">NEW</span>`;
+        wItem.innerHTML = `<i class="fa-solid fa-paw"></i><span>狗来财</span><span id="st-glc-wand-upd-badge" style="display:none;margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.5px;opacity:0.78;line-height:1;">NEW</span>`;
         wItem.addEventListener('click', () => { togglePanel(true); });
         wandMenu.appendChild(wItem);
       }
