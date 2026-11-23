@@ -19507,7 +19507,79 @@ function bootGoulaicaiExtension() {
       if (act === 'nuzzle') msg = pick([`${sf}凑过来贴贴${ow}的脸颊~`, `蹭蹭${ow}, 最喜欢${ow}啦!`]);
       else if (act === 'heart_pose') msg = pick([`${sf}举起像素爱心牌送给${ow}!`, `这份心意只给${ow}一个人看~`]);
       else if (act === 'star_wish') msg = pick([`和${ow}一起看像素流星雨, 许个愿吧!`, `${sf}许愿一直陪着${ow}~`]);
-      else if (act === 'listen_music') msg = pick([`分${ow}一半小耳机，一起听这首温柔的歌吧~`, `跟着旋律和${ow}一起轻轻晃脑袋~`]);
+      else if (act === 'listen_music') {
+        msg = pick([`分${ow}一半小耳机，我来随机挑一首歌一起听`, `戴上耳机吧${ow}，正在帮你随机搜一首歌`]);
+        (async () => {
+          try {
+            const REGIONS = [
+              { cc: 'CN', terms: ['夜', '风', '海', '星', '梦', '光', '雨', '夏', '花', '云', '月', '街', '秋', '雪', '蓝', '雾', '城', '灯', '春', '空', '影', '路', '晚', '暖', '山', '河', '白', '甜', '心', '岛'] },
+              { cc: 'TW', terms: ['夏', '海', '风', '星', '月', '梦', '雨', '花', '夜', '光', '晴', '云', '城', '慢', '暖', '歌', '路', '日', '蓝', '心'] },
+              { cc: 'HK', terms: ['夜', '海', '风', '星', '雨', '梦', '花', '月', '城', '光', '天', '雪', '心', '街', '秋'] },
+              { cc: 'JP', terms: ['夜', '空', '風', '星', '夢', '花', '海', '雨', '光', '夏', '月', '街', '青', '春', '雪', '恋', '君', '朝', '雲', '音'] },
+              { cc: 'KR', terms: ['밤', '별', '바람', '꿈', '사랑', '바다', '비', '꽃', '하늘', '달', '여름', '빛', '눈', '길', '구름', '봄', '겨울', '노래'] },
+              { cc: 'US', terms: ['night', 'moon', 'star', 'rain', 'blue', 'dream', 'love', 'sun', 'wind', 'sea', 'city', 'gold', 'time', 'light', 'sky', 'slow', 'home', 'wave', 'rose', 'summer', 'winter', 'jazz', 'soul', 'velvet'] },
+              { cc: 'GB', terms: ['rain', 'london', 'night', 'blue', 'silver', 'dream', 'echo', 'heart', 'glass', 'fire', 'water', 'cloud', 'river', 'gold'] },
+              { cc: 'FR', terms: ['nuit', 'lune', 'mer', 'vent', 'soleil', 'amour', 'pluie', 'etoile', 'paris', 'reve', 'bleu', 'matin'] },
+              { cc: 'ES', terms: ['noche', 'luna', 'mar', 'sol', 'viento', 'lluvia', 'amor', 'cielo', 'flor', 'tiempo', 'azul', 'estrella'] },
+              { cc: 'DE', terms: ['nacht', 'mond', 'meer', 'wind', 'stern', 'traum', 'regen', 'licht', 'sommer', 'zeit'] },
+              { cc: 'BR', terms: ['noite', 'lua', 'mar', 'sol', 'vento', 'amor', 'chuva', 'ceu', 'flor', 'verao'] },
+              { cc: 'SE', terms: ['night', 'light', 'northern', 'snow', 'dream', 'ocean', 'glow', 'silver', 'midnight'] },
+            ];
+            const reg = pick(REGIONS);
+            const term = pick(reg.terms);
+            const offset = randInt(0, 80);
+            const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+            const tId = ctrl ? setTimeout(() => ctrl.abort(), 4500) : null;
+            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=${reg.cc}&media=music&entity=song&limit=25&offset=${offset}`;
+            const resp = await win.fetch(url, ctrl ? { signal: ctrl.signal } : undefined);
+            if (tId) clearTimeout(tId);
+            if (!resp.ok) return;
+            const data = await resp.json();
+            const list = (Array.isArray(data?.results) ? data.results : []).filter(it => it && it.trackName && it.artistName && !/karaoke|instrumental version/i.test(it.trackName));
+            if (!list.length) return;
+            const song = pick(list);
+            const title = String(song.trackName).trim();
+            const artist = String(song.artistName).trim();
+            const pId = config.puppyPersonality || 'sleepyhead';
+            const REC_BY_PERS = {
+              sleepyhead: [
+                `呼啊，刚随手翻到 ${artist} 的《${title}》，{owner}和我一起窝着听听看吧`,
+                `分你一半耳机，今天随机到的是 ${artist} 的《${title}》，听着好舒服`,
+              ],
+              clingy: [
+                `{owner}快戴上耳机！今天随机抽到 ${artist} 的《${title}》，想和你贴在一起听`,
+                `刚帮你挑中了 ${artist} 的《${title}》，快去搜来听听，我陪着你一起摇尾巴`,
+              ],
+              tsundere: [
+                `哼，随便给你搜了一首 ${artist} 的《${title}》，难得推荐一次，去听听看吧`,
+                `才不是特意帮你挑的，刚好刷到 ${artist} 的《${title}》，勉强分你一半耳机`,
+              ],
+              foodie: [
+                `诶！刚随机转盘停在了 ${artist} 的《${title}》上面，{owner}快听听看好不好听`,
+                `差点按错键，结果翻出一首 ${artist} 的《${title}》，听起来感觉不错呀`,
+              ],
+              explorer: [
+                `今日随机音乐盲盒开出 ${artist} 的《${title}》！{owner}快一起去听听看`,
+                `刚在音乐海里捞到一首 ${artist} 的《${title}》，分{owner}一半耳机一起听`,
+              ],
+              fashionista: [
+                `刚好挑到 ${artist} 的《${title}》，品味还不错，有空可以听听`,
+                `分你一半耳机。今天随机到的是 ${artist} 的《${title}》，挺适合现在听`,
+              ],
+              gamer: [
+                `随机抽歌命中 ${artist} 的《${title}》！快去搜来当今天的背景音乐吧`,
+                `盲盒开歌成功，这轮是 ${artist} 的《${title}》，{owner}快试试合不合胃口`,
+              ],
+              philosopher: [
+                `随机选到一首 ${artist} 的《${title}》，{owner}看文的时候可以放来听听`,
+                `今天随缘挑到的是 ${artist} 的《${title}》，戴上耳机静静听一会儿挺好的`,
+              ],
+            };
+            const pool = REC_BY_PERS[pId] || REC_BY_PERS.sleepyhead;
+            showPuppyBubble(formatPupText(pick(pool)), 6800, true);
+          } catch (_) {}
+        })();
+      }
       else if (act === 'snap_photo') msg = pick([`咔嚓! 定格下今天和${ow}最开心的一张纪念合影!`, `三二一茄子! 这张合影${sf}要永远珍藏起来~`]);
       else msg = pick([`${ow}, ${sf}永远都是你的专属小狗!`, `为${ow}放一场满屏像素烟花!`, `遇到${ow}是${sf}最幸福的事!`]);
     }
@@ -31963,6 +32035,10 @@ function bootGoulaicaiExtension() {
       win.cancelAnimationFrame(gameRaf);
       gameRaf = null;
     }
+    if (typeof mem !== 'undefined' && mem) {
+      if (mem.previewTimer) { clearInterval(mem.previewTimer); mem.previewTimer = null; }
+      mem.previewing = false;
+    }
     catchSt.moveDir = 0;
   };
 
@@ -32161,6 +32237,9 @@ function bootGoulaicaiExtension() {
   const spawnTet = () => {
     const idx = randInt(0, TET_SHAPES.length - 1);
     tet.cur = { sh: TET_SHAPES[idx].map(r => [...r]), col: TET_COLS[idx], x: 3, y: 0 };
+    tet.lockUntil = 0;
+    tet.lockResets = 0;
+    tet.lastDropAt = Date.now();
     if (tetCollide(tet.cur.sh, tet.cur.x, tet.cur.y)) settleCurrentGame();
   };
   const drawTetris = () => {
@@ -32207,15 +32286,46 @@ function bootGoulaicaiExtension() {
     pxGameScoreEl.textContent = `消行: ${tet.lines}`;
     spawnTet();
   };
-  const tetAction = (act) => {
+  const tetAction = (act, isAuto = false) => {
     if (!gameRunning || activeGameId !== 'tetris' || !tet.cur) return;
-    if (act === 'l' && !tetCollide(tet.cur.sh, tet.cur.x - 1, tet.cur.y)) tet.cur.x -= 1;
-    else if (act === 'r' && !tetCollide(tet.cur.sh, tet.cur.x + 1, tet.cur.y)) tet.cur.x += 1;
-    else if (act === 'd') { if (!tetCollide(tet.cur.sh, tet.cur.x, tet.cur.y + 1)) tet.cur.y += 1; else lockTet(); }
-    else if (act === 'u') {
+    let moved = false;
+    if (act === 'l' && !tetCollide(tet.cur.sh, tet.cur.x - 1, tet.cur.y)) {
+      tet.cur.x -= 1;
+      moved = true;
+    } else if (act === 'r' && !tetCollide(tet.cur.sh, tet.cur.x + 1, tet.cur.y)) {
+      tet.cur.x += 1;
+      moved = true;
+    } else if (act === 'd') {
+      if (!tetCollide(tet.cur.sh, tet.cur.x, tet.cur.y + 1)) {
+        tet.cur.y += 1;
+        tet.lockUntil = 0;
+        tet.lastDropAt = Date.now();
+      } else if (!isAuto) {
+        lockTet();
+        drawTetris();
+        return;
+      } else if (!tet.lockUntil) {
+        tet.lockUntil = Date.now() + 520;
+      }
+    } else if (act === 'u') {
       const sh = tet.cur.sh;
       const rot = sh[0].map((_, ci) => sh.map(row => row[ci]).reverse());
-      if (!tetCollide(rot, tet.cur.x, tet.cur.y)) tet.cur.sh = rot;
+      for (const kick of [0, -1, 1]) {
+        if (!tetCollide(rot, tet.cur.x + kick, tet.cur.y)) {
+          tet.cur.sh = rot;
+          tet.cur.x += kick;
+          moved = true;
+          break;
+        }
+      }
+    }
+    if (moved) {
+      if (!tetCollide(tet.cur.sh, tet.cur.x, tet.cur.y + 1)) {
+        tet.lockUntil = 0;
+      } else if (tet.lockUntil && (tet.lockResets || 0) < 6) {
+        tet.lockUntil = Date.now() + 450;
+        tet.lockResets = (tet.lockResets || 0) + 1;
+      }
     }
     drawTetris();
   };
@@ -32395,7 +32505,7 @@ function bootGoulaicaiExtension() {
       const r = Math.floor(i / n), col = i % n;
       const x = pad + col * step, y = pad + r * step;
       const card = mem.cards[i];
-      const isUp = card && (card.matched || mem.open.includes(i));
+      const isUp = card && (mem.previewing || card.matched || mem.open.includes(i));
       g.fillStyle = '#3b2a22'; g.fillRect(x, y, sz, sz);
       g.fillStyle = isUp ? '#fffdf7' : '#8f6f52';
       const bd = n === 8 ? 2 : 3;
@@ -32416,7 +32526,7 @@ function bootGoulaicaiExtension() {
     g.restore();
   };
   const clickMemory = (idx) => {
-    if (!gameRunning || activeGameId !== 'memory' || mem.lock) return;
+    if (!gameRunning || activeGameId !== 'memory' || mem.lock || mem.previewing) return;
     const card = mem.cards[idx];
     if (!card || card.matched || mem.open.includes(idx)) return;
     mem.open.push(idx);
@@ -32547,11 +32657,23 @@ function bootGoulaicaiExtension() {
       pxGameScoreEl.textContent = '消行: 0';
       pxGameTimeEl.textContent = '俄罗斯方块';
       spawnTet();
+      tet.lastDropAt = Date.now();
+      tet.lockUntil = 0;
+      tet.lockResets = 0;
       const loopTet = () => {
         if (!gameRunning || !pupBagOpen || pupBagTab !== 'game' || activeGameId !== 'tetris') { stopPixelGame(); return; }
-        tet.tick += 1;
-        if (tet.tick % 28 === 0) tetAction('d');
-        drawTetris();
+        const now = Date.now();
+        const dropMs = Math.max(220, 760 - (tet.lines || 0) * 36);
+        if (tet.cur && tetCollide(tet.cur.sh, tet.cur.x, tet.cur.y + 1)) {
+          if (!tet.lockUntil) tet.lockUntil = now + 520;
+          else if (now >= tet.lockUntil) {
+            lockTet();
+            drawTetris();
+          }
+        } else if (now - (tet.lastDropAt || 0) >= dropMs) {
+          tet.lastDropAt = now;
+          tetAction('d', true);
+        }
         if (gameRunning) gameRaf = win.requestAnimationFrame(loopTet);
       };
       gameRaf = win.requestAnimationFrame(loopTet);
@@ -32568,10 +32690,13 @@ function bootGoulaicaiExtension() {
       spawnSnakeFood();
       pxGameScoreEl.textContent = '吃骨: 0';
       pxGameTimeEl.textContent = '贪吃蛇';
+      snk.lastStepAt = Date.now();
+      drawSnake();
       const loopSnk = () => {
         if (!gameRunning || !pupBagOpen || pupBagTab !== 'game' || activeGameId !== 'snake') { stopPixelGame(); return; }
-        snk.tick += 1;
-        if (snk.tick % 11 === 0) {
+        const now = Date.now();
+        if (now - (snk.lastStepAt || 0) >= 215) {
+          snk.lastStepAt = now;
           snk.dir = snk.nextDir;
           const head = snk.body[0];
           const nx = head.x + (snk.dir === 'r' ? 1 : snk.dir === 'l' ? -1 : 0);
@@ -32587,16 +32712,45 @@ function bootGoulaicaiExtension() {
           } else {
             snk.body.pop();
           }
+          drawSnake();
         }
-        drawSnake();
         if (gameRunning) gameRaf = win.requestAnimationFrame(loopSnk);
       };
       gameRaf = win.requestAnimationFrame(loopSnk);
     } else if (activeGameId === 'memory') {
       initMemDeck();
       pxGameScoreEl.textContent = `配对: 0/${mem.totalPairs}`;
-      pxGameTimeEl.textContent = `剩余: ${mem.maxMoves}步`;
-      drawMemory();
+      if (mem.mode === 'hard') {
+        mem.previewing = true;
+        let secLeft = 10;
+        pxGameTimeEl.textContent = `记忆: ${secLeft}s`;
+        pxGameMsgEl.textContent = '记住牌面位置';
+        drawMemory();
+        if (mem.previewTimer) clearInterval(mem.previewTimer);
+        mem.previewTimer = setInterval(() => {
+          if (!gameRunning || activeGameId !== 'memory') {
+            clearInterval(mem.previewTimer);
+            mem.previewTimer = null;
+            mem.previewing = false;
+            return;
+          }
+          secLeft -= 1;
+          if (secLeft > 0) {
+            pxGameTimeEl.textContent = `记忆: ${secLeft}s`;
+          } else {
+            clearInterval(mem.previewTimer);
+            mem.previewTimer = null;
+            mem.previewing = false;
+            pxGameTimeEl.textContent = `剩余: ${mem.maxMoves}步`;
+            pxGameMsgEl.textContent = '开始翻牌';
+            drawMemory();
+          }
+        }, 1000);
+      } else {
+        mem.previewing = false;
+        pxGameTimeEl.textContent = `剩余: ${mem.maxMoves}步`;
+        drawMemory();
+      }
     }
     updateGameButtonsUI();
   };
