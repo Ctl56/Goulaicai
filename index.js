@@ -19843,6 +19843,13 @@ function bootGoulaicaiExtension() {
     }
   };
 
+  let cachedPupWinW = win.innerWidth;
+  let cachedPupWinH = win.innerHeight;
+  const syncCachedPupWinSize = () => {
+    cachedPupWinW = win.innerWidth;
+    cachedPupWinH = win.innerHeight;
+  };
+  win.addEventListener('resize', syncCachedPupWinSize, { passive: true });
   const startPuppy = () => {
     stopPuppy();
     badgeDot.classList.toggle('active', config.effect !== 'none' || config.puppyEnabled);
@@ -19903,8 +19910,8 @@ function bootGoulaicaiExtension() {
       }
       if (!doc.hidden) {
         pup.tick += 1;
-        const maxX = Math.max(12, win.innerWidth - 78);
-        const maxY = Math.max(12, win.innerHeight - 74);
+        const maxX = Math.max(12, cachedPupWinW - 78);
+        const maxY = Math.max(12, cachedPupWinH - 74);
         const pSpd = clamp(Number(config.puppySpeed) || 1.0, 0.3, 2.4);
 
         if (pup.state === 'drag') {
@@ -39464,6 +39471,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     doc.removeEventListener('touchend', onGuardTouchEndCapture, true);
     doc.removeEventListener('click', onDocDblClick);
     doc.removeEventListener('touchend', onDocTouchEnd);
+    win.removeEventListener('resize', syncCachedPupWinSize);
     doc.removeEventListener('pointerdown', onOutsidePupBagClick);
     doc.removeEventListener('visibilitychange', onKeepAliveVisibility);
     doc.removeEventListener('pointerdown', onKeepAliveGesture);
