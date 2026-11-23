@@ -1,4 +1,4 @@
-// SillyTavern UI Extension: 狗来财 (v2.0.79)
+// SillyTavern UI Extension: 狗来财 (v2.0.80)
 let __goulaicaiExtBooted = false;
 
 function bootGoulaicaiExtension() {
@@ -38357,7 +38357,78 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
   }, 450);
 
+
+  // ==================== 扩展管理页与底栏魔法棒入口 ====================
+  const mountExtMenuEntries = () => {
+    try {
+      // 1. 底栏魔法棒拓展菜单 (#extensionsMenu) 入口：点击召唤平时那个面板
+      const extMenu = doc.querySelector('#extensionsMenu');
+      if (extMenu && !doc.querySelector('#st-goulaicai-ext-menu-item')) {
+        const item = doc.createElement('div');
+        item.id = 'st-goulaicai-ext-menu-item';
+        item.className = 'list-group-item flex-container flexGap5 interactable';
+        item.tabIndex = 0;
+        item.innerHTML = '<i class="fa-solid fa-paw"></i><span>狗来财</span>';
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          try { if (win.$) win.$('#extensionsMenu').hide(); } catch (_) {}
+          togglePanel(true);
+        });
+        extMenu.appendChild(item);
+      }
+
+      // 2. 顶部扩展设置页 (#extensions_settings2 / #extensions_settings) 入口
+      const extSettings = doc.querySelector('#extensions_settings2') || doc.querySelector('#extensions_settings');
+      if (extSettings && !doc.querySelector('#st-goulaicai-ext-settings')) {
+        const box = doc.createElement('div');
+        box.id = 'st-goulaicai-ext-settings';
+        box.className = 'inline-drawer';
+        box.innerHTML = `
+          <div class="inline-drawer-toggle inline-drawer-header">
+            <b>狗来财</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+          </div>
+          <div class="inline-drawer-content" style="padding:8px 4px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <div id="st-glc-ext-open-panel" class="menu_button menu_button_icon" style="flex:1;min-width:110px;justify-content:center;">
+                <i class="fa-solid fa-toolbox"></i><span>打开狗来财面板</span>
+              </div>
+              <div id="st-glc-ext-toggle-pup" class="menu_button menu_button_icon" style="flex:1;min-width:110px;justify-content:center;">
+                <i class="fa-solid fa-paw"></i><span>${config.puppyEnabled ? '收起小狗' : '呼出小狗'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        extSettings.appendChild(box);
+        const openBtn = box.querySelector('#st-glc-ext-open-panel');
+        const pupBtn = box.querySelector('#st-glc-ext-toggle-pup');
+        if (openBtn) {
+          openBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePanel(true);
+          });
+        }
+        if (pupBtn) {
+          pupBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            config.puppyEnabled = !config.puppyEnabled;
+            saveConfig();
+            syncUI();
+            if (config.puppyEnabled) startPuppy();
+            else stopPuppy();
+            const sp = pupBtn.querySelector('span');
+            if (sp) sp.textContent = config.puppyEnabled ? '收起小狗' : '呼出小狗';
+          });
+        }
+      }
+    } catch (_) {}
+  };
+  mountExtMenuEntries();
+  setTimeout(mountExtMenuEntries, 800);
+  setTimeout(mountExtMenuEntries, 2500);
+
   const cleanup = () => {
+    doc.querySelectorAll('#st-goulaicai-ext-menu-item, #st-goulaicai-ext-settings').forEach(el => el.remove());
     doc.removeEventListener('click', onChatParaClick);
     exitSeMultiMode();
     doc.documentElement.classList.remove('st-tb-char-gallery');
@@ -38447,7 +38518,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       ev.on(et.APP_READY, () => {
         setTimeout(bootGoulaicaiExtension, 120);
       });
-      // 兜底：若 APP_READY 在注册前已触发且页面已就绪，延迟启动一次
       setTimeout(() => {
         if (!__goulaicaiExtBooted && document.readyState === 'complete') {
           bootGoulaicaiExtension();
