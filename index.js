@@ -5480,7 +5480,7 @@ function bootGoulaicaiExtension() {
       background: var(--tb-bg);
       color: var(--tb-text);
       border: 1px solid var(--tb-border);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+      box-shadow: none !important;
       font-size: 11.5px;
       font-weight: 600;
       white-space: nowrap;
@@ -5494,6 +5494,106 @@ function bootGoulaicaiExtension() {
     }
     #st-tb-reader-mini-pill.show {
       display: inline-flex;
+    }
+    #st-tb-root .st-tb-r-ico {
+      width: 24px !important;
+      min-width: 24px !important;
+      height: 24px !important;
+      min-height: 24px !important;
+      padding: 0 !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      line-height: 1 !important;
+      border-radius: 6px !important;
+    }
+    #st-tb-reader-fs-down.st-tb-r-ico,
+    #st-tb-reader-fs-up.st-tb-r-ico {
+      width: 26px !important;
+      min-width: 26px !important;
+      font-size: 10.5px !important;
+    }
+    .st-tb-reader-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--tb-border);
+      background: var(--tb-bg);
+      flex-shrink: 0;
+    }
+    #st-tb-reader-select {
+      flex: 1;
+      min-width: 0;
+      height: 28px !important;
+      border-radius: 6px !important;
+      padding: 0 8px !important;
+      font-size: 12px !important;
+    }
+    #st-tb-root .st-tb-r-act {
+      height: 28px !important;
+      min-height: 28px !important;
+      padding: 0 9px !important;
+      border-radius: 6px !important;
+      border: 1px solid var(--tb-border) !important;
+      background: var(--tb-surface) !important;
+      color: var(--tb-text) !important;
+      font-size: 11.5px !important;
+      font-weight: 600 !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      cursor: pointer !important;
+      flex-shrink: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      transition: background 0.14s ease, border-color 0.14s ease, opacity 0.14s ease;
+    }
+    #st-tb-root .st-tb-r-act.accent {
+      background: var(--tb-accent) !important;
+      color: var(--tb-accent-text) !important;
+      border-color: var(--tb-accent) !important;
+    }
+    #st-tb-root .st-tb-r-act.danger {
+      color: #c85a5a !important;
+      border-color: rgba(200, 90, 90, 0.35) !important;
+    }
+    .st-tb-reader-rename-bar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--tb-border);
+      background: var(--tb-surface);
+      flex-shrink: 0;
+    }
+    .st-tb-reader-rename-bar.open {
+      display: flex;
+    }
+    #st-tb-reader-rename-inp {
+      flex: 1;
+      min-width: 0;
+      height: 28px !important;
+      border-radius: 6px !important;
+      font-size: 12px !important;
+    }
+    #st-tb-confirm-skip-wrap {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--tb-border);
+    }
+    #st-tb-confirm-skip-wrap.show {
+      display: block;
+    }
+    #st-tb-confirm-skip-note {
+      display: none;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--tb-sub);
+      line-height: 1.45;
+    }
+    #st-tb-confirm-skip-note.show {
+      display: block;
     }
     #st-tb-shop-grid[data-own-filter="owned"] > [data-own="0"],
     #st-tb-shop-grid[data-own-filter="unowned"] > [data-own="1"] {
@@ -6640,6 +6740,10 @@ function bootGoulaicaiExtension() {
       <div id="st-tb-confirm-box">
         <div class="st-tb-confirm-title" id="st-tb-confirm-title">确认重新生成？</div>
         <div class="st-tb-confirm-desc" id="st-tb-confirm-desc">此操作将调用 API 生成新的回复内容。</div>
+        <div id="st-tb-confirm-skip-wrap">
+          <label class="st-tb-check"><input type="checkbox" id="st-tb-confirm-skip-chk" /><span>下次不再提醒</span></label>
+          <div id="st-tb-confirm-skip-note">勾选后将不再弹出此提醒，之后可在「外观」页的字号设置里重新开启。</div>
+        </div>
         <div class="st-tb-confirm-actions">
           <button class="st-tb-btn" id="st-tb-confirm-cancel" type="button">取消</button>
           <button class="st-tb-btn primary" id="st-tb-confirm-ok" type="button">确认生成</button>
@@ -7316,20 +7420,26 @@ function bootGoulaicaiExtension() {
     <div id="st-tb-reader">
       <div class="st-tb-reader-resize" id="st-tb-reader-resize" title="拖动调整阅读器大小"></div>
       <div class="st-tb-reader-head" id="st-tb-reader-head" title="浮窗模式可按住拖动">
-        <span class="st-tb-title" id="st-tb-reader-title">小说阅读器</span>
+        <span class="st-tb-title" id="st-tb-reader-title">阅读中</span>
         <div class="st-tb-header-actions">
-          <button class="st-tb-mini-btn" id="st-tb-reader-fs-down" type="button">A-</button>
-          <button class="st-tb-mini-btn" id="st-tb-reader-fs-up" type="button">A+</button>
-          <button class="st-tb-mini-btn" id="st-tb-reader-min-btn" type="button">收起</button>
-          <button class="st-tb-mini-btn" id="st-tb-reader-full-btn" type="button">全屏</button>
-          <button class="st-tb-mini-btn" id="st-tb-reader-close" type="button">关闭</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-fs-down" type="button" title="减小字号">A-</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-fs-up" type="button" title="增大字号">A+</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-min-btn" type="button" title="最小化">−</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-full-btn" type="button" title="切换全屏">□</button>
+          <button class="st-tb-mini-btn st-tb-r-ico" id="st-tb-reader-close" type="button" title="关闭">×</button>
         </div>
       </div>
       <div class="st-tb-reader-bar">
         <select class="st-tb-select" id="st-tb-reader-select"></select>
-        <button class="st-tb-mini-btn" id="st-tb-reader-import" type="button">导入TXT</button>
-        <button class="st-tb-mini-btn" id="st-tb-reader-del" type="button">删</button>
+        <button class="st-tb-r-act" id="st-tb-reader-rename" type="button" title="修改当前书名">改名</button>
+        <button class="st-tb-r-act accent" id="st-tb-reader-import" type="button" title="导入本地TXT小说">导入</button>
+        <button class="st-tb-r-act danger" id="st-tb-reader-del" type="button" title="删除当前小说">删除</button>
         <input id="st-tb-reader-file" type="file" accept=".txt,text/plain" style="display:none;" />
+      </div>
+      <div class="st-tb-reader-rename-bar" id="st-tb-reader-rename-bar">
+        <input class="st-tb-input" id="st-tb-reader-rename-inp" type="text" maxlength="40" placeholder="输入新的书名" />
+        <button class="st-tb-r-act accent" id="st-tb-reader-rename-ok" type="button">保存</button>
+        <button class="st-tb-r-act" id="st-tb-reader-rename-cancel" type="button">取消</button>
       </div>
       <div class="st-tb-reader-toc" id="st-tb-reader-toc"></div>
       <div class="st-tb-reader-content" id="st-tb-reader-content">
@@ -7483,7 +7593,7 @@ function bootGoulaicaiExtension() {
       <button class="st-tb-qd-btn" data-qd="bag" type="button">小狗</button>
       <button class="st-tb-qd-btn" data-qd="hide" type="button">隐藏</button>
     </div>
-    <div id="st-tb-reader-mini-pill" title="点击继续阅读，按住拖动">继续阅读</div>
+    <div id="st-tb-reader-mini-pill" title="点击继续阅读，按住拖动">阅读中</div>
         <div id="st-tb-badge" title="点击展开，长按快捷菜单，按住拖动">
       <span class="st-tb-dot"></span>
       <span id="st-tb-floor-text">0 层</span>
@@ -7945,6 +8055,10 @@ function bootGoulaicaiExtension() {
                 <input class="st-tb-range" id="st-tb-ui-fontsize" type="range" min="10" max="18" step="0.5" />
                 <span id="st-tb-ui-fontsize-val">12px</span>
               </div>
+              <label class="st-tb-check" style="margin-top:6px;">
+                <input type="checkbox" id="st-tb-hide-remind-check" />
+                <span>隐藏悬浮球时显示三击召唤提醒</span>
+              </label>
             </div>
           </div>
 
@@ -10145,6 +10259,8 @@ function bootGoulaicaiExtension() {
   const closeGuardConfirm = () => {
     pendingConfirmAction = null;
     confirmMask.classList.remove('open');
+    const sw = root.querySelector('#st-tb-confirm-skip-wrap');
+    if (sw) sw.classList.remove('show');
   };
 
   const openGuardConfirm = (title, desc, onConfirm, okLabel = '确认生成', isPixelBag = false) => {
@@ -33229,18 +33345,51 @@ function bootGoulaicaiExtension() {
     applyBadgePosition(false);
   });
 
+  const hideRemindCheck = root.querySelector('#st-tb-hide-remind-check');
+  const confirmSkipWrap = root.querySelector('#st-tb-confirm-skip-wrap');
+  const confirmSkipChk = root.querySelector('#st-tb-confirm-skip-chk');
+  const confirmSkipNote = root.querySelector('#st-tb-confirm-skip-note');
+  const syncHideRemindUI = () => {
+    if (hideRemindCheck) hideRemindCheck.checked = !Boolean(config.skipHideRemind);
+  };
+  syncHideRemindUI();
+  if (hideRemindCheck) {
+    hideRemindCheck.addEventListener('change', () => {
+      config.skipHideRemind = !hideRemindCheck.checked;
+      saveConfig();
+    });
+  }
+  if (confirmSkipChk && confirmSkipNote) {
+    confirmSkipChk.addEventListener('change', () => {
+      confirmSkipNote.classList.toggle('show', confirmSkipChk.checked);
+    });
+  }
   fullHideBtn.addEventListener('click', () => {
+    const doHideNow = () => {
+      togglePanel(false);
+      config.fullHidden = true;
+      saveConfig();
+      applyBadgePosition(false);
+    };
+    if (config.skipHideRemind) {
+      doHideNow();
+      return;
+    }
+    if (confirmSkipChk) confirmSkipChk.checked = false;
+    if (confirmSkipNote) confirmSkipNote.classList.remove('show');
     openGuardConfirm(
       '开启完全隐藏',
       '悬浮按钮隐藏后，如果要再次召唤，可以连续点击页面空白处三下。',
       () => {
-        togglePanel(false);
-        config.fullHidden = true;
-        saveConfig();
-        applyBadgePosition(false);
+        if (confirmSkipChk && confirmSkipChk.checked) {
+          config.skipHideRemind = true;
+          syncHideRemindUI();
+        }
+        doHideNow();
       },
       '知道了，立即隐藏'
     );
+    if (confirmSkipWrap) confirmSkipWrap.classList.add('show');
   });
 
   const toggleImmersive = () => {
@@ -33634,7 +33783,7 @@ function bootGoulaicaiExtension() {
   const applyReaderLayout = () => {
     const isFull = Boolean(config.readerFull);
     readerEl.classList.toggle('fullscreen', isFull);
-    readerFullBtn.textContent = isFull ? '浮窗' : '全屏';
+    readerFullBtn.textContent = isFull ? '◫' : '□';
     readerContentEl.style.fontSize = `${clamp(Number(config.readerFontSize) || 15, 11, 26)}px`;
     if (!isFull) {
       const maxW = Math.max(260, win.innerWidth - 16);
@@ -33676,7 +33825,7 @@ function bootGoulaicaiExtension() {
   const renderReaderChapter = (chapIdx, restoreScroll = 0) => {
     const book = config.novelBooks.find(b => b.id === config.activeNovelId);
     if (!book || !currentChapters.length) {
-      readerTitleEl.textContent = '小说阅读器';
+      readerTitleEl.textContent = '阅读中';
       readerContentEl.innerHTML = '<div class="st-tb-empty">点击上方「导入TXT」导入本地小说，等酒馆回复时可浮窗或全屏阅读。</div>';
       readerProgEl.textContent = '0/0';
       return;
@@ -33684,7 +33833,7 @@ function bootGoulaicaiExtension() {
     const idx = clamp(chapIdx, 0, currentChapters.length - 1);
     book.chapIdx = idx;
     const ch = currentChapters[idx];
-    readerTitleEl.textContent = `${book.name}`;
+    readerTitleEl.textContent = '阅读中';
     readerProgEl.textContent = `${idx + 1}/${currentChapters.length}`;
 
     readerContentEl.innerHTML = '';
@@ -39961,9 +40110,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
 
   const updateReaderMiniPillLabel = () => {
     if (!readerMiniPill) return;
-    const curBook = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
-    const shortNm = curBook && curBook.name ? String(curBook.name).replace(/\.txt$/i, '').slice(0, 6) : '';
-    readerMiniPill.textContent = shortNm ? `读 · ${shortNm}` : '继续阅读';
+    readerMiniPill.textContent = '阅读中';
   };
 
   const minimizeReader = () => {
@@ -39992,6 +40139,43 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
 
   if (readerMinBtn) {
     readerMinBtn.addEventListener('click', () => { minimizeReader(); });
+  }
+  const readerRenameBtn = root.querySelector('#st-tb-reader-rename');
+  const readerRenameBar = root.querySelector('#st-tb-reader-rename-bar');
+  const readerRenameInp = root.querySelector('#st-tb-reader-rename-inp');
+  const readerRenameOk = root.querySelector('#st-tb-reader-rename-ok');
+  const readerRenameCancel = root.querySelector('#st-tb-reader-rename-cancel');
+  const closeReaderRename = () => {
+    if (readerRenameBar) readerRenameBar.classList.remove('open');
+  };
+  const saveReaderRename = () => {
+    const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+    const nv = String(readerRenameInp?.value || '').trim();
+    if (book && nv) {
+      book.name = nv;
+      saveConfig();
+      renderNovelSelect();
+    }
+    closeReaderRename();
+  };
+  if (readerRenameBtn && readerRenameBar && readerRenameInp) {
+    readerRenameBtn.addEventListener('click', () => {
+      const book = (config.novelBooks || []).find(b => b.id === config.activeNovelId);
+      if (!book) return;
+      const opening = !readerRenameBar.classList.contains('open');
+      readerRenameBar.classList.toggle('open', opening);
+      if (opening) {
+        readerRenameInp.value = String(book.name || '');
+        readerRenameInp.focus();
+        readerRenameInp.select();
+      }
+    });
+    readerRenameOk?.addEventListener('click', saveReaderRename);
+    readerRenameCancel?.addEventListener('click', closeReaderRename);
+    readerRenameInp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); saveReaderRename(); }
+      else if (e.key === 'Escape') { e.preventDefault(); closeReaderRename(); }
+    });
   }
   if (readerCloseBtn) {
     readerCloseBtn.addEventListener('click', () => {
