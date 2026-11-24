@@ -5531,18 +5531,24 @@
       position: fixed; inset: 0; z-index: 10035;
       background: rgba(15, 20, 30, 0.42); backdrop-filter: blur(4px);
       display: none; align-items: center; justify-content: center; padding: 14px;
+      pointer-events: auto !important; touch-action: auto;
     }
     .st-tb-qd-modal-mask.open { display: flex; }
     .st-tb-qd-modal {
-      width: min(350px, calc(100vw - 28px)); max-height: min(78vh, 520px);
+      width: min(350px, calc(100vw - 28px)); max-height: min(82vh, 540px);
       background: var(--tb-bg, #ffffff); color: var(--tb-text, #222222);
       border: 1px solid var(--tb-border, rgba(0,0,0,0.12)); border-radius: 14px;
       box-shadow: 0 12px 34px rgba(0,0,0,0.24); padding: 14px;
       display: flex; flex-direction: column; gap: 10px; overflow: hidden;
       font-size: 12.5px; line-height: 1.5;
+      pointer-events: auto !important; touch-action: auto;
     }
-    .st-tb-qd-modal-title { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; }
-    .st-tb-qd-list { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; max-height: 220px; padding-right: 2px; }
+    .st-tb-qd-modal-title { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .st-tb-qd-list {
+      overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+      max-height: 210px; min-height: 44px; padding-right: 2px;
+      -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y;
+    }
     .st-tb-qd-item {
       display: flex; align-items: center; gap: 5px;
       padding: 5px 7px; border-radius: 9px;
@@ -5555,7 +5561,7 @@
       border: 1px solid var(--tb-border, rgba(0,0,0,0.14));
       background: var(--tb-bg, #ffffff); color: var(--tb-text, #222222); font-size: 12px;
     }
-    .st-tb-qd-pool { display: flex; flex-wrap: wrap; gap: 5px; max-height: 110px; overflow-y: auto; }
+    .st-tb-qd-pool { display: flex; flex-wrap: wrap; gap: 6px; max-height: 136px; min-height: 36px; overflow-y: auto; padding: 2px 2px 4px 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
     .st-tb-qd-chip {
       padding: 4px 8px; border-radius: 999px; font-size: 11.5px; cursor: pointer;
       border: 1px dashed var(--tb-border, rgba(0,0,0,0.22));
@@ -8615,8 +8621,8 @@
               <button class="st-tb-btn" id="st-tb-perf-clean" type="button">图片懒加载</button>
             </div>
             <div class="st-tb-row" style="margin-bottom:0;gap:6px;align-items:center;">
-              <button class="st-tb-btn" id="st-tb-perf-fold-toggle" type="button" style="flex:1;">仅显示楼层：关</button>
-              <select class="st-tb-select" id="st-tb-perf-fold" style="width:76px;flex:0 0 auto;text-align:center;" title="选择仅显示的最近楼层数">
+              <button class="st-tb-btn" id="st-tb-perf-fold-toggle" type="button" style="flex:1;min-height:28px;padding:4px 8px;font-size:12px;">折叠楼层：关</button>
+              <select class="st-tb-select" id="st-tb-perf-fold" style="width:62px;flex:0 0 auto;min-height:28px;padding:3px 4px;font-size:12px;text-align:center;" title="选择保留显示的最近楼层数">
                 <option value="3">3</option>
                 <option value="5">5</option>
                 <option value="8">8</option>
@@ -30741,7 +30747,7 @@
     const foldCnt = Number(config.perfFoldCount) || 20;
     config.perfFoldKeep = foldOn ? foldCnt : 0;
     if (perfFoldToggleBtn) {
-      perfFoldToggleBtn.textContent = foldOn ? '仅显示楼层：开' : '仅显示楼层：关';
+      perfFoldToggleBtn.textContent = foldOn ? '折叠楼层：开' : '折叠楼层：关';
       perfFoldToggleBtn.classList.toggle('primary', foldOn);
     }
     if (perfFoldSel) {
@@ -42944,11 +42950,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'guard',     name: '防手滑保护', defLabel: '防手滑' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
-    { id: 'fold',      name: '仅显示楼层', defLabel: '折楼' },
+    { id: 'fold',      name: '折叠楼层',   defLabel: '折楼' },
     { id: 'chars',     name: '角色卡管理', defLabel: '角色' },
     { id: 'persona',   name: 'User面具',   defLabel: '面具' },
     { id: 'preset',    name: '预设管理',   defLabel: '预设' },
-    { id: 'music',     name: '一起听歌',   defLabel: '听歌' },
     { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
     { id: 'panel',     name: '工具箱面板', defLabel: '面板' },
   ];
@@ -43137,9 +43142,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdTipMask.innerHTML = `<div class="st-tb-qd-modal" style="max-width:320px;">
         <div class="st-tb-qd-modal-title"><span>长按快捷键支持自定义</span></div>
         <div style="font-size:12.5px;opacity:0.9;">你可以在「工具箱 - 外观 - 长按悬浮球快捷栏」里自由增删功能、调整排序，还可以给每个按钮重新命名。</div>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;user-select:none;">
-          <input type="checkbox" id="st-tb-qd-tip-never" />
-          <span>下次不再出现</span>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:1;cursor:pointer;user-select:none;margin:2px 0;">
+          <input type="checkbox" id="st-tb-qd-tip-never" style="margin:0;width:14px;height:14px;flex-shrink:0;vertical-align:middle;accent-color:var(--tb-accent, #6b8cff);" />
+          <span style="line-height:1;display:inline-block;">下次不再出现</span>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <button class="st-tb-mini-btn" id="st-tb-qd-tip-go" type="button">立即去自定义</button>
@@ -43253,10 +43258,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         togglePanel(true);
         root.querySelector('.st-tb-tab[data-tab="overview"]')?.click();
         setTimeout(() => { root.querySelector('#st-pr-open-btn')?.click(); }, 40);
-      } else if (act === 'music') {
-        toggleQuickDock(false);
-        togglePupBag(true);
-        setTimeout(() => { root.querySelector('[data-px-tab="music"]')?.click(); }, 40);
       } else if (act === 'puppy') {
         if (puppyToggleBtn) puppyToggleBtn.click();
         syncQuickDockUI();
