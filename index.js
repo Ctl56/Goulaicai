@@ -9630,12 +9630,13 @@ function bootGoulaicaiExtension() {
 
   let kaNoticeTimer = null;
   const showKaPolicyNotice = (msg) => {
-    let el = doc.getElementById('st-tb-ka-notice');
+    const host = panel || root;
+    let el = host.querySelector('#st-tb-ka-notice');
     if (!el) {
       el = doc.createElement('div');
       el.id = 'st-tb-ka-notice';
-      el.style.cssText = 'position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);width:min(326px,calc(100vw - 32px));padding:11px 16px;border-radius:11px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 10px 28px rgba(0,0,0,0.22);font-size:12px;line-height:1.55;z-index:10040;pointer-events:none;opacity:0;transition:opacity 0.2s ease;text-align:center;box-sizing:border-box;';
-      root.appendChild(el);
+      el.style.cssText = 'position:absolute;left:50%;top:42px;transform:translateX(-50%);max-width:calc(100% - 20px);width:max-content;padding:6px 12px;border-radius:999px;background:rgba(24,24,23,0.88);color:#f0efe9;font-size:11px;line-height:1.4;z-index:35;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
+      host.appendChild(el);
     }
     el.textContent = msg;
     el.style.opacity = '1';
@@ -9643,8 +9644,23 @@ function bootGoulaicaiExtension() {
     kaNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 2800);
   };
 
+  let immNoticeTimer = null;
+  const showImmNotice = (msg) => {
+    let el = root.querySelector('#st-tb-imm-notice');
+    if (!el) {
+      el = doc.createElement('div');
+      el.id = 'st-tb-imm-notice';
+      el.style.cssText = 'position:fixed;left:50%;top:max(22px,env(safe-area-inset-top));transform:translateX(-50%);max-width:calc(100vw - 28px);padding:6px 13px;border-radius:999px;background:rgba(24,24,23,0.88);color:#f0efe9;font-size:11px;line-height:1.4;white-space:nowrap;z-index:10035;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
+      root.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = '1';
+    clearTimeout(immNoticeTimer);
+    immNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 2800);
+  };
+
   const showOnceDragTip = (kind) => {
-    const keyMap = { panel: 'dragTipV2_panel', bag: 'dragTipV2_bag', reader: 'dragTipV2_reader' };
+    const keyMap = { panel: 'dragTipV3_panel', bag: 'dragTipV3_bag', reader: 'dragTipV3_reader' };
     const cfgKey = keyMap[kind];
     if (!cfgKey || config[cfgKey]) return;
 
@@ -9680,8 +9696,10 @@ function bootGoulaicaiExtension() {
       return;
     }
 
+    const hostEl = kind === 'reader' ? readerEl : panel;
+    if (!hostEl) return;
     const maskId = `st-tb-drag-tip-${kind}`;
-    if (root.querySelector(`#${maskId}`)) return;
+    if (hostEl.querySelector(`#${maskId}`)) return;
     const isKdOrDark = kind === 'reader' && readerEl && (readerEl.classList.contains('kindle-mode') || readerEl.classList.contains('reader-dark'));
     const cardBg = isKdOrDark ? '#242422' : 'var(--tb-bg,#fff)';
     const cardFg = isKdOrDark ? '#e8e7e2' : 'var(--tb-text,#222)';
@@ -9692,12 +9710,12 @@ function bootGoulaicaiExtension() {
       : '按住顶部标题栏可移动到任意位置，按住右下角边缘可拖动调整大小。';
     const mask = doc.createElement('div');
     mask.id = maskId;
-    mask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.36);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10042;pointer-events:auto;';
-    mask.innerHTML = `<div style="width:min(296px,calc(100vw - 36px));background:${cardBg};color:${cardFg};border:1px solid ${cardBd};border-radius:12px;padding:14px 16px 12px;box-shadow:0 10px 28px rgba(0,0,0,0.24);box-sizing:border-box;">` +
-      `<div style="font-size:13px;font-weight:700;margin-bottom:6px;">操作提示</div>` +
-      `<div style="font-size:11.5px;line-height:1.6;color:${cardSub};margin-bottom:12px;">${descTxt}</div>` +
+    mask.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.32);display:flex;align-items:center;justify-content:center;padding:16px;z-index:45;border-radius:inherit;pointer-events:auto;';
+    mask.innerHTML = `<div style="width:min(264px,calc(100% - 12px));background:${cardBg};color:${cardFg};border:1px solid ${cardBd};border-radius:12px;padding:13px 14px 11px;box-shadow:0 8px 24px rgba(0,0,0,0.22);box-sizing:border-box;">` +
+      `<div style="font-size:12.5px;font-weight:700;margin-bottom:5px;">操作提示</div>` +
+      `<div style="font-size:11.5px;line-height:1.55;color:${cardSub};margin-bottom:11px;">${descTxt}</div>` +
       `<div style="display:flex;justify-content:flex-end;">` +
-      `<button type="button" class="st-tb-mini-btn active" id="${maskId}-ok" style="padding:4px 14px;height:26px;font-size:11.5px;${isKdOrDark ? 'background:#e8e7e2;color:#1b1b1b;border:none;' : ''}">知道了</button>` +
+      `<button type="button" class="st-tb-mini-btn active" id="${maskId}-ok" style="padding:4px 14px;height:25px;font-size:11px;${isKdOrDark ? 'background:#e8e7e2;color:#1b1b1b;border:none;' : ''}">知道了</button>` +
       `</div></div>`;
     const dismissTip = (e) => {
       if (e) e.stopPropagation();
@@ -9707,7 +9725,7 @@ function bootGoulaicaiExtension() {
     };
     mask.querySelector(`#${maskId}-ok`)?.addEventListener('click', dismissTip);
     mask.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === mask) dismissTip(e); });
-    root.appendChild(mask);
+    hostEl.appendChild(mask);
   };
 
   const kaRuntime = {
@@ -17630,6 +17648,7 @@ function bootGoulaicaiExtension() {
       if (pupBagTab === 'game') restoreGameView();
       if (pupBagTab === 'adv') renderPupAdventure();
       positionPupBag();
+      if (typeof bringFloatFront === 'function') bringFloatFront(pupBagEl);
       setTimeout(() => { if (typeof showOnceDragTip === 'function') showOnceDragTip('bag'); }, 40);
     }
   };
@@ -34453,6 +34472,7 @@ function bootGoulaicaiExtension() {
     if (open) {
       positionPanel();
       updateStats();
+      if (typeof bringFloatFront === 'function') bringFloatFront(panel);
       setTimeout(() => { if (typeof showOnceDragTip === 'function') showOnceDragTip('panel'); }, 40);
       renderBookmarks();
       renderDrafts();
@@ -34526,6 +34546,9 @@ function bootGoulaicaiExtension() {
     saveConfig();
     applyImmersive();
     syncUI();
+    if (config.immersive && typeof showImmNotice === 'function') {
+      showImmNotice('已开启沉浸模式，轻点屏幕最底部可直接召唤底栏');
+    }
   };
   quickImmBtn.addEventListener('click', toggleImmersive);
   immToggleBtn.addEventListener('click', toggleImmersive);
@@ -35063,6 +35086,7 @@ function bootGoulaicaiExtension() {
     if (open) {
       applyReaderLayout();
       loadActiveNovel();
+      if (typeof bringFloatFront === 'function') bringFloatFront(readerEl);
       setTimeout(() => { if (typeof showOnceDragTip === 'function') showOnceDragTip('reader'); }, 40);
     }
   };
