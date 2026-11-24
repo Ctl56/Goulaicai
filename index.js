@@ -4112,7 +4112,7 @@
       border: 1px solid color-mix(in srgb, var(--tb-text) 24%, transparent);
       box-shadow: none;
     }
-    #st-tb-badge { height: auto !important; min-height: 0 !important; padding: var(--badge-pad-y, 4px) 10px !important; line-height: 1.2 !important; }
+    #st-tb-badge { height: auto !important; min-height: 0 !important; padding: var(--badge-pad-y, 4px) var(--badge-pad-x, 10px) !important; line-height: 1.2 !important; }
     #st-tb-badge.bstyle-frost {
       gap: 5px; font-size: 11.5px;
       background: color-mix(in srgb, var(--tb-bg) 58%, transparent);
@@ -6354,6 +6354,20 @@
     .st-px-ach-orn.tr { right: -8px; top: -7px; width: 10px; height: 12px; transform: scaleX(-1); }
     .st-px-ach-orn.bl { left: -8px; top: auto; bottom: -7px; width: 10px; height: 12px; transform: none; }
     .st-px-ach-orn.br { right: -8px; top: auto; bottom: -7px; width: 10px; height: 12px; transform: scaleX(-1); }
+    .st-px-ach-orn.mini { width: 8px; height: 8px; }
+    .st-px-ach-orn.tl-sub { left: 4px; top: -7px; width: 8px; height: 8px; transform: none; }
+    .st-px-ach-orn.tr-sub { right: 4px; top: -7px; width: 8px; height: 8px; transform: none; }
+    .st-px-ach-orn.bl-sub { left: 5px; top: auto; bottom: -7px; width: 8px; height: 8px; transform: none; }
+    .st-px-ach-orn.br-sub { right: 5px; top: auto; bottom: -7px; width: 8px; height: 8px; transform: none; }
+    .st-px-ach-orn.bl-high { left: -9px; top: auto; bottom: 2px; width: 9px; height: 9px; transform: none; }
+    .st-px-ach-orn.br-high { right: -9px; top: auto; bottom: 2px; width: 9px; height: 9px; transform: scaleX(-1); }
+    .st-px-ach-orn.tl-low { left: -9px; top: 3px; width: 9px; height: 9px; transform: none; }
+    .st-px-ach-orn.tr-low { right: -9px; top: 3px; width: 9px; height: 9px; transform: scaleX(-1); }
+    .st-px-ach-orn.top-left { left: 22%; top: -8px; width: 10px; height: 11px; transform: translateX(-50%); }
+    .st-px-ach-orn.top-right { right: 20%; left: auto; top: -8px; width: 9px; height: 9px; transform: none; }
+    .st-px-ach-orn.bot-left { left: 24%; top: auto; bottom: -8px; width: 9px; height: 9px; transform: none; }
+    .st-px-ach-orn.bot-right { right: 22%; left: auto; top: auto; bottom: -8px; width: 10px; height: 10px; transform: none; }
+    .st-px-title-badge.lay-creative { margin: 6px 10px; }
     .st-px-title-badge.tier-3.lay-top { margin: 7px 6px 2px; }
     .st-px-title-badge.tier-3.lay-bottom { margin: 2px 6px 7px; }
     .st-px-title-badge.tier-3.lay-diag { margin: 5px 9px; }
@@ -9301,10 +9315,15 @@
                 <input class="st-tb-range" id="st-tb-badge-radius" type="range" min="0" max="20" step="1" value="16" />
                 <span id="st-tb-badge-radius-val">16px</span>
               </div>
-              <div class="st-tb-slider-row" style="margin-bottom:8px;">
+              <div class="st-tb-slider-row" style="margin-bottom:6px;">
                 <span>高度</span>
                 <input class="st-tb-range" id="st-tb-badge-pady" type="range" min="0" max="10" step="1" value="4" />
                 <span id="st-tb-badge-pady-val">4px</span>
+              </div>
+              <div class="st-tb-slider-row" style="margin-bottom:8px;">
+                <span>宽度</span>
+                <input class="st-tb-range" id="st-tb-badge-padx" type="range" min="4" max="24" step="1" value="10" />
+                <span id="st-tb-badge-padx-val">10px</span>
               </div>
               <div style="font-size:11px;opacity:0.78;margin:4px 0 5px;">快捷栏样式</div>
               <div class="st-tb-pills" id="st-tb-qd-styles" style="margin-bottom:7px;flex-wrap:wrap;">
@@ -17224,47 +17243,154 @@
     secret_key: 'lr', camera: 'lr',
   };
 
+  // 12 款全新迷你像素副饰（与主徽饰混搭，拒绝同元素重复与四芒星）
+  const BADGE_MINI_ACCENTS = [
+    ['..pp..','.pwwp.','..pp..','..p...'],
+    ['..yy..','.ywwy.','..yy..','......'],
+    ['..cc..','.cwwc.','..cc..','.c..c.'],
+    ['.g..g.','..gg..','.gwwg.','..gg..'],
+    ['..ll..','.lwwl.','.l..l.','......'],
+    ['.w..w.','wwmmww','.mmmm.','......'],
+    ['..aa..','.awwa.','..aa..','...a..'],
+    ['.p..p.','pppppp','.pwwp.','..pp..'],
+    ['..bb..','.bwwb.','..bb..','..b...'],
+    ['..yy..','.yyyy.','..yy..','.y..y.'],
+    ['..mm..','.mwwm.','..mm..','......'],
+    ['.c.p..','cwpw..','.c.p..','......'],
+  ];
+
+  const makeMiniAccentCanvas = (accIdx, posCls) => {
+    const c = doc.createElement('canvas');
+    c.width = 6;
+    c.height = 4;
+    c.className = `st-px-ach-orn mini ${posCls}`;
+    const g = c.getContext('2d');
+    const grid = BADGE_MINI_ACCENTS[((accIdx % BADGE_MINI_ACCENTS.length) + BADGE_MINI_ACCENTS.length) % BADGE_MINI_ACCENTS.length];
+    for (let y = 0; y < grid.length; y++) {
+      for (let x = 0; x < grid[y].length; x++) {
+        const col = ACH_ICON_PAL[grid[y][x]];
+        if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
+      }
+    }
+    return c;
+  };
+
+  const hashBadgeId = (str) => {
+    let h = 2166136261;
+    const s = String(str || 'badge');
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return Math.abs(h);
+  };
+
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
     const tier = isMystery ? 1 : (ach.tier || 1);
     const fKey = ach.frame || 'stars';
-    const lay = ACH_FRAME_LAYOUT[fKey] || 'lr';
-    const layClass = tier === 3
-      ? (lay === 'diag1' || lay === 'diag2' || lay === 'quad' ? ' lay-diag' : (lay === 'trio' || lay === 'trio_bot' ? ' lay-trio' : ''))
-      : '';
+    const isProtected = ach.id === 'aff_lv10' || ach.id === 'sb_ult_angel_seraph';
     const isGachaDynBadge = fKey.startsWith('gframe_');
-    el.className = `st-px-title-badge tier-${tier}${layClass}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
-    el.innerHTML = '';
-    el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
-    el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
-    el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
-    if (tier >= 4 && !isMystery) {
-      el.appendChild(makeUltOrn('top', fKey));
-      el.appendChild(makeUltOrn('bottom', fKey));
-      el.appendChild(makeUltOrn('left', fKey));
-      el.appendChild(makeUltOrn('right', fKey));
-    } else if (tier >= 3 && !isMystery) {
-      if (lay === 'diag1') {
-        el.appendChild(makeAchOrnCanvas(fKey, 'tl'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'br'));
-      } else if (lay === 'diag2') {
-        el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'bl'));
-      } else if (lay === 'quad') {
-        el.appendChild(makeAchOrnCanvas(fKey, 'tl'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'bl'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'br'));
-      } else if (lay === 'trio') {
-        el.appendChild(makeAchOrnCanvas(fKey, 'top'));
+
+    if (isProtected) {
+      const lay = ACH_FRAME_LAYOUT[fKey] || 'lr';
+      const layClass = tier === 3
+        ? (lay === 'diag1' || lay === 'diag2' || lay === 'quad' ? ' lay-diag' : (lay === 'trio' || lay === 'trio_bot' ? ' lay-trio' : ''))
+        : '';
+      el.className = `st-px-title-badge tier-${tier}${layClass}`;
+      el.innerHTML = '';
+      el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
+      el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
+      el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
+      if (tier >= 4 && !isMystery) {
+        el.appendChild(makeUltOrn('top', fKey));
+        el.appendChild(makeUltOrn('bottom', fKey));
+        el.appendChild(makeUltOrn('left', fKey));
+        el.appendChild(makeUltOrn('right', fKey));
+      } else if (tier >= 3 && !isMystery) {
         el.appendChild(makeAchOrnCanvas(fKey, 'left'));
         el.appendChild(makeAchOrnCanvas(fKey, 'right'));
-      } else if (lay === 'trio_bot') {
-        el.appendChild(makeAchOrnCanvas(fKey, 'bottom'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'left'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'right'));
-      } else {
-        el.appendChild(makeAchOrnCanvas(fKey, 'left'));
-        el.appendChild(makeAchOrnCanvas(fKey, 'right'));
+      }
+    } else {
+      el.className = `st-px-title-badge tier-${tier}${tier >= 3 ? ' lay-creative' : ''}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
+      el.innerHTML = '';
+      el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
+      el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
+      el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
+      if (tier >= 3 && !isMystery) {
+        const h = hashBadgeId(ach.id || ach.title || fKey);
+        const comp = h % 12;
+        const a1 = (h >> 3) % BADGE_MINI_ACCENTS.length;
+        const a2 = (a1 + 3 + ((h >> 6) % 5)) % BADGE_MINI_ACCENTS.length;
+        const mainOrn = (pos) => (tier >= 4 && (pos === 'top' || pos === 'bottom' || pos === 'left' || pos === 'right')
+          ? makeUltOrn(pos, fKey)
+          : makeAchOrnCanvas(fKey, pos));
+        // 12 种不对称、多位置、角落堆叠且多元素混搭的创意构图
+        if (comp === 0) {
+          // 左上错落堆叠 + 右下微光点
+          el.appendChild(mainOrn('tl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'tl-sub'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'br'));
+        } else if (comp === 1) {
+          // 左下双层堆叠 + 右上轻点
+          el.appendChild(mainOrn('bl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'bl-sub'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'bl-high'));
+          el.appendChild(makeMiniAccentCanvas(a1 + 2, 'tr'));
+        } else if (comp === 2) {
+          // 左上+右上双角挂饰（底部清爽留白）
+          el.appendChild(mainOrn('tl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'tr'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'tr-sub'));
+        } else if (comp === 3) {
+          // 右侧瀑布流堆叠 + 左下呼应
+          el.appendChild(mainOrn('tr'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'br-high'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'br'));
+          el.appendChild(makeMiniAccentCanvas(a1 + 1, 'bl'));
+        } else if (comp === 4) {
+          // 底边错落垂挂花环（上沿通透）
+          el.appendChild(mainOrn('bl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'bot-left'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'bot-right'));
+        } else if (comp === 5) {
+          // 右上斜戴主饰 + 左下小尾
+          el.appendChild(mainOrn('tr'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'tr-low'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'bl'));
+          el.appendChild(makeMiniAccentCanvas(a1 + 3, 'bl-sub'));
+        } else if (comp === 6) {
+          // 左侧花束簇拥（右侧完全留白）
+          el.appendChild(mainOrn('tl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'tl-low'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'bl'));
+        } else if (comp === 7) {
+          // 顶部偏左主饰 + 右上轻点
+          el.appendChild(mainOrn('top-left'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'top-right'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'br-sub'));
+        } else if (comp === 8) {
+          // 右下重簇堆叠 + 左上呼应
+          el.appendChild(mainOrn('br'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'br-sub'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'br-high'));
+          el.appendChild(makeMiniAccentCanvas(a1 + 4, 'tl'));
+        } else if (comp === 9) {
+          // 三角不对称星散
+          el.appendChild(mainOrn('tl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'top-right'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'bot-left'));
+        } else if (comp === 10) {
+          // 左下+右下双托底
+          el.appendChild(mainOrn('bl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'br'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'br-sub'));
+        } else {
+          // 左上斜绕 + 右侧垂坠
+          el.appendChild(mainOrn('tl'));
+          el.appendChild(makeMiniAccentCanvas(a1, 'tl-sub'));
+          el.appendChild(makeMiniAccentCanvas(a2, 'tr-low'));
+          el.appendChild(makeMiniAccentCanvas(a1 + 2, 'br'));
+        }
       }
     }
     if (!isMystery) el.appendChild(makeAchIconCanvas(ach.icon));
@@ -17840,9 +17966,7 @@
             idBadgeEl.style.display = 'inline-flex';
             fillAchBadgeEl(idBadgeEl, ach, false);
           }
-          if (typeof showImmNotice === 'function') {
-            showImmNotice(`预览称号「${ach.title}」，点击右侧佩戴按钮才会正式戴上`);
-          }
+
         });
         const topLine = doc.createElement('div');
         topLine.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
@@ -43989,6 +44113,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const showDot = config.badgeShowDot !== false;
     const bRad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
     const bPadY = Number.isFinite(Number(config.badgePadY)) ? clamp(Number(config.badgePadY), 0, 10) : 4;
+    const bPadX = Number.isFinite(Number(config.badgePadX)) ? clamp(Number(config.badgePadX), 4, 24) : 10;
     const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
     const qMaxW = Number.isFinite(Number(config.quickDockMaxW)) ? clamp(Number(config.quickDockMaxW), 180, 420) : 320;
     const btnRad = Number.isFinite(Number(config.quickDockBtnRadius)) ? clamp(Number(config.quickDockBtnRadius), 0, 20) : 12;
@@ -43999,6 +44124,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (!showDot) badge.classList.add('no-dot');
       badge.style.borderRadius = `${bRad}px`;
       badge.style.setProperty('--badge-pad-y', `${bPadY}px`);
+      badge.style.setProperty('--badge-pad-x', `${bPadX}px`);
     }
     const dotToggleBtn = root.querySelector('#st-tb-badge-dot-toggle');
     if (dotToggleBtn) {
@@ -44013,6 +44139,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const bPyVal = root.querySelector('#st-tb-badge-pady-val');
     if (bPyInp) bPyInp.value = String(bPadY);
     if (bPyVal) bPyVal.textContent = `${bPadY}px`;
+    const bPxInp = root.querySelector('#st-tb-badge-padx');
+    const bPxVal = root.querySelector('#st-tb-badge-padx-val');
+    if (bPxInp) bPxInp.value = String(bPadX);
+    if (bPxVal) bPxVal.textContent = `${bPadX}px`;
     const qRadInp = root.querySelector('#st-tb-qd-radius');
     const qRadVal = root.querySelector('#st-tb-qd-radius-val');
     if (qRadInp) qRadInp.value = String(qRad);
@@ -44117,6 +44247,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   });
   root.querySelector('#st-tb-badge-pady')?.addEventListener('input', (e) => {
     config.badgePadY = clamp(Number(e.target.value) || 0, 0, 10);
+    saveConfig();
+    applyBadgeAndDockStyle();
+    applyBadgePosition(true);
+  });
+  root.querySelector('#st-tb-badge-padx')?.addEventListener('input', (e) => {
+    config.badgePadX = clamp(Number(e.target.value) || 4, 4, 24);
     saveConfig();
     applyBadgeAndDockStyle();
     applyBadgePosition(true);
