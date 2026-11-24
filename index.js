@@ -1,9 +1,3 @@
-// SillyTavern UI Extension: 狗来财 (v2.0.56)
-let __goulaicaiExtBooted = false;
-
-function bootGoulaicaiExtension() {
-  if (__goulaicaiExtBooted) return;
-  __goulaicaiExtBooted = true;
 (() => {
   const win = window.parent || window;
   const doc = win.document;
@@ -1624,18 +1618,18 @@ function bootGoulaicaiExtension() {
     { id: 'gacha_mini_pudding_cat', name: '软糖小恐龙', tier: 'SR' },
   ];
   const GACHA_BUBBLES = [
-    { id: 'bub_gacha_crystal', name: '[扭蛋] 糖晶梦境框', tier: 'SSR', dyn: 'sodapop', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'dot_heart' }], desc: '扭蛋机 SSR 传说限定：糖果水晶折射光气泡框' },
-    { id: 'bub_gacha_royal', name: '[扭蛋] 鎏金星冕框', tier: 'SSR', dyn: 'firefly', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'dot_heart' }], desc: '扭蛋机 SSR 传说限定：黑金丝绒鎏金星冕气泡框' },
-    { id: 'bub_gacha_sakura_tea', name: '[扭蛋] 樱茶和果框', tier: 'SSR', dyn: 'sakuratea', charms: [{ pos: 'tr', key: 'sakura' }, { pos: 'bl', key: 'bow' }], desc: '扭蛋机 SSR 传说限定：粉绿樱茶渐变角饰气泡框' },
-    { id: 'bub_gacha_moonlight', name: '[扭蛋] 月华流光框', tier: 'SSR', dyn: 'mooncharm', desc: '扭蛋机 SSR 传说动态限定：静谧银蓝月夜流光配摇曳弯月星坠' },
-    { id: 'bub_gacha_starry_velvet', name: '[扭蛋] 碎星丝绒框', tier: 'SSR', dyn: 'galaxydust', desc: '扭蛋机 SSR 传说动态限定：暗紫丝绒夜空配星座连线与流星微光' },
-    { id: 'bub_gacha_toast', name: '[扭蛋] 烤吐司奶泡', tier: 'SR', dyn: 'matchawhirl', charms: [{ pos: 'br', key: 'paw' }], desc: '扭蛋机 SR 稀有限定：香酥烤吐司暖杏色趣味气泡框' },
-    { id: 'bub_gacha_mint_milk', name: '[扭蛋] 薄荷奶糖框', tier: 'SR', dyn: 'sodapop', charms: [{ pos: 'tl', key: 'butterfly' }], desc: '扭蛋机 SR 稀有限定：清凉薄荷奶糖雾绿气泡框' },
-    { id: 'bub_gacha_soda_pop', name: '[扭蛋] 汽水气泡框', tier: 'SR', dyn: 'sodapop', charms: [], desc: '扭蛋机 SR 稀有限定：[动态] 冰蓝苏打不断冒出细密小气泡的清爽气泡框' },
-    { id: 'bub_gacha_milk_strawberry', name: '[扭蛋] 草莓牛奶泡', tier: 'SR', dyn: 'strawberry', charms: [], desc: '扭蛋机 SR 稀有限定：[动态] 柔粉草莓牛奶渐变底，飘浮红草莓与奶盖微光' },
-    { id: 'bub_gacha_aurora_glass', name: '[扭蛋] 极光玻璃框', tier: 'SSR', dyn: 'aurora', charms: [{ pos: 'br', key: 'butterfly' }], desc: '扭蛋机 SSR 传说动态限定：折射北极光流彩的透明琉璃气泡框' },
-    { id: 'bub_gacha_hotpot_bub', name: '[扭蛋] 咕嘟火锅泡', tier: 'SR', dyn: 'hearts', charms: [{ pos: 'tr', key: 'cloud' }, { pos: 'bl', key: 'heart' }], desc: '扭蛋机 SR 搞笑限定：热气腾腾番茄锅底气泡框' },
-    { id: 'bub_gacha_mahjong_tile', name: '[扭蛋] 玉牌发财泡', tier: 'SR', dyn: 'clover', charms: [{ pos: 'tl', key: 'clover' }, { pos: 'br', key: 'clover_bud' }], desc: '扭蛋机 SR 趣味限定：清透白玉翡翠麻将牌面气泡框' },
+    { id: 'bub_gacha_crystal', name: '[扭蛋] 糖晶梦境框', tier: 'SSR', dyn: 'gdyn_prism_refract', charms: [], desc: '扭蛋机 SSR 传说动态限定：斜向棱镜糖彩折射光束与跃动糖晶微粒' },
+    { id: 'bub_gacha_royal', name: '[扭蛋] 鎏金星冕框', tier: 'SSR', dyn: 'gdyn_royal_ribbon', charms: [], desc: '扭蛋机 SSR 传说动态限定：流动液态金带环绕边框与巡游金珠光晕' },
+    { id: 'bub_gacha_sakura_tea', name: '[扭蛋] 樱茶和果框', tier: 'SSR', dyn: 'gdyn_matcha_whisp', charms: [], desc: '扭蛋机 SSR 传说动态限定：袅袅抹茶清雾升腾与轻柔樱果花瓣斜飘' },
+    { id: 'bub_gacha_moonlight', name: '[扭蛋] 月华流光框', tier: 'SSR', dyn: 'gdyn_lunar_tide', charms: [], desc: '扭蛋机 SSR 传说动态限定：银蓝月汐波纹起伏与顶部柔月弧光轻摇' },
+    { id: 'bub_gacha_starry_velvet', name: '[扭蛋] 碎星丝绒框', tier: 'SSR', dyn: 'gdyn_nebula_constel', charms: [], desc: '扭蛋机 SSR 传说动态限定：暗紫星云微雾脉动与逐段点亮的星轨连线' },
+    { id: 'bub_gacha_toast', name: '[扭蛋] 烤吐司奶泡', tier: 'SR', dyn: 'gdyn_toast_butter', charms: [], desc: '扭蛋机 SR 稀有限定：顶边暖金黄油缓缓融滴与烤面包热气轻卷' },
+    { id: 'bub_gacha_mint_milk', name: '[扭蛋] 薄荷奶糖框', tier: 'SR', dyn: 'gdyn_mint_swirl', charms: [], desc: '扭蛋机 SR 稀有限定：清凉薄荷奶糖双色旋涡沿框流转与冰雾奶珠跃动' },
+    { id: 'bub_gacha_soda_pop', name: '[扭蛋] 汽水气泡框', tier: 'SR', dyn: 'gdyn_fizz_cascade', charms: [], desc: '扭蛋机 SR 稀有限定：冰蓝苏打顶层泡沫起伏与加速上升炸裂水环' },
+    { id: 'bub_gacha_milk_strawberry', name: '[扭蛋] 草莓牛奶泡', tier: 'SR', dyn: 'gdyn_berry_milkshake', charms: [], desc: '扭蛋机 SR 稀有限定：粉白奶昔波浪轻荡配浮沉小红莓与奶泡光点' },
+    { id: 'bub_gacha_aurora_glass', name: '[扭蛋] 极光玻璃框', tier: 'SSR', dyn: 'gdyn_glass_aurora', charms: [], desc: '扭蛋机 SSR 传说动态限定：竖向极光幕帘柔波摇曳与斜向琉璃反光扫过' },
+    { id: 'bub_gacha_hotpot_bub', name: '[扭蛋] 咕嘟火锅泡', tier: 'SR', dyn: 'gdyn_hotpot_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：底边番茄红汤咕嘟鼓泡破裂与翻卷白雾热气' },
+    { id: 'bub_gacha_mahjong_tile', name: '[扭蛋] 玉牌发财泡', tier: 'SR', dyn: 'gdyn_jade_tile', charms: [], desc: '扭蛋机 SR 趣味动态限定：翡翠白玉斜向温润光扫与竹节金环脉动' },
   ];
   const GACHA_TRAILS = [
     { id: 'trail_gacha_capsule', name: '[扭蛋] 扭蛋彩球印', tier: 'SSR', cols: ['#ff85a1', '#ffe066', '#8ac4ff', '#c4a8ff'], desc: '扭蛋机 SSR 传说限定：走过留下一串圆滚滚迷你扭蛋球' },
@@ -1649,32 +1643,32 @@ function bootGoulaicaiExtension() {
     { id: 'trail_gacha_gold_ingot', name: '[扭蛋] 滚落金元宝', tier: 'SR', cols: ['#ffd700', '#ffe875', '#d99826'], desc: '扭蛋机 SR 招财限定：每走一步咕噜噜滚出亮闪闪小金元宝' },
   ];
   const GACHA_AVATAR_FRAMES = [
-    { id: 'af_gacha_ribbon', name: '[扭蛋] 蕾丝缎带框', tier: 'SR', dyn: 'lace', charms: [{ pos: 'tr', key: 'bow' }, { pos: 'tl', key: 'dot_heart' }], desc: '扭蛋机 SR 稀有限定：柔粉蕾丝缎带头像框' },
-    { id: 'af_gacha_cat', name: '[扭蛋] 软萌猫耳框', tier: 'SR', dyn: 'catclaw', charms: [{ pos: 'tl', key: 'cat_ear' }, { pos: 'br', key: 'paw' }], desc: '扭蛋机 SR 稀有限定：俏皮猫耳与小肉垫头像框' },
-    { id: 'af_gacha_toast', name: '[扭蛋] 芝士吐司框', tier: 'SR', dyn: 'shibatoast', charms: [{ pos: 'br', key: 'paw' }, { pos: 'tl', key: 'heart' }], desc: '扭蛋机 SR 趣味限定：烤得金黄酥脆的暖芝士吐司头像框' },
-    { id: 'af_gacha_frog', name: '[扭蛋] 小青蛙呱呱框', tier: 'SR', dyn: 'frog', charms: [{ pos: 'tl', key: 'clover_bud' }, { pos: 'br', key: 'clover' }], desc: '扭蛋机 SR 趣味限定：清新嫩绿荷叶小青蛙头像框' },
-    { id: 'af_gacha_berry_cream', name: '[扭蛋] 草莓奶油框', tier: 'SR', dyn: 'berry', charms: [{ pos: 'tr', key: 'berry' }, { pos: 'bl', key: 'berry_flower' }], desc: '扭蛋机 SR 稀有限定：软糯草莓奶油蛋糕边框头像框' },
-    { id: 'af_gacha_crystal', name: '[扭蛋] 晶钻小皇冠', tier: 'SSR', dyn: 'rainbow', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'butterfly' }], desc: '扭蛋机 SSR 传说动态限定：幻彩晶钻皇冠栖蝶流光框' },
-    { id: 'af_gacha_cloud_swing', name: '[扭蛋] 云端秋千框', tier: 'SSR', dyn: 'hotballoon', charms: [], desc: '扭蛋机 SSR 传说限定：[动态] 粉蓝云天柔光框，彩色小气球与软云缓缓掠过' },
-    { id: 'af_gacha_moon', name: '[扭蛋] 暮月云影框', tier: 'SSR', dyn: 'mooncloud', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'dot_heart' }], desc: '扭蛋机 SSR 传说动态限定：暮蓝丝绒夜空配柔月云影头像框' },
-    { id: 'af_gacha_hotpot_steam', name: '[扭蛋] 鸳鸯火锅框', tier: 'SR', dyn: 'bubble', charms: [{ pos: 'tl', key: 'cloud' }, { pos: 'br', key: 'heart' }], desc: '扭蛋机 SR 搞笑限定：红白鸳鸯锅咕嘟冒泡暖烘烘边框' },
-    { id: 'af_gacha_mahjong_win', name: '[扭蛋] 玉牌发财框', tier: 'SSR', dyn: 'clover', charms: [{ pos: 'tl', key: 'clover' }, { pos: 'br', key: 'clover_bud' }], desc: '扭蛋机 SSR 趣味限定：清透白玉翡翠麻将好运边框' },
-    { id: 'af_gacha_polaroid_tape', name: '[扭蛋] 胶带拍立得', tier: 'SR', dyn: 'stamppost', charms: [{ pos: 'tr', key: 'bow' }, { pos: 'bl', key: 'petal' }], desc: '扭蛋机 SR 文艺限定：斜贴和纸胶带的复古拍立得相框' },
+    { id: 'af_gacha_ribbon', name: '[扭蛋] 蕾丝缎带框', tier: 'SR', dyn: 'gadyn_lace_ripple', charms: [], desc: '扭蛋机 SR 动态限定：四边柔粉蕾丝波浪律动与飘逸丝带尾摆动' },
+    { id: 'af_gacha_cat', name: '[扭蛋] 软萌猫耳框', tier: 'SR', dyn: 'gadyn_kitty_bounce', charms: [], desc: '扭蛋机 SR 动态限定：轻抖软萌猫耳轮廓配绕框漫步的小粉肉垫印' },
+    { id: 'af_gacha_toast', name: '[扭蛋] 芝士吐司框', tier: 'SR', dyn: 'gadyn_cheese_melt', charms: [], desc: '扭蛋机 SR 动态限定：金黄拉丝芝士缓缓流淌与两侧热烘吐司雾气' },
+    { id: 'af_gacha_frog', name: '[扭蛋] 小青蛙呱呱框', tier: 'SR', dyn: 'gadyn_pond_ripple', charms: [], desc: '扭蛋机 SR 动态限定：荷塘雨滴荡开涟漪与跃动青绿水珠光点' },
+    { id: 'af_gacha_berry_cream', name: '[扭蛋] 草莓奶油框', tier: 'SR', dyn: 'gadyn_cream_piping', charms: [], desc: '扭蛋机 SR 动态限定：绕框轮转奶油裱花珠配顶边融霜与草莓微光' },
+    { id: 'af_gacha_crystal', name: '[扭蛋] 晶钻小皇冠', tier: 'SSR', dyn: 'gadyn_prism_orbit', charms: [], desc: '扭蛋机 SSR 传说动态限定：幻彩晶钻折光绕框巡游与冠冕光带起伏' },
+    { id: 'af_gacha_cloud_swing', name: '[扭蛋] 云端秋千框', tier: 'SSR', dyn: 'gadyn_sky_swing', charms: [], desc: '扭蛋机 SSR 传说动态限定：底边云朵秋千弧线轻荡与天际柔云漂浮' },
+    { id: 'af_gacha_moon', name: '[扭蛋] 暮月云影框', tier: 'SSR', dyn: 'gadyn_twilight_crescent', charms: [], desc: '扭蛋机 SSR 传说动态限定：暮蓝云纱缓缓流过银金弯月与夜雾微粒' },
+    { id: 'af_gacha_hotpot_steam', name: '[扭蛋] 鸳鸯火锅框', tier: 'SR', dyn: 'gadyn_yuanyang_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：左红右白鸳鸯锅底翻滚冒泡与双侧热气升腾' },
+    { id: 'af_gacha_mahjong_win', name: '[扭蛋] 玉牌发财框', tier: 'SSR', dyn: 'gadyn_jade_gleam', charms: [], desc: '扭蛋机 SSR 趣味动态限定：翡翠玉面斜扫柔光与四角转运金环脉动' },
+    { id: 'af_gacha_polaroid_tape', name: '[扭蛋] 胶带拍立得', tier: 'SR', dyn: 'gadyn_shutter_flash', charms: [], desc: '扭蛋机 SR 文艺动态限定：复古快门柔光掠影配和纸胶带微闪与胶片齿孔滚动' },
   ];
   const GACHA_BADGES = [
-    { id: 'gb_gacha_lucky_dog', title: '欧气小狗王', name: '[扭蛋] 欧气小狗王', gachaTier: 'SSR', tier: 4, frame: 'supreme_royal', icon: 'diamond_cup', bg: 'linear-gradient(115deg,#fff3c4,#ffd9ec,#d6f5ff,#fff3c4)', bd: '#e0a238', fg: '#6b3b08' },
-    { id: 'gb_gacha_star_sugar', title: '摘星小甜豆', name: '[扭蛋] 摘星小甜豆', gachaTier: 'SSR', tier: 4, frame: 'pearl_lace', icon: 'candy_bear_blue', bg: 'linear-gradient(115deg,#e6e4ff,#f7e3ff,#d9f4ff,#e6e4ff)', bd: '#8c82e6', fg: '#2d2578' },
-    { id: 'gb_gacha_melon_eater', title: '一线吃瓜汪', name: '[扭蛋] 一线吃瓜汪', gachaTier: 'SR', tier: 3, frame: 'berries', icon: 'melon_slice', bg: 'linear-gradient(120deg,#e6fae8,#ffe8ef,#e8fce8,#e6fae8)', bd: '#68bd7e', fg: '#1f5932' },
-    { id: 'gb_gacha_sleep_master', title: '国家一级睡狗', name: '[扭蛋] 国家一级睡狗', gachaTier: 'SR', tier: 3, frame: 'clouds', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#eef5ff,#f5ecff,#fff9eb,#eef5ff)', bd: '#8ea8e6', fg: '#2b3f75' },
-    { id: 'gb_gacha_snack_thief', title: '零食质检员', name: '[扭蛋] 零食质检员', gachaTier: 'SR', tier: 3, frame: 'bells', icon: 'cookie_gold', bg: 'linear-gradient(120deg,#fff3d6,#ffe8e0,#fff7db,#fff3d6)', bd: '#e09d52', fg: '#703d0c' },
-    { id: 'gb_gacha_slacking_pro', title: '合法摸鱼狗', name: '[扭蛋] 合法摸鱼狗', gachaTier: 'SR', tier: 3, frame: 'paws', icon: 'fish_mint', bg: 'linear-gradient(120deg,#e4faf5,#efe8ff,#e8f7ff,#e4faf5)', bd: '#6bbdb3', fg: '#1d5452' },
-    { id: 'gb_gacha_night_snack', title: '深夜干饭王', name: '[扭蛋] 深夜干饭王', gachaTier: 'SR', tier: 3, frame: 'berries', icon: 'ice_cream', bg: 'linear-gradient(120deg,#fff4e0,#ffe8f0,#f4ecff,#fff4e0)', bd: '#d99862', fg: '#6b3a12' },
-    { id: 'gb_gacha_cloud_drifter', title: '云端发呆冠军', name: '[扭蛋] 云端发呆冠军', gachaTier: 'SR', tier: 3, frame: 'clouds', icon: 'cloud_cup_ico', bg: 'linear-gradient(120deg,#eaf6ff,#f4f0ff,#eef9ff)', bd: '#8ab8e6', fg: '#234c78' },
-    { id: 'gb_gacha_destiny_star', title: '满级幸运星', name: '[扭蛋] 满级幸运星', gachaTier: 'SSR', tier: 4, frame: 'pearl_lace', icon: 'star_ribbon_b', bg: 'linear-gradient(115deg,#dfe8ff,#f5e4ff,#d9f8ff,#fff5cc)', bd: '#7e90e6', fg: '#232e6e' },
-    { id: 'gb_gacha_couch_potato', title: '沙发粘合剂', name: '[扭蛋] 沙发粘合剂', gachaTier: 'SR', tier: 3, frame: 'clouds', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#f5f0ff,#fff3e8,#eef6ff)', bd: '#9e90d9', fg: '#3b2e70' },
-    { id: 'gb_gacha_no_work_dog', title: '退堂鼓鼓手', name: '[扭蛋] 退堂鼓鼓手', gachaTier: 'SR', tier: 3, frame: 'notes', icon: 'bell_luck', bg: 'linear-gradient(120deg,#fff0f3,#fff6e0,#f0f5ff)', bd: '#e08ca4', fg: '#6e263c' },
-    { id: 'gb_gacha_e_pickles', title: '电子榨菜王', name: '[扭蛋] 电子榨菜王', gachaTier: 'SR', tier: 3, frame: 'clover', icon: 'bowl', bg: 'linear-gradient(120deg,#eefbe8,#fff7dc,#e8f8f0)', bd: '#6cb572', fg: '#225428' },
-    { id: 'gb_gacha_read_nonsense', title: '已读乱回专家', name: '[扭蛋] 已读乱回专家', gachaTier: 'SSR', tier: 4, frame: 'ribbons', icon: 'chat_bubble', bg: 'linear-gradient(115deg,#e8f2ff,#f7e8ff,#fff0e6,#e8f2ff)', bd: '#7f98e0', fg: '#263870' },
+    { id: 'gb_gacha_lucky_dog', title: '欧气小狗王', name: '[扭蛋] 欧气小狗王', gachaTier: 'SSR', tier: 4, frame: 'gframe_lucky_dice', icon: 'diamond_cup', bg: 'linear-gradient(115deg,#fff3c4,#ffd9ec,#d6f5ff,#fff3c4)', bd: '#e0a238', fg: '#6b3b08' },
+    { id: 'gb_gacha_star_sugar', title: '摘星小甜豆', name: '[扭蛋] 摘星小甜豆', gachaTier: 'SSR', tier: 4, frame: 'gframe_candy_jar', icon: 'candy_bear_blue', bg: 'linear-gradient(115deg,#e6e4ff,#f7e3ff,#d9f4ff,#e6e4ff)', bd: '#8c82e6', fg: '#2d2578' },
+    { id: 'gb_gacha_melon_eater', title: '一线吃瓜汪', name: '[扭蛋] 一线吃瓜汪', gachaTier: 'SR', tier: 3, frame: 'gframe_melon_slice', icon: 'melon_slice', bg: 'linear-gradient(120deg,#e6fae8,#ffe8ef,#e8fce8,#e6fae8)', bd: '#68bd7e', fg: '#1f5932' },
+    { id: 'gb_gacha_sleep_master', title: '国家一级睡狗', name: '[扭蛋] 国家一级睡狗', gachaTier: 'SR', tier: 3, frame: 'gframe_sleep_zzz', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#eef5ff,#f5ecff,#fff9eb,#eef5ff)', bd: '#8ea8e6', fg: '#2b3f75' },
+    { id: 'gb_gacha_snack_thief', title: '零食质检员', name: '[扭蛋] 零食质检员', gachaTier: 'SR', tier: 3, frame: 'gframe_cookie_bite', icon: 'cookie_gold', bg: 'linear-gradient(120deg,#fff3d6,#ffe8e0,#fff7db,#fff3d6)', bd: '#e09d52', fg: '#703d0c' },
+    { id: 'gb_gacha_slacking_pro', title: '合法摸鱼狗', name: '[扭蛋] 合法摸鱼狗', gachaTier: 'SR', tier: 3, frame: 'gframe_fish_ripple', icon: 'fish_mint', bg: 'linear-gradient(120deg,#e4faf5,#efe8ff,#e8f7ff,#e4faf5)', bd: '#6bbdb3', fg: '#1d5452' },
+    { id: 'gb_gacha_night_snack', title: '深夜干饭王', name: '[扭蛋] 深夜干饭王', gachaTier: 'SR', tier: 3, frame: 'gframe_ramen_steam', icon: 'ice_cream', bg: 'linear-gradient(120deg,#fff4e0,#ffe8f0,#f4ecff,#fff4e0)', bd: '#d99862', fg: '#6b3a12' },
+    { id: 'gb_gacha_cloud_drifter', title: '云端发呆冠军', name: '[扭蛋] 云端发呆冠军', gachaTier: 'SR', tier: 3, frame: 'gframe_cloud_kite', icon: 'cloud_cup_ico', bg: 'linear-gradient(120deg,#eaf6ff,#f4f0ff,#eef9ff)', bd: '#8ab8e6', fg: '#234c78' },
+    { id: 'gb_gacha_destiny_star', title: '满级幸运星', name: '[扭蛋] 满级幸运星', gachaTier: 'SSR', tier: 4, frame: 'gframe_clover_orbit', icon: 'star_ribbon_b', bg: 'linear-gradient(115deg,#dfe8ff,#f5e4ff,#d9f8ff,#fff5cc)', bd: '#7e90e6', fg: '#232e6e' },
+    { id: 'gb_gacha_couch_potato', title: '沙发粘合剂', name: '[扭蛋] 沙发粘合剂', gachaTier: 'SR', tier: 3, frame: 'gframe_sofa_cushion', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#f5f0ff,#fff3e8,#eef6ff)', bd: '#9e90d9', fg: '#3b2e70' },
+    { id: 'gb_gacha_no_work_dog', title: '退堂鼓鼓手', name: '[扭蛋] 退堂鼓鼓手', gachaTier: 'SR', tier: 3, frame: 'gframe_drum_beat', icon: 'bell_luck', bg: 'linear-gradient(120deg,#fff0f3,#fff6e0,#f0f5ff)', bd: '#e08ca4', fg: '#6e263c' },
+    { id: 'gb_gacha_e_pickles', title: '电子榨菜王', name: '[扭蛋] 电子榨菜王', gachaTier: 'SR', tier: 3, frame: 'gframe_pickle_jar', icon: 'bowl', bg: 'linear-gradient(120deg,#eefbe8,#fff7dc,#e8f8f0)', bd: '#6cb572', fg: '#225428' },
+    { id: 'gb_gacha_read_nonsense', title: '已读乱回专家', name: '[扭蛋] 已读乱回专家', gachaTier: 'SSR', tier: 4, frame: 'gframe_chat_pop', icon: 'chat_bubble', bg: 'linear-gradient(115deg,#e8f2ff,#f7e8ff,#fff0e6,#e8f2ff)', bd: '#7f98e0', fg: '#263870' },
   ];
 
   const GACHA_SNACKS = [
@@ -2540,8 +2534,8 @@ function bootGoulaicaiExtension() {
 
   // 冒险极低概率神秘隐藏掉落（不提示、不售卖：2款隐藏气泡 + 2款隐藏走路特效）
   const SECRET_ADV_BUBBLES = [
-    { id: 'bub_adv_cloudsea', name: '[秘境] 云海仙境框', dyn: 'skycloud', charms: [{ pos: 'tl', key: 'dot_heart' }, { pos: 'br', key: 'petal_mini' }], desc: '冒险极低概率偶遇的云海秘境限定气泡' },
-    { id: 'bub_adv_stardust', name: '[秘境] 星尘奇遇框', dyn: 'aurora', charms: [{ pos: 'tr', key: 'moon' }, { pos: 'bl', key: 'dot_heart' }], desc: '冒险极低概率偶遇的星尘秘境限定气泡' },
+    { id: 'bub_adv_cloudsea', name: '[秘境] 云海仙境框', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '冒险极低概率偶遇的云海秘境动态限定：层叠云海翻涌与金霞微光升腾' },
+    { id: 'bub_adv_stardust', name: '[秘境] 星尘奇遇框', dyn: 'gdyn_comet_arc', charms: [], desc: '冒险极低概率偶遇的星尘秘境动态限定：双色彗星弧光绕框拖曳星尘尾迹' },
   ];
   const BOND_REWARD_ITEMS = {
     lv6: { kind: 'bubble', id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡' },
@@ -2564,8 +2558,8 @@ function bootGoulaicaiExtension() {
     { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
-    { id: 'af_adv_cloud', name: '[秘境] 云端小翅膀', dyn: 'halo', charms: [{ pos: 'tl', key: 'dot_heart' }, { pos: 'br', key: 'petal_mini' }], desc: '冒险极低概率偶遇的云端仙羽动态头像框' },
-    { id: 'af_adv_star', name: '[秘境] 星空小轨迹', dyn: 'starfall', charms: [{ pos: 'tr', key: 'moon' }, { pos: 'bl', key: 'dot_heart' }], desc: '冒险极低概率偶遇的银河星轨动态头像框' },
+    { id: 'af_adv_cloud', name: '[秘境] 云端小翅膀', dyn: 'gadyn_feather_drift', charms: [], desc: '冒险极低概率偶遇的云端仙羽动态头像框：双侧柔羽轻扇配上升云雾光环' },
+    { id: 'af_adv_star', name: '[秘境] 星空小轨迹', dyn: 'gadyn_orbital_ring', charms: [], desc: '冒险极低概率偶遇的银河星轨动态头像框：双色星轨流光与双星绕框公转' },
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
@@ -6518,6 +6512,40 @@ function bootGoulaicaiExtension() {
       66% { background-position: 200% 50%; filter: drop-shadow(0 0 4px rgba(255,220,110,0.75)); }
       100% { background-position: 0% 50%; filter: drop-shadow(0 0 3px rgba(255,150,210,0.65)); }
     }
+    @keyframes stGachaBadgeFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes stGachaOrnFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-2px) scale(1.06); }
+    }
+    @keyframes stGachaBadgeSheen {
+      0% { left: -45%; opacity: 0; }
+      25% { opacity: 0.72; }
+      60% { left: 120%; opacity: 0; }
+      100% { left: 120%; opacity: 0; }
+    }
+    .st-px-title-badge.gacha-dyn {
+      background-size: 220% 220% !important;
+      animation: stGachaBadgeFlow 3.4s ease-in-out infinite !important;
+      position: relative;
+      overflow: visible;
+    }
+    .st-px-title-badge.gacha-dyn::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; width: 28%;
+      background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.68) 50%, transparent 100%);
+      pointer-events: none;
+      animation: stGachaBadgeSheen 2.8s ease-in-out infinite;
+      border-radius: inherit;
+    }
+    .st-px-title-badge.gacha-dyn .st-px-ach-orn,
+    .st-px-title-badge.gacha-dyn .st-px-ult-orn {
+      animation: stGachaOrnFloat 2.1s ease-in-out infinite !important;
+    }
     .st-px-title-badge.tier-4 {
       padding: 4px 12px;
       margin: 7px 16px;
@@ -9761,6 +9789,9 @@ function bootGoulaicaiExtension() {
             if (config.keepAlivePolicy === pol && kaRuntime.active) return;
             config.keepAlivePolicy = pol;
             saveConfig();
+            if (config.puppyBgNotify !== false && typeof Notification !== 'undefined' && Notification.permission === 'default') {
+              try { Notification.requestPermission().catch(() => {}); } catch (_) {}
+            }
             startKeepAlive();
             showKaPolicyNotice(pol === 'exclusive'
               ? '已切换强保活：会占用音频栏与灵动岛，息屏常驻更稳'
@@ -9914,6 +9945,9 @@ function bootGoulaicaiExtension() {
           kaBeatN += 1;
           kaRuntime.lastBeatAt = Date.now();
           tryResumeKaAudio(true);
+          if (doc.hidden && typeof win.__stCheckReplyBg === 'function') {
+            try { win.__stCheckReplyBg(); } catch (_) {}
+          }
           if (doc.hidden && kaBeatN % 8 === 0) {
             try { win.fetch('/csrf-token', { cache: 'no-store' }).catch(() => {}); } catch (_) {}
           }
@@ -16436,6 +16470,15 @@ function bootGoulaicaiExtension() {
 
   // 15 款各不相同的顶级成就框外像素装饰（7x9，左右镜像呈现）
   const ACH_ORN_GRIDS = {
+    gframe_melon_slice:  ['.......','..ggg..','.gwwwg.','grrrrrg','grkrkrg','.grrrg.','..ggg..','.......','.......'],
+    gframe_sleep_zzz:    ['..bbb..','.bwwwb.','..bbb..','....ll.','...l...','..ll...','.cc....','cwwc...','.cc....'],
+    gframe_cookie_bite:  ['.......','..aaa..','.aoaoa.','aaaoaaa','aaoaaao','.aaaaa.','..aaa..','.......','.......'],
+    gframe_fish_ripple:  ['...c...','..ccc..','.ccwcc.','mcccccc','.mmccc.','..m..c.','..mm...','.......','.......'],
+    gframe_ramen_steam:  ['..w.w..','.w...w.','..w.w..','.......','yyyyyyy','.ypppy.','..yyy..','.......','.......'],
+    gframe_cloud_kite:   ['...p...','..pwp..','.ppppp.','..pwp..','...p...','....y..','...y...','..y....','.......'],
+    gframe_sofa_cushion: ['.......','.l...l.','lllllll','llwwwll','lllllll','.l...l.','.......','.......','.......'],
+    gframe_drum_beat:    ['..r.r..','.rrrrr.','ryyyyyr','rywywyr','ryyyyyr','.rrrrr.','..o.o..','.......','.......'],
+    gframe_pickle_jar:   ['..yyy..','.ggggg.','gmwmmmg','gmmgmmg','gmmwmmg','.ggggg.','.......','.......','.......'],
     crown:   ['.......','..y.y..','.yyyyy.','.ywywy.','..yyy..','...y...','..w.w..','.......','.......'],
     gems:    ['...c...','..ccc..','.ccwcc.','..ccc..','...c...','..l.l..','...l...','.......','.......'],
     bells:   ['...y...','..yyy..','.yywyy.','.yyyyy.','...o...','..y.y..','.......','.......','.......'],
@@ -16672,6 +16715,54 @@ function bootGoulaicaiExtension() {
         c.width = 17; c.height = 5;
         grid = ['.p..m..y..m..p...','pwp.m.ywy.m.pwp..','.p..m..y..m..p...','.....ppwpp.......','.......p.........'];
       }
+    } else if (styleKey === 'gframe_lucky_dice') {
+      // 欧气小狗王专属：转运金骰 + 彩虹金币环四向高定装饰
+      if (pos === 'left' || pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['..yyyyy..','.ywwwwwy.','ywkywykwy','ywwwwwwwy','ywwwkwwwy','ywwwwwwwy','ywkywykwy','.ywwwwwy.','..yyyyy..','...p.c...','..ppccc..','...p.c...','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['..yyy..ppp..yyy..','.ywkwy.pwp.ywkwy.','.ywwwy.ppp.ywwwy.','..yyy.ccccc.yyy..','.....yyyyyyy.....','.................'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['.y..p..ccc..p..y.','ywy.p.cwwwc.p.ywy','.y..p..ccc..p..y.','.....yyyyyyy.....','.................'];
+      }
+    } else if (styleKey === 'gframe_candy_jar') {
+      // 摘星小甜豆专属：糖果琉璃珠链 + 软糖圆拱装饰
+      if (pos === 'left' || pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['...lll...','..lwwwl..','...lll...','..p...c..','.pwp.cwc.','..p...c..','...mmm...','..mwwwm..','...mmm...','..l...p..','.lwl.pwp.','..l...p..','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['....lll...ccc....','..p.lwl.m.cwc.p..','.pwp.l.mwm.c.pwp.','..p...m.m.m...p..','...lllllllllll...','.................'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['..l..p..m..c..l..','.lwl.p.mwm.c.lwl.','..l..p..m..c..l..','....ccccccccc....','.................'];
+      }
+    } else if (styleKey === 'gframe_clover_orbit') {
+      // 满级幸运星专属：翡翠金轨双环与幸运圆珠（无四芒星）
+      if (pos === 'left' || pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['..mm.mm..','.mwwmwwm.','..mmmmm..','...mmm...','..c...y..','.cwc.ywy.','..c...y..','...lll...','..lwwwl..','...lll...','..m...m..','.mwm.mwm.','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['...ccc.....ccc...','..cwwwc.y.cwwwc..','...ccc.ywy.ccc...','..mmmm..y..mmmm..','....yyyyyyyyy....','.................'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['.c..m..yyy..m..c.','cwc.m.ywwwy.m.cwc','.c..m..yyy..m..c.','.....mmmmmmm.....','.................'];
+      }
+    } else if (styleKey === 'gframe_chat_pop') {
+      // 已读乱回专家专属：弹跳像素对话泡泡与彩色波点波浪
+      if (pos === 'left' || pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['.bbbbbbb.','bwwwwwwwb','bwbbwbbwb','bwwwwwwwb','.bbbbbbb.','..bb.....','.b.......','..p...l..','.pwp.lwl.','..p...l..','...c.c...','..cwwwc..','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['..bbbbb...ppppp..','.bwwwwwb.pwwwwwp.','.bwbbwb..pwppwp..','..bbbbb...ppppp..','...b.........p...','.................'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['.b..p..l..c..b...','bwb.p.lwl.c.bwb..','.b..p..l..c..b...','....bbbbbbbbb....','.................'];
+      }
     } else if (styleKey === 'cosmic_god') {
       if (pos === 'left' || pos === 'right') {
         c.width = 9; c.height = 13;
@@ -16734,6 +16825,9 @@ function bootGoulaicaiExtension() {
 
   // 灵活且协调的多方位框外像素排布（对角双饰 / 四角星饰 / 上左右三向 / 下左右三向 / 左右双翼，告别突兀单边）
   const ACH_FRAME_LAYOUT = {
+    gframe_melon_slice: 'diag1', gframe_sleep_zzz: 'trio', gframe_cookie_bite: 'diag2',
+    gframe_fish_ripple: 'lr', gframe_ramen_steam: 'trio_bot', gframe_cloud_kite: 'diag1',
+    gframe_sofa_cushion: 'lr', gframe_drum_beat: 'diag2', gframe_pickle_jar: 'trio',
     crown: 'trio', halos: 'trio', wings: 'trio', runway: 'trio', firework_ach: 'trio',
     pearls: 'trio_bot', bells: 'trio_bot', lanterns: 'trio_bot', ribbons: 'trio_bot', neckgems: 'trio_bot',
     gems: 'quad', prism: 'quad', stars: 'quad', bloom_ult: 'quad', chest_orb: 'quad',
@@ -16749,7 +16843,8 @@ function bootGoulaicaiExtension() {
     const layClass = tier === 3
       ? (lay === 'diag1' || lay === 'diag2' || lay === 'quad' ? ' lay-diag' : (lay === 'trio' || lay === 'trio_bot' ? ' lay-trio' : ''))
       : '';
-    el.className = `st-px-title-badge tier-${tier}${layClass}`;
+    const isGachaDynBadge = fKey.startsWith('gframe_');
+    el.className = `st-px-title-badge tier-${tier}${layClass}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
     el.innerHTML = '';
     el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
     el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
@@ -27616,6 +27711,203 @@ function bootGoulaicaiExtension() {
         px(ox - 1, oy - 1, 'rgba(255,255,255,0.24)', 4, 4);
         px(ox, oy, wCols[i % wCols.length], 2, 2);
       }
+    } else if (m === 'gdyn_prism_refract') {
+      // 糖晶梦境框：斜向糖果棱镜折射光带扫过 + 上下边缘跃动糖晶微粒
+      const pCols = ['rgba(255,176,214,0.42)', 'rgba(160,232,255,0.42)', 'rgba(255,232,148,0.42)', 'rgba(206,184,255,0.42)'];
+      const sweepX = ((t * 3) % (W + 24)) - 12;
+      for (let k = 0; k < 4; k++) {
+        for (let r = 0; r < H; r += 3) {
+          const rx = sweepX + k * 3 - Math.floor(r * 0.55);
+          if (rx >= 1 && rx < W - 2) px(rx, r, pCols[k], 2, 2);
+        }
+      }
+      for (let i = 0; i < 6; i++) {
+        const dx = 5 + ((i * 19 + t * 2) % Math.max(8, W - 10));
+        const dy = i % 2 === 0 ? 1 + (Math.floor((t + i) / 3) % 2) : H - 3 - (Math.floor((t + i) / 3) % 2);
+        px(dx, dy, '#ffffff', 2, 2);
+        px(dx + 1, dy, i % 2 === 0 ? '#ffa8d8' : '#8ce4ff', 1, 1);
+      }
+    } else if (m === 'gdyn_royal_ribbon') {
+      // 鎏金星冕框：流动液态金带沿上下边起伏 + 巡游金珠光晕
+      for (let x = 2; x < W - 2; x += 2) {
+        const wave = Math.round(Math.sin(t * 0.22 + x * 0.25));
+        const shimmer = ((x + t * 2) % 14) < 4;
+        px(x, 1 + Math.max(0, wave), shimmer ? '#fff6c4' : '#e6b84c', 2, 1);
+        px(x, H - 2 - Math.max(0, -wave), shimmer ? '#fff6c4' : '#d49e35', 2, 1);
+      }
+      for (let i = 0; i < 4; i++) {
+        const gx = 4 + ((t * 2 + i * 17) % Math.max(8, W - 8));
+        const gy = i % 2 === 0 ? 2 : H - 4;
+        px(gx - 1, gy, 'rgba(255,232,140,0.38)', 4, 2);
+        px(gx, gy, '#fff7cc', 2, 2);
+      }
+    } else if (m === 'gdyn_matcha_whisp') {
+      // 樱茶和果框：底角抹茶清雾袅袅升腾 + 粉白和果圆瓣随风斜飘
+      for (let i = 0; i < 3; i++) {
+        const sx = 5 + i * 3 + Math.round(Math.sin(t * 0.25 + i) * 1.5);
+        const sy = H - 3 - ((t + i * 5) % Math.max(8, H - 5));
+        px(sx, sy, 'rgba(136,208,158,0.68)', 2, 2);
+        px(W - sx - 2, sy, 'rgba(156,220,174,0.58)', 2, 1);
+      }
+      for (let i = 0; i < 5; i++) {
+        const px0 = (t * 2 + i * 17) % Math.max(8, W - 4);
+        const py0 = 2 + ((t + i * 7) % Math.max(6, H - 4));
+        px(px0, py0, i % 2 === 0 ? '#ffb5cc' : '#ffe0ea', 2, 2);
+        px(px0 + 1, py0 + 1, '#ffffff', 1, 1);
+      }
+    } else if (m === 'gdyn_lunar_tide') {
+      // 月华流光框：底边银蓝月汐波纹起伏 + 顶边柔月弧光轻摇
+      for (let x = 2; x < W - 2; x += 2) {
+        const ty = H - 3 + Math.round(Math.sin(t * 0.24 + x * 0.22));
+        px(x, ty, (x + t) % 8 < 4 ? '#cfe8ff' : '#8eb8f0', 2, 1);
+        if (ty + 1 < H) px(x, ty + 1, 'rgba(130,178,240,0.45)', 2, 1);
+      }
+      const arcX = Math.round(W * 0.5 + Math.sin(t * 0.14) * Math.max(4, W * 0.28));
+      px(arcX - 3, 2, 'rgba(224,240,255,0.42)', 7, 2);
+      px(arcX - 1, 1, '#fff6c8', 3, 2);
+      px(arcX, 2, '#9ec4f5', 2, 1);
+    } else if (m === 'gdyn_nebula_constel') {
+      // 碎星丝绒框：暗紫星云微雾脉动 + 逐段点亮的星轨圆点连线
+      const pts = [[4, 3], [Math.round(W * 0.35), 2], [Math.round(W * 0.68), 3], [W - 6, 2], [W - 5, H - 4], [Math.round(W * 0.55), H - 3], [6, H - 4]];
+      const activeSeg = Math.floor(t / 5) % pts.length;
+      for (let i = 0; i < pts.length; i++) {
+        const [x0, y0] = pts[i];
+        const glow = i === activeSeg || i === (activeSeg + 1) % pts.length;
+        px(x0 - 1, y0 - 1, glow ? 'rgba(210,180,255,0.5)' : 'rgba(170,150,235,0.22)', 4, 4);
+        px(x0, y0, glow ? '#fff6c4' : '#cbb8ff', 2, 2);
+      }
+      const [ax, ay] = pts[activeSeg];
+      const [bx, by] = pts[(activeSeg + 1) % pts.length];
+      for (let s = 1; s < 5; s++) {
+        const lx = Math.round(ax + (bx - ax) * (s / 5));
+        const ly = Math.round(ay + (by - ay) * (s / 5));
+        px(lx, ly, 'rgba(232,216,255,0.62)', 1, 1);
+      }
+    } else if (m === 'gdyn_toast_butter') {
+      // 烤吐司奶泡：顶边暖金黄油缓缓融滴 + 烤面包热气轻卷
+      for (let i = 0; i < 5; i++) {
+        const bx = 6 + Math.round(((W - 14) * i) / 4);
+        const drip = 2 + Math.floor((Math.sin(t * 0.18 + i * 1.4) + 1) * 2.2);
+        px(bx - 1, 1, '#f7cf68', 4, 2);
+        px(bx, 2, '#ffe89c', 2, drip);
+        px(bx, 1 + drip, '#fff6d4', 1, 1);
+      }
+      for (let i = 0; i < 3; i++) {
+        const sy = H - 3 - ((t + i * 5) % Math.max(8, H - 6));
+        const sx = (i % 2 === 0 ? 3 : W - 5) + Math.round(Math.sin(t * 0.25 + i));
+        px(sx, sy, 'rgba(255,244,224,0.68)', 2, 2);
+      }
+    } else if (m === 'gdyn_mint_swirl') {
+      // 薄荷奶糖框：清凉薄荷奶糖双色旋带沿上下框流转 + 跃动冰雾奶珠
+      for (let x = 2; x < W - 2; x += 3) {
+        const phase = (x + t * 2) % 12;
+        const cTop = phase < 6 ? '#7ee0bf' : '#ffffff';
+        const cBot = phase < 6 ? '#ffffff' : '#96ebd0';
+        px(x, 1, cTop, 2, 2);
+        px(x, H - 3, cBot, 2, 2);
+      }
+      for (let i = 0; i < 5; i++) {
+        const mx = 5 + ((i * 17 + t) % Math.max(8, W - 10));
+        const my = 4 + Math.round((Math.sin(t * 0.22 + i * 1.5) + 1) * Math.max(2, (H - 10) * 0.45));
+        px(mx - 1, my, 'rgba(182,250,228,0.45)', 4, 2);
+        px(mx, my, '#ffffff', 2, 2);
+      }
+    } else if (m === 'gdyn_fizz_cascade') {
+      // 汽水气泡框：顶层冰蓝苏打泡沫波浪起伏 + 上升气泡到顶炸开微水环
+      for (let x = 2; x < W - 2; x += 2) {
+        const fy = 1 + (Math.round(Math.sin(t * 0.28 + x * 0.3)) > 0 ? 1 : 0);
+        px(x, fy, 'rgba(225,248,255,0.85)', 2, 1);
+      }
+      for (let i = 0; i < 6; i++) {
+        const prog = (t * 2 + i * 6) % Math.max(10, H - 3);
+        const sx = 5 + Math.round(((W - 10) * ((i * 41) % 100)) / 100);
+        const sy = H - 2 - prog;
+        if (sy <= 3) {
+          px(sx - 1, 2, 'rgba(168,232,255,0.75)', 1, 1);
+          px(sx + 2, 2, 'rgba(168,232,255,0.75)', 1, 1);
+        } else {
+          px(sx, sy, '#88dcff', 2, 2);
+          px(sx, sy, '#ffffff', 1, 1);
+        }
+      }
+    } else if (m === 'gdyn_berry_milkshake') {
+      // 草莓牛奶泡：底边粉白奶昔波浪轻荡 + 浮沉圆润草莓粒与奶盖光点
+      for (let x = 2; x < W - 2; x += 2) {
+        const wy = H - 3 + Math.round(Math.sin(t * 0.22 + x * 0.28));
+        px(x, wy, (x + t) % 6 < 3 ? '#fff5f8' : '#ffb8ce', 2, 2);
+      }
+      for (let i = 0; i < 4; i++) {
+        const bx = 6 + Math.round(((W - 14) * i) / 3);
+        const by = 3 + Math.round((Math.sin(t * 0.2 + i * 1.7) + 1) * Math.max(2, (H - 10) * 0.4));
+        px(bx, by, '#f05d7a', 3, 2);
+        px(bx + 1, by - 1, '#78c97e', 1, 1);
+        px(bx, by, '#ffc2d0', 1, 1);
+      }
+    } else if (m === 'gdyn_glass_aurora') {
+      // 极光玻璃框：竖向极光幕帘轻摇 + 斜向琉璃高光扫过
+      const aCols = ['rgba(126,245,212,0.42)', 'rgba(130,206,255,0.42)', 'rgba(202,164,255,0.42)'];
+      for (let i = 0; i < 5; i++) {
+        const ax = 4 + Math.round(((W - 10) * i) / 4) + Math.round(Math.sin(t * 0.16 + i) * 2);
+        const ah = 4 + ((t + i * 3) % Math.max(5, Math.min(9, H - 4)));
+        px(ax, 1, aCols[i % 3], 3, ah);
+      }
+      const gl = ((t * 3) % (W + 16)) - 8;
+      for (let y = 1; y < H - 1; y += 2) {
+        const gx = gl - Math.floor(y * 0.4);
+        if (gx >= 1 && gx < W - 2) px(gx, y, 'rgba(255,255,255,0.65)', 1, 2);
+      }
+    } else if (m === 'gdyn_hotpot_boil') {
+      // 咕嘟火锅泡：底边番茄红汤翻滚鼓泡 + 白色热气螺旋上升
+      for (let i = 0; i < 5; i++) {
+        const phase = (t + i * 5) % 12;
+        const bx = 5 + Math.round(((W - 12) * i) / 4);
+        if (phase < 6) {
+          px(bx, H - 3, '#ff6e54', 3, 2);
+          px(bx + 1, H - 3, '#ffd2a6', 1, 1);
+        } else if (phase < 9) {
+          px(bx - 1, H - 4, 'rgba(255,132,96,0.75)', 1, 1);
+          px(bx + 3, H - 4, 'rgba(255,132,96,0.75)', 1, 1);
+        }
+      }
+      for (let i = 0; i < 4; i++) {
+        const sx = 6 + Math.round(((W - 12) * i) / 3) + Math.round(Math.sin(t * 0.3 + i) * 1.5);
+        const sy = H - 4 - ((t * 2 + i * 5) % Math.max(8, H - 5));
+        px(sx, sy, 'rgba(255,250,245,0.72)', 2, 2);
+      }
+    } else if (m === 'gdyn_jade_tile') {
+      // 玉牌发财泡：翡翠白玉斜向温润光扫 + 四边竹绿金环脉动
+      const sw = ((t * 2) % (W + 14)) - 7;
+      for (let y = 1; y < H - 1; y += 2) {
+        const jx = sw - Math.floor(y * 0.35);
+        if (jx >= 1 && jx < W - 2) px(jx, y, 'rgba(196,255,232,0.52)', 2, 2);
+      }
+      const pulse = (t % 12) < 6;
+      px(2, 2, pulse ? '#5ec996' : '#a8ebd0', 2, 2);
+      px(W - 4, 2, pulse ? '#f5cf64' : '#fff0b3', 2, 2);
+      px(2, H - 4, pulse ? '#f5cf64' : '#fff0b3', 2, 2);
+      px(W - 4, H - 4, pulse ? '#5ec996' : '#a8ebd0', 2, 2);
+    } else if (m === 'gdyn_cloudsea_roll') {
+      // [秘境] 云海仙境框：底边层叠翻涌云海波涛 + 暖金霞光微粒升腾
+      for (let x = 1; x < W - 2; x += 4) {
+        const cy = H - 4 + Math.round(Math.sin(t * 0.18 + x * 0.25));
+        px(x, cy, 'rgba(255,255,255,0.88)', 4, 3);
+        px(x + 1, cy - 1, 'rgba(232,246,255,0.78)', 2, 1);
+      }
+      for (let i = 0; i < 4; i++) {
+        const gx = 6 + ((i * 19 + t) % Math.max(8, W - 12));
+        const gy = H - 4 - ((t + i * 6) % Math.max(8, H - 6));
+        px(gx, gy, i % 2 === 0 ? '#ffe8a8' : '#b8e4ff', 2, 2);
+      }
+    } else if (m === 'gdyn_comet_arc') {
+      // [秘境] 星尘奇遇框：双色彗星弧光绕上下边反向滑行拖曳星尘尾迹
+      const p1 = (t * 2) % Math.max(10, W - 6);
+      const p2 = Math.max(10, W - 6) - p1;
+      for (let k = 0; k < 5; k++) {
+        const x1 = Math.max(2, p1 - k * 2);
+        const x2 = Math.min(W - 4, p2 + k * 2);
+        px(x1, 2, k === 0 ? '#ffffff' : (k < 3 ? '#8ce4ff' : 'rgba(140,228,255,0.35)'), k === 0 ? 2 : 1, k === 0 ? 2 : 1);
+        px(x2, H - 4, k === 0 ? '#ffffff' : (k < 3 ? '#ffb4e0' : 'rgba(255,180,224,0.35)'), k === 0 ? 2 : 1, k === 0 ? 2 : 1);
+      }
     }
   }, 150);
 
@@ -28361,6 +28653,180 @@ function bootGoulaicaiExtension() {
       if (sweep > -0.3) {
         g.fillStyle = 'rgba(255,242,168,0.42)';
         g.fillRect(36, 42, 18, 4); g.fillRect(26, 40, 12, 6);
+      }
+    } else if (m === 'gadyn_lace_ripple') {
+      // 蕾丝缎带框：四边柔粉蕾丝波浪律动 + 底角双丝带飘摆
+      for (let i = 0; i < 12; i++) {
+        const p = (i * 15 + t) % 180;
+        const [x, y] = perimPt(p);
+        g.fillStyle = i % 2 === 0 ? '#ffffff' : '#ffc2d9';
+        g.fillRect(x - 1, y - 1, 3, 3);
+      }
+      const sw = Math.round(Math.sin(t * 0.24) * 2);
+      g.fillStyle = '#f28eb2';
+      g.fillRect(6 + sw, 54, 4, 6); g.fillRect(54 - sw, 54, 4, 6);
+      g.fillStyle = '#ffe0ec';
+      g.fillRect(7 + sw, 55, 2, 4); g.fillRect(55 - sw, 55, 2, 4);
+    } else if (m === 'gadyn_kitty_bounce') {
+      // 软萌猫耳框：顶边软萌脉冲猫耳轮廓 + 绕框漫步的小粉肉垫印
+      const bob = Math.floor(t / 6) % 2;
+      g.fillStyle = '#e89cb8';
+      g.fillRect(10, 4 + bob, 6, 4); g.fillRect(11, 2 + bob, 4, 2);
+      g.fillRect(48, 4 + (1 - bob), 6, 4); g.fillRect(49, 2 + (1 - bob), 4, 2);
+      g.fillStyle = '#ffd9e8';
+      g.fillRect(12, 4 + bob, 2, 3); g.fillRect(50, 4 + (1 - bob), 2, 3);
+      for (let i = 0; i < 4; i++) {
+        const [px0, py0] = perimPt(t * 2 + i * 45);
+        g.fillStyle = '#ffadc8';
+        g.fillRect(px0 - 1, py0 - 1, 3, 2);
+        g.fillStyle = '#fff0f5';
+        g.fillRect(px0 - 1, py0 - 2, 1, 1); g.fillRect(px0 + 1, py0 - 2, 1, 1);
+      }
+    } else if (m === 'gadyn_cheese_melt') {
+      // 芝士吐司框：顶边金黄拉丝芝士缓缓伸展回弹 + 两侧热烘吐司雾气
+      for (let i = 0; i < 6; i++) {
+        const cx = 11 + i * 8;
+        const h = 3 + Math.floor((Math.sin(t * 0.2 + i * 1.2) + 1) * 2.5);
+        g.fillStyle = '#f5c24c'; g.fillRect(cx, 7, 5, h);
+        g.fillStyle = '#fff0a8'; g.fillRect(cx + 1, 7, 2, Math.max(2, h - 1));
+      }
+      for (let i = 0; i < 3; i++) {
+        const sy = 50 - ((t * 2 + i * 14) % 38);
+        const sx = (i % 2 === 0 ? 4 : 58) + Math.round(Math.sin(t * 0.25 + i));
+        g.fillStyle = 'rgba(255,244,220,0.78)'; g.fillRect(sx, sy, 2, 3);
+      }
+    } else if (m === 'gadyn_pond_ripple') {
+      // 小青蛙呱呱框：底边荷塘水波涟漪扩开 + 跃动青绿水珠光点
+      const rad = 3 + (t % 12);
+      g.fillStyle = 'rgba(136,224,174,0.65)';
+      g.fillRect(32 - rad, 57, rad * 2, 1);
+      g.fillStyle = 'rgba(204,250,224,0.75)';
+      g.fillRect(32 - Math.floor(rad * 0.6), 55, Math.max(2, Math.floor(rad * 1.2)), 1);
+      for (let i = 0; i < 5; i++) {
+        const bx = 10 + i * 11;
+        const by = 52 - Math.round(Math.abs(Math.sin(t * 0.22 + i * 1.1)) * 14);
+        g.fillStyle = i % 2 === 0 ? '#78d98c' : '#c4f7d0';
+        g.fillRect(bx, by, 3, 3);
+        g.fillStyle = '#ffffff'; g.fillRect(bx, by, 1, 1);
+      }
+    } else if (m === 'gadyn_cream_piping') {
+      // 草莓奶油框：绕框轮转奶油裱花珠 + 顶边粉白糖霜与草莓微光
+      for (let i = 0; i < 15; i++) {
+        const [x, y] = perimPt(i * 12 + t);
+        g.fillStyle = i % 3 === 0 ? '#ff8aa8' : '#fff8fa';
+        g.fillRect(x - 1, y - 1, 3, 3);
+        if (i % 3 === 0) { g.fillStyle = '#7cd184'; g.fillRect(x, y - 2, 1, 1); }
+      }
+      for (let x = 12; x <= 48; x += 9) {
+        const dr = 2 + Math.floor((Math.sin(t * 0.18 + x) + 1) * 1.5);
+        g.fillStyle = '#ffffff'; g.fillRect(x, 8, 4, dr);
+      }
+    } else if (m === 'gadyn_prism_orbit') {
+      // 晶钻小皇冠：幻彩晶钻折光绕框巡游 + 顶边冠冕光带起伏
+      const cols = ['#ff9ed2', '#8ce6ff', '#ffe68c', '#c8a8ff', '#92f0cc'];
+      for (let i = 0; i < 8; i++) {
+        const [x, y] = perimPt(t * 2 + i * 22.5);
+        g.fillStyle = 'rgba(255,255,255,0.45)'; g.fillRect(x - 2, y - 2, 5, 5);
+        g.fillStyle = cols[i % cols.length]; g.fillRect(x - 1, y - 1, 3, 3);
+        g.fillStyle = '#ffffff'; g.fillRect(x, y, 1, 1);
+      }
+      const glow = 18 + Math.round(Math.sin(t * 0.2) * 8);
+      g.fillStyle = '#ffe894'; g.fillRect(glow, 4, 10, 2);
+      g.fillStyle = '#ffffff'; g.fillRect(glow + 3, 3, 4, 2);
+    } else if (m === 'gadyn_sky_swing') {
+      // 云端秋千框：底边云朵秋千弧线轻荡 + 顶部流云缓慢横移
+      const sw = Math.round(Math.sin(t * 0.16) * 5);
+      g.fillStyle = '#b4dcff'; g.fillRect(20 + sw, 55, 24, 3);
+      g.fillStyle = '#ffffff'; g.fillRect(22 + sw, 53, 20, 4);
+      g.fillStyle = 'rgba(255,220,236,0.85)';
+      g.fillRect(22 + sw, 46, 1, 7); g.fillRect(41 + sw, 46, 1, 7);
+      const cx1 = (t % 56) + 2;
+      const cx2 = ((t + 28) % 56) + 2;
+      g.fillStyle = 'rgba(255,255,255,0.88)';
+      g.fillRect(cx1, 4, 10, 3); g.fillRect(cx1 + 2, 2, 6, 2);
+      g.fillRect(cx2, 6, 8, 2);
+    } else if (m === 'gadyn_twilight_crescent') {
+      // 暮月云影框：暮蓝云纱缓缓掠过顶部银金弯月 + 漂浮夜雾微粒
+      g.fillStyle = '#fff2b0'; g.fillRect(46, 4, 7, 7);
+      g.fillStyle = '#2d3b6b'; g.fillRect(49, 4, 5, 5);
+      const vx = 8 + ((t) % 34);
+      g.fillStyle = 'rgba(154,178,240,0.52)'; g.fillRect(vx, 8, 16, 3);
+      g.fillStyle = 'rgba(206,222,255,0.45)'; g.fillRect(50 - (vx % 28), 54, 14, 3);
+      for (let i = 0; i < 4; i++) {
+        const [x, y] = perimPt(t + i * 45);
+        g.fillStyle = i % 2 === 0 ? '#e6f0ff' : '#ffe8a8';
+        g.fillRect(x, y, 2, 2);
+      }
+    } else if (m === 'gadyn_yuanyang_boil') {
+      // 鸳鸯火锅框：左红汤右白汤翻滚冒泡 + 双侧螺旋热气升腾
+      for (let i = 0; i < 3; i++) {
+        const ph = (t + i * 5) % 10;
+        const lx = 10 + i * 7;
+        const rx = 36 + i * 7;
+        g.fillStyle = ph < 6 ? '#ff6248' : '#ffb89e'; g.fillRect(lx, 55 - (ph < 4 ? 1 : 0), 4, 3);
+        g.fillStyle = ph < 6 ? '#fff8eb' : '#ffe4b8'; g.fillRect(rx, 55 - (ph < 4 ? 1 : 0), 4, 3);
+      }
+      for (let i = 0; i < 4; i++) {
+        const sy = 50 - ((t * 2 + i * 11) % 40);
+        const sxL = 4 + Math.round(Math.sin(t * 0.28 + i) * 2);
+        const sxR = 57 + Math.round(Math.cos(t * 0.28 + i) * 2);
+        g.fillStyle = 'rgba(255,250,245,0.75)';
+        g.fillRect(sxL, sy, 2, 3); g.fillRect(sxR, sy, 2, 3);
+      }
+    } else if (m === 'gadyn_jade_gleam') {
+      // 玉牌发财框：翡翠玉面斜向柔光扫过 + 四角转运金环脉动
+      const sw = ((t * 3) % 76) - 12;
+      g.fillStyle = 'rgba(182,255,226,0.48)';
+      for (let y = 6; y < 58; y += 3) {
+        const x = sw - Math.floor(y * 0.45);
+        if (x >= 4 && x <= 56) g.fillRect(x, y, 3, 3);
+      }
+      const p = (t % 12) < 6;
+      const pts = [[6, 6], [53, 6], [6, 53], [53, 53]];
+      pts.forEach(([cx, cy], idx) => {
+        g.fillStyle = (idx % 2 === 0 ? p : !p) ? '#54c98e' : '#f2c95a';
+        g.fillRect(cx, cy, 5, 5);
+        g.fillStyle = '#ffffff'; g.fillRect(cx + 1, cy + 1, 3, 3);
+        g.fillStyle = '#54c98e'; g.fillRect(cx + 2, cy + 2, 1, 1);
+      });
+    } else if (m === 'gadyn_shutter_flash') {
+      // 胶带拍立得：复古快门柔光掠影 + 两侧胶片齿孔滚动 + 顶角和纸胶带微闪
+      const flash = (t % 24) < 3;
+      if (flash) {
+        g.fillStyle = 'rgba(255,252,240,0.45)';
+        g.fillRect(8, 8, 48, 48);
+      }
+      for (let i = 0; i < 6; i++) {
+        const fy = 8 + ((i * 8 + t) % 48);
+        g.fillStyle = 'rgba(140,122,108,0.65)';
+        g.fillRect(4, fy, 2, 4); g.fillRect(58, fy, 2, 4);
+      }
+      g.fillStyle = (t % 10) < 5 ? '#ffd4a8' : '#ffe8cc';
+      g.fillRect(4, 5, 11, 3); g.fillRect(49, 5, 11, 3);
+    } else if (m === 'gadyn_feather_drift') {
+      // [秘境] 云端小翅膀：双侧发光云羽轻扇 + 上升空气光环
+      const flap = Math.round(Math.sin(t * 0.25) * 2);
+      g.fillStyle = '#ffffff';
+      g.fillRect(1, 24 + flap, 7, 10); g.fillRect(3, 21 + flap, 5, 3);
+      g.fillRect(56, 24 + flap, 7, 10); g.fillRect(56, 21 + flap, 5, 3);
+      g.fillStyle = '#bce8ff';
+      g.fillRect(2, 26 + flap, 4, 6); g.fillRect(58, 26 + flap, 4, 6);
+      for (let i = 0; i < 4; i++) {
+        const hy = 54 - ((t * 2 + i * 13) % 46);
+        const hx = 14 + i * 11;
+        g.fillStyle = 'rgba(218,244,255,0.78)'; g.fillRect(hx, hy, 4, 2);
+      }
+    } else if (m === 'gadyn_orbital_ring') {
+      // [秘境] 星空小轨迹：双色星轨流光与双星绕框公转（无四芒星）
+      const p1 = (t * 3) % 180;
+      const p2 = (p1 + 90) % 180;
+      for (let k = 0; k < 6; k++) {
+        const [x1, y1] = perimPt(p1 - k * 4);
+        const [x2, y2] = perimPt(p2 - k * 4);
+        g.fillStyle = k === 0 ? '#ffffff' : (k < 3 ? '#88e2ff' : 'rgba(136,226,255,0.35)');
+        g.fillRect(x1 - (k === 0 ? 1 : 0), y1 - (k === 0 ? 1 : 0), k === 0 ? 3 : 2, k === 0 ? 3 : 2);
+        g.fillStyle = k === 0 ? '#ffffff' : (k < 3 ? '#f7a8e8' : 'rgba(247,168,232,0.35)');
+        g.fillRect(x2 - (k === 0 ? 1 : 0), y2 - (k === 0 ? 1 : 0), k === 0 ? 3 : 2, k === 0 ? 3 : 2);
       }
     }
     const shopFx = root.querySelector('#st-px-shop-af-fx');
@@ -29463,7 +29929,11 @@ function bootGoulaicaiExtension() {
     try {
       const AudioCtx = win.AudioContext || win.webkitAudioContext;
       if (!AudioCtx) return;
-      const ctx = new AudioCtx();
+      const reuseKa = !!(kaAudioCtx && kaAudioCtx.state !== 'closed' && (doc.hidden || kaAudioCtx.state === 'running'));
+      const ctx = reuseKa ? kaAudioCtx : new AudioCtx();
+      if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
+        try { ctx.resume().catch(() => {}); } catch (_) {}
+      }
       const now = ctx.currentTime;
       const playNote = (freq, delay, dur, type = 'triangle', peak = 0.28) => {
         const osc = ctx.createOscillator();
@@ -29735,6 +30205,22 @@ function bootGoulaicaiExtension() {
         pendingBgReturn = true;
         startTitleFlash(`${getPupName()}喊你回来看回复`);
       }
+      // 轻保活切屏提醒脉冲：短暂切 transient 让提示音穿透静音限制且不占常驻音频栏，播完恢复 ambient
+      if (doc.hidden && config.keepAlive && config.keepAlivePolicy !== 'exclusive') {
+        try {
+          if (win.navigator && win.navigator.audioSession) {
+            win.navigator.audioSession.type = 'transient';
+            clearTimeout(win.__stKaTransientRestoreTimer);
+            win.__stKaTransientRestoreTimer = setTimeout(() => {
+              try {
+                if (doc.hidden && config.keepAlive && config.keepAlivePolicy !== 'exclusive' && win.navigator && win.navigator.audioSession) {
+                  win.navigator.audioSession.type = 'ambient';
+                }
+              } catch (_) {}
+            }, 2400);
+          }
+        } catch (_) {}
+      }
       const bgPool = BG_NOTIFY_BY_PERS[curBellP] || BG_NOTIFY_BY_PERS.sleepyhead;
       const bodyTxt = formatPupText(pick(bgPool));
       const pName = (PUP_PERSONALITIES.find(p => p.id === curBellP) || {}).name || '';
@@ -29767,22 +30253,30 @@ function bootGoulaicaiExtension() {
       } catch (_) {}
 
       const fireViaSWOrNew = () => {
+        const nTag = 'st-pup-reply-' + Date.now();
+        let fired = false;
         try {
           if (navigator.serviceWorker && navigator.serviceWorker.ready) {
             navigator.serviceWorker.ready.then(reg => {
               if (reg && typeof reg.showNotification === 'function') {
-                reg.showNotification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined });
+                reg.showNotification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, tag: nTag, renotify: true, silent: false })
+                  .catch(() => reg.showNotification(notifyTitle, { body: bodyTxt, tag: nTag, renotify: true, silent: false }).catch(() => {}));
               }
             }).catch(() => {});
           }
         } catch (_) {}
         try {
-          const n = new Notification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, requireInteraction: false });
+          const n = new Notification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, tag: nTag, renotify: true, silent: false, requireInteraction: false });
           n.onclick = () => { try { win.focus(); } catch (_) {} n.close(); };
-          return true;
+          fired = true;
         } catch (_) {
-          return false;
+          try {
+            const n2 = new Notification(notifyTitle, { body: bodyTxt, tag: nTag, silent: false });
+            n2.onclick = () => { try { win.focus(); } catch (_) {} n2.close(); };
+            fired = true;
+          } catch (_) {}
         }
+        return fired;
       };
 
       // 第 1 优先级：油猴/脚本猫特权 GM_notification（绕过非 HTTPS 限制！）
@@ -29949,6 +30443,21 @@ function bootGoulaicaiExtension() {
     if (now - lastAlertFiredAt < 4000) return;
     lastAlertFiredAt = now;
     fireReplyReadyAlert(false);
+  };
+
+  win.__stCheckReplyBg = () => {
+    try {
+      if (!config.puppyEnabled || config.puppyReplyBell === false) return;
+      const busy = isStopBtnVisible();
+      if (busy) {
+        beginReplyTrack();
+      } else if (stWasGenerating) {
+        const shouldAlert = hasVerifiedNewReply();
+        resetReplyTrack();
+        applyChatFold();
+        if (shouldAlert) triggerAlertOnce();
+      }
+    } catch (_) {}
   };
 
   // ==================== 酒馆流畅度与内存优化引擎 ====================
@@ -42585,31 +43094,4 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   win.__stToolboxCleanup = _wrappedCleanupGlc;
   window.addEventListener('pagehide', cleanup);
   window.addEventListener('unload', cleanup);
-})();
-}
-
-(function initGoulaicaiExt() {
-  try {
-    const st = window.SillyTavern;
-    const ctx = st && typeof st.getContext === 'function' ? st.getContext() : null;
-    const ev = ctx && ctx.eventSource;
-    const et = ctx && (ctx.eventTypes || ctx.event_types);
-    if (ev && et && et.APP_READY) {
-      ev.on(et.APP_READY, () => {
-        setTimeout(bootGoulaicaiExtension, 120);
-      });
-      setTimeout(() => {
-        if (!__goulaicaiExtBooted && document.readyState === 'complete') {
-          bootGoulaicaiExtension();
-        }
-      }, 1200);
-      return;
-    }
-  } catch (_) {}
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => setTimeout(bootGoulaicaiExtension, 300), { once: true });
-  } else {
-    setTimeout(bootGoulaicaiExtension, 300);
-  }
 })();
