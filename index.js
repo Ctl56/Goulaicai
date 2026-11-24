@@ -9052,7 +9052,7 @@
                 <button class="st-tb-mini-btn active" id="st-tb-phrase-save" type="button">保存</button>
               </div>
             </div>
-            <div id="st-tb-phrase-list" style="display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto;"></div>
+            <div id="st-tb-phrase-list" style="display:flex;flex-direction:column;gap:4px;max-height:128px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px;"></div>
           </div>
 
           <div class="st-tb-section">
@@ -9659,27 +9659,24 @@
     }
     config.quickPhrases.forEach(ph => {
       const row = doc.createElement('div');
-      row.className = 'st-tb-chat-item';
-      row.style.padding = '6px 8px';
-      const top = doc.createElement('div');
-      top.className = 'st-tb-chat-top';
+      row.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:6px;background:var(--tb-surface);border:1px solid var(--tb-border);min-height:28px;box-sizing:border-box;';
       const nm = doc.createElement('div');
-      nm.className = 'st-tb-chat-name';
+      nm.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
       nm.textContent = ph.title || '未命名短语';
-      nm.title = ph.text || '';
+      nm.title = `点击填入：${ph.text || ''}`;
       nm.addEventListener('click', () => insertPhraseToInput(ph.text));
 
-      const mkBtn = (txt, fn, col) => {
+      const mkBtn = (txt, title, fn, col) => {
         const b = doc.createElement('button');
         b.type = 'button';
         b.className = 'st-tb-mini-btn';
+        b.style.cssText = `min-height:20px;height:20px;padding:0 5px;font-size:10px;line-height:18px;flex-shrink:0;${col ? `color:${col};` : ''}`;
         b.textContent = txt;
-        if (col) b.style.color = col;
+        b.title = title;
         b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
         return b;
       };
-      const useB = mkBtn('填入', () => insertPhraseToInput(ph.text));
-      const renB = mkBtn('改名', () => {
+      const renB = mkBtn('改', '重命名', () => {
         editingPhraseId = ph.id;
         if (phraseFormEl && phraseTitleInp && phraseTextInp) {
           phraseTitleInp.value = ph.title || '';
@@ -9689,7 +9686,7 @@
           phraseTitleInp.select();
         }
       });
-      const editB = mkBtn('编辑', () => {
+      const editB = mkBtn('编', '编辑内容', () => {
         editingPhraseId = ph.id;
         if (phraseFormEl && phraseTitleInp && phraseTextInp) {
           phraseTitleInp.value = ph.title || '';
@@ -9698,7 +9695,7 @@
           phraseTextInp.focus();
         }
       });
-      const delB = mkBtn('删除', () => {
+      const delB = mkBtn('×', '删除', () => {
         openConfirmModal({
           title: '删除快捷短语',
           message: `确定删除快捷短语「${ph.title || '未命名'}」吗？`,
@@ -9713,12 +9710,7 @@
         });
       }, '#d9534f');
 
-      top.append(nm, useB, renB, editB, delB);
-      const preview = doc.createElement('div');
-      preview.style.cssText = 'font-size:10px;opacity:0.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
-      preview.textContent = ph.text || '';
-      preview.addEventListener('click', () => insertPhraseToInput(ph.text));
-      row.append(top, preview);
+      row.append(nm, renB, editB, delB);
       phraseListEl.appendChild(row);
     });
   };
@@ -17481,7 +17473,48 @@
     c.className = `st-px-ach-orn-ult ${pos}`;
     const g = c.getContext('2d');
     let grid = [];
-    if (styleKey === 'arcade_2048') {
+    if (styleKey === 'floor99_bespoke') {
+      // 百层同行者：顶边紫金流苏花边（独立构图）
+      if (pos === 'top' || pos === 'bottom') {
+        c.width = 19; c.height = 5;
+        grid = [
+          '..ll..yy..ll..yy..l.',
+          '.lwwl.ywy.lwwl.ywy..',
+          '..ll..yy..ll..yy..l.',
+          '....lpppppppppppl...',
+          '......yy.....yy.....',
+        ];
+      }
+    } else if (styleKey === 'floor1000_bespoke') {
+      // 千层长情契：左+顶双边绯金祥云包边（独立构图）
+      if (pos === 'top' || pos === 'bottom') {
+        c.width = 19; c.height = 5;
+        grid = [
+          '.rr..yy..rr..yy..rr.',
+          'rwwr.ywy.rwwr.ywy.r.',
+          '.rr..yy..rr..yy..rr.',
+          '...yyyyyyyyyyyyy....',
+          '.....rwwr.rwwr......',
+        ];
+      } else {
+        c.width = 7; c.height = 13;
+        grid = [
+          '..rrr..',
+          '.rpppr.',
+          '..rrr..',
+          '...y...',
+          '..ywy..',
+          '...y...',
+          '..rrr..',
+          '.rpppr.',
+          '..rrr..',
+          '...y...',
+          '..ywy..',
+          '...y...',
+          '..rrr..',
+        ];
+      }
+    } else if (styleKey === 'arcade_2048') {
       // 2048 专属电玩金蓝像素方块+闪电+奖杯四向装饰
       if (pos === 'left' || pos === 'right') {
         c.width = 9; c.height = 13;
@@ -17770,76 +17803,56 @@
 
   // 20 款 100% 单独手绘的专属铭牌设计（每款独立构图与独立像素画，绝不复用模板）
   const BESPOKE_BADGE_DESIGNS = {
+    // 百层同行者 (原创构图)：顶边紫金流苏花边 + 左下摊开手账本 + 右顶羽笔墨水瓶 + 底偏右翻页书签帧动画
     chat_floor_99: {
       cls: 'bespoke-lux bespoke-glow',
+      ult: ['top'],
       pieces: [
-        { pos: 'left:-12px;top:-7px;', w: 12, h: 15, pal: { l: '#8c6be6', p: '#c9b3ff', y: '#f5cc58', w: '#ffffff' },
+        { pos: 'left:-12px;bottom:-6px;', w: 14, h: 13, anim: 'b-tilt', pal: { l: '#8c6be6', p: '#d9c4ff', w: '#fffdf8', y: '#f5cc58', b: '#6882c9' },
           grid: [
-            '..llllll..',
-            '.lppppppl.',
-            '.lpwyywpl.',
-            '.lppppppl.',
-            '..llllll..',
-            '....yy....',
-            '...y..y...',
-            '..y....y..',
+            '.bbbb..bbbb.',
+            'bwwwwbbwwwwb',
+            'bwllwbwwppwb',
+            'bwwwwbbwwwwb',
+            '.bbbb..bbbb.',
+            '...l....y...',
           ] },
-        { pos: 'left:50%;top:-5px;transform:translateX(-50%);', w: 26, h: 4, pal: { y: '#f0b840', w: '#fff9d6' },
+        { pos: 'right:-11px;top:-8px;', w: 12, h: 10, anim: 'b-bob', pal: { w: '#ffffff', l: '#9a7be0', y: '#f5cc58', p: '#e8d8ff' },
           grid: [
-            'yy.ww.yy.ww.yy.ww.yy',
-            '.yy..yy..yy..yy..yy.',
+            '.....ww....',
+            '....wppw...',
+            '...wllw....',
+            '..yyyyyyy..',
+            '..ylwllly..',
           ] },
-        { pos: 'right:-10px;bottom:-6px;', w: 12, h: 10, pal: { b: '#7898d8', w: '#fffdf7', c: '#b8d4ff' },
+        { pos: 'right:16px;bottom:-6px;', w: 10, h: 7, pal: { l: '#8c6be6', y: '#f5cc58', w: '#ffffff' },
           frames: [
-            [
-              '.bbbb..bbbb.',
-              'bwwwwbbwwwwb',
-              'bwccwbwwccwb',
-              'bwwwwbbwwwwb',
-              '.bbbb..bbbb.',
-            ],
-            [
-              '.bbbb..bbbb.',
-              'bwwwwbbwwwwb',
-              'bwwwwbbwccwb',
-              'bwwwwbbwwwwb',
-              '.bbbb..bbbb.',
-            ]
+            ['..ll..yy..','.lwwlywwy.','..ll..yy..'],
+            ['..yy..ll..','.ywwylwwl.','..yy..ll..'],
           ] },
       ],
     },
+    // 千层长情契 (原创构图)：左+顶双边绯金祥云包边 + 右下跃云绯金双翼纸鹤 + 底偏左红金同心平安结帧动画
     chat_floor_1000: {
       cls: 'bespoke-lux bespoke-sheen',
+      ult: ['left', 'top'],
       pieces: [
-        { pos: 'left:-11px;bottom:-7px;', w: 12, h: 14, pal: { k: '#6b3b22', y: '#ffe078', o: '#ff9e42', w: '#ffffff' },
-          frames: [
-            [
-              '....kk....',
-              '..kkkkkk..',
-              '.kyyyyyyk.',
-              '.kywwwwyk.',
-              '.kyooooyk.',
-              '..kkkkkk..',
-              '....kk....',
-            ],
-            [
-              '....kk....',
-              '..kkkkkk..',
-              '.koyyyyok.',
-              '.kywwwwyk.',
-              '.koyyyyok.',
-              '..kkkkkk..',
-              '....kk....',
-            ]
-          ] },
-        { pos: 'right:-10px;top:-8px;', w: 14, h: 11, pal: { r: '#e85a78', p: '#ffb3c8', y: '#ffd866', w: '#ffffff' },
+        { pos: 'right:-14px;bottom:-5px;', w: 15, h: 16, anim: 'b-bob', pal: { r: '#e85a78', p: '#ffb8cc', w: '#ffffff', y: '#ffe066', o: '#f28a48' },
           grid: [
-            '..rrr....rrr..',
-            '.rpppr..rpppr.',
-            '.rpwwryyrwwpr.',
-            '..rrr.yy.rrr..',
-            '....r....r....',
-            '...r......r...',
+            '.....rr.....',
+            '....rwwr....',
+            '..rrrppprrr.',
+            '.rwwwppwwwr.',
+            '..rrppppprr.',
+            '....rwwr....',
+            '..yy.rr.yy..',
+            '.ywwyyyywwy.',
+            '..yyyyyyyy..',
+          ] },
+        { pos: 'left:16px;bottom:-7px;', w: 12, h: 10, pal: { r: '#e04e68', y: '#f5cc58', w: '#fff6c4', p: '#ff9eb5' },
+          frames: [
+            ['...rrrr...','..rywwyr..','.rwywwywr.','..rywwyr..','...rrrr...','....yy....'],
+            ['...rrrr...','..rwwwwr..','.rwywwywr.','..rwwwwr..','...rrrr...','....yy....'],
           ] },
       ],
     },
@@ -47401,27 +47414,27 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             }
             arr.forEach(ph => {
               const item = doc.createElement('div');
-              item.style.cssText = 'display:flex;flex-direction:column;gap:3px;padding:5px 6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);';
-              const top = doc.createElement('div');
-              top.style.cssText = 'display:flex;align-items:center;gap:4px;';
+              item.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);min-height:26px;box-sizing:border-box;';
               const nm = doc.createElement('span');
-              nm.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
+              nm.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
               nm.textContent = ph.title || '未命名';
+              nm.title = `点击填入：${ph.text || ''}`;
               nm.addEventListener('click', () => { insertPhraseToInput(ph.text); ppop.classList.remove('open'); });
-              const mkB = (t, fn, c) => {
+              const mkB = (t, ttl, fn, c) => {
                 const b = doc.createElement('button');
                 b.type = 'button';
                 b.className = 'st-tb-mini-btn';
-                b.style.cssText = `padding:1px 5px;font-size:10px;${c ? `color:${c};` : ''}`;
+                b.style.cssText = `min-height:20px;height:20px;padding:0 5px;font-size:10px;line-height:18px;flex-shrink:0;${c ? `color:${c};` : ''}`;
                 b.textContent = t;
+                b.title = ttl;
                 b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
                 return b;
               };
-              top.append(
+              item.append(
                 nm,
-                mkB('改名', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTtl.focus(); qTtl.select(); }),
-                mkB('编辑', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTxt.focus(); }),
-                mkB('删', () => {
+                mkB('改', '重命名', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTtl.focus(); qTtl.select(); }),
+                mkB('编', '编辑内容', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTxt.focus(); }),
+                mkB('×', '删除', () => {
                   openConfirmModal({
                     title: '删除快捷短语',
                     message: `确定删除「${ph.title || '未命名'}」吗？`,
@@ -47435,11 +47448,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                   });
                 }, '#d9534f')
               );
-              const sub = doc.createElement('div');
-              sub.style.cssText = 'font-size:10px;opacity:0.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
-              sub.textContent = ph.text || '';
-              sub.addEventListener('click', () => { insertPhraseToInput(ph.text); ppop.classList.remove('open'); });
-              item.append(top, sub);
               qList.appendChild(item);
             });
           };
