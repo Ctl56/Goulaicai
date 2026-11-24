@@ -978,6 +978,10 @@
     { id: 'hidden_mem_perfect_5', title: '过目不忘', desc: '翻牌配对以极少步数完美通关累计 5 次', reward: 18, tier: 4, frame: 'gems', hidden: true, bg: 'linear-gradient(115deg,#e6f2ff,#f2e8ff,#fff6d9)', bd: '#7aa4e6', fg: '#233e73', icon: 'trophy' },
     { id: 'hidden_mem_hard_3', title: '极限记忆王', desc: '翻牌困难模式全配对通关累计 3 次', reward: 22, tier: 4, frame: 'supreme_royal', hidden: true, bg: 'linear-gradient(115deg,#fff0d6,#ffe6f2,#e6f4ff)', bd: '#dfa042', fg: '#6b3e08', icon: 'crown' },
     { id: 'hidden_mem_streak_5', title: '五连翻牌神', desc: '翻牌配对连续通关 5 局不失手', reward: 16, tier: 3, frame: 'bolts', hidden: true, bg: 'linear-gradient(120deg,#eaf4ff,#f5ecff,#e8fff7)', bd: '#829ce6', fg: '#263973', icon: 'bolt' },
+    { id: 'hidden_job_first_oops', title: '实习闯祸精', desc: '第一次打工搞砸被店长罚停工反省 1 小时', reward: 8, tier: 3, frame: 'bells', hidden: true, bg: 'linear-gradient(120deg,#fff2e6,#ffe8ec,#fff8e0)', bd: '#e08e68', fg: '#733218', icon: 'bowl' },
+    { id: 'hidden_job_wrecker', title: '无敌破坏王', desc: '打工累计搞砸触发 1 小时停工反省满 5 次', reward: 18, tier: 4, frame: 'bolts', hidden: true, bg: 'linear-gradient(115deg,#ffe6e6,#fff0d6,#f2e8ff)', bd: '#db6c6c', fg: '#731d1d', icon: 'bolt' },
+    { id: 'hidden_adv_rest_3', title: '旅途倒霉蛋', desc: '出门冒险遭遇波折被迫休整 1 小时累计 3 次', reward: 15, tier: 3, frame: 'clouds', hidden: true, bg: 'linear-gradient(120deg,#eaf2ff,#f0ebff,#fff2f6)', bd: '#849ee0', fg: '#263a70', icon: 'cloud_ach' },
+    { id: 'hidden_adv_rest_8', title: '历险大冤种', desc: '出门冒险累计触发 1 小时倒霉休整满 8 次', reward: 22, tier: 4, frame: 'prism', hidden: true, bg: 'linear-gradient(115deg,#e8eaff,#ffeaf5,#fff6dc)', bd: '#9882e0', fg: '#392273', icon: 'compass_ach' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -1660,6 +1664,8 @@
     { id: 'bub_gacha_aurora_glass', name: '[扭蛋] 极光玻璃框', tier: 'SSR', dyn: 'gdyn_glass_aurora', charms: [], desc: '扭蛋机 SSR 传说动态限定：竖向极光幕帘柔波摇曳与斜向琉璃反光扫过' },
     { id: 'bub_gacha_hotpot_bub', name: '[扭蛋] 咕嘟火锅泡', tier: 'SR', dyn: 'gdyn_hotpot_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：底边番茄红汤咕嘟鼓泡破裂与翻卷白雾热气' },
     { id: 'bub_gacha_mahjong_tile', name: '[扭蛋] 玉牌发财泡', tier: 'SR', dyn: 'gdyn_jade_tile', charms: [], desc: '扭蛋机 SR 趣味动态限定：翡翠白玉斜向温润光扫与竹节金环脉动' },
+    { id: 'bub_gacha_jellyfish_sea', name: '[扭蛋] 浅海荧光水母框', tier: 'SSR', dyn: 'gdyn_sea_jelly', charms: [], desc: '扭蛋机 SSR 传说动态限定：深海蓝调配发光迷你粉蓝水母游动与上升水泡' },
+    { id: 'bub_gacha_peach_oolong', name: '[扭蛋] 白桃乌龙泡', tier: 'SR', dyn: 'gdyn_peach_oolong', charms: [], desc: '扭蛋机 SR 稀有限定：粉嫩水蜜桃轻晃配淡茶香雾袅袅升起' },
   ];
   const GACHA_TRAILS = [
     { id: 'trail_gacha_capsule', name: '[扭蛋] 扭蛋彩球印', tier: 'SSR', cols: ['#ff85a1', '#ffe066', '#8ac4ff', '#c4a8ff'], desc: '扭蛋机 SSR 传说限定：走过留下一串圆滚滚迷你扭蛋球' },
@@ -1684,6 +1690,8 @@
     { id: 'af_gacha_hotpot_steam', name: '[扭蛋] 鸳鸯火锅框', tier: 'SR', dyn: 'gadyn_yuanyang_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：左红右白鸳鸯锅底翻滚冒泡与双侧热气升腾' },
     { id: 'af_gacha_mahjong_win', name: '[扭蛋] 玉牌发财框', tier: 'SSR', dyn: 'gadyn_jade_gleam', charms: [], desc: '扭蛋机 SSR 趣味动态限定：翡翠玉面斜扫柔光与四角转运金环脉动' },
     { id: 'af_gacha_polaroid_tape', name: '[扭蛋] 胶带拍立得', tier: 'SR', dyn: 'gadyn_shutter_flash', charms: [], desc: '扭蛋机 SR 文艺动态限定：复古快门柔光掠影配和纸胶带微闪与胶片齿孔滚动' },
+    { id: 'af_gacha_music_box', name: '[扭蛋] 八音盒发条框', tier: 'SSR', dyn: 'gadyn_music_box', charms: [], desc: '扭蛋机 SSR 传说动态限定：复古金发条缓缓旋转与跃动彩色音符绕框轻舞' },
+    { id: 'af_gacha_peach_soda', name: '[扭蛋] 蜜桃汽水框', tier: 'SR', dyn: 'gadyn_peach_soda', charms: [], desc: '扭蛋机 SR 稀有限定：粉嫩水蜜桃与晶莹冰块轻晃配气泡升腾' },
   ];
   const GACHA_BADGES = [
     { id: 'gb_gacha_lucky_dog', title: '欧气小狗王', name: '[扭蛋] 欧气小狗王', gachaTier: 'SSR', tier: 4, frame: 'gframe_lucky_dice', icon: 'diamond_cup', bg: 'linear-gradient(115deg,#fff3c4,#ffd9ec,#d6f5ff,#fff3c4)', bd: '#e0a238', fg: '#6b3b08' },
@@ -1699,6 +1707,8 @@
     { id: 'gb_gacha_no_work_dog', title: '退堂鼓鼓手', name: '[扭蛋] 退堂鼓鼓手', gachaTier: 'SR', tier: 3, frame: 'gframe_drum_beat', icon: 'bell_luck', bg: 'linear-gradient(120deg,#fff0f3,#fff6e0,#f0f5ff)', bd: '#e08ca4', fg: '#6e263c' },
     { id: 'gb_gacha_e_pickles', title: '电子榨菜王', name: '[扭蛋] 电子榨菜王', gachaTier: 'SR', tier: 3, frame: 'gframe_pickle_jar', icon: 'bowl', bg: 'linear-gradient(120deg,#eefbe8,#fff7dc,#e8f8f0)', bd: '#6cb572', fg: '#225428' },
     { id: 'gb_gacha_read_nonsense', title: '已读乱回专家', name: '[扭蛋] 已读乱回专家', gachaTier: 'SSR', tier: 4, frame: 'gframe_chat_pop', icon: 'chat_bubble', bg: 'linear-gradient(115deg,#e8f2ff,#f7e8ff,#fff0e6,#e8f2ff)', bd: '#7f98e0', fg: '#263870' },
+    { id: 'gb_gacha_chaos_king', title: '专业捣蛋鬼', name: '[扭蛋] 专业捣蛋鬼', gachaTier: 'SR', tier: 3, frame: 'gframe_chaos_paw', icon: 'paw', bg: 'linear-gradient(120deg,#fff0ec,#fff6db,#f2ecff)', bd: '#e08472', fg: '#73291d' },
+    { id: 'gb_gacha_sleepy_rich', title: '躺赢富贵汪', name: '[扭蛋] 躺赢富贵汪', gachaTier: 'SSR', tier: 4, frame: 'gframe_gold_pillow', icon: 'coins', bg: 'linear-gradient(115deg,#fff5cc,#ffe8f0,#e6f6ff,#fff5cc)', bd: '#dfa236', fg: '#6b3e06' },
   ];
 
   const GACHA_SNACKS = [
@@ -5387,6 +5397,8 @@
     .st-px-avatar-wrap.af-adv-cloud { border-color: #9ebcd4; background: linear-gradient(125deg,#eef6fc,#ffffff,#f2eef8); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 10px rgba(158,188,212,0.5); }
     .st-px-avatar-wrap.af-adv-star { border-color: #d4be7a; background: linear-gradient(125deg,#2e3657,#47416e,#2e3657); background-size: 240% 240%; animation: stAfFlow 4.5s ease infinite; box-shadow: 0 0 0 1px #b0a3d6, 0 0 11px rgba(212,190,122,0.52); }
     .st-px-avatar-wrap.af-bond-lv9 { border-color: #d9b56c; background: linear-gradient(125deg,#fff6e0,#fcebf2,#eef4ff); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 12px rgba(217,181,108,0.55); }
+    .st-px-avatar-wrap.af-gacha-music-box { border-color: #d9a84e; background: linear-gradient(125deg,#33273d,#4d3859,#33273d); background-size: 220% 220%; animation: stAfFlow 3.6s ease infinite; box-shadow: 0 0 0 1px #fff4cc, 0 0 10px rgba(217,168,78,0.45); }
+    .st-px-avatar-wrap.af-gacha-peach-soda { border-color: #f29ca2; background: linear-gradient(125deg,#fff0f0,#ffe6e8,#fff8eb); background-size: 220% 220%; animation: stAfFlow 3.4s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 9px rgba(242,156,162,0.42); }
     .st-px-avatar-wrap.af-bday-candle { border-color: #f29ab8; background: linear-gradient(125deg,#ffeaf3,#fff6de,#e8f6ff,#ffeaf3); background-size: 240% 240%; animation: stAfFlow 3.4s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 10px rgba(242,154,184,0.48); }
     .st-px-avatar-wrap.af-fest-lantern { border-color: #c97272; background: linear-gradient(125deg,#faf0ec,#f7e5cf,#faf0ec); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; box-shadow: 0 0 0 1px #ffe6cf, 0 0 10px rgba(201,114,114,0.46); }
     .st-px-af-custom-bar { grid-column: 1 / -1; padding: 6px 7px; border: 1.5px dashed var(--px-bd, #bfa4ae); background: #ffffff; margin-bottom: 2px; font-size: 10px; }
@@ -6578,6 +6590,10 @@
     #st-tb-puppy-bubble.bub-gacha-starry-velvet::after { background: #3d315c; border-color: #d6c4f2; }
     #st-tb-puppy-bubble.bub-gacha-toast { background: linear-gradient(135deg,#fff7e3,#fae9c3); border-color: #c99455; color: #634320; box-shadow: 0 2px 8px rgba(201,148,85,0.34); }
     #st-tb-puppy-bubble.bub-gacha-toast::after { background: #fcf0d2; border-color: #c99455; }
+    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea { background: linear-gradient(130deg,#1c2b4a,#27426e,#1d3359); border-color: #82d4ff; color: #e8f7ff; box-shadow: 0 2px 10px rgba(42,96,158,0.42); }
+    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea::after { background: #233a61; border-color: #82d4ff; }
+    #st-tb-puppy-bubble.bub-gacha-peach-oolong { background: linear-gradient(130deg,#fff2f0,#ffe9e0,#f7f3e3); border-color: #f0a496; color: #6e352c; box-shadow: 0 2px 9px rgba(240,164,150,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-peach-oolong::after { background: #ffede6; border-color: #f0a496; }
     #st-tb-puppy-bubble.bub-gacha-mint-milk { background: linear-gradient(135deg,#eefaf6,#dcf5ec); border-color: #88c2b0; color: #2e574a; box-shadow: 0 2px 8px rgba(136,194,176,0.34); }
     #st-tb-puppy-bubble.bub-gacha-mint-milk::after { background: #e5f7f1; border-color: #88c2b0; }
     #st-tb-puppy-bubble.bub-bond-lv6 { background: linear-gradient(125deg,#fff0f5,#fce3ec,#fff8fa); background-size: 240% 240%; animation: stBubSheen 3.8s ease infinite; border-color: #d993ab; color: #633447; box-shadow: 0 2px 10px rgba(217,147,171,0.42); }
@@ -16839,6 +16855,7 @@
     gframe_sofa_cushion: ['.......','.l...l.','lllllll','llwwwll','lllllll','.l...l.','.......','.......','.......'],
     gframe_drum_beat:    ['..r.r..','.rrrrr.','ryyyyyr','rywywyr','ryyyyyr','.rrrrr.','..o.o..','.......','.......'],
     gframe_pickle_jar:   ['..yyy..','.ggggg.','gmwmmmg','gmmgmmg','gmmwmmg','.ggggg.','.......','.......','.......'],
+    gframe_chaos_paw:    ['..r.r..','.r...r.','..ppp..','.ppwpp.','.ppppp.','..ppp..','.......','.......','.......'],
     crown:   ['.......','..y.y..','.yyyyy.','.ywywy.','..yyy..','...y...','..w.w..','.......','.......'],
     gems:    ['...c...','..ccc..','.ccwcc.','..ccc..','...c...','..l.l..','...l...','.......','.......'],
     bells:   ['...y...','..yyy..','.yywyy.','.yyyyy.','...o...','..y.y..','.......','.......','.......'],
@@ -17111,6 +17128,17 @@
         c.width = 17; c.height = 5;
         grid = ['.c..m..yyy..m..c.','cwc.m.ywwwy.m.cwc','.c..m..yyy..m..c.','.....mmmmmmm.....','.................'];
       }
+    } else if (styleKey === 'gframe_gold_pillow') {
+      if (pos === 'left' || pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['..yyyyy..','.ywwwwwy.','ywywywywy','.ywwwwwy.','..yyyyy..','..l...l..','.lllllll.','llwwwwwll','.lllllll.','..l...l..','...yyy...','..ywwwy..','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['..yyyy.....yyyy..','.ywwwwy.l.ywwwwy.','ywywwywlwlwywwywy','.yyyyyyllllyyyyy.','....yyyyyyyyy....','.................'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['.y..l..yyy..l..y.','ywy.l.ywwwy.l.ywy','.y..l..yyy..l..y.','....lllllllll....','.................'];
+      }
     } else if (styleKey === 'gframe_chat_pop') {
       // 已读乱回专家专属：弹跳像素对话泡泡与彩色波点波浪
       if (pos === 'left' || pos === 'right') {
@@ -17187,7 +17215,7 @@
   const ACH_FRAME_LAYOUT = {
     gframe_melon_slice: 'diag1', gframe_sleep_zzz: 'trio', gframe_cookie_bite: 'diag2',
     gframe_fish_ripple: 'lr', gframe_ramen_steam: 'trio_bot', gframe_cloud_kite: 'diag1',
-    gframe_sofa_cushion: 'lr', gframe_drum_beat: 'diag2', gframe_pickle_jar: 'trio',
+    gframe_sofa_cushion: 'lr', gframe_drum_beat: 'diag2', gframe_pickle_jar: 'trio', gframe_chaos_paw: 'diag1',
     crown: 'trio', halos: 'trio', wings: 'trio', runway: 'trio', firework_ach: 'trio',
     pearls: 'trio_bot', bells: 'trio_bot', lanterns: 'trio_bot', ribbons: 'trio_bot', neckgems: 'trio_bot',
     gems: 'quad', prism: 'quad', stars: 'quad', bloom_ult: 'quad', chest_orb: 'quad',
@@ -17503,6 +17531,10 @@
       hidden_mem_perfect_5: (st.memPerfectWins || 0) >= 5,
       hidden_mem_hard_3: (st.memHardClears || 0) >= 3,
       hidden_mem_streak_5: (st.memWinStreak || 0) >= 5,
+      hidden_job_first_oops: (st.jobFailCount || 0) >= 1,
+      hidden_job_wrecker: (st.jobFailCount || 0) >= 5,
+      hidden_adv_rest_3: (st.advRestCount || 0) >= 3,
+      hidden_adv_rest_8: (st.advRestCount || 0) >= 8,
     };
 
     const newlyUnlocked = [];
@@ -23602,6 +23634,11 @@
     let isNewPhoto = false;
 
     if (hasMishap) {
+      if (Math.random() < 0.55) {
+        config.puppyAdvCooldownUntil = Date.now() + 3600000;
+        config.puppyStats = config.puppyStats || {};
+        config.puppyStats.advRestCount = (config.puppyStats.advRestCount || 0) + 1;
+      }
       const mType = randInt(0, 3);
       if (mType === 0) {
         // 东西颠丢了，但抓拍了一张照片回来
@@ -23722,7 +23759,10 @@
           const loss = Math.min(3, Math.max(0, Math.floor(config.puppyCoins || 0)));
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
           adjustPupStats(0, 0, -5);
-          extraEventTxt = loss > 0 ? ` · 倒霉奇遇: 踩进泥水坑花 ${loss} 币去自助冲洗` : ' · 倒霉奇遇: 踩进水坑溅了一脚泥，抖抖毛继续出发';
+          config.puppyAdvCooldownUntil = Date.now() + 3600000;
+          config.puppyStats = config.puppyStats || {};
+          config.puppyStats.advRestCount = (config.puppyStats.advRestCount || 0) + 1;
+          extraEventTxt = loss > 0 ? ` · 倒霉奇遇: 踩进泥水坑花 ${loss} 币冲洗并需休整 1 小时` : ' · 倒霉奇遇: 踩进水坑溅了一身泥，回家洗澡休整 1 小时';
         } else if (evPick === 11) {
           const loss = Math.min(4, Math.max(0, Math.floor(config.puppyCoins || 0)));
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
@@ -23730,7 +23770,10 @@
           extraEventTxt = loss > 0 ? ` · 贪吃奇遇: 路过烤肠摊没忍住花 ${loss} 币买了一根(饱食+12)` : ' · 贪吃奇遇: 在烤肠摊前流口水被老板塞了一小块试吃';
         } else if (evPick === 12) {
           adjustPupStats(-8, 0, -4);
-          extraEventTxt = ' · 倒霉奇遇: 被路过调皮麻雀顺走了半块随身干粮(饱食-8)';
+          config.puppyAdvCooldownUntil = Date.now() + 3600000;
+          config.puppyStats = config.puppyStats || {};
+          config.puppyStats.advRestCount = (config.puppyStats.advRestCount || 0) + 1;
+          extraEventTxt = ' · 倒霉奇遇: 被路过调皮麻雀追着啄跑半块干粮，吓得回窝休整 1 小时(饱食-8)';
         } else if (evPick === 13) {
           const loss = Math.min(2, Math.max(0, Math.floor(config.puppyCoins || 0)));
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
@@ -28503,6 +28546,29 @@
         const fy = 2 + ((t + i * 5) % Math.max(6, H - 5));
         px(fx, fy, conf[(i + Math.floor(t / 4)) % 5], 2, 1);
       }
+    } else if (m === 'gdyn_sea_jelly') {
+      // 浅海荧光水母框：左下发光粉蓝小水母轻游 + 右上透亮海泡上升
+      const jx = 2 + Math.round(Math.sin(t * 0.16) * 2);
+      const jy = H - 10 + bob1;
+      px(jx + 1, jy, '#96e4ff', 5, 2); px(jx, jy + 2, '#f5b8e8', 7, 2); px(jx + 2, jy + 1, '#ffffff', 2, 1);
+      px(jx + 1, jy + 4, 'rgba(150,228,255,0.8)', 1, 2 + (t % 2));
+      px(jx + 3, jy + 4, 'rgba(245,184,232,0.85)', 1, 3 - (t % 2));
+      px(jx + 5, jy + 4, 'rgba(150,228,255,0.8)', 1, 2 + (t % 2));
+      for (let i = 0; i < 5; i++) {
+        const bx = W - 12 + (i % 3) * 4;
+        const by = H - 2 - ((t * 2 + i * 5) % Math.max(8, H - 4));
+        px(bx, by, i % 2 === 0 ? '#a8ecff' : '#ffffff', 2, 2);
+      }
+    } else if (m === 'gdyn_peach_oolong') {
+      // 白桃乌龙泡：左上粉嫩小水蜜桃轻晃 + 右下茶杯飘暖白果茶香雾
+      const px0 = 2, py0 = 2 + bob1;
+      px(px0 + 3, py0, '#78c97a', 2, 1);
+      px(px0 + 1, py0 + 1, '#ffa8a8', 5, 4); px(px0 + 2, py0 + 5, '#ff8e96', 3, 1);
+      px(px0 + 2, py0 + 2, '#ffe8e8', 2, 1);
+      const cx = W - 9, cy = H - 7;
+      px(cx, cy + 2, '#f5d2a4', 6, 4); px(cx + 1, cy + 2, '#ffbfa8', 4, 1);
+      px(cx + 6, cy + 3, '#f5d2a4', 1, 2);
+      px(cx + 2 + bob2, cy - (t % 4), 'rgba(255,250,245,0.85)', 2, 2);
     }
   };
 
@@ -29442,6 +29508,33 @@
       for (let i = 0; i < 5; i++) {
         const [x, y] = perimPt(t * 2 + i * 36);
         g.fillStyle = conf[i % 5]; g.fillRect(x, y, 2, 2);
+      }
+    } else if (m === 'gadyn_music_box') {
+      // 八音盒发条框：右侧旋转小金发条 + 彩色迷你音符绕框轻舞
+      const turn = (t % 8) < 4;
+      g.fillStyle = '#f2c45a';
+      g.fillRect(55, 29, 5, 2);
+      g.fillRect(59, turn ? 25 : 27, 3, turn ? 10 : 6);
+      g.fillStyle = '#fff5c4'; g.fillRect(60, 29, 1, 2);
+      const nCols = ['#ffe68c', '#ff9ec8', '#94e2ff', '#d4b4ff'];
+      for (let i = 0; i < 4; i++) {
+        const [nx, ny] = perimPt(t * 2 + i * 45);
+        g.fillStyle = nCols[i % 4];
+        g.fillRect(nx, ny, 3, 2); g.fillRect(nx + 2, ny - 3, 1, 4); g.fillRect(nx + 2, ny - 3, 3, 1);
+      }
+    } else if (m === 'gadyn_peach_soda') {
+      // 蜜桃汽水框：左上水蜜桃轻晃 + 右下晶莹冰块 + 细密粉白汽水泡上升
+      const bob = Math.round(Math.sin(t * 0.22));
+      g.fillStyle = '#78c97a'; g.fillRect(7, 2 + bob, 3, 2);
+      g.fillStyle = '#ffa4a4'; g.fillRect(4, 4 + bob, 7, 6);
+      g.fillStyle = '#ffe8e8'; g.fillRect(6, 5 + bob, 2, 2);
+      g.fillStyle = '#d4f2ff'; g.fillRect(52, 51 - bob, 7, 7);
+      g.fillStyle = '#ffffff'; g.fillRect(53, 52 - bob, 3, 2);
+      for (let i = 0; i < 5; i++) {
+        const by = 56 - ((t * 2 + i * 11) % 48);
+        const bx = i % 2 === 0 ? 4 + (i % 3) * 2 : 56 - (i % 3) * 2;
+        g.fillStyle = i % 2 === 0 ? '#ffc4d4' : '#ffffff';
+        g.fillRect(bx, by, 2, 2);
       }
     }
     const shopFx = root.querySelector('#st-px-shop-af-fx');
@@ -31691,6 +31784,8 @@
         bub_gacha_aurora_glass: 'background:linear-gradient(125deg,#e6fff8,#e8f4ff,#f5ecff);border-color:#7ec8e8;color:#274469;',
         bub_gacha_hotpot_bub: 'background:linear-gradient(135deg,#fff0ea,#ffe0d4);border-color:#e66b52;color:#782418;',
         bub_gacha_mahjong_tile: 'background:linear-gradient(135deg,#f5fff9,#e3faed);border-color:#5ec492;color:#1d543a;',
+        bub_gacha_jellyfish_sea: 'background:linear-gradient(130deg,#1c2b4a,#27426e);border-color:#82d4ff;color:#e8f7ff;',
+        bub_gacha_peach_oolong: 'background:linear-gradient(130deg,#fff2f0,#ffe9e0);border-color:#f0a496;color:#6e352c;',
       };
       box.style.cssText = (styles[itemId] || 'background:#fff9eb;border-color:#e3a530;color:#6b3d06;') + 'position:relative;overflow:hidden;min-width:52px;height:36px;display:flex;align-items:center;justify-content:center;padding:0 8px;';
       const lbl = doc.createElement('span');
@@ -33099,8 +33194,11 @@
           config.puppyJobLevels[jObj.id] = (config.puppyJobLevels[jObj.id] || 0) + 1;
           const rkAfter = getJobRankInfo(jObj);
           const promoted = rkAfter.lv > rkBefore.lv;
+          if (messedUp) {
+            config.puppyStats.jobFailCount = (config.puppyStats.jobFailCount || 0) + 1;
+          }
           config.puppyJob = null;
-          config.puppyJobCooldownUntil = Date.now() + 600000;
+          config.puppyJobCooldownUntil = Date.now() + (messedUp ? 3600000 : 600000);
           saveConfig();
           checkPupAchievements();
           if (pup.state !== 'drag' && pup.state !== 'sleep') setPuppyState(messedUp ? 'speechless' : (promoted ? 'love_firework' : 'happy'), 110);
@@ -33115,7 +33213,7 @@
           statusEl.innerHTML = `
             <div style="font-weight:700;color:#8c4e1f;margin-bottom:4px;">[${jObj.name} Lv.${rkAfter.lv} 结算小剧场] ${ev.star ? '(金牌好评)' : ''}</div>
             <div style="font-size:11px;line-height:1.5;margin-bottom:5px;">${formatPupText(ev.msg)}</div>
-            <div style="font-size:11px;font-weight:700;">基础工资: +${baseWage}币${tip ? ` · 额外小费: +${tip}币` : ''}${penalty ? ` · 搞砸扣款: -${penalty}币` : ''}${(tip || penalty) ? ` · 实发 +${totalWage}币` : ''}</div>
+            <div style="font-size:11px;font-weight:700;">基础工资: +${baseWage}币${tip ? ` · 额外小费: +${tip}币` : ''}${penalty ? ` · 搞砸扣款: -${penalty}币` : ''}${(tip || penalty) ? ` · 实发 +${totalWage}币` : ''}${messedUp ? ' · 闯祸停工反省 1 小时' : ''}</div>
             ${promoHtml}
           `;
           syncPupBagUI();
