@@ -4249,7 +4249,7 @@
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
-      z-index: 10032;
+      z-index: 9995;
       width: min(300px, calc(100vw - 28px));
       background: var(--tb-bg, #ffffff);
       color: var(--tb-text, #222222);
@@ -9728,9 +9728,9 @@
         return b;
       };
       const dragH = doc.createElement('span');
-      dragH.textContent = '⋮⋮';
+      dragH.innerHTML = '<svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="2" x2="11" y2="2"/><line x1="1" y1="5" x2="11" y2="5"/><line x1="1" y1="8" x2="11" y2="8"/></svg>';
       dragH.title = '按住上下拖动排序';
-      dragH.style.cssText = 'font-size:12px;opacity:0.55;padding:0 3px;user-select:none;flex-shrink:0;';
+      dragH.style.cssText = 'display:inline-flex;align-items:center;opacity:0.55;padding:2px 3px;user-select:none;flex-shrink:0;';
       attachPhraseDrag(dragH, row, phraseListEl, idx, (fromI, toI) => {
         const [moved] = config.quickPhrases.splice(fromI, 1);
         config.quickPhrases.splice(toI, 0, moved);
@@ -46844,10 +46844,15 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (idx !== -1) {
       floatOrder.splice(idx, 1);
       floatOrder.push(el);
+    } else {
+      floatOrder.push(el);
+      if (!el.__stFloatBound) {
+        el.__stFloatBound = true;
+        el.addEventListener('pointerdown', () => bringFloatFront(el), true);
+      }
     }
-    const baseZ = [9991, 9993, 9995];
     floatOrder.forEach((node, i) => {
-      if (node) node.style.zIndex = String(baseZ[i] || 9995);
+      if (node) node.style.zIndex = String(9991 + i);
     });
   };
   floatOrder.forEach(el => {
@@ -47538,9 +47543,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 return b;
               };
               const dragHQ = doc.createElement('span');
-              dragHQ.textContent = '⋮⋮';
+              dragHQ.innerHTML = '<svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="2" x2="11" y2="2"/><line x1="1" y1="5" x2="11" y2="5"/><line x1="1" y1="8" x2="11" y2="8"/></svg>';
               dragHQ.title = '按住上下拖动排序';
-              dragHQ.style.cssText = 'font-size:12px;opacity:0.55;padding:0 3px;user-select:none;flex-shrink:0;';
+              dragHQ.style.cssText = 'display:inline-flex;align-items:center;opacity:0.55;padding:2px 3px;user-select:none;flex-shrink:0;';
               attachPhraseDrag(dragHQ, item, qList, idx, (fromI, toI) => {
                 const [moved] = config.quickPhrases.splice(fromI, 1);
                 config.quickPhrases.splice(toI, 0, moved);
@@ -47620,6 +47625,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
         if (typeof win.__stSyncQpBarToggle === 'function') win.__stSyncQpBarToggle();
         ppop.classList.add('open');
+        if (typeof bringFloatFront === 'function') bringFloatFront(ppop);
       } else if (act === 'readstyle') {
         toggleQuickDock(false);
         let pop = root.querySelector('#st-tb-quick-read-pop');
@@ -47687,6 +47693,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
         syncQuickReadPop();
         pop.classList.add('open');
+        if (typeof bringFloatFront === 'function') bringFloatFront(pop);
       } else if (act === 'font') {
         toggleQuickDock(false);
         let fpop = root.querySelector('#st-tb-quick-font-pop');
@@ -47817,6 +47824,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         }
         root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
         fpop.classList.add('open');
+        if (typeof bringFloatFront === 'function') bringFloatFront(fpop);
       } else if (act === 'fold' || act === 'preset') {
         toggleQuickDock(false);
         togglePanel(true);
