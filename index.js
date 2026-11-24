@@ -6359,7 +6359,7 @@
     .st-px-title-badge.tier-3.lay-diag { margin: 5px 9px; }
     .st-px-title-badge.tier-3.lay-trio { margin: 7px 12px 2px; }
     #st-px-id-badges-wrap { gap: var(--badge-pair-gap, 4px) !important; }
-    #st-px-id-badges-wrap .st-px-title-badge { margin-left: 0 !important; margin-right: 0 !important; }
+    #st-px-id-badges-wrap .st-px-title-badge { margin: 0 !important; align-self: center !important; vertical-align: middle !important; }
     #st-tb-root.no-badge-white-rim .st-px-title-badge,
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2,
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-3,
