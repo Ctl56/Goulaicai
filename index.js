@@ -17695,9 +17695,9 @@
     sb_star_ocean: {
       cls: 'bespoke-std bespoke-sheen',
       pieces: [
-        { pos: 'left:12px;top:-8px;', w: 11, h: 10, pal: { b: '#5c9ee6', y: '#ffe066', w: '#ffffff' },
+        { pos: 'left:-11px;top:50%;transform:translateY(-50%);', w: 11, h: 11, pal: { b: '#5c9ee6', y: '#ffe066', w: '#ffffff' },
           grid: ['....bbb...','...bwwb...','..byyybb..','...bbyb...','..bb......'] },
-        { pos: 'right:-10px;bottom:-4px;', w: 13, h: 10, pal: { b: '#72b0eb', c: '#a8e6ff', w: '#ffffff', y: '#ffe484' },
+        { pos: 'right:-11px;bottom:-5px;', w: 13, h: 10, pal: { b: '#72b0eb', c: '#a8e6ff', w: '#ffffff', y: '#ffe484' },
           frames: [
             ['........yy..','.....ccywwy.','..bbbcccyy..','bb..........'],
             ['.......yy...','....ccywwy..','.bbbcccyy...','b...........'],
@@ -17716,18 +17716,18 @@
     sb_sweet_berry: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:8px;bottom:-8px;', w: 12, h: 12, pal: { r: '#eb5a74', g: '#6ec478', w: '#ffffff', p: '#ffc4d4', a: '#e6a878' },
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 13, pal: { r: '#eb5a74', g: '#6ec478', w: '#ffffff', p: '#ffc4d4', a: '#e6a878' },
           grid: ['....gg....','...rrrr...','..wwwwww..','.wwpwwpww.','..aaaaaa..','...aaaa...'] },
-        { pos: 'right:-9px;top:50%;transform:translateY(-50%);', w: 9, h: 10, pal: { p: '#f598b0', w: '#ffffff' },
+        { pos: 'right:-9px;top:-6px;', w: 9, h: 9, pal: { p: '#f598b0', w: '#ffffff' },
           grid: ['..ppp..','.pwwwp.','.ppppp.','..ppp..'] },
       ],
     },
     sb_moon_lullaby: {
       cls: 'bespoke-std bespoke-glow',
       pieces: [
-        { pos: 'right:-11px;top:50%;transform:translateY(-50%);', w: 13, h: 14, pal: { l: '#8f96e8', y: '#ffe694', w: '#ffffff', p: '#ffb8d4' },
+        { pos: 'right:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 14, pal: { l: '#8f96e8', y: '#ffe694', w: '#ffffff', p: '#ffb8d4' },
           grid: ['...yyyy...','..yyww....','.yyy.p.p..','.yyy.ppp..','..yywwp...','...yyyy...'] },
-        { pos: 'left:10px;top:-7px;', w: 10, h: 8, anim: 'b-bob', pal: { l: '#a8aef2', w: '#ffffff' },
+        { pos: 'left:-9px;bottom:-5px;', w: 10, h: 8, anim: 'b-bob', pal: { l: '#a8aef2', w: '#ffffff' },
           grid: ['..ll....','.lwl..l.','..ll....'] },
       ],
     },
@@ -17755,18 +17755,18 @@
     sb_clover_luck: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:10px;top:-8px;', w: 12, h: 11, anim: 'b-tilt', pal: { g: '#58b878', l: '#b8f2cc', w: '#ffffff' },
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 12, anim: 'b-tilt', pal: { g: '#58b878', l: '#b8f2cc', w: '#ffffff' },
           grid: ['..gg..gg..','.gllggllg.','.gggggggg.','..ggwwgg..','....gg....'] },
-        { pos: 'right:-8px;bottom:-5px;', w: 10, h: 9, pal: { g: '#64bf84', y: '#ffe484', w: '#ffffff' },
+        { pos: 'right:-9px;bottom:-5px;', w: 10, h: 9, pal: { g: '#64bf84', y: '#ffe484', w: '#ffffff' },
           grid: ['..gg...','..gwg..','...g.yy','....ywy'] },
       ],
     },
     sb_paw_guardian: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'right:-10px;top:50%;transform:translateY(-50%);', w: 12, h: 13, pal: { p: '#eb8ca8', w: '#fff0f5', o: '#a86478' },
+        { pos: 'right:-11px;top:50%;transform:translateY(-50%);', w: 12, h: 13, pal: { p: '#eb8ca8', w: '#fff0f5', o: '#a86478' },
           grid: ['..pppppp..','.pwwwwwwp.','..pppppp..','..o.o.o...','..o.o.o...','....pp....','....pp....'] },
-        { pos: 'left:12px;bottom:-7px;', w: 11, h: 8, pal: { w: '#ffffff', p: '#f5b8cc' },
+        { pos: 'left:-10px;bottom:-5px;', w: 11, h: 8, pal: { w: '#ffffff', p: '#f5b8cc' },
           grid: ['..wwwww..','.wpppppw.','..wwwww..'] },
       ],
     },
@@ -18155,25 +18155,47 @@
           hidden_adv_rest_3:    ['..bbbbbb..','.bwwwwwwb.','..cc..cc..'],
         };
         const g1 = UNIQUE_ACH_PROPS[ach.id] || ['..MMMMMM..','.MwwwwwwM.','MwMwwwwMwM','.MwwwwwwM.','..MMMMMM..'];
-        // 4 种贴合左右外沿与远端边沿的舒展构图（绝不压住左侧内图标正上下！）
+        // 4 种严格对侧远端外沿构图（学习合法摸鱼狗/带薪打盹王/黄金左脸：绝不压左内图标、绝不同侧挤在一起）
         const edgeLayouts = [
-          ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-8px;top:50%;transform:translateY(-50%);'],
-          ['left:-12px;top:50%;transform:translateY(-50%);', 'right:-8px;bottom:-4px;'],
-          ['right:-12px;top:50%;transform:translateY(-50%);', 'right:12px;bottom:-7px;'],
-          ['left:-12px;top:50%;transform:translateY(-50%);', 'right:12px;top:-7px;'],
+          ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-9px;bottom:-5px;'],
+          ['left:-12px;top:50%;transform:translateY(-50%);', 'right:10px;top:-7px;'],
+          ['left:-12px;top:50%;transform:translateY(-50%);', 'right:-9px;bottom:-5px;'],
+          ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-9px;top:-7px;'],
         ];
         const [p1, p2] = edgeLayouts[h % edgeLayouts.length];
-        const subDots = [
-          ['..yy..','.ywwy.','..yy..'],
-          ['..MM..','.MwwM.','..MM..'],
-          ['..cc..','.cwwc.','..cc..'],
-          ['..pp..','.pwwp.','..pp..'],
+        const subClusters = [
+          ['..yyyy..','.ywwwwy.','..yyyy..'],
+          ['.MM..MM.','MwwMMMM.','.MMMMM..','..MMM...'],
+          ['..cc..cc','.cwwccwc','..cc..cc'],
+          ['..gg..pp','.gwwgpwp','..gg..pp'],
         ];
-        el.classList.add('bespoke-std');
-        if (h % 3 === 0) el.classList.add('bespoke-static');
-        el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
-        if (h % 2 === 0) {
-          el.appendChild(renderBespokePiece({ pos: p2, w: 7, h: 6, pal, grid: subDots[(h >> 3) % subDots.length] }));
+        // 较高阶里程碑成就参照真龙天狗/樱花公主/天选小可爱/发财小锦鲤，补上华丽单边 ult 雕饰提升分量
+        const seniorSet = new Set([
+          'collector_max', 'treasure_hunter', 'game_champ', 'soulmate',
+          'adv_album_all', 'adv_curio_all', 'garden_collector_30', 'garden_bloom_100',
+          'kitchen_lv10_master', 'rich_tycoon_500', 'adv_legend_50', 'gacha_count_300',
+          'pet_legend_300', 'care_legend_200', 'game_legend_100', 'hidden_fashion_sss',
+          'hidden_adv_miracle', 'hidden_adv_legend', 'hidden_gacha_ssr_lucky', 'ach_ck_99'
+        ]);
+        const isSenior = seniorSet.has(ach.id);
+        el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
+        if (isSenior) {
+          const ultSides = ['bottom', 'top', 'left', 'right'];
+          const uSide = ultSides[h % ultSides.length];
+          el.appendChild(makeUltOrn(uSide, fKey));
+          // 主饰放在与 ult 雕饰不冲突的远端外沿
+          const mainPos = uSide === 'right'
+            ? 'left:-13px;top:50%;transform:translateY(-50%);'
+            : (uSide === 'left'
+              ? 'right:-13px;top:50%;transform:translateY(-50%);'
+              : (h % 2 === 0 ? 'left:-13px;top:50%;transform:translateY(-50%);' : 'right:-13px;top:50%;transform:translateY(-50%);'));
+          const subPos = mainPos.startsWith('left:') ? 'right:-9px;top:-7px;' : 'left:-9px;bottom:-5px;';
+          el.appendChild(renderBespokePiece({ pos: mainPos, w: 14, h: 12, anim: (h % 3 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+          el.appendChild(renderBespokePiece({ pos: subPos, w: 9, h: 7, pal, grid: subClusters[(h >> 3) % subClusters.length] }));
+        } else {
+          if (h % 3 === 0) el.classList.add('bespoke-static');
+          el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+          el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 7, pal, grid: subClusters[(h >> 3) % subClusters.length] }));
         }
       }
     }
