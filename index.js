@@ -17624,16 +17624,38 @@
           grid: ['..yyyy....','.yw..wy...','..yyyyyy..','......y.y.','........y.'] },
       ],
     },
-    // 35. 全成就七彩神话 (终极传说豪华)：完整四向七彩神话天使翼与彩虹冠 + 左上额外动态七彩棱镜光核
+    // 35. 全成就七彩神话 (终极传说豪华)：底边七彩彩虹花环托底 + 左侧双帧闪耀七彩神话大羽翼 + 右上七彩钻冠（华丽非对称）
     hidden_all_master: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['top', 'bottom', 'left', 'right'],
+      ult: ['bottom'],
       pieces: [
-        { pos: 'left:-10px;top:-10px;', w: 12, h: 12, anim: 'b-bob', pal: { p: '#ff94c8', c: '#7edcf5', l: '#c496ff', y: '#ffe680', w: '#ffffff' },
+        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 18, anim: 'b-bob', pal: { p: '#ff94c8', c: '#7edcf5', l: '#c496ff', y: '#ffe680', w: '#ffffff', m: '#92f0cc' },
           frames: [
-            ['....yy....','..ppwwcc..','.pwwwwwwc.','..llwwyy..','....ww....'],
-            ['....cc....','..yywwpp..','.lwwwwwwy.','..ccwwpp..','....yy....'],
+            ['..ppwww...','.ppwwwww..','ppwwcwwww.','.llwwcwww.','..llwwwm..','...bbwwm..','..y.bbm...','.yyy......'],
+            ['..ccwww...','.ccwwwww..','ccwwpwwww.','.mmwwpwww.','..mmwwwl..','...yywwl..','..p.yyl...','.ppp......'],
           ] },
+        { pos: 'right:-10px;top:-10px;', w: 14, h: 11, anim: 'b-tilt', pal: { y: '#f5cc58', p: '#ff94c8', c: '#7edcf5', l: '#c496ff', w: '#ffffff' },
+          grid: ['..y...y...y..','.pyp.ywy.ycy.','.yyyyyyyyyyy.','.yllywwwycly.','..yyyyyyyyy..'] },
+      ],
+    },
+    // 晴雨小跟班：精致对角线构图（左上晴云小太阳 + 右下透明小雨珠）
+    fun_weather_kid: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-10px;top:-8px;', w: 14, h: 12, pal: { y: '#f5c84c', l: '#fff2a8', w: '#ffffff', b: '#88c4eb' },
+          grid: ['....yyyy....','...ylllly...','..bbbyybbb..','.bwwwwwwwwb.','bwwwwwwwwwwb','.bbbbbbbbbb.'] },
+        { pos: 'right:-7px;bottom:-6px;', w: 9, h: 10, anim: 'b-bob', pal: { b: '#6eb4eb', c: '#b8e8ff', w: '#ffffff' },
+          grid: ['...bb...','..bwwb..','.bccccb.','.bccccb.','..bbbb..'] },
+      ],
+    },
+    // 嘴甜小宝贝：锁留玩家点名满意的清爽对话气泡搭配
+    fun_chat_bestie: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:10px;top:-8px;', w: 12, h: 11, pal: { M: '#eb8cb0', w: '#ffffff' },
+          grid: ['.MMMMMM..','MwwwwwwM.','MwMMwMMwM','MwwwwwwM.','.MMMMMM..','..MM.....'] },
+        { pos: 'right:-8px;bottom:-3px;', w: 8, h: 7, pal: { M: '#eb8cb0', w: '#ffffff' },
+          grid: ['.MM..MM.','MwwMMMM.','.MMMMM..','..MMM...'] },
       ],
     },
     // 36. 摸头大师：保留玩家点赞的清爽协调搭配（左上柔粉丝带珍珠胸针 + 右下小爱心）
@@ -17674,7 +17696,7 @@
         { pos: 'left:-10px;bottom:-5px;', w: 12, h: 13, pal: { y: '#dfa838', w: '#ffffff', l: '#fff4d6', b: '#8cb8e6' },
           grid: ['yyyyyyyy','ywwwwwwy','ywbbbbwy','ywbbbbwy','ywwwwwwy','ywwwwwwy','yyyyyyyy'] },
         { pos: 'right:12px;bottom:-7px;', w: 10, h: 8, anim: 'b-bob', pal: { y: '#f5cc58', w: '#ffffff' },
-          grid: ['...yy...','..ywwy..','.yywwyy.','...yy...'] },
+          grid: ['..yyyy..','.ywwwwy.','.ywwwwy.','..yyyy..'] },
       ],
     },
     sb_sweet_berry: {
@@ -18037,7 +18059,7 @@
         el.appendChild(makeAchOrnCanvas(fKey, 'left'));
         el.appendChild(makeAchOrnCanvas(fKey, 'right'));
       } else {
-        // 其余未单独列出的高阶成就：按自身主题配色与非雷同偏左/偏右/顶偏左/底偏右单侧成景渲染，彻底告别死板上左右与固定对角线
+        // 其余高阶成就：一处紧凑双元素堆叠主簇 + 远端舒展轻点缀（绝不双底、绝不双顶、绝不贴太近、零四芒星）
         let h = 2166136261;
         const sid = String(ach.id || ach.title || fKey);
         for (let i = 0; i < sid.length; i++) { h ^= sid.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -18046,43 +18068,45 @@
         const darkC = ach.fg || '#6b3848';
         const pal = { M: mainC, D: darkC, w: '#ffffff', y: '#f5cc58', l: '#fff4f8', g: '#68c284', c: '#82d8f5', p: '#ff9ec2' };
         const txt = `${ach.id || ''} ${ach.title || ''}`;
-        const pickThemeGrid = () => {
-          if (/photo|album|mirror|影|拍|镜|画框/.test(txt)) return ['..MMMMMM..','.MwwwwwwM.','MwMccccwM.','MwMccccwM.','.MwwwwwwM.','..MMMMMM..'];
-          if (/game|2048|toy|arcade|电玩|游乐|翻牌|方块|陪玩|短腿/.test(txt)) return ['..MMMMMM..','.MMwwwwMM.','MMwMwwMwMM','.MMwwwwMM.','..MM..MM..'];
-          if (/flower|garden|mutant|花|园|植物|绿/.test(txt)) return ['...MM..MM.','..MwwMMwwM','...MMMMMM.','....gg....','...gggg...'];
-          if (/cook|kitchen|eater|gourmet|厨|胃|吃|料理/.test(txt)) return ['..ww..ww..','.wwwwwwww.','.MMMMMMMM.','..MMwwMM..','...MMMM...'];
-          if (/coin|rich|tycoon|lucky|dig|金|富|财|欧|铲/.test(txt)) return ['...yyyy...','..ywwwwy..','.yywyywyy.','..ywwwwy..','...yyyy...'];
-          if (/trad|ancient|poet|fest|岁|古|诗|灯/.test(txt)) return ['..yyyy..','.yMMMMy.','yMwMMwMy','.yMMMMy.','..yyyy..','...yy...'];
-          if (/wing|angel|aura|sky|weather|晴|羽|翅|光环/.test(txt)) return ['..www....','.wwwww...','wwwMwwww.','.wwMMwww.','..wwww...'];
-          if (/night|sleep|early|晨|夜|睡|起床/.test(txt)) return ['...yyyy..','..yyww...','.yyy.....','..yyyy...','..MMwwMM.'];
-          if (/mail|chat|bestie|visitor|社交|信|嘴甜|外交|追更/.test(txt)) return ['.MMMMMM..','MwwwwwwM.','MwMMwMMwM','MwwwwwwM.','.MMMMMM..','..MM.....'];
-          if (/gacha|treasure|curio|chest|扭蛋|宝|秘境|寻奇/.test(txt)) return ['..MMMMMM..','.MywwwwyM.','MMyyyyyyMM','MMMMMMMMMM','.MMMMMMMM.'];
-          if (/dress|fashion|neck|ribbon|衣|穿搭|甜心|造型|美学/.test(txt)) return ['.MMM..MMM.','MMwMMMMwMM','MMMDDDMMMM','.MMM..MMM.','..M....M..'];
-          if (/ck_|day|wish|soul|心|情|同行|灵魂|常青/.test(txt)) return ['.MM..MM.','MwwMMMMM','MMMMMMMM','.MMMMMM.','..MMMM..','...MM...'];
-          return ['..MMMM..','.MwwwwM.','MwMwwMwM','.MwwwwM.','..MMMM..'];
+        // 14 款双元素组合堆叠主簇（12x10 紧凑成景）
+        const pickClusterGrid = () => {
+          if (/photo|album|mirror|影|拍|镜|画框/.test(txt)) return ['..MMMMMM....','.MwwwwwwM.y.','MwMccccwMywy','MwMccccwM.y.','.MwwwwwwM...','..MMMMMM....'];
+          if (/game|2048|toy|arcade|电玩|游乐|翻牌|方块|陪玩|短腿/.test(txt)) return ['..MMMMMM....','.MMwwwwMM.cc','MMwMwwMwMcwc','.MMwwwwMM.cc','..MM..MM....'];
+          if (/flower|garden|mutant|花|园|植物|绿/.test(txt)) return ['..MM..MM....','.MwwMMwwM.gg','..MMMMMM.ggg','....gg..gg..','...gggg.....'];
+          if (/cook|kitchen|eater|gourmet|厨|胃|吃|料理/.test(txt)) return ['..ww..ww....','.wwwwwwww.pp','.MMMMMMMMpwp','..MMwwMM..pp','...MMMM.....'];
+          if (/coin|rich|tycoon|lucky|dig|金|富|财|欧|铲/.test(txt)) return ['...yyyy.....','..ywwwwy.MM.','.yywyywyMwwM','..ywwwwy.MM.','...yyyy.....'];
+          if (/trad|ancient|poet|fest|岁|古|诗|灯/.test(txt)) return ['..yyyy..gg..','.yMMMMygggg.','yMwMMwMy.gg.','.yMMMMy.....','..yyyy......','...yy.......'];
+          if (/wing|angel|aura|sky|晴|羽|翅|光环/.test(txt)) return ['..www...yy..','.wwwww.ywwy.','wwwMwwwwyy..','.wwMMwww....','..wwww......'];
+          if (/night|sleep|early|晨|夜|睡|起床/.test(txt)) return ['...yyyy.....','..yyww..cc..','.yyy...cwwc.','..yyyy..cc..','..MMwwMM....'];
+          if (/mail|chat|bestie|visitor|社交|信|嘴甜|外交|追更/.test(txt)) return ['.MMMMMM.....','MwwwwwwM.pp.','MwMMwMMwpwwp','MwwwwwwM.pp.','.MMMMMM.....','..MM........'];
+          if (/gacha|treasure|curio|chest|扭蛋|宝|秘境|寻奇/.test(txt)) return ['..MMMMMM....','.MywwwwyM.yy','MMyyyyyyMywy','MMMMMMMMM.yy','.MMMMMMMM...'];
+          if (/dress|fashion|neck|ribbon|衣|穿搭|甜心|造型|美学/.test(txt)) return ['.MMM..MMM...','MMwMMMMwMM.w','MMMDDDMMMMyw','.MMM..MMM..w','..M....M....'];
+          if (/ck_|day|wish|soul|心|情|同行|灵魂|常青/.test(txt)) return ['.MM..MM.....','MwwMMMMM.yy.','MMMMMMMMywwy','.MMMMMM..yy.','..MMMM......','...MM.......'];
+          if (/trail|paw|pet|care|cat|足迹|撸|铲屎|长条|脾气/.test(txt)) return ['.MM..MM.....','MwwMMwwM.pp.','.MMMMMM.pwwp','..MMMM...pp.','.M.MM.M.....'];
+          return ['..MMMMMM....','.MwwwwwwM.yy','MwMMwwMMwywy','.MwwwwwwM.yy','..MMMMMM....'];
         };
-        const subGrids = [
+        // 远端极简和谐轻点缀（圆润小珠/小爱心/小嫩叶，绝无四芒星）
+        const accents = [
           ['..yy..','.ywwy.','..yy..'],
           ['.MM..MM.','MwwMMMM.','.MMMMM..','..MMM...'],
           ['..cc..','.cwwc.','..cc..'],
           ['..gg..','.gwwg.','..gg..'],
           ['..MM..','.MwwM.','..MM..'],
         ];
+        // 5 种舒展远端呼吸构图（主簇与点缀远端错开，绝不双底、绝不双顶、绝不贴太近）
         const slots = [
-          ['left:10px;top:-8px;', 'right:-8px;bottom:-3px;'],
-          ['right:10px;top:-8px;', 'left:-9px;bottom:-3px;'],
-          ['left:8px;bottom:-8px;', 'left:-9px;top:-2px;'],
-          ['right:8px;bottom:-8px;', 'right:-9px;top:-2px;'],
-          ['left:-10px;top:50%;transform:translateY(-50%);', 'right:12px;bottom:-6px;'],
-          ['right:-10px;top:50%;transform:translateY(-50%);', 'left:12px;top:-6px;'],
-          ['left:12px;bottom:-8px;', 'right:12px;bottom:-6px;'],
+          ['left:-10px;top:-8px;', 'right:-7px;bottom:-5px;'],
+          ['left:-10px;bottom:-7px;', 'right:-7px;top:-6px;'],
+          ['left:-11px;top:50%;transform:translateY(-50%);', 'right:-7px;top:-6px;'],
+          ['right:-11px;top:50%;transform:translateY(-50%);', 'left:-7px;bottom:-5px;'],
+          ['left:10px;top:-9px;', 'right:-7px;bottom:-5px;'],
         ];
         const [p1, p2] = slots[h % slots.length];
-        const g1 = pickThemeGrid();
-        const g2 = subGrids[(h >> 3) % subGrids.length];
+        const g1 = pickClusterGrid();
+        const g2 = accents[(h >> 3) % accents.length];
         el.classList.add('bespoke-std');
         if (h % 3 === 0) el.classList.add('bespoke-static');
-        el.appendChild(renderBespokePiece({ pos: p1, w: 12, h: 11, anim: (h % 4 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+        el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 11, anim: (h % 4 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
         el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: g2 }));
       }
     }
