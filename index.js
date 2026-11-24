@@ -9635,7 +9635,7 @@ function bootGoulaicaiExtension() {
     if (!el) {
       el = doc.createElement('div');
       el.id = 'st-tb-ka-notice';
-      el.style.cssText = 'position:absolute;left:50%;top:42px;transform:translateX(-50%);max-width:calc(100% - 20px);width:max-content;padding:6px 12px;border-radius:999px;background:rgba(24,24,23,0.88);color:#f0efe9;font-size:11px;line-height:1.4;z-index:35;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
+      el.style.cssText = 'position:absolute;left:50%;top:42px;transform:translateX(-50%);max-width:calc(100% - 20px);width:max-content;padding:6px 13px;border-radius:999px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 18px rgba(0,0,0,0.16);font-size:11.5px;line-height:1.4;z-index:35;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
       host.appendChild(el);
     }
     el.textContent = msg;
@@ -9650,7 +9650,7 @@ function bootGoulaicaiExtension() {
     if (!el) {
       el = doc.createElement('div');
       el.id = 'st-tb-imm-notice';
-      el.style.cssText = 'position:fixed;left:50%;top:max(22px,env(safe-area-inset-top));transform:translateX(-50%);max-width:calc(100vw - 28px);padding:6px 13px;border-radius:999px;background:rgba(24,24,23,0.88);color:#f0efe9;font-size:11px;line-height:1.4;white-space:nowrap;z-index:10035;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
+      el.style.cssText = 'position:fixed;left:50%;top:max(22px,env(safe-area-inset-top));transform:translateX(-50%);max-width:calc(100vw - 28px);padding:7px 15px;border-radius:999px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 18px rgba(0,0,0,0.16);font-size:12.5px;line-height:1.45;white-space:nowrap;z-index:10035;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
       root.appendChild(el);
     }
     el.textContent = msg;
@@ -39839,6 +39839,14 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     config.storyCopyRich = !(config.storyCopyRich !== false);
     saveConfig();
     syncSeFmtUI();
+    const fmtMsg = config.storyCopyRich !== false
+      ? '当前已开启带格式复制，保留加粗斜体等排版'
+      : '当前已开启纯文本复制，仅保留干净文字';
+    if (e && e.currentTarget === seFmtBtn && typeof showKaPolicyNotice === 'function') {
+      showKaPolicyNotice(fmtMsg);
+    } else if (typeof showImmNotice === 'function') {
+      showImmNotice(fmtMsg);
+    }
   };
   if (seFmtBtn) seFmtBtn.addEventListener('click', toggleSeFmt);
   if (seMultiFmt) seMultiFmt.addEventListener('click', toggleSeFmt);
