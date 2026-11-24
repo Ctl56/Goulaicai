@@ -1652,20 +1652,20 @@
     { id: 'gacha_mini_pudding_cat', name: '软糖小恐龙', tier: 'SR' },
   ];
   const GACHA_BUBBLES = [
-    { id: 'bub_gacha_crystal', name: '糖晶梦境框', tier: 'SSR', dyn: 'gdyn_prism_refract', charms: [], desc: '扭蛋机 SSR 传说动态限定：斜向棱镜糖彩折射光束与跃动糖晶微粒' },
-    { id: 'bub_gacha_royal', name: '鎏金星冕框', tier: 'SSR', dyn: 'gdyn_royal_ribbon', charms: [], desc: '扭蛋机 SSR 传说动态限定：流动液态金带环绕边框与巡游金珠光晕' },
-    { id: 'bub_gacha_sakura_tea', name: '樱茶和果框', tier: 'SSR', dyn: 'gdyn_matcha_whisp', charms: [], desc: '扭蛋机 SSR 传说动态限定：袅袅抹茶清雾升腾与轻柔樱果花瓣斜飘' },
-    { id: 'bub_gacha_moonlight', name: '月华流光框', tier: 'SSR', dyn: 'gdyn_lunar_tide', charms: [], desc: '扭蛋机 SSR 传说动态限定：银蓝月汐波纹起伏与顶部柔月弧光轻摇' },
-    { id: 'bub_gacha_starry_velvet', name: '碎星丝绒框', tier: 'SSR', dyn: 'gdyn_nebula_constel', charms: [], desc: '扭蛋机 SSR 传说动态限定：暗紫星云微雾脉动与逐段点亮的星轨连线' },
-    { id: 'bub_gacha_toast', name: '烤吐司奶泡', tier: 'SR', dyn: 'gdyn_toast_butter', charms: [], desc: '扭蛋机 SR 稀有限定：顶边暖金黄油缓缓融滴与烤面包热气轻卷' },
-    { id: 'bub_gacha_mint_milk', name: '薄荷奶糖框', tier: 'SR', dyn: 'gdyn_mint_swirl', charms: [], desc: '扭蛋机 SR 稀有限定：清凉薄荷奶糖双色旋涡沿框流转与冰雾奶珠跃动' },
-    { id: 'bub_gacha_soda_pop', name: '汽水气泡框', tier: 'SR', dyn: 'gdyn_fizz_cascade', charms: [], desc: '扭蛋机 SR 稀有限定：冰蓝苏打顶层泡沫起伏与加速上升炸裂水环' },
-    { id: 'bub_gacha_milk_strawberry', name: '草莓牛奶泡', tier: 'SR', dyn: 'gdyn_berry_milkshake', charms: [], desc: '扭蛋机 SR 稀有限定：粉白奶昔波浪轻荡配浮沉小红莓与奶泡光点' },
-    { id: 'bub_gacha_aurora_glass', name: '极光玻璃框', tier: 'SSR', dyn: 'gdyn_glass_aurora', charms: [], desc: '扭蛋机 SSR 传说动态限定：竖向极光幕帘柔波摇曳与斜向琉璃反光扫过' },
-    { id: 'bub_gacha_hotpot_bub', name: '咕嘟火锅泡', tier: 'SR', dyn: 'gdyn_hotpot_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：底边番茄红汤咕嘟鼓泡破裂与翻卷白雾热气' },
-    { id: 'bub_gacha_mahjong_tile', name: '玉牌发财泡', tier: 'SR', dyn: 'gdyn_jade_tile', charms: [], desc: '扭蛋机 SR 趣味动态限定：翡翠白玉斜向温润光扫与竹节金环脉动' },
-    { id: 'bub_gacha_jellyfish_sea', name: '浅海荧光水母框', tier: 'SSR', dyn: 'gdyn_sea_jelly', charms: [], desc: '扭蛋机 SSR 传说动态限定：深海蓝调配发光迷你粉蓝水母游动与上升水泡' },
-    { id: 'bub_gacha_peach_oolong', name: '白桃乌龙泡', tier: 'SR', dyn: 'gdyn_peach_oolong', charms: [], desc: '扭蛋机 SR 稀有限定：粉嫩水蜜桃轻晃配淡茶香雾袅袅升起' },
+    { id: 'bub_gacha_crystal', name: '[扭蛋] 糖晶梦境框', tier: 'SSR', dyn: 'gdyn_prism_refract', charms: [], desc: '扭蛋机 SSR 传说动态限定：斜向棱镜糖彩折射光束与跃动糖晶微粒' },
+    { id: 'bub_gacha_royal', name: '[扭蛋] 鎏金星冕框', tier: 'SSR', dyn: 'gdyn_royal_ribbon', charms: [], desc: '扭蛋机 SSR 传说动态限定：流动液态金带环绕边框与巡游金珠光晕' },
+    { id: 'bub_gacha_sakura_tea', name: '[扭蛋] 樱茶和果框', tier: 'SSR', dyn: 'gdyn_matcha_whisp', charms: [], desc: '扭蛋机 SSR 传说动态限定：袅袅抹茶清雾升腾与轻柔樱果花瓣斜飘' },
+    { id: 'bub_gacha_moonlight', name: '[扭蛋] 月华流光框', tier: 'SSR', dyn: 'gdyn_lunar_tide', charms: [], desc: '扭蛋机 SSR 传说动态限定：银蓝月汐波纹起伏与顶部柔月弧光轻摇' },
+    { id: 'bub_gacha_starry_velvet', name: '[扭蛋] 碎星丝绒框', tier: 'SSR', dyn: 'gdyn_nebula_constel', charms: [], desc: '扭蛋机 SSR 传说动态限定：暗紫星云微雾脉动与逐段点亮的星轨连线' },
+    { id: 'bub_gacha_toast', name: '[扭蛋] 烤吐司奶泡', tier: 'SR', dyn: 'gdyn_toast_butter', charms: [], desc: '扭蛋机 SR 稀有限定：顶边暖金黄油缓缓融滴与烤面包热气轻卷' },
+    { id: 'bub_gacha_mint_milk', name: '[扭蛋] 薄荷奶糖框', tier: 'SR', dyn: 'gdyn_mint_swirl', charms: [], desc: '扭蛋机 SR 稀有限定：清凉薄荷奶糖双色旋涡沿框流转与冰雾奶珠跃动' },
+    { id: 'bub_gacha_soda_pop', name: '[扭蛋] 汽水气泡框', tier: 'SR', dyn: 'gdyn_fizz_cascade', charms: [], desc: '扭蛋机 SR 稀有限定：冰蓝苏打顶层泡沫起伏与加速上升炸裂水环' },
+    { id: 'bub_gacha_milk_strawberry', name: '[扭蛋] 草莓牛奶泡', tier: 'SR', dyn: 'gdyn_berry_milkshake', charms: [], desc: '扭蛋机 SR 稀有限定：粉白奶昔波浪轻荡配浮沉小红莓与奶泡光点' },
+    { id: 'bub_gacha_aurora_glass', name: '[扭蛋] 极光玻璃框', tier: 'SSR', dyn: 'gdyn_glass_aurora', charms: [], desc: '扭蛋机 SSR 传说动态限定：竖向极光幕帘柔波摇曳与斜向琉璃反光扫过' },
+    { id: 'bub_gacha_hotpot_bub', name: '[扭蛋] 咕嘟火锅泡', tier: 'SR', dyn: 'gdyn_hotpot_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：底边番茄红汤咕嘟鼓泡破裂与翻卷白雾热气' },
+    { id: 'bub_gacha_mahjong_tile', name: '[扭蛋] 玉牌发财泡', tier: 'SR', dyn: 'gdyn_jade_tile', charms: [], desc: '扭蛋机 SR 趣味动态限定：翡翠白玉斜向温润光扫与竹节金环脉动' },
+    { id: 'bub_gacha_jellyfish_sea', name: '[扭蛋] 浅海荧光水母框', tier: 'SSR', dyn: 'gdyn_sea_jelly', charms: [], desc: '扭蛋机 SSR 传说动态限定：深海蓝调配发光迷你粉蓝水母游动与上升水泡' },
+    { id: 'bub_gacha_peach_oolong', name: '[扭蛋] 白桃乌龙泡', tier: 'SR', dyn: 'gdyn_peach_oolong', charms: [], desc: '扭蛋机 SR 稀有限定：粉嫩水蜜桃轻晃配淡茶香雾袅袅升起' },
   ];
   const GACHA_TRAILS = [
     { id: 'trail_gacha_capsule', name: '[扭蛋] 扭蛋彩球印', tier: 'SSR', cols: ['#ff85a1', '#ffe066', '#8ac4ff', '#c4a8ff'], desc: '扭蛋机 SSR 传说限定：走过留下一串圆滚滚迷你扭蛋球' },
@@ -1679,36 +1679,36 @@
     { id: 'trail_gacha_gold_ingot', name: '[扭蛋] 滚落金元宝', tier: 'SR', cols: ['#ffd700', '#ffe875', '#d99826'], desc: '扭蛋机 SR 招财限定：每走一步咕噜噜滚出亮闪闪小金元宝' },
   ];
   const GACHA_AVATAR_FRAMES = [
-    { id: 'af_gacha_ribbon', name: '蕾丝缎带框', tier: 'SR', dyn: 'gadyn_lace_ripple', charms: [], desc: '扭蛋机 SR 动态限定：四边柔粉蕾丝波浪律动与飘逸丝带尾摆动' },
-    { id: 'af_gacha_cat', name: '软萌猫耳框', tier: 'SR', dyn: 'gadyn_kitty_bounce', charms: [], desc: '扭蛋机 SR 动态限定：轻抖软萌猫耳轮廓配绕框漫步的小粉肉垫印' },
-    { id: 'af_gacha_toast', name: '芝士吐司框', tier: 'SR', dyn: 'gadyn_cheese_melt', charms: [], desc: '扭蛋机 SR 动态限定：金黄拉丝芝士缓缓流淌与两侧热烘吐司雾气' },
-    { id: 'af_gacha_frog', name: '小青蛙呱呱框', tier: 'SR', dyn: 'gadyn_pond_ripple', charms: [], desc: '扭蛋机 SR 动态限定：荷塘雨滴荡开涟漪与跃动青绿水珠光点' },
-    { id: 'af_gacha_berry_cream', name: '草莓奶油框', tier: 'SR', dyn: 'gadyn_cream_piping', charms: [], desc: '扭蛋机 SR 动态限定：绕框轮转奶油裱花珠配顶边融霜与草莓微光' },
-    { id: 'af_gacha_crystal', name: '晶钻小皇冠', tier: 'SSR', dyn: 'gadyn_prism_orbit', charms: [], desc: '扭蛋机 SSR 传说动态限定：幻彩晶钻折光绕框巡游与冠冕光带起伏' },
-    { id: 'af_gacha_cloud_swing', name: '云端秋千框', tier: 'SSR', dyn: 'gadyn_sky_swing', charms: [], desc: '扭蛋机 SSR 传说动态限定：底边云朵秋千弧线轻荡与天际柔云漂浮' },
-    { id: 'af_gacha_moon', name: '暮月云影框', tier: 'SSR', dyn: 'gadyn_twilight_crescent', charms: [], desc: '扭蛋机 SSR 传说动态限定：暮蓝云纱缓缓流过银金弯月与夜雾微粒' },
-    { id: 'af_gacha_hotpot_steam', name: '鸳鸯火锅框', tier: 'SR', dyn: 'gadyn_yuanyang_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：左红右白鸳鸯锅底翻滚冒泡与双侧热气升腾' },
-    { id: 'af_gacha_mahjong_win', name: '玉牌发财框', tier: 'SSR', dyn: 'gadyn_jade_gleam', charms: [], desc: '扭蛋机 SSR 趣味动态限定：翡翠玉面斜扫柔光与四角转运金环脉动' },
-    { id: 'af_gacha_polaroid_tape', name: '胶带拍立得', tier: 'SR', dyn: 'gadyn_shutter_flash', charms: [], desc: '扭蛋机 SR 文艺动态限定：复古快门柔光掠影配和纸胶带微闪与胶片齿孔滚动' },
-    { id: 'af_gacha_music_box', name: '八音盒发条框', tier: 'SSR', dyn: 'gadyn_music_box', charms: [], desc: '扭蛋机 SSR 传说动态限定：复古金发条缓缓旋转与跃动彩色音符绕框轻舞' },
-    { id: 'af_gacha_peach_soda', name: '蜜桃汽水框', tier: 'SR', dyn: 'gadyn_peach_soda', charms: [], desc: '扭蛋机 SR 稀有限定：粉嫩水蜜桃与晶莹冰块轻晃配气泡升腾' },
+    { id: 'af_gacha_ribbon', name: '[扭蛋] 蕾丝缎带框', tier: 'SR', dyn: 'gadyn_lace_ripple', charms: [], desc: '扭蛋机 SR 动态限定：四边柔粉蕾丝波浪律动与飘逸丝带尾摆动' },
+    { id: 'af_gacha_cat', name: '[扭蛋] 软萌猫耳框', tier: 'SR', dyn: 'gadyn_kitty_bounce', charms: [], desc: '扭蛋机 SR 动态限定：轻抖软萌猫耳轮廓配绕框漫步的小粉肉垫印' },
+    { id: 'af_gacha_toast', name: '[扭蛋] 芝士吐司框', tier: 'SR', dyn: 'gadyn_cheese_melt', charms: [], desc: '扭蛋机 SR 动态限定：金黄拉丝芝士缓缓流淌与两侧热烘吐司雾气' },
+    { id: 'af_gacha_frog', name: '[扭蛋] 小青蛙呱呱框', tier: 'SR', dyn: 'gadyn_pond_ripple', charms: [], desc: '扭蛋机 SR 动态限定：荷塘雨滴荡开涟漪与跃动青绿水珠光点' },
+    { id: 'af_gacha_berry_cream', name: '[扭蛋] 草莓奶油框', tier: 'SR', dyn: 'gadyn_cream_piping', charms: [], desc: '扭蛋机 SR 动态限定：绕框轮转奶油裱花珠配顶边融霜与草莓微光' },
+    { id: 'af_gacha_crystal', name: '[扭蛋] 晶钻小皇冠', tier: 'SSR', dyn: 'gadyn_prism_orbit', charms: [], desc: '扭蛋机 SSR 传说动态限定：幻彩晶钻折光绕框巡游与冠冕光带起伏' },
+    { id: 'af_gacha_cloud_swing', name: '[扭蛋] 云端秋千框', tier: 'SSR', dyn: 'gadyn_sky_swing', charms: [], desc: '扭蛋机 SSR 传说动态限定：底边云朵秋千弧线轻荡与天际柔云漂浮' },
+    { id: 'af_gacha_moon', name: '[扭蛋] 暮月云影框', tier: 'SSR', dyn: 'gadyn_twilight_crescent', charms: [], desc: '扭蛋机 SSR 传说动态限定：暮蓝云纱缓缓流过银金弯月与夜雾微粒' },
+    { id: 'af_gacha_hotpot_steam', name: '[扭蛋] 鸳鸯火锅框', tier: 'SR', dyn: 'gadyn_yuanyang_boil', charms: [], desc: '扭蛋机 SR 搞笑动态限定：左红右白鸳鸯锅底翻滚冒泡与双侧热气升腾' },
+    { id: 'af_gacha_mahjong_win', name: '[扭蛋] 玉牌发财框', tier: 'SSR', dyn: 'gadyn_jade_gleam', charms: [], desc: '扭蛋机 SSR 趣味动态限定：翡翠玉面斜扫柔光与四角转运金环脉动' },
+    { id: 'af_gacha_polaroid_tape', name: '[扭蛋] 胶带拍立得', tier: 'SR', dyn: 'gadyn_shutter_flash', charms: [], desc: '扭蛋机 SR 文艺动态限定：复古快门柔光掠影配和纸胶带微闪与胶片齿孔滚动' },
+    { id: 'af_gacha_music_box', name: '[扭蛋] 八音盒发条框', tier: 'SSR', dyn: 'gadyn_music_box', charms: [], desc: '扭蛋机 SSR 传说动态限定：复古金发条缓缓旋转与跃动彩色音符绕框轻舞' },
+    { id: 'af_gacha_peach_soda', name: '[扭蛋] 蜜桃汽水框', tier: 'SR', dyn: 'gadyn_peach_soda', charms: [], desc: '扭蛋机 SR 稀有限定：粉嫩水蜜桃与晶莹冰块轻晃配气泡升腾' },
   ];
   const GACHA_BADGES = [
-    { id: 'gb_gacha_lucky_dog', title: '欧气小狗王', name: '欧气小狗王', gachaTier: 'SSR', tier: 4, frame: 'gframe_lucky_dice', icon: 'diamond_cup', bg: 'linear-gradient(115deg,#fff3c4,#ffd9ec,#d6f5ff,#fff3c4)', bd: '#e0a238', fg: '#6b3b08' },
-    { id: 'gb_gacha_star_sugar', title: '摘星小甜豆', name: '摘星小甜豆', gachaTier: 'SSR', tier: 4, frame: 'gframe_candy_jar', icon: 'candy_bear_blue', bg: 'linear-gradient(115deg,#e6e4ff,#f7e3ff,#d9f4ff,#e6e4ff)', bd: '#8c82e6', fg: '#2d2578' },
-    { id: 'gb_gacha_melon_eater', title: '一线吃瓜汪', name: '一线吃瓜汪', gachaTier: 'SR', tier: 3, frame: 'gframe_melon_slice', icon: 'melon_slice', bg: 'linear-gradient(120deg,#e6fae8,#ffe8ef,#e8fce8,#e6fae8)', bd: '#68bd7e', fg: '#1f5932' },
-    { id: 'gb_gacha_sleep_master', title: '国家一级睡狗', name: '国家一级睡狗', gachaTier: 'SR', tier: 3, frame: 'gframe_sleep_zzz', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#eef5ff,#f5ecff,#fff9eb,#eef5ff)', bd: '#8ea8e6', fg: '#2b3f75' },
-    { id: 'gb_gacha_snack_thief', title: '零食质检员', name: '零食质检员', gachaTier: 'SR', tier: 3, frame: 'gframe_cookie_bite', icon: 'cookie_gold', bg: 'linear-gradient(120deg,#fff3d6,#ffe8e0,#fff7db,#fff3d6)', bd: '#e09d52', fg: '#703d0c' },
-    { id: 'gb_gacha_slacking_pro', title: '合法摸鱼狗', name: '合法摸鱼狗', gachaTier: 'SR', tier: 3, frame: 'gframe_fish_ripple', icon: 'fish_mint', bg: 'linear-gradient(120deg,#e4faf5,#efe8ff,#e8f7ff,#e4faf5)', bd: '#6bbdb3', fg: '#1d5452' },
-    { id: 'gb_gacha_night_snack', title: '深夜干饭王', name: '深夜干饭王', gachaTier: 'SR', tier: 3, frame: 'gframe_ramen_steam', icon: 'ice_cream', bg: 'linear-gradient(120deg,#fff4e0,#ffe8f0,#f4ecff,#fff4e0)', bd: '#d99862', fg: '#6b3a12' },
-    { id: 'gb_gacha_cloud_drifter', title: '云端发呆冠军', name: '云端发呆冠军', gachaTier: 'SR', tier: 3, frame: 'gframe_cloud_kite', icon: 'cloud_cup_ico', bg: 'linear-gradient(120deg,#eaf6ff,#f4f0ff,#eef9ff)', bd: '#8ab8e6', fg: '#234c78' },
-    { id: 'gb_gacha_destiny_star', title: '满级幸运星', name: '满级幸运星', gachaTier: 'SSR', tier: 4, frame: 'gframe_clover_orbit', icon: 'star_ribbon_b', bg: 'linear-gradient(115deg,#dfe8ff,#f5e4ff,#d9f8ff,#fff5cc)', bd: '#7e90e6', fg: '#232e6e' },
-    { id: 'gb_gacha_couch_potato', title: '沙发粘合剂', name: '沙发粘合剂', gachaTier: 'SR', tier: 3, frame: 'gframe_sofa_cushion', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#f5f0ff,#fff3e8,#eef6ff)', bd: '#9e90d9', fg: '#3b2e70' },
-    { id: 'gb_gacha_no_work_dog', title: '退堂鼓鼓手', name: '退堂鼓鼓手', gachaTier: 'SR', tier: 3, frame: 'gframe_drum_beat', icon: 'bell_luck', bg: 'linear-gradient(120deg,#fff0f3,#fff6e0,#f0f5ff)', bd: '#e08ca4', fg: '#6e263c' },
-    { id: 'gb_gacha_e_pickles', title: '电子榨菜王', name: '电子榨菜王', gachaTier: 'SR', tier: 3, frame: 'gframe_pickle_jar', icon: 'bowl', bg: 'linear-gradient(120deg,#eefbe8,#fff7dc,#e8f8f0)', bd: '#6cb572', fg: '#225428' },
-    { id: 'gb_gacha_read_nonsense', title: '已读乱回专家', name: '已读乱回专家', gachaTier: 'SSR', tier: 4, frame: 'gframe_chat_pop', icon: 'chat_bubble', bg: 'linear-gradient(115deg,#e8f2ff,#f7e8ff,#fff0e6,#e8f2ff)', bd: '#7f98e0', fg: '#263870' },
-    { id: 'gb_gacha_chaos_king', title: '专业捣蛋鬼', name: '专业捣蛋鬼', gachaTier: 'SR', tier: 3, frame: 'gframe_chaos_paw', icon: 'paw', bg: 'linear-gradient(120deg,#fff0ec,#fff6db,#f2ecff)', bd: '#e08472', fg: '#73291d' },
-    { id: 'gb_gacha_sleepy_rich', title: '躺赢富贵汪', name: '躺赢富贵汪', gachaTier: 'SSR', tier: 4, frame: 'gframe_gold_pillow', icon: 'coins', bg: 'linear-gradient(115deg,#fff5cc,#ffe8f0,#e6f6ff,#fff5cc)', bd: '#dfa236', fg: '#6b3e06' },
+    { id: 'gb_gacha_lucky_dog', title: '欧气小狗王', name: '[扭蛋] 欧气小狗王', gachaTier: 'SSR', tier: 4, frame: 'gframe_lucky_dice', icon: 'diamond_cup', bg: 'linear-gradient(115deg,#fff3c4,#ffd9ec,#d6f5ff,#fff3c4)', bd: '#e0a238', fg: '#6b3b08' },
+    { id: 'gb_gacha_star_sugar', title: '摘星小甜豆', name: '[扭蛋] 摘星小甜豆', gachaTier: 'SSR', tier: 4, frame: 'gframe_candy_jar', icon: 'candy_bear_blue', bg: 'linear-gradient(115deg,#e6e4ff,#f7e3ff,#d9f4ff,#e6e4ff)', bd: '#8c82e6', fg: '#2d2578' },
+    { id: 'gb_gacha_melon_eater', title: '一线吃瓜汪', name: '[扭蛋] 一线吃瓜汪', gachaTier: 'SR', tier: 3, frame: 'gframe_melon_slice', icon: 'melon_slice', bg: 'linear-gradient(120deg,#e6fae8,#ffe8ef,#e8fce8,#e6fae8)', bd: '#68bd7e', fg: '#1f5932' },
+    { id: 'gb_gacha_sleep_master', title: '国家一级睡狗', name: '[扭蛋] 国家一级睡狗', gachaTier: 'SR', tier: 3, frame: 'gframe_sleep_zzz', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#eef5ff,#f5ecff,#fff9eb,#eef5ff)', bd: '#8ea8e6', fg: '#2b3f75' },
+    { id: 'gb_gacha_snack_thief', title: '零食质检员', name: '[扭蛋] 零食质检员', gachaTier: 'SR', tier: 3, frame: 'gframe_cookie_bite', icon: 'cookie_gold', bg: 'linear-gradient(120deg,#fff3d6,#ffe8e0,#fff7db,#fff3d6)', bd: '#e09d52', fg: '#703d0c' },
+    { id: 'gb_gacha_slacking_pro', title: '合法摸鱼狗', name: '[扭蛋] 合法摸鱼狗', gachaTier: 'SR', tier: 3, frame: 'gframe_fish_ripple', icon: 'fish_mint', bg: 'linear-gradient(120deg,#e4faf5,#efe8ff,#e8f7ff,#e4faf5)', bd: '#6bbdb3', fg: '#1d5452' },
+    { id: 'gb_gacha_night_snack', title: '深夜干饭王', name: '[扭蛋] 深夜干饭王', gachaTier: 'SR', tier: 3, frame: 'gframe_ramen_steam', icon: 'ice_cream', bg: 'linear-gradient(120deg,#fff4e0,#ffe8f0,#f4ecff,#fff4e0)', bd: '#d99862', fg: '#6b3a12' },
+    { id: 'gb_gacha_cloud_drifter', title: '云端发呆冠军', name: '[扭蛋] 云端发呆冠军', gachaTier: 'SR', tier: 3, frame: 'gframe_cloud_kite', icon: 'cloud_cup_ico', bg: 'linear-gradient(120deg,#eaf6ff,#f4f0ff,#eef9ff)', bd: '#8ab8e6', fg: '#234c78' },
+    { id: 'gb_gacha_destiny_star', title: '满级幸运星', name: '[扭蛋] 满级幸运星', gachaTier: 'SSR', tier: 4, frame: 'gframe_clover_orbit', icon: 'star_ribbon_b', bg: 'linear-gradient(115deg,#dfe8ff,#f5e4ff,#d9f8ff,#fff5cc)', bd: '#7e90e6', fg: '#232e6e' },
+    { id: 'gb_gacha_couch_potato', title: '沙发粘合剂', name: '[扭蛋] 沙发粘合剂', gachaTier: 'SR', tier: 3, frame: 'gframe_sofa_cushion', icon: 'pillow_nap', bg: 'linear-gradient(120deg,#f5f0ff,#fff3e8,#eef6ff)', bd: '#9e90d9', fg: '#3b2e70' },
+    { id: 'gb_gacha_no_work_dog', title: '退堂鼓鼓手', name: '[扭蛋] 退堂鼓鼓手', gachaTier: 'SR', tier: 3, frame: 'gframe_drum_beat', icon: 'bell_luck', bg: 'linear-gradient(120deg,#fff0f3,#fff6e0,#f0f5ff)', bd: '#e08ca4', fg: '#6e263c' },
+    { id: 'gb_gacha_e_pickles', title: '电子榨菜王', name: '[扭蛋] 电子榨菜王', gachaTier: 'SR', tier: 3, frame: 'gframe_pickle_jar', icon: 'bowl', bg: 'linear-gradient(120deg,#eefbe8,#fff7dc,#e8f8f0)', bd: '#6cb572', fg: '#225428' },
+    { id: 'gb_gacha_read_nonsense', title: '已读乱回专家', name: '[扭蛋] 已读乱回专家', gachaTier: 'SSR', tier: 4, frame: 'gframe_chat_pop', icon: 'chat_bubble', bg: 'linear-gradient(115deg,#e8f2ff,#f7e8ff,#fff0e6,#e8f2ff)', bd: '#7f98e0', fg: '#263870' },
+    { id: 'gb_gacha_chaos_king', title: '专业捣蛋鬼', name: '[扭蛋] 专业捣蛋鬼', gachaTier: 'SR', tier: 3, frame: 'gframe_chaos_paw', icon: 'paw', bg: 'linear-gradient(120deg,#fff0ec,#fff6db,#f2ecff)', bd: '#e08472', fg: '#73291d' },
+    { id: 'gb_gacha_sleepy_rich', title: '躺赢富贵汪', name: '[扭蛋] 躺赢富贵汪', gachaTier: 'SSR', tier: 4, frame: 'gframe_gold_pillow', icon: 'coins', bg: 'linear-gradient(115deg,#fff5cc,#ffe8f0,#e6f6ff,#fff5cc)', bd: '#dfa236', fg: '#6b3e06' },
   ];
 
   const GACHA_SNACKS = [
@@ -2574,14 +2574,14 @@
 
   // 冒险极低概率神秘隐藏掉落（不提示、不售卖：2款隐藏气泡 + 2款隐藏走路特效）
   const SECRET_ADV_BUBBLES = [
-    { id: 'bub_adv_cloudsea', name: '云海仙境框', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '冒险极低概率偶遇的云海秘境动态限定：层叠云海翻涌与金霞微光升腾' },
-    { id: 'bub_adv_stardust', name: '星尘奇遇框', dyn: 'gdyn_comet_arc', charms: [], desc: '冒险极低概率偶遇的星尘秘境动态限定：双色彗星弧光绕框拖曳星尘尾迹' },
+    { id: 'bub_adv_cloudsea', name: '[秘境] 云海仙境框', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '冒险极低概率偶遇的云海秘境动态限定：层叠云海翻涌与金霞微光升腾' },
+    { id: 'bub_adv_stardust', name: '[秘境] 星尘奇遇框', dyn: 'gdyn_comet_arc', charms: [], desc: '冒险极低概率偶遇的星尘秘境动态限定：双色彗星弧光绕框拖曳星尘尾迹' },
   ];
   const BOND_REWARD_ITEMS = {
-    lv6: { kind: 'bubble', id: 'bub_bond_lv6', name: '心意微光泡' },
+    lv6: { kind: 'bubble', id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡' },
     lv7: { kind: 'acc', id: 'acc_bond_lv7', name: '[好感Lv7] 同心结挂坠' },
     lv8: { kind: 'comp', id: 'comp_bond_lv8', name: '[好感Lv8] 迷你小狗玩偶' },
-    lv9: { kind: 'avatarframe', id: 'af_bond_lv9', name: '星月守护框' },
+    lv9: { kind: 'avatarframe', id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框' },
     lv10: { kind: 'outfit', id: 'outfit_bond_lv10', name: '[好感Lv10] 十级星纱礼裙' },
   };
   const SPECIAL_EVENT_OUTFITS = [
@@ -2593,22 +2593,22 @@
     { id: 'ck_outfit_century_cloak', name: '百日纪念斗篷' },
   ];
   const SPECIAL_EVENT_BUBBLES = [
-    { id: 'bub_ach_fluff', name: '暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
-    { id: 'bub_bond_lv6', name: '心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
-    { id: 'bub_bday_cake', name: '蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
-    { id: 'bub_ck_vintage_post', name: '邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
-    { id: 'bub_fest_lantern', name: '佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
+    { id: 'bub_ach_fluff', name: '[成就] 暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
+    { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
+    { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
+    { id: 'bub_ck_vintage_post', name: '[签到] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
+    { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
-    { id: 'af_adv_cloud', name: '云端小翅膀', dyn: 'gadyn_feather_drift', charms: [], desc: '冒险极低概率偶遇的云端仙羽动态头像框：双侧柔羽轻扇配上升云雾光环' },
-    { id: 'af_adv_star', name: '星空小轨迹', dyn: 'gadyn_orbital_ring', charms: [], desc: '冒险极低概率偶遇的银河星轨动态头像框：双色星轨流光与双星绕框公转' },
+    { id: 'af_adv_cloud', name: '[秘境] 云端小翅膀', dyn: 'gadyn_feather_drift', charms: [], desc: '冒险极低概率偶遇的云端仙羽动态头像框：双侧柔羽轻扇配上升云雾光环' },
+    { id: 'af_adv_star', name: '[秘境] 星空小轨迹', dyn: 'gadyn_orbital_ring', charms: [], desc: '冒险极低概率偶遇的银河星轨动态头像框：双色星轨流光与双星绕框公转' },
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
-    { id: 'af_ach_velvet', name: '高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
-    { id: 'af_bond_lv9', name: '星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
-    { id: 'af_bday_candle', name: '奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
-    { id: 'af_ck_amber_press', name: '琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
-    { id: 'af_fest_lantern', name: '花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
+    { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
+    { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
+    { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
+    { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
+    { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
   ];
   const SECRET_ADV_TRAILS = [
     { id: 'trail_adv_meteor', name: '[秘境] 流星碎光', cols: ['#ffe478', '#9ee8ff', '#ffffff'], desc: '冒险极低概率偶遇的流星碎光足迹' },
@@ -2657,6 +2657,8 @@
     },
     charCustomGroups: [{ id: 'grp_fav', name: '收藏' }, { id: 'grp_play', name: '常玩' }],
     charGroups: {},
+    chatCustomGroups: [{ id: 'cgrp_fav', name: '常用' }],
+    chatGroups: {},
     charDelWbPrompt: true,
     charRandomSkipRecent: true,
     personaCustomGroups: [
@@ -4644,7 +4646,7 @@
     .st-tb-range { flex: 1; height: 3px; accent-color: var(--tb-accent); cursor: pointer; }
 
     .st-tb-chat-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 11px; color: var(--tb-sub); }
-    .st-tb-chat-list { display: flex; flex-direction: column; gap: 6px; }
+    .st-tb-chat-list { display: flex; flex-direction: column; gap: 6px; max-height: 230px; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
     .st-tb-chat-item {
       padding: 8px 9px;
       border-radius: 7px;
@@ -7042,6 +7044,7 @@
       image-rendering: crisp-edges;
       flex-shrink: 0;
     }
+    #st-px-shop-main-tabs .st-px-btn { padding: 0 2px !important; line-height: 1 !important; padding-top: 0 !important; }
     .st-px-subtabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -8180,7 +8183,7 @@
             <button class="st-px-btn" data-shop-main="comp" type="button">跟班</button>
             <button class="st-px-btn" data-shop-main="goods" type="button">杂货</button>
             <button class="st-px-btn" data-shop-main="gacha" type="button">扭蛋</button>
-            <button class="st-px-btn" data-shop-main="sell" type="button">售卖铺</button>
+            <button class="st-px-btn" data-shop-main="sell" type="button">售卖</button>
           </div>
           <div id="st-px-gacha-view" style="display:none;">
             <div class="st-px-adv-card" style="text-align:center;">
@@ -9004,7 +9007,16 @@
             </div>
             <div class="st-tb-row">
               <input class="st-tb-input" id="st-tb-chat-filter" type="text" placeholder="筛选聊天名称" />
+              <button class="st-tb-btn" id="st-tb-chat-cat-add" type="button">+分类</button>
             </div>
+            <div id="st-tb-chat-cat-add-box" style="display:none;margin-bottom:6px;">
+              <div class="st-tb-row">
+                <input class="st-tb-input" id="st-tb-chat-cat-input" type="text" placeholder="输入新聊天分类名称" />
+                <button class="st-tb-btn primary" id="st-tb-chat-cat-save" type="button">添加</button>
+                <button class="st-tb-btn" id="st-tb-chat-cat-cancel" type="button">取消</button>
+              </div>
+            </div>
+            <div id="st-tb-chat-cats" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;"></div>
             <div class="st-tb-chat-list" id="st-tb-chat-list"></div>
           </div>
 
@@ -9250,7 +9262,15 @@
             </div>
             <div class="st-tb-row">
               <select class="st-tb-select" id="st-tb-font-select"></select>
+              <button class="st-tb-btn" id="st-tb-font-rename" type="button">重命名</button>
               <button class="st-tb-btn" id="st-tb-font-del" type="button">删除</button>
+            </div>
+            <div id="st-tb-font-rename-box" style="display:none; margin-bottom:6px;">
+              <div class="st-tb-row">
+                <input class="st-tb-input" id="st-tb-font-rename-input" type="text" placeholder="输入新的字体名称" />
+                <button class="st-tb-btn primary" id="st-tb-font-rename-save" type="button">保存</button>
+                <button class="st-tb-btn" id="st-tb-font-rename-cancel" type="button">取消</button>
+              </div>
             </div>
             <div class="st-tb-grid-2" style="margin-bottom:6px;">
               <button class="st-tb-btn" id="st-tb-font-upload-btn" type="button">上传本地字体</button>
@@ -9642,6 +9662,11 @@
   const uiFontSizeVal = root.querySelector('#st-tb-ui-fontsize-val');
   const fontSelect = root.querySelector('#st-tb-font-select');
   const fontDelBtn = root.querySelector('#st-tb-font-del');
+  const fontRenameBtn = root.querySelector('#st-tb-font-rename');
+  const fontRenameBox = root.querySelector('#st-tb-font-rename-box');
+  const fontRenameInput = root.querySelector('#st-tb-font-rename-input');
+  const fontRenameSaveBtn = root.querySelector('#st-tb-font-rename-save');
+  const fontRenameCancelBtn = root.querySelector('#st-tb-font-rename-cancel');
   const fontUploadBtn = root.querySelector('#st-tb-font-upload-btn');
   const fontFileInput = root.querySelector('#st-tb-font-file');
   const fontUrlToggleBtn = root.querySelector('#st-tb-font-url-toggle');
@@ -11405,14 +11430,109 @@
     }
   };
 
+  let activeChatCat = 'all';
+  const chatCatsBarEl = root.querySelector('#st-tb-chat-cats');
+  const chatCatAddBtn = root.querySelector('#st-tb-chat-cat-add');
+  const chatCatAddBox = root.querySelector('#st-tb-chat-cat-add-box');
+  const chatCatInput = root.querySelector('#st-tb-chat-cat-input');
+  const chatCatSaveBtn = root.querySelector('#st-tb-chat-cat-save');
+  const chatCatCancelBtn = root.querySelector('#st-tb-chat-cat-cancel');
+
+  const getChatGroupKey = (fileName) => {
+    const char = getCurrentCharacter();
+    const charKey = char ? (char.avatar || char.name || 'char') : 'global';
+    return `${charKey}::${cleanFileName(fileName)}`;
+  };
+
+  const renderChatCatsBar = () => {
+    if (!chatCatsBarEl) return;
+    if (!Array.isArray(config.chatCustomGroups)) config.chatCustomGroups = [{ id: 'cgrp_fav', name: '常用' }];
+    if (!config.chatGroups || typeof config.chatGroups !== 'object') config.chatGroups = {};
+    chatCatsBarEl.innerHTML = '';
+    const cats = [{ id: 'all', name: '全部' }, { id: 'none', name: '未分类' }, ...config.chatCustomGroups];
+    cats.forEach(cat => {
+      const wrap = doc.createElement('span');
+      wrap.style.cssText = 'display:inline-flex;align-items:center;gap:2px;';
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = `st-tb-mini-btn${activeChatCat === cat.id ? ' active' : ''}`;
+      b.textContent = cat.name;
+      b.addEventListener('click', () => {
+        activeChatCat = cat.id;
+        renderChatList();
+      });
+      wrap.appendChild(b);
+      if (cat.id !== 'all' && cat.id !== 'none') {
+        const delC = doc.createElement('button');
+        delC.type = 'button';
+        delC.className = 'st-tb-mini-btn';
+        delC.textContent = '×';
+        delC.title = `删除分类「${cat.name}」`;
+        delC.style.cssText = 'padding:0 4px;opacity:0.7;';
+        delC.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openConfirmModal({
+            title: '删除聊天分类',
+            message: `确定删除分类「${cat.name}」吗？`,
+            warning: '该分类下的聊天记录会回到“未分类”，不会被删除。',
+            okText: '删除分类',
+            onConfirm: () => {
+              config.chatCustomGroups = (config.chatCustomGroups || []).filter(g => g.id !== cat.id);
+              Object.keys(config.chatGroups || {}).forEach(k => {
+                if (config.chatGroups[k] === cat.id) delete config.chatGroups[k];
+              });
+              if (activeChatCat === cat.id) activeChatCat = 'all';
+              saveConfig();
+              renderChatList();
+            },
+          });
+        });
+        wrap.appendChild(delC);
+      }
+      chatCatsBarEl.appendChild(wrap);
+    });
+  };
+
+  if (chatCatAddBtn && chatCatAddBox && chatCatInput) {
+    chatCatAddBtn.addEventListener('click', () => {
+      const show = chatCatAddBox.style.display === 'none';
+      chatCatAddBox.style.display = show ? 'block' : 'none';
+      if (show) chatCatInput.focus();
+    });
+    const doAddChatCat = () => {
+      const nm = String(chatCatInput.value || '').trim().slice(0, 12);
+      if (!nm) { chatCatAddBox.style.display = 'none'; return; }
+      if (!Array.isArray(config.chatCustomGroups)) config.chatCustomGroups = [];
+      const id = `cgrp_${Date.now()}`;
+      config.chatCustomGroups.push({ id, name: nm });
+      chatCatInput.value = '';
+      chatCatAddBox.style.display = 'none';
+      activeChatCat = id;
+      saveConfig();
+      renderChatList();
+    };
+    if (chatCatSaveBtn) chatCatSaveBtn.addEventListener('click', doAddChatCat);
+    if (chatCatCancelBtn) chatCatCancelBtn.addEventListener('click', () => { chatCatAddBox.style.display = 'none'; });
+    chatCatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doAddChatCat();
+      if (e.key === 'Escape') chatCatAddBox.style.display = 'none';
+    });
+  }
+
   const renderChatList = () => {
+    renderChatCatsBar();
     const ctx = getContext();
     const currentId = cleanFileName(ctx?.chatId);
     const filter = chatFilterText.trim().toLowerCase();
 
-    const filtered = filter
-      ? chatListCache.filter(item => cleanFileName(item.file_name).toLowerCase().includes(filter))
-      : chatListCache;
+    const filtered = chatListCache.filter(item => {
+      const clean = cleanFileName(item.file_name);
+      if (filter && !clean.toLowerCase().includes(filter)) return false;
+      const gId = (config.chatGroups || {})[getChatGroupKey(item.file_name)] || '';
+      if (activeChatCat === 'none') return !gId;
+      if (activeChatCat !== 'all') return gId === activeChatCat;
+      return true;
+    });
 
     if (!filtered.length) {
       chatListEl.innerHTML = `<div class="st-tb-empty">${filter ? '没有匹配的聊天记录' : '暂无聊天文件'}</div>`;
@@ -11507,6 +11627,32 @@
           });
         });
 
+        const catSel = doc.createElement('select');
+        catSel.className = 'st-tb-select';
+        catSel.style.cssText = 'flex:0 0 auto;width:auto;max-width:74px;height:22px;font-size:10px;padding:0 4px;';
+        const curGId = (config.chatGroups || {})[getChatGroupKey(item.file_name)] || '';
+        const optNone = doc.createElement('option');
+        optNone.value = '';
+        optNone.textContent = '未分类';
+        catSel.appendChild(optNone);
+        (config.chatCustomGroups || []).forEach(g => {
+          const opt = doc.createElement('option');
+          opt.value = g.id;
+          opt.textContent = g.name;
+          catSel.appendChild(opt);
+        });
+        catSel.value = curGId;
+        catSel.addEventListener('change', (e) => {
+          e.stopPropagation();
+          config.chatGroups = config.chatGroups || {};
+          const key = getChatGroupKey(item.file_name);
+          if (catSel.value) config.chatGroups[key] = catSel.value;
+          else delete config.chatGroups[key];
+          saveConfig();
+          renderChatList();
+        });
+
+        top.appendChild(catSel);
         top.appendChild(renameBtn);
         top.appendChild(delChatBtn);
 
@@ -20382,8 +20528,9 @@
     if (!pupShopGridEl) return;
     const isConsumable = shopMainCat === 'goods' && (shopSubCat === 'gear' || shopSubCat === 'snack');
     const isGacha = shopMainCat === 'gacha';
-    syncShopOwnFilterUI(isGacha || isConsumable);
-    if (isGacha || isConsumable) {
+    const isSell = shopMainCat === 'sell';
+    syncShopOwnFilterUI(isGacha || isConsumable || isSell);
+    if (isGacha || isConsumable || isSell) {
       pupShopGridEl.dataset.ownFilter = 'all';
       return;
     }
@@ -20615,6 +20762,10 @@
     if (pupShopSubTabsEl && isGachaTab) pupShopSubTabsEl.style.display = 'none';
     if (pupShopGridEl) pupShopGridEl.style.display = isGachaTab ? 'none' : 'grid';
     if (pupShopCatHeadEl?.parentElement) pupShopCatHeadEl.parentElement.style.display = isGachaTab ? 'none' : 'flex';
+    const _vBoxG = root.querySelector('#st-px-sell-vendor');
+    if (_vBoxG && isGachaTab) _vBoxG.style.display = 'none';
+    const _pvWrapG = root.querySelector('.st-px-pane[data-px-pane="shop"] .st-px-preview-wrap');
+    if (_pvWrapG && isGachaTab) _pvWrapG.style.display = '';
     if (isGachaTab) { renderGachaView(); return; }
     const subDefs = shopMainCat === 'outfit'
       ? [
@@ -20675,6 +20826,53 @@
     let list = [];
     let headLabel = '';
     if (shopMainCat === 'sell') {
+      syncShopOwnFilterUI(true);
+      const previewWrap = root.querySelector('.st-px-pane[data-px-pane="shop"] .st-px-preview-wrap');
+      if (previewWrap) previewWrap.style.display = 'none';
+      const merchantBox = root.querySelector('#st-px-merchant-box');
+      if (merchantBox) merchantBox.style.display = 'none';
+
+      let vendorBox = root.querySelector('#st-px-sell-vendor');
+      if (!vendorBox && previewWrap && previewWrap.parentElement) {
+        vendorBox = doc.createElement('div');
+        vendorBox.id = 'st-px-sell-vendor';
+        vendorBox.className = 'st-px-preview-wrap';
+        vendorBox.style.cssText = 'margin-bottom:6px;';
+        vendorBox.innerHTML = `<div class="st-px-preview-box" style="align-items:center;gap:8px;padding:6px 8px;">
+          <canvas id="st-px-sell-vendor-cv" width="44" height="44" style="width:44px;height:44px;flex-shrink:0;border:2px solid #3b2a22;background:#fff8eb;image-rendering:pixelated;"></canvas>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">小狸回收铺 · 掌柜阿狸</div>
+            <div id="st-px-sell-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「囤着不用的道具、零食、鲜花和料理，都可以拿来我这儿换小狗币哦~」</div>
+          </div>
+        </div>`;
+        previewWrap.parentElement.insertBefore(vendorBox, previewWrap.nextSibling);
+        // 绘制像素小狐狸/小狸花回收商人头像
+        const vCv = vendorBox.querySelector('#st-px-sell-vendor-cv');
+        if (vCv) {
+          const vg = vCv.getContext('2d');
+          vg.imageSmoothingEnabled = false;
+          const p = (x, y, w, h, c) => { vg.fillStyle = c; vg.fillRect(x, y, w, h); };
+          p(0, 0, 44, 44, '#fff4df');
+          // 橘白小狐狸耳朵
+          p(8, 6, 8, 9, '#d97236'); p(10, 9, 4, 5, '#ffd4c2');
+          p(28, 6, 8, 9, '#d97236'); p(30, 9, 4, 5, '#ffd4c2');
+          // 头部与白腮
+          p(9, 13, 26, 18, '#e88242');
+          p(9, 22, 26, 9, '#fff7ed');
+          p(12, 19, 20, 4, '#f5a262');
+          // 眼睛与鼻头
+          p(14, 19, 3, 3, '#2d1e18'); p(27, 19, 3, 3, '#2d1e18');
+          p(14, 19, 1, 1, '#ffffff'); p(27, 19, 1, 1, '#ffffff');
+          p(20, 23, 4, 3, '#2d1e18');
+          p(19, 26, 6, 1, '#b85a3a');
+          // 围巾与金币小徽章
+          p(11, 31, 22, 11, '#5d7fa3');
+          p(14, 31, 16, 4, '#d95b5b');
+          p(20, 35, 4, 4, '#ffd24d');
+        }
+      }
+      if (vendorBox) vendorBox.style.display = 'block';
+
       const sellCat = shopSubCat || 'all';
       const inv = config.puppyInventory || {};
       const flInv = config.puppyGarden?.unlocked || {};
@@ -20683,7 +20881,7 @@
 
       if (sellCat === 'all' || sellCat === 'gear') {
         SHOP_PUP_GOODS.filter(x => x.cat === 'gear' && (inv[x.id] || 0) > 0).forEach(x => {
-          sellItems.push({ kind: 'gear', catLabel: '道具', id: x.id, name: x.name, qty: Math.floor(inv[x.id]), sellPrice: Math.max(1, Math.floor((x.price || 4) * 0.5)), desc: x.desc || '' });
+          sellItems.push({ kind: 'gear', catLabel: '道具', id: x.id, name: x.name, qty: Math.floor(inv[x.id]), sellPrice: Math.max(1, Math.floor((x.price || 4) * 0.5)), raw: x });
         });
       }
       if (sellCat === 'all' || sellCat === 'snack') {
@@ -20691,7 +20889,7 @@
           const q = Math.floor(inv[x.id] || 0);
           if (q > 0) {
             const sp = x.price ? Math.max(1, Math.floor(x.price * 0.5)) : 3;
-            sellItems.push({ kind: 'snack', catLabel: '零食', id: x.id, name: x.name, qty: q, sellPrice: sp, desc: x.desc || '' });
+            sellItems.push({ kind: 'snack', catLabel: '零食', id: x.id, name: x.name, qty: q, sellPrice: sp, raw: x });
           }
         });
       }
@@ -20700,33 +20898,40 @@
           const q = Math.floor(flInv[fl.id] || 0);
           if (q > 0) {
             const sp = Math.max(1, Math.floor((fl.reward || 3) * 0.6));
-            sellItems.push({ kind: 'flower', catLabel: '花朵', id: fl.id, name: fl.name, qty: q, sellPrice: sp, col: fl.col, desc: fl.note || '' });
+            sellItems.push({ kind: 'flower', catLabel: '花朵', id: fl.id, name: fl.name, qty: q, sellPrice: sp, raw: fl });
           }
         });
       }
       if (sellCat === 'all' || sellCat === 'dish') {
-        const allDishes = [...PUP_KITCHEN_RECIPES, ...PUP_DARK_DISHES];
-        allDishes.forEach(kd => {
+        PUP_KITCHEN_RECIPES.forEach(kd => {
           const q = Math.floor(dishInv[kd.id] || 0);
           if (q > 0) {
-            const sp = kd.coins ? Math.max(1, Math.floor(kd.coins * 0.8)) : 1;
-            sellItems.push({ kind: 'dish', catLabel: '食物', id: kd.id, name: kd.name, qty: q, sellPrice: sp, col: kd.col, desc: kd.desc || '' });
+            const sp = kd.coins ? Math.max(1, Math.floor(kd.coins * 0.8)) : 2;
+            sellItems.push({ kind: 'dish', catLabel: '食物', id: kd.id, name: kd.name, qty: q, sellPrice: sp, raw: kd, isDark: false });
+          }
+        });
+        PUP_DARK_DISHES.forEach(kd => {
+          const q = Math.floor(dishInv[kd.id] || 0);
+          if (q > 0) {
+            sellItems.push({ kind: 'dish', catLabel: '暗黑料理', id: kd.id, name: kd.name, qty: q, sellPrice: 1, raw: kd, isDark: true });
           }
         });
       }
 
       const sellLbl = subDefs.find(d => d.id === sellCat)?.label || '全部';
-      if (pupShopCatHeadEl) pupShopCatHeadEl.textContent = `售卖铺 · ${sellLbl} (${sellItems.length}种)`;
-      pupShopGridEl.style.gridTemplateColumns = '';
+      if (pupShopCatHeadEl) pupShopCatHeadEl.textContent = `售卖 · ${sellLbl} (${sellItems.length}种)`;
+      if (pupShopNoticeEl) pupShopNoticeEl.textContent = '确认后换取小狗币';
+      pupShopGridEl.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+      pupShopGridEl.style.overflowX = 'hidden';
       pupShopGridEl.innerHTML = '';
 
       if (!sellItems.length) {
         const empty = doc.createElement('div');
-        empty.style.cssText = 'grid-column:1/-1;text-align:center;font-size:10px;opacity:0.7;padding:18px 6px;';
+        empty.style.cssText = 'grid-column:1/-1;text-align:center;font-size:10px;opacity:0.72;padding:18px 6px;';
         empty.textContent = '暂无可售卖的物品（道具、零食、花朵、厨房食物都可以在这里换成小狗币哦~）';
         pupShopGridEl.appendChild(empty);
       } else {
-        const doSell = (it, count) => {
+        const executeSell = (it, count) => {
           const cnt = Math.max(1, Math.min(it.qty, count));
           if (it.kind === 'gear' || it.kind === 'snack') {
             config.puppyInventory = config.puppyInventory || {};
@@ -20749,44 +20954,87 @@
           saveConfig();
           updatePupStatBars();
           renderPupShop();
+          const vMsg = root.querySelector('#st-px-sell-vendor-msg');
+          if (vMsg) vMsg.textContent = `「谢谢惠顾！${it.name} ×${cnt} 我收下啦，这是给你的 ${gained} 枚小狗币~」`;
           if (config.puppyEnabled) showPuppyBubble(`卖出 ${it.name} x${cnt}，换到 ${gained} 枚小狗币啦~`, 2000);
+        };
+
+        const confirmAndSell = (it, count) => {
+          const cnt = Math.max(1, Math.min(it.qty, count));
+          const gained = it.sellPrice * cnt;
+          openGuardConfirm(
+            `确认售卖【${it.name}】？`,
+            `将卖出 ${it.name} ×${cnt}，可获得 ${gained} 枚小狗币（售出后不可撤回）。`,
+            () => executeSell(it, cnt),
+            `确认卖出 (+${gained}币)`,
+            true
+          );
+        };
+
+        const makeItemIcon = (it) => {
+          if (it.kind === 'gear' || it.kind === 'snack') {
+            const cv = makeGoodsIconCanvas(it.id, false);
+            cv.style.cssText = 'width:28px;height:28px;display:block;flex-shrink:0;image-rendering:pixelated;';
+            return cv;
+          }
+          if (it.kind === 'flower') {
+            const cv = doc.createElement('canvas');
+            cv.width = 28; cv.height = 28;
+            cv.style.cssText = 'width:28px;height:28px;display:block;flex-shrink:0;';
+            const g = cv.getContext('2d');
+            drawFlowerBlossom(g, it.raw, 14, 14, 10);
+            return cv;
+          }
+          const cv = makeDishCanvas(it.raw, Boolean(it.isDark), false);
+          cv.style.cssText = 'width:28px;height:28px;display:block;flex-shrink:0;';
+          return cv;
         };
 
         sellItems.forEach(it => {
           const card = doc.createElement('div');
-          card.className = 'st-px-shop-card';
-          card.style.cssText = 'display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:6px;';
+          card.className = 'st-px-shop-item';
+          card.style.cssText = 'min-width:0;overflow:hidden;box-sizing:border-box;cursor:default;padding:5px 6px;gap:4px;';
           const top = doc.createElement('div');
-          top.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
-            <span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${it.col ? `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${it.col};margin-right:3px;border:1px solid rgba(0,0,0,0.2);"></span>` : ''}${it.name}</span>
+          top.style.cssText = 'display:flex;align-items:center;gap:5px;min-width:0;';
+          const iconEl = makeItemIcon(it);
+          const meta = doc.createElement('div');
+          meta.style.cssText = 'flex:1;min-width:0;';
+          meta.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0;">
+            <span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${it.name}</span>
             <span style="font-size:9px;opacity:0.75;flex-shrink:0;">x${it.qty}</span>
           </div>
-          <div style="font-size:9px;opacity:0.78;margin-top:2px;">[${it.catLabel}] 单价 ${it.sellPrice} 币</div>`;
+          <div style="font-size:9px;opacity:0.78;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">[${it.catLabel}] ${it.sellPrice}币/个</div>`;
+          top.append(iconEl, meta);
+
           const btns = doc.createElement('div');
-          btns.style.cssText = 'display:flex;gap:4px;margin-top:2px;';
+          btns.style.cssText = 'display:flex;gap:4px;';
           const b1 = doc.createElement('button');
           b1.type = 'button';
           b1.className = 'st-px-btn';
-          b1.style.cssText = 'flex:1;height:21px;font-size:9px;padding:0 4px;';
-          b1.textContent = it.qty > 1 ? `卖1 (+${it.sellPrice})` : `卖出 (+${it.sellPrice})`;
-          b1.addEventListener('click', () => doSell(it, 1));
+          b1.style.cssText = 'flex:1;height:21px;font-size:9px;padding:0 2px;min-width:0;';
+          b1.textContent = it.qty > 1 ? `卖1(+${it.sellPrice})` : `卖出(+${it.sellPrice})`;
+          b1.addEventListener('click', () => confirmAndSell(it, 1));
           btns.appendChild(b1);
           if (it.qty > 1) {
             const bAll = doc.createElement('button');
             bAll.type = 'button';
             bAll.className = 'st-px-btn active';
-            bAll.style.cssText = 'flex:1;height:21px;font-size:9px;padding:0 4px;';
-            bAll.textContent = `全卖 (+${it.sellPrice * it.qty})`;
-            bAll.addEventListener('click', () => doSell(it, it.qty));
+            bAll.style.cssText = 'flex:1;height:21px;font-size:9px;padding:0 2px;min-width:0;';
+            bAll.textContent = `全卖(+${it.sellPrice * it.qty})`;
+            bAll.addEventListener('click', () => confirmAndSell(it, it.qty));
             btns.appendChild(bAll);
           }
           card.append(top, btns);
           pupShopGridEl.appendChild(card);
         });
       }
-      drawShopPreview();
       return;
     }
+    const _pvWrap = root.querySelector('.st-px-pane[data-px-pane="shop"] .st-px-preview-wrap');
+    if (_pvWrap) _pvWrap.style.display = '';
+    const _vBox = root.querySelector('#st-px-sell-vendor');
+    if (_vBox) _vBox.style.display = 'none';
+    if (pupShopGridEl) pupShopGridEl.style.overflowX = '';
     if (shopMainCat === 'outfit') {
       list = SHOP_PUP_OUTFITS.filter(it => it.cat === shopSubCat);
       const lbl = subDefs.find(d => d.id === shopSubCat)?.label || '';
@@ -37295,6 +37543,16 @@
       if (config.activeTab === 'chats' || statChats.textContent === '-') {
         fetchCharacterChats();
       }
+    } else if (typeof rxDirty !== 'undefined' && rxDirty) {
+      rxDirty = false;
+      try {
+        const ctx = getContext();
+        if (typeof ctx?.reloadCurrentChat === 'function') {
+          ctx.reloadCurrentChat().then(() => cmNotify('正则已变更，已刷新当前聊天页面')).catch(() => {});
+        } else if (typeof win.reloadCurrentChat === 'function') {
+          win.reloadCurrentChat().then(() => cmNotify('正则已变更，已刷新当前聊天页面')).catch(() => {});
+        }
+      } catch (_) {}
     }
   };
 
@@ -37501,6 +37759,41 @@
     renderFontSelect();
     await applyCustomFont();
   });
+
+  if (fontRenameBtn && fontRenameBox && fontRenameInput) {
+    fontRenameBtn.addEventListener('click', () => {
+      const id = config.activeFontId;
+      const item = (config.fontRecipes || []).find(f => f.id === id);
+      if (!item) {
+        cmNotify('请先选择一个自定义字体配方');
+        return;
+      }
+      fontRenameInput.value = item.name || '';
+      fontRenameBox.style.display = 'block';
+      fontRenameInput.focus();
+    });
+    const doSaveFontRename = () => {
+      const id = config.activeFontId;
+      const item = (config.fontRecipes || []).find(f => f.id === id);
+      const nextName = String(fontRenameInput.value || '').trim();
+      if (!item || !nextName) {
+        fontRenameBox.style.display = 'none';
+        return;
+      }
+      item.name = nextName;
+      fontRenameBox.style.display = 'none';
+      saveConfig();
+      renderFontSelect();
+      applyCustomFont();
+      cmNotify(`字体已重命名为：${nextName}`);
+    };
+    if (fontRenameSaveBtn) fontRenameSaveBtn.addEventListener('click', doSaveFontRename);
+    if (fontRenameCancelBtn) fontRenameCancelBtn.addEventListener('click', () => { fontRenameBox.style.display = 'none'; });
+    fontRenameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') doSaveFontRename();
+      if (e.key === 'Escape') fontRenameBox.style.display = 'none';
+    });
+  }
 
   fontDelBtn.addEventListener('click', async () => {
     const id = config.activeFontId;
@@ -42724,6 +43017,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       b.classList.toggle('active', rich);
     });
   };
+  syncSeFmtUI();
   const toggleSeFmt = (e) => {
     if (e) e.stopPropagation();
     config.storyCopyRich = !(config.storyCopyRich !== false);
@@ -43873,6 +44167,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
 
   let rxListOpen = false;
   let rxOnlyOn = false;
+  let rxDirty = false;
   let rxCatFilter = 'all';
   const rxCatBtns = Array.from(root.querySelectorAll('[data-rx-cat]'));
 
@@ -43936,6 +44231,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       sw.className = 'st-tb-mini-btn' + (it.enabled ? ' active' : '');
       sw.textContent = it.enabled ? '开' : '关';
       sw.addEventListener('click', async () => {
+        rxDirty = true;
         const nextEnabled = !it.enabled;
         it.obj.disabled = !nextEnabled;
         try {
@@ -44003,6 +44299,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   });
   if (rxRefreshBtn) {
     rxRefreshBtn.addEventListener('click', async () => {
+      rxDirty = false;
       renderRegexList();
       try {
         const ctx = getContext();
