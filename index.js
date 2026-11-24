@@ -9661,9 +9661,9 @@
       phraseListEl.innerHTML = '<div class="st-tb-empty" style="padding:10px;">暂无快捷短语，点右上角「+ 新增」添加</div>';
       return;
     }
-    config.quickPhrases.forEach(ph => {
+    config.quickPhrases.forEach((ph, idx) => {
       const row = doc.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:6px;background:var(--tb-surface);border:1px solid var(--tb-border);min-height:28px;box-sizing:border-box;';
+      row.style.cssText = 'display:flex;align-items:center;gap:3px;padding:4px 7px;border-radius:6px;background:var(--tb-surface);border:1px solid var(--tb-border);min-height:28px;box-sizing:border-box;';
       const nm = doc.createElement('div');
       nm.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
       nm.textContent = ph.title || '未命名短语';
@@ -9680,23 +9680,26 @@
         b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
         return b;
       };
-      const renB = mkBtn('改', '重命名', () => {
+      const movePhrase = (dir) => {
+        const to = idx + dir;
+        if (to < 0 || to >= config.quickPhrases.length) return;
+        const tmp = config.quickPhrases[to];
+        config.quickPhrases[to] = config.quickPhrases[idx];
+        config.quickPhrases[idx] = tmp;
+        saveConfig();
+        renderPhraseList();
+        if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+        if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
+      };
+      if (idx > 0) row.appendChild(mkBtn('↑', '上移', () => movePhrase(-1)));
+      if (idx < config.quickPhrases.length - 1) row.appendChild(mkBtn('↓', '下移', () => movePhrase(1)));
+      const editB = mkBtn('编', '编辑名称与内容', () => {
         editingPhraseId = ph.id;
         if (phraseFormEl && phraseTitleInp && phraseTextInp) {
           phraseTitleInp.value = ph.title || '';
           phraseTextInp.value = ph.text || '';
           phraseFormEl.style.display = 'flex';
           phraseTitleInp.focus();
-          phraseTitleInp.select();
-        }
-      });
-      const editB = mkBtn('编', '编辑内容', () => {
-        editingPhraseId = ph.id;
-        if (phraseFormEl && phraseTitleInp && phraseTextInp) {
-          phraseTitleInp.value = ph.title || '';
-          phraseTextInp.value = ph.text || '';
-          phraseFormEl.style.display = 'flex';
-          phraseTextInp.focus();
         }
       });
       const delB = mkBtn('×', '删除', () => {
@@ -9715,7 +9718,7 @@
         });
       }, '#d9534f');
 
-      row.append(nm, renB, editB, delB);
+      row.append(nm, editB, delB);
       phraseListEl.appendChild(row);
     });
   };
@@ -47470,9 +47473,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               qList.innerHTML = '<div style="font-size:11px;opacity:0.68;text-align:center;padding:10px;">暂无快捷短语，点「+新增」添加</div>';
               return;
             }
-            arr.forEach(ph => {
+            arr.forEach((ph, idx) => {
               const item = doc.createElement('div');
-              item.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);min-height:26px;box-sizing:border-box;';
+              item.style.cssText = 'display:flex;align-items:center;gap:3px;padding:4px 6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);min-height:26px;box-sizing:border-box;';
               const nm = doc.createElement('span');
               nm.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
               nm.textContent = ph.title || '未命名';
@@ -47488,10 +47491,22 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
                 return b;
               };
+              const moveQ = (dir) => {
+                const to = idx + dir;
+                if (to < 0 || to >= config.quickPhrases.length) return;
+                const tmp = config.quickPhrases[to];
+                config.quickPhrases[to] = config.quickPhrases[idx];
+                config.quickPhrases[idx] = tmp;
+                saveConfig();
+                renderPhraseList();
+                syncQPop();
+                if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
+              };
+              if (idx > 0) item.appendChild(mkB('↑', '上移', () => moveQ(-1)));
+              if (idx < arr.length - 1) item.appendChild(mkB('↓', '下移', () => moveQ(1)));
               item.append(
                 nm,
-                mkB('改', '重命名', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTtl.focus(); qTtl.select(); }),
-                mkB('编', '编辑内容', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTxt.focus(); }),
+                mkB('编', '编辑名称与内容', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTtl.focus(); }),
                 mkB('×', '删除', () => {
                   openConfirmModal({
                     title: '删除快捷短语',
