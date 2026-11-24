@@ -879,8 +879,10 @@
     { id: 'mail_reader', title: '笔友小狗', desc: '累计查收 5 封小狗悄悄话信件', reward: 5, tier: 2, bg: 'linear-gradient(135deg,#fff5eb,#ffe8f0)', bd: '#e698a8', fg: '#782b40', icon: 'tag' },
     { id: 'hidden_secret_mail', title: '秘密收信人', desc: '收到任意 1 封隐藏悄悄话信件', reward: 7, tier: 3, hidden: true, frame: 'envelope', bg: 'linear-gradient(120deg,#fff0f6,#f0ebff,#fff8e0,#fff0f6)', bd: '#d982b8', fg: '#6b2050', icon: 'hearts' },
     { id: 'garden_bloom', title: '像素小花匠', desc: '亲手种出并收获 3 朵像素花', reward: 5, tier: 2, bg: 'linear-gradient(135deg,#eefce8,#fff8dc)', bd: '#7ac46a', fg: '#265c20', icon: 'flower' },
-    { id: 'garden_twin_miracle', title: '双生花蜜语', desc: '在花盆触发小蜜蜂催熟或双生花彩蛋', reward: 8, tier: 3, frame: 'twin_bee_bespoke', bg: 'linear-gradient(120deg,#ebfff4,#fffbe6,#f2faff)', bd: '#5fb882', fg: '#1d5434', icon: 'twin_nectar_bud' },
-    { id: 'kitchen_god_stroke', title: '神来一笔厨', desc: '在小厨房做菜时触发「神来一笔」彩蛋', reward: 8, tier: 3, frame: 'copper_pan_bespoke', bg: 'linear-gradient(120deg,#fff3e6,#fff9d9,#ffece8)', bd: '#d98848', fg: '#6b3814', icon: 'skillet_souffle' },
+    { id: 'garden_twin_miracle', title: '双生花蜜语', desc: '在花盆触发小蜜蜂催熟或双生花彩蛋', reward: 8, tier: 3, frame: 'twin_bee_bespoke', bg: 'linear-gradient(120deg,#ebfff4,#fffbe6,#f2faff)', bd: '#5fb882', fg: '#1d5434', icon: 'watering_can_mini' },
+    { id: 'kitchen_god_stroke', title: '神来一笔厨', desc: '在小厨房做菜时触发「神来一笔」彩蛋', reward: 8, tier: 3, frame: 'copper_pan_bespoke', bg: 'linear-gradient(120deg,#fff3e6,#fff9d9,#ffece8)', bd: '#d98848', fg: '#6b3814', icon: 'chef_hat_mini' },
+    { id: 'chat_floor_99', title: '百层同行者', desc: '单段聊天达到 99 层并触发楼层里程碑', reward: 12, tier: 4, frame: 'floor99_bespoke', bg: 'linear-gradient(115deg,#f3ecff,#fff6e8,#eaf6ff)', bd: '#9a7be0', fg: '#432878', icon: 'feather_scroll_mini' },
+    { id: 'chat_floor_1000', title: '千层长情契', desc: '单段聊天达到 1000 层，见证漫长陪伴', reward: 30, tier: 4, frame: 'floor1000_bespoke', bg: 'linear-gradient(115deg,#ffeaf2,#fff7d9,#ffe8e0)', bd: '#e07a96', fg: '#781f38', icon: 'eternal_knot_mini' },
     { id: 'hidden_mutant_flower', title: '变异花语师', desc: '培育出 1 朵隐藏变异传说花朵', reward: 8, tier: 3, hidden: true, frame: 'bloom_ult', bg: 'linear-gradient(120deg,#e6fff2,#ffeef8,#e8f4ff,#e6fff2)', bd: '#6ec49c', fg: '#1a543c', icon: 'flower' },
     { id: 'fashion_s_rank', title: '时尚评审团', desc: '在穿搭主题挑战中获得 S 或以上评价', reward: 5, tier: 2, bg: 'linear-gradient(135deg,#fff0f8,#eef2ff)', bd: '#b38ce6', fg: '#4a2678', icon: 'dress' },
     { id: 'hidden_fashion_sss', title: '传说穿搭王', desc: '触发穿搭挑战隐藏 SSS 完美评价', reward: 8, tier: 3, hidden: true, frame: 'runway', bg: 'linear-gradient(120deg,#fff4d9,#ffe6f2,#e6f4ff,#fff4d9)', bd: '#e09e48', fg: '#6b3f08', icon: 'crown' },
@@ -2661,6 +2663,7 @@
     charGroups: {},
     chatCustomGroups: [{ id: 'cgrp_fav', name: '常用' }],
     chatGroups: {},
+    quickPhrases: [],
     charDelWbPrompt: true,
     charRandomSkipRecent: true,
     personaCustomGroups: [
@@ -9038,6 +9041,22 @@
 
           <div class="st-tb-section">
             <div class="st-tb-label">
+              <span>快捷短语收藏</span>
+              <button class="st-tb-mini-btn" id="st-tb-phrase-add-btn" type="button">+ 新增</button>
+            </div>
+            <div id="st-tb-phrase-form" style="display:none;flex-direction:column;gap:5px;margin-bottom:6px;padding:6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);">
+              <input class="st-tb-input" id="st-tb-phrase-title" type="text" placeholder="短语名称（用于辨认与重命名）" />
+              <textarea class="st-tb-textarea" id="st-tb-phrase-text" style="min-height:54px;" placeholder="输入常用短语/提示词内容，点击短语即可填入酒馆输入框"></textarea>
+              <div style="display:flex;gap:5px;justify-content:flex-end;">
+                <button class="st-tb-mini-btn" id="st-tb-phrase-cancel" type="button">取消</button>
+                <button class="st-tb-mini-btn active" id="st-tb-phrase-save" type="button">保存</button>
+              </div>
+            </div>
+            <div id="st-tb-phrase-list" style="display:flex;flex-direction:column;gap:5px;max-height:150px;overflow-y:auto;"></div>
+          </div>
+
+          <div class="st-tb-section">
+            <div class="st-tb-label">
               <span>一键打码</span>
               <div style="display:flex;gap:4px;align-items:center;">
                 <button class="st-tb-mini-btn" id="st-tb-mask-toggle-btn" type="button">开启打码</button>
@@ -9611,6 +9630,134 @@
   const chatRefreshBtn = root.querySelector('#st-tb-chat-refresh');
   const chatFilterInput = root.querySelector('#st-tb-chat-filter');
   const chatListEl = root.querySelector('#st-tb-chat-list');
+  const phraseAddBtn = root.querySelector('#st-tb-phrase-add-btn');
+  const phraseFormEl = root.querySelector('#st-tb-phrase-form');
+  const phraseTitleInp = root.querySelector('#st-tb-phrase-title');
+  const phraseTextInp = root.querySelector('#st-tb-phrase-text');
+  const phraseSaveBtn = root.querySelector('#st-tb-phrase-save');
+  const phraseCancelBtn = root.querySelector('#st-tb-phrase-cancel');
+  const phraseListEl = root.querySelector('#st-tb-phrase-list');
+  let editingPhraseId = null;
+
+  const insertPhraseToInput = (txt) => {
+    const ta = doc.getElementById('send_textarea');
+    if (!ta) { cmNotify('未找到酒馆输入框'); return; }
+    const val = String(txt || '');
+    ta.value = ta.value ? `${ta.value}${ta.value.endsWith('\n') ? '' : '\n'}${val}` : val;
+    ta.dispatchEvent(new Event('input', { bubbles: true }));
+    ta.focus();
+    cmNotify('已填入输入框');
+  };
+
+  const renderPhraseList = () => {
+    if (!phraseListEl) return;
+    if (!Array.isArray(config.quickPhrases)) config.quickPhrases = [];
+    phraseListEl.innerHTML = '';
+    if (!config.quickPhrases.length) {
+      phraseListEl.innerHTML = '<div class="st-tb-empty" style="padding:10px;">暂无快捷短语，点右上角「+ 新增」添加</div>';
+      return;
+    }
+    config.quickPhrases.forEach(ph => {
+      const row = doc.createElement('div');
+      row.className = 'st-tb-chat-item';
+      row.style.padding = '6px 8px';
+      const top = doc.createElement('div');
+      top.className = 'st-tb-chat-top';
+      const nm = doc.createElement('div');
+      nm.className = 'st-tb-chat-name';
+      nm.textContent = ph.title || '未命名短语';
+      nm.title = ph.text || '';
+      nm.addEventListener('click', () => insertPhraseToInput(ph.text));
+
+      const mkBtn = (txt, fn, col) => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-tb-mini-btn';
+        b.textContent = txt;
+        if (col) b.style.color = col;
+        b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+        return b;
+      };
+      const useB = mkBtn('填入', () => insertPhraseToInput(ph.text));
+      const renB = mkBtn('改名', () => {
+        editingPhraseId = ph.id;
+        if (phraseFormEl && phraseTitleInp && phraseTextInp) {
+          phraseTitleInp.value = ph.title || '';
+          phraseTextInp.value = ph.text || '';
+          phraseFormEl.style.display = 'flex';
+          phraseTitleInp.focus();
+          phraseTitleInp.select();
+        }
+      });
+      const editB = mkBtn('编辑', () => {
+        editingPhraseId = ph.id;
+        if (phraseFormEl && phraseTitleInp && phraseTextInp) {
+          phraseTitleInp.value = ph.title || '';
+          phraseTextInp.value = ph.text || '';
+          phraseFormEl.style.display = 'flex';
+          phraseTextInp.focus();
+        }
+      });
+      const delB = mkBtn('删除', () => {
+        openConfirmModal({
+          title: '删除快捷短语',
+          message: `确定删除快捷短语「${ph.title || '未命名'}」吗？`,
+          warning: '删除后无法恢复。',
+          okText: '确认删除',
+          onConfirm: () => {
+            config.quickPhrases = (config.quickPhrases || []).filter(x => x.id !== ph.id);
+            saveConfig();
+            renderPhraseList();
+            if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+          },
+        });
+      }, '#d9534f');
+
+      top.append(nm, useB, renB, editB, delB);
+      const preview = doc.createElement('div');
+      preview.style.cssText = 'font-size:10px;opacity:0.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
+      preview.textContent = ph.text || '';
+      preview.addEventListener('click', () => insertPhraseToInput(ph.text));
+      row.append(top, preview);
+      phraseListEl.appendChild(row);
+    });
+  };
+  if (phraseAddBtn && phraseFormEl) {
+    phraseAddBtn.addEventListener('click', () => {
+      editingPhraseId = null;
+      if (phraseTitleInp) phraseTitleInp.value = '';
+      if (phraseTextInp) phraseTextInp.value = '';
+      phraseFormEl.style.display = phraseFormEl.style.display === 'none' ? 'flex' : 'none';
+      if (phraseFormEl.style.display === 'flex' && phraseTitleInp) phraseTitleInp.focus();
+    });
+  }
+  if (phraseCancelBtn && phraseFormEl) {
+    phraseCancelBtn.addEventListener('click', () => {
+      editingPhraseId = null;
+      phraseFormEl.style.display = 'none';
+    });
+  }
+  if (phraseSaveBtn && phraseFormEl) {
+    phraseSaveBtn.addEventListener('click', () => {
+      const ttl = String(phraseTitleInp?.value || '').trim().slice(0, 24) || '未命名短语';
+      const txt = String(phraseTextInp?.value || '').trim();
+      if (!txt) { cmNotify('请输入短语内容'); return; }
+      if (!Array.isArray(config.quickPhrases)) config.quickPhrases = [];
+      if (editingPhraseId) {
+        const target = config.quickPhrases.find(x => x.id === editingPhraseId);
+        if (target) { target.title = ttl; target.text = txt; }
+      } else {
+        config.quickPhrases.push({ id: `qp_${Date.now()}`, title: ttl, text: txt });
+      }
+      editingPhraseId = null;
+      phraseFormEl.style.display = 'none';
+      saveConfig();
+      renderPhraseList();
+      if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+      cmNotify('已保存快捷短语');
+    });
+  }
+  renderPhraseList();
   const greetTitleEl = root.querySelector('#st-tb-greet-title');
   const greetToggleBtn = root.querySelector('#st-tb-greet-toggle');
   const greetListEl = root.querySelector('#st-tb-greet-list');
@@ -17039,8 +17186,10 @@
 
   // 绘制 20 款完全不重样的 9x9 像素成就专属小图标
   const ACH_ICON_GRIDS = {
-    twin_nectar_bud: ['..pp..cc.','.pwp.cwc.','..pp..cc.','...g..g..','..ggggg..','.gg.g.gg.','....g....','...ooo...','.........'],
-    skillet_souffle: ['...rrr...','..yyyyy..','.yyyyyyy.','ooooooooo','okkkkkkko','.ooooooo.','.........','.........','.........'],
+    watering_can_mini:   ['....bbb..','...b...b.','.c.bbbbb.','ccbbbbbb.','..bbbbbb.','..bwwwwb.','..bbbbbb.','.........','.........'],
+    feather_scroll_mini: ['..ooooo..','.owwwwwo.','.owbbwwo.','.owwwwwo.','.owbbwwo.','..ooooo..','.....c...','....cc...','...c.....'],
+    eternal_knot_mini:   ['...rrr...','.rryyyrr.','rywwyywyr','.rryyyrr.','...r.r...','..r...r..','.r.....r.','.........','.........'],
+    chef_hat_mini:     ['..wwwww..','.wwwwwww.','wwwwwwwww','.wwwwwww.','..ooooo..','..owwwo..','..ooooo..','.........','.........'],
     ck_calendar_30:   ['.rrrrrrr.','.rwwwwwr.','.ooooooo.','.owwwwwо.','.owwggwo.','.owggwwo.','.owwwwwо.','.ooooooo.','.........'].map(r => r.replace(/о/g, 'o')),
     ck_wax_envelope:  ['.........','.ooooooo.','.owwwwwo.','.oowwwoo.','.owwrwwo.','.owwwwwo.','.ooooooo.','.........','.........'],
     ck_hourglass_gold:['.ooooooo.','..oyyyo..','...oyo...','....o....','...oyo...','..oyyyo..','.ooooooo.','.........','.........'],
@@ -17621,6 +17770,79 @@
 
   // 20 款 100% 单独手绘的专属铭牌设计（每款独立构图与独立像素画，绝不复用模板）
   const BESPOKE_BADGE_DESIGNS = {
+    chat_floor_99: {
+      cls: 'bespoke-lux bespoke-glow',
+      pieces: [
+        { pos: 'left:-12px;top:-7px;', w: 12, h: 15, pal: { l: '#8c6be6', p: '#c9b3ff', y: '#f5cc58', w: '#ffffff' },
+          grid: [
+            '..llllll..',
+            '.lppppppl.',
+            '.lpwyywpl.',
+            '.lppppppl.',
+            '..llllll..',
+            '....yy....',
+            '...y..y...',
+            '..y....y..',
+          ] },
+        { pos: 'left:50%;top:-5px;transform:translateX(-50%);', w: 26, h: 4, pal: { y: '#f0b840', w: '#fff9d6' },
+          grid: [
+            'yy.ww.yy.ww.yy.ww.yy',
+            '.yy..yy..yy..yy..yy.',
+          ] },
+        { pos: 'right:-10px;bottom:-6px;', w: 12, h: 10, pal: { b: '#7898d8', w: '#fffdf7', c: '#b8d4ff' },
+          frames: [
+            [
+              '.bbbb..bbbb.',
+              'bwwwwbbwwwwb',
+              'bwccwbwwccwb',
+              'bwwwwbbwwwwb',
+              '.bbbb..bbbb.',
+            ],
+            [
+              '.bbbb..bbbb.',
+              'bwwwwbbwwwwb',
+              'bwwwwbbwccwb',
+              'bwwwwbbwwwwb',
+              '.bbbb..bbbb.',
+            ]
+          ] },
+      ],
+    },
+    chat_floor_1000: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-11px;bottom:-7px;', w: 12, h: 14, pal: { k: '#6b3b22', y: '#ffe078', o: '#ff9e42', w: '#ffffff' },
+          frames: [
+            [
+              '....kk....',
+              '..kkkkkk..',
+              '.kyyyyyyk.',
+              '.kywwwwyk.',
+              '.kyooooyk.',
+              '..kkkkkk..',
+              '....kk....',
+            ],
+            [
+              '....kk....',
+              '..kkkkkk..',
+              '.koyyyyok.',
+              '.kywwwwyk.',
+              '.koyyyyok.',
+              '..kkkkkk..',
+              '....kk....',
+            ]
+          ] },
+        { pos: 'right:-10px;top:-8px;', w: 14, h: 11, pal: { r: '#e85a78', p: '#ffb3c8', y: '#ffd866', w: '#ffffff' },
+          grid: [
+            '..rrr....rrr..',
+            '.rpppr..rpppr.',
+            '.rpwwryyrwwpr.',
+            '..rrr.yy.rrr..',
+            '....r....r....',
+            '...r......r...',
+          ] },
+      ],
+    },
     garden_twin_miracle: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
@@ -18918,6 +19140,8 @@
       fun_neck_chic: (config.puppyOwnedAccs || []).filter(id => SHOP_PUP_ACCS.find(a => a.id === id)?.cat === 'neck').length >= 3,
       fun_game_all: (st.games || 0) >= 25,
       fun_chat_bestie: Boolean((config.puppySelfName || '').trim() && (config.puppyOwnerTitle || '').trim()),
+      chat_floor_99: (st.maxChatFloor || 0) >= 99,
+      chat_floor_1000: (st.maxChatFloor || 0) >= 1000,
       hidden_dress_master: Boolean(
         config.puppyOutfit && config.puppyOutfit !== 'none' &&
         Array.isArray(config.puppyAccs) && config.puppyAccs.length >= 3 &&
@@ -19178,7 +19402,7 @@
   };
 
   const ACH_GROUPS = [
-    { key: 'bond', name: '陪伴与好感', ids: ['named_pup', 'first_pet', 'pet_master', 'fun_stretch_cat', 'pet_legend_300', 'best_friend', 'soulmate', 'aff_lv10', 'bday_set', 'fun_bday_twin', 'fun_chat_bestie', 'ask_listener', 'mail_reader', 'wish_first_day', 'wish_master_15', 'lt_wish_50', 'wish_legend_100'] },
+    { key: 'bond', name: '陪伴与好感', ids: ['named_pup', 'first_pet', 'pet_master', 'fun_stretch_cat', 'pet_legend_300', 'best_friend', 'soulmate', 'aff_lv10', 'bday_set', 'fun_bday_twin', 'fun_chat_bestie', 'chat_floor_99', 'chat_floor_1000', 'ask_listener', 'mail_reader', 'wish_first_day', 'wish_master_15', 'lt_wish_50', 'wish_legend_100'] },
     { key: 'wardrobe', name: '衣橱与装扮', ids: ['dual_acc', 'companion_pal', 'preset_maker', 'fashionista', 'fun_dress_rainbow', 'wardrobe_king', 'collector_max', 'fun_mirror_star', 'fun_wing_angel', 'fun_aura_glow', 'fun_trad_lover', 'fun_neck_chic', 'fashion_s_rank', 'fun_color_artist', 'ach_trail_collector', 'ach_frame_collector', 'ach_bubble_collector'] },
     { key: 'daily', name: '日常、花盆、厨房与玩具', ids: ['pin_home', 'sit_zen', 'chef_owner', 'ach_big_eater', 'care_legend_200', 'rich_pup', 'fun_coin_saver', 'rich_tycoon_500', 'lt_coins_5000', 'fun_weather_kid', 'garden_bloom', 'garden_twin_miracle', 'fun_flower_gifter', 'garden_collector_15', 'garden_collector_30', 'garden_bloom_100', 'garden_all_42', 'kitchen_first', 'kitchen_god_stroke', 'kitchen_lv5', 'kitchen_dex_10', 'kitchen_lv10_master', 'lt_cook_100', 'kitchen_dex_all', 'toy_first', 'toy_all_4', 'toy_marathon_100', 'lt_toy_100', 'job_worker', 'fun_job_pro', 'job_legend_50', 'fun_diary_keeper', 'fun_fortune_fan', 'visitor_pal', 'visitor_host_30', 'festival_egg'] },
     { key: 'adv', name: '冒险与图鉴', ids: ['adv_first_trip', 'fun_photo_snap', 'adv_album_half', 'adv_curio_20', 'adv_album_all', 'adv_curio_all', 'adv_hidden_curio', 'treasure_hunter', 'ach_dig_lucky_3', 'adv_legend_50'] },
@@ -39491,8 +39715,51 @@
     if (config.maskEnabled) setTimeout(applyMasks, 260);
   };
 
+  const CHAT_MILESTONE_DEFS = [
+    { floor: 50,   reward: 5 },
+    { floor: 99,   reward: 8 },
+    { floor: 123,  reward: 10 },
+    { floor: 200,  reward: 15 },
+    { floor: 1000, reward: 30 },
+  ];
+  const checkChatFloorMilestones = () => {
+    try {
+      const ctx = getContext();
+      const chatLen = Array.isArray(ctx?.chat) ? ctx.chat.length : 0;
+      if (!chatLen) return;
+      const ck = getCurrentChatKey() || 'default';
+      if (!config.puppyChatMilestones || typeof config.puppyChatMilestones !== 'object') config.puppyChatMilestones = {};
+      const claimed = Array.isArray(config.puppyChatMilestones[ck]) ? config.puppyChatMilestones[ck] : [];
+      config.puppyStats = config.puppyStats || {};
+      if (chatLen > (config.puppyStats.maxChatFloor || 0)) config.puppyStats.maxChatFloor = chatLen;
+      let hitNew = null;
+      CHAT_MILESTONE_DEFS.forEach(ms => {
+        if (chatLen >= ms.floor && !claimed.includes(ms.floor)) {
+          claimed.push(ms.floor);
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + ms.reward;
+          config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + ms.reward;
+          config.puppyStats.chatMilestonesHit = (config.puppyStats.chatMilestonesHit || 0) + 1;
+          hitNew = ms;
+        }
+      });
+      if (hitNew) {
+        config.puppyChatMilestones[ck] = claimed;
+        saveConfig();
+        updatePupStatBars();
+        checkPupAchievements();
+        if (config.puppyEnabled) {
+          setPuppyState('love_firework', 120);
+          showPuppyBubble(`聊天达到 ${hitNew.floor} 层里程碑啦！奖励 +${hitNew.reward} 枚小狗币~`, 3200);
+        } else {
+          cmNotify(`聊天达到 ${hitNew.floor} 层里程碑！小狗币 +${hitNew.reward}`);
+        }
+      }
+    } catch (_) {}
+  };
+
   const onMessageChanged = () => {
     updateStats();
+    checkChatFloorMilestones();
     if (config.maskEnabled) scheduleMask();
     if (config.puppyEnabled && CALM_PUP_STATES.has(pup.state) && Date.now() >= pup.nextAutoBubbleAt) {
       setPuppyState('happy', 65);
@@ -46526,6 +46793,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'imgswap',   name: '换图工坊',   defLabel: '换图' },
     { id: 'readstyle', name: '正文调整',   defLabel: '正文' },
     { id: 'font',      name: '字体设置',   defLabel: '字体' },
+    { id: 'phrases',   name: '快捷短语',   defLabel: '短语' },
     { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
   ];
   const QUICK_DOCK_DEFAULT = [
@@ -47093,6 +47361,118 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         toggleQuickDock(false);
         togglePanel(true);
         root.querySelector('.st-tb-tab[data-tab="imgswap"]')?.click();
+      } else if (act === 'phrases') {
+        toggleQuickDock(false);
+        let ppop = root.querySelector('#st-tb-quick-phrase-pop');
+        if (!ppop) {
+          ppop = doc.createElement('div');
+          ppop.id = 'st-tb-quick-phrase-pop';
+          ppop.className = 'st-tb-mini-pop';
+          ppop.style.width = '264px';
+          ppop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+              <span>快捷短语</span>
+              <div style="display:flex;gap:5px;">
+                <button class="st-tb-mini-btn" id="st-qp-add" type="button">+新增</button>
+                <button class="st-tb-mini-btn" id="st-qp-close" type="button">关闭</button>
+              </div>
+            </div>
+            <div id="st-qp-form" style="display:none;flex-direction:column;gap:4px;padding:5px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);">
+              <input class="st-tb-input" id="st-qp-ttl" type="text" placeholder="短语名称" />
+              <textarea class="st-tb-textarea" id="st-qp-txt" style="min-height:48px;" placeholder="短语内容"></textarea>
+              <div style="display:flex;gap:4px;justify-content:flex-end;">
+                <button class="st-tb-mini-btn" id="st-qp-cancel" type="button">取消</button>
+                <button class="st-tb-mini-btn active" id="st-qp-save" type="button">保存</button>
+              </div>
+            </div>
+            <div id="st-qp-list" style="display:flex;flex-direction:column;gap:4px;max-height:185px;overflow-y:auto;"></div>`;
+          root.appendChild(ppop);
+          let qEditId = null;
+          const qForm = ppop.querySelector('#st-qp-form');
+          const qTtl = ppop.querySelector('#st-qp-ttl');
+          const qTxt = ppop.querySelector('#st-qp-txt');
+          const qList = ppop.querySelector('#st-qp-list');
+          const syncQPop = () => {
+            if (!qList) return;
+            qList.innerHTML = '';
+            const arr = Array.isArray(config.quickPhrases) ? config.quickPhrases : [];
+            if (!arr.length) {
+              qList.innerHTML = '<div style="font-size:11px;opacity:0.68;text-align:center;padding:10px;">暂无快捷短语，点「+新增」添加</div>';
+              return;
+            }
+            arr.forEach(ph => {
+              const item = doc.createElement('div');
+              item.style.cssText = 'display:flex;flex-direction:column;gap:3px;padding:5px 6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);';
+              const top = doc.createElement('div');
+              top.style.cssText = 'display:flex;align-items:center;gap:4px;';
+              const nm = doc.createElement('span');
+              nm.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
+              nm.textContent = ph.title || '未命名';
+              nm.addEventListener('click', () => { insertPhraseToInput(ph.text); ppop.classList.remove('open'); });
+              const mkB = (t, fn, c) => {
+                const b = doc.createElement('button');
+                b.type = 'button';
+                b.className = 'st-tb-mini-btn';
+                b.style.cssText = `padding:1px 5px;font-size:10px;${c ? `color:${c};` : ''}`;
+                b.textContent = t;
+                b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+                return b;
+              };
+              top.append(
+                nm,
+                mkB('改名', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTtl.focus(); qTtl.select(); }),
+                mkB('编辑', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTxt.focus(); }),
+                mkB('删', () => {
+                  openConfirmModal({
+                    title: '删除快捷短语',
+                    message: `确定删除「${ph.title || '未命名'}」吗？`,
+                    okText: '删除',
+                    onConfirm: () => {
+                      config.quickPhrases = (config.quickPhrases || []).filter(x => x.id !== ph.id);
+                      saveConfig();
+                      renderPhraseList();
+                      syncQPop();
+                    },
+                  });
+                }, '#d9534f')
+              );
+              const sub = doc.createElement('div');
+              sub.style.cssText = 'font-size:10px;opacity:0.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;';
+              sub.textContent = ph.text || '';
+              sub.addEventListener('click', () => { insertPhraseToInput(ph.text); ppop.classList.remove('open'); });
+              item.append(top, sub);
+              qList.appendChild(item);
+            });
+          };
+          win.__stSyncQuickPhrasePop = syncQPop;
+          ppop.querySelector('#st-qp-close')?.addEventListener('click', () => ppop.classList.remove('open'));
+          ppop.querySelector('#st-qp-add')?.addEventListener('click', () => {
+            qEditId = null; qTtl.value = ''; qTxt.value = '';
+            qForm.style.display = qForm.style.display === 'none' ? 'flex' : 'none';
+            if (qForm.style.display === 'flex') qTtl.focus();
+          });
+          ppop.querySelector('#st-qp-cancel')?.addEventListener('click', () => { qEditId = null; qForm.style.display = 'none'; });
+          ppop.querySelector('#st-qp-save')?.addEventListener('click', () => {
+            const ttl = String(qTtl.value || '').trim().slice(0, 24) || '未命名短语';
+            const txt = String(qTxt.value || '').trim();
+            if (!txt) { cmNotify('请输入短语内容'); return; }
+            if (!Array.isArray(config.quickPhrases)) config.quickPhrases = [];
+            if (qEditId) {
+              const tg = config.quickPhrases.find(x => x.id === qEditId);
+              if (tg) { tg.title = ttl; tg.text = txt; }
+            } else {
+              config.quickPhrases.push({ id: `qp_${Date.now()}`, title: ttl, text: txt });
+            }
+            qEditId = null;
+            qForm.style.display = 'none';
+            saveConfig();
+            renderPhraseList();
+            syncQPop();
+          });
+        }
+        root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
+        root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
+        if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+        ppop.classList.add('open');
       } else if (act === 'readstyle') {
         toggleQuickDock(false);
         let pop = root.querySelector('#st-tb-quick-read-pop');
