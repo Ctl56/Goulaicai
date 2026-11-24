@@ -6354,70 +6354,22 @@
     .st-px-ach-orn.tr { right: -8px; top: -7px; width: 10px; height: 12px; transform: scaleX(-1); }
     .st-px-ach-orn.bl { left: -8px; top: auto; bottom: -7px; width: 10px; height: 12px; transform: none; }
     .st-px-ach-orn.br { right: -8px; top: auto; bottom: -7px; width: 10px; height: 12px; transform: scaleX(-1); }
-    .st-px-ach-orn.mini { width: 8px; height: 8px; }
-    .st-px-ach-orn.tl-sub { left: 4px; top: -7px; width: 8px; height: 8px; transform: none; }
-    .st-px-ach-orn.tr-sub { right: 4px; top: -7px; width: 8px; height: 8px; transform: none; }
-    .st-px-ach-orn.bl-sub { left: 5px; top: auto; bottom: -7px; width: 8px; height: 8px; transform: none; }
-    .st-px-ach-orn.br-sub { right: 5px; top: auto; bottom: -7px; width: 8px; height: 8px; transform: none; }
-    .st-px-ach-orn.bl-high { left: -9px; top: auto; bottom: 2px; width: 9px; height: 9px; transform: none; }
-    .st-px-ach-orn.br-high { right: -9px; top: auto; bottom: 2px; width: 9px; height: 9px; transform: scaleX(-1); }
-    .st-px-ach-orn.tl-low { left: -9px; top: 3px; width: 9px; height: 9px; transform: none; }
-    .st-px-ach-orn.tr-low { right: -9px; top: 3px; width: 9px; height: 9px; transform: scaleX(-1); }
-    .st-px-ach-orn.top-left { left: 22%; top: -8px; width: 10px; height: 11px; transform: translateX(-50%); }
-    .st-px-ach-orn.top-right { right: 20%; left: auto; top: -8px; width: 9px; height: 9px; transform: none; }
-    .st-px-ach-orn.bot-left { left: 24%; top: auto; bottom: -8px; width: 9px; height: 9px; transform: none; }
-    .st-px-ach-orn.bot-right { right: 22%; left: auto; top: auto; bottom: -8px; width: 10px; height: 10px; transform: none; }
-    .st-px-title-badge.lay-creative { margin: 7px 11px; }
-    .st-px-title-badge.lay-lux { margin: 9px 13px; }
-    @keyframes stOrnSway {
-      0%, 100% { transform: rotate(-4deg); }
-      50% { transform: rotate(4deg); }
-    }
-    @keyframes stOrnFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-2px); }
-    }
-    @keyframes stOrnGlow {
-      0%, 100% { filter: brightness(1); transform: scale(1); }
-      50% { filter: brightness(1.18); transform: scale(1.04); }
-    }
-    .st-px-cluster-orn {
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      pointer-events: none;
-      image-rendering: pixelated;
-      image-rendering: crisp-edges;
-      z-index: 3;
-    }
-    .st-px-cluster-orn.c-tl { left: -9px; top: -8px; transform-origin: center; }
-    .st-px-cluster-orn.c-tr { right: -9px; top: -8px; transform-origin: center; }
-    .st-px-cluster-orn.c-bl { left: -9px; bottom: -8px; top: auto; transform-origin: center; }
-    .st-px-cluster-orn.c-br { right: -9px; bottom: -8px; top: auto; transform-origin: center; }
-    .st-px-cluster-orn.c-top-l { left: 10px; top: -10px; transform-origin: bottom center; }
-    .st-px-cluster-orn.c-bot-r { right: 10px; bottom: -9px; top: auto; transform-origin: top center; }
-    .st-px-cluster-orn.anim-sway { animation: stOrnSway 2.6s ease-in-out infinite; }
-    .st-px-cluster-orn.anim-float { animation: stOrnFloat 2.4s ease-in-out infinite; }
-    .st-px-cluster-orn.anim-glow { animation: stOrnGlow 2.2s ease-in-out infinite; }
-    #st-px-id-badges-wrap { gap: var(--badge-pair-gap, 4px) !important; }
-    #st-px-id-badges-wrap .st-px-title-badge { margin-left: 0 !important; margin-right: 0 !important; }
-    .st-px-cluster-orn.c-top-r { right: 10px; left: auto; top: -10px; transform-origin: bottom center; }
-    .st-px-cluster-orn.c-bot-l { left: 10px; bottom: -9px; top: auto; transform-origin: top center; }
-    .st-px-cluster-orn.c-mid-l { left: -10px; top: 50%; margin-top: -7px; transform-origin: center; }
-    .st-px-cluster-orn.c-mid-r { right: -10px; top: 50%; margin-top: -7px; transform-origin: center; }
-    .st-px-badge-fx-cvs {
-      position: absolute;
-      inset: -7px;
-      width: calc(100% + 14px);
-      height: calc(100% + 14px);
-      pointer-events: none;
-      image-rendering: pixelated;
-      z-index: 4;
-    }
     .st-px-title-badge.tier-3.lay-top { margin: 7px 6px 2px; }
     .st-px-title-badge.tier-3.lay-bottom { margin: 2px 6px 7px; }
     .st-px-title-badge.tier-3.lay-diag { margin: 5px 9px; }
     .st-px-title-badge.tier-3.lay-trio { margin: 7px 12px 2px; }
+    #st-px-id-badges-wrap { gap: var(--badge-pair-gap, 4px) !important; }
+    #st-px-id-badges-wrap .st-px-title-badge { margin-left: 0 !important; margin-right: 0 !important; }
+    #st-tb-root.no-badge-white-rim .st-px-title-badge,
+    #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2,
+    #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-3,
+    #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-4 {
+      box-shadow: 1px 1px 0 rgba(59, 42, 34, 0.22) !important;
+    }
+    #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2::before,
+    #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2::after {
+      display: none !important;
+    }
     /* 6 款像素背包皮肤 */
     #st-tb-pup-bag.skin-strawberry { background: #f5edf0; border-color: #9e4762; box-shadow: 4px 4px 0 rgba(158,71,98,0.32); }
     #st-tb-pup-bag.skin-strawberry .st-px-head { background: #e87a9c; color: #faf6f7; border-bottom-color: #9e4762; }
@@ -6898,50 +6850,8 @@
     }
     .st-px-title-badge.gacha-dyn .st-px-ach-orn,
     .st-px-title-badge.gacha-dyn .st-px-ult-orn {
-      animation: none !important;
+      animation: stGachaOrnFloat 2.1s ease-in-out infinite !important;
     }
-    @keyframes stBadgeGlowSoft {
-      0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.72), 0 1px 4px rgba(0,0,0,0.08); }
-      50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.95), 0 0 9px var(--bdg-glow, rgba(224,160,196,0.45)); }
-    }
-    .st-px-title-badge.bdg-still {
-      animation: none !important;
-    }
-    .st-px-title-badge.bdg-still::after {
-      display: none !important;
-    }
-    .st-px-title-badge.bdg-glow-breath {
-      animation: stBadgeGlowSoft 3.2s ease-in-out infinite !important;
-    }
-    .st-px-title-badge.bdg-glow-breath::after {
-      display: none !important;
-    }
-    /* 无外挂贴图的精致雕花镶边本体款（玉牌/浮雕/丝绒镶边/邮票锯齿） */
-    .st-px-title-badge.arch-relief-double {
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.85), 0 0 0 1.5px var(--bdg-bd, #d4a8b8), 0 2px 5px rgba(0,0,0,0.08) !important;
-      padding-left: 9px !important;
-      padding-right: 9px !important;
-    }
-    .st-px-title-badge.arch-relief-stitch {
-      border-style: dashed !important;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.72), 0 1px 4px rgba(0,0,0,0.08) !important;
-      padding-left: 9px !important;
-      padding-right: 9px !important;
-    }
-    .st-px-title-badge.arch-relief-pill {
-      border-radius: 999px !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08) !important;
-      padding-left: 10px !important;
-      padding-right: 10px !important;
-    }
-    .st-px-title-badge.arch-relief-ribbon {
-      border-radius: 3px 10px 3px 10px !important;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.78), 2px 2px 0 rgba(0,0,0,0.08) !important;
-      padding-left: 9px !important;
-      padding-right: 9px !important;
-    }
-    .st-px-cluster-orn.still-orn { animation: none !important; }
-    .st-px-cluster-orn.c-top-mid { left: 50%; top: -10px; transform: translateX(-50%); }
     .st-px-title-badge.tier-4 {
       padding: 4px 12px;
       margin: 7px 16px;
@@ -17331,215 +17241,47 @@
     secret_key: 'lr', camera: 'lr',
   };
 
-  // 18 款 12x12 完整紧凑手绘复合像素集群（支持 M/D/L 颜色自适应通道，与每块铭牌色系严丝合缝）
-  const BADGE_CLUSTER_ART = {
-    bow_pearl:     { anim: 'anim-sway',  grid: ['............','..MMM..MMM..','.MMLMMMMMLM.','.MMMDDDMMMM.','..MMMDDMMM..','....MM.MM...','...MM...MM..','..MM..w..MM.','..M..wLw..M.','......w.....','.....www....','......w.....'] },
-    flower_leaf:   { anim: 'anim-sway',  grid: ['....MM......','..MMLLMM....','..MMzzMM.gg.','...MMMM.ggg.','..gg..ggMM..','.ggg.gMMLLm.','..gg..MMzzMM','.......MMMM.','....gg..MM..','...ggg......','....g.......','............'] },
-    crown_gem:     { anim: 'anim-glow',  grid: ['............','....y..y....','..y.yy.yy.y.','..yyyyyyyyy.','..yMyywyMyy.','..yyyyyyyyy.','...yLLLLLy..','...yyyyyyy..','....y...y...','...ww...ww..','............','............'] },
-    cloud_moon:    { anim: 'anim-float', grid: ['......yyy...','.....yyw....','....yyy.....','....yyy.....','.....yyyy...','..MMMM..yy..','.MMwwwMM....','MwwwwwwwMM..','MwwwwwwwwwM.','.MMMMMMMMM..','............','............'] },
-    berry_cream:   { anim: 'anim-float', grid: ['....ggg.....','...gMMMg....','..MMLMMLM...','..MMMMMMM...','...MMMMM....','..wwwwwww...','.wwLwwwLww..','wwwwwwwwwww.','.wwLLLLLww..','..wwwwwww...','............','............'] },
-    wing_ribbon:   { anim: 'anim-float', grid: ['..www.......','.wwwww......','wwwwwww.....','.wwLwwww....','..wwLLwww...','...wwwLww...','....wwwww...','.....MMwww..','....MMLMM...','...MM...MM..','..MM.....MM.','............'] },
-    paw_heart:     { anim: 'anim-float', grid: ['............','..MM...MM...','.MMLM.MMLM..','..MM...MM...','....MMMM....','...MLLLLm...','..MMLLLLMM..','..MMMMMMMM..','...MM..MM...','..p..pp..p..','.ppppppppp..','...ppppp....'] },
-    lantern_tassel:{ anim: 'anim-sway',  grid: ['....yyyy....','...yMMMMY...','..MMLMMMLM..','..MMMyyMMM..','..MMLMMMLM..','...yMMMMY...','....yyyy....','.....yy.....','....yMMY....','....M..M....','....M..M....','............'] },
-    koi_wave:      { anim: 'anim-sway',  grid: ['....MMM.....','...MMLMM....','..MMwwwMM...','..MMMMMMM...','...MMwMM....','....MMM.....','...MM.MM....','.cc..M..cc..','cwwcc.ccwwc.','.cccccccccc.','............','............'] },
-    boba_straw:    { anim: 'anim-float', grid: ['......MM....','.....MM.....','...wwwwww...','..wLLLLLLw..','..wMMMMMMw..','..wMLMMLMw..','..wMDMDMDw..','..wMDDMDDw..','...wwwwww...','............','............','............'] },
-    butterfly_petal:{ anim: 'anim-sway', grid: ['..MM....MM..','.MMLM..MLMM.','.MMwMMMMwMM.','..MMDDDDMM..','...MMDDMM...','..MMw..wMM..','.MMLM..MLMM.','..MM....MM..','....L..L....','...LL..LL...','............','............'] },
-    gem_chain:     { anim: 'anim-glow',  grid: ['....www.....','...wMMMw....','..wMLLLMw...','..wMLwLMw...','...wMMMw....','....www.....','..w..M..w...','.wLw.M.wLw..','..w..M..w...','.....w......','....wLw.....','............'] },
-    music_clef:    { anim: 'anim-float', grid: ['......MMMM..','.....MMLLM..','.....MM..M..','.....MM..M..','.....MM..M..','...MMMM..M..','..MMLLM.MM..','..MMMMM.MM..','...MMM..M...','..w....w....','............','............'] },
-    clover_dew:    { anim: 'anim-sway',  grid: ['...gg..gg...','..gLLggLLg..','..gggggggg..','...ggwwgg...','..gggggggg..','..gLLggLLg..','...gg..gg...','.....gg.....','..c..gg.....','.cwc.g......','..c.........','............'] },
-    cat_ears_bell: { anim: 'anim-sway',  grid: ['.MM......MM.','MMLM....MLMM','MMpM....MpMM','MMMMMMMMMMMM','.MMwwwwwwMM.','....yyyy....','...yywwyy...','...yyDDyy...','....yyyy....','............','............','............'] },
-    crystal_orb:   { anim: 'anim-glow',  grid: ['...MMMMM....','..MMLLLMM...','.MMLwwMLMM..','.MMLwMMLMM..','.MMLLMMLMM..','..MMMMMMM...','...MMMMM....','..yyyyyyy...','.yywwwwwyy..','..yyyyyyy...','............','............'] },
-    cake_cherry:   { anim: 'anim-float', grid: ['.....rr.....','....rwwr....','.....rr.....','..wwwwwwww..','.wwLLLLLLww.','.wMMMMMMMMw.','.wMLLLLLLMw.','.wMMMMMMMMw.','.wwwwwwwwww.','............','............','............'] },
-    fan_jade:      { anim: 'anim-sway',  grid: ['...MMMMMM...','.MMLLwwLLMM.','MMLLMMMMLLMM','MMMMMMMMMMMM','.MMDDDDDDMM.','...DDDDDD...','....yyyy....','.....mm.....','....mwwm....','.....mm.....','....y..y....','............'] },
-  };
-
-  const makeClusterOrnCanvas = (clusterKey, posCls, ach, flipX = false) => {
-    const def = BADGE_CLUSTER_ART[clusterKey] || BADGE_CLUSTER_ART.bow_pearl;
-    const c = doc.createElement('canvas');
-    c.width = 12;
-    c.height = 12;
-    c.className = `st-px-cluster-orn ${posCls} ${def.anim}`;
-    const g = c.getContext('2d');
-    // 颜色自适应通道：M=铭牌主色, D=铭牌深色, L=浅亮柔和色
-    const mainC = (ach && ach.bd) || '#e08ca8';
-    const darkC = (ach && ach.fg) || '#6b3848';
-    const pal = {
-      ...ACH_ICON_PAL,
-      M: mainC, m: mainC, Y: '#f4c842',
-      D: darkC, L: '#fff6fa', z: '#ffe89e',
-    };
-    for (let y = 0; y < def.grid.length; y++) {
-      const row = def.grid[y];
-      for (let x = 0; x < row.length; x++) {
-        const col = pal[row[x]];
-        if (col) {
-          g.fillStyle = col;
-          g.fillRect(flipX ? (11 - x) : x, y, 1, 1);
-        }
-      }
-    }
-    return c;
-  };
-
-  const pickClusterPairForBadge = (ach, fKey, h) => {
-    const txt = `${ach.id || ''} ${ach.title || ''} ${fKey || ''}`;
-    const allKeys = Object.keys(BADGE_CLUSTER_ART);
-    let primary = '';
-    if (/paw|pet|dog|cat|摸头|肉垫|吸狗|捣蛋/.test(txt)) primary = 'paw_heart';
-    else if (/boba|tea|milk|奶茶|全糖|茶/.test(txt)) primary = 'boba_straw';
-    else if (/cake|berry|snack|cookie|melon|candy|甜|蛋糕|零食|干饭|榨菜/.test(txt)) primary = (h % 2 === 0 ? 'berry_cream' : 'cake_cherry');
-    else if (/lantern|song|ming|ancient|jade|fan|宋|明|古|花灯|玉|扇/.test(txt)) primary = (h % 2 === 0 ? 'lantern_tassel' : 'fan_jade');
-    else if (/koi|fish|water|sea|锦鲤|摸鱼|海/.test(txt)) primary = 'koi_wave';
-    else if (/sakura|petal|flower|garden|樱|花|园|百花/.test(txt)) primary = (h % 2 === 0 ? 'flower_leaf' : 'butterfly_petal');
-    else if (/clover|luck|幸运|欧/.test(txt)) primary = 'clover_dew';
-    else if (/music|note|drum|音|鼓|歌/.test(txt)) primary = 'music_clef';
-    else if (/crown|royal|rich|king|wardrobe|dice|gold|coin|王|皇|富|贵|万|大亨|财|银行/.test(txt)) primary = (h % 2 === 0 ? 'crown_gem' : 'gem_chain');
-    else if (/cloud|moon|sleep|nap|sofa|night|dream|云|月|睡|盹|沙发|夜|呆/.test(txt)) primary = 'cloud_moon';
-    else if (/star|cosmic|prism|星|秘境|水晶/.test(txt)) primary = 'crystal_orb';
-    else if (/wing|angel|fairy|feather|halo|翅|羽|天|仙|精灵/.test(txt)) primary = 'wing_ribbon';
-    else if (/cat|meow|猫|耳|铃/.test(txt)) primary = 'cat_ears_bell';
-    else primary = allKeys[h % allKeys.length];
-
-    // 选一个风格互补且绝不重复的副元素
-    let secondary = allKeys[(allKeys.indexOf(primary) + 3 + (h % 7)) % allKeys.length];
-    if (secondary === primary) secondary = 'bow_pearl';
-    return [primary, secondary];
-  };
-
-  const hashBadgeId = (str) => {
-    let h = 2166136261;
-    const s = String(str || 'badge');
-    for (let i = 0; i < s.length; i++) {
-      h ^= s.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return Math.abs(h);
-  };
-
-  // 协调型单角/侧翼/托底/浮雕六大版式引擎（绝不在顶部放两个，绝不乱散落，不强迫全部抖动）
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
     const tier = isMystery ? 1 : (ach.tier || 1);
     const fKey = ach.frame || 'stars';
-    const bid = String(ach.id || '');
-    const bdCol = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
-    const bgCol = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
-    const fgCol = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
-
+    const lay = ACH_FRAME_LAYOUT[fKey] || 'lr';
+    const layClass = tier === 3
+      ? (lay === 'diag1' || lay === 'diag2' || lay === 'quad' ? ' lay-diag' : (lay === 'trio' || lay === 'trio_bot' ? ' lay-trio' : ''))
+      : '';
+    const isGachaDynBadge = fKey.startsWith('gframe_');
+    el.className = `st-px-title-badge tier-${tier}${layClass}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
     el.innerHTML = '';
-    el.style.background = bgCol;
-    el.style.borderColor = bdCol;
-    el.style.color = fgCol;
-    el.style.setProperty('--bdg-bd', bdCol);
-    el.style.setProperty('--bdg-glow', bdCol);
-
-    // 1. 永久锁定玩家喜爱的 4 款经典样板：满分偏爱 / 炽天使汪 / 摸头大师 / 百日纪念章
-    if (bid === 'aff_lv10' || bid === 'sb_ult_angel_seraph' || bid === 'ach_ck_100') {
-      el.className = `st-px-title-badge tier-${tier} bdg-still`;
-      if (tier >= 4 && !isMystery) {
-        el.appendChild(makeUltOrn('top', fKey));
-        el.appendChild(makeUltOrn('bottom', fKey));
-        el.appendChild(makeUltOrn('left', fKey));
-        el.appendChild(makeUltOrn('right', fKey));
-      } else if (tier >= 3 && !isMystery) {
+    el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
+    el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
+    el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
+    if (tier >= 4 && !isMystery) {
+      el.appendChild(makeUltOrn('top', fKey));
+      el.appendChild(makeUltOrn('bottom', fKey));
+      el.appendChild(makeUltOrn('left', fKey));
+      el.appendChild(makeUltOrn('right', fKey));
+    } else if (tier >= 3 && !isMystery) {
+      if (lay === 'diag1') {
+        el.appendChild(makeAchOrnCanvas(fKey, 'tl'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'br'));
+      } else if (lay === 'diag2') {
+        el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'bl'));
+      } else if (lay === 'quad') {
+        el.appendChild(makeAchOrnCanvas(fKey, 'tl'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'bl'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'br'));
+      } else if (lay === 'trio') {
+        el.appendChild(makeAchOrnCanvas(fKey, 'top'));
         el.appendChild(makeAchOrnCanvas(fKey, 'left'));
         el.appendChild(makeAchOrnCanvas(fKey, 'right'));
-      }
-      return;
-    }
-    if (bid === 'ach_pet_200') {
-      // 保留摸头大师最受好评的清爽协调搭配：左上单枚柔粉丝带珍珠胸针 + 右下微呼应小爱心，静谧干净
-      el.className = 'st-px-title-badge tier-3 lay-creative bdg-still';
-      const c1 = makeClusterOrnCanvas('bow_pearl', 'c-tl', ach, false);
-      c1.classList.add('still-orn');
-      el.appendChild(c1);
-      el.appendChild(makeAchOrnCanvas('hearts', 'br'));
-      return;
-    }
-
-    if (isMystery || tier < 3) {
-      el.className = `st-px-title-badge tier-${tier} bdg-still`;
-      return;
-    }
-
-    const h = hashBadgeId(bid || ach.title || fKey);
-    const [clPrimary] = pickClusterPairForBadge(ach, fKey, h);
-    const isLux = tier >= 4;
-    const isGachaSSR = ach.gachaTier === 'SSR';
-
-    // 克制分化动态：大部分铭牌保持干净静态，仅部分高阶/SSR 铭牌分配丝光扫过或柔光呼吸，避免千篇一律都在动
-    let motionCls = 'bdg-still';
-    let ornStill = true;
-    if (isLux || isGachaSSR) {
-      const mRoll = h % 3;
-      if (mRoll === 0) { motionCls = 'gacha-dyn'; ornStill = true; }
-      else if (mRoll === 1) { motionCls = 'bdg-glow-breath'; ornStill = true; }
-      else { motionCls = 'bdg-still'; ornStill = false; }
-    } else if (fKey.startsWith('gframe_') && (h % 2 === 0)) {
-      motionCls = 'bdg-glow-breath';
-      ornStill = true;
-    }
-
-    const mkCl = (key, pos, flip = false) => {
-      const cv = makeClusterOrnCanvas(key, pos, ach, flip);
-      if (ornStill) cv.classList.add('still-orn');
-      return cv;
-    };
-
-    if (isLux) {
-      // 高价/传说豪华铭牌（5 种精致协调的豪华建筑版式，绝不顶上放两个，绝不死板四向堆砌）
-      const luxArch = h % 5;
-      if (luxArch === 0) {
-        // 优雅侧翼流苏款（左右华丽翼饰，上下留白显贵气）
-        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
-        el.appendChild(makeUltOrn('left', fKey));
-        el.appendChild(makeUltOrn('right', fKey));
-      } else if (luxArch === 1) {
-        // 底部托底花环 + 左上单枚胸针
-        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
-        el.appendChild(makeUltOrn('bottom', fKey));
-        el.appendChild(mkCl(clPrimary, 'c-tl', false));
-      } else if (luxArch === 2) {
-        // 顶部居中华丽单冠 + 底部简洁托底（无左右臃肿堆积）
-        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
-        el.appendChild(makeUltOrn('top', fKey));
-        el.appendChild(makeUltOrn('bottom', fKey));
-      } else if (luxArch === 3) {
-        // 左下豪华主胸针 + 右侧精致侧翼（不对称礼服胸针感）
-        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
-        el.appendChild(mkCl(clPrimary, 'c-bl', false));
-        el.appendChild(makeUltOrn('right', fKey));
-      } else {
-        // 高定雕花双线框 + 右上单枚斜戴胸针（极简奢华）
-        el.className = `st-px-title-badge tier-4 lay-creative arch-relief-double ${motionCls}`;
-        el.appendChild(mkCl(clPrimary, 'c-tr', true));
-        el.appendChild(makeAchOrnCanvas(fKey, 'bl'));
-      }
-    } else {
-      // 常规高阶铭牌（6 种完全不同的协调版式，含 3 种无外挂精致雕花框 + 3 种单焦点/一主一微协调胸针款）
-      const arch = h % 6;
-      if (arch === 0) {
-        // 单角胸针款（只在左上放一枚主题复合胸针，干净极简）
-        el.className = `st-px-title-badge tier-3 lay-creative ${motionCls}`;
-        el.appendChild(mkCl(clPrimary, 'c-tl', false));
-      } else if (arch === 1) {
-        // 一主一微斜角呼应款（类似摸头大师：左下主胸针 + 右上极轻小呼应）
-        el.className = `st-px-title-badge tier-3 lay-creative ${motionCls}`;
-        el.appendChild(mkCl(clPrimary, 'c-bl', false));
-        el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
-      } else if (arch === 2) {
-        // 复古双线雕花框 + 右下角单枚精致落款（不浮夸、质感高）
-        el.className = `st-px-title-badge tier-3 lay-creative arch-relief-double ${motionCls}`;
-        el.appendChild(mkCl(clPrimary, 'c-br', true));
-      } else if (arch === 3) {
-        // 柔圆胶囊浮雕款（零外挂贴图，靠双层光泽圆润边框取胜）
-        el.className = `st-px-title-badge tier-3 arch-relief-pill ${motionCls}`;
-      } else if (arch === 4) {
-        // 复古手账缝线邮票框 + 左侧单枚小徽（文艺精致）
-        el.className = `st-px-title-badge tier-3 lay-creative arch-relief-stitch ${motionCls}`;
+      } else if (lay === 'trio_bot') {
+        el.appendChild(makeAchOrnCanvas(fKey, 'bottom'));
         el.appendChild(makeAchOrnCanvas(fKey, 'left'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'right'));
       } else {
-        // 斜角书签切角丝带框（零外挂杂物，造型本身有辨识度）
-        el.className = `st-px-title-badge tier-3 arch-relief-ribbon ${motionCls}`;
+        el.appendChild(makeAchOrnCanvas(fKey, 'left'));
+        el.appendChild(makeAchOrnCanvas(fKey, 'right'));
       }
     }
     if (!isMystery) el.appendChild(makeAchIconCanvas(ach.icon));
@@ -17609,6 +17351,7 @@
       const gPx = Number.isFinite(Number(config.badgePairGap)) ? clamp(Number(config.badgePairGap), 0, 22) : 4;
       idBadgesWrap.style.setProperty('--badge-pair-gap', `${gPx}px`);
     }
+    root.classList.toggle('no-badge-white-rim', config.badgeWhiteRim === false);
     if (pupIdShopBadgeEl) {
       const bObj = [...SHOP_PUP_BADGES, ...GACHA_BADGES].find(b => b.id === config.puppyActiveShopBadge);
       if (bObj) {
@@ -18027,11 +17770,14 @@
     const gapRow = doc.createElement('div');
     gapRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:3px 6px;border-radius:6px;background:rgba(128,128,128,0.08);font-size:10px;';
     const curGap = Number.isFinite(Number(config.badgePairGap)) ? clamp(Number(config.badgePairGap), 0, 22) : 4;
+    const whiteRimOn = config.badgeWhiteRim !== false;
     const wrapEl = root.querySelector('#st-px-id-badges-wrap');
     if (wrapEl) wrapEl.style.setProperty('--badge-pair-gap', `${curGap}px`);
-    gapRow.innerHTML = `<span style="white-space:nowrap;opacity:0.82;">双铭牌间距</span><input type="range" min="0" max="22" step="1" value="${curGap}" style="flex:1;height:14px;cursor:pointer;" /><span class="st-px-gap-val" style="min-width:28px;text-align:right;font-weight:700;">${curGap}px</span>`;
+    root.classList.toggle('no-badge-white-rim', !whiteRimOn);
+    gapRow.innerHTML = `<span style="white-space:nowrap;opacity:0.82;">双铭牌间距</span><input type="range" min="0" max="22" step="1" value="${curGap}" style="flex:1;height:14px;cursor:pointer;" /><span class="st-px-gap-val" style="min-width:26px;text-align:right;font-weight:700;">${curGap}px</span><button type="button" class="st-px-btn st-px-rim-btn" style="height:20px;padding:0 6px;font-size:9.5px;flex-shrink:0;">白边:${whiteRimOn ? '开' : '关'}</button>`;
     const gInp = gapRow.querySelector('input');
     const gVal = gapRow.querySelector('.st-px-gap-val');
+    const rimBtn = gapRow.querySelector('.st-px-rim-btn');
     if (gInp) {
       gInp.addEventListener('input', () => {
         const v = clamp(Number(gInp.value) || 0, 0, 22);
@@ -18040,6 +17786,15 @@
         if (gVal) gVal.textContent = `${v}px`;
         const w = root.querySelector('#st-px-id-badges-wrap');
         if (w) w.style.setProperty('--badge-pair-gap', `${v}px`);
+      });
+    }
+    if (rimBtn) {
+      rimBtn.addEventListener('click', () => {
+        config.badgeWhiteRim = config.badgeWhiteRim === false;
+        const on = config.badgeWhiteRim !== false;
+        saveConfig();
+        root.classList.toggle('no-badge-white-rim', !on);
+        rimBtn.textContent = `白边:${on ? '开' : '关'}`;
       });
     }
     achListEl.appendChild(gapRow);
