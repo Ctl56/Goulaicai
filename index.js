@@ -6399,6 +6399,21 @@
     .st-px-cluster-orn.anim-sway { animation: stOrnSway 2.6s ease-in-out infinite; }
     .st-px-cluster-orn.anim-float { animation: stOrnFloat 2.4s ease-in-out infinite; }
     .st-px-cluster-orn.anim-glow { animation: stOrnGlow 2.2s ease-in-out infinite; }
+    #st-px-id-badges-wrap { gap: var(--badge-pair-gap, 4px) !important; }
+    #st-px-id-badges-wrap .st-px-title-badge { margin-left: 0 !important; margin-right: 0 !important; }
+    .st-px-cluster-orn.c-top-r { right: 10px; left: auto; top: -10px; transform-origin: bottom center; }
+    .st-px-cluster-orn.c-bot-l { left: 10px; bottom: -9px; top: auto; transform-origin: top center; }
+    .st-px-cluster-orn.c-mid-l { left: -10px; top: 50%; margin-top: -7px; transform-origin: center; }
+    .st-px-cluster-orn.c-mid-r { right: -10px; top: 50%; margin-top: -7px; transform-origin: center; }
+    .st-px-badge-fx-cvs {
+      position: absolute;
+      inset: -7px;
+      width: calc(100% + 14px);
+      height: calc(100% + 14px);
+      pointer-events: none;
+      image-rendering: pixelated;
+      z-index: 4;
+    }
     .st-px-title-badge.tier-3.lay-top { margin: 7px 6px 2px; }
     .st-px-title-badge.tier-3.lay-bottom { margin: 2px 6px 7px; }
     .st-px-title-badge.tier-3.lay-diag { margin: 5px 9px; }
@@ -7852,7 +7867,7 @@
           <div class="st-px-idmeta">
             <div class="st-px-idline">
               <span class="st-px-idname" id="st-px-id-name">小狗</span>
-              <span style="display:inline-flex;align-items:center;gap:3px;flex-shrink:0;"><span class="st-px-title-badge" id="st-px-id-title" style="display:none;"></span><span class="st-px-title-badge" id="st-px-id-shopbadge" style="display:none;"></span></span>
+              <span id="st-px-id-badges-wrap" style="display:inline-flex;align-items:center;gap:var(--badge-pair-gap, 4px);flex-shrink:0;"><span class="st-px-title-badge" id="st-px-id-title" style="display:none;"></span><span class="st-px-title-badge" id="st-px-id-shopbadge" style="display:none;"></span></span>
             </div>
             <div class="st-px-idline">
               <span><span style="font-size:10px;color:#6b5446;font-weight:700;" id="st-px-aff-label">好感 Lv.1 初相识</span><span class="st-px-pers-tag" id="st-px-pers-tag" style="display:none;">懒洋洋</span></span>
@@ -17274,120 +17289,43 @@
     secret_key: 'lr', camera: 'lr',
   };
 
-  // 6 款 12x12 完整紧凑复合像素角饰集群（自带轻摇/漂浮/流光动态，拒绝零散碎点）
+  // 18 款 12x12 完整紧凑手绘复合像素集群（支持 M/D/L 颜色自适应通道，与每块铭牌色系严丝合缝）
   const BADGE_CLUSTER_ART = {
-    bow_pearl: {
-      anim: 'anim-sway',
-      grid: [
-        '............',
-        '..ppp..ppp..',
-        '.ppwppppwpp.',
-        '.ppprrrpppp.',
-        '..ppprrppp..',
-        '....pp.pp...',
-        '...pp...pp..',
-        '..pp..w..pp.',
-        '..p..wzw..p.',
-        '......w.....',
-        '.....www....',
-        '......w.....',
-      ],
-    },
-    flower_leaf: {
-      anim: 'anim-sway',
-      grid: [
-        '....pp......',
-        '..ppwwpp....',
-        '..ppyypp.gg.',
-        '...pppp.ggg.',
-        '..gg..ggpp..',
-        '.ggg.gppwwp.',
-        '..gg..ppyypp',
-        '.......pppp.',
-        '....gg..pp..',
-        '...ggg......',
-        '....g.......',
-        '............',
-      ],
-    },
-    crown_gem: {
-      anim: 'anim-glow',
-      grid: [
-        '............',
-        '....y..y....',
-        '..y.yy.yy.y.',
-        '..yyyyyyyyy.',
-        '..yryywycyy.',
-        '..yyyyyyyyy.',
-        '...ywwwwwy..',
-        '...yyyyyyy..',
-        '....y...y...',
-        '...ww...ww..',
-        '............',
-        '............',
-      ],
-    },
-    cloud_moon: {
-      anim: 'anim-float',
-      grid: [
-        '......yyy...',
-        '.....yyw....',
-        '....yyy.....',
-        '....yyy.....',
-        '.....yyyy...',
-        '..cccc..yy..',
-        '.ccwwwcc....',
-        'cwwwwwwwcc..',
-        'cwwwwwwwwwc.',
-        '.ccccccccc..',
-        '............',
-        '............',
-      ],
-    },
-    berry_cream: {
-      anim: 'anim-float',
-      grid: [
-        '....ggg.....',
-        '...grrrg....',
-        '..rrwrrwr...',
-        '..rrrrrrr...',
-        '...rrrrr....',
-        '..wwwwwww...',
-        '.wwpwwwpww..',
-        'wwwwwwwwwww.',
-        '.wwpppppww..',
-        '..wwwwwww...',
-        '............',
-        '............',
-      ],
-    },
-    wing_ribbon: {
-      anim: 'anim-float',
-      grid: [
-        '..www.......',
-        '.wwwww......',
-        'wwwwwww.....',
-        '.wwcwwww....',
-        '..wwccwww...',
-        '...wwwcww...',
-        '....wwwww...',
-        '.....ppwww..',
-        '....ppwpp...',
-        '...pp...pp..',
-        '..pp.....pp.',
-        '............',
-      ],
-    },
+    bow_pearl:     { anim: 'anim-sway',  grid: ['............','..MMM..MMM..','.MMLMMMMMLM.','.MMMDDDMMMM.','..MMMDDMMM..','....MM.MM...','...MM...MM..','..MM..w..MM.','..M..wLw..M.','......w.....','.....www....','......w.....'] },
+    flower_leaf:   { anim: 'anim-sway',  grid: ['....MM......','..MMLLMM....','..MMzzMM.gg.','...MMMM.ggg.','..gg..ggMM..','.ggg.gMMLLm.','..gg..MMzzMM','.......MMMM.','....gg..MM..','...ggg......','....g.......','............'] },
+    crown_gem:     { anim: 'anim-glow',  grid: ['............','....y..y....','..y.yy.yy.y.','..yyyyyyyyy.','..yMyywyMyy.','..yyyyyyyyy.','...yLLLLLy..','...yyyyyyy..','....y...y...','...ww...ww..','............','............'] },
+    cloud_moon:    { anim: 'anim-float', grid: ['......yyy...','.....yyw....','....yyy.....','....yyy.....','.....yyyy...','..MMMM..yy..','.MMwwwMM....','MwwwwwwwMM..','MwwwwwwwwwM.','.MMMMMMMMM..','............','............'] },
+    berry_cream:   { anim: 'anim-float', grid: ['....ggg.....','...gMMMg....','..MMLMMLM...','..MMMMMMM...','...MMMMM....','..wwwwwww...','.wwLwwwLww..','wwwwwwwwwww.','.wwLLLLLww..','..wwwwwww...','............','............'] },
+    wing_ribbon:   { anim: 'anim-float', grid: ['..www.......','.wwwww......','wwwwwww.....','.wwLwwww....','..wwLLwww...','...wwwLww...','....wwwww...','.....MMwww..','....MMLMM...','...MM...MM..','..MM.....MM.','............'] },
+    paw_heart:     { anim: 'anim-float', grid: ['............','..MM...MM...','.MMLM.MMLM..','..MM...MM...','....MMMM....','...MLLLLm...','..MMLLLLMM..','..MMMMMMMM..','...MM..MM...','..p..pp..p..','.ppppppppp..','...ppppp....'] },
+    lantern_tassel:{ anim: 'anim-sway',  grid: ['....yyyy....','...yMMMMY...','..MMLMMMLM..','..MMMyyMMM..','..MMLMMMLM..','...yMMMMY...','....yyyy....','.....yy.....','....yMMY....','....M..M....','....M..M....','............'] },
+    koi_wave:      { anim: 'anim-sway',  grid: ['....MMM.....','...MMLMM....','..MMwwwMM...','..MMMMMMM...','...MMwMM....','....MMM.....','...MM.MM....','.cc..M..cc..','cwwcc.ccwwc.','.cccccccccc.','............','............'] },
+    boba_straw:    { anim: 'anim-float', grid: ['......MM....','.....MM.....','...wwwwww...','..wLLLLLLw..','..wMMMMMMw..','..wMLMMLMw..','..wMDMDMDw..','..wMDDMDDw..','...wwwwww...','............','............','............'] },
+    butterfly_petal:{ anim: 'anim-sway', grid: ['..MM....MM..','.MMLM..MLMM.','.MMwMMMMwMM.','..MMDDDDMM..','...MMDDMM...','..MMw..wMM..','.MMLM..MLMM.','..MM....MM..','....L..L....','...LL..LL...','............','............'] },
+    gem_chain:     { anim: 'anim-glow',  grid: ['....www.....','...wMMMw....','..wMLLLMw...','..wMLwLMw...','...wMMMw....','....www.....','..w..M..w...','.wLw.M.wLw..','..w..M..w...','.....w......','....wLw.....','............'] },
+    music_clef:    { anim: 'anim-float', grid: ['......MMMM..','.....MMLLM..','.....MM..M..','.....MM..M..','.....MM..M..','...MMMM..M..','..MMLLM.MM..','..MMMMM.MM..','...MMM..M...','..w....w....','............','............'] },
+    clover_dew:    { anim: 'anim-sway',  grid: ['...gg..gg...','..gLLggLLg..','..gggggggg..','...ggwwgg...','..gggggggg..','..gLLggLLg..','...gg..gg...','.....gg.....','..c..gg.....','.cwc.g......','..c.........','............'] },
+    cat_ears_bell: { anim: 'anim-sway',  grid: ['.MM......MM.','MMLM....MLMM','MMpM....MpMM','MMMMMMMMMMMM','.MMwwwwwwMM.','....yyyy....','...yywwyy...','...yyDDyy...','....yyyy....','............','............','............'] },
+    crystal_orb:   { anim: 'anim-glow',  grid: ['...MMMMM....','..MMLLLMM...','.MMLwwMLMM..','.MMLwMMLMM..','.MMLLMMLMM..','..MMMMMMM...','...MMMMM....','..yyyyyyy...','.yywwwwwyy..','..yyyyyyy...','............','............'] },
+    cake_cherry:   { anim: 'anim-float', grid: ['.....rr.....','....rwwr....','.....rr.....','..wwwwwwww..','.wwLLLLLLww.','.wMMMMMMMMw.','.wMLLLLLLMw.','.wMMMMMMMMw.','.wwwwwwwwww.','............','............','............'] },
+    fan_jade:      { anim: 'anim-sway',  grid: ['...MMMMMM...','.MMLLwwLLMM.','MMLLMMMMLLMM','MMMMMMMMMMMM','.MMDDDDDDMM.','...DDDDDD...','....yyyy....','.....mm.....','....mwwm....','.....mm.....','....y..y....','............'] },
   };
 
-  const makeClusterOrnCanvas = (clusterKey, posCls, flipX = false) => {
+  const makeClusterOrnCanvas = (clusterKey, posCls, ach, flipX = false) => {
     const def = BADGE_CLUSTER_ART[clusterKey] || BADGE_CLUSTER_ART.bow_pearl;
     const c = doc.createElement('canvas');
     c.width = 12;
     c.height = 12;
     c.className = `st-px-cluster-orn ${posCls} ${def.anim}`;
     const g = c.getContext('2d');
-    const pal = { ...ACH_ICON_PAL, z: '#ffe89e' };
+    // 颜色自适应通道：M=铭牌主色, D=铭牌深色, L=浅亮柔和色
+    const mainC = (ach && ach.bd) || '#e08ca8';
+    const darkC = (ach && ach.fg) || '#6b3848';
+    const pal = {
+      ...ACH_ICON_PAL,
+      M: mainC, m: mainC, Y: '#f4c842',
+      D: darkC, L: '#fff6fa', z: '#ffe89e',
+    };
     for (let y = 0; y < def.grid.length; y++) {
       const row = def.grid[y];
       for (let x = 0; x < row.length; x++) {
@@ -17401,15 +17339,117 @@
     return c;
   };
 
-  const pickClusterForBadge = (ach, fKey) => {
+  const pickClusterPairForBadge = (ach, fKey, h) => {
     const txt = `${ach.id || ''} ${ach.title || ''} ${fKey || ''}`;
-    if (/berry|cake|snack|tea|melon|cookie|ramen|candy|pickle|甜|奶|瓜|零食|饭|糖|茶|榨菜/.test(txt)) return 'berry_cream';
-    if (/sakura|petal|flower|clover|garden|jade|fan|樱|花|草|玉|宋|明|萌|园/.test(txt)) return 'flower_leaf';
-    if (/crown|royal|rich|lucky|king|wardrobe|dice|gold|coin|王|皇|富|贵|万|大亨|欧|财|锦鲤/.test(txt)) return 'crown_gem';
-    if (/cloud|moon|sleep|nap|sofa|night|dream|star|云|月|睡|盹|沙发|星|夜|呆/.test(txt)) return 'cloud_moon';
-    if (/wing|angel|fairy|seraph|feather|halo|kite|翅|羽|天|仙|精灵|风筝/.test(txt)) return 'wing_ribbon';
-    return 'bow_pearl';
+    const allKeys = Object.keys(BADGE_CLUSTER_ART);
+    let primary = '';
+    if (/paw|pet|dog|cat|摸头|肉垫|吸狗|捣蛋/.test(txt)) primary = 'paw_heart';
+    else if (/boba|tea|milk|奶茶|全糖|茶/.test(txt)) primary = 'boba_straw';
+    else if (/cake|berry|snack|cookie|melon|candy|甜|蛋糕|零食|干饭|榨菜/.test(txt)) primary = (h % 2 === 0 ? 'berry_cream' : 'cake_cherry');
+    else if (/lantern|song|ming|ancient|jade|fan|宋|明|古|花灯|玉|扇/.test(txt)) primary = (h % 2 === 0 ? 'lantern_tassel' : 'fan_jade');
+    else if (/koi|fish|water|sea|锦鲤|摸鱼|海/.test(txt)) primary = 'koi_wave';
+    else if (/sakura|petal|flower|garden|樱|花|园|百花/.test(txt)) primary = (h % 2 === 0 ? 'flower_leaf' : 'butterfly_petal');
+    else if (/clover|luck|幸运|欧/.test(txt)) primary = 'clover_dew';
+    else if (/music|note|drum|音|鼓|歌/.test(txt)) primary = 'music_clef';
+    else if (/crown|royal|rich|king|wardrobe|dice|gold|coin|王|皇|富|贵|万|大亨|财|银行/.test(txt)) primary = (h % 2 === 0 ? 'crown_gem' : 'gem_chain');
+    else if (/cloud|moon|sleep|nap|sofa|night|dream|云|月|睡|盹|沙发|夜|呆/.test(txt)) primary = 'cloud_moon';
+    else if (/star|cosmic|prism|星|秘境|水晶/.test(txt)) primary = 'crystal_orb';
+    else if (/wing|angel|fairy|feather|halo|翅|羽|天|仙|精灵/.test(txt)) primary = 'wing_ribbon';
+    else if (/cat|meow|猫|耳|铃/.test(txt)) primary = 'cat_ears_bell';
+    else primary = allKeys[h % allKeys.length];
+
+    // 选一个风格互补且绝不重复的副元素
+    let secondary = allKeys[(allKeys.indexOf(primary) + 3 + (h % 7)) % allKeys.length];
+    if (secondary === primary) secondary = 'bow_pearl';
+    return [primary, secondary];
   };
+
+  const BADGE_FX_MODES = ['orbit_pearls', 'rising_bubbles', 'corner_flutter', 'shimmer_wave', 'sparkle_breath', 'ribbon_trail'];
+
+  const attachBadgeLiveFx = (el, ach, h) => {
+    const mode = BADGE_FX_MODES[h % BADGE_FX_MODES.length];
+    const cvs = doc.createElement('canvas');
+    cvs.width = 56;
+    cvs.height = 24;
+    cvs.className = 'st-px-badge-fx-cvs';
+    cvs.dataset.bfx = mode;
+    cvs.dataset.bcol = (ach && ach.bd) || '#e698b8';
+    el.appendChild(cvs);
+  };
+
+  // 共享轻量化铭牌实时动态渲染循环（6 种不同动效，仅在背包打开时运行）
+  if (!win.__stBadgeFxLoopInstalled) {
+    win.__stBadgeFxLoopInstalled = true;
+    let bfxTick = 0;
+    setInterval(() => {
+      if (doc.hidden || !pupBagEl || !pupBagEl.classList.contains('open')) return;
+      const list = root.querySelectorAll('canvas.st-px-badge-fx-cvs');
+      if (!list.length) return;
+      bfxTick = (bfxTick + 1) % 240;
+      const t = bfxTick;
+      const perim = (p, W, H) => {
+        const peri = (W - 6) * 2 + (H - 6) * 2;
+        const n = ((p % peri) + peri) % peri;
+        const wSpan = W - 6, hSpan = H - 6;
+        if (n < wSpan) return [3 + n, 3];
+        if (n < wSpan + hSpan) return [W - 3, 3 + (n - wSpan)];
+        if (n < wSpan * 2 + hSpan) return [W - 3 - (n - wSpan - hSpan), H - 3];
+        return [3, H - 3 - (n - wSpan * 2 - hSpan)];
+      };
+      list.forEach(cv => {
+        if (!cv.offsetParent) return;
+        const g = cv.getContext('2d');
+        const W = cv.width, H = cv.height;
+        const m = cv.dataset.bfx;
+        const col = cv.dataset.bcol || '#e698b8';
+        g.clearRect(0, 0, W, H);
+        if (m === 'orbit_pearls') {
+          for (let i = 0; i < 3; i++) {
+            const [x, y] = perim(t * 2 + i * 44, W, H);
+            g.fillStyle = col; g.fillRect(Math.round(x) - 1, Math.round(y) - 1, 3, 3);
+            g.fillStyle = '#ffffff'; g.fillRect(Math.round(x), Math.round(y), 1, 1);
+          }
+        } else if (m === 'rising_bubbles') {
+          for (let i = 0; i < 4; i++) {
+            const bx = 8 + i * 13 + Math.round(Math.sin(t * 0.25 + i) * 2);
+            const by = H - 2 - ((t + i * 6) % (H - 4));
+            g.fillStyle = col; g.fillRect(bx, by, 2, 2);
+            g.fillStyle = '#ffffff'; g.fillRect(bx, by, 1, 1);
+          }
+        } else if (m === 'corner_flutter') {
+          for (let i = 0; i < 3; i++) {
+            const fx = 6 + ((t + i * 17) % (W - 12));
+            const fy = 2 + Math.round((Math.sin(t * 0.22 + i * 2) + 1) * 2.5);
+            g.fillStyle = i % 2 === 0 ? col : '#ffffff';
+            g.fillRect(fx, fy, 2, 1);
+          }
+        } else if (m === 'shimmer_wave') {
+          const sx = ((t * 2) % (W + 14)) - 7;
+          g.fillStyle = 'rgba(255,255,255,0.65)';
+          for (let y = 3; y < H - 3; y += 3) {
+            const x = sx - Math.floor(y * 0.4);
+            if (x >= 3 && x < W - 4) g.fillRect(x, y, 2, 2);
+          }
+        } else if (m === 'sparkle_breath') {
+          const pts = [[4, 4], [W - 6, 4], [4, H - 6], [W - 6, H - 6]];
+          pts.forEach(([px0, py0], idx) => {
+            if (((t + idx * 5) % 16) < 8) {
+              g.fillStyle = col; g.fillRect(px0, py0, 2, 2);
+              g.fillStyle = '#ffffff'; g.fillRect(px0, py0, 1, 1);
+            }
+          });
+        } else if (m === 'ribbon_trail') {
+          const x1 = 4 + ((t * 2) % (W - 10));
+          const x2 = W - 6 - ((t * 2) % (W - 10));
+          for (let k = 0; k < 4; k++) {
+            g.fillStyle = k === 0 ? '#ffffff' : col;
+            g.fillRect(Math.max(3, x1 - k * 2), 2, 2, 1);
+            g.fillRect(Math.min(W - 5, x2 + k * 2), H - 3, 2, 1);
+          }
+        }
+      });
+    }, 160);
+  }
 
   const hashBadgeId = (str) => {
     let h = 2166136261;
@@ -17447,43 +17487,43 @@
         el.appendChild(makeAchOrnCanvas(fKey, 'right'));
       }
     } else if (tier >= 4 && !isMystery) {
-      // 高阶/高价豪华铭牌：保留华丽 makeUltOrn 立体质感 + 12x12 动态复合角饰，采用 5 种非对称豪华构图
+      // 高价/传说豪华铭牌：华丽大件 + 颜色自适应复合集群 + 专属 Canvas 实时动态特效（6 种动效 + 6 种豪华不对称布局）
       const h = hashBadgeId(ach.id || ach.title || fKey);
-      const luxMode = h % 5;
-      const clKey = pickClusterForBadge(ach, fKey);
+      const luxMode = h % 6;
+      const [cl1, cl2] = pickClusterPairForBadge(ach, fKey, h);
       el.className = `st-px-title-badge tier-4 lay-lux${isGachaDynBadge ? ' gacha-dyn' : ''}`;
       el.innerHTML = '';
       el.style.background = ach.bg || '#fff8de';
       el.style.borderColor = ach.bd || '#e0b860';
       el.style.color = ach.fg || '#6b4d18';
+      attachBadgeLiveFx(el, ach, h);
       if (luxMode === 0) {
-        // 顶冠 + 左侧华丽翼饰 + 右下复合动态集群
         el.appendChild(makeUltOrn('top', fKey));
-        el.appendChild(makeUltOrn('left', fKey));
-        el.appendChild(makeClusterOrnCanvas(clKey, 'c-br', true));
+        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+        el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
       } else if (luxMode === 1) {
-        // 底部托底花环 + 左上复合集群 + 右侧华丽翼饰
         el.appendChild(makeUltOrn('bottom', fKey));
-        el.appendChild(makeClusterOrnCanvas(clKey, 'c-tl', false));
+        el.appendChild(makeClusterOrnCanvas(cl1, 'c-tl', ach, false));
         el.appendChild(makeUltOrn('right', fKey));
       } else if (luxMode === 2) {
-        // 左右舒展双侧华丽装饰 + 顶左斜戴复合集群（无死板底框）
         el.appendChild(makeUltOrn('left', fKey));
-        el.appendChild(makeUltOrn('right', fKey));
-        el.appendChild(makeClusterOrnCanvas(clKey, 'c-top-l', false));
+        el.appendChild(makeClusterOrnCanvas(cl1, 'c-top-r', ach, true));
+        el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
       } else if (luxMode === 3) {
-        // 左下大集群堆叠 + 右上斜扣集群 + 底部华丽托底
         el.appendChild(makeUltOrn('bottom', fKey));
-        el.appendChild(makeClusterOrnCanvas(clKey, 'c-bl', false));
-        el.appendChild(makeClusterOrnCanvas(clKey === 'crown_gem' ? 'wing_ribbon' : 'crown_gem', 'c-tr', true));
-      } else {
-        // 顶部华丽冠冕 + 右侧华丽侧饰 + 左下复合动态集群
+        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+        el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-l', ach, false));
+      } else if (luxMode === 4) {
         el.appendChild(makeUltOrn('top', fKey));
         el.appendChild(makeUltOrn('right', fKey));
-        el.appendChild(makeClusterOrnCanvas(clKey, 'c-bl', false));
+        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+      } else {
+        el.appendChild(makeUltOrn('left', fKey));
+        el.appendChild(makeUltOrn('right', fKey));
+        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bot-r', ach, true));
       }
     } else {
-      // 常规高阶 (tier 3) 铭牌：4 种干净紧凑成簇动态构图，绝不零散乱丢
+      // 常规高阶 (tier 3) 铭牌：10 种多元空间堆叠构图 + 18 款色系自适应复合集群 + 扭蛋/部分高阶附带 Canvas 动态
       el.className = `st-px-title-badge tier-${tier}${tier >= 3 ? ' lay-creative' : ''}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
       el.innerHTML = '';
       el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
@@ -17491,24 +17531,49 @@
       el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
       if (tier >= 3 && !isMystery) {
         const h = hashBadgeId(ach.id || ach.title || fKey);
-        const mode = h % 4;
-        const clKey = pickClusterForBadge(ach, fKey);
+        const mode = h % 10;
+        const [cl1, cl2] = pickClusterPairForBadge(ach, fKey, h);
+        if (isGachaDynBadge || (h % 3 === 0)) attachBadgeLiveFx(el, ach, h);
         if (mode === 0) {
-          // 左上角完整复合动态角饰 + 右下轻呼应主题小饰
-          el.appendChild(makeClusterOrnCanvas(clKey, 'c-tl', false));
-          el.appendChild(makeAchOrnCanvas(fKey, 'br'));
+          // 左上主簇 + 右下互补副簇（经典摸头大师式和谐对角）
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-tl', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
         } else if (mode === 1) {
-          // 左下角紧凑复合集群 + 右上角斜戴呼应
-          el.appendChild(makeClusterOrnCanvas(clKey, 'c-bl', false));
-          el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
+          // 左下重堆叠双簇（上右留白）
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-bot-l', ach, false));
         } else if (mode === 2) {
-          // 顶部偏左斜戴完整复合集群（左右下全部留白，利落精致）
-          el.appendChild(makeClusterOrnCanvas(clKey, 'c-top-l', false));
-          el.appendChild(makeAchOrnCanvas(fKey, 'br'));
+          // 右下重堆叠双簇（上左留白）
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-br', ach, true));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-bot-r', ach, true));
+        } else if (mode === 3) {
+          // 顶部偏左 + 顶部偏右双小簇（底边清爽）
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-top-l', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-r', ach, true));
+        } else if (mode === 4) {
+          // 底边左下+右下双托起
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
+        } else if (mode === 5) {
+          // 左下主簇 + 右上互补副簇
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-tr', ach, true));
+        } else if (mode === 6) {
+          // 左侧中下簇拥 + 顶部偏左斜戴
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-mid-l', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-l', ach, false));
+        } else if (mode === 7) {
+          // 右侧中上簇拥 + 右下呼应
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-mid-r', ach, true));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
+        } else if (mode === 8) {
+          // 顶部偏右单主簇 + 左下轻呼应
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-top-r', ach, true));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-bl', ach, false));
         } else {
-          // 左上+右上双角成对紧凑挂饰（底部清爽）
-          el.appendChild(makeClusterOrnCanvas(clKey, 'c-tl', false));
-          el.appendChild(makeClusterOrnCanvas(clKey, 'c-tr', true));
+          // 左上双元素紧贴堆叠（极简留白构图）
+          el.appendChild(makeClusterOrnCanvas(cl1, 'c-tl', ach, false));
+          el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-l', ach, false));
         }
       }
     }
@@ -17573,6 +17638,11 @@
       } else {
         pupIdTitleEl.style.display = 'none';
       }
+    }
+    const idBadgesWrap = root.querySelector('#st-px-id-badges-wrap');
+    if (idBadgesWrap) {
+      const gPx = Number.isFinite(Number(config.badgePairGap)) ? clamp(Number(config.badgePairGap), 0, 22) : 4;
+      idBadgesWrap.style.setProperty('--badge-pair-gap', `${gPx}px`);
     }
     if (pupIdShopBadgeEl) {
       const bObj = [...SHOP_PUP_BADGES, ...GACHA_BADGES].find(b => b.id === config.puppyActiveShopBadge);
@@ -17989,6 +18059,25 @@
       filterBar.appendChild(fb);
     });
     achListEl.appendChild(filterBar);
+    const gapRow = doc.createElement('div');
+    gapRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:3px 6px;border-radius:6px;background:rgba(128,128,128,0.08);font-size:10px;';
+    const curGap = Number.isFinite(Number(config.badgePairGap)) ? clamp(Number(config.badgePairGap), 0, 22) : 4;
+    const wrapEl = root.querySelector('#st-px-id-badges-wrap');
+    if (wrapEl) wrapEl.style.setProperty('--badge-pair-gap', `${curGap}px`);
+    gapRow.innerHTML = `<span style="white-space:nowrap;opacity:0.82;">双铭牌间距</span><input type="range" min="0" max="22" step="1" value="${curGap}" style="flex:1;height:14px;cursor:pointer;" /><span class="st-px-gap-val" style="min-width:28px;text-align:right;font-weight:700;">${curGap}px</span>`;
+    const gInp = gapRow.querySelector('input');
+    const gVal = gapRow.querySelector('.st-px-gap-val');
+    if (gInp) {
+      gInp.addEventListener('input', () => {
+        const v = clamp(Number(gInp.value) || 0, 0, 22);
+        config.badgePairGap = v;
+        saveConfig();
+        if (gVal) gVal.textContent = `${v}px`;
+        const w = root.querySelector('#st-px-id-badges-wrap');
+        if (w) w.style.setProperty('--badge-pair-gap', `${v}px`);
+      });
+    }
+    achListEl.appendChild(gapRow);
 
     // 分类筛选条：全部类型 / 各单独分类（不用反复上下滑动）
     const catBar = doc.createElement('div');
