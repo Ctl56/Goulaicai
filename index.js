@@ -4061,56 +4061,54 @@
     }
 
     #st-tb-badge.dragging { cursor: grabbing; opacity: 0.85; }
-    #st-tb-badge.bstyle-dot {
-      width: 24px; height: 24px; padding: 0; justify-content: center; gap: 0;
-      border-radius: 50%; background: var(--tb-bg); opacity: 0.78;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.14);
-    }
-    #st-tb-badge.bstyle-dot #st-tb-floor-text { display: none; }
-    #st-tb-badge.bstyle-dot .st-tb-dot { width: 8px; height: 8px; }
+    #st-tb-badge.no-dot .st-tb-dot { display: none !important; }
     #st-tb-badge.bstyle-thin {
-      height: 24px; padding: 0 9px; gap: 5px; font-size: 11px;
-      background: color-mix(in srgb, var(--tb-bg) 72%, transparent);
+      height: 26px; padding: 0 10px; gap: 5px; font-size: 11.5px;
+      background: color-mix(in srgb, var(--tb-bg) 74%, transparent);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border: 1px solid color-mix(in srgb, var(--tb-text) 22%, transparent);
+      border: 1px solid color-mix(in srgb, var(--tb-text) 24%, transparent);
       box-shadow: none;
     }
-    #st-tb-badge.bstyle-tab {
-      height: 26px; padding: 0 8px 0 7px; gap: 4px; font-size: 11px;
-      border-radius: 10px; opacity: 0.88;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    #st-tb-badge.bstyle-frost {
+      height: 28px; padding: 0 11px; gap: 5px; font-size: 11.5px;
+      background: color-mix(in srgb, var(--tb-bg) 56%, transparent);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid color-mix(in srgb, #ffffff 42%, var(--tb-border));
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
     }
-    #st-tb-badge.bstyle-plain {
-      height: 22px; padding: 0 5px; gap: 4px; font-size: 11.5px; font-weight: 600;
-      background: transparent !important; border-color: transparent !important;
-      box-shadow: none !important;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.22);
+    #st-tb-quick-dock.open {
+      flex-direction: row !important;
+      flex-wrap: wrap;
+      width: max-content;
+      max-width: calc(100vw - 16px);
+      justify-content: center;
     }
-    #st-tb-badge.bstyle-plain .st-tb-dot { width: 5px; height: 5px; }
+    #st-tb-quick-dock .st-tb-qd-btn { white-space: nowrap; flex-shrink: 0; }
     #st-tb-quick-dock.qstyle-grid.open {
       display: grid !important;
-      grid-template-columns: repeat(2, minmax(64px, 1fr));
+      grid-template-columns: repeat(3, minmax(56px, 1fr));
       gap: 5px;
       padding: 6px;
-      border-radius: 12px;
-      max-width: min(210px, calc(100vw - 16px));
+      width: auto;
+      max-width: min(260px, calc(100vw - 16px));
     }
     #st-tb-quick-dock.qstyle-grid .st-tb-qd-btn {
-      width: 100%; justify-content: center; border-radius: 8px; padding: 5px 8px;
+      width: 100%; justify-content: center; padding: 5px 7px;
       border: 1px solid color-mix(in srgb, var(--tb-border) 85%, transparent);
     }
-    #st-tb-quick-dock.qstyle-rail.open {
-      display: flex !important;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 4px;
-      padding: 5px;
-      border-radius: 12px;
-      min-width: 68px;
-      max-width: 116px;
+    .st-tb-qd-drag-handle {
+      display: inline-flex; flex-direction: column; justify-content: center; gap: 2px;
+      width: 16px; height: 22px; padding: 0 2px; cursor: grab; touch-action: none; flex-shrink: 0;
+      opacity: 0.58;
     }
-    #st-tb-quick-dock.qstyle-rail .st-tb-qd-btn {
-      width: 100%; justify-content: center; border-radius: 8px; padding: 4px 10px;
+    .st-tb-qd-drag-handle i {
+      display: block; height: 1.5px; width: 100%; background: currentColor; border-radius: 1px;
+    }
+    .st-tb-qd-item.qd-dragging {
+      opacity: 0.92;
+      border-color: var(--tb-accent, #6b8cff) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+      transform: scale(1.01);
     }
     #st-tb-badge.hidden {
       visibility: hidden;
@@ -9070,8 +9068,8 @@
               <button class="st-tb-pill" data-effect="snow" type="button">柔雪</button>
               <button class="st-tb-pill" data-effect="leaf" type="button">秋叶</button>
               <button class="st-tb-pill" data-effect="firefly" type="button">萤火</button>
-              <button class="st-tb-pill" data-effect="rainwindow" type="button">雨痕</button>
-              <button class="st-tb-pill" data-effect="sunbeam" type="button">光斑</button>
+              <button class="st-tb-pill" data-effect="starlight" type="button">星河</button>
+              <button class="st-tb-pill" data-effect="bubbleglow" type="button">泡泡</button>
             </div>
             <div class="st-tb-slider-group">
               <div class="st-tb-slider-row">
@@ -9097,19 +9095,24 @@
               <span>悬浮球与快捷栏</span>
               <button class="st-tb-mini-btn" id="st-tb-qd-cfg-open" type="button">自定义快捷键</button>
             </div>
-            <div style="font-size:11px;opacity:0.75;margin:4px 0 4px;">悬浮球样式</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin:5px 0 4px;">
+              <span style="font-size:11px;opacity:0.75;">悬浮球样式</span>
+              <button class="st-tb-mini-btn" id="st-tb-badge-dot-toggle" type="button">前圆点：开</button>
+            </div>
             <div class="st-tb-pills" id="st-tb-badge-styles" style="margin-bottom:7px;">
               <button class="st-tb-pill" data-bstyle="default" type="button">默认</button>
-              <button class="st-tb-pill" data-bstyle="dot" type="button">圆点</button>
               <button class="st-tb-pill" data-bstyle="thin" type="button">细边</button>
-              <button class="st-tb-pill" data-bstyle="tab" type="button">贴边</button>
-              <button class="st-tb-pill" data-bstyle="plain" type="button">纯字</button>
+              <button class="st-tb-pill" data-bstyle="frost" type="button">磨砂</button>
             </div>
             <div style="font-size:11px;opacity:0.75;margin:4px 0 4px;">快捷栏样式</div>
-            <div class="st-tb-pills" id="st-tb-qd-styles">
-              <button class="st-tb-pill" data-qstyle="pill" type="button">胶囊</button>
-              <button class="st-tb-pill" data-qstyle="grid" type="button">方格</button>
-              <button class="st-tb-pill" data-qstyle="rail" type="button">竖条</button>
+            <div class="st-tb-pills" id="st-tb-qd-styles" style="margin-bottom:7px;">
+              <button class="st-tb-pill" data-qstyle="pill" type="button">横向胶囊</button>
+              <button class="st-tb-pill" data-qstyle="grid" type="button">极简方格</button>
+            </div>
+            <div class="st-tb-slider-row" style="margin-top:2px;">
+              <span>圆角</span>
+              <input class="st-tb-range" id="st-tb-badge-radius" type="range" min="0" max="20" step="1" value="16" />
+              <span id="st-tb-badge-radius-val">16px</span>
             </div>
           </div>
 
@@ -20600,44 +20603,45 @@
       };
     }
 
-    if (type === 'rainwindow') {
-      const isDrop = Math.random() < 0.34;
-      if (isDrop) {
+    if (type === 'starlight') {
+      const isMeteor = Math.random() < 0.16;
+      if (isMeteor) {
         return {
-          isDrop: true,
-          x: Math.random() * w,
-          y: randomY ? Math.random() * h : -12,
-          r: 1.8 + Math.random() * 2.4,
-          vy: 0.18 + Math.random() * 0.48,
-          pause: Math.random() * 60,
-          trail: 10 + Math.random() * 22,
-          alpha: 0.22 + Math.random() * 0.24,
+          isMeteor: true,
+          x: w * (0.25 + Math.random() * 0.85),
+          y: -15 - Math.random() * (h * 0.35),
+          vx: -(2.6 + Math.random() * 2.2),
+          vy: 1.5 + Math.random() * 1.3,
+          len: 36 + Math.random() * 44,
+          alpha: 0.45 + Math.random() * 0.4,
+          hue: Math.random() < 0.5 ? '210, 232, 255' : '255, 236, 178',
+          wait: Math.random() * 120,
         };
       }
       return {
-        isDrop: false,
-        x: Math.random() * (w + 100),
-        y,
-        depth,
-        len: (12 + Math.random() * 14) * depth,
-        vx: -0.65 * depth,
-        vy: (3.8 + Math.random() * 2.4) * depth,
-        alpha: 0.12 + depth * 0.14,
+        isMeteor: false,
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 1.1 + Math.random() * 2.2,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: -0.06 - Math.random() * 0.14,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: 0.03 + Math.random() * 0.04,
+        hue: pick(['255, 236, 170', '172, 218, 255', '224, 194, 255']),
       };
     }
 
-    if (type === 'sunbeam') {
-      const sideBias = Math.random();
-      const bx = sideBias < 0.42 ? Math.random() * (w * 0.32) : (sideBias < 0.84 ? w - Math.random() * (w * 0.32) : Math.random() * w);
+    if (type === 'bubbleglow') {
       return {
-        x: bx,
-        y: Math.random() * (h * 0.85),
-        r: 22 + Math.random() * 44,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: (Math.random() - 0.5) * 0.08,
-        phase: Math.random() * Math.PI * 2,
-        phaseSpeed: 0.008 + Math.random() * 0.012,
-        warm: Math.random() < 0.65,
+        x: Math.random() * w,
+        y: randomY ? Math.random() * h : h + 16 + Math.random() * 40,
+        r: 7 + Math.random() * 14,
+        vy: -(0.35 + Math.random() * 0.55),
+        swayPhase: Math.random() * Math.PI * 2,
+        swaySpeed: 0.018 + Math.random() * 0.02,
+        swayAmp: 0.35 + Math.random() * 0.55,
+        tint: pick(['rgba(255, 182, 218, ', 'rgba(154, 224, 255, ', 'rgba(202, 182, 255, ', 'rgba(164, 242, 216, ']),
+        alpha: 0.34 + Math.random() * 0.28,
       };
     }
 
@@ -20876,78 +20880,81 @@
           ctx2d.beginPath();
           ctx2d.arc(p.x, p.y, p.r * 2.2, 0, Math.PI * 2);
           ctx2d.fill();
-        } else if (type === 'rainwindow') {
-          if (p.isDrop) {
-            p.pause -= spd;
-            if (p.pause <= 0) {
-              p.y += p.vy * spd * 2.1;
-              p.x += Math.sin(p.y * 0.04) * 0.15;
-              if (Math.random() < 0.02) p.pause = 20 + Math.random() * 55;
+        } else if (type === 'starlight') {
+          if (p.isMeteor) {
+            if (p.wait > 0) {
+              p.wait -= spd;
             } else {
-              p.y += p.vy * spd * 0.18;
+              p.x += p.vx * spd;
+              p.y += p.vy * spd;
+              const a = clamp(p.alpha * opa * (lightBg ? 0.82 : 1), 0, 0.92);
+              const tx = p.x - p.vx * (p.len / 4.2);
+              const ty = p.y - p.vy * (p.len / 4.2);
+              const mg = ctx2d.createLinearGradient(p.x, p.y, tx, ty);
+              const headCol = lightBg ? '122, 152, 224' : p.hue;
+              mg.addColorStop(0, `rgba(255, 255, 255, ${a})`);
+              mg.addColorStop(0.28, `rgba(${headCol}, ${a * 0.78})`);
+              mg.addColorStop(1, `rgba(${headCol}, 0)`);
+              ctx2d.strokeStyle = mg;
+              ctx2d.lineWidth = 1.65;
+              ctx2d.lineCap = 'round';
+              ctx2d.beginPath();
+              ctx2d.moveTo(p.x, p.y);
+              ctx2d.lineTo(tx, ty);
+              ctx2d.stroke();
+              ctx2d.fillStyle = `rgba(255, 255, 255, ${a})`;
+              ctx2d.beginPath();
+              ctx2d.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+              ctx2d.fill();
+              if (p.x < -60 || p.y > h + 60) {
+                p.x = w * (0.28 + Math.random() * 0.85);
+                p.y = -18 - Math.random() * (h * 0.25);
+                p.wait = 60 + Math.random() * 140;
+              }
             }
-            if (p.y > h + 24) {
-              p.y = -12;
-              p.x = Math.random() * w;
-              p.pause = Math.random() * 40;
-            }
-            const a = clamp(p.alpha * opa, 0, 0.55);
-            const colBase = lightBg ? '120, 152, 186' : '198, 224, 248';
-            const tg = ctx2d.createLinearGradient(p.x, p.y - p.trail, p.x, p.y);
-            tg.addColorStop(0, `rgba(${colBase}, 0)`);
-            tg.addColorStop(1, `rgba(${colBase}, ${a * 0.55})`);
-            ctx2d.strokeStyle = tg;
-            ctx2d.lineWidth = Math.max(0.9, p.r * 0.52);
-            ctx2d.beginPath();
-            ctx2d.moveTo(p.x, p.y - p.trail);
-            ctx2d.lineTo(p.x, p.y);
-            ctx2d.stroke();
-            ctx2d.fillStyle = `rgba(${colBase}, ${a * 0.9})`;
-            ctx2d.beginPath();
-            ctx2d.ellipse(p.x, p.y, p.r * 0.85, p.r * 1.15, 0, 0, Math.PI * 2);
-            ctx2d.fill();
-            ctx2d.fillStyle = `rgba(255, 255, 255, ${a * 0.95})`;
-            ctx2d.beginPath();
-            ctx2d.arc(p.x - p.r * 0.25, p.y - p.r * 0.3, Math.max(0.55, p.r * 0.26), 0, Math.PI * 2);
-            ctx2d.fill();
           } else {
+            p.phase += p.phaseSpeed * spd;
             p.x += p.vx * spd;
             p.y += p.vy * spd;
-            if (p.y > h + 20 || p.x < -20) {
-              p.y = -16;
-              p.x = Math.random() * (w + 100);
-            }
-            const a = clamp(p.alpha * opa, 0, 0.35);
-            ctx2d.strokeStyle = lightBg ? `rgba(116, 146, 178, ${a})` : `rgba(196, 220, 246, ${a})`;
-            ctx2d.lineWidth = 0.85;
+            if (p.x < -8) p.x = w + 6;
+            if (p.x > w + 8) p.x = -6;
+            if (p.y < -8) p.y = h + 6;
+            const tw = 0.28 + 0.72 * (0.5 + 0.5 * Math.sin(p.phase));
+            const a = clamp(tw * opa * (lightBg ? 0.76 : 0.95), 0, 0.95);
+            const col = lightBg ? '138, 162, 224' : p.hue;
+            const sg = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.6);
+            sg.addColorStop(0, `rgba(255, 255, 255, ${a})`);
+            sg.addColorStop(0.42, `rgba(${col}, ${a * 0.65})`);
+            sg.addColorStop(1, `rgba(${col}, 0)`);
+            ctx2d.fillStyle = sg;
             ctx2d.beginPath();
-            ctx2d.moveTo(p.x, p.y);
-            ctx2d.lineTo(p.x + p.vx * 2.2, p.y + p.len);
-            ctx2d.stroke();
+            ctx2d.arc(p.x, p.y, p.r * 2.6, 0, Math.PI * 2);
+            ctx2d.fill();
           }
-        } else if (type === 'sunbeam') {
-          p.phase += p.phaseSpeed * spd;
-          p.x += (p.vx + Math.sin(p.phase) * 0.14) * spd;
-          p.y += (p.vy + Math.cos(p.phase * 0.8) * 0.09) * spd;
-          if (p.x < -p.r) p.x = w + p.r;
-          if (p.x > w + p.r) p.x = -p.r;
-          if (p.y < -p.r) p.y = h * 0.85;
-          if (p.y > h + p.r) p.y = -p.r;
-          const breath = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(p.phase));
-          const a = clamp((lightBg ? 0.16 : 0.12) * breath * opa, 0, 0.28);
-          const grad = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-          if (p.warm) {
-            grad.addColorStop(0, `rgba(255, 246, 206, ${a})`);
-            grad.addColorStop(0.55, `rgba(255, 232, 168, ${a * 0.45})`);
-            grad.addColorStop(1, 'rgba(255, 232, 168, 0)');
-          } else {
-            grad.addColorStop(0, `rgba(255, 253, 242, ${a * 0.92})`);
-            grad.addColorStop(0.55, `rgba(246, 240, 212, ${a * 0.4})`);
-            grad.addColorStop(1, 'rgba(246, 240, 212, 0)');
+        } else if (type === 'bubbleglow') {
+          p.swayPhase += p.swaySpeed * spd;
+          p.y += p.vy * spd;
+          p.x += Math.sin(p.swayPhase) * p.swayAmp * spd;
+          if (p.y < -p.r - 12) {
+            p.y = h + p.r + Math.random() * 28;
+            p.x = Math.random() * w;
           }
-          ctx2d.fillStyle = grad;
+          const fadeTop = p.y < h * 0.16 ? clamp(p.y / (h * 0.16), 0, 1) : 1;
+          const a = clamp(p.alpha * opa * fadeTop, 0, 0.72);
+          const bg = ctx2d.createRadialGradient(p.x - p.r * 0.28, p.y - p.r * 0.28, p.r * 0.1, p.x, p.y, p.r);
+          bg.addColorStop(0, `rgba(255, 255, 255, ${a * 0.35})`);
+          bg.addColorStop(0.72, `${p.tint}${a * 0.18})`);
+          bg.addColorStop(1, `${p.tint}${a * 0.68})`);
+          ctx2d.fillStyle = bg;
           ctx2d.beginPath();
           ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx2d.fill();
+          ctx2d.strokeStyle = `${p.tint}${a * 0.92})`;
+          ctx2d.lineWidth = 1.1;
+          ctx2d.stroke();
+          ctx2d.fillStyle = `rgba(255, 255, 255, ${a * 0.95})`;
+          ctx2d.beginPath();
+          ctx2d.ellipse(p.x - p.r * 0.34, p.y - p.r * 0.34, Math.max(1.2, p.r * 0.22), Math.max(0.8, p.r * 0.12), -0.6, 0, Math.PI * 2);
           ctx2d.fill();
         }
       }
@@ -35685,39 +35692,39 @@
   });
 
   const AMBIENT_PUP_TALK = {
-    rainwindow: {
-      sleepyhead: ['听着窗外滴滴答答的雨声，眼皮都要黏在一起了，陪你窝着听雨吧', '雨珠顺着玻璃慢慢滑下来，这个节奏最适合趴着打盹了'],
-      clingy: ['下雨天窗玻璃湿漉漉的，我凑近一点挨着你，就不冷啦', '窗外落雨了，主人别走远，我蹲在屏幕边陪你听雨'],
-      tsundere: ['哼，才不是怕打雷才往你旁边靠的，只是顺便看看雨痕而已', '下雨有什么好看的，算了，既然你喜欢我就陪你听一会儿'],
-      foodie: ['窗外下细雨了，这种天气最配热乎乎的关东煮和小甜饼了', '听着细雨声肚子都咕咕叫了，主人要不要顺便泡杯热茶'],
-      explorer: ['哇，透明小雨珠贴在玻璃上排着队滑下来，好像在比赛一样', '雨天氛围拉满了，我帮你守着窗边，顺便数一数滑过多少滴雨'],
-      fashionista: ['细雨配玻璃水痕，这股清冷电影感拿捏得刚刚好', '雨天光线柔和了不少，毛毛可不能淋湿，我就安静坐着欣赏'],
-      gamer: ['下雨天氛围挂机开启，窗边听雨加看剧情，沉浸感直接拉满', '滴，检测到雨痕特效上线，已切换为室内静谧挂机模式'],
-      philosopher: ['细雨落在窗上又慢慢散开，安静读几段字倒是格外舒心', '雨声把外面的喧闹隔开了，慢慢看，我在这边陪着你'],
+    starlight: {
+      sleepyhead: ['刚刚有颗小流星滑过去了，我迷迷糊糊许了个愿，希望主人天天开心', '满屏星光晃呀晃的，像盖了一床软软的银河小被子'],
+      clingy: ['主人快看流星，我们一起对着星星许愿，以后都要一直待在一起', '星河好漂亮，可是我还是觉得屏幕里最亮的是主人'],
+      tsundere: ['哼，流星有什么稀奇的，本汪才没有偷偷闭眼许愿希望你多摸摸我', '这片星河勉强配得上本汪的气质吧，顺便允许你一起欣赏'],
+      foodie: ['一闪一闪的星星看起来好像跳跳糖，好想张嘴接一颗尝尝味道', '流星滑过去的时候，我许愿明天能吃到双倍分量的小饼干'],
+      explorer: ['哇，又有流星拖着长尾巴飞过去了，我要把每颗星的轨迹都记下来', '开启星河航行模式，我来当你的领航小狗，前方发现闪亮星尘'],
+      fashionista: ['细碎星光配上流星尾迹，这个氛围高级又干净，拍照肯定绝美', '星河柔光打在毛毛上闪闪的，今天的造型质感直接拉满'],
+      gamer: ['检测到稀有流星划过，快按下许愿键领取今日份欧气加成', '星河背景已激活，护眼又浪漫，刷剧情的时候顺便攒一波好运'],
+      philosopher: ['流星只亮一瞬间，却让人记住很久，慢慢看这段故事吧', '星尘无声滑过夜幕，有你一起看的时候格外安宁'],
     },
-    sunbeam: {
-      sleepyhead: ['暖洋洋的光斑照在背上，好舒服，我要眯起眼睛晒太阳了', '午后阳光晃晃悠悠的，感觉毛毛都被晒得蓬松暖和起来了'],
-      clingy: ['这片暖光好温柔，主人快把手伸过来，我们一起晒太阳贴贴', '晒着太阳心情都变甜了，只要有光又有你陪着就够啦'],
-      tsundere: ['阳光刚好照过来我才勉强趴下晒一晒的，可不是在偷懒', '哼，这光斑晃得还挺好看，本汪就大方准许它照在我身上吧'],
-      foodie: ['暖暖的午后光斑，闻起来好像刚出炉的蜂蜜小吐司一样香', '晒得浑身暖烘烘的，好想来一口冰牛奶配小饼干当下午茶'],
-      explorer: ['光斑在屏幕上轻轻晃来晃去，我差点忍不住扑过去踩它一下', '好像树叶缝里漏下来的午后日光，整个页面一下子亮堂又温柔'],
-      fashionista: ['这束午后柔光打在毛尖上自带滤镜，现在拍照肯定特别上镜', '自然光影才是最耐看的搭配，不抢眼又很有午后散步的松弛感'],
-      gamer: ['阳光充能中，晒满午后光斑体力条都要自动回满啦', '午后树影光斑已激活，护眼又清爽，最适合慢慢刷剧情'],
-      philosopher: ['午后的光影慢慢挪动，时间好像也跟着放慢了一点', '光线柔和不刺眼，正好可以静下心来好好读完这一章'],
+    bubbleglow: {
+      sleepyhead: ['彩色大泡泡慢慢飘上来了，晃得我眼睛都跟着一眨一眨的', '好想钻进一个亮晶晶的泡泡里，漂在空中舒舒服服打个盹'],
+      clingy: ['主人看我跳起来戳泡泡，戳破一个就送你一颗小爱心', '好多彩虹色泡泡围着我们飘，就像和主人在一起时的心情一样甜'],
+      tsundere: ['喂，这些泡泡自己飘到我鼻尖上的，本汪才不是玩得停不下来', '哼，轻轻拍一下就破掉了，勉强算是个还不错的小消遣吧'],
+      foodie: ['圆滚滚亮晶晶的泡泡，看起来好像汽水里冒出来的甜味气泡', '这些彩虹泡泡飘起来软乎乎的，感觉闻起来都是草莓苏打味'],
+      explorer: ['发现一群虹彩泡泡正在升空，看我一个飞扑抓住最大那颗', '每颗泡泡映出来的颜色都不一样，我数数今天能戳破几个'],
+      fashionista: ['半透明的彩虹折光泡泡最显灵动了，飘在画面里一点都不抢戏', '这种清透的珠光气泡质感刚刚好，优雅又带着一点俏皮'],
+      gamer: ['泡泡小游戏自动触发，看本汪精准连击戳破空中飘过的大泡泡', '满屏虹彩气泡氛围上线，视觉清爽度加满，心情值直接回血'],
+      philosopher: ['泡泡映着光缓缓升起又轻轻散开，看着它们烦恼也跟着变轻了', '轻盈通透的泡沫飘在字里行间，让阅读也多了一点松弛感'],
     },
   };
 
   const triggerAmbientPupReaction = (effKey, fromClick = true) => {
     if (!config.puppyEnabled) return;
-    if (effKey !== 'rainwindow' && effKey !== 'sunbeam') return;
+    if (effKey !== 'starlight' && effKey !== 'bubbleglow') return;
     const curP = config.puppyPersonality || 'sleepyhead';
     const bank = AMBIENT_PUP_TALK[effKey][curP] || AMBIENT_PUP_TALK[effKey].sleepyhead;
     const line = pick(bank);
-    if (effKey === 'rainwindow') {
+    if (effKey === 'starlight') {
       setPuppyState('sit', 130);
       for (let i = 0; i < 3; i++) spawnPupFx('note', 8 + i * 4, 4);
     } else {
-      setPuppyState(fromClick ? 'happy' : 'sleep', 135);
+      setPuppyState('happy', 135);
       for (let i = 0; i < 3; i++) spawnPupFx('heart', 8 + i * 4, 4);
     }
     showPuppyBubble(formatPupText(line), 4400);
@@ -35725,7 +35732,7 @@
 
   setInterval(() => {
     if (doc.hidden || !config.puppyEnabled) return;
-    if (config.effect !== 'rainwindow' && config.effect !== 'sunbeam') return;
+    if (config.effect !== 'starlight' && config.effect !== 'bubbleglow') return;
     if (puppyBubble && puppyBubble.classList.contains('show')) return;
     if (Math.random() < 0.28) triggerAmbientPupReaction(config.effect, false);
   }, 46000);
@@ -43261,6 +43268,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       b.className = 'st-tb-qd-btn';
       b.dataset.qd = it.id;
       b.textContent = it.label;
+      const rad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
+      b.style.borderRadius = `${Math.max(2, Math.min(rad, 16))}px`;
       quickDockEl.appendChild(b);
     });
     syncQuickDockUI();
@@ -43274,7 +43283,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       reader: Boolean(readerOpen || readerMinimized),
       bag: Boolean(pupBagOpen),
       keepalive: Boolean(config.keepAlive),
-      guard: Boolean(config.guardEnabled),
+      guard: Boolean(config.swipeGuard),
       ambient: Boolean(config.effect && config.effect !== 'none'),
       storyedit: Boolean(config.storyEditEnabled),
       fold: Boolean(config.perfFoldEnabled),
@@ -43298,13 +43307,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdCfgMask.className = 'st-tb-qd-modal-mask';
       qdCfgMask.innerHTML = `<div class="st-tb-qd-modal">
         <div class="st-tb-qd-modal-title"><span>自定义长按悬浮球快捷栏</span><button class="st-tb-mini-btn" id="st-tb-qd-cfg-close" type="button">关闭</button></div>
-        <div style="font-size:11.5px;opacity:0.78;">已启用的快捷按钮，可上下调整顺序、直接修改名称或移除：</div>
+        <div style="font-size:11.5px;opacity:0.78;">已启用的快捷按钮，可按住左侧横杠拖动或点上下排序，也能改名或移除：</div>
         <div class="st-tb-qd-list" id="st-tb-qd-active-list"></div>
         <div style="font-size:11.5px;opacity:0.78;">点击下方功能即可加入长按快捷栏：</div>
         <div class="st-tb-qd-pool" id="st-tb-qd-pool-list"></div>
-        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:1;cursor:pointer;user-select:none;margin:2px 0;">
-          <input type="checkbox" id="st-tb-qd-cfg-tip-toggle" style="margin:0;width:14px;height:14px;flex-shrink:0;vertical-align:middle;accent-color:var(--tb-accent, #6b8cff);" />
-          <span style="line-height:1;display:inline-block;">长按悬浮球时显示自定义提醒弹窗</span>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:15px;">
+          <input type="checkbox" id="st-tb-qd-cfg-tip-toggle" style="margin:0 !important;padding:0 !important;width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;transform:none !important;position:static !important;vertical-align:middle !important;accent-color:var(--tb-accent, #6b8cff);" />
+          <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">长按悬浮球时显示自定义提醒弹窗</span>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
           <button class="st-tb-mini-btn" id="st-tb-qd-cfg-reset" type="button">恢复默认</button>
@@ -43333,6 +43342,47 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         const meta = QUICK_DOCK_CATALOG.find(c => c.id === it.id);
         const row = doc.createElement('div');
         row.className = 'st-tb-qd-item';
+        row.dataset.qdIdx = String(idx);
+        const handle = doc.createElement('span');
+        handle.className = 'st-tb-qd-drag-handle';
+        handle.title = '按住上下拖动调整顺序';
+        handle.innerHTML = '<i></i><i></i><i></i>';
+        handle.addEventListener('pointerdown', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          let curIdx = idx;
+          row.classList.add('qd-dragging');
+          const onMove = (me) => {
+            const rows = Array.from(listEl.querySelectorAll('.st-tb-qd-item'));
+            for (let j = 0; j < rows.length; j++) {
+              if (j === curIdx) continue;
+              const rc = rows[j].getBoundingClientRect();
+              const mid = rc.top + rc.height / 2;
+              if ((j < curIdx && me.clientY < mid) || (j > curIdx && me.clientY > mid)) {
+                const next = getQuickDockItems();
+                const [moved] = next.splice(curIdx, 1);
+                next.splice(j, 0, moved);
+                config.quickDockItems = next;
+                saveConfig();
+                renderQuickDock();
+                if (j < curIdx) listEl.insertBefore(row, rows[j]);
+                else listEl.insertBefore(row, rows[j].nextSibling);
+                curIdx = j;
+                break;
+              }
+            }
+          };
+          const onUp = () => {
+            row.classList.remove('qd-dragging');
+            win.removeEventListener('pointermove', onMove);
+            win.removeEventListener('pointerup', onUp);
+            win.removeEventListener('pointercancel', onUp);
+            renderQdCfgBody();
+          };
+          win.addEventListener('pointermove', onMove);
+          win.addEventListener('pointerup', onUp);
+          win.addEventListener('pointercancel', onUp);
+        });
         const tag = doc.createElement('span');
         tag.className = 'st-tb-qd-item-tag';
         tag.textContent = meta ? meta.name : it.id;
@@ -43383,7 +43433,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             saveConfig(); renderQuickDock(); renderQdCfgBody();
           }
         });
-        row.append(tag, inp, upBtn, dnBtn, delBtn);
+        row.append(handle, tag, inp, upBtn, dnBtn, delBtn);
         listEl.appendChild(row);
       });
       const usedSet = new Set(cur.map(x => x.id));
@@ -43426,9 +43476,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdTipMask.innerHTML = `<div class="st-tb-qd-modal" style="max-width:320px;">
         <div class="st-tb-qd-modal-title"><span>长按快捷键支持自定义</span></div>
         <div style="font-size:12.5px;opacity:0.9;">你可以在「工具箱 - 外观 - 长按悬浮球快捷栏」里自由增删功能、调整排序，还可以给每个按钮重新命名。</div>
-        <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:1;cursor:pointer;user-select:none;margin:2px 0;">
-          <input type="checkbox" id="st-tb-qd-tip-never" style="margin:0;width:14px;height:14px;flex-shrink:0;vertical-align:middle;accent-color:var(--tb-accent, #6b8cff);" />
-          <span style="line-height:1;display:inline-block;">下次不再出现</span>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:15px;">
+          <input type="checkbox" id="st-tb-qd-tip-never" style="margin:0 !important;padding:0 !important;width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;transform:none !important;position:static !important;vertical-align:middle !important;accent-color:var(--tb-accent, #6b8cff);" />
+          <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">下次不再出现</span>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <button class="st-tb-mini-btn" id="st-tb-qd-tip-go" type="button">立即去自定义</button>
@@ -43458,23 +43508,53 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   };
 
   const applyBadgeAndDockStyle = () => {
-    const bs = config.badgeStyle || 'default';
+    const validBs = ['default', 'thin', 'frost'];
+    const bs = validBs.includes(config.badgeStyle) ? config.badgeStyle : 'default';
+    const showDot = config.badgeShowDot !== false;
+    const rad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
+    const btnRad = Math.max(2, Math.min(rad, 16));
     if (badge) {
-      badge.classList.remove('bstyle-dot', 'bstyle-thin', 'bstyle-tab', 'bstyle-plain');
+      badge.classList.remove('bstyle-thin', 'bstyle-frost', 'no-dot');
       if (bs !== 'default') badge.classList.add(`bstyle-${bs}`);
+      if (!showDot) badge.classList.add('no-dot');
+      badge.style.borderRadius = `${rad}px`;
     }
+    const dotToggleBtn = root.querySelector('#st-tb-badge-dot-toggle');
+    if (dotToggleBtn) {
+      dotToggleBtn.textContent = showDot ? '前圆点：开' : '前圆点：关';
+      dotToggleBtn.classList.toggle('active', showDot);
+    }
+    const radInput = root.querySelector('#st-tb-badge-radius');
+    const radVal = root.querySelector('#st-tb-badge-radius-val');
+    if (radInput) radInput.value = String(rad);
+    if (radVal) radVal.textContent = `${rad}px`;
     root.querySelectorAll('#st-tb-badge-styles [data-bstyle]').forEach(b => {
       b.classList.toggle('active', b.dataset.bstyle === bs);
     });
-    const qs = config.quickDockStyle || 'pill';
+    const qs = config.quickDockStyle === 'grid' ? 'grid' : 'pill';
     if (quickDockEl) {
-      quickDockEl.classList.remove('qstyle-grid', 'qstyle-rail');
-      if (qs !== 'pill') quickDockEl.classList.add(`qstyle-${qs}`);
+      quickDockEl.classList.remove('qstyle-grid');
+      if (qs === 'grid') quickDockEl.classList.add('qstyle-grid');
+      quickDockEl.style.borderRadius = `${rad}px`;
+      quickDockEl.querySelectorAll('.st-tb-qd-btn').forEach(btn => {
+        btn.style.borderRadius = `${btnRad}px`;
+      });
     }
     root.querySelectorAll('#st-tb-qd-styles [data-qstyle]').forEach(b => {
       b.classList.toggle('active', b.dataset.qstyle === qs);
     });
   };
+  root.querySelector('#st-tb-badge-dot-toggle')?.addEventListener('click', () => {
+    config.badgeShowDot = config.badgeShowDot === false;
+    saveConfig();
+    applyBadgeAndDockStyle();
+    applyBadgePosition(true);
+  });
+  root.querySelector('#st-tb-badge-radius')?.addEventListener('input', (e) => {
+    config.badgeRadius = clamp(Number(e.target.value) || 0, 0, 20);
+    saveConfig();
+    applyBadgeAndDockStyle();
+  });
   root.querySelectorAll('#st-tb-badge-styles [data-bstyle]').forEach(btn => {
     btn.addEventListener('click', () => {
       config.badgeStyle = btn.dataset.bstyle;
@@ -43501,6 +43581,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       return;
     }
     renderQuickDock();
+    quickDockEl.style.left = '8px';
+    quickDockEl.style.top = '8px';
     quickDockEl.classList.add('open');
     const br = badge.getBoundingClientRect();
     const dw = quickDockEl.offsetWidth || 226;
@@ -43561,8 +43643,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         }
         syncQuickDockUI();
       } else if (act === 'guard') {
-        if (guardBtn) guardBtn.click();
-        showImmNotice(config.guardEnabled ? '已开启防手滑保护：误触重生成或删卡前会先确认' : '已关闭防手滑保护');
+        config.swipeGuard = !Boolean(config.swipeGuard);
+        saveConfig();
+        syncUI();
+        showImmNotice(config.swipeGuard ? '已开启防手滑保护：右滑新生成或重生成前会先确认' : '已关闭防手滑保护');
         syncQuickDockUI();
       } else if (act === 'storyedit') {
         const seBtn = root.querySelector('#st-se-toggle-btn');
