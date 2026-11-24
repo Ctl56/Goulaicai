@@ -6419,19 +6419,31 @@
       from { transform: scale(0.84) translateY(10px); opacity: 0; }
       to { transform: scale(1) translateY(0); opacity: 1; }
     }
-    .st-px-gacha-pop-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-    .st-px-gacha-pop-sub { font-size: 10px; opacity: 0.8; margin-bottom: 8px; }
-    .st-px-gacha-pop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; max-height: 270px; overflow-y: auto; padding: 2px; }
+    .st-px-gacha-pop-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; line-height: 1.4; }
+    .st-px-gacha-pop-sub { font-size: 11px; opacity: 0.82; margin-bottom: 10px; line-height: 1.4; }
+    .st-px-gacha-pop-grid { display: grid; grid-template-columns: 1fr; gap: 8px; max-height: 330px; overflow-y: auto; padding: 2px 3px 4px 2px; -webkit-overflow-scrolling: touch; }
     .st-px-gacha-pop-grid.single { grid-template-columns: 1fr; }
     .st-px-gacha-card {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px;
+      gap: 10px;
+      padding: 9px 10px;
       border: 2px solid #b8c6d9;
+      border-radius: 6px;
       background: #ffffff;
       text-align: left;
       animation: stPxPopIn 0.25s ease-out both;
+    }
+    .st-px-gacha-kind-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(95, 115, 155, 0.13);
+      color: #425270;
+      margin-left: 5px;
+      vertical-align: middle;
     }
     .st-px-gacha-card.tier-R { background: #f7faff; border-color: #9eb7d9; }
     .st-px-gacha-card.tier-SR { background: #f8f2ff; border-color: #ad84e6; }
@@ -8620,22 +8632,19 @@
               <button class="st-tb-btn" id="st-tb-perf-noblur" type="button">去毛玻璃:关</button>
               <button class="st-tb-btn" id="st-tb-perf-clean" type="button">图片懒加载</button>
             </div>
-            <div class="st-tb-row" style="margin-bottom:0;gap:6px;align-items:center;">
-              <button class="st-tb-btn" id="st-tb-perf-fold-toggle" type="button" style="flex:1;min-height:28px;padding:4px 8px;font-size:12px;">折叠楼层：关</button>
-              <select class="st-tb-select" id="st-tb-perf-fold" style="width:62px;flex:0 0 auto;min-height:28px;padding:3px 4px;font-size:12px;text-align:center;" title="选择保留显示的最近楼层数">
-                <option value="3">3</option>
-                <option value="5">5</option>
-                <option value="8">8</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="50">50</option>
-                <option value="60">60</option>
-                <option value="80">80</option>
-                <option value="100">100</option>
-              </select>
+            <div class="st-tb-row" style="margin-bottom:0;gap:6px;align-items:stretch;">
+              <button class="st-tb-btn" id="st-tb-perf-fold-toggle" type="button" style="flex:1;height:30px;min-height:30px;max-height:30px;margin:0;padding:0 10px;font-size:12px;line-height:1;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;">折叠楼层：关</button>
+              <input class="st-tb-input" id="st-tb-perf-fold" type="number" min="1" max="999" step="1" inputmode="numeric" list="st-tb-perf-fold-presets" value="20" style="width:66px;flex:0 0 66px;height:30px;min-height:30px;max-height:30px;margin:0;padding:0 6px;font-size:12px;line-height:1;text-align:center;box-sizing:border-box;" title="输入或选择保留显示的最近楼层数" />
+              <datalist id="st-tb-perf-fold-presets">
+                <option value="5"></option>
+                <option value="10"></option>
+                <option value="15"></option>
+                <option value="20"></option>
+                <option value="30"></option>
+                <option value="50"></option>
+                <option value="80"></option>
+                <option value="100"></option>
+              </datalist>
             </div>
           </div>
 
@@ -30553,7 +30562,7 @@
   if (typeof config.perfFoldEnabled !== 'boolean') {
     config.perfFoldEnabled = Number(config.perfFoldKeep) > 0;
   }
-  if (!Number(config.perfFoldCount) || Number(config.perfFoldCount) < 3) {
+  if (!Number(config.perfFoldCount) || Number(config.perfFoldCount) < 1) {
     config.perfFoldCount = Number(config.perfFoldKeep) > 0 ? Number(config.perfFoldKeep) : 20;
   }
   const perfCleanBtn = root.querySelector('#st-tb-perf-clean');
@@ -30797,13 +30806,21 @@
     });
   }
   if (perfFoldSel) {
-    perfFoldSel.addEventListener('change', () => {
-      const n = Number(perfFoldSel.value) || 20;
+    const commitFoldCount = (fixEmpty) => {
+      const raw = parseInt(String(perfFoldSel.value || '').trim(), 10);
+      if (!Number.isFinite(raw) || raw < 1) {
+        if (fixEmpty) perfFoldSel.value = String(Number(config.perfFoldCount) || 20);
+        return;
+      }
+      const n = Math.min(999, Math.max(1, raw));
       config.perfFoldCount = n;
       if (config.perfFoldEnabled) config.perfFoldKeep = n;
       saveConfig();
       applyPerfOptimizer();
-    });
+    };
+    perfFoldSel.addEventListener('input', () => commitFoldCount(false));
+    perfFoldSel.addEventListener('change', () => commitFoldCount(true));
+    perfFoldSel.addEventListener('blur', () => commitFoldCount(true));
   }
   if (perfCleanBtn) {
     perfCleanBtn.addEventListener('click', () => {
@@ -31295,9 +31312,16 @@
       card.className = `st-px-gacha-card tier-${r.tier}`;
       card.style.animationDelay = `${idx * 0.045}s`;
       card.appendChild(makeGachaRealPreview(r));
+      const kindLabelMap = {
+        outfit: '服装', acc: '配饰', comp: '小伙伴', bubble: '气泡框',
+        avatarframe: '头像框', badge: '铭牌', trail: '走路特效',
+        recipe: '食谱', flower_pack: '花种', snack: '零食',
+        coins: '奖励', good: '杂货道具',
+      };
+      const kindTxt = kindLabelMap[r.iconType] || '限定物品';
       const info = doc.createElement('div');
-      info.style.cssText = 'flex:1;min-width:0;';
-      info.innerHTML = `<div><span class="st-px-gacha-badge tier-${r.tier}">${r.tier}</span><span style="font-size:10px;font-weight:700;">${r.name}</span></div><div style="font-size:9px;opacity:0.78;margin-top:1px;">${r.sub}</div>`;
+      info.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;';
+      info.innerHTML = `<div style="display:flex;align-items:center;flex-wrap:wrap;gap:2px;"><span class="st-px-gacha-badge tier-${r.tier}">${r.tier}</span><span class="st-px-gacha-kind-tag">${kindTxt}</span></div><div style="font-size:12px;font-weight:700;line-height:1.35;word-break:break-word;">${r.name}</div><div style="font-size:10.5px;opacity:0.8;line-height:1.4;word-break:break-word;">${r.sub}</div>`;
       card.appendChild(info);
       gachaPopGrid.appendChild(card);
     });
@@ -42955,7 +42979,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'persona',   name: 'User面具',   defLabel: '面具' },
     { id: 'preset',    name: '预设管理',   defLabel: '预设' },
     { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
-    { id: 'panel',     name: '工具箱面板', defLabel: '面板' },
   ];
   const QUICK_DOCK_DEFAULT = [
     { id: 'imm', label: '沉浸' },
@@ -43217,53 +43240,45 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       } else if (act === 'hide') {
         toggleQuickDock(false);
         if (fullHideBtn) fullHideBtn.click();
-      } else if (act === 'keepalive') {
-        if (keepAliveBtn) keepAliveBtn.click();
-        syncQuickDockUI();
-      } else if (act === 'guard') {
-        if (guardBtn) guardBtn.click();
-        syncQuickDockUI();
-      } else if (act === 'ambient') {
-        const curEff = config.effect && config.effect !== 'none' ? config.effect : 'none';
-        if (curEff !== 'none') {
-          config.lastQuickAmbient = curEff;
-          const noneBtn = root.querySelector('#st-tb-effects [data-effect="none"]');
-          if (noneBtn) noneBtn.click();
-          else { config.effect = 'none'; saveConfig(); }
-        } else {
-          const targetEff = config.lastQuickAmbient || 'snow';
-          const effBtn = root.querySelector(`#st-tb-effects [data-effect="${targetEff}"]`) || root.querySelector('#st-tb-effects [data-effect]:not([data-effect="none"])');
-          if (effBtn) effBtn.click();
-        }
-        syncQuickDockUI();
-      } else if (act === 'storyedit') {
-        const seBtn = root.querySelector('#st-se-toggle-btn');
-        if (seBtn) seBtn.click();
-        syncQuickDockUI();
-      } else if (act === 'fold') {
-        const flBtn = root.querySelector('#st-tb-perf-fold-toggle');
-        if (flBtn) flBtn.click();
-        syncQuickDockUI();
+      } else if (act === 'keepalive' || act === 'guard' || act === 'ambient' || act === 'storyedit' || act === 'fold' || act === 'preset') {
+        toggleQuickDock(false);
+        togglePanel(true);
+        const selMap = {
+          keepalive: '#st-tb-keepalive-btn',
+          guard: '#st-tb-guard-btn',
+          fold: '#st-tb-perf-fold-toggle',
+          storyedit: '#st-se-toggle-btn',
+          ambient: '#st-tb-effects',
+          preset: '#st-pr-select',
+        };
+        const targetEl = root.querySelector(selMap[act]);
+        const paneEl = targetEl && targetEl.closest ? targetEl.closest('.st-tb-pane') : null;
+        const tabKey = paneEl && paneEl.dataset ? paneEl.dataset.pane : (act === 'ambient' ? 'style' : (act === 'storyedit' ? 'chats' : 'overview'));
+        root.querySelector(`.st-tb-tab[data-tab="${tabKey}"]`)?.click();
+        setTimeout(() => {
+          const el = root.querySelector(selMap[act]);
+          if (!el) return;
+          const sec = (el.closest && el.closest('.st-tb-section')) || el;
+          try { sec.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+          const oldOut = sec.style.outline;
+          const oldRad = sec.style.borderRadius;
+          sec.style.outline = '2px solid var(--tb-accent, #6b8cff)';
+          sec.style.borderRadius = '10px';
+          setTimeout(() => { sec.style.outline = oldOut; sec.style.borderRadius = oldRad; }, 1200);
+        }, 60);
       } else if (act === 'chars') {
         toggleQuickDock(false);
         togglePanel(true);
         root.querySelector('.st-tb-tab[data-tab="chars"]')?.click();
+        setTimeout(() => { root.querySelector('[data-cm-subtab="chars"]')?.click(); }, 40);
       } else if (act === 'persona') {
         toggleQuickDock(false);
         togglePanel(true);
         root.querySelector('.st-tb-tab[data-tab="chars"]')?.click();
-        setTimeout(() => { root.querySelector('[data-cm-sub="persona"]')?.click(); }, 40);
-      } else if (act === 'preset') {
-        toggleQuickDock(false);
-        togglePanel(true);
-        root.querySelector('.st-tb-tab[data-tab="overview"]')?.click();
-        setTimeout(() => { root.querySelector('#st-pr-open-btn')?.click(); }, 40);
+        setTimeout(() => { root.querySelector('[data-cm-subtab="personas"]')?.click(); }, 40);
       } else if (act === 'puppy') {
         if (puppyToggleBtn) puppyToggleBtn.click();
         syncQuickDockUI();
-      } else if (act === 'panel') {
-        toggleQuickDock(false);
-        togglePanel(!panelOpen);
       }
     });
   }
