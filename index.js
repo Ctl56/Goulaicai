@@ -4076,6 +4076,86 @@
       border: 1px solid color-mix(in srgb, #ffffff 42%, var(--tb-border));
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
     }
+    #st-tb-badge.bstyle-plain {
+      height: 24px; padding: 0 6px; gap: 4px; font-size: 12px; font-weight: 600;
+      background: transparent !important; border-color: transparent !important;
+      box-shadow: none !important;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.22);
+    }
+    #st-tb-badge.bstyle-outline {
+      height: 26px; padding: 0 10px; gap: 5px; font-size: 11.5px;
+      background: transparent !important;
+      border: 1px solid color-mix(in srgb, var(--tb-accent, var(--tb-text)) 65%, transparent) !important;
+      box-shadow: none !important;
+    }
+    #st-tb-badge.bstyle-soft {
+      height: 28px; padding: 0 11px; gap: 5px; font-size: 11.5px;
+      background: color-mix(in srgb, var(--tb-bg) 92%, transparent);
+      border-color: transparent !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+    }
+    #st-tb-quick-dock.qstyle-frost {
+      background: color-mix(in srgb, var(--tb-bg) 58%, transparent) !important;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid color-mix(in srgb, #ffffff 42%, var(--tb-border)) !important;
+    }
+    #st-tb-quick-dock.qstyle-outline {
+      background: color-mix(in srgb, var(--tb-bg) 28%, transparent) !important;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border: 1px solid color-mix(in srgb, var(--tb-accent, var(--tb-text)) 60%, transparent) !important;
+      box-shadow: none !important;
+    }
+    #st-tb-quick-dock.qstyle-soft {
+      border-color: transparent !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+    }
+    .st-tb-check {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      line-height: 15px !important;
+      margin-top: 6px;
+    }
+    .st-tb-check input[type="checkbox"] {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 15px !important;
+      height: 15px !important;
+      min-width: 15px !important;
+      flex: 0 0 15px !important;
+      transform: none !important;
+      position: static !important;
+      vertical-align: middle !important;
+    }
+    .st-tb-check span {
+      display: inline-flex;
+      align-items: center;
+      height: 15px;
+      line-height: 15px;
+      margin: 0;
+      padding: 0;
+    }
+    .st-tb-mini-pop {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10032;
+      width: min(300px, calc(100vw - 28px));
+      background: var(--tb-bg, #ffffff);
+      color: var(--tb-text, #222222);
+      border: 1px solid var(--tb-border, rgba(0,0,0,0.14));
+      border-radius: 14px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.22);
+      padding: 12px 13px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: auto !important;
+      touch-action: auto;
+      font-size: 12px;
+    }
+    .st-tb-mini-pop.open { display: flex; }
     #st-tb-quick-dock.open {
       flex-direction: row !important;
       flex-wrap: wrap;
@@ -9068,8 +9148,8 @@
               <button class="st-tb-pill" data-effect="snow" type="button">柔雪</button>
               <button class="st-tb-pill" data-effect="leaf" type="button">秋叶</button>
               <button class="st-tb-pill" data-effect="firefly" type="button">萤火</button>
-              <button class="st-tb-pill" data-effect="starlight" type="button">星河</button>
-              <button class="st-tb-pill" data-effect="bubbleglow" type="button">泡泡</button>
+              <button class="st-tb-pill" data-effect="auroraveil" type="button">极光</button>
+              <button class="st-tb-pill" data-effect="dandelion" type="button">蒲公英</button>
             </div>
             <div class="st-tb-slider-group">
               <div class="st-tb-slider-row">
@@ -9093,26 +9173,50 @@
           <div class="st-tb-section">
             <div class="st-tb-label">
               <span>悬浮球与快捷栏</span>
-              <button class="st-tb-mini-btn" id="st-tb-qd-cfg-open" type="button">自定义快捷键</button>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <button class="st-tb-mini-btn" id="st-tb-badge-reset" type="button" title="把悬浮球拉回屏幕默认位置">复位</button>
+                <button class="st-tb-mini-btn" id="st-tb-qd-cfg-open" type="button">自定义快捷</button>
+              </div>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin:5px 0 4px;">
-              <span style="font-size:11px;opacity:0.75;">悬浮球样式</span>
-              <button class="st-tb-mini-btn" id="st-tb-badge-dot-toggle" type="button">前圆点：开</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+              <button class="st-tb-mini-btn" id="st-tb-bd-expand-btn" type="button" style="width:100%;justify-content:center;">样式与圆角尺寸设置：展开</button>
             </div>
-            <div class="st-tb-pills" id="st-tb-badge-styles" style="margin-bottom:7px;">
-              <button class="st-tb-pill" data-bstyle="default" type="button">默认</button>
-              <button class="st-tb-pill" data-bstyle="thin" type="button">细边</button>
-              <button class="st-tb-pill" data-bstyle="frost" type="button">磨砂</button>
-            </div>
-            <div style="font-size:11px;opacity:0.75;margin:4px 0 4px;">快捷栏样式</div>
-            <div class="st-tb-pills" id="st-tb-qd-styles" style="margin-bottom:7px;">
-              <button class="st-tb-pill" data-qstyle="pill" type="button">横向胶囊</button>
-              <button class="st-tb-pill" data-qstyle="grid" type="button">极简方格</button>
-            </div>
-            <div class="st-tb-slider-row" style="margin-top:2px;">
-              <span>圆角</span>
-              <input class="st-tb-range" id="st-tb-badge-radius" type="range" min="0" max="20" step="1" value="16" />
-              <span id="st-tb-badge-radius-val">16px</span>
+            <div id="st-tb-bd-expand-body" style="display:none;margin-top:8px;padding-top:6px;border-top:1px dashed var(--tb-border);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin:0 0 5px;">
+                <span style="font-size:11px;opacity:0.78;">悬浮球样式</span>
+                <button class="st-tb-mini-btn" id="st-tb-badge-dot-toggle" type="button">前圆点：开</button>
+              </div>
+              <div class="st-tb-pills" id="st-tb-badge-styles" style="margin-bottom:7px;flex-wrap:wrap;">
+                <button class="st-tb-pill" data-bstyle="default" type="button">默认</button>
+                <button class="st-tb-pill" data-bstyle="thin" type="button">细边</button>
+                <button class="st-tb-pill" data-bstyle="frost" type="button">磨砂</button>
+                <button class="st-tb-pill" data-bstyle="plain" type="button">纯字</button>
+                <button class="st-tb-pill" data-bstyle="outline" type="button">线框</button>
+                <button class="st-tb-pill" data-bstyle="soft" type="button">柔影</button>
+              </div>
+              <div class="st-tb-slider-row" style="margin-bottom:8px;">
+                <span>球圆角</span>
+                <input class="st-tb-range" id="st-tb-badge-radius" type="range" min="0" max="20" step="1" value="16" />
+                <span id="st-tb-badge-radius-val">16px</span>
+              </div>
+              <div style="font-size:11px;opacity:0.78;margin:4px 0 5px;">快捷栏样式</div>
+              <div class="st-tb-pills" id="st-tb-qd-styles" style="margin-bottom:7px;flex-wrap:wrap;">
+                <button class="st-tb-pill" data-qstyle="pill" type="button">默认胶囊</button>
+                <button class="st-tb-pill" data-qstyle="frost" type="button">磨砂胶囊</button>
+                <button class="st-tb-pill" data-qstyle="outline" type="button">细线胶囊</button>
+                <button class="st-tb-pill" data-qstyle="soft" type="button">柔影胶囊</button>
+                <button class="st-tb-pill" data-qstyle="grid" type="button">极简方格</button>
+              </div>
+              <div class="st-tb-slider-row" style="margin-bottom:6px;">
+                <span>栏圆角</span>
+                <input class="st-tb-range" id="st-tb-qd-radius" type="range" min="0" max="24" step="1" value="16" />
+                <span id="st-tb-qd-radius-val">16px</span>
+              </div>
+              <div class="st-tb-slider-row">
+                <span>栏宽</span>
+                <input class="st-tb-range" id="st-tb-qd-maxw" type="range" min="180" max="420" step="10" value="320" />
+                <span id="st-tb-qd-maxw-val">320px</span>
+              </div>
             </div>
           </div>
 
@@ -20603,45 +20707,33 @@
       };
     }
 
-    if (type === 'starlight') {
-      const isMeteor = Math.random() < 0.16;
-      if (isMeteor) {
-        return {
-          isMeteor: true,
-          x: w * (0.25 + Math.random() * 0.85),
-          y: -15 - Math.random() * (h * 0.35),
-          vx: -(2.6 + Math.random() * 2.2),
-          vy: 1.5 + Math.random() * 1.3,
-          len: 36 + Math.random() * 44,
-          alpha: 0.45 + Math.random() * 0.4,
-          hue: Math.random() < 0.5 ? '210, 232, 255' : '255, 236, 178',
-          wait: Math.random() * 120,
-        };
-      }
+    if (type === 'auroraveil') {
+      const idxBand = Math.floor(Math.random() * 3);
       return {
-        isMeteor: false,
+        band: idxBand,
         x: Math.random() * w,
-        y: Math.random() * h,
-        r: 1.1 + Math.random() * 2.2,
-        vx: (Math.random() - 0.5) * 0.18,
-        vy: -0.06 - Math.random() * 0.14,
+        y: h * (0.04 + idxBand * 0.11 + Math.random() * 0.08),
+        span: 130 + Math.random() * 190,
+        height: 46 + Math.random() * 58,
+        vx: (idxBand % 2 === 0 ? 1 : -1) * (0.18 + Math.random() * 0.24),
         phase: Math.random() * Math.PI * 2,
-        phaseSpeed: 0.03 + Math.random() * 0.04,
-        hue: pick(['255, 236, 170', '172, 218, 255', '224, 194, 255']),
+        phaseSpeed: 0.012 + Math.random() * 0.014,
+        hue: ['108, 238, 204', '118, 198, 255', '194, 152, 255'][idxBand],
       };
     }
 
-    if (type === 'bubbleglow') {
+    if (type === 'dandelion') {
       return {
         x: Math.random() * w,
-        y: randomY ? Math.random() * h : h + 16 + Math.random() * 40,
-        r: 7 + Math.random() * 14,
-        vy: -(0.35 + Math.random() * 0.55),
+        y: randomY ? Math.random() * h : -22,
+        scale: 0.65 + Math.random() * 0.65,
+        vx: 0.22 + Math.random() * 0.38,
+        vy: 0.24 + Math.random() * 0.36,
         swayPhase: Math.random() * Math.PI * 2,
-        swaySpeed: 0.018 + Math.random() * 0.02,
-        swayAmp: 0.35 + Math.random() * 0.55,
-        tint: pick(['rgba(255, 182, 218, ', 'rgba(154, 224, 255, ', 'rgba(202, 182, 255, ', 'rgba(164, 242, 216, ']),
-        alpha: 0.34 + Math.random() * 0.28,
+        swaySpeed: 0.016 + Math.random() * 0.018,
+        rot: (Math.random() - 0.5) * 0.6,
+        rotSpeed: (Math.random() - 0.5) * 0.012,
+        alpha: 0.48 + Math.random() * 0.36,
       };
     }
 
@@ -20880,82 +20972,66 @@
           ctx2d.beginPath();
           ctx2d.arc(p.x, p.y, p.r * 2.2, 0, Math.PI * 2);
           ctx2d.fill();
-        } else if (type === 'starlight') {
-          if (p.isMeteor) {
-            if (p.wait > 0) {
-              p.wait -= spd;
-            } else {
-              p.x += p.vx * spd;
-              p.y += p.vy * spd;
-              const a = clamp(p.alpha * opa * (lightBg ? 0.82 : 1), 0, 0.92);
-              const tx = p.x - p.vx * (p.len / 4.2);
-              const ty = p.y - p.vy * (p.len / 4.2);
-              const mg = ctx2d.createLinearGradient(p.x, p.y, tx, ty);
-              const headCol = lightBg ? '122, 152, 224' : p.hue;
-              mg.addColorStop(0, `rgba(255, 255, 255, ${a})`);
-              mg.addColorStop(0.28, `rgba(${headCol}, ${a * 0.78})`);
-              mg.addColorStop(1, `rgba(${headCol}, 0)`);
-              ctx2d.strokeStyle = mg;
-              ctx2d.lineWidth = 1.65;
-              ctx2d.lineCap = 'round';
-              ctx2d.beginPath();
-              ctx2d.moveTo(p.x, p.y);
-              ctx2d.lineTo(tx, ty);
-              ctx2d.stroke();
-              ctx2d.fillStyle = `rgba(255, 255, 255, ${a})`;
-              ctx2d.beginPath();
-              ctx2d.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
-              ctx2d.fill();
-              if (p.x < -60 || p.y > h + 60) {
-                p.x = w * (0.28 + Math.random() * 0.85);
-                p.y = -18 - Math.random() * (h * 0.25);
-                p.wait = 60 + Math.random() * 140;
-              }
-            }
-          } else {
-            p.phase += p.phaseSpeed * spd;
-            p.x += p.vx * spd;
-            p.y += p.vy * spd;
-            if (p.x < -8) p.x = w + 6;
-            if (p.x > w + 8) p.x = -6;
-            if (p.y < -8) p.y = h + 6;
-            const tw = 0.28 + 0.72 * (0.5 + 0.5 * Math.sin(p.phase));
-            const a = clamp(tw * opa * (lightBg ? 0.76 : 0.95), 0, 0.95);
-            const col = lightBg ? '138, 162, 224' : p.hue;
-            const sg = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.6);
-            sg.addColorStop(0, `rgba(255, 255, 255, ${a})`);
-            sg.addColorStop(0.42, `rgba(${col}, ${a * 0.65})`);
-            sg.addColorStop(1, `rgba(${col}, 0)`);
-            ctx2d.fillStyle = sg;
-            ctx2d.beginPath();
-            ctx2d.arc(p.x, p.y, p.r * 2.6, 0, Math.PI * 2);
-            ctx2d.fill();
-          }
-        } else if (type === 'bubbleglow') {
+        } else if (type === 'auroraveil') {
+          p.phase += p.phaseSpeed * spd;
+          p.x += p.vx * spd;
+          if (p.x < -p.span) p.x = w + p.span * 0.5;
+          if (p.x > w + p.span) p.x = -p.span * 0.5;
+          const waveY = p.y + Math.sin(p.phase) * 18;
+          const breath = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(p.phase * 0.8));
+          const a = clamp((lightBg ? 0.14 : 0.19) * breath * opa, 0, 0.28);
+          ctx2d.save();
+          ctx2d.translate(p.x, waveY);
+          ctx2d.rotate(-0.14 + Math.sin(p.phase * 0.5) * 0.06);
+          const ag = ctx2d.createLinearGradient(-p.span * 0.5, 0, p.span * 0.5, p.height);
+          ag.addColorStop(0, `rgba(${p.hue}, 0)`);
+          ag.addColorStop(0.35, `rgba(${p.hue}, ${a})`);
+          ag.addColorStop(0.68, `rgba(${p.hue}, ${a * 0.8})`);
+          ag.addColorStop(1, `rgba(${p.hue}, 0)`);
+          ctx2d.fillStyle = ag;
+          ctx2d.beginPath();
+          ctx2d.ellipse(0, 0, p.span * 0.55, p.height * 0.48, 0, 0, Math.PI * 2);
+          ctx2d.fill();
+          ctx2d.restore();
+        } else if (type === 'dandelion') {
           p.swayPhase += p.swaySpeed * spd;
-          p.y += p.vy * spd;
-          p.x += Math.sin(p.swayPhase) * p.swayAmp * spd;
-          if (p.y < -p.r - 12) {
-            p.y = h + p.r + Math.random() * 28;
-            p.x = Math.random() * w;
+          p.rot += p.rotSpeed * spd;
+          p.x += (p.vx + Math.sin(p.swayPhase) * 0.35) * spd;
+          p.y += (p.vy + Math.cos(p.swayPhase * 0.7) * 0.14) * spd;
+          if (p.y > h + 24 || p.x > w + 28) {
+            p.y = -18 - Math.random() * 30;
+            p.x = Math.random() * w * 0.85 - 20;
           }
-          const fadeTop = p.y < h * 0.16 ? clamp(p.y / (h * 0.16), 0, 1) : 1;
-          const a = clamp(p.alpha * opa * fadeTop, 0, 0.72);
-          const bg = ctx2d.createRadialGradient(p.x - p.r * 0.28, p.y - p.r * 0.28, p.r * 0.1, p.x, p.y, p.r);
-          bg.addColorStop(0, `rgba(255, 255, 255, ${a * 0.35})`);
-          bg.addColorStop(0.72, `${p.tint}${a * 0.18})`);
-          bg.addColorStop(1, `${p.tint}${a * 0.68})`);
-          ctx2d.fillStyle = bg;
+          const a = clamp(p.alpha * opa, 0, 0.86);
+          const strokeCol = lightBg ? `rgba(118, 128, 146, ${a * 0.88})` : `rgba(246, 250, 255, ${a})`;
+          const seedCol = lightBg ? `rgba(136, 112, 86, ${a * 0.92})` : `rgba(235, 224, 198, ${a})`;
+          ctx2d.save();
+          ctx2d.translate(p.x, p.y);
+          ctx2d.rotate(p.rot + Math.sin(p.swayPhase) * 0.22);
+          ctx2d.scale(p.scale, p.scale);
+          ctx2d.strokeStyle = strokeCol;
+          ctx2d.lineWidth = 0.85;
           ctx2d.beginPath();
-          ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx2d.fill();
-          ctx2d.strokeStyle = `${p.tint}${a * 0.92})`;
-          ctx2d.lineWidth = 1.1;
+          ctx2d.moveTo(0, 0);
+          ctx2d.lineTo(0, 10);
           ctx2d.stroke();
-          ctx2d.fillStyle = `rgba(255, 255, 255, ${a * 0.95})`;
+          ctx2d.fillStyle = seedCol;
           ctx2d.beginPath();
-          ctx2d.ellipse(p.x - p.r * 0.34, p.y - p.r * 0.34, Math.max(1.2, p.r * 0.22), Math.max(0.8, p.r * 0.12), -0.6, 0, Math.PI * 2);
+          ctx2d.ellipse(0, 11.2, 1.3, 2.2, 0, 0, Math.PI * 2);
           ctx2d.fill();
+          for (let k = -3; k <= 3; k++) {
+            const ang = -Math.PI / 2 + k * 0.32;
+            const len = 7.5 - Math.abs(k) * 0.5;
+            ctx2d.beginPath();
+            ctx2d.moveTo(0, 0);
+            ctx2d.lineTo(Math.cos(ang) * len, Math.sin(ang) * len);
+            ctx2d.stroke();
+          }
+          ctx2d.fillStyle = lightBg ? `rgba(255, 255, 255, ${a * 0.9})` : `rgba(255, 255, 255, ${a})`;
+          ctx2d.beginPath();
+          ctx2d.arc(0, 0, 1.2, 0, Math.PI * 2);
+          ctx2d.fill();
+          ctx2d.restore();
         }
       }
 
@@ -35692,35 +35768,35 @@
   });
 
   const AMBIENT_PUP_TALK = {
-    starlight: {
-      sleepyhead: ['刚刚有颗小流星滑过去了，我迷迷糊糊许了个愿，希望主人天天开心', '满屏星光晃呀晃的，像盖了一床软软的银河小被子'],
-      clingy: ['主人快看流星，我们一起对着星星许愿，以后都要一直待在一起', '星河好漂亮，可是我还是觉得屏幕里最亮的是主人'],
-      tsundere: ['哼，流星有什么稀奇的，本汪才没有偷偷闭眼许愿希望你多摸摸我', '这片星河勉强配得上本汪的气质吧，顺便允许你一起欣赏'],
-      foodie: ['一闪一闪的星星看起来好像跳跳糖，好想张嘴接一颗尝尝味道', '流星滑过去的时候，我许愿明天能吃到双倍分量的小饼干'],
-      explorer: ['哇，又有流星拖着长尾巴飞过去了，我要把每颗星的轨迹都记下来', '开启星河航行模式，我来当你的领航小狗，前方发现闪亮星尘'],
-      fashionista: ['细碎星光配上流星尾迹，这个氛围高级又干净，拍照肯定绝美', '星河柔光打在毛毛上闪闪的，今天的造型质感直接拉满'],
-      gamer: ['检测到稀有流星划过，快按下许愿键领取今日份欧气加成', '星河背景已激活，护眼又浪漫，刷剧情的时候顺便攒一波好运'],
-      philosopher: ['流星只亮一瞬间，却让人记住很久，慢慢看这段故事吧', '星尘无声滑过夜幕，有你一起看的时候格外安宁'],
+    auroraveil: {
+      sleepyhead: ['头顶的柔光极光慢慢飘着，像一条软绵绵的薄荷蓝丝巾，看得我都想打呵欠了', '极光晃呀晃的真温柔，窝在屏幕边跟你一起看极夜好舒服'],
+      clingy: ['听说和最喜欢的人一起看到极光就会一直幸福，主人快拉着我一起看', '薄荷青配淡紫色的极光好梦幻，可是我还是更喜欢看主人'],
+      tsundere: ['哼，这种级别的北极光也就勉强配得上本汪的毛色吧，算你眼光不错', '才不是看入迷了呢，只是帮主人检查一下这片极光飘得匀不匀'],
+      foodie: ['绿绿紫紫的极光丝带，怎么越看越像薄荷蓝莓味的双色绵绵冰', '看着极光突然好想喝一口冰凉清甜的薄荷苏打水'],
+      explorer: ['哇，居然在酒馆里偶遇北极光了，快记进今天的大冒险日志里', '极光幕帘正在头顶流动，感觉我们像在雪原露营一样浪漫'],
+      fashionista: ['青蓝和薰衣草紫的柔雾渐变，这组配色质感高级又极克制', '极光漫反射打在屏幕上特别显干净，今天的阅读氛围满分'],
+      gamer: ['隐藏奇观北极光已触发，据说在极光下抽扭蛋手气都会变好', '极光幕帘模式上线，柔雾感拉满还完全不晃眼'],
+      philosopher: ['极光悄无声息地在天幕流转，适合配一段安静悠长的故事', '光带聚散无常却格外安宁，慢慢看，我就在一旁陪着'],
     },
-    bubbleglow: {
-      sleepyhead: ['彩色大泡泡慢慢飘上来了，晃得我眼睛都跟着一眨一眨的', '好想钻进一个亮晶晶的泡泡里，漂在空中舒舒服服打个盹'],
-      clingy: ['主人看我跳起来戳泡泡，戳破一个就送你一颗小爱心', '好多彩虹色泡泡围着我们飘，就像和主人在一起时的心情一样甜'],
-      tsundere: ['喂，这些泡泡自己飘到我鼻尖上的，本汪才不是玩得停不下来', '哼，轻轻拍一下就破掉了，勉强算是个还不错的小消遣吧'],
-      foodie: ['圆滚滚亮晶晶的泡泡，看起来好像汽水里冒出来的甜味气泡', '这些彩虹泡泡飘起来软乎乎的，感觉闻起来都是草莓苏打味'],
-      explorer: ['发现一群虹彩泡泡正在升空，看我一个飞扑抓住最大那颗', '每颗泡泡映出来的颜色都不一样，我数数今天能戳破几个'],
-      fashionista: ['半透明的彩虹折光泡泡最显灵动了，飘在画面里一点都不抢戏', '这种清透的珠光气泡质感刚刚好，优雅又带着一点俏皮'],
-      gamer: ['泡泡小游戏自动触发，看本汪精准连击戳破空中飘过的大泡泡', '满屏虹彩气泡氛围上线，视觉清爽度加满，心情值直接回血'],
-      philosopher: ['泡泡映着光缓缓升起又轻轻散开，看着它们烦恼也跟着变轻了', '轻盈通透的泡沫飘在字里行间，让阅读也多了一点松弛感'],
+    dandelion: {
+      sleepyhead: ['小蒲公英晃悠悠飘到鼻尖上了，啊啾，毛茸茸的好痒呀', '跟着风慢慢飘的蒲公英，看得我眼皮都跟着轻飘飘起来了'],
+      clingy: ['主人你看，我对着飘过的蒲公英吹了一口气，把好运全都吹到你身边', '蒲公英飘到哪儿我就跟主人到哪儿，绝不松开爪爪'],
+      tsundere: ['啊啾，都怪这些毛茸茸的蒲公英乱飞，本汪才不是在追着它们玩', '哼，吹飞一朵蒲公英而已，本汪随随便便就能吹得比谁都远'],
+      foodie: ['白绒绒的蒲公英小伞飘过去，像极了刚扯下来的棉花糖细丝', '风一吹满屏都是软乎乎的小白绒球，好想来块松软舒芙蕾'],
+      explorer: ['快看，好多蒲公英种子乘着微风去旅行了，我也想跟着它们去探险', '每一朵蒲公英都是一把迷你降落伞，我来帮它们数一数落点'],
+      fashionista: ['轻盈的白色蒲公英绒丝随风轻旋，画面瞬间有了初夏电影感', '这么干净克制的飘浮绒毛，不管配什么主题背景都特别耐看'],
+      gamer: ['微风蒲公英特效激活，本汪正在尝试空中精准拦截路过的小白伞', '轻飘飘的蒲公英自带治愈光环，连刷几十层楼都不累'],
+      philosopher: ['风把蒲公英带去远方，故事也随着字句慢慢铺展开来', '细小的绒毛在微风里不疾不徐地旋转，看着格外静心'],
     },
   };
 
   const triggerAmbientPupReaction = (effKey, fromClick = true) => {
     if (!config.puppyEnabled) return;
-    if (effKey !== 'starlight' && effKey !== 'bubbleglow') return;
+    if (effKey !== 'auroraveil' && effKey !== 'dandelion') return;
     const curP = config.puppyPersonality || 'sleepyhead';
     const bank = AMBIENT_PUP_TALK[effKey][curP] || AMBIENT_PUP_TALK[effKey].sleepyhead;
     const line = pick(bank);
-    if (effKey === 'starlight') {
+    if (effKey === 'auroraveil') {
       setPuppyState('sit', 130);
       for (let i = 0; i < 3; i++) spawnPupFx('note', 8 + i * 4, 4);
     } else {
@@ -35732,7 +35808,7 @@
 
   setInterval(() => {
     if (doc.hidden || !config.puppyEnabled) return;
-    if (config.effect !== 'starlight' && config.effect !== 'bubbleglow') return;
+    if (config.effect !== 'auroraveil' && config.effect !== 'dandelion') return;
     if (puppyBubble && puppyBubble.classList.contains('show')) return;
     if (Math.random() < 0.28) triggerAmbientPupReaction(config.effect, false);
   }, 46000);
@@ -43268,8 +43344,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       b.className = 'st-tb-qd-btn';
       b.dataset.qd = it.id;
       b.textContent = it.label;
-      const rad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
-      b.style.borderRadius = `${Math.max(2, Math.min(rad, 16))}px`;
+      const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
+      b.style.borderRadius = `${Math.max(2, Math.min(qRad, 18))}px`;
       quickDockEl.appendChild(b);
     });
     syncQuickDockUI();
@@ -43285,7 +43361,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       keepalive: Boolean(config.keepAlive),
       guard: Boolean(config.swipeGuard),
       ambient: Boolean(config.effect && config.effect !== 'none'),
-      storyedit: Boolean(config.storyEditEnabled),
+      storyedit: config.storyQuickBarEnabled !== false,
       fold: Boolean(config.perfFoldEnabled),
       puppy: Boolean(config.puppyEnabled),
       panel: Boolean(panelOpen),
@@ -43508,34 +43584,46 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   };
 
   const applyBadgeAndDockStyle = () => {
-    const validBs = ['default', 'thin', 'frost'];
+    const validBs = ['default', 'thin', 'frost', 'plain', 'outline', 'soft'];
     const bs = validBs.includes(config.badgeStyle) ? config.badgeStyle : 'default';
     const showDot = config.badgeShowDot !== false;
-    const rad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
-    const btnRad = Math.max(2, Math.min(rad, 16));
+    const bRad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
+    const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
+    const qMaxW = Number.isFinite(Number(config.quickDockMaxW)) ? clamp(Number(config.quickDockMaxW), 180, 420) : 320;
+    const btnRad = Math.max(2, Math.min(qRad, 18));
     if (badge) {
-      badge.classList.remove('bstyle-thin', 'bstyle-frost', 'no-dot');
+      badge.classList.remove('bstyle-thin', 'bstyle-frost', 'bstyle-plain', 'bstyle-outline', 'bstyle-soft', 'no-dot');
       if (bs !== 'default') badge.classList.add(`bstyle-${bs}`);
       if (!showDot) badge.classList.add('no-dot');
-      badge.style.borderRadius = `${rad}px`;
+      badge.style.borderRadius = `${bRad}px`;
     }
     const dotToggleBtn = root.querySelector('#st-tb-badge-dot-toggle');
     if (dotToggleBtn) {
       dotToggleBtn.textContent = showDot ? '前圆点：开' : '前圆点：关';
       dotToggleBtn.classList.toggle('active', showDot);
     }
-    const radInput = root.querySelector('#st-tb-badge-radius');
-    const radVal = root.querySelector('#st-tb-badge-radius-val');
-    if (radInput) radInput.value = String(rad);
-    if (radVal) radVal.textContent = `${rad}px`;
+    const bRadInp = root.querySelector('#st-tb-badge-radius');
+    const bRadVal = root.querySelector('#st-tb-badge-radius-val');
+    if (bRadInp) bRadInp.value = String(bRad);
+    if (bRadVal) bRadVal.textContent = `${bRad}px`;
+    const qRadInp = root.querySelector('#st-tb-qd-radius');
+    const qRadVal = root.querySelector('#st-tb-qd-radius-val');
+    if (qRadInp) qRadInp.value = String(qRad);
+    if (qRadVal) qRadVal.textContent = `${qRad}px`;
+    const qWInp = root.querySelector('#st-tb-qd-maxw');
+    const qWVal = root.querySelector('#st-tb-qd-maxw-val');
+    if (qWInp) qWInp.value = String(qMaxW);
+    if (qWVal) qWVal.textContent = `${qMaxW}px`;
     root.querySelectorAll('#st-tb-badge-styles [data-bstyle]').forEach(b => {
       b.classList.toggle('active', b.dataset.bstyle === bs);
     });
-    const qs = config.quickDockStyle === 'grid' ? 'grid' : 'pill';
+    const validQs = ['pill', 'frost', 'outline', 'soft', 'grid'];
+    const qs = validQs.includes(config.quickDockStyle) ? config.quickDockStyle : 'pill';
     if (quickDockEl) {
-      quickDockEl.classList.remove('qstyle-grid');
-      if (qs === 'grid') quickDockEl.classList.add('qstyle-grid');
-      quickDockEl.style.borderRadius = `${rad}px`;
+      quickDockEl.classList.remove('qstyle-frost', 'qstyle-outline', 'qstyle-soft', 'qstyle-grid');
+      if (qs !== 'pill') quickDockEl.classList.add(`qstyle-${qs}`);
+      quickDockEl.style.borderRadius = `${qRad}px`;
+      quickDockEl.style.maxWidth = `min(${qMaxW}px, calc(100vw - 16px))`;
       quickDockEl.querySelectorAll('.st-tb-qd-btn').forEach(btn => {
         btn.style.borderRadius = `${btnRad}px`;
       });
@@ -43544,6 +43632,25 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       b.classList.toggle('active', b.dataset.qstyle === qs);
     });
   };
+  root.querySelector('#st-tb-badge-reset')?.addEventListener('click', () => {
+    config.posX = null;
+    config.posY = Math.max(56, Math.round(win.innerHeight * 0.42));
+    config.hidden = false;
+    config.fullHidden = false;
+    saveConfig();
+    if (badge) badge.classList.remove('hidden');
+    applyBadgePosition(true);
+    showImmNotice('悬浮球已复位到默认位置');
+  });
+  const bdExpBtn = root.querySelector('#st-tb-bd-expand-btn');
+  const bdExpBody = root.querySelector('#st-tb-bd-expand-body');
+  if (bdExpBtn && bdExpBody) {
+    bdExpBtn.addEventListener('click', () => {
+      const opening = bdExpBody.style.display === 'none';
+      bdExpBody.style.display = opening ? 'block' : 'none';
+      bdExpBtn.textContent = opening ? '样式与圆角尺寸设置：收起' : '样式与圆角尺寸设置：展开';
+    });
+  }
   root.querySelector('#st-tb-badge-dot-toggle')?.addEventListener('click', () => {
     config.badgeShowDot = config.badgeShowDot === false;
     saveConfig();
@@ -43552,6 +43659,16 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   });
   root.querySelector('#st-tb-badge-radius')?.addEventListener('input', (e) => {
     config.badgeRadius = clamp(Number(e.target.value) || 0, 0, 20);
+    saveConfig();
+    applyBadgeAndDockStyle();
+  });
+  root.querySelector('#st-tb-qd-radius')?.addEventListener('input', (e) => {
+    config.quickDockRadius = clamp(Number(e.target.value) || 0, 0, 24);
+    saveConfig();
+    applyBadgeAndDockStyle();
+  });
+  root.querySelector('#st-tb-qd-maxw')?.addEventListener('input', (e) => {
+    config.quickDockMaxW = clamp(Number(e.target.value) || 320, 180, 420);
     saveConfig();
     applyBadgeAndDockStyle();
   });
@@ -43649,9 +43766,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         showImmNotice(config.swipeGuard ? '已开启防手滑保护：右滑新生成或重生成前会先确认' : '已关闭防手滑保护');
         syncQuickDockUI();
       } else if (act === 'storyedit') {
-        const seBtn = root.querySelector('#st-se-toggle-btn');
-        if (seBtn) seBtn.click();
-        showImmNotice(config.storyEditEnabled ? '已开启正文快捷编辑：双击正文段落进入编辑，单击空白退出' : '已关闭正文快捷编辑');
+        config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
+        saveConfig();
+        if (typeof syncSeToggleUI === 'function') syncSeToggleUI();
+        if (typeof syncSeFmtUI === 'function') syncSeFmtUI();
+        showImmNotice(config.storyQuickBarEnabled !== false ? '已开启正文快捷编辑：双击段落唤出操作条，单击收起' : '已关闭正文快捷编辑');
         syncQuickDockUI();
       } else if (act === 'ambient') {
         if (config.effect && config.effect !== 'none') {
@@ -43681,18 +43800,123 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         toggleQuickDock(false);
         togglePanel(true);
         root.querySelector('.st-tb-tab[data-tab="imgswap"]')?.click();
-      } else if (act === 'fold' || act === 'preset' || act === 'readstyle' || act === 'font') {
+      } else if (act === 'readstyle') {
+        toggleQuickDock(false);
+        let pop = root.querySelector('#st-tb-quick-read-pop');
+        if (!pop) {
+          pop = doc.createElement('div');
+          pop.id = 'st-tb-quick-read-pop';
+          pop.className = 'st-tb-mini-pop';
+          pop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+              <span>正文调整</span>
+              <div style="display:flex;gap:5px;">
+                <button class="st-tb-mini-btn" id="st-qr-reset" type="button">重置</button>
+                <button class="st-tb-mini-btn" id="st-qr-close" type="button">关闭</button>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+              <label style="display:flex;flex-direction:column;gap:3px;font-size:11px;"><span>字号</span><input class="st-tb-input" id="st-qr-fs" type="text" inputmode="decimal" /></label>
+              <label style="display:flex;flex-direction:column;gap:3px;font-size:11px;"><span>行距</span><input class="st-tb-input" id="st-qr-lh" type="text" inputmode="decimal" /></label>
+              <label style="display:flex;flex-direction:column;gap:3px;font-size:11px;"><span>段距</span><input class="st-tb-input" id="st-qr-pg" type="text" inputmode="decimal" /></label>
+              <label style="display:flex;flex-direction:column;gap:3px;font-size:11px;"><span>边距</span><input class="st-tb-input" id="st-qr-sp" type="text" inputmode="decimal" /></label>
+            </div>
+            <label class="st-tb-check" style="margin-top:2px;">
+              <input type="checkbox" id="st-qr-indent" />
+              <span>首行缩进</span>
+            </label>`;
+          root.appendChild(pop);
+          pop.querySelector('#st-qr-close')?.addEventListener('click', () => pop.classList.remove('open'));
+          pop.querySelector('#st-qr-reset')?.addEventListener('click', () => {
+            root.querySelector('#st-tb-read-reset')?.click();
+            syncQuickReadPop();
+          });
+          const bindMirror = (srcSel, dstSel, isCheck = false) => {
+            const sEl = pop.querySelector(srcSel);
+            if (!sEl) return;
+            sEl.addEventListener(isCheck ? 'change' : 'input', () => {
+              const dEl = root.querySelector(dstSel);
+              if (!dEl) return;
+              if (isCheck) {
+                dEl.checked = sEl.checked;
+                dEl.dispatchEvent(new Event('change', { bubbles: true }));
+              } else {
+                dEl.value = sEl.value;
+                dEl.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            });
+          };
+          bindMirror('#st-qr-fs', '#st-tb-fontsize');
+          bindMirror('#st-qr-lh', '#st-tb-lineheight');
+          bindMirror('#st-qr-pg', '#st-tb-paragap');
+          bindMirror('#st-qr-sp', '#st-tb-sidepad');
+          bindMirror('#st-qr-indent', '#st-tb-textindent', true);
+        }
+        const syncQuickReadPop = () => {
+          const mapPairs = [['#st-qr-fs', '#st-tb-fontsize'], ['#st-qr-lh', '#st-tb-lineheight'], ['#st-qr-pg', '#st-tb-paragap'], ['#st-qr-sp', '#st-tb-sidepad']];
+          mapPairs.forEach(([a, b]) => {
+            const ae = pop.querySelector(a);
+            const be = root.querySelector(b);
+            if (ae && be) ae.value = be.value;
+          });
+          const ai = pop.querySelector('#st-qr-indent');
+          const bi = root.querySelector('#st-tb-textindent');
+          if (ai && bi) ai.checked = bi.checked;
+        };
+        root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
+        syncQuickReadPop();
+        pop.classList.add('open');
+      } else if (act === 'font') {
+        toggleQuickDock(false);
+        let fpop = root.querySelector('#st-tb-quick-font-pop');
+        if (!fpop) {
+          fpop = doc.createElement('div');
+          fpop.id = 'st-tb-quick-font-pop';
+          fpop.className = 'st-tb-mini-pop';
+          fpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+              <span>字体设置</span>
+              <button class="st-tb-mini-btn" id="st-qf-close" type="button">关闭</button>
+            </div>
+            <select class="st-tb-select" id="st-qf-select" style="width:100%;"></select>
+            <div style="display:flex;gap:6px;justify-content:flex-end;">
+              <button class="st-tb-mini-btn" id="st-qf-import" type="button">导入新字体</button>
+            </div>`;
+          root.appendChild(fpop);
+          fpop.querySelector('#st-qf-close')?.addEventListener('click', () => fpop.classList.remove('open'));
+          fpop.querySelector('#st-qf-import')?.addEventListener('click', () => {
+            fpop.classList.remove('open');
+            togglePanel(true);
+            root.querySelector('.st-tb-tab[data-tab="style"]')?.click();
+            setTimeout(() => {
+              const el = root.querySelector('#st-tb-font-select');
+              const sec = el && el.closest ? el.closest('.st-tb-section') : el;
+              try { sec?.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+            }, 60);
+          });
+          fpop.querySelector('#st-qf-select')?.addEventListener('change', (ev) => {
+            const mainSel = root.querySelector('#st-tb-font-select');
+            if (!mainSel) return;
+            mainSel.value = ev.target.value;
+            mainSel.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+        }
+        const qSel = fpop.querySelector('#st-qf-select');
+        const mainSel = root.querySelector('#st-tb-font-select');
+        if (qSel && mainSel) {
+          qSel.innerHTML = mainSel.innerHTML;
+          qSel.value = mainSel.value;
+        }
+        root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
+        fpop.classList.add('open');
+      } else if (act === 'fold' || act === 'preset') {
         toggleQuickDock(false);
         togglePanel(true);
         const selMap = {
           fold: '#st-tb-perf-fold-toggle',
           preset: '#st-pr-select',
-          readstyle: '#st-tb-fontsize',
-          font: '#st-tb-font-select',
         };
         const targetEl = root.querySelector(selMap[act]);
         const paneEl = targetEl && targetEl.closest ? targetEl.closest('.st-tb-pane') : null;
-        const tabKey = paneEl && paneEl.dataset ? paneEl.dataset.pane : (act === 'readstyle' || act === 'font' ? 'style' : 'overview');
+        const tabKey = paneEl && paneEl.dataset ? paneEl.dataset.pane : 'overview';
         root.querySelector(`.st-tb-tab[data-tab="${tabKey}"]`)?.click();
         setTimeout(() => {
           const el = root.querySelector(selMap[act]);
