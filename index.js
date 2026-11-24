@@ -6364,8 +6364,41 @@
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2,
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-3,
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-4 {
-      box-shadow: 1px 1px 0 rgba(59, 42, 34, 0.22) !important;
+      outline: none !important;
+      outline-offset: 0 !important;
+      box-shadow: 1px 1px 0 rgba(59, 42, 34, 0.2) !important;
     }
+    .st-px-title-badge.bespoke-static { animation: none !important; }
+    .st-px-title-badge.bespoke-static::after { display: none !important; }
+    .st-px-title-badge.bespoke-sheen {
+      background-size: 220% 220% !important;
+      animation: stGachaBadgeFlow 3.8s ease-in-out infinite !important;
+    }
+    @keyframes stBespokeGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.1); }
+    }
+    @keyframes stBespokeBob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-1.5px); }
+    }
+    @keyframes stBespokeTilt {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    .st-px-title-badge.bespoke-glow { animation: stBespokeGlow 3s ease-in-out infinite !important; }
+    .st-px-title-badge.bespoke-glow::after { display: none !important; }
+    .st-px-bsp-piece {
+      position: absolute;
+      pointer-events: none;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      z-index: 3;
+    }
+    .st-px-bsp-piece.b-bob { animation: stBespokeBob 2.6s ease-in-out infinite; }
+    .st-px-bsp-piece.b-tilt { animation: stBespokeTilt 2.8s ease-in-out infinite; }
+    .st-px-title-badge.bespoke-lux { margin: 8px 12px; }
+    .st-px-title-badge.bespoke-std { margin: 5px 10px; }
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2::before,
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2::after {
       display: none !important;
@@ -17241,6 +17274,215 @@
     secret_key: 'lr', camera: 'lr',
   };
 
+  // 20 款 100% 单独手绘的专属铭牌设计（每款独立构图与独立像素画，绝不复用模板）
+  const BESPOKE_BADGE_DESIGNS = {
+    // 1. 百愿必达星：左上暖金许愿玻璃瓶 + 右下飘出金色心愿丝带（静态柔美）
+    wish_legend_100: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-9px;top:-8px;', w: 12, h: 14, pal: { o: '#8c5468', c: '#d99862', g: '#ffe8f4', w: '#ffffff', y: '#f5c84c', p: '#f282a8' },
+          grid: ['....cccc....','....cccc....','...oooooo...','..ogwwwwgo..','.ogwwyywwgo.','.ogwpyypwgo.','.ogwwyywwgo.','.ogwppppwgo.','..oggggggo..','...oooooo...'] },
+        { pos: 'right:-8px;bottom:-6px;', w: 11, h: 8, pal: { y: '#f2bf49', w: '#fff6cc', p: '#f088ab' },
+          grid: ['.......pp..','.....ppyy..','...yywwyy..','.yywwyy....','yy.........'] },
+      ],
+    },
+    // 2. 衣橱大亨：左侧复古衣架挂小粉裙 + 右下金线纽扣（静态高定感）
+    wardrobe_king: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-10px;top:50%;transform:translateY(-50%);', w: 12, h: 15, pal: { y: '#d9a038', p: '#f28cb0', l: '#ffd6e6', w: '#ffffff', o: '#6b4328' },
+          grid: ['.....yy.....','....y..y....','.....yy.....','...yyyyyy...','..yppwwppy..','...ppwwpp...','..ppplllpp..','.pppplllppp.','ppppplllpppp','.pppppppppp.'] },
+        { pos: 'right:-6px;bottom:-5px;', w: 8, h: 8, pal: { y: '#e0a838', w: '#fff7cc', o: '#7a4d12' },
+          grid: ['..yyyy..','.ywwwwy.','ywowyowy','ywwwwwwy','ywowyowy','.ywwwwy.','..yyyy..'] },
+      ],
+    },
+    // 3. 欧气小狗王 (SSR 豪华)：左侧金红双骰叠元宝 + 底边鎏金托底 + 右上微倾金冠（柔和金光呼吸）
+    gb_gacha_lucky_dog: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 15, pal: { y: '#e6a82e', w: '#fffaf0', r: '#e04858', k: '#4a2e14', l: '#ffe894' },
+          grid: ['..yyyyyy....','.ywwwwwwy...','ywrywwyrwy..','ywwwwwwwwy..','ywwwrrwwwy..','.yyyyyyyy...','...llllll...','.llyyyyyyll.','lyyyyyyyyyyl','.yyyyyyyyyy.'] },
+        { pos: 'right:-7px;top:-9px;', w: 11, h: 9, anim: 'b-tilt', pal: { y: '#e8ae32', w: '#fff7cc', r: '#e85268', c: '#72d4e8' },
+          grid: ['..y..y..y..','.yy.yyy.yy.','.yyyyyyyyy.','.yryywycyy.','..yyyyyyy..'] },
+      ],
+    },
+    // 4. 摘星小甜豆 (SSR 豪华)：左下彩糖透明玻璃罐 + 右侧垂落紫蓝糖珠链（丝光扫过）
+    gb_gacha_star_sugar: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-10px;bottom:-7px;', w: 12, h: 14, pal: { l: '#9a8ae8', w: '#ffffff', c: '#8ce0ff', p: '#ff9ec8', y: '#ffe078' },
+          grid: ['...llllll...','..lwwwwwwl..','.lwppwwcwl..','.lwppyycwl..','.lwccppwwl..','.lwyyccppl..','..lwwwwwwl..','...llllll...'] },
+        { pos: 'right:-9px;top:50%;transform:translateY(-50%);', w: 10, h: 16, anim: 'b-bob', pal: { l: '#8c82e6', w: '#ffffff', c: '#7ed4f5', p: '#f5a4cc' },
+          grid: ['...ll.....','..lwwl....','...ll.....','....c.....','..ccwwcc..','...cccc...','....p.....','..ppwwpp..','...pppp...','....l.....'] },
+      ],
+    },
+    // 5. 一线吃瓜汪 (SR)：右下咬了一口的翠绿红瓤大西瓜角（干净静态）
+    gb_gacha_melon_eater: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'right:-9px;bottom:-7px;', w: 13, h: 11, pal: { g: '#4ea864', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
+          grid: ['.....rr.....','....rrwr....','...rrkrr....','..rrr..rr...','.rrkrrrrkr..','llrrrrrrrll.','.gglllllgg..','..ggggggg...'] },
+      ],
+    },
+    // 6. 国家一级睡狗 (SR)：左下浅蓝软云枕 + 右上轻轻漂浮睡意泡泡
+    gb_gacha_sleep_master: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-10px;bottom:-6px;', w: 14, h: 10, pal: { b: '#8ea8e6', w: '#ffffff', l: '#dce8ff' },
+          grid: ['.b........b.','bbwwwwwwwwbb','bwwllllllwwb','bwwllllllwwb','bbwwwwwwwwbb','.b........b.'] },
+        { pos: 'right:-7px;top:-7px;', w: 9, h: 9, anim: 'b-bob', pal: { l: '#9e8ee6', w: '#ffffff' },
+          grid: ['....lll..','...lwwl..','....lll..','.ll......','lwl......','.ll......'] },
+      ],
+    },
+    // 7. 零食质检员 (SR)：左上咬缺一口的巧克力豆曲奇（干净静态）
+    gb_gacha_snack_thief: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-8px;top:-7px;', w: 11, h: 11, pal: { o: '#b87438', a: '#f0be7a', l: '#ffe2b0', k: '#5c341a' },
+          grid: ['..oooo....','.oaalao...','oakaal....','oaaalao...','oaakaaoo..','.oaaakao..','..ooooo...'] },
+      ],
+    },
+    // 8. 合法摸鱼狗 (SR)：右侧摆尾薄荷青小鱼配水纹（轻摇）
+    gb_gacha_slacking_pro: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'right:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 12, anim: 'b-tilt', pal: { c: '#5cb8ad', l: '#b8f2ea', w: '#ffffff', k: '#234a48' },
+          grid: ['....cccc....','..ccllllcc..','.cclkllllcc.','cclllllllccc','.ccllllcc.cc','..cccccc..cc','............','..cc....cc..'] },
+      ],
+    },
+    // 9. 深夜干饭王 (SR)：左下冒热气暖橘小面碗配筷子（热气微浮）
+    gb_gacha_night_snack: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-10px;bottom:-6px;', w: 13, h: 13, pal: { w: '#ffffff', y: '#f5cc64', o: '#d97848', r: '#e85a5a', k: '#7a4a24' },
+          grid: ['..w...w...kk','...w...w.kk.','..yyyyyykk..','.yyyyyyyyy..','ooooooooooo.','.ooooroooo..','..ooooooo...','...ooooo....'] },
+      ],
+    },
+    // 10. 云端发呆冠军 (SR)：底边一整朵蓬松白云托起铭牌
+    gb_gacha_cloud_drifter: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:50%;bottom:-8px;transform:translateX(-50%);', w: 24, h: 8, pal: { b: '#94bee6', w: '#ffffff', l: '#e6f4ff' },
+          grid: ['....bbbb......bbbb....','..bbwwwwbb..bbwwwwbb..','.bwwwwwwwwbbwwwwwwwwb.','bwwwwwwwwwwwwwwwwwwwwb','.bbllllllllllllllllbb.'] },
+      ],
+    },
+    // 11. 满级幸运星 (SSR 豪华)：左侧翡翠四叶草缠金丝带 + 底边蓝金托底 + 右上弯弯金月（柔光呼吸）
+    gb_gacha_destiny_star: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-11px;top:50%;transform:translateY(-50%);', w: 13, h: 14, pal: { g: '#5ec488', l: '#b8f5cf', w: '#ffffff', y: '#f2c44c' },
+          grid: ['..gg..gg....','.gllggllg...','.gggggggg...','..ggwwgg....','.gggggggg...','.gllggllg...','...yygg.....','..ywwy......','...yy.......'] },
+        { pos: 'right:-8px;top:-8px;', w: 10, h: 10, anim: 'b-bob', pal: { y: '#f2c44c', w: '#fff7cc' },
+          grid: ['...yyyy...','..yyww....','.yyy......','.yyy......','..yyww....','...yyyy...'] },
+      ],
+    },
+    // 12. 沙发粘合剂 (SR)：左侧淡紫格子软抱枕紧贴边缘（静态慵懒）
+    gb_gacha_couch_potato: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-9px;top:50%;transform:translateY(-50%);', w: 11, h: 12, pal: { l: '#9e90d9', a: '#dfd6ff', w: '#ffffff' },
+          grid: ['l........l','lllaaaalll','.lawwawal.','.laaawaal.','.lawaaaal.','.lawwawal.','lllaaaalll','l........l'] },
+      ],
+    },
+    // 13. 退堂鼓鼓手 (SR)：左下绯红小太鼓配小鼓槌（静态俏皮）
+    gb_gacha_no_work_dog: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-9px;bottom:-6px;', w: 12, h: 12, pal: { r: '#e0586e', y: '#f5cc64', w: '#fff8ec', k: '#7a4830' },
+          grid: ['k........k','.kk....kk.','..rrrrrr..','.rywwwwyr.','rywwwwwwyr','rywwwwwwyr','.rywwwwyr.','..rrrrrr..'] },
+      ],
+    },
+    // 14. 电子榨菜王 (SR)：右下翠绿玻璃酱菜罐贴红封条（静态搞怪）
+    gb_gacha_e_pickles: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'right:-9px;bottom:-6px;', w: 11, h: 13, pal: { y: '#e0b048', g: '#5eb86e', l: '#b8f0be', r: '#e85a64', w: '#ffffff' },
+          grid: ['..yyyyy...','.ggggggg..','gllwrrrllg','glggrrrggl','gllwrrrllg','glgggggggl','.ggggggg..'] },
+      ],
+    },
+    // 15. 已读乱回专家 (SSR 豪华)：左上蓝粉叠层对话泡泡 + 右下小感叹号徽（丝光扫过）
+    gb_gacha_read_nonsense: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-11px;top:-8px;', w: 15, h: 13, pal: { b: '#6c8ee0', w: '#ffffff', p: '#eb88b4' },
+          grid: ['..bbbbbb......','.bwwwwwwb.....','.bwbbwbbppppp.','.bwwwwwwpwwwp.','..bbbbbbpwpwp.','...bb...ppppp.','........p.....'] },
+        { pos: 'right:-7px;bottom:-6px;', w: 9, h: 10, anim: 'b-bob', pal: { p: '#e878a4', w: '#ffffff' },
+          grid: ['..ppppp..','.pwwwwwp.','.pwwpwwp.','.pwwpwwp.','.pwwwwwp.','.pwwpwwp.','..ppppp..'] },
+      ],
+    },
+    // 16. 专业捣蛋鬼 (SR)：左上歪戴红金小角 + 右下顽皮小肉垫（静态）
+    gb_gacha_chaos_king: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-8px;top:-8px;', w: 11, h: 10, pal: { r: '#e05a5a', y: '#f5cc64', w: '#fff4d6' },
+          grid: ['.r......r.','rr......rr','rrr....rrr','.rryyyyrr.','..yywwyy..'] },
+        { pos: 'right:-7px;bottom:-5px;', w: 9, h: 8, pal: { p: '#f08a9e', w: '#ffd9e2' },
+          grid: ['.p..p..p.','..ppppp..','.ppwwwpp.','..ppppp..'] },
+      ],
+    },
+    // 17. 躺赢富贵汪 (SSR 豪华)：底边金元宝叠软枕托底 + 左上金币堆（柔光呼吸）
+    gb_gacha_sleepy_rich: {
+      cls: 'bespoke-lux bespoke-glow',
+      pieces: [
+        { pos: 'left:50%;bottom:-9px;transform:translateX(-50%);', w: 24, h: 9, pal: { y: '#e6a832', l: '#ffe894', w: '#ffffff', p: '#f5b8cc' },
+          grid: ['......yyyyyyyyyy......','....yyllwwwwwwllyy....','..ppyyyyyyyyyyyyyypp..','.ppwwwwwwwwwwwwwwwwpp.','..pppppppppppppppppp..'] },
+        { pos: 'left:-9px;top:-7px;', w: 11, h: 10, pal: { y: '#e6a832', w: '#fff7cc', o: '#9c6412' },
+          grid: ['...yyyy...','..ywwwwy..','.yywyywyy.','ywwyyyywwy','.yyyyyyyy.'] },
+      ],
+    },
+    // 18. 甜心教主 (商店75币豪华)：底边豪华糖果城堡托底 + 左侧手绘双球甜筒冰淇淋 + 右上草莓糖霜蝴蝶结
+    sb_ult_candy_queen: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 16, pal: { p: '#ff96be', g: '#98ebd0', w: '#ffffff', a: '#e6a868', o: '#b8743c', r: '#f05674' },
+          grid: ['....rr....','..pppppp..','.ppwwwwpp.','..gggggg..','.ggwwwwgg.','..aaaaaa..','...aooa...','....aa....','....oo....'] },
+        { pos: 'right:-9px;top:-8px;', w: 12, h: 9, anim: 'b-tilt', pal: { p: '#eb7aa8', w: '#fff0f6', r: '#e04e78' },
+          grid: ['.ppp..ppp.','ppwppppwpp','ppprrrpppp','.ppp..ppp.','..p....p..'] },
+      ],
+    },
+    // 19. 樱花公主汪 (商店78币豪华)：左侧斜伸完整古风樱花枝条 + 底部落樱花瓣托底
+    sb_ult_sakura_empress: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, pal: { o: '#7a4e42', p: '#ff9ec2', l: '#ffd9e8', w: '#ffffff', y: '#ffe078' },
+          grid: ['...pp..oo...','..pllp.o....','.plwwlp.o...','..pllp..oo..','...pp..o.pp.','......o.pllp','....oo..pwlp','...o....plp.','..o.........'] },
+      ],
+    },
+    // 20. 绝版七彩萌主 (商店108币顶级豪华)：左侧华丽紫金权杖 + 底边七彩棱镜花环 + 右上斜戴七彩钻冠
+    sb_supreme_rainbow: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 17, pal: { l: '#b47ae8', c: '#7edcf5', p: '#ff94c8', y: '#f5cc58', w: '#ffffff' },
+          grid: ['....yy....','..llwwll..','.lcwwwwcl.','..ppwwpp..','....yy....','....yy....','...ywwy...','....yy....','....yy....','....yy....'] },
+        { pos: 'right:-9px;top:-9px;', w: 13, h: 10, anim: 'b-bob', pal: { y: '#f2c44c', l: '#b882eb', c: '#7edcf5', p: '#ff94c8', w: '#ffffff' },
+          grid: ['..y...y...y..','.lyl.ywy.ycy.','.yyyyyyyyyyy.','.ypyylwycypy.','..yyyyyyyyy..'] },
+      ],
+    },
+  };
+
+  const renderBespokePiece = (pc) => {
+    const cv = doc.createElement('canvas');
+    const rows = pc.grid.length;
+    const cols = pc.grid[0].length;
+    cv.width = cols;
+    cv.height = rows;
+    cv.className = `st-px-bsp-piece${pc.anim ? ' ' + pc.anim : ''}`;
+    cv.style.cssText = `${pc.pos}width:${pc.w}px;height:${pc.h}px;`;
+    const g = cv.getContext('2d');
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const col = pc.pal[pc.grid[y][x]];
+        if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
+      }
+    }
+    return cv;
+  };
+
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
     const tier = isMystery ? 1 : (ach.tier || 1);
     const fKey = ach.frame || 'stars';
@@ -17249,12 +17491,22 @@
       ? (lay === 'diag1' || lay === 'diag2' || lay === 'quad' ? ' lay-diag' : (lay === 'trio' || lay === 'trio_bot' ? ' lay-trio' : ''))
       : '';
     const isGachaDynBadge = fKey.startsWith('gframe_');
-    el.className = `st-px-title-badge tier-${tier}${layClass}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
+    const bespoke = !isMystery && ach.id ? BESPOKE_BADGE_DESIGNS[ach.id] : null;
+    el.className = bespoke
+      ? `st-px-title-badge tier-${tier} ${bespoke.cls}`
+      : `st-px-title-badge tier-${tier}${layClass}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
     el.innerHTML = '';
     el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
     el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
     el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
-    if (tier >= 4 && !isMystery) {
+    if (bespoke) {
+      if (Array.isArray(bespoke.ult)) {
+        bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, fKey)));
+      }
+      if (Array.isArray(bespoke.pieces)) {
+        bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
+      }
+    } else if (tier >= 4 && !isMystery) {
       el.appendChild(makeUltOrn('top', fKey));
       el.appendChild(makeUltOrn('bottom', fKey));
       el.appendChild(makeUltOrn('left', fKey));
