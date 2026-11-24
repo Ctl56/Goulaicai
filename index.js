@@ -37844,6 +37844,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       config.charDelWbPrompt = !(config.charDelWbPrompt !== false);
       saveConfig();
       applyCharGalleryMode();
+      if (config.charDelWbPrompt !== false && typeof showKaPolicyNotice === 'function') {
+        showKaPolicyNotice('已开启删卡清理世界书，删卡时会询问是否同步删除绑定世界书');
+      }
     });
   }
   if (cmSkipRecentEl) {
@@ -39761,6 +39764,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       saveConfig();
       syncSeToggleUI();
   syncSeFmtUI();
+      if (config.storyQuickBarEnabled !== false && typeof showKaPolicyNotice === 'function') {
+        showKaPolicyNotice('已开启正文快捷编辑，双击任意段落唤出操作条，单击收起');
+      }
     });
   }
   if (seEditLastBtn) {
