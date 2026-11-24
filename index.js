@@ -9622,23 +9622,46 @@ function bootGoulaicaiExtension() {
     } catch (_) {}
   };
 
+  const kaRuntime = {
+    active: false,
+    mode: 'mix',
+    startedAt: 0,
+    lastBeatAt: 0,
+    recoverCount: 0,
+    interrupted: false,
+  };
+
   const updateKeepAliveUI = () => {
     if (!keepAliveBtn) return;
+    const curPolicy = config.keepAlivePolicy === 'exclusive' ? 'exclusive' : 'mix';
     if (config.keepAlive) {
       keepAliveBtn.textContent = kaNeedsGesture ? '后台保活：待轻点' : '后台保活：开';
       keepAliveBtn.classList.add('primary');
-      if (kaNeedsGesture) {
+      if (keepAliveTip) {
         keepAliveTip.style.display = 'block';
-        keepAliveTip.textContent = '请轻点页面任意处激活保活。';
-      } else {
-        keepAliveTip.style.display = 'none';
-        keepAliveTip.textContent = '';
+        keepAliveTip.innerHTML = `<div style="display:flex;align-items:center;gap:5px;">` +
+          `<button type="button" class="st-tb-mini-btn${curPolicy === 'mix' ? ' active' : ''}" data-kapolicy="mix" style="flex:1;" title="不占顶部音频栏，可同时听发语音与刷视频">混音保活</button>` +
+          `<button type="button" class="st-tb-mini-btn${curPolicy === 'exclusive' ? ' active' : ''}" data-kapolicy="exclusive" style="flex:1;" title="原版强效独占音频通道，适合长时间息屏常驻">独占保活</button>` +
+          `</div>${kaNeedsGesture ? '<div style="margin-top:4px;font-size:10.5px;color:var(--tb-sub);">轻点页面任意位置完成激活</div>' : ''}`;
+        keepAliveTip.querySelectorAll('[data-kapolicy]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const pol = btn.dataset.kapolicy;
+            if (pol !== 'mix' && pol !== 'exclusive') return;
+            if (config.keepAlivePolicy === pol && kaRuntime.active) return;
+            config.keepAlivePolicy = pol;
+            saveConfig();
+            startKeepAlive();
+          });
+        });
       }
     } else {
       keepAliveBtn.textContent = '后台保活：关';
       keepAliveBtn.classList.remove('primary');
-      keepAliveTip.style.display = 'none';
-      keepAliveTip.textContent = '';
+      if (keepAliveTip) {
+        keepAliveTip.style.display = 'none';
+        keepAliveTip.textContent = '';
+      }
     }
   };
 
@@ -9679,6 +9702,13 @@ function bootGoulaicaiExtension() {
       try { win.__stKaCleanRecovery(); } catch (_) {}
       win.__stKaCleanRecovery = null;
     }
+    kaRuntime.active = false;
+    kaRuntime.interrupted = false;
+    if (!config.keepAlive) {
+      kaRuntime.startedAt = 0;
+      kaRuntime.lastBeatAt = 0;
+      kaRuntime.recoverCount = 0;
+    }
     updateKeepAliveUI();
   };
 
@@ -9688,8 +9718,22 @@ function bootGoulaicaiExtension() {
     const mode = 'strong';
     acquireWebLock();
 
-    const tryResumeKaAudio = () => {
+    const kaPolicy = config.keepAlivePolicy === 'exclusive' ? 'exclusive' : 'mix';
+    kaRuntime.active = true;
+    kaRuntime.mode = kaPolicy;
+    if (!kaRuntime.startedAt) kaRuntime.startedAt = Date.now();
+    kaRuntime.lastBeatAt = Date.now();
+    kaRuntime.interrupted = false;
+
+    try {
+      if (win.navigator && win.navigator.audioSession) {
+        win.navigator.audioSession.type = kaPolicy === 'mix' ? 'ambient' : 'playback';
+      }
+    } catch (_) {}
+
+    const tryResumeKaAudio = (fromInterruption = false) => {
       if (!config.keepAlive) return;
+      kaRuntime.lastBeatAt = Date.now();
       if (kaAudioEl) {
         if (kaAudioEl.error || kaAudioEl.ended) {
           try {
@@ -9697,64 +9741,100 @@ function bootGoulaicaiExtension() {
           } catch (_) {}
         }
         if (kaAudioEl.paused) {
-          kaAudioEl.play().catch(() => {});
+          kaAudioEl.play().then(() => {
+            kaRuntime.interrupted = false;
+            if (fromInterruption) kaRuntime.recoverCount += 1;
+            if (kaNeedsGesture) { kaNeedsGesture = false; updateKeepAliveUI(); }
+          }).catch(() => {});
         }
       }
       if (kaAudioCtx && kaAudioCtx.state === 'suspended') {
-        kaAudioCtx.resume().catch(() => {});
+        kaAudioCtx.resume().then(() => {
+          kaRuntime.interrupted = false;
+          if (fromInterruption) kaRuntime.recoverCount += 1;
+          if (kaNeedsGesture) { kaNeedsGesture = false; updateKeepAliveUI(); }
+        }).catch(() => {});
       }
     };
-    const kaKeepInterval = setInterval(tryResumeKaAudio, 3000);
-    const onKaWakeEvt = () => { if (!doc.hidden) tryResumeKaAudio(); };
+    const kaKeepInterval = setInterval(() => tryResumeKaAudio(true), 2000);
+    const onKaWakeEvt = () => { if (!doc.hidden) tryResumeKaAudio(true); };
+    const onKaTapWake = () => tryResumeKaAudio(false);
     doc.addEventListener('visibilitychange', onKaWakeEvt);
-    win.addEventListener('focus', tryResumeKaAudio);
-    win.addEventListener('pageshow', tryResumeKaAudio);
-    doc.addEventListener('pointerdown', tryResumeKaAudio, true);
-    doc.addEventListener('touchstart', tryResumeKaAudio, { capture: true, passive: true });
+    win.addEventListener('focus', onKaWakeEvt);
+    win.addEventListener('pageshow', onKaWakeEvt);
+    doc.addEventListener('pointerdown', onKaTapWake, true);
+    doc.addEventListener('touchstart', onKaTapWake, { capture: true, passive: true });
     win.__stKaCleanRecovery = () => {
       clearInterval(kaKeepInterval);
       doc.removeEventListener('visibilitychange', onKaWakeEvt);
-      win.removeEventListener('focus', tryResumeKaAudio);
-      win.removeEventListener('pageshow', tryResumeKaAudio);
-      doc.removeEventListener('pointerdown', tryResumeKaAudio, true);
-      doc.removeEventListener('touchstart', tryResumeKaAudio, true);
+      win.removeEventListener('focus', onKaWakeEvt);
+      win.removeEventListener('pageshow', onKaWakeEvt);
+      doc.removeEventListener('pointerdown', onKaTapWake, true);
+      doc.removeEventListener('touchstart', onKaTapWake, true);
     };
 
     let kaBeatN = 0;
     if (typeof win.Worker === 'function') {
       try {
         const wBlob = new Blob([
-          'let t=setInterval(()=>{postMessage(Date.now());},1500);onmessage=()=>{clearInterval(t);};'
+          'let t=setInterval(()=>{postMessage(Date.now());},1000);onmessage=()=>{clearInterval(t);};'
         ], { type: 'application/javascript' });
         kaWorkerUrl = win.URL.createObjectURL(wBlob);
         kaWorker = new win.Worker(kaWorkerUrl);
         kaWorker.onmessage = () => {
           if (!config.keepAlive) return;
           kaBeatN += 1;
-          tryResumeKaAudio();
-          // 若后台期间音频被其他软件暂时打断，改用轻量网络心跳维持连接与后台窗口
-          if (doc.hidden && kaAudioEl && kaAudioEl.paused && kaBeatN % 5 === 0) {
+          kaRuntime.lastBeatAt = Date.now();
+          tryResumeKaAudio(true);
+          if (doc.hidden && kaBeatN % 8 === 0) {
             try { win.fetch('/csrf-token', { cache: 'no-store' }).catch(() => {}); } catch (_) {}
           }
         };
       } catch (_) {}
     }
 
+    if (kaPolicy === 'mix') {
+      // 混音策略：静音 PCM 缓冲循环叠加混音通道，不占顶部音频栏，方便同时听发语音与刷视频
+      const AC_Mix = win.AudioContext || win.webkitAudioContext;
+      if (AC_Mix) {
+        try {
+          kaAudioCtx = new AC_Mix();
+          const silentBuf = kaAudioCtx.createBuffer(1, 22050, 22050);
+          const srcNode = kaAudioCtx.createBufferSource();
+          srcNode.buffer = silentBuf;
+          srcNode.loop = true;
+          const gainNode = kaAudioCtx.createGain();
+          gainNode.gain.value = 0.0001;
+          srcNode.connect(gainNode);
+          gainNode.connect(kaAudioCtx.destination);
+          srcNode.start(0);
+          kaOsc = srcNode;
+          kaAudioCtx.onstatechange = () => {
+            if (config.keepAlive && kaAudioCtx && kaAudioCtx.state === 'suspended') {
+              kaRuntime.interrupted = true;
+              setTimeout(() => tryResumeKaAudio(true), 300);
+            }
+          };
+          if (kaAudioCtx.state === 'suspended') kaAudioCtx.resume().catch(() => {});
+        } catch (_) {}
+      }
+    }
+
     if (mode === 'strong') {
-      // 原版最强静音循环音频保活 + 被其他软件打断后持续自动续播恢复
       kaAudioUrl = createSilentWavUrl();
       kaAudioEl = doc.createElement('audio');
       kaAudioEl.src = kaAudioUrl;
       kaAudioEl.loop = true;
-      kaAudioEl.volume = 0.001;
+      kaAudioEl.volume = kaPolicy === 'mix' ? 0.0001 : 0.001;
       kaAudioEl.setAttribute('playsinline', '');
       kaAudioEl.setAttribute('webkit-playsinline', '');
       kaAudioEl.style.display = 'none';
       const onKaInterrupted = () => {
         if (!config.keepAlive) return;
-        setTimeout(tryResumeKaAudio, 300);
-        setTimeout(tryResumeKaAudio, 1200);
-        setTimeout(tryResumeKaAudio, 3000);
+        kaRuntime.interrupted = true;
+        setTimeout(() => tryResumeKaAudio(true), 300);
+        setTimeout(() => tryResumeKaAudio(true), 1200);
+        setTimeout(() => tryResumeKaAudio(true), 2800);
       };
       kaAudioEl.addEventListener('pause', onKaInterrupted);
       kaAudioEl.addEventListener('stalled', onKaInterrupted);
