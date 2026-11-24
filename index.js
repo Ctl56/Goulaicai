@@ -6898,8 +6898,50 @@
     }
     .st-px-title-badge.gacha-dyn .st-px-ach-orn,
     .st-px-title-badge.gacha-dyn .st-px-ult-orn {
-      animation: stGachaOrnFloat 2.1s ease-in-out infinite !important;
+      animation: none !important;
     }
+    @keyframes stBadgeGlowSoft {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.72), 0 1px 4px rgba(0,0,0,0.08); }
+      50% { box-shadow: 0 0 0 1px rgba(255,255,255,0.95), 0 0 9px var(--bdg-glow, rgba(224,160,196,0.45)); }
+    }
+    .st-px-title-badge.bdg-still {
+      animation: none !important;
+    }
+    .st-px-title-badge.bdg-still::after {
+      display: none !important;
+    }
+    .st-px-title-badge.bdg-glow-breath {
+      animation: stBadgeGlowSoft 3.2s ease-in-out infinite !important;
+    }
+    .st-px-title-badge.bdg-glow-breath::after {
+      display: none !important;
+    }
+    /* 无外挂贴图的精致雕花镶边本体款（玉牌/浮雕/丝绒镶边/邮票锯齿） */
+    .st-px-title-badge.arch-relief-double {
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.85), 0 0 0 1.5px var(--bdg-bd, #d4a8b8), 0 2px 5px rgba(0,0,0,0.08) !important;
+      padding-left: 9px !important;
+      padding-right: 9px !important;
+    }
+    .st-px-title-badge.arch-relief-stitch {
+      border-style: dashed !important;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.72), 0 1px 4px rgba(0,0,0,0.08) !important;
+      padding-left: 9px !important;
+      padding-right: 9px !important;
+    }
+    .st-px-title-badge.arch-relief-pill {
+      border-radius: 999px !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08) !important;
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+    }
+    .st-px-title-badge.arch-relief-ribbon {
+      border-radius: 3px 10px 3px 10px !important;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.78), 2px 2px 0 rgba(0,0,0,0.08) !important;
+      padding-left: 9px !important;
+      padding-right: 9px !important;
+    }
+    .st-px-cluster-orn.still-orn { animation: none !important; }
+    .st-px-cluster-orn.c-top-mid { left: 50%; top: -10px; transform: translateX(-50%); }
     .st-px-title-badge.tier-4 {
       padding: 4px 12px;
       margin: 7px 16px;
@@ -17364,93 +17406,6 @@
     return [primary, secondary];
   };
 
-  const BADGE_FX_MODES = ['orbit_pearls', 'rising_bubbles', 'corner_flutter', 'shimmer_wave', 'sparkle_breath', 'ribbon_trail'];
-
-  const attachBadgeLiveFx = (el, ach, h) => {
-    const mode = BADGE_FX_MODES[h % BADGE_FX_MODES.length];
-    const cvs = doc.createElement('canvas');
-    cvs.width = 56;
-    cvs.height = 24;
-    cvs.className = 'st-px-badge-fx-cvs';
-    cvs.dataset.bfx = mode;
-    cvs.dataset.bcol = (ach && ach.bd) || '#e698b8';
-    el.appendChild(cvs);
-  };
-
-  // 共享轻量化铭牌实时动态渲染循环（6 种不同动效，仅在背包打开时运行）
-  if (!win.__stBadgeFxLoopInstalled) {
-    win.__stBadgeFxLoopInstalled = true;
-    let bfxTick = 0;
-    setInterval(() => {
-      if (doc.hidden || !pupBagEl || !pupBagEl.classList.contains('open')) return;
-      const list = root.querySelectorAll('canvas.st-px-badge-fx-cvs');
-      if (!list.length) return;
-      bfxTick = (bfxTick + 1) % 240;
-      const t = bfxTick;
-      const perim = (p, W, H) => {
-        const peri = (W - 6) * 2 + (H - 6) * 2;
-        const n = ((p % peri) + peri) % peri;
-        const wSpan = W - 6, hSpan = H - 6;
-        if (n < wSpan) return [3 + n, 3];
-        if (n < wSpan + hSpan) return [W - 3, 3 + (n - wSpan)];
-        if (n < wSpan * 2 + hSpan) return [W - 3 - (n - wSpan - hSpan), H - 3];
-        return [3, H - 3 - (n - wSpan * 2 - hSpan)];
-      };
-      list.forEach(cv => {
-        if (!cv.offsetParent) return;
-        const g = cv.getContext('2d');
-        const W = cv.width, H = cv.height;
-        const m = cv.dataset.bfx;
-        const col = cv.dataset.bcol || '#e698b8';
-        g.clearRect(0, 0, W, H);
-        if (m === 'orbit_pearls') {
-          for (let i = 0; i < 3; i++) {
-            const [x, y] = perim(t * 2 + i * 44, W, H);
-            g.fillStyle = col; g.fillRect(Math.round(x) - 1, Math.round(y) - 1, 3, 3);
-            g.fillStyle = '#ffffff'; g.fillRect(Math.round(x), Math.round(y), 1, 1);
-          }
-        } else if (m === 'rising_bubbles') {
-          for (let i = 0; i < 4; i++) {
-            const bx = 8 + i * 13 + Math.round(Math.sin(t * 0.25 + i) * 2);
-            const by = H - 2 - ((t + i * 6) % (H - 4));
-            g.fillStyle = col; g.fillRect(bx, by, 2, 2);
-            g.fillStyle = '#ffffff'; g.fillRect(bx, by, 1, 1);
-          }
-        } else if (m === 'corner_flutter') {
-          for (let i = 0; i < 3; i++) {
-            const fx = 6 + ((t + i * 17) % (W - 12));
-            const fy = 2 + Math.round((Math.sin(t * 0.22 + i * 2) + 1) * 2.5);
-            g.fillStyle = i % 2 === 0 ? col : '#ffffff';
-            g.fillRect(fx, fy, 2, 1);
-          }
-        } else if (m === 'shimmer_wave') {
-          const sx = ((t * 2) % (W + 14)) - 7;
-          g.fillStyle = 'rgba(255,255,255,0.65)';
-          for (let y = 3; y < H - 3; y += 3) {
-            const x = sx - Math.floor(y * 0.4);
-            if (x >= 3 && x < W - 4) g.fillRect(x, y, 2, 2);
-          }
-        } else if (m === 'sparkle_breath') {
-          const pts = [[4, 4], [W - 6, 4], [4, H - 6], [W - 6, H - 6]];
-          pts.forEach(([px0, py0], idx) => {
-            if (((t + idx * 5) % 16) < 8) {
-              g.fillStyle = col; g.fillRect(px0, py0, 2, 2);
-              g.fillStyle = '#ffffff'; g.fillRect(px0, py0, 1, 1);
-            }
-          });
-        } else if (m === 'ribbon_trail') {
-          const x1 = 4 + ((t * 2) % (W - 10));
-          const x2 = W - 6 - ((t * 2) % (W - 10));
-          for (let k = 0; k < 4; k++) {
-            g.fillStyle = k === 0 ? '#ffffff' : col;
-            g.fillRect(Math.max(3, x1 - k * 2), 2, 2, 1);
-            g.fillRect(Math.min(W - 5, x2 + k * 2), H - 3, 2, 1);
-          }
-        }
-      });
-    }, 160);
-  }
-
   const hashBadgeId = (str) => {
     let h = 2166136261;
     const s = String(str || 'badge');
@@ -17461,22 +17416,25 @@
     return Math.abs(h);
   };
 
+  // 协调型单角/侧翼/托底/浮雕六大版式引擎（绝不在顶部放两个，绝不乱散落，不强迫全部抖动）
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
     const tier = isMystery ? 1 : (ach.tier || 1);
     const fKey = ach.frame || 'stars';
-    const isProtected = ach.id === 'aff_lv10' || ach.id === 'sb_ult_angel_seraph';
-    const isGachaDynBadge = fKey.startsWith('gframe_');
+    const bid = String(ach.id || '');
+    const bdCol = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
+    const bgCol = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
+    const fgCol = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
 
-    if (isProtected) {
-      const lay = ACH_FRAME_LAYOUT[fKey] || 'lr';
-      const layClass = tier === 3
-        ? (lay === 'diag1' || lay === 'diag2' || lay === 'quad' ? ' lay-diag' : (lay === 'trio' || lay === 'trio_bot' ? ' lay-trio' : ''))
-        : '';
-      el.className = `st-px-title-badge tier-${tier}${layClass}`;
-      el.innerHTML = '';
-      el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
-      el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
-      el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
+    el.innerHTML = '';
+    el.style.background = bgCol;
+    el.style.borderColor = bdCol;
+    el.style.color = fgCol;
+    el.style.setProperty('--bdg-bd', bdCol);
+    el.style.setProperty('--bdg-glow', bdCol);
+
+    // 1. 永久锁定玩家喜爱的 4 款经典样板：满分偏爱 / 炽天使汪 / 摸头大师 / 百日纪念章
+    if (bid === 'aff_lv10' || bid === 'sb_ult_angel_seraph' || bid === 'ach_ck_100') {
+      el.className = `st-px-title-badge tier-${tier} bdg-still`;
       if (tier >= 4 && !isMystery) {
         el.appendChild(makeUltOrn('top', fKey));
         el.appendChild(makeUltOrn('bottom', fKey));
@@ -17486,95 +17444,102 @@
         el.appendChild(makeAchOrnCanvas(fKey, 'left'));
         el.appendChild(makeAchOrnCanvas(fKey, 'right'));
       }
-    } else if (tier >= 4 && !isMystery) {
-      // 高价/传说豪华铭牌：华丽大件 + 颜色自适应复合集群 + 专属 Canvas 实时动态特效（6 种动效 + 6 种豪华不对称布局）
-      const h = hashBadgeId(ach.id || ach.title || fKey);
-      const luxMode = h % 6;
-      const [cl1, cl2] = pickClusterPairForBadge(ach, fKey, h);
-      el.className = `st-px-title-badge tier-4 lay-lux${isGachaDynBadge ? ' gacha-dyn' : ''}`;
-      el.innerHTML = '';
-      el.style.background = ach.bg || '#fff8de';
-      el.style.borderColor = ach.bd || '#e0b860';
-      el.style.color = ach.fg || '#6b4d18';
-      attachBadgeLiveFx(el, ach, h);
-      if (luxMode === 0) {
-        el.appendChild(makeUltOrn('top', fKey));
-        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
-        el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
-      } else if (luxMode === 1) {
-        el.appendChild(makeUltOrn('bottom', fKey));
-        el.appendChild(makeClusterOrnCanvas(cl1, 'c-tl', ach, false));
-        el.appendChild(makeUltOrn('right', fKey));
-      } else if (luxMode === 2) {
+      return;
+    }
+    if (bid === 'ach_pet_200') {
+      // 保留摸头大师最受好评的清爽协调搭配：左上单枚柔粉丝带珍珠胸针 + 右下微呼应小爱心，静谧干净
+      el.className = 'st-px-title-badge tier-3 lay-creative bdg-still';
+      const c1 = makeClusterOrnCanvas('bow_pearl', 'c-tl', ach, false);
+      c1.classList.add('still-orn');
+      el.appendChild(c1);
+      el.appendChild(makeAchOrnCanvas('hearts', 'br'));
+      return;
+    }
+
+    if (isMystery || tier < 3) {
+      el.className = `st-px-title-badge tier-${tier} bdg-still`;
+      return;
+    }
+
+    const h = hashBadgeId(bid || ach.title || fKey);
+    const [clPrimary] = pickClusterPairForBadge(ach, fKey, h);
+    const isLux = tier >= 4;
+    const isGachaSSR = ach.gachaTier === 'SSR';
+
+    // 克制分化动态：大部分铭牌保持干净静态，仅部分高阶/SSR 铭牌分配丝光扫过或柔光呼吸，避免千篇一律都在动
+    let motionCls = 'bdg-still';
+    let ornStill = true;
+    if (isLux || isGachaSSR) {
+      const mRoll = h % 3;
+      if (mRoll === 0) { motionCls = 'gacha-dyn'; ornStill = true; }
+      else if (mRoll === 1) { motionCls = 'bdg-glow-breath'; ornStill = true; }
+      else { motionCls = 'bdg-still'; ornStill = false; }
+    } else if (fKey.startsWith('gframe_') && (h % 2 === 0)) {
+      motionCls = 'bdg-glow-breath';
+      ornStill = true;
+    }
+
+    const mkCl = (key, pos, flip = false) => {
+      const cv = makeClusterOrnCanvas(key, pos, ach, flip);
+      if (ornStill) cv.classList.add('still-orn');
+      return cv;
+    };
+
+    if (isLux) {
+      // 高价/传说豪华铭牌（5 种精致协调的豪华建筑版式，绝不顶上放两个，绝不死板四向堆砌）
+      const luxArch = h % 5;
+      if (luxArch === 0) {
+        // 优雅侧翼流苏款（左右华丽翼饰，上下留白显贵气）
+        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
         el.appendChild(makeUltOrn('left', fKey));
-        el.appendChild(makeClusterOrnCanvas(cl1, 'c-top-r', ach, true));
-        el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
-      } else if (luxMode === 3) {
-        el.appendChild(makeUltOrn('bottom', fKey));
-        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
-        el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-l', ach, false));
-      } else if (luxMode === 4) {
-        el.appendChild(makeUltOrn('top', fKey));
         el.appendChild(makeUltOrn('right', fKey));
-        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
+      } else if (luxArch === 1) {
+        // 底部托底花环 + 左上单枚胸针
+        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
+        el.appendChild(makeUltOrn('bottom', fKey));
+        el.appendChild(mkCl(clPrimary, 'c-tl', false));
+      } else if (luxArch === 2) {
+        // 顶部居中华丽单冠 + 底部简洁托底（无左右臃肿堆积）
+        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
+        el.appendChild(makeUltOrn('top', fKey));
+        el.appendChild(makeUltOrn('bottom', fKey));
+      } else if (luxArch === 3) {
+        // 左下豪华主胸针 + 右侧精致侧翼（不对称礼服胸针感）
+        el.className = `st-px-title-badge tier-4 lay-lux ${motionCls}`;
+        el.appendChild(mkCl(clPrimary, 'c-bl', false));
+        el.appendChild(makeUltOrn('right', fKey));
       } else {
-        el.appendChild(makeUltOrn('left', fKey));
-        el.appendChild(makeUltOrn('right', fKey));
-        el.appendChild(makeClusterOrnCanvas(cl1, 'c-bot-r', ach, true));
+        // 高定雕花双线框 + 右上单枚斜戴胸针（极简奢华）
+        el.className = `st-px-title-badge tier-4 lay-creative arch-relief-double ${motionCls}`;
+        el.appendChild(mkCl(clPrimary, 'c-tr', true));
+        el.appendChild(makeAchOrnCanvas(fKey, 'bl'));
       }
     } else {
-      // 常规高阶 (tier 3) 铭牌：10 种多元空间堆叠构图 + 18 款色系自适应复合集群 + 扭蛋/部分高阶附带 Canvas 动态
-      el.className = `st-px-title-badge tier-${tier}${tier >= 3 ? ' lay-creative' : ''}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
-      el.innerHTML = '';
-      el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
-      el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
-      el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
-      if (tier >= 3 && !isMystery) {
-        const h = hashBadgeId(ach.id || ach.title || fKey);
-        const mode = h % 10;
-        const [cl1, cl2] = pickClusterPairForBadge(ach, fKey, h);
-        if (isGachaDynBadge || (h % 3 === 0)) attachBadgeLiveFx(el, ach, h);
-        if (mode === 0) {
-          // 左上主簇 + 右下互补副簇（经典摸头大师式和谐对角）
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-tl', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
-        } else if (mode === 1) {
-          // 左下重堆叠双簇（上右留白）
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-bot-l', ach, false));
-        } else if (mode === 2) {
-          // 右下重堆叠双簇（上左留白）
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-br', ach, true));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-bot-r', ach, true));
-        } else if (mode === 3) {
-          // 顶部偏左 + 顶部偏右双小簇（底边清爽）
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-top-l', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-r', ach, true));
-        } else if (mode === 4) {
-          // 底边左下+右下双托起
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
-        } else if (mode === 5) {
-          // 左下主簇 + 右上互补副簇
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-bl', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-tr', ach, true));
-        } else if (mode === 6) {
-          // 左侧中下簇拥 + 顶部偏左斜戴
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-mid-l', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-l', ach, false));
-        } else if (mode === 7) {
-          // 右侧中上簇拥 + 右下呼应
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-mid-r', ach, true));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-br', ach, true));
-        } else if (mode === 8) {
-          // 顶部偏右单主簇 + 左下轻呼应
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-top-r', ach, true));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-bl', ach, false));
-        } else {
-          // 左上双元素紧贴堆叠（极简留白构图）
-          el.appendChild(makeClusterOrnCanvas(cl1, 'c-tl', ach, false));
-          el.appendChild(makeClusterOrnCanvas(cl2, 'c-top-l', ach, false));
-        }
+      // 常规高阶铭牌（6 种完全不同的协调版式，含 3 种无外挂精致雕花框 + 3 种单焦点/一主一微协调胸针款）
+      const arch = h % 6;
+      if (arch === 0) {
+        // 单角胸针款（只在左上放一枚主题复合胸针，干净极简）
+        el.className = `st-px-title-badge tier-3 lay-creative ${motionCls}`;
+        el.appendChild(mkCl(clPrimary, 'c-tl', false));
+      } else if (arch === 1) {
+        // 一主一微斜角呼应款（类似摸头大师：左下主胸针 + 右上极轻小呼应）
+        el.className = `st-px-title-badge tier-3 lay-creative ${motionCls}`;
+        el.appendChild(mkCl(clPrimary, 'c-bl', false));
+        el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
+      } else if (arch === 2) {
+        // 复古双线雕花框 + 右下角单枚精致落款（不浮夸、质感高）
+        el.className = `st-px-title-badge tier-3 lay-creative arch-relief-double ${motionCls}`;
+        el.appendChild(mkCl(clPrimary, 'c-br', true));
+      } else if (arch === 3) {
+        // 柔圆胶囊浮雕款（零外挂贴图，靠双层光泽圆润边框取胜）
+        el.className = `st-px-title-badge tier-3 arch-relief-pill ${motionCls}`;
+      } else if (arch === 4) {
+        // 复古手账缝线邮票框 + 左侧单枚小徽（文艺精致）
+        el.className = `st-px-title-badge tier-3 lay-creative arch-relief-stitch ${motionCls}`;
+        el.appendChild(makeAchOrnCanvas(fKey, 'left'));
+      } else {
+        // 斜角书签切角丝带框（零外挂杂物，造型本身有辨识度）
+        el.className = `st-px-title-badge tier-3 arch-relief-ribbon ${motionCls}`;
       }
     }
     if (!isMystery) el.appendChild(makeAchIconCanvas(ach.icon));
