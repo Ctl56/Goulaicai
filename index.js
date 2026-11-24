@@ -20110,7 +20110,7 @@
         headRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:5px;';
         const lblSpan = doc.createElement('span');
         lblSpan.style.fontWeight = '700';
-        lblSpan.textContent = '头饰/配饰位置微调 (0.01)';
+        lblSpan.textContent = '配饰位置微调 (0.01)';
         const sel = doc.createElement('select');
         sel.className = 'st-tb-select';
         sel.style.cssText = 'height:22px;font-size:10px;padding:0 4px;flex:0 1 115px;';
@@ -20182,11 +20182,11 @@
         saveMemBtn.type = 'button';
         saveMemBtn.className = 'st-px-btn active';
         saveMemBtn.style.cssText = 'flex:1;height:22px;font-size:9.5px;';
-        saveMemBtn.textContent = '保存记忆此头饰位置';
+        saveMemBtn.textContent = '保存此配饰位置';
         saveMemBtn.addEventListener('click', () => {
           applyLiveOffset();
           saveConfig();
-          cmNotify('已保存并记忆该头饰位置');
+          cmNotify('已保存此配饰位置');
           if (config.puppyEnabled) showPuppyBubble('记好这个位置啦，下次戴还在这里~', 1800);
         });
         const rstMemBtn = doc.createElement('button');
@@ -20930,12 +20930,12 @@
     const list = doc.createElement('div');
     list.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
 
-    // 1. 85折扭蛋券（限购5张，8币/张）
+    // 1. 扭蛋券（限购5张，8币/张）
     const tRow = doc.createElement('div');
     tRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:10px;';
     const tLeft = Math.max(0, Math.floor(m.ticketsLeft || 0));
     const tName = doc.createElement('span');
-    tName.textContent = `85折扭蛋券 · 8币/张 · 限购余 ${tLeft}/5`;
+    tName.textContent = `扭蛋券 · 8币/张 · 限购余 ${tLeft}/5`;
     const tBtn = doc.createElement('button');
     tBtn.type = 'button';
     tBtn.className = 'st-px-btn' + (tLeft > 0 ? ' care' : '');
@@ -20945,7 +20945,7 @@
     tBtn.addEventListener('click', () => {
       const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
       if (curC < 8) { setShopNotice(`小狗币不足，还差 ${8 - curC} 币`); return; }
-      openGuardConfirm('确认购买神秘商人扭蛋券？', `花费 8 枚小狗币购买 1 张85折扭蛋券（余额 ${curC} 币）。`, () => {
+      openGuardConfirm('确认购买神秘商人扭蛋券？', `花费 8 枚小狗币购买 1 张扭蛋券（余额 ${curC} 币）。`, () => {
         if ((m.ticketsLeft || 0) <= 0) return;
         config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - 8;
         config.puppyInventory = config.puppyInventory || {};
@@ -20954,7 +20954,7 @@
         saveConfig();
         updatePupStatBars();
         renderMerchantBannerInShop();
-        setShopNotice('已购入 1 张85折扭蛋券');
+        setShopNotice('已购入 1 张扭蛋券');
       }, '确认购买', true);
     });
     tRow.append(tName, tBtn);
@@ -21182,9 +21182,16 @@
               ep(5, 8, 3, 2, '#6b94e8'); ep(9, 8, 3, 2, '#6b94e8');
             } else if (kind === 'exclaim') {
               ep(8, 2, 2, 5, '#e89628'); ep(8, 8, 2, 2, '#e89628');
+            } else if (kind === 'question') {
+              ep(7, 2, 4, 2, '#9a6be8'); ep(10, 3, 2, 2, '#9a6be8');
+              ep(8, 5, 2, 2, '#9a6be8'); ep(8, 8, 2, 2, '#9a6be8');
+            } else if (kind === 'coin') {
+              ep(6, 2, 6, 8, '#f0b832'); ep(5, 3, 8, 6, '#f0b832');
+              ep(7, 3, 4, 6, '#ffe478'); ep(8, 4, 2, 4, '#d98a1e');
             } else {
-              ep(8, 2, 2, 7, '#f5c238'); ep(5, 5, 8, 2, '#f5c238');
-              ep(7, 4, 4, 4, '#fff4b8');
+              ep(7, 2, 4, 2, '#ff8fb8'); ep(7, 8, 4, 2, '#ff8fb8');
+              ep(5, 4, 2, 4, '#ff8fb8'); ep(11, 4, 2, 4, '#ff8fb8');
+              ep(7, 4, 4, 4, '#ffe066');
             }
           };
           const popSellEmo = (kind) => {
@@ -21262,7 +21269,7 @@
               }
             } else {
               drawSellAvatar('shy');
-              popSellEmo(pick(['sparkle', 'note', 'exclaim']));
+              popSellEmo(pick(['flower', 'note', 'exclaim', 'question', 'coin']));
               setTimeout(() => drawSellAvatar('normal'), 600);
               if (vMsg) {
                 vMsg.textContent = pick([
@@ -34053,9 +34060,16 @@
         ep(5, 8, 3, 2, '#6b94e8'); ep(9, 8, 3, 2, '#6b94e8');
       } else if (kind === 'exclaim') {
         ep(8, 2, 2, 5, '#e89628'); ep(8, 8, 2, 2, '#e89628');
+      } else if (kind === 'question') {
+        ep(7, 2, 4, 2, '#9a6be8'); ep(10, 3, 2, 2, '#9a6be8');
+        ep(8, 5, 2, 2, '#9a6be8'); ep(8, 8, 2, 2, '#9a6be8');
+      } else if (kind === 'coin') {
+        ep(6, 2, 6, 8, '#f0b832'); ep(5, 3, 8, 6, '#f0b832');
+        ep(7, 3, 4, 6, '#ffe478'); ep(8, 4, 2, 4, '#d98a1e');
       } else {
-        ep(8, 2, 2, 7, '#f5c238'); ep(5, 5, 8, 2, '#f5c238');
-        ep(7, 4, 4, 4, '#fff4b8');
+        ep(7, 2, 4, 2, '#ff8fb8'); ep(7, 8, 4, 2, '#ff8fb8');
+        ep(5, 4, 2, 4, '#ff8fb8'); ep(11, 4, 2, 4, '#ff8fb8');
+        ep(7, 4, 4, 4, '#ffe066');
       }
     };
     const popGachaEmo = (kind) => {
@@ -34115,7 +34129,7 @@
           renderGachaView();
           drawGachaAvatar('happy');
           popGachaEmo('heart');
-          const gTxt = '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 85折扭蛋券！';
+          const gTxt = '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 扭蛋券！';
           if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
           openGuardConfirm('触发隐藏彩蛋 · 招财喵超开心！', gTxt, () => {}, '谢谢老板', true);
           if (config.puppyEnabled) showPuppyBubble('招财喵老板开心送了 1 张扭蛋券!', 2200);
@@ -34130,7 +34144,7 @@
         }
       } else {
         drawGachaAvatar('shy');
-        popGachaEmo(pick(['sparkle', 'note', 'exclaim']));
+        popGachaEmo(pick(['flower', 'note', 'exclaim', 'question', 'coin']));
         setTimeout(() => drawGachaAvatar('normal'), 600);
         if (gachaVendorMsg) {
           gachaVendorMsg.textContent = pick([
@@ -34701,7 +34715,7 @@
             config.puppyInventory = config.puppyInventory || {};
             config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
             saveConfig();
-            gachaEggPop = '十连气势太足了喵！老板偷偷再送你 1 张 85折扭蛋券！';
+            gachaEggPop = '十连气势太足了喵！老板偷偷再送你 1 张 扭蛋券！';
           } else if (rEgg < 0.08) {
             veG.gachaMiscCd = nowG + 12 * 60000;
             config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + 2;
@@ -35856,12 +35870,31 @@
       startBtn.disabled = true;
       startBtn.textContent = '外出冒险中，暂不可打工';
     } else if (cdRem > 0) {
-      const m = Math.floor(cdRem / 60000);
-      const s = Math.ceil((cdRem % 60000) / 1000);
-      const cdTxt = m > 0 ? `${m}分${String(s).padStart(2, '0')}秒` : `${s}秒`;
-      statusEl.innerHTML = `<div style="font-size:11px;">${getPupName()} 刚下班歇爪中，${cdTxt} 后可再次打工~</div>`;
+      const fmtCd = (ms) => {
+        const totalSec = Math.max(0, Math.ceil(ms / 1000));
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        return m > 0 ? `${m}分${String(s).padStart(2, '0')}秒` : `${s}秒`;
+      };
+      const cdTxt = fmtCd(cdRem);
+      statusEl.innerHTML = `<div style="font-size:11px;">${getPupName()} 刚下班歇爪中，<span id="st-px-job-cd-txt">${cdTxt}</span> 后可再次打工~</div>`;
       startBtn.disabled = true;
       startBtn.textContent = `歇爪休息中 (${cdTxt})`;
+      jobAnimTimer = setInterval(() => {
+        if (!advJobView || advJobView.style.display === 'none' || config.puppyJob) {
+          clearInterval(jobAnimTimer); jobAnimTimer = null; return;
+        }
+        const remNow = Math.max(0, (config.puppyJobCooldownUntil || 0) - Date.now());
+        if (remNow <= 0) {
+          clearInterval(jobAnimTimer); jobAnimTimer = null;
+          renderJobPanel();
+          return;
+        }
+        const txtNow = fmtCd(remNow);
+        const cdSpan = statusEl.querySelector('#st-px-job-cd-txt');
+        if (cdSpan) cdSpan.textContent = txtNow;
+        startBtn.textContent = `歇爪休息中 (${txtNow})`;
+      }, 1000);
     } else {
       const sel = PUP_JOBS.find(j => j.id === selectedJobId) || PUP_JOBS[0];
       const selRk = getJobRankInfo(sel);
