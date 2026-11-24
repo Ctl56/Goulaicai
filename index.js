@@ -17888,7 +17888,7 @@
     },
     garden_all_42: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['bottom'],
+      trim: [['bottom', 2]],
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 17, pal: { g: '#58b878', p: '#ff96be', c: '#82d8ff', y: '#ffe478', l: '#c496ff', w: '#ffffff' },
           grid: ['..pp..cc..','.pwwpcwwc.','..ppggcc..','.llggggyy.','lwwggggwwy','..llggyy..','....gg....','...gggg...'] },
@@ -17901,7 +17901,7 @@
     },
     kitchen_dex_all: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['bottom', 'right'],
+      trim: [['bottom', 1], ['right', 3]],
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 17, anim: 'b-bob', pal: { w: '#ffffff', l: '#e8d8f5', y: '#e6b242', p: '#f28cb4', o: '#b87442' },
           grid: ['..ww..ww..','.wwwwwwww.','wwwwwwwwww','.wllllllw.','..yyyyyy..','oooooooooo','.oowppwoo.','..oooooo..'] },
@@ -17909,7 +17909,7 @@
     },
     gacha_count_1000: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['top', 'bottom'],
+      trim: [['top', 7], ['bottom', 0]],
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 17, pal: { r: '#eb6c88', w: '#ffffff', c: '#8ce0ff', y: '#ffe066', p: '#ffa6d4', o: '#a8445c' },
           frames: [
@@ -17922,7 +17922,7 @@
     },
     lt_coins_5000: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['bottom'],
+      trim: [['bottom', 1]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, pal: { k: '#4a382e', y: '#f2c44c', w: '#fff6cc', r: '#e05868' },
           grid: ['...kkkkkk...','...kwwwwk...','...krrrrk...','.kkkkkkkkkk.','....yyyy....','...yywwyy...','....yyyy....'] },
@@ -17932,7 +17932,7 @@
     },
     hidden_garden_blooms_60: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['top'],
+      trim: [['top', 2]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 17, pal: { g: '#4eb572', l: '#b8f2cc', p: '#ff8eb4', w: '#ffffff', y: '#ffe478' },
           grid: ['...gggg..','..gllgg..','.ggppgg..','ggpwwpg..','.ggppgg..','..gllgg..','...ggyy..','....gg...'] },
@@ -17952,7 +17952,7 @@
     },
     hidden_mem_perfect_5: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['bottom'],
+      trim: [['bottom', 4]],
       pieces: [
         { pos: 'left:10px;top:-10px;', w: 16, h: 12, anim: 'b-bob', pal: { b: '#6c98e6', w: '#ffffff', y: '#f5cc58', p: '#ff96be' },
           grid: ['.bbbb..bbbb.','bwwwwbbwwwwb','bwywwbbwpwwb','bwwwwbbwwwwb','.bbbb..bbbb.'] },
@@ -17972,7 +17972,7 @@
     },
     hidden_job_wrecker: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['bottom'],
+      trim: [['bottom', 6]],
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 16, pal: { w: '#e6e0e0', k: '#5c5050', r: '#e05252', y: '#f5cc58', o: '#b87442' },
           frames: [
@@ -17985,7 +17985,7 @@
     },
     hidden_adv_rest_8: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['bottom'],
+      trim: [['bottom', 5]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-tilt', pal: { y: '#e0a848', w: '#ffffff', r: '#e05864', b: '#7896e0' },
           grid: ['..yyyyyy..','.ywwwwwwy.','ywrrwwwwyy','ywwwbbwwyy','.ywwwwwwy.','..yyyyyy..'] },
@@ -18021,6 +18021,49 @@
       });
     }, 420);
   }
+
+  const makeCustomTrim = (side, bdCol, fgCol, variant) => {
+    const cv = doc.createElement('canvas');
+    const isHoriz = side === 'top' || side === 'bottom';
+    cv.width = isHoriz ? 18 : 6;
+    cv.height = isHoriz ? 5 : 14;
+    cv.className = 'st-px-bsp-piece';
+    const posCss = side === 'top'
+      ? 'left:50%;top:-6px;transform:translateX(-50%);width:22px;height:6px;'
+      : (side === 'bottom'
+        ? 'left:50%;bottom:-6px;transform:translateX(-50%);width:22px;height:6px;'
+        : (side === 'left'
+          ? 'left:-7px;top:50%;transform:translateY(-50%);width:7px;height:16px;'
+          : 'right:-7px;top:50%;transform:translateY(-50%);width:7px;height:16px;'));
+    cv.style.cssText = posCss;
+    const g = cv.getContext('2d');
+    const M = bdCol || '#d996b0';
+    const D = fgCol || '#6b3848';
+    const pal = { M, D, w: '#ffffff', y: '#f5cc58', g: '#68c284', c: '#8ce0ff' };
+    const v = ((variant % 8) + 8) % 8;
+    const horizGrids = [
+      ['..MM..MM..MM..MM..','.MwwMMwwMMwwMMwwM.','..MM..MM..MM..MM..','..................','..................'],
+      ['.yMMMyMMMyMMMyMMM.','..w...w...w...w...','.MMMyMMMyMMMyMMMy.','..................','..................'],
+      ['..gg..MM..gg..MM..','.gwwgMwwMgwwgMwwM.','..gg..MM..gg..MM..','..................','..................'],
+      ['.w..MM..ww..MM..w.','wMwMwwMwMMwMwwMwMw','.w..MM..ww..MM..w.','..................','..................'],
+      ['..DD..MM..DD..MM..','.DwwDMwwMDwwDMwwM.','..DD..MM..DD..MM..','..................','..................'],
+      ['...MMMM....MMMM...','.MMwwwwMMMMwwwwMM.','MMMMMMMMMMMMMMMMMM','..................','..................'],
+      ['.M.w.M.w.M.w.M.w..','..M.w.M.w.M.w.M.w.','.M.w.M.w.M.w.M.w..','..................','..................'],
+      ['..cc..MM..yy..MM..','.cwwcMwwMywwyMwwM.','..cc..MM..yy..MM..','..................','..................'],
+    ];
+    const vertGrids = [
+      ['..MM..','.MwwM.','..MM..','......','..MM..','.MwwM.','..MM..','......','..MM..','.MwwM.','..MM..','......','......','......'],
+      ['..yy..','.ywwy.','..MM..','.MwwM.','..yy..','.ywwy.','..MM..','.MwwM.','..yy..','.ywwy.','......','......','......','......'],
+      ['..gg..','.gwwg.','..MM..','.MwwM.','..gg..','.gwwg.','..MM..','.MwwM.','..gg..','......','......','......','......','......'],
+      ['..ww..','.wMMw.','..ww..','..MM..','.MwwM.','..MM..','..ww..','.wMMw.','..ww..','......','......','......','......','......'],
+      ['..DD..','.DwwD.','..MM..','.MwwM.','..DD..','.DwwD.','..MM..','.MwwM.','..DD..','......','......','......','......','......'],
+      ['..MM..','.MwwM.','MwwwwM','.MwwM.','..MM..','.MwwM.','MwwwwM','.MwwM.','..MM..','......','......','......','......','......'],
+      ['.M..w.','..MM..','.w..M.','..MM..','.M..w.','..MM..','.w..M.','..MM..','.M..w.','......','......','......','......','......'],
+      ['..cc..','.cwwc.','..MM..','.MwwM.','..yy..','.ywwy.','..MM..','.MwwM.','..cc..','......','......','......','......','......'],
+    ];
+    drawGridOnCtx(g, isHoriz ? horizGrids[v] : vertGrids[v], pal);
+    return cv;
+  };
 
   const renderBespokePiece = (pc) => {
     const cv = doc.createElement('canvas');
@@ -18059,6 +18102,9 @@
     if (bespoke) {
       if (Array.isArray(bespoke.ult)) {
         bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, fKey)));
+      }
+      if (Array.isArray(bespoke.trim)) {
+        bespoke.trim.forEach(([side, vIdx]) => el.appendChild(makeCustomTrim(side, ach.bd, ach.fg, vIdx)));
       }
       if (Array.isArray(bespoke.pieces)) {
         bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
@@ -18168,15 +18214,23 @@
           el.appendChild(renderBespokePiece({ pos: cp1, w: 13, h: 11, pal, grid: g1 }));
           el.appendChild(renderBespokePiece({ pos: cp2, w: 9, h: 7, pal, grid: ['..yyyy..','.ywwwwy.','..yyyy..'] }));
         } else {
-          // 7 种多元不极端且绝不压左内图标的远端舒展布局（左外上/左外下/顶中右/底中右/左外中/右外中错落搭配）
+          // 每款成就按自身 ID 生成自然微调的连续偏移（绝不死板固定在同一点，绝不压左内图标，绝不同侧拥挤）
+          const topPct = 36 + (h % 36);          // 36%..71% 避开左内图标
+          const botPct = 34 + ((h >> 3) % 38);   // 34%..71% 避开左内图标
+          const sideTopL = 24 + ((h >> 5) % 48); // 24%..71% 左侧上下错落
+          const sideTopR = 24 + ((h >> 7) % 48); // 24%..71% 右侧上下错落
+          const rShift = 6 + ((h >> 4) % 18);    // right: 6px..23px 灵活微移
+          const lOuter = -10 + ((h >> 2) % 5);   // left: -10px..-6px 左外角微移
           const variedLayouts = [
-            ['left:-8px;top:-8px;',    'right:16px;bottom:-7px;'],
-            ['right:14px;top:-8px;',   'left:-8px;bottom:-6px;'],
-            ['left:-8px;bottom:-7px;', 'right:-9px;top:-6px;'],
-            ['right:16px;bottom:-7px;','left:-8px;top:-7px;'],
-            ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-8px;bottom:-6px;'],
-            ['left:-12px;top:50%;transform:translateY(-50%);',  'right:14px;top:-7px;'],
-            ['right:-11px;top:-7px;',  'left:-9px;bottom:-6px;'],
+            [`left:${lOuter}px;top:-8px;`,                            `left:${botPct}%;bottom:-7px;transform:translateX(-50%);`],
+            [`left:${topPct}%;top:-8px;transform:translateX(-50%);`,  `left:${lOuter}px;bottom:-6px;`],
+            [`left:${lOuter}px;bottom:-7px;`,                         `right:${rShift}px;top:-7px;`],
+            [`left:${botPct}%;bottom:-7px;transform:translateX(-50%);`,`right:-10px;top:${sideTopR}%;transform:translateY(-50%);`],
+            [`right:-12px;top:${sideTopR}%;transform:translateY(-50%);`,`left:${lOuter}px;bottom:-6px;`],
+            [`left:-12px;top:${sideTopL}%;transform:translateY(-50%);`, `left:${topPct}%;top:-8px;transform:translateX(-50%);`],
+            [`right:${rShift}px;top:-8px;`,                           `left:${botPct}%;bottom:-7px;transform:translateX(-50%);`],
+            [`right:${rShift}px;bottom:-7px;`,                        `left:-11px;top:${sideTopL}%;transform:translateY(-50%);`],
+            [`left:${topPct}%;top:-8px;transform:translateX(-50%);`,  `right:-10px;bottom:-6px;`],
           ];
           const [p1, p2] = variedLayouts[h % variedLayouts.length];
           // 专属副元素字典：每款成就拥有各自独立配套小件，彻底告别重复副元素
@@ -18261,17 +18315,22 @@
           const isSenior = seniorSet.has(ach.id);
           el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
           if (isSenior) {
-            const ultSides = ['bottom', 'top', 'left', 'right'];
-            const uSide = ultSides[h % ultSides.length];
-            el.appendChild(makeUltOrn(uSide, fKey));
+            // 彻底停用会落入彩虹兜底的 makeUltOrn，改用 8 种自配色专属雕边 + 连续微调不雷同位置
+            const trimSides = ['bottom', 'top', 'left', 'right'];
+            const uSide = trimSides[h % trimSides.length];
+            el.appendChild(makeCustomTrim(uSide, ach.bd, ach.fg, h));
             const mainPos = uSide === 'right'
-              ? 'left:-10px;top:-7px;'
+              ? `left:-11px;top:${sideTopL}%;transform:translateY(-50%);`
               : (uSide === 'left'
-                ? 'right:-10px;bottom:-6px;'
+                ? `right:-11px;top:${sideTopR}%;transform:translateY(-50%);`
                 : p1);
+            const subPos = uSide === 'right'
+              ? `left:${botPct}%;bottom:-7px;transform:translateX(-50%);`
+              : (uSide === 'left'
+                ? `left:${topPct}%;top:-8px;transform:translateX(-50%);`
+                : p2);
             el.appendChild(renderBespokePiece({ pos: mainPos, w: 14, h: 12, anim: (h % 3 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
             if (subG) {
-              const subPos = mainPos.startsWith('left:') ? 'right:14px;bottom:-7px;' : 'left:-8px;top:-7px;';
               el.appendChild(renderBespokePiece({ pos: subPos, w: 8, h: 7, pal, grid: subG }));
             }
           } else {
