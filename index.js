@@ -2664,6 +2664,7 @@
     chatCustomGroups: [{ id: 'cgrp_fav', name: '常用' }],
     chatGroups: {},
     quickPhrases: [],
+    quickPhraseBarOn: true,
     charDelWbPrompt: true,
     charRandomSkipRecent: true,
     personaCustomGroups: [
@@ -9042,7 +9043,10 @@
           <div class="st-tb-section">
             <div class="st-tb-label">
               <span>快捷短语收藏</span>
-              <button class="st-tb-mini-btn" id="st-tb-phrase-add-btn" type="button">+ 新增</button>
+              <div style="display:flex;gap:4px;">
+                <button class="st-tb-mini-btn" id="st-tb-phrase-bar-toggle" type="button" title="在酒馆输入框上方显示常驻短语条，点一下直接填入">常驻输入框</button>
+                <button class="st-tb-mini-btn" id="st-tb-phrase-add-btn" type="button">+ 新增</button>
+              </div>
             </div>
             <div id="st-tb-phrase-form" style="display:none;flex-direction:column;gap:5px;margin-bottom:6px;padding:6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);">
               <input class="st-tb-input" id="st-tb-phrase-title" type="text" placeholder="短语名称（用于辨认与重命名）" />
@@ -9706,6 +9710,7 @@
             saveConfig();
             renderPhraseList();
             if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+            if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
           },
         });
       }, '#d9534f');
@@ -9746,10 +9751,58 @@
       saveConfig();
       renderPhraseList();
       if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+      if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
       cmNotify('已保存快捷短语');
     });
   }
+  const phraseBarToggleBtn = root.querySelector('#st-tb-phrase-bar-toggle');
+  const syncInlinePhraseBar = () => {
+    const on = config.quickPhraseBarOn !== false;
+    if (phraseBarToggleBtn) {
+      phraseBarToggleBtn.classList.toggle('active', on);
+      phraseBarToggleBtn.textContent = on ? '常驻:开' : '常驻:关';
+    }
+    const oldBar = doc.getElementById('st-tb-inline-phrase-bar');
+    const arr = Array.isArray(config.quickPhrases) ? config.quickPhrases : [];
+    if (!on || !arr.length) {
+      if (oldBar) oldBar.remove();
+      return;
+    }
+    const ta = doc.getElementById('send_textarea');
+    const host = (ta && (ta.closest('#send_form') || ta.parentElement)) || doc.getElementById('send_form');
+    if (!host) return;
+    let bar = oldBar;
+    if (!bar) {
+      bar = doc.createElement('div');
+      bar.id = 'st-tb-inline-phrase-bar';
+      bar.style.cssText = 'display:flex;align-items:center;gap:5px;width:100%;overflow-x:auto;padding:3px 6px;box-sizing:border-box;scrollbar-width:none;-webkit-overflow-scrolling:touch;';
+      host.insertBefore(bar, host.firstChild);
+    }
+    bar.innerHTML = '';
+    arr.forEach(ph => {
+      const pill = doc.createElement('button');
+      pill.type = 'button';
+      pill.textContent = ph.title || '短语';
+      pill.title = ph.text || '';
+      pill.style.cssText = 'flex-shrink:0;height:22px;padding:0 8px;border-radius:999px;border:1px solid rgba(180,160,175,0.55);background:rgba(255,255,255,0.12);color:inherit;font-size:11px;line-height:20px;cursor:pointer;white-space:nowrap;';
+      pill.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        insertPhraseToInput(ph.text);
+      });
+      bar.appendChild(pill);
+    });
+  };
+  if (phraseBarToggleBtn) {
+    phraseBarToggleBtn.addEventListener('click', () => {
+      config.quickPhraseBarOn = !(config.quickPhraseBarOn !== false);
+      saveConfig();
+      syncInlinePhraseBar();
+    });
+  }
+  win.__stSyncInlinePhraseBar = syncInlinePhraseBar;
   renderPhraseList();
+  setTimeout(syncInlinePhraseBar, 600);
   const greetTitleEl = root.querySelector('#st-tb-greet-title');
   const greetToggleBtn = root.querySelector('#st-tb-greet-toggle');
   const greetListEl = root.querySelector('#st-tb-greet-list');
@@ -17474,44 +17527,46 @@
     const g = c.getContext('2d');
     let grid = [];
     if (styleKey === 'floor99_bespoke') {
-      // 百层同行者：顶边紫金流苏花边（独立构图）
+      // 百层同行者：顶边紫金扇贝拱檐+中央垂坠书签造型（全新轮廓）
       if (pos === 'top' || pos === 'bottom') {
-        c.width = 19; c.height = 5;
+        c.width = 21; c.height = 6;
         grid = [
-          '..ll..yy..ll..yy..l.',
-          '.lwwl.ywy.lwwl.ywy..',
-          '..ll..yy..ll..yy..l.',
-          '....lpppppppppppl...',
-          '......yy.....yy.....',
+          '......lllllllll......',
+          '....llpppppppppll....',
+          '..llppwlllllllwpppl..',
+          '.lpplllllllllllllppl.',
+          'll........y........ll',
+          '.........ywy.........',
         ];
       }
     } else if (styleKey === 'floor1000_bespoke') {
-      // 千层长情契：左+顶双边绯金祥云包边（独立构图）
+      // 千层长情契：顶边双环交织锦缎波浪+左侧阶梯流苏穗（全新轮廓）
       if (pos === 'top' || pos === 'bottom') {
-        c.width = 19; c.height = 5;
+        c.width = 21; c.height = 6;
         grid = [
-          '.rr..yy..rr..yy..rr.',
-          'rwwr.ywy.rwwr.ywy.r.',
-          '.rr..yy..rr..yy..rr.',
-          '...yyyyyyyyyyyyy....',
-          '.....rwwr.rwwr......',
+          '...rrrrr.....rrrrr...',
+          '.rrppppprr.rrppppprr.',
+          'rppwrrrwppwrppwrrrwpr',
+          '.rrppppprrrrrppppprr.',
+          '....yyyyy...yyyyy....',
+          '......y.......y......',
         ];
       } else {
         c.width = 7; c.height = 13;
         grid = [
+          '.rrrrr.',
+          'rpppppr',
+          'rrwyywr',
+          '.rrrrr.',
           '..rrr..',
-          '.rpppr.',
-          '..rrr..',
+          '...r...',
+          '.yyyyy.',
+          '.ypppy.',
+          '..yyy..',
           '...y...',
-          '..ywy..',
-          '...y...',
-          '..rrr..',
-          '.rpppr.',
-          '..rrr..',
-          '...y...',
-          '..ywy..',
-          '...y...',
-          '..rrr..',
+          '.rrrrr.',
+          '..rpr..',
+          '...r...',
         ];
       }
     } else if (styleKey === 'arcade_2048') {
@@ -47444,6 +47499,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                       saveConfig();
                       renderPhraseList();
                       syncQPop();
+                      if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
                     },
                   });
                 }, '#d9534f')
@@ -47475,6 +47531,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             saveConfig();
             renderPhraseList();
             syncQPop();
+            if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
           });
         }
         root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
