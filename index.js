@@ -6825,6 +6825,10 @@ function bootGoulaicaiExtension() {
       display: none !important;
       content: none !important;
     }
+    .st-se-float-bar,
+    .st-se-multi-bar {
+      z-index: 9986 !important;
+    }
     #st-tb-reader-set-btn.st-tb-r-ico {
       display: inline-flex !important;
       align-items: center !important;
@@ -9811,6 +9815,11 @@ function bootGoulaicaiExtension() {
       try { win.__stKaCleanRecovery(); } catch (_) {}
       win.__stKaCleanRecovery = null;
     }
+    try {
+      if (win.navigator && win.navigator.audioSession) {
+        win.navigator.audioSession.type = 'auto';
+      }
+    } catch (_) {}
     kaRuntime.active = false;
     kaRuntime.interrupted = false;
     if (!config.keepAlive) {
@@ -9834,11 +9843,18 @@ function bootGoulaicaiExtension() {
     kaRuntime.lastBeatAt = Date.now();
     kaRuntime.interrupted = false;
 
-    try {
-      if (win.navigator && win.navigator.audioSession) {
-        win.navigator.audioSession.type = kaPolicy === 'mix' ? 'ambient' : 'playback';
-      }
-    } catch (_) {}
+    const syncKaAudioSession = () => {
+      try {
+        if (!win.navigator || !win.navigator.audioSession) return;
+        if (kaPolicy === 'exclusive') {
+          win.navigator.audioSession.type = 'playback';
+        } else {
+          // 轻保活：在前台使用 auto 确保酒馆音乐、小狗提示音与一起听歌全部正常出声；切后台立即切 ambient 不占音频栏且与其他软件混音
+          win.navigator.audioSession.type = doc.hidden ? 'ambient' : 'auto';
+        }
+      } catch (_) {}
+    };
+    syncKaAudioSession();
 
     const tryResumeKaAudio = (fromInterruption = false) => {
       if (!config.keepAlive) return;
@@ -9866,7 +9882,10 @@ function bootGoulaicaiExtension() {
       }
     };
     const kaKeepInterval = setInterval(() => tryResumeKaAudio(true), 2000);
-    const onKaWakeEvt = () => { if (!doc.hidden) tryResumeKaAudio(true); };
+    const onKaWakeEvt = () => {
+      syncKaAudioSession();
+      if (!doc.hidden) tryResumeKaAudio(true);
+    };
     const onKaTapWake = () => tryResumeKaAudio(false);
     doc.addEventListener('visibilitychange', onKaWakeEvt);
     win.addEventListener('focus', onKaWakeEvt);
@@ -10075,6 +10094,8 @@ function bootGoulaicaiExtension() {
     if (now - lastSummonAt < 450) return;
     lastSummonAt = now;
 
+    win.__stSeSuppressUntil = Date.now() + 550;
+    if (typeof win.__stSeCancelAndHide === 'function') win.__stSeCancelAndHide();
     config.fullHidden = false;
     config.hidden = false;
     win.requestAnimationFrame(() => {
@@ -20982,10 +21003,24 @@ function bootGoulaicaiExtension() {
                 au.pause();
                 au.volume = 0.58;
                 au.src = previewUrl;
+                const restoreLightKaSession = () => {
+                  try {
+                    if (config.keepAlive && config.keepAlivePolicy !== 'exclusive' && win.navigator && win.navigator.audioSession) {
+                      win.navigator.audioSession.type = doc.hidden ? 'ambient' : 'auto';
+                    }
+                  } catch (_) {}
+                };
                 au.onended = () => {
                   if (pup.state === 'music') setPuppyState('idle', 120);
+                  restoreLightKaSession();
                 };
-                au.play().catch(() => {});
+                au.onerror = () => { restoreLightKaSession(); };
+                try {
+                  if (win.navigator && win.navigator.audioSession) {
+                    win.navigator.audioSession.type = 'playback';
+                  }
+                } catch (_) {}
+                au.play().catch(() => { restoreLightKaSession(); });
               } catch (_) {}
             }, 600);
           } catch (_) {}
@@ -39734,9 +39769,17 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (seFloatBar && seFloatBar.classList.contains('show')) hideSeFloatBar();
       return;
     }
+    if (Date.now() < (win.__stSeSuppressUntil || 0)) return;
     lastSeParaTap = { para: null, time: 0 };
+    win.__stSeCancelAndHide = () => {
+      clearTimeout(sePendingTapTimer);
+      sePendingTapTimer = null;
+      lastSeParaTap = { para: null, time: 0 };
+      hideSeFloatBar();
+    };
     sePendingTapTimer = setTimeout(() => {
       sePendingTapTimer = null;
+      if (Date.now() < (win.__stSeSuppressUntil || 0)) return;
       try { win.getSelection?.()?.removeAllRanges?.(); } catch (_) {}
       if (seFloatBar && seFloatBar.classList.contains('show') && seActiveParaEl === para) {
         hideSeFloatBar();
@@ -39754,7 +39797,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         seFloatBar.style.left = left + 'px';
         seFloatBar.style.top = top + 'px';
       }
-    }, 240);
+    }, config.fullHidden ? 380 : 240);
   };
   doc.addEventListener('click', onChatParaClick);
 
