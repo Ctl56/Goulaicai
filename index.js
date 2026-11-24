@@ -8183,7 +8183,10 @@
           </div>
           <div id="st-px-gacha-vendor" class="st-px-preview-wrap" style="display:none;margin-bottom:6px;">
             <div class="st-px-preview-box" style="align-items:center;gap:8px;padding:6px 8px;">
-              <canvas id="st-px-gacha-vendor-cv" width="44" height="44" title="点点看招财喵老板~" style="width:44px;height:44px;flex-shrink:0;border:2px solid #3b2a22;background:#fff4e6;image-rendering:pixelated;cursor:pointer;"></canvas>
+              <div style="position:relative;flex-shrink:0;">
+                <canvas id="st-px-gacha-vendor-cv" width="44" height="44" title="点点看招财喵老板~" style="width:44px;height:44px;display:block;border:2px solid #3b2a22;background:#fff4e6;image-rendering:pixelated;cursor:pointer;"></canvas>
+                <span id="st-px-gacha-vendor-emo" style="position:absolute;top:-8px;right:-6px;font-size:13px;pointer-events:none;opacity:0;transition:all 0.35s ease;"></span>
+              </div>
               <div style="flex:1;min-width:0;">
                 <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">幸运扭蛋屋 · 招财喵老板</div>
                 <div id="st-px-gacha-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「欢迎光临喵~ 今天手气一定超旺，十连保底 SR 哦！」</div>
@@ -9274,8 +9277,9 @@
               <span id="st-tb-font-status"></span>
             </div>
             <div class="st-tb-row">
-              <input class="st-tb-input" id="st-tb-font-search" type="text" placeholder="搜索字体配方" />
+              <input class="st-tb-input" id="st-tb-font-search" type="text" placeholder="搜索字体配方（结果直接显示在下方）" />
             </div>
+            <div id="st-tb-font-search-results" style="display:none;flex-direction:column;gap:3px;max-height:110px;overflow-y:auto;margin-bottom:6px;padding:4px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);"></div>
             <div class="st-tb-row">
               <select class="st-tb-select" id="st-tb-font-select"></select>
               <button class="st-tb-btn" id="st-tb-font-rename" type="button">重命名</button>
@@ -9685,6 +9689,7 @@
   const uiFontSizeVal = root.querySelector('#st-tb-ui-fontsize-val');
   const fontSelect = root.querySelector('#st-tb-font-select');
   const fontSearchInput = root.querySelector('#st-tb-font-search');
+  const fontSearchResEl = root.querySelector('#st-tb-font-search-results');
   const fontDelBtn = root.querySelector('#st-tb-font-del');
   const fontUploadNameBox = root.querySelector('#st-tb-font-upload-name-box');
   const fontUploadNameInput = root.querySelector('#st-tb-font-upload-name');
@@ -14227,6 +14232,15 @@
   // 绘制原有 10 款免费配饰 + 22 款商城特别像素配饰
   const drawPupAccessory = (acc, hx, hy, ox, oy, isFlatPose, isDead) => {
     if (!acc || acc === 'none' || isDead) return;
+    const _accOff = config.puppyAccOffsets && config.puppyAccOffsets[acc];
+    if (_accOff) {
+      const _dx = Number(_accOff.dx) || 0;
+      const _dy = Number(_accOff.dy) || 0;
+      hx += _dx;
+      hy += _dy;
+      ox += _dx;
+      oy += _dy;
+    }
     const hc = hx - 1;
     const ol = '#3b2a22';
 
@@ -17602,47 +17616,66 @@
     garden_twin_miracle: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-11px;top:-8px;', w: 14, h: 14, anim: 'b-sway-lr', pal: { c: '#8ce6ff', w: '#ffffff', p: '#ff96b8', q: '#ffd6e6', g: '#58b878', l: '#90e09c' },
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 14, pal: { p: '#ff8cb4', q: '#ffd9e8', c: '#78c8f5', g: '#54b072', l: '#8ce09e', t: '#c97a4b', d: '#8c4c2a' },
           grid: [
-            '....cc........',
-            '...cwwc.......',
-            '....cc..pp....',
-            '..pp...pqqp...',
-            '.pqqp..pppp...',
-            '.pppp...gg....',
-            '..gg...gllg...',
-            '..gllgg..gg...',
-            '...gggg.......',
+            '..pp....cc..',
+            '.pqqp..cwwc.',
+            '..ppg..gcc..',
+            '...g....g...',
+            '..gllggllg..',
+            '..tttttttt..',
+            '..dddddddd..',
+            '...tttttt...',
+            '...dddddd...',
           ] },
-        { pos: 'left:28%;bottom:-7px;', w: 10, h: 8, anim: 'b-sway-lr', pal: { w: '#eef9ff', y: '#ffd24d', k: '#3b2a22' },
-          grid: [
-            '..ww..ww..',
-            '.w..ww..w.',
-            '..kykyky..',
-            '.kykykyky.',
-            '..kykyky..',
+        { pos: 'right:-8px;bottom:-6px;', w: 10, h: 9, pal: { w: '#f2faff', y: '#ffd24d', k: '#3b2a22' },
+          frames: [
+            [
+              '..ww..ww..',
+              '.w..ww..w.',
+              '..kykyky..',
+              '.kykykyky.',
+              '..kykyky..',
+            ],
+            [
+              '..........',
+              '.ww....ww.',
+              '..kykyky..',
+              '.kykykyky.',
+              '..kykyky..',
+            ]
           ] },
       ],
     },
     kitchen_god_stroke: {
-      cls: 'bespoke-std bespoke-static',
+      cls: 'bespoke-std bespoke-glow',
       pieces: [
-        { pos: 'left:-11px;top:-8px;', w: 14, h: 12, anim: 'b-sway-lr', pal: { y: '#ffe066', o: '#ff7d38', r: '#e84838', c: '#c97838', k: '#5c361c', w: '#fff8dc' },
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 12, pal: { w: '#fffdf7', y: '#ffe078', o: '#e89848', c: '#545866', k: '#2d2f38', r: '#ff6b78' },
           grid: [
-            '....yy........',
-            '...ywwy.......',
-            '..yoooy.......',
-            '..orrrr.......',
-            '.ccccccccc....',
-            'ccccccccckkkk.',
-            '.cccccccc.....',
-            '..kkkkkk......',
+            '....rr......',
+            '..wwwwww....',
+            '.wyyyyyyw...',
+            '.oooooooo...',
+            'cccccccckkkk',
+            '.cccccccc...',
+            '..cccccc....',
           ] },
-        { pos: 'left:30%;top:-6px;', w: 10, h: 7, anim: 'b-sway-lr', pal: { y: '#ffd84d', w: '#ffffff', o: '#ff9e38' },
-          grid: [
-            '..y....o..',
-            '.ywy..owo.',
-            '..y....o..',
+        { pos: 'right:-7px;bottom:-5px;', w: 9, h: 10, pal: { w: '#ffffff', s: '#ffd9b8', o: '#f5b078' },
+          frames: [
+            [
+              '..w...s..',
+              '.w...s...',
+              '..s...w..',
+              '...s.w...',
+              '..ooooo..',
+            ],
+            [
+              '.s...w...',
+              '..s...w..',
+              '...w.s...',
+              '..w...s..',
+              '..ooooo..',
+            ]
           ] },
       ],
     },
@@ -20054,6 +20087,117 @@
         grid.appendChild(btn);
       });
       pupWardBodyEl.appendChild(grid);
+      if (wornAccs.length > 0) {
+        if (!config.puppyAccOffsets || typeof config.puppyAccOffsets !== 'object') config.puppyAccOffsets = {};
+        const wornItems = wornAccs.map(id => allAccOwned.find(x => x.id === id) || { id, name: id });
+        if (!wornItems.some(x => x.id === window.__stEditAccId)) window.__stEditAccId = wornItems[0].id;
+        const editId = window.__stEditAccId;
+        const curOff = config.puppyAccOffsets[editId] || { dx: 0, dy: 0 };
+        let dx = Number(curOff.dx) || 0;
+        let dy = Number(curOff.dy) || 0;
+
+        const adjBox = doc.createElement('div');
+        adjBox.style.cssText = 'margin-top:6px;padding:6px 7px;border:2px solid var(--px-border,#bfa4ae);background:var(--px-bg-soft,#f8f2f5);font-size:10px;display:flex;flex-direction:column;gap:5px;';
+        const headRow = doc.createElement('div');
+        headRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:5px;';
+        const lblSpan = doc.createElement('span');
+        lblSpan.style.fontWeight = '700';
+        lblSpan.textContent = '头饰/配饰位置微调 (0.01)';
+        const sel = doc.createElement('select');
+        sel.className = 'st-tb-select';
+        sel.style.cssText = 'height:22px;font-size:10px;padding:0 4px;flex:0 1 115px;';
+        wornItems.forEach(wi => {
+          const o = doc.createElement('option');
+          o.value = wi.id;
+          o.textContent = wi.name.replace(/^[*+^#]/, '');
+          sel.appendChild(o);
+        });
+        sel.value = editId;
+        sel.addEventListener('change', () => {
+          window.__stEditAccId = sel.value;
+          renderPupWardrobe();
+        });
+        headRow.append(lblSpan, sel);
+        adjBox.appendChild(headRow);
+
+        const applyLiveOffset = () => {
+          config.puppyAccOffsets = config.puppyAccOffsets || {};
+          config.puppyAccOffsets[editId] = { dx: Number(dx.toFixed(2)), dy: Number(dy.toFixed(2)) };
+          if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
+          if (config.puppyEnabled) drawPuppyScene();
+        };
+
+        const makeAxisRow = (axisLabel, getVal, setVal) => {
+          const r = doc.createElement('div');
+          r.style.cssText = 'display:flex;align-items:center;gap:4px;';
+          const lb = doc.createElement('span');
+          lb.style.cssText = 'width:46px;font-weight:700;';
+          lb.textContent = axisLabel;
+          const inp = doc.createElement('input');
+          inp.type = 'number';
+          inp.step = '0.01';
+          inp.min = '-4';
+          inp.max = '4';
+          inp.className = 'st-tb-input';
+          inp.style.cssText = 'width:60px;height:22px;padding:0 4px;font-size:10px;text-align:center;flex:0 0 60px;';
+          inp.value = getVal().toFixed(2);
+          const mkStep = (delta, txt) => {
+            const b = doc.createElement('button');
+            b.type = 'button';
+            b.className = 'st-px-btn';
+            b.style.cssText = 'height:22px;padding:0 4px;font-size:9px;flex:1;';
+            b.textContent = txt;
+            b.addEventListener('click', () => {
+              const nv = clamp(Number((getVal() + delta).toFixed(2)), -4, 4);
+              setVal(nv);
+              inp.value = nv.toFixed(2);
+              applyLiveOffset();
+            });
+            return b;
+          };
+          inp.addEventListener('input', () => {
+            const parsed = parseFloat(inp.value);
+            if (!Number.isFinite(parsed)) return;
+            setVal(clamp(Number(parsed.toFixed(2)), -4, 4));
+            applyLiveOffset();
+          });
+          r.append(lb, mkStep(-0.05, '-0.05'), mkStep(-0.01, '-0.01'), inp, mkStep(0.01, '+0.01'), mkStep(0.05, '+0.05'));
+          return r;
+        };
+
+        adjBox.appendChild(makeAxisRow('左右(X)', () => dx, (v) => { dx = v; }));
+        adjBox.appendChild(makeAxisRow('上下(Y)', () => dy, (v) => { dy = v; }));
+
+        const actRow = doc.createElement('div');
+        actRow.style.cssText = 'display:flex;gap:5px;margin-top:1px;';
+        const saveMemBtn = doc.createElement('button');
+        saveMemBtn.type = 'button';
+        saveMemBtn.className = 'st-px-btn active';
+        saveMemBtn.style.cssText = 'flex:1;height:22px;font-size:9.5px;';
+        saveMemBtn.textContent = '保存记忆此头饰位置';
+        saveMemBtn.addEventListener('click', () => {
+          applyLiveOffset();
+          saveConfig();
+          cmNotify('已保存并记忆该头饰位置');
+          if (config.puppyEnabled) showPuppyBubble('记好这个位置啦，下次戴还在这里~', 1800);
+        });
+        const rstMemBtn = doc.createElement('button');
+        rstMemBtn.type = 'button';
+        rstMemBtn.className = 'st-px-btn';
+        rstMemBtn.style.cssText = 'height:22px;padding:0 8px;font-size:9.5px;';
+        rstMemBtn.textContent = '归零';
+        rstMemBtn.addEventListener('click', () => {
+          dx = 0; dy = 0;
+          if (config.puppyAccOffsets) delete config.puppyAccOffsets[editId];
+          saveConfig();
+          if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
+          if (config.puppyEnabled) drawPuppyScene();
+          renderPupWardrobe();
+        });
+        actRow.append(saveMemBtn, rstMemBtn);
+        adjBox.appendChild(actRow);
+        pupWardBodyEl.appendChild(adjBox);
+      }
     } else if (wardTab === 'outfit') {
       pupWardHeadEl.textContent = '服装';
       renderWardSubTabs('outfit');
@@ -20987,7 +21131,10 @@
         vendorBox.className = 'st-px-preview-wrap';
         vendorBox.style.cssText = 'margin-bottom:6px;';
         vendorBox.innerHTML = `<div class="st-px-preview-box" style="align-items:center;gap:8px;padding:6px 8px;">
-          <canvas id="st-px-sell-vendor-cv" width="44" height="44" style="width:44px;height:44px;flex-shrink:0;border:2px solid #3b2a22;background:#fff8eb;image-rendering:pixelated;"></canvas>
+          <div style="position:relative;flex-shrink:0;">
+            <canvas id="st-px-sell-vendor-cv" width="44" height="44" style="width:44px;height:44px;display:block;border:2px solid #3b2a22;background:#fff8eb;image-rendering:pixelated;"></canvas>
+            <span id="st-px-sell-vendor-emo" style="position:absolute;top:-8px;right:-6px;font-size:13px;pointer-events:none;opacity:0;transition:all 0.35s ease;"></span>
+          </div>
           <div style="flex:1;min-width:0;">
             <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">小狸回收铺 · 掌柜阿狸</div>
             <div id="st-px-sell-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「囤着不用的道具、零食、鲜花和料理，都可以拿来我这儿换小狗币哦~」</div>
@@ -20999,6 +21146,47 @@
         if (vCv) {
           vCv.style.cursor = 'pointer';
           vCv.title = '点点看阿狸掌柜~';
+          const popSellEmo = (txt) => {
+            const em = vendorBox.querySelector('#st-px-sell-vendor-emo');
+            if (!em) return;
+            em.textContent = txt;
+            em.style.opacity = '1';
+            em.style.transform = 'translateY(-6px)';
+            clearTimeout(em._t);
+            em._t = setTimeout(() => { em.style.opacity = '0'; em.style.transform = 'translateY(0)'; }, 950);
+          };
+          const drawSellAvatar = (mood = 'normal') => {
+            const vg = vCv.getContext('2d');
+            vg.imageSmoothingEnabled = false;
+            const p = (x, y, w, h, c) => { vg.fillStyle = c; vg.fillRect(x, y, w, h); };
+            p(0, 0, 44, 44, '#fff4df');
+            p(8, 6, 8, 9, '#d97236'); p(10, 9, 4, 5, '#ffd4c2');
+            p(28, 6, 8, 9, '#d97236'); p(30, 9, 4, 5, '#ffd4c2');
+            p(9, 13, 26, 18, '#e88242');
+            p(9, 22, 26, 9, '#fff7ed');
+            p(12, 19, 20, 4, '#f5a262');
+            if (mood === 'happy') {
+              p(13, 20, 4, 1, '#2d1e18'); p(14, 19, 2, 1, '#2d1e18');
+              p(27, 20, 4, 1, '#2d1e18'); p(28, 19, 2, 1, '#2d1e18');
+              p(11, 22, 4, 2, '#ff9eb5'); p(29, 22, 4, 2, '#ff9eb5');
+            } else if (mood === 'angry') {
+              p(13, 18, 4, 1, '#5c1e16'); p(15, 19, 2, 2, '#2d1e18');
+              p(27, 18, 4, 1, '#5c1e16'); p(27, 19, 2, 2, '#2d1e18');
+              p(18, 26, 8, 2, '#9c3228');
+            } else if (mood === 'shy') {
+              p(14, 20, 3, 1, '#2d1e18'); p(27, 20, 3, 1, '#2d1e18');
+              p(11, 22, 3, 2, '#ffb3c6'); p(30, 22, 3, 2, '#ffb3c6');
+            } else {
+              p(14, 19, 3, 3, '#2d1e18'); p(27, 19, 3, 3, '#2d1e18');
+              p(14, 19, 1, 1, '#ffffff'); p(27, 19, 1, 1, '#ffffff');
+            }
+            p(20, 23, 4, 3, '#2d1e18');
+            if (mood !== 'angry') p(19, 26, 6, 1, '#b85a3a');
+            p(11, 31, 22, 11, '#5d7fa3');
+            p(14, 31, 16, 4, '#d95b5b');
+            p(20, 35, 4, 4, '#ffd24d');
+          };
+          drawSellAvatar('normal');
           let sellPokeCnt = 0;
           let sellPokeLast = 0;
           vCv.addEventListener('click', () => {
@@ -21014,6 +21202,8 @@
                 ve.sellRateMult = 1.25;
                 ve.sellRateUntil = nowT + 3 * 60000;
                 saveConfig();
+                drawSellAvatar('happy');
+                popSellEmo('♥');
                 const mTxt = '唔…耳朵被挠得好舒服！接下来 3 分钟阿狸给你加价 25% 回收！';
                 if (vMsg) vMsg.textContent = `「${mTxt}」`;
                 openGuardConfirm('触发隐藏彩蛋 · 阿狸开心啦！', mTxt, () => {}, '太棒了', true);
@@ -21022,17 +21212,26 @@
                 ve.sellRateMult = 0.7;
                 ve.sellRateUntil = nowT + 3 * 60000;
                 saveConfig();
+                drawSellAvatar('angry');
+                popSellEmo('💢');
                 const mTxt = '再一直戳阿狸尾巴要生气了！接下来 3 分钟回收价打 7 折哼！（原价 1 币物品保持不变）';
                 if (vMsg) vMsg.textContent = `「${mTxt}」`;
                 openGuardConfirm('触发隐藏彩蛋 · 阿狸生气啦！', mTxt, () => {}, '知道啦', true);
                 renderPupShop();
               }
-            } else if (vMsg && sellPokeCnt >= 2) {
-              vMsg.textContent = pick([
-                '「诶？别老盯着阿狸的毛茸茸大尾巴看啦~」',
-                '「忙着记账呢，再戳我要算错小狗币了哦！」',
-                '「今天也收到了好多有趣的小玩意呢~」',
-              ]);
+            } else {
+              drawSellAvatar('shy');
+              popSellEmo(pick(['✨', '♪', '!']));
+              setTimeout(() => drawSellAvatar('normal'), 600);
+              if (vMsg) {
+                vMsg.textContent = pick([
+                  '「诶？别老盯着阿狸的毛茸茸大尾巴看啦~」',
+                  '「忙着记账呢，再戳我要算错小狗币了哦！」',
+                  '「今天也收到了好多有趣的小玩意呢，有空多来逛逛~」',
+                  '「算盘珠子都要被你晃乱啦，哈哈~」',
+                  '「如果是稀有花朵或秘传料理，阿狸会给特别好的价钱哦！」',
+                ]);
+              }
             }
           });
         }
@@ -21104,15 +21303,16 @@
 
       if (sellCat === 'all' || sellCat === 'gear') {
         SHOP_PUP_GOODS.filter(x => x.cat === 'gear' && (inv[x.id] || 0) > 0).forEach(x => {
-          sellItems.push({ kind: 'gear', catLabel: '道具', id: x.id, name: x.name, qty: Math.floor(inv[x.id]), sellPrice: Math.max(1, Math.floor((x.price || 4) * 0.5)), raw: x });
+          const sp = Math.max(2, Math.round((x.price || 4) * 0.7));
+          sellItems.push({ kind: 'gear', catLabel: '道具', id: x.id, name: x.name, qty: Math.floor(inv[x.id]), sellPrice: sp, raw: x });
         });
       }
       if (sellCat === 'all' || sellCat === 'snack') {
         [...SHOP_PUP_GOODS.filter(x => x.cat === 'snack'), ...GACHA_SNACKS].forEach(x => {
           const q = Math.floor(inv[x.id] || 0);
           if (q > 0) {
-            const sp = x.price ? Math.max(1, Math.floor(x.price * 0.5)) : 3;
-            sellItems.push({ kind: 'snack', catLabel: '零食', id: x.id, name: x.name, qty: q, sellPrice: sp, raw: x });
+            const sp = x.gachaOnly ? 10 : Math.max(2, Math.round((x.price || 4) * 0.7));
+            sellItems.push({ kind: 'snack', catLabel: x.gachaOnly ? '扭蛋零食' : '零食', id: x.id, name: x.name, qty: q, sellPrice: sp, raw: x });
           }
         });
       }
@@ -21120,8 +21320,8 @@
         PUP_FLOWERS.forEach(fl => {
           const q = Math.floor(flInv[fl.id] || 0);
           if (q > 0) {
-            const sp = Math.max(1, Math.floor((fl.reward || 3) * 0.6));
-            sellItems.push({ kind: 'flower', catLabel: '花朵', id: fl.id, name: fl.name, qty: q, sellPrice: sp, raw: fl });
+            const sp = fl.hidden ? Math.max(12, Math.round((fl.reward || 8) * 1.6)) : Math.max(3, Math.round((fl.reward || 3) * 1.1));
+            sellItems.push({ kind: 'flower', catLabel: fl.hidden ? '稀有花' : '花朵', id: fl.id, name: fl.name, qty: q, sellPrice: sp, raw: fl });
           }
         });
       }
@@ -21129,14 +21329,15 @@
         PUP_KITCHEN_RECIPES.forEach(kd => {
           const q = Math.floor(dishInv[kd.id] || 0);
           if (q > 0) {
-            const sp = kd.coins ? Math.max(1, Math.floor(kd.coins * 0.8)) : 2;
-            sellItems.push({ kind: 'dish', catLabel: '食物', id: kd.id, name: kd.name, qty: q, sellPrice: sp, raw: kd, isDark: false });
+            const mult = kd.gachaTier === 'SSR' ? 1.8 : (kd.rarity === 'legend' ? 1.7 : (kd.gachaTier === 'SR' || kd.rarity === 'rare' ? 1.5 : 1.3));
+            const sp = Math.max(4, Math.round((kd.coins || 3) * mult));
+            sellItems.push({ kind: 'dish', catLabel: kd.gachaOnly ? '秘传料理' : (kd.rarity === 'legend' ? '传说料理' : '食物'), id: kd.id, name: kd.name, qty: q, sellPrice: sp, raw: kd, isDark: false });
           }
         });
         PUP_DARK_DISHES.forEach(kd => {
           const q = Math.floor(dishInv[kd.id] || 0);
           if (q > 0) {
-            sellItems.push({ kind: 'dish', catLabel: '暗黑料理', id: kd.id, name: kd.name, qty: q, sellPrice: 1, raw: kd, isDark: true });
+            sellItems.push({ kind: 'dish', catLabel: '暗黑料理', id: kd.id, name: kd.name, qty: q, sellPrice: 2, raw: kd, isDark: true });
           }
         });
       }
@@ -21648,7 +21849,7 @@
       hx = ox + 11;
       hy = oy + 6;
       isFlatPose = true;
-    } else if (pup.state === 'sit' || pup.state === 'sit_yarn' || pup.state === 'sit_hum' || pup.state === 'sit_draw') {
+    } else if (pup.state === 'sit' || pup.state === 'sit_yarn' || pup.state === 'sit_hum' || pup.state === 'sit_draw' || pup.state === 'ground_draw') {
       const blinkCycle = pup.tick % 150;
       if (blinkCycle > 142) frame = 'sit_blink';
       else frame = Math.floor(pup.tick / 16) % 2 === 0 ? 'sit1' : 'sit2';
@@ -22439,6 +22640,30 @@
       const brushY = ey + 3 + (Math.floor(pup.tick / 8) % 2);
       px(ex - 1, brushY, '#d97236');
       px(ex, brushY - 1, '#ff7d9e');
+    } else if (pup.state === 'ground_draw') {
+      const gx = ox + 15;
+      const gy = 20;
+      const gStep = Math.floor(pup.tick / 18) % 4;
+      const dKind = pup.groundDoodle || 'paw';
+      if (dKind === 'paw') {
+        px(gx + 1, gy + 1, '#e882a0'); px(gx + 2, gy + 1, '#e882a0');
+        px(gx + 1, gy + 2, '#e882a0'); px(gx + 2, gy + 2, '#e882a0');
+        if (gStep >= 1) px(gx, gy, '#f5a6be');
+        if (gStep >= 2) px(gx + 2, gy - 1, '#f5a6be');
+        if (gStep >= 3) px(gx + 3, gy, '#f5a6be');
+      } else if (dKind === 'heart') {
+        px(gx, gy, '#ff6b8b'); px(gx + 2, gy, '#ff6b8b');
+        if (gStep >= 1) { px(gx, gy + 1, '#ff8ca6'); px(gx + 1, gy + 1, '#ff6b8b'); px(gx + 2, gy + 1, '#ff8ca6'); }
+        if (gStep >= 2) px(gx + 1, gy + 2, '#ff6b8b');
+      } else if (dKind === 'bone') {
+        px(gx, gy + 1, '#d9c4a6'); px(gx + 1, gy + 1, '#efe4d0'); px(gx + 2, gy + 1, '#efe4d0');
+        if (gStep >= 1) { px(gx, gy, '#d9c4a6'); px(gx + 3, gy + 1, '#d9c4a6'); }
+        if (gStep >= 2) { px(gx + 3, gy, '#d9c4a6'); px(gx + 3, gy + 2, '#d9c4a6'); }
+      } else {
+        px(gx + 1, gy, '#ffd24d');
+        if (gStep >= 1) { px(gx, gy + 1, '#ffe478'); px(gx + 2, gy + 1, '#ffe478'); }
+        if (gStep >= 2) { px(gx + 1, gy + 2, '#ffd24d'); }
+      }
     } else if (pup.state === 'sit_groom') {
       // 坐着理毛的小闪光像素
       if (Math.floor(pup.tick / 10) % 2 === 0) {
@@ -24164,17 +24389,30 @@
               markPupSpecialCooldown(11, 18);
               setPuppyState('sit', 220 + Math.floor(Math.random() * 180));
             } else if (pup.state === 'sit_draw') {
-              markPupSpecialCooldown(18, 28);
+              markPupSpecialCooldown(22, 34);
+              pupNextDrawAt = Math.max(pupNextDrawAt, now + randInt(420000, 660000));
               if (pupLastDrawnArt) showPuppyBubble(`画好啦！点我看看「${pupLastDrawnArt.title}」~`, 2600, true);
               setPuppyState('sit', 200 + Math.floor(Math.random() * 140));
-            } else if ((pup.state === 'idle' || pup.state === 'sit') && now >= pupNextDrawAt && Math.random() < 0.22) {
-              pupNextDrawAt = now + randInt(210000, 360000);
-              const persKey = config.puppyPersonality || 'sleepyhead';
-              const artPool = PUP_PIXEL_ARTS[persKey] || PUP_PIXEL_ARTS.sleepyhead;
-              pupLastDrawnArt = pick(artPool);
-              pupLastDrawnAt = now;
-              setPuppyState('sit_draw', 180);
-              showPuppyBubble('突然来灵感啦，支起小画架画一幅画…（点我看画作）', 2500, true);
+            } else if (pup.state === 'ground_draw') {
+              markPupSpecialCooldown(20, 32);
+              pupNextDrawAt = Math.max(pupNextDrawAt, now + randInt(360000, 580000));
+              showPuppyBubble('在桌面上悄悄画了一个小图案~', 2200, true);
+              setPuppyState('sit', 180 + Math.floor(Math.random() * 120));
+            } else if ((pup.state === 'idle' || pup.state === 'sit') && now >= pupNextDrawAt && Math.random() < 0.16) {
+              pupNextDrawAt = now + randInt(380000, 620000);
+              if (Math.random() < 0.50) {
+                const doodleMap = { paw: '小爪印', heart: '小爱心', bone: '小骨头', star: '小涂鸦' };
+                pup.groundDoodle = pick(['paw', 'heart', 'bone', 'star']);
+                setPuppyState('ground_draw', 150);
+                showPuppyBubble(`低头用爪子在桌面上画了个${doodleMap[pup.groundDoodle]}~`, 2200, true);
+              } else {
+                const persKey = config.puppyPersonality || 'sleepyhead';
+                const artPool = PUP_PIXEL_ARTS[persKey] || PUP_PIXEL_ARTS.sleepyhead;
+                pupLastDrawnArt = pick(artPool);
+                pupLastDrawnAt = now;
+                setPuppyState('sit_draw', 180);
+                showPuppyBubble('突然来灵感啦，支起小画架画一幅画…（点我看画作）', 2500, true);
+              }
             } else if (pup.state === 'sit' && pup.sitCycles > 0) {
               if (now >= pup.nextSpecialAt) {
                 pup.sitCycles -= 1;
@@ -25253,7 +25491,7 @@
 
   let pupLastDrawnArt = null;
   let pupLastDrawnAt = 0;
-  let pupNextDrawAt = Date.now() + 90000;
+  let pupNextDrawAt = Date.now() + 180000;
 
   const openPupDrawingModal = (art) => {
     if (!art) return;
@@ -33741,21 +33979,46 @@
   const gachaVendorMsg = root.querySelector('#st-px-gacha-vendor-msg');
   if (gachaVendorCv && !gachaVendorCv._inited) {
     gachaVendorCv._inited = true;
-    const cg = gachaVendorCv.getContext('2d');
-    cg.imageSmoothingEnabled = false;
-    const p = (x, y, w, h, c) => { cg.fillStyle = c; cg.fillRect(x, y, w, h); };
-    p(0, 0, 44, 44, '#fff4e6');
-    p(9, 7, 7, 8, '#f09448'); p(11, 9, 3, 4, '#ffd0dc');
-    p(28, 7, 7, 8, '#f09448'); p(30, 9, 3, 4, '#ffd0dc');
-    p(9, 14, 26, 17, '#ffbe78');
-    p(20, 14, 4, 5, '#d97236'); p(16, 15, 2, 3, '#d97236'); p(26, 15, 2, 3, '#d97236');
-    p(13, 23, 18, 8, '#fff7ed');
-    p(14, 19, 3, 3, '#2d1e18'); p(27, 19, 3, 3, '#2d1e18');
-    p(14, 19, 1, 1, '#ffffff'); p(27, 19, 1, 1, '#ffffff');
-    p(21, 23, 2, 2, '#f27894');
-    p(12, 31, 20, 11, '#fff7ed');
-    p(12, 31, 20, 3, '#d94848');
-    p(20, 34, 4, 4, '#ffd24d');
+    const popGachaEmo = (txt) => {
+      const em = root.querySelector('#st-px-gacha-vendor-emo');
+      if (!em) return;
+      em.textContent = txt;
+      em.style.opacity = '1';
+      em.style.transform = 'translateY(-6px)';
+      clearTimeout(em._t);
+      em._t = setTimeout(() => { em.style.opacity = '0'; em.style.transform = 'translateY(0)'; }, 950);
+    };
+    const drawGachaAvatar = (mood = 'normal') => {
+      const cg = gachaVendorCv.getContext('2d');
+      cg.imageSmoothingEnabled = false;
+      const p = (x, y, w, h, c) => { cg.fillStyle = c; cg.fillRect(x, y, w, h); };
+      p(0, 0, 44, 44, '#fff4e6');
+      p(9, 7, 7, 8, '#f09448'); p(11, 9, 3, 4, '#ffd0dc');
+      p(28, 7, 7, 8, '#f09448'); p(30, 9, 3, 4, '#ffd0dc');
+      p(9, 14, 26, 17, '#ffbe78');
+      p(20, 14, 4, 5, '#d97236'); p(16, 15, 2, 3, '#d97236'); p(26, 15, 2, 3, '#d97236');
+      p(13, 23, 18, 8, '#fff7ed');
+      if (mood === 'happy') {
+        p(13, 20, 4, 1, '#2d1e18'); p(14, 19, 2, 1, '#2d1e18');
+        p(27, 20, 4, 1, '#2d1e18'); p(28, 19, 2, 1, '#2d1e18');
+        p(11, 22, 4, 2, '#ff9eb5'); p(29, 22, 4, 2, '#ff9eb5');
+      } else if (mood === 'angry') {
+        p(13, 18, 4, 1, '#7a2218'); p(15, 19, 2, 2, '#2d1e18');
+        p(27, 18, 4, 1, '#7a2218'); p(27, 19, 2, 2, '#2d1e18');
+        p(19, 26, 6, 2, '#9c3228');
+      } else if (mood === 'shy') {
+        p(14, 20, 3, 1, '#2d1e18'); p(27, 20, 3, 1, '#2d1e18');
+        p(11, 22, 3, 2, '#ffb3c6'); p(30, 22, 3, 2, '#ffb3c6');
+      } else {
+        p(14, 19, 3, 3, '#2d1e18'); p(27, 19, 3, 3, '#2d1e18');
+        p(14, 19, 1, 1, '#ffffff'); p(27, 19, 1, 1, '#ffffff');
+      }
+      p(21, 23, 2, 2, '#f27894');
+      p(12, 31, 20, 11, '#fff7ed');
+      p(12, 31, 20, 3, '#d94848');
+      p(20, 34, 4, 4, '#ffd24d');
+    };
+    drawGachaAvatar('normal');
     let gPokeCnt = 0;
     let gPokeLast = 0;
     gachaVendorCv.addEventListener('click', () => {
@@ -33771,6 +34034,8 @@
           config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
           saveConfig();
           renderGachaView();
+          drawGachaAvatar('happy');
+          popGachaEmo('♥');
           const gTxt = '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 85折扭蛋券！';
           if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
           openGuardConfirm('触发隐藏彩蛋 · 招财喵超开心！', gTxt, () => {}, '谢谢老板', true);
@@ -33778,16 +34043,25 @@
         } else {
           ve.gachaLockUntil = nowT + 2 * 60000;
           saveConfig();
+          drawGachaAvatar('angry');
+          popGachaEmo('💢');
           const gTxt = '喵呜！不准再揪胡子了！卷帘门拉下来冷静 2 分钟喵！';
           if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
           openGuardConfirm('触发隐藏彩蛋 · 招财喵生气啦！', gTxt, () => {}, '知错了', true);
         }
-      } else if (gachaVendorMsg && gPokeCnt >= 2) {
-        gachaVendorMsg.textContent = pick([
-          '「喵？不要一直戳招财铃铛啦，会响个不停的！」',
-          '「老板正在擦扭蛋机玻璃呢，别捣乱喵~」',
-          '「摸摸头可以，可不许扯本喵胡须哦！」',
-        ]);
+      } else {
+        drawGachaAvatar('shy');
+        popGachaEmo(pick(['✨', '♪', '!']));
+        setTimeout(() => drawGachaAvatar('normal'), 600);
+        if (gachaVendorMsg) {
+          gachaVendorMsg.textContent = pick([
+            '「喵？不要一直戳招财铃铛啦，会响个不停的！」',
+            '「老板正在擦扭蛋机玻璃呢，今天手气一定特别欧喵~」',
+            '「摸摸头可以，可不许扯本喵胡须哦！」',
+            '「十连必出 SR，攒够小狗币随时来扭两颗呀~」',
+            '「刚才好像有颗金色扭蛋在里面滚来滚去喵！」',
+          ]);
+        }
       }
     });
   }
@@ -38322,8 +38596,42 @@
     fontFileInput.click();
   });
 
+  const renderFontSearchResults = () => {
+    if (!fontSearchResEl || !fontSearchInput) return;
+    const fq = String(fontSearchInput.value || '').trim().toLowerCase();
+    if (!fq) {
+      fontSearchResEl.style.display = 'none';
+      fontSearchResEl.innerHTML = '';
+      return;
+    }
+    const hits = (config.fontRecipes || []).filter(f => String(f.name || '').toLowerCase().includes(fq));
+    fontSearchResEl.style.display = 'flex';
+    fontSearchResEl.innerHTML = '';
+    if (!hits.length) {
+      fontSearchResEl.innerHTML = '<div style="font-size:11px;opacity:0.65;padding:2px 4px;">没有匹配的字体配方</div>';
+      return;
+    }
+    hits.forEach(f => {
+      const btn = doc.createElement('button');
+      btn.type = 'button';
+      btn.className = `st-tb-mini-btn${config.activeFontId === f.id ? ' active' : ''}`;
+      btn.style.cssText = 'text-align:left;width:100%;justify-content:flex-start;';
+      btn.textContent = `${f.type === 'local' ? '[本地]' : '[链接]'} ${f.name}`;
+      btn.addEventListener('click', () => {
+        config.activeFontId = f.id;
+        saveConfig();
+        renderFontSelect();
+        applyCustomFont();
+        renderFontSearchResults();
+      });
+      fontSearchResEl.appendChild(btn);
+    });
+  };
   if (fontSearchInput) {
-    fontSearchInput.addEventListener('input', () => renderFontSelect());
+    fontSearchInput.addEventListener('input', () => {
+      renderFontSelect();
+      renderFontSearchResults();
+    });
   }
 
   let pendingUploadFontFile = null;
@@ -46736,8 +47044,15 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               <span>字体设置</span>
               <button class="st-tb-mini-btn" id="st-qf-close" type="button">关闭</button>
             </div>
+            <input class="st-tb-input" id="st-qf-search" type="text" placeholder="搜索字体配方" style="width:100%;" />
+            <div id="st-qf-search-res" style="display:none;flex-direction:column;gap:3px;max-height:96px;overflow-y:auto;padding:3px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);"></div>
             <select class="st-tb-select" id="st-qf-select" style="width:100%;"></select>
+            <div id="st-qf-rename-box" style="display:none;gap:4px;">
+              <input class="st-tb-input" id="st-qf-rename-inp" type="text" placeholder="输入新字体名称" style="flex:1;min-width:0;" />
+              <button class="st-tb-mini-btn active" id="st-qf-rename-save" type="button">保存</button>
+            </div>
             <div style="display:flex;gap:6px;justify-content:flex-end;">
+              <button class="st-tb-mini-btn" id="st-qf-rename" type="button">重命名</button>
               <button class="st-tb-mini-btn" id="st-qf-import" type="button">导入新字体</button>
             </div>`;
           root.appendChild(fpop);
@@ -46752,7 +47067,71 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               try { sec?.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
             }, 60);
           });
-          fpop.querySelector('#st-qf-select')?.addEventListener('change', (ev) => {
+          const qfSel = fpop.querySelector('#st-qf-select');
+          const qfSearch = fpop.querySelector('#st-qf-search');
+          const qfRes = fpop.querySelector('#st-qf-search-res');
+          const qfRenBtn = fpop.querySelector('#st-qf-rename');
+          const qfRenBox = fpop.querySelector('#st-qf-rename-box');
+          const qfRenInp = fpop.querySelector('#st-qf-rename-inp');
+          const qfRenSave = fpop.querySelector('#st-qf-rename-save');
+          const syncQfSearch = () => {
+            if (!qfRes || !qfSearch) return;
+            const fq = String(qfSearch.value || '').trim().toLowerCase();
+            if (!fq) { qfRes.style.display = 'none'; qfRes.innerHTML = ''; return; }
+            const hits = (config.fontRecipes || []).filter(f => String(f.name || '').toLowerCase().includes(fq));
+            qfRes.style.display = 'flex';
+            qfRes.innerHTML = '';
+            if (!hits.length) { qfRes.innerHTML = '<div style="font-size:11px;opacity:0.65;padding:2px 4px;">无匹配字体</div>'; return; }
+            hits.forEach(f => {
+              const b = doc.createElement('button');
+              b.type = 'button';
+              b.className = `st-tb-mini-btn${config.activeFontId === f.id ? ' active' : ''}`;
+              b.style.cssText = 'text-align:left;width:100%;justify-content:flex-start;';
+              b.textContent = `${f.type === 'local' ? '[本地]' : '[链接]'} ${f.name}`;
+              b.addEventListener('click', () => {
+                const mainSel = root.querySelector('#st-tb-font-select');
+                if (mainSel) {
+                  mainSel.value = f.id;
+                  mainSel.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                if (qfSel) qfSel.value = f.id;
+                syncQfSearch();
+              });
+              qfRes.appendChild(b);
+            });
+          };
+          if (qfSearch) qfSearch.addEventListener('input', syncQfSearch);
+          if (qfRenBtn && qfRenBox && qfRenInp) {
+            qfRenBtn.addEventListener('click', () => {
+              const curItem = (config.fontRecipes || []).find(f => f.id === config.activeFontId);
+              if (!curItem) { cmNotify('请先选择一个自定义字体配方'); return; }
+              qfRenInp.value = curItem.name || '';
+              qfRenBox.style.display = qfRenBox.style.display === 'none' ? 'flex' : 'none';
+              if (qfRenBox.style.display === 'flex') qfRenInp.focus();
+            });
+            const doQfRename = () => {
+              const curItem = (config.fontRecipes || []).find(f => f.id === config.activeFontId);
+              const nv = String(qfRenInp.value || '').trim();
+              if (!curItem || !nv) { qfRenBox.style.display = 'none'; return; }
+              curItem.name = nv;
+              qfRenBox.style.display = 'none';
+              saveConfig();
+              renderFontSelect();
+              applyCustomFont();
+              if (qfSel) {
+                const mainSel = root.querySelector('#st-tb-font-select');
+                if (mainSel) { qfSel.innerHTML = mainSel.innerHTML; qfSel.value = mainSel.value; }
+              }
+              syncQfSearch();
+              cmNotify(`字体已重命名为：${nv}`);
+            };
+            if (qfRenSave) qfRenSave.addEventListener('click', doQfRename);
+            qfRenInp.addEventListener('keydown', (ev) => {
+              if (ev.key === 'Enter') doQfRename();
+              if (ev.key === 'Escape') qfRenBox.style.display = 'none';
+            });
+          }
+          qfSel?.addEventListener('change', (ev) => {
             const mainSel = root.querySelector('#st-tb-font-select');
             if (!mainSel) return;
             mainSel.value = ev.target.value;
