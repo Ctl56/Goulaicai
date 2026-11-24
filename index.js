@@ -9720,16 +9720,22 @@ function bootGoulaicaiExtension() {
       doc.removeEventListener('touchstart', tryResumeKaAudio, true);
     };
 
+    let kaBeatN = 0;
     if (typeof win.Worker === 'function') {
       try {
         const wBlob = new Blob([
-          'let t=setInterval(()=>{postMessage(Date.now());},3000);onmessage=()=>{clearInterval(t);};'
+          'let t=setInterval(()=>{postMessage(Date.now());},1500);onmessage=()=>{clearInterval(t);};'
         ], { type: 'application/javascript' });
         kaWorkerUrl = win.URL.createObjectURL(wBlob);
         kaWorker = new win.Worker(kaWorkerUrl);
         kaWorker.onmessage = () => {
           if (!config.keepAlive) return;
+          kaBeatN += 1;
           tryResumeKaAudio();
+          // 若后台期间音频被其他软件暂时打断，改用轻量网络心跳维持连接与后台窗口
+          if (doc.hidden && kaAudioEl && kaAudioEl.paused && kaBeatN % 5 === 0) {
+            try { win.fetch('/csrf-token', { cache: 'no-store' }).catch(() => {}); } catch (_) {}
+          }
         };
       } catch (_) {}
     }
@@ -21613,7 +21619,6 @@ function bootGoulaicaiExtension() {
       pup.dragTicks = 0;
       pup.dragStartedAt = Date.now();
       pup.dragAngryShown = false;
-      togglePupBag(false);
       setPuppyState('drag', 999);
       showPuppyBubble(getPersReact('dragStart'), 1800);
     }
@@ -22352,12 +22357,31 @@ function bootGoulaicaiExtension() {
     }
   };
 
+  let pupDragSuppressUntil = 0;
+  ['mousedown', 'mouseup', 'touchstart', 'touchend', 'click'].forEach(evtName => {
+    puppyEl.addEventListener(evtName, (e) => {
+      e.stopPropagation();
+    });
+  });
+  const onPupDragShield = (e) => {
+    if (Date.now() < pupDragSuppressUntil || (puppyDrag && puppyDrag.moved)) {
+      e.stopPropagation();
+      if (e.type === 'click') e.preventDefault();
+    }
+  };
+  doc.addEventListener('click', onPupDragShield, true);
+  doc.addEventListener('mousedown', onPupDragShield, true);
+  doc.addEventListener('mouseup', onPupDragShield, true);
+  doc.addEventListener('touchend', onPupDragShield, true);
+
   const endPuppyDrag = (e) => {
     if (!puppyDrag || puppyDrag.id !== e.pointerId) return;
+    e.stopPropagation();
     clearTimeout(puppyLongPressTimer);
     const wasMoved = puppyDrag.moved;
     const wasLongPressed = puppyDrag.longPressed;
     puppyDrag = null;
+    if (wasMoved || wasLongPressed) pupDragSuppressUntil = Date.now() + 450;
     try { puppyEl.releasePointerCapture(e.pointerId); } catch (_) {}
 
     if (wasLongPressed) return;
@@ -42284,6 +42308,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     clearTimeout(win.__stPupMusicPlayTimer);
     try { if (win.__stPupMusicAudio) { win.__stPupMusicAudio.pause(); win.__stPupMusicAudio.src = ''; } } catch (_) {}
     clearTimeout(pupAutoDressTimer);
+    doc.removeEventListener('click', onPupDragShield, true);
+    doc.removeEventListener('mousedown', onPupDragShield, true);
+    doc.removeEventListener('mouseup', onPupDragShield, true);
+    doc.removeEventListener('touchend', onPupDragShield, true);
     doc.removeEventListener('click', onImmDocClick, true);
     doc.documentElement.classList.remove('st-tb-imm-show-input');
     doc.removeEventListener('pointerdown', onOutsideQuickDock);
