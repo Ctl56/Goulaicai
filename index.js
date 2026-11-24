@@ -6819,6 +6819,12 @@ function bootGoulaicaiExtension() {
     #st-tb-badge {
       -webkit-touch-callout: none !important;
     }
+    .st-tb-resize-br::after,
+    .st-px-resize-br::after,
+    .st-tb-reader-resize::after {
+      display: none !important;
+      content: none !important;
+    }
     #st-tb-reader-set-btn.st-tb-r-ico {
       display: inline-flex !important;
       align-items: center !important;
@@ -9622,6 +9628,21 @@ function bootGoulaicaiExtension() {
     } catch (_) {}
   };
 
+  let kaNoticeTimer = null;
+  const showKaPolicyNotice = (msg) => {
+    let el = doc.getElementById('st-tb-ka-notice');
+    if (!el) {
+      el = doc.createElement('div');
+      el.id = 'st-tb-ka-notice';
+      el.style.cssText = 'position:fixed;left:50%;top:18px;transform:translateX(-50%);max-width:min(320px,calc(100vw - 28px));padding:8px 13px;border-radius:10px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 20px rgba(0,0,0,0.18);font-size:11.5px;line-height:1.5;z-index:10035;pointer-events:none;opacity:0;transition:opacity 0.2s ease;text-align:center;';
+      root.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = '1';
+    clearTimeout(kaNoticeTimer);
+    kaNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 3200);
+  };
+
   const kaRuntime = {
     active: false,
     mode: 'mix',
@@ -9640,8 +9661,8 @@ function bootGoulaicaiExtension() {
       if (keepAliveTip) {
         keepAliveTip.style.display = 'block';
         keepAliveTip.innerHTML = `<div style="display:flex;align-items:center;gap:5px;">` +
-          `<button type="button" class="st-tb-mini-btn${curPolicy === 'mix' ? ' active' : ''}" data-kapolicy="mix" style="flex:1;" title="不占顶部音频栏，可同时听发语音与刷视频">混音保活</button>` +
-          `<button type="button" class="st-tb-mini-btn${curPolicy === 'exclusive' ? ' active' : ''}" data-kapolicy="exclusive" style="flex:1;" title="原版强效独占音频通道，适合长时间息屏常驻">独占保活</button>` +
+          `<button type="button" class="st-tb-mini-btn${curPolicy === 'mix' ? ' active' : ''}" data-kapolicy="mix" style="flex:1;" title="不占系统音频栏，可与语音视频共存">轻保活</button>` +
+          `<button type="button" class="st-tb-mini-btn${curPolicy === 'exclusive' ? ' active' : ''}" data-kapolicy="exclusive" style="flex:1;" title="占用系统音频栏，适合长时间息屏常驻">强保活</button>` +
           `</div>${kaNeedsGesture ? '<div style="margin-top:4px;font-size:10.5px;color:var(--tb-sub);">轻点页面任意位置完成激活</div>' : ''}`;
         keepAliveTip.querySelectorAll('[data-kapolicy]').forEach(btn => {
           btn.addEventListener('click', (e) => {
@@ -9652,6 +9673,9 @@ function bootGoulaicaiExtension() {
             config.keepAlivePolicy = pol;
             saveConfig();
             startKeepAlive();
+            showKaPolicyNotice(pol === 'exclusive'
+              ? '已切换为强保活：会占用系统音频栏，长时间息屏更稳，遇到其他软件发声时可能暂时让出通道'
+              : '已切换为轻保活：不占系统音频栏，可与微信语音、视频和游戏共存');
           });
         });
       }
@@ -34361,6 +34385,28 @@ function bootGoulaicaiExtension() {
     if (open) {
       positionPanel();
       updateStats();
+      if (!config.panelDragTipShown) {
+        let tipMask = root.querySelector('#st-tb-drag-tip-mask');
+        if (!tipMask) {
+          tipMask = doc.createElement('div');
+          tipMask.id = 'st-tb-drag-tip-mask';
+          tipMask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.36);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10038;pointer-events:auto;';
+          tipMask.innerHTML = `<div style="width:min(286px,calc(100vw - 36px));background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);border-radius:12px;padding:14px 15px 12px;box-shadow:0 10px 28px rgba(0,0,0,0.22);box-sizing:border-box;">` +
+            `<div style="font-size:13px;font-weight:700;margin-bottom:6px;">面板操作提示</div>` +
+            `<div style="font-size:11.5px;line-height:1.6;color:var(--tb-sub,#555);margin-bottom:12px;">所有面板按住顶部标题栏都可以移动到任意位置，按住右下角边缘可直接拖动调整大小。</div>` +
+            `<div style="display:flex;justify-content:flex-end;">` +
+            `<button type="button" class="st-tb-mini-btn active" id="st-tb-drag-tip-ok" style="padding:4px 14px;height:26px;font-size:11.5px;">知道了</button>` +
+            `</div></div>`;
+          const dismissTip = () => {
+            config.panelDragTipShown = true;
+            saveConfig();
+            tipMask.remove();
+          };
+          tipMask.querySelector('#st-tb-drag-tip-ok')?.addEventListener('click', dismissTip);
+          tipMask.addEventListener('click', (e) => { if (e.target === tipMask) dismissTip(); });
+          root.appendChild(tipMask);
+        }
+      }
       renderBookmarks();
       renderDrafts();
       attachDraftListener();
@@ -38866,6 +38912,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       return true;
     });
 
+    if (curAv) {
+      filtered.sort((a, b) => (a.avatar === curAv ? -1 : 0) - (b.avatar === curAv ? -1 : 0));
+    }
     if (pmCountEl) pmCountEl.textContent = `${filtered.length} / ${all.length}`;
     pmListEl.innerHTML = '';
 
