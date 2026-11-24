@@ -17280,7 +17280,7 @@
     wish_legend_100: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:10px;bottom:-9px;', w: 12, h: 14, pal: { o: '#8c5468', c: '#d99862', g: '#ffe8f4', w: '#ffffff', y: '#f5c84c', p: '#f282a8' },
+        { pos: 'left:-6px;bottom:-9px;', w: 12, h: 14, pal: { o: '#8c5468', c: '#d99862', g: '#ffe8f4', w: '#ffffff', y: '#f5c84c', p: '#f282a8' },
           grid: ['....cccc....','....cccc....','...oooooo...','..ogwwwwgo..','.ogwwyywwgo.','.ogwpyypwgo.','.ogwwyywwgo.','.ogwppppwgo.','..oggggggo..','...oooooo...'] },
         { pos: 'right:-10px;top:0px;', w: 11, h: 8, pal: { y: '#f2bf49', w: '#fff6cc', p: '#f088ab' },
           grid: ['.......pp..','.....ppyy..','...yywwyy..','.yywwyy....','yy.........'] },
@@ -17317,13 +17317,13 @@
           grid: ['...ll.....','..lwwl....','...ll.....','....c.....','..ccwwcc..','...cccc...','....p.....','..ppwwpp..','...pppp...','....l.....'] },
       ],
     },
-    // 5. 一线吃瓜汪 (SR)：右下大西瓜角叠翠绿薄荷叶 + 左上溅出两颗粉红西瓜汁珠
+    // 5. 一线吃瓜汪 (SR)：左外下角大西瓜角叠薄荷叶 + 顶偏右溅出西瓜汁珠
     gb_gacha_melon_eater: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'right:8px;top:-9px;', w: 15, h: 12, pal: { g: '#4ea864', m: '#82d994', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
+        { pos: 'left:-10px;bottom:-7px;', w: 15, h: 12, pal: { g: '#4ea864', m: '#82d994', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
           grid: ['.....rr..mm...','....rrwrmgg...','...rrkrrmg....','..rrr..rr.....','.rrkrrrrkr....','llrrrrrrrll...','.gglllllgg....','..ggggggg.....'] },
-        { pos: 'right:-8px;bottom:-2px;', w: 9, h: 8, anim: 'b-bob', pal: { r: '#f5788e', w: '#ffe0e6', g: '#62bf78' },
+        { pos: 'right:14px;top:-7px;', w: 9, h: 8, anim: 'b-bob', pal: { r: '#f5788e', w: '#ffe0e6', g: '#62bf78' },
           grid: ['..rr.....','.rwwr..g.','..rr..gg.','......g..'] },
       ],
     },
@@ -17662,13 +17662,13 @@
           grid: ['...bb...','..bwwb..','.bccccb.','.bccccb.','..bbbb..'] },
       ],
     },
-    // 嘴甜小宝贝：锁留玩家点名满意的清爽对话气泡搭配
+    // 嘴甜小宝贝：顶偏右清爽对话气泡 + 左外下角柔粉小爱心（避开左内图标）
     fun_chat_bestie: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:10px;top:-8px;', w: 12, h: 11, pal: { M: '#eb8cb0', w: '#ffffff' },
+        { pos: 'right:14px;top:-9px;', w: 12, h: 11, pal: { M: '#eb8cb0', w: '#ffffff' },
           grid: ['.MMMMMM..','MwwwwwwM.','MwMMwMMwM','MwwwwwwM.','.MMMMMM..','..MM.....'] },
-        { pos: 'right:-8px;bottom:-3px;', w: 8, h: 7, pal: { M: '#eb8cb0', w: '#ffffff' },
+        { pos: 'left:-8px;bottom:-5px;', w: 9, h: 8, pal: { M: '#eb8cb0', w: '#ffffff' },
           grid: ['.MM..MM.','MwwMMMM.','.MMMMM..','..MMM...'] },
       ],
     },
@@ -17854,13 +17854,13 @@
     sb_lazy_sunshine: {
       cls: 'bespoke-std bespoke-glow',
       pieces: [
-        { pos: 'left:10px;top:-9px;', w: 12, h: 12, pal: { y: '#f2b838', l: '#fff0a8', w: '#ffffff' },
+        { pos: 'left:-9px;top:-9px;', w: 12, h: 12, pal: { y: '#f2b838', l: '#fff0a8', w: '#ffffff' },
           frames: [
             ['....y....','.y.yyy.y.','..ywwly..','.yyyyyyy.','..ylwwy..','.y.yyy.y.','....y....'],
             ['..y...y..','...yyy...','y.ywwly.y','..yyyyy..','y.ylwwy.y','...yyy...','..y...y..'],
           ] },
-        { pos: 'right:-8px;bottom:-4px;', w: 9, h: 8, pal: { y: '#f5cc64', w: '#fff8d6' },
-          grid: ['..yy..','.ywwy.','..yy..'] },
+        { pos: 'right:16px;bottom:-7px;', w: 11, h: 7, pal: { y: '#f5cc64', w: '#fff8d6', l: '#ffebb0' },
+          grid: ['..yyyyyy..','.ywwllwwy.','..yyyyyy..'] },
       ],
     },
     sb_milk_tea_boss: {
@@ -18155,47 +18155,132 @@
           hidden_adv_rest_3:    ['..bbbbbb..','.bwwwwwwb.','..cc..cc..'],
         };
         const g1 = UNIQUE_ACH_PROPS[ach.id] || ['..MMMMMM..','.MwwwwwwM.','MwMwwwwMwM','.MwwwwwwM.','..MMMMMM..'];
-        // 4 种严格对侧远端外沿构图（学习合法摸鱼狗/带薪打盹王/黄金左脸：绝不压左内图标、绝不同侧挤在一起）
-        const edgeLayouts = [
-          ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-9px;bottom:-5px;'],
-          ['left:-12px;top:50%;transform:translateY(-50%);', 'right:10px;top:-7px;'],
-          ['left:-12px;top:50%;transform:translateY(-50%);', 'right:-9px;bottom:-5px;'],
-          ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-9px;top:-7px;'],
-        ];
-        const [p1, p2] = edgeLayouts[h % edgeLayouts.length];
-        const subClusters = [
-          ['..yyyy..','.ywwwwy.','..yyyy..'],
-          ['.MM..MM.','MwwMMMM.','.MMMMM..','..MMM...'],
-          ['..cc..cc','.cwwccwc','..cc..cc'],
-          ['..gg..pp','.gwwgpwp','..gg..pp'],
-        ];
-        // 较高阶里程碑成就参照真龙天狗/樱花公主/天选小可爱/发财小锦鲤，补上华丽单边 ult 雕饰提升分量
-        const seniorSet = new Set([
-          'collector_max', 'treasure_hunter', 'game_champ', 'soulmate',
-          'adv_album_all', 'adv_curio_all', 'garden_collector_30', 'garden_bloom_100',
-          'kitchen_lv10_master', 'rich_tycoon_500', 'adv_legend_50', 'gacha_count_300',
-          'pet_legend_300', 'care_legend_200', 'game_legend_100', 'hidden_fashion_sss',
-          'hidden_adv_miracle', 'hidden_adv_legend', 'hidden_gacha_ssr_lucky', 'ach_ck_99'
-        ]);
-        const isSenior = seniorSet.has(ach.id);
-        el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
-        if (isSenior) {
-          const ultSides = ['bottom', 'top', 'left', 'right'];
-          const uSide = ultSides[h % ultSides.length];
-          el.appendChild(makeUltOrn(uSide, fKey));
-          // 主饰放在与 ult 雕饰不冲突的远端外沿
-          const mainPos = uSide === 'right'
-            ? 'left:-13px;top:50%;transform:translateY(-50%);'
-            : (uSide === 'left'
-              ? 'right:-13px;top:50%;transform:translateY(-50%);'
-              : (h % 2 === 0 ? 'left:-13px;top:50%;transform:translateY(-50%);' : 'right:-13px;top:50%;transform:translateY(-50%);'));
-          const subPos = mainPos.startsWith('left:') ? 'right:-9px;top:-7px;' : 'left:-9px;bottom:-5px;';
-          el.appendChild(renderBespokePiece({ pos: mainPos, w: 14, h: 12, anim: (h % 3 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
-          el.appendChild(renderBespokePiece({ pos: subPos, w: 9, h: 7, pal, grid: subClusters[(h >> 3) % subClusters.length] }));
+        // 签到打卡成就（ach_ck_52 / ach_ck_60 / ach_ck_99）保持原样不动！
+        if (String(ach.id || '').startsWith('ach_ck_')) {
+          const ckLayouts = [
+            ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-9px;bottom:-5px;'],
+            ['left:-12px;top:50%;transform:translateY(-50%);', 'right:10px;top:-7px;'],
+            ['left:-12px;top:50%;transform:translateY(-50%);', 'right:-9px;bottom:-5px;'],
+          ];
+          const [cp1, cp2] = ckLayouts[h % ckLayouts.length];
+          el.classList.add('bespoke-std');
+          if (ach.id === 'ach_ck_99') el.appendChild(makeUltOrn('bottom', fKey));
+          el.appendChild(renderBespokePiece({ pos: cp1, w: 13, h: 11, pal, grid: g1 }));
+          el.appendChild(renderBespokePiece({ pos: cp2, w: 9, h: 7, pal, grid: ['..yyyy..','.ywwwwy.','..yyyy..'] }));
         } else {
-          if (h % 3 === 0) el.classList.add('bespoke-static');
-          el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
-          el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 7, pal, grid: subClusters[(h >> 3) % subClusters.length] }));
+          // 7 种多元不极端且绝不压左内图标的远端舒展布局（左外上/左外下/顶中右/底中右/左外中/右外中错落搭配）
+          const variedLayouts = [
+            ['left:-8px;top:-8px;',    'right:16px;bottom:-7px;'],
+            ['right:14px;top:-8px;',   'left:-8px;bottom:-6px;'],
+            ['left:-8px;bottom:-7px;', 'right:-9px;top:-6px;'],
+            ['right:16px;bottom:-7px;','left:-8px;top:-7px;'],
+            ['right:-12px;top:50%;transform:translateY(-50%);', 'left:-8px;bottom:-6px;'],
+            ['left:-12px;top:50%;transform:translateY(-50%);',  'right:14px;top:-7px;'],
+            ['right:-11px;top:-7px;',  'left:-9px;bottom:-6px;'],
+          ];
+          const [p1, p2] = variedLayouts[h % variedLayouts.length];
+          // 专属副元素字典：每款成就拥有各自独立配套小件，彻底告别重复副元素
+          const UNIQUE_ACH_SUBS = {
+            collector_max:        ['..cc..','cwwwwc','.cccc.'],
+            treasure_hunter:      ['..yy..','.ywwy.','..yy..','..y...'],
+            game_champ:           ['.r..b.','rrrrbb','.r..b.'],
+            soulmate:             ['.p..p.','pwwwwp','.pppp.','..pp..'],
+            fun_mirror_star:      ['..pp..','.pwwp.','..pp..','...p..'],
+            fun_coin_saver:       ['.yyyy.','ywoowy','.yyyy.'],
+            fun_stretch_cat:      ['.p..p.','.pppp.','..pp..'],
+            fun_bday_twin:        ['..rr..','..ww..','.pppp.'],
+            fun_dress_rainbow:    ['.pycp.','pywwcp','.pycp.'],
+            hidden_night_owl:     ['..bb..','.bwwb.','..bb..','....b.'],
+            hidden_drag_forgive:  ['.o..o.','owppwo','.oooo.'],
+            hidden_lucky_coin:    ['..gg..','.gwwg.','..gg..'],
+            fun_wing_angel:       ['..ww..','.wccw.','..ww..'],
+            fun_aura_glow:        ['.yyyy.','ywwwwy','.yyyy.'],
+            fun_trad_lover:       ['..rr..','.ryyr.','..rr..','..y...'],
+            fun_neck_chic:        ['.w.w..','wpwp..','.w.w..'],
+            fun_game_all:         ['.kk...','krrk..','.kk...'],
+            hidden_dress_master:  ['.pp.pp','ppwwpp','.pppp.'],
+            hidden_twin_sparkle:  ['.c..y.','cwywyc','.c..y.'],
+            hidden_ancient_poet:  ['...y..','..yy..','.yy...','kk....'],
+            hidden_sleepy_poke:   ['..bb..','..ww..','..bb..'],
+            adv_album_all:        ['.kkkk.','kcccck','.kkkk.'],
+            adv_curio_all:        ['..MM..','.MwwM.','..MM..','..y...'],
+            adv_hidden_curio:     ['..ll..','.lwwl.','.l..l.'],
+            hidden_secret_mail:   ['..pp..','.pwwp.','..pp..'],
+            hidden_mutant_flower: ['..gg..','.gccg.','..gg..'],
+            hidden_fashion_sss:   ['.y..y.','ywwwwy','.yyyy.'],
+            hidden_festival_wish: ['..yy..','.yrr..','..rr..'],
+            hidden_adv_miracle:   ['..cc..','.cyyc.','..cc..'],
+            hidden_adv_legend:    ['..oo..','.owwo.','..oo..'],
+            ach_big_eater:        ['..oo..','.oaa..','..oo..'],
+            hidden_visitor_all:   ['.p..c.','pwwcww','.p..c.'],
+            hidden_gacha_lucky:   ['..rr..','.rwwr.','..yy..'],
+            hidden_gacha_ssr_lucky:['.yy.y.','ywwwwy','.yyyy.'],
+            hidden_job_star:      ['..yy..','.ywwy.','.y..y.'],
+            garden_collector_30:  ['..gg..','.gllg.','..gg..'],
+            garden_bloom_100:     ['..pp..','.pyyp.','..gg..'],
+            hidden_mutant_5:      ['..ll..','.lggl.','..ll..'],
+            kitchen_lv10_master:  ['..ww..','.wyyw.','..yy..'],
+            hidden_dark_gourmet:  ['..kk..','.kllk.','..kk..'],
+            toy_marathon_100:     ['..bb..','.bwwb.','..bb..'],
+            hidden_toy_rally_king:['..cc..','.cppc.','..cc..'],
+            gacha_count_300:      ['..ll..','.lppc.','..ll..'],
+            pet_legend_300:       ['.p.p..','ppwpp.','.ppp..'],
+            care_legend_200:      ['..oo..','.oyyo.','..oo..'],
+            game_legend_100:      ['..yy..','.ywwy.','..yy..'],
+            rich_tycoon_500:      ['.yyyy.','ywwwwy','.oooo.'],
+            job_legend_50:        ['..oo..','.oyyo.','..oo..'],
+            adv_legend_50:        ['..bb..','.bggb.','..bb..'],
+            visitor_host_30:      ['.l..p.','lwwpww','.l..p.'],
+            hidden_2048_double:   ['.yy...','ywwy..','.yy...'],
+            hidden_job_boss:      ['..yy..','.yooy.','..yy..'],
+            lt_cook_100:          ['..pp..','.pyyp.','..pp..'],
+            lt_wish_50:           ['..gg..','.gwwg.','..oo..'],
+            lt_toy_100:           ['..bb..','.byyb.','..bb..'],
+            ach_trail_collector:  ['.g..g.','gwwgww','.g..g.'],
+            ach_frame_collector:  ['.llll.','lwwwwl','.llll.'],
+            ach_bubble_collector: ['..cc..','.cwwc.','..cc..'],
+            ach_dig_lucky_3:      ['..yy..','.yyyy.','..y...'],
+            ach_gacha_30:         ['..ll..','.lyyl.','..ll..'],
+            hidden_early_bird:    ['..yy..','.yccy.','..cc..'],
+            hidden_chat_100:      ['.bbbb.','bwwwwb','.bbbb.'],
+            hidden_fashion_3:     ['..pp..','.pwwp.','..pp..'],
+            hidden_style_player:  ['..cc..','.cppc.','..yy..'],
+            hidden_garden_gift_30:['..pp..','.pggp.','..gg..'],
+            hidden_mem_streak_5:  ['.bb...','bwwb..','.bb...'],
+            hidden_job_first_oops:['..rr..','.rwwr.','..rr..'],
+            hidden_adv_rest_3:    ['..bb..','.bccb.','..cc..'],
+          };
+          const subG = UNIQUE_ACH_SUBS[ach.id];
+          const seniorSet = new Set([
+            'collector_max', 'treasure_hunter', 'game_champ', 'soulmate',
+            'adv_album_all', 'adv_curio_all', 'garden_collector_30', 'garden_bloom_100',
+            'kitchen_lv10_master', 'rich_tycoon_500', 'adv_legend_50', 'gacha_count_300',
+            'pet_legend_300', 'care_legend_200', 'game_legend_100', 'hidden_fashion_sss',
+            'hidden_adv_miracle', 'hidden_adv_legend', 'hidden_gacha_ssr_lucky'
+          ]);
+          const isSenior = seniorSet.has(ach.id);
+          el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
+          if (isSenior) {
+            const ultSides = ['bottom', 'top', 'left', 'right'];
+            const uSide = ultSides[h % ultSides.length];
+            el.appendChild(makeUltOrn(uSide, fKey));
+            const mainPos = uSide === 'right'
+              ? 'left:-10px;top:-7px;'
+              : (uSide === 'left'
+                ? 'right:-10px;bottom:-6px;'
+                : p1);
+            el.appendChild(renderBespokePiece({ pos: mainPos, w: 14, h: 12, anim: (h % 3 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+            if (subG) {
+              const subPos = mainPos.startsWith('left:') ? 'right:14px;bottom:-7px;' : 'left:-8px;top:-7px;';
+              el.appendChild(renderBespokePiece({ pos: subPos, w: 8, h: 7, pal, grid: subG }));
+            }
+          } else {
+            if (h % 3 === 0) el.classList.add('bespoke-static');
+            el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+            if (subG) {
+              el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
+            }
+          }
         }
       }
     }
