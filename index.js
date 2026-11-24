@@ -9775,16 +9775,17 @@
     if (!bar) {
       bar = doc.createElement('div');
       bar.id = 'st-tb-inline-phrase-bar';
-      bar.style.cssText = 'display:flex;align-items:center;gap:5px;width:100%;overflow-x:auto;padding:3px 6px;box-sizing:border-box;scrollbar-width:none;-webkit-overflow-scrolling:touch;';
+      bar.style.cssText = 'display:flex;align-items:center;gap:5px;width:100%;overflow-x:auto;padding:2px 4px 4px;box-sizing:border-box;background:transparent;scrollbar-width:none;-webkit-overflow-scrolling:touch;';
       host.insertBefore(bar, host.firstChild);
     }
     bar.innerHTML = '';
     arr.forEach(ph => {
       const pill = doc.createElement('button');
       pill.type = 'button';
+      pill.className = 'menu_button interactable';
       pill.textContent = ph.title || '短语';
       pill.title = ph.text || '';
-      pill.style.cssText = 'flex-shrink:0;height:22px;padding:0 8px;border-radius:999px;border:1px solid rgba(180,160,175,0.55);background:rgba(255,255,255,0.12);color:inherit;font-size:11px;line-height:20px;cursor:pointer;white-space:nowrap;';
+      pill.style.cssText = 'flex-shrink:0;width:auto;min-width:0;height:auto;min-height:22px;margin:0;padding:2px 8px;border-radius:5px;border:1px solid var(--SmartThemeBorderColor, rgba(128,128,128,0.32));background:var(--SmartThemeBlurTintColor, rgba(128,128,128,0.08));color:var(--SmartThemeBodyColor, inherit);font-family:inherit;font-size:11px;line-height:1.3;cursor:pointer;white-space:nowrap;';
       pill.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -9798,6 +9799,7 @@
       config.quickPhraseBarOn = !(config.quickPhraseBarOn !== false);
       saveConfig();
       syncInlinePhraseBar();
+      if (typeof win.__stSyncQpBarToggle === 'function') win.__stSyncQpBarToggle();
     });
   }
   win.__stSyncInlinePhraseBar = syncInlinePhraseBar;
@@ -47439,7 +47441,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           ppop.style.width = '264px';
           ppop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
               <span>快捷短语</span>
-              <div style="display:flex;gap:5px;">
+              <div style="display:flex;gap:4px;">
+                <button class="st-tb-mini-btn" id="st-qp-bar-toggle" type="button">常驻:开</button>
                 <button class="st-tb-mini-btn" id="st-qp-add" type="button">+新增</button>
                 <button class="st-tb-mini-btn" id="st-qp-close" type="button">关闭</button>
               </div>
@@ -47508,6 +47511,23 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             });
           };
           win.__stSyncQuickPhrasePop = syncQPop;
+          const qpBarToggle = ppop.querySelector('#st-qp-bar-toggle');
+          const syncQpBarToggle = () => {
+            if (!qpBarToggle) return;
+            const on = config.quickPhraseBarOn !== false;
+            qpBarToggle.classList.toggle('active', on);
+            qpBarToggle.textContent = on ? '常驻:开' : '常驻:关';
+          };
+          win.__stSyncQpBarToggle = syncQpBarToggle;
+          syncQpBarToggle();
+          if (qpBarToggle) {
+            qpBarToggle.addEventListener('click', () => {
+              config.quickPhraseBarOn = !(config.quickPhraseBarOn !== false);
+              saveConfig();
+              if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
+              syncQpBarToggle();
+            });
+          }
           ppop.querySelector('#st-qp-close')?.addEventListener('click', () => ppop.classList.remove('open'));
           ppop.querySelector('#st-qp-add')?.addEventListener('click', () => {
             qEditId = null; qTtl.value = ''; qTxt.value = '';
@@ -47537,6 +47557,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
         root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
         if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
+        if (typeof win.__stSyncQpBarToggle === 'function') win.__stSyncQpBarToggle();
         ppop.classList.add('open');
       } else if (act === 'readstyle') {
         toggleQuickDock(false);
