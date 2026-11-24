@@ -1255,6 +1255,18 @@
     { id: 'ft_scholar', name: '古风小书童', desc: '推荐：传统服饰 + 颈饰/头饰 + 小灯笼/纸鹤', outfitCat: 'trad', accCats: ['neck', 'head'], compIds: ['mini_lantern', 'mini_crane', 'mini_teacup'] },
     { id: 'ft_fruit', name: '水果派对日', desc: '推荐：连体衣 + 头饰/包包 + 甜品跟班', outfitCat: 'onesie', accCats: ['head', 'bag'], compIds: ['mini_boba', 'mini_pudding', 'mini_cupcake'] },
     { id: 'ft_superstar', name: '满配大明星', desc: '推荐：任意裙子 + 翅膀/光环/颈饰 + 闪耀跟班', outfitCat: 'skirt', accCats: ['wing', 'aura', 'neck'], compIds: ['mini_star', 'mini_rainbow_cloud', 'mini_planet', 'mini_heart_spirit'] },
+    { id: 'ft_daily_walk', name: '日常漫步风', desc: '推荐：日常服饰 + 包包/头饰 + 萌宠或云朵跟班', outfitCat: 'daily', accCats: ['bag', 'head'], compIds: ['mini_cat', 'mini_bunny', 'mini_cloud', 'mini_shiba_doll'] },
+    { id: 'ft_street_cool', name: '街头酷盖汪', desc: '推荐：日常服饰 + 颈饰/包包 + 漂浮或炫酷跟班', outfitCat: 'daily', accCats: ['neck', 'bag'], compIds: ['mini_planet', 'mini_paper_plane', 'mini_fox_fire', 'mini_ghost'] },
+    { id: 'ft_picnic_spring', name: '春日野餐会', desc: '推荐：小裙子 + 包包/头饰 + 甜点或蜜蜂跟班', outfitCat: 'skirt', accCats: ['bag', 'head'], compIds: ['mini_cupcake', 'mini_bee', 'mini_butterfly', 'mini_boba'] },
+    { id: 'ft_lantern_eve', name: '花灯古风夜', desc: '推荐：传统服饰 + 颈饰/光环 + 花灯或仙鹤跟班', outfitCat: 'trad', accCats: ['neck', 'aura'], compIds: ['mini_lantern', 'mini_crane', 'mini_sakura', 'mini_fox_fire'] },
+    { id: 'ft_dream_cloud', name: '云端梦境游', desc: '推荐：连体衣 + 翅膀/光环 + 云朵或月亮跟班', outfitCat: 'onesie', accCats: ['wing', 'aura'], compIds: ['mini_cloud', 'mini_rainbow_cloud', 'mini_moon', 'mini_star'] },
+    { id: 'ft_candy_house', name: '童话糖果屋', desc: '推荐：小裙子 + 头饰/颈饰 + 甜点跟班', outfitCat: 'skirt', accCats: ['head', 'neck'], compIds: ['mini_cupcake', 'mini_pudding', 'mini_boba', 'mini_teacup'] },
+    { id: 'ft_summer_sea', name: '海风夏日祭', desc: '推荐：日常服饰 + 头饰/光环 + 海洋或气泡跟班', outfitCat: 'daily', accCats: ['head', 'aura'], compIds: ['mini_whale', 'mini_jellyfish', 'mini_balloon', 'mini_cloud'] },
+    { id: 'ft_winter_fluff', name: '冬日毛绒居', desc: '推荐：连体衣 + 头饰/颈饰 + 暖心跟班', outfitCat: 'onesie', accCats: ['head', 'neck'], compIds: ['mini_teacup', 'mini_bunny', 'mini_cat', 'mini_shiba_doll'] },
+    { id: 'ft_gacha_gala', name: '限定秀场夜', desc: '推荐：任意小裙子或限定服 + 光环/翅膀 + 任意闪耀或限定跟班', outfitCat: 'skirt', accCats: ['aura', 'wing', 'head'], compIds: ['mini_star', 'mini_moon', 'mini_fairy', 'mini_heart_spirit'] },
+    { id: 'ft_cafe_date', name: '咖啡馆午后', desc: '推荐：日常服饰 + 颈饰/头饰 + 茶杯或甜点跟班', outfitCat: 'daily', accCats: ['neck', 'head'], compIds: ['mini_teacup', 'mini_cupcake', 'mini_pudding', 'mini_cat'] },
+    { id: 'ft_fairy_garden', name: '秘境花仙子', desc: '推荐：小裙子 + 翅膀/包包 + 精灵或蝴蝶跟班', outfitCat: 'skirt', accCats: ['wing', 'bag'], compIds: ['mini_fairy', 'mini_butterfly', 'mini_sakura', 'mini_bee'] },
+    { id: 'ft_royal_trad', name: '盛世霓裳宴', desc: '推荐：传统服饰 + 头饰/翅膀/光环 + 仙鹤或灯笼跟班', outfitCat: 'trad', accCats: ['head', 'wing', 'aura'], compIds: ['mini_crane', 'mini_lantern', 'mini_sakura', 'mini_fairy'] },
   ];
 
   const PUP_FESTIVALS = [
@@ -4108,27 +4120,38 @@
     #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn {
       background: transparent !important;
       border: 1px solid transparent !important;
+      color: var(--tb-text) !important;
       box-shadow: none !important;
+      opacity: 0.78;
     }
     #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active {
-      color: var(--tb-accent) !important;
+      background: transparent !important;
+      color: var(--tb-text) !important;
+      opacity: 1;
       font-weight: 700;
+      box-shadow: inset 0 -2px 0 var(--tb-accent, var(--tb-text)) !important;
     }
     #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn {
       background: transparent !important;
-      border: 1px solid color-mix(in srgb, var(--tb-text) 16%, transparent) !important;
+      border: 1px solid color-mix(in srgb, var(--tb-text) 18%, transparent) !important;
+      color: var(--tb-text) !important;
     }
     #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn.active {
-      border-color: color-mix(in srgb, var(--tb-accent) 62%, transparent) !important;
-      color: var(--tb-accent) !important;
+      background: color-mix(in srgb, var(--tb-text) 11%, transparent) !important;
+      border: 1.5px solid color-mix(in srgb, var(--tb-text) 68%, transparent) !important;
+      color: var(--tb-text) !important;
+      font-weight: 700;
     }
     #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn {
-      background: color-mix(in srgb, var(--tb-text) 8%, transparent) !important;
+      background: color-mix(in srgb, var(--tb-text) 7%, transparent) !important;
       border: 1px solid transparent !important;
+      color: var(--tb-text) !important;
     }
     #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn.active {
-      background: color-mix(in srgb, var(--tb-accent) 22%, transparent) !important;
-      color: var(--tb-accent) !important;
+      background: color-mix(in srgb, var(--tb-text) 20%, transparent) !important;
+      border: 1px solid color-mix(in srgb, var(--tb-text) 24%, transparent) !important;
+      color: var(--tb-text) !important;
+      font-weight: 700;
     }
     #st-tb-quick-dock.qstyle-soft {
       border-color: transparent !important;
@@ -9174,7 +9197,16 @@
               <button class="st-tb-pill" data-effect="leaf" type="button">秋叶</button>
               <button class="st-tb-pill" data-effect="firefly" type="button">萤火</button>
               <button class="st-tb-pill" data-effect="auroraveil" type="button">极光</button>
-              <button class="st-tb-pill" data-effect="golddust" type="button">碎金</button>
+              <button class="st-tb-pill" data-effect="softclouds" type="button">轻云</button>
+            </div>
+            <div id="st-tb-aurora-hue-row" style="display:none;align-items:center;justify-content:space-between;gap:6px;margin:6px 0 2px;">
+              <span style="font-size:11px;opacity:0.78;white-space:nowrap;">极光主色</span>
+              <div class="st-tb-pills" id="st-tb-aurora-hues" style="flex:1;justify-content:flex-end;">
+                <button class="st-tb-pill" data-ahue="green" type="button">极光绿</button>
+                <button class="st-tb-pill" data-ahue="purple" type="button">梦幻紫</button>
+                <button class="st-tb-pill" data-ahue="blue" type="button">冰川蓝</button>
+                <button class="st-tb-pill" data-ahue="mix" type="button">幻彩</button>
+              </div>
             </div>
             <div class="st-tb-slider-group">
               <div class="st-tb-slider-row">
@@ -9243,11 +9275,16 @@
                 <span id="st-tb-qd-maxw-val">320px</span>
               </div>
               <div style="font-size:11px;opacity:0.78;margin:4px 0 5px;">快捷按钮样式</div>
-              <div class="st-tb-pills" id="st-tb-qbtn-styles" style="margin-bottom:8px;flex-wrap:wrap;">
+              <div class="st-tb-pills" id="st-tb-qbtn-styles" style="margin-bottom:6px;flex-wrap:wrap;">
                 <button class="st-tb-pill" data-qbstyle="default" type="button">默认</button>
                 <button class="st-tb-pill" data-qbstyle="ghost" type="button">纯字</button>
                 <button class="st-tb-pill" data-qbstyle="outline" type="button">极细线</button>
                 <button class="st-tb-pill" data-qbstyle="soft" type="button">柔底</button>
+              </div>
+              <div class="st-tb-slider-row" style="margin-bottom:8px;">
+                <span>按钮圆角</span>
+                <input class="st-tb-range" id="st-tb-qbtn-radius" type="range" min="0" max="20" step="1" value="12" />
+                <span id="st-tb-qbtn-radius-val">12px</span>
               </div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px;">
                 <span style="font-size:11px;opacity:0.78;">悬浮球与快捷栏字色</span>
@@ -20747,31 +20784,25 @@
     }
 
     if (type === 'auroraveil') {
-      const idx = Math.floor(Math.random() * 3);
       return {
-        isRibbon: Math.random() < 0.22,
-        band: idx,
         x: Math.random() * w,
-        y: Math.random() * (h * 0.38),
+        y: Math.random() * (h * 0.42),
+        r: 0.7 + Math.random() * 1.1,
         phase: Math.random() * Math.PI * 2,
-        speed: 0.008 + Math.random() * 0.01,
-        r: 1.0 + Math.random() * 1.8,
-        hue: ['82, 232, 198', '104, 186, 255', '178, 138, 255'][idx],
+        speed: 0.015 + Math.random() * 0.02,
       };
     }
 
-    if (type === 'golddust') {
-      const isBokeh = Math.random() < 0.24;
+    if (type === 'softclouds') {
+      const bandY = Math.random() < 0.65 ? Math.random() * (h * 0.45) : (h * 0.55 + Math.random() * (h * 0.35));
       return {
-        isBokeh,
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: isBokeh ? (6 + Math.random() * 12) : (0.9 + Math.random() * 1.8),
-        vx: (Math.random() - 0.5) * 0.22,
-        vy: -(0.12 + Math.random() * 0.26),
-        phase: Math.random() * Math.PI * 2,
-        phaseSpeed: 0.02 + Math.random() * 0.032,
-        hue: pick(['255, 224, 140', '255, 238, 186', '242, 198, 104']),
+        x: randomY ? Math.random() * (w + 180) - 90 : -140 - Math.random() * 120,
+        y: bandY,
+        scale: 0.75 + Math.random() * 0.95,
+        vx: 0.14 + Math.random() * 0.22,
+        bobPhase: Math.random() * Math.PI * 2,
+        bobSpeed: 0.008 + Math.random() * 0.01,
+        alpha: 0.16 + Math.random() * 0.18,
       };
     }
 
@@ -21012,71 +21043,81 @@
           ctx2d.fill();
         } else if (type === 'auroraveil') {
           p.phase += p.speed * spd;
-          if (p.isRibbon) {
-            const tw = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(p.phase * 2.2));
-            const a = clamp(tw * opa * (lightBg ? 0.36 : 0.65), 0, 0.72);
-            ctx2d.fillStyle = `rgba(${p.hue}, ${a})`;
-            ctx2d.beginPath();
-            ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx2d.fill();
+          const tw = 0.25 + 0.75 * (0.5 + 0.5 * Math.sin(p.phase));
+          const a = clamp(tw * opa * (lightBg ? 0.22 : 0.48), 0, 0.55);
+          ctx2d.fillStyle = lightBg ? `rgba(120, 148, 196, ${a})` : `rgba(235, 248, 255, ${a})`;
+          ctx2d.beginPath();
+          ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx2d.fill();
+        } else if (type === 'softclouds') {
+          p.bobPhase += p.bobSpeed * spd;
+          p.x += p.vx * spd;
+          const cy = p.y + Math.sin(p.bobPhase) * 3.5;
+          if (p.x > w + 160 * p.scale) {
+            p.x = -160 * p.scale;
+            p.y = Math.random() * (h * 0.78);
           }
-        } else if (type === 'golddust') {
-          p.phase += p.phaseSpeed * spd;
-          p.x += (p.vx + Math.sin(p.phase) * 0.14) * spd;
-          p.y += p.vy * spd;
-          if (p.y < -20) { p.y = h + 16; p.x = Math.random() * w; }
-          if (p.x < -20) p.x = w + 16;
-          if (p.x > w + 20) p.x = -16;
-          const tw = 0.32 + 0.68 * (0.5 + 0.5 * Math.sin(p.phase));
-          if (p.isBokeh) {
-            const a = clamp((lightBg ? 0.14 : 0.18) * tw * opa, 0, 0.24);
-            const g = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-            g.addColorStop(0, `rgba(${p.hue}, ${a})`);
-            g.addColorStop(0.55, `rgba(${p.hue}, ${a * 0.42})`);
-            g.addColorStop(1, `rgba(${p.hue}, 0)`);
-            ctx2d.fillStyle = g;
+          const a = clamp(p.alpha * opa * (lightBg ? 0.95 : 0.62), 0, 0.34);
+          const col = lightBg ? '255, 255, 255' : '216, 232, 252';
+          ctx2d.save();
+          ctx2d.translate(p.x, cy);
+          ctx2d.scale(p.scale, p.scale);
+          const puffs = [[0, 0, 46], [-34, 8, 32], [36, 10, 34], [-14, -10, 30], [18, -8, 28]];
+          puffs.forEach(([ox, oy, rad]) => {
+            const cg = ctx2d.createRadialGradient(ox, oy, rad * 0.12, ox, oy, rad);
+            cg.addColorStop(0, `rgba(${col}, ${a})`);
+            cg.addColorStop(0.6, `rgba(${col}, ${a * 0.48})`);
+            cg.addColorStop(1, `rgba(${col}, 0)`);
+            ctx2d.fillStyle = cg;
             ctx2d.beginPath();
-            ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx2d.arc(ox, oy, rad, 0, Math.PI * 2);
             ctx2d.fill();
-          } else {
-            const a = clamp((lightBg ? 0.68 : 0.9) * tw * opa, 0, 0.92);
-            const col = lightBg ? '214, 162, 56' : p.hue;
-            const g = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.4);
-            g.addColorStop(0, `rgba(255, 252, 232, ${a})`);
-            g.addColorStop(0.45, `rgba(${col}, ${a * 0.7})`);
-            g.addColorStop(1, `rgba(${col}, 0)`);
-            ctx2d.fillStyle = g;
-            ctx2d.beginPath();
-            ctx2d.arc(p.x, p.y, p.r * 2.4, 0, Math.PI * 2);
-            ctx2d.fill();
-          }
+          });
+          ctx2d.restore();
         }
       }
 
       if (type === 'auroraveil') {
-        const nowSec = performance.now() * 0.00045 * spd;
-        const curtains = [
-          { hue: '76, 232, 194', yBase: h * 0.14, amp: 24, freq: 0.0042, hSpan: h * 0.24, ph: 0 },
-          { hue: '108, 186, 255', yBase: h * 0.19, amp: 30, freq: 0.0034, hSpan: h * 0.26, ph: 2.1 },
-          { hue: '182, 142, 255', yBase: h * 0.12, amp: 20, freq: 0.0051, hSpan: h * 0.22, ph: 4.2 },
-        ];
+        const tm = performance.now() * 0.00055 * spd;
+        const hueMode = config.auroraHue || 'green';
+        const palMap = {
+          green:  [['48, 242, 168', '110, 255, 212', '86, 206, 245'], ['72, 238, 184', '140, 248, 224', '132, 174, 255']],
+          purple: [['186, 118, 255', '224, 158, 255', '128, 178, 255'], ['156, 114, 252', '242, 156, 228', '104, 212, 248']],
+          blue:   [['78, 176, 255', '138, 224, 255', '102, 236, 214'], ['96, 154, 255', '166, 214, 255', '172, 148, 255']],
+          mix:    [['64, 240, 178', '112, 204, 255', '192, 134, 255'], ['198, 132, 255', '94, 232, 212', '108, 178, 255']],
+        };
+        const bands = palMap[hueMode] || palMap.green;
         ctx2d.save();
         ctx2d.globalCompositeOperation = lightBg ? 'source-over' : 'screen';
-        const step = Math.max(12, Math.floor(w / 46));
-        curtains.forEach(c => {
-          const baseA = clamp((lightBg ? 0.085 : 0.13) * opa, 0, 0.22);
-          for (let x = 0; x <= w; x += step) {
-            const wave = Math.sin(x * c.freq + nowSec + c.ph) * c.amp + Math.cos(x * c.freq * 1.7 - nowSec * 0.8) * (c.amp * 0.45);
-            const topY = Math.max(0, c.yBase + wave - c.hSpan * 0.45);
-            const botY = topY + c.hSpan;
-            const colAlpha = baseA * (0.55 + 0.45 * Math.sin(x * 0.009 + nowSec * 1.3 + c.ph));
-            const grad = ctx2d.createLinearGradient(x, topY, x, botY);
-            grad.addColorStop(0, `rgba(${c.hue}, 0)`);
-            grad.addColorStop(0.32, `rgba(${c.hue}, ${colAlpha})`);
-            grad.addColorStop(0.62, `rgba(${c.hue}, ${colAlpha * 0.55})`);
-            grad.addColorStop(1, `rgba(${c.hue}, 0)`);
-            ctx2d.fillStyle = grad;
-            ctx2d.fillRect(x, topY, step + 1.5, c.hSpan);
+        const cols = 72;
+        const dx = w / cols;
+        bands.forEach((colsArr, bIdx) => {
+          const yBase = h * (0.17 + bIdx * 0.11);
+          const hotCenter = ((Math.sin(tm * 0.55 + bIdx * 2.4) * 0.38 + 0.5) * w);
+          const hotCenter2 = ((Math.cos(tm * 0.42 + bIdx * 1.7) * 0.36 + 0.5) * w);
+          for (let i = 0; i <= cols; i++) {
+            const x = i * dx;
+            const nx = i / cols;
+            const fold = Math.sin(nx * 5.2 + tm * (1.1 + bIdx * 0.25) + bIdx * 1.9) * (36 + bIdx * 14)
+              + Math.sin(nx * 10.5 - tm * 0.75 + bIdx) * 16
+              + Math.cos(nx * 3.1 + tm * 0.4) * 22;
+            const ridgeY = yBase + fold;
+            const rayH = (h * (0.18 + 0.13 * (0.5 + 0.5 * Math.sin(nx * 7.4 + tm * 1.3 + bIdx)))) * (0.85 + 0.35 * Math.cos(nx * 4.1 - tm * 0.9));
+            const d1 = Math.exp(-Math.pow((x - hotCenter) / (w * 0.18), 2));
+            const d2 = Math.exp(-Math.pow((x - hotCenter2) / (w * 0.22), 2));
+            const shimmer = 0.22 + 0.78 * Math.min(1, d1 * 1.15 + d2 * 0.65);
+            const edgeFade = Math.sin(nx * Math.PI);
+            const alpha = clamp((lightBg ? 0.14 : 0.24) * shimmer * Math.pow(edgeFade, 0.55) * opa, 0, 0.42);
+            if (alpha < 0.008) continue;
+            const topY = Math.max(0, ridgeY - rayH);
+            const g = ctx2d.createLinearGradient(x, ridgeY + 12, x, topY);
+            g.addColorStop(0, `rgba(${colsArr[0]}, 0)`);
+            g.addColorStop(0.14, `rgba(${colsArr[1]}, ${Math.min(0.55, alpha * 1.45)})`);
+            g.addColorStop(0.36, `rgba(${colsArr[0]}, ${alpha})`);
+            g.addColorStop(0.72, `rgba(${colsArr[2]}, ${alpha * 0.42})`);
+            g.addColorStop(1, `rgba(${colsArr[2]}, 0)`);
+            ctx2d.fillStyle = g;
+            ctx2d.fillRect(x - dx * 0.6, topY, dx * 2.1, ridgeY + 12 - topY);
           }
         });
         ctx2d.restore();
@@ -25361,7 +25402,7 @@
     }
     const theme = getTodayFashionTheme();
     fashionBestEl.textContent = config.puppyFashionDaily.best ? `今日最高: ${config.puppyFashionDaily.best}` : '今日未评分';
-    fashionCardEl.innerHTML = `<div style="font-weight:700;color:#5c2878;">今日主题：【${theme.name}】</div><div style="margin-top:3px;color:#6b5446;">${theme.desc}</div><div style="margin-top:3px;font-size:9px;color:#8c7a6b;">衣服+对应配饰+对应跟班全套契合可触发隐藏 SSS 评价!</div>`;
+    fashionCardEl.innerHTML = `<div style="font-weight:700;color:#5c2878;">今日主题：【${theme.name}】</div><div style="margin-top:3px;color:#6b5446;">${theme.desc}</div><div style="margin-top:4px;font-size:9.5px;line-height:1.45;color:#7a685b;">评分规则：基础50分 + 服装契合24分 + 配饰每件契合10分（上限20分）+ 跟班契合16分；扭蛋与秘境限定装扮同样计分，全套契合触发 SSS</div>`;
   };
 
   fashionEvalBtn.addEventListener('click', () => {
@@ -25370,12 +25411,44 @@
       config.puppyFashionDaily = { date: today, best: '', claimed: false };
     }
     const theme = getTodayFashionTheme();
-    const oObj = SHOP_PUP_OUTFITS.find(o => o.id === config.puppyOutfit);
-    const outfitMatch = oObj ? oObj.cat === theme.outfitCat : (theme.outfitCat === 'skirt' && FREE_PUP_OUTFITS.some(f => f.id === config.puppyOutfit && f.id !== 'none'));
-    const accMatches = (config.puppyAccs || []).filter(id => theme.accCats.includes(SHOP_PUP_ACCS.find(a => a.id === id)?.cat)).length;
-    const compMatch = theme.compIds.includes(config.puppyCompanion || '');
+    const inferOutfitCat = (item) => {
+      if (!item) return '';
+      if (item.cat && ['skirt', 'daily', 'trad', 'onesie'].includes(item.cat)) return item.cat;
+      const nm = `${item.id || ''} ${item.name || ''}`;
+      if (/hanfu|kimono|qipao|tang|song|ming|ancient|trad|guofeng|汉服|古风|唐|宋|明|旗袍|和服|仙裙|霓裳/.test(nm)) return 'trad';
+      if (/onesie|pajama|sleep|hoodie|bear|bunny|frog|shark|dino|睡衣|连体|绒|卫衣|毛衣|冬/.test(nm)) return 'onesie';
+      if (/shirt|jacket|coat|suit|jeans|sweater|uniform|daily|street|cafe|卫|外套|夹克|衬衫|西装|制服|日常|牛仔|毛衣/.test(nm)) return 'daily';
+      return 'skirt';
+    };
+    const inferAccCat = (item) => {
+      if (!item) return '';
+      if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag'].includes(item.cat)) return item.cat;
+      const nm = `${item.id || ''} ${item.name || ''}`;
+      if (/wing|feather|cape|翅|羽|披风/.test(nm)) return 'wing';
+      if (/aura|halo|star|moon|glow|ring|cloud|光环|光晕|星|月|极光|雾/.test(nm)) return 'aura';
+      if (/bag|purse|basket|pack|包|篮|背/.test(nm)) return 'bag';
+      if (/neck|collar|scarf|tie|bell|necklace|ribbon|围巾|项链|领结|项圈|铃铛|丝带/.test(nm)) return 'neck';
+      return 'head';
+    };
+    const allOutfits = [...SHOP_PUP_OUTFITS, ...GACHA_OUTFITS, ...TREASURE_OUTFITS, ...SPECIAL_EVENT_OUTFITS, ...FREE_PUP_OUTFITS];
+    const allAccs = [...SHOP_PUP_ACCS, ...GACHA_ACCS, ...TREASURE_ACCS];
+    const allSpecialComps = [...GACHA_COMPANIONS, ...TREASURE_COMPANIONS];
+    const oObj = allOutfits.find(o => o.id === config.puppyOutfit);
+    const hasOutfit = Boolean(config.puppyOutfit && config.puppyOutfit !== 'none');
+    const outfitCatReal = oObj ? inferOutfitCat(oObj) : '';
+    const outfitMatch = hasOutfit && (outfitCatReal === theme.outfitCat || (theme.id === 'ft_gacha_gala' && (GACHA_OUTFITS.some(g => g.id === config.puppyOutfit) || TREASURE_OUTFITS.some(t => t.id === config.puppyOutfit))));
+    const accMatches = (config.puppyAccs || []).filter(id => {
+      const aObj = allAccs.find(a => a.id === id);
+      return aObj && theme.accCats.includes(inferAccCat(aObj));
+    }).length;
+    const curCompId = config.puppyCompanion || '';
+    const isSpecialComp = allSpecialComps.some(c => c.id === curCompId);
+    const compMatch = theme.compIds.includes(curCompId) || isSpecialComp;
 
-    let score = 50 + (outfitMatch ? 24 : (config.puppyOutfit !== 'none' ? 10 : 0)) + Math.min(20, accMatches * 10) + (compMatch ? 16 : (config.puppyCompanion && config.puppyCompanion !== 'none' ? 6 : 0));
+    const outfitPts = outfitMatch ? 24 : (hasOutfit ? 10 : 0);
+    const accPts = Math.min(20, accMatches * 10);
+    const compPts = compMatch ? 16 : (curCompId && curCompId !== 'none' ? 6 : 0);
+    let score = 50 + outfitPts + accPts + compPts;
     const isSSS = outfitMatch && accMatches >= 2 && compMatch;
     const rank = isSSS ? 'SSS(隐藏完美)' : (score >= 92 ? 'S' : (score >= 78 ? 'A' : (score >= 64 ? 'B' : 'C')));
     let reward = 0;
@@ -25394,6 +25467,7 @@
     renderFashionChallenge();
 
     fashionResultEl.style.display = 'block';
+    const detailNote = `（基础50 + 服装${outfitPts} + 配饰${accPts} + 跟班${compPts}）`;
     fashionResultEl.innerHTML = `<div style="font-weight:700;color:${isSSS ? '#b83888' : '#2f6626'};">走秀评分：${rank} (${Math.min(100, score)}分)${reward ? ` · 奖励 +${reward}币` : ' · 今日已领奖'}</div><div style="margin-top:2px;font-size:9px;color:#6b5446;">衣服${outfitMatch ? '超契合' : '一般'} · 配饰命中${accMatches}件 · 跟班${compMatch ? '超契合' : '一般'}</div>`;
     if (config.puppyEnabled) {
       setPuppyState(isSSS ? 'love_firework' : 'happy', 110);
@@ -35500,6 +35574,10 @@
 
     themeBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.themeVal === config.theme));
     effectBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.effect === config.effect));
+    const ahRow = root.querySelector('#st-tb-aurora-hue-row');
+    if (ahRow) ahRow.style.display = config.effect === 'auroraveil' ? 'flex' : 'none';
+    const curAh = config.auroraHue || 'green';
+    root.querySelectorAll('#st-tb-aurora-hues [data-ahue]').forEach(b => b.classList.toggle('active', b.dataset.ahue === curAh));
 
     puppyToggleBtn.textContent = config.puppyEnabled ? '已开启' : '开启';
     puppyToggleBtn.classList.toggle('active', Boolean(config.puppyEnabled));
@@ -35825,21 +35903,21 @@
       gamer: ['隐藏奇观北极光已触发，据说在极光下抽扭蛋手气都会变好', '极光幕帘模式上线，柔雾感拉满还完全不晃眼'],
       philosopher: ['极光悄无声息地在天幕流转，适合配一段安静悠长的故事', '光带聚散无常却格外安宁，慢慢看，我就在一旁陪着'],
     },
-    golddust: {
-      sleepyhead: ['暖洋洋的碎金光点飘过来，感觉空气都变得软绵绵的，好想打个盹', '金灿灿的柔光像黄昏洒进窗台的细尘，窝着看故事最舒服了'],
-      clingy: ['漫天暖金光尘飘在周围，主人快看，你整个人都在发光一样', '收集一把屏幕里的小金光送给主人，祝你今天顺顺利利'],
-      tsundere: ['哼，满屏碎金光尘才勉强配得上本汪的毛色，算你会挑氛围', '才不是在伸爪接金光呢，本汪只是顺手帮你扫一扫屏幕'],
-      foodie: ['亮晶晶的碎金微尘飘上去，好像刚洒在热可可上的金箔糖粉', '暖金色的浮光看着香喷喷的，突然好想吃焦糖布丁配小饼干'],
-      explorer: ['哇，空气里飘满会发光的细碎金尘，好像闯进了藏宝秘境一样', '看这些慢悠悠升起的碎金光点，说不定藏着什么好运彩蛋'],
-      fashionista: ['柔焦暖金浮光配极细光尘，这股油画电影滤镜感高级又克制', '碎金微光自带柔焦质感，不管配浅色还是深色页面都很耐看'],
-      gamer: ['碎金浮光特效已上线，全屏自带招财欧气光环，感觉抽卡都要出金了', '暖金光尘缓慢升空，既不挡视线又很有仪式感'],
-      philosopher: ['微尘在光里缓缓浮沉，让每一段文字都多了一层安静的温度', '细碎的暖光不喧闹，陪你安安静静读完这一章刚刚好'],
+    softclouds: {
+      sleepyhead: ['头顶慢慢飘过一朵软蓬蓬的大云朵，看着好想枕上去睡个午觉', '轻飘飘的流云慢慢晃过，连呼吸都跟着慢半拍了'],
+      clingy: ['主人你看那朵飘过去的云，是不是圆滚滚的有点像我', '我想摘一朵最软的小白云垫在主人手边，看字就不累啦'],
+      tsundere: ['哼，云朵慢吞吞飘过去有什么稀奇的，本汪才没有仰着头数云朵', '算了，这朵云长得还挺蓬松，勉强准它在本汪头顶路过吧'],
+      foodie: ['白胖胖的流云飘过来，越看越像刚烤好的舒芙蕾和棉花糖', '看着漫天软云突然有点馋奶盖茶了，主人要不要歇会儿喝口水'],
+      explorer: ['哇，那朵云刚飘过来的时候像小鲸鱼，转眼又变成小羊了', '高空流云缓缓漂移，今天的天空能见度极佳，适合出发看新故事'],
+      fashionista: ['极淡的通透流云慢飘，干净克制又完全不抢正文风头，耐看度满分', '这种自带留白感的轻云氛围，和任何主题配色搭在一起都很和谐'],
+      gamer: ['轻云舒缓氛围已加载，护眼模式拉满，看长剧情眼睛舒服多了', '跟着云朵飘动节奏慢慢翻楼，整个人都放松下来了'],
+      philosopher: ['云卷云舒不急不缓，正好配着这一段慢慢往下读', '天上的云总在悄悄变换形状，就像故事里每一次意想不到的转折'],
     },
   };
 
   const triggerAmbientPupReaction = (effKey, fromClick = true) => {
     if (!config.puppyEnabled) return;
-    if (effKey !== 'auroraveil' && effKey !== 'golddust') return;
+    if (effKey !== 'auroraveil' && effKey !== 'softclouds') return;
     const curP = config.puppyPersonality || 'sleepyhead';
     const bank = AMBIENT_PUP_TALK[effKey][curP] || AMBIENT_PUP_TALK[effKey].sleepyhead;
     const line = pick(bank);
@@ -35855,7 +35933,7 @@
 
   setInterval(() => {
     if (doc.hidden || !config.puppyEnabled) return;
-    if (config.effect !== 'auroraveil' && config.effect !== 'golddust') return;
+    if (config.effect !== 'auroraveil' && config.effect !== 'softclouds') return;
     if (puppyBubble && puppyBubble.classList.contains('show')) return;
     if (Math.random() < 0.28) triggerAmbientPupReaction(config.effect, false);
   }, 46000);
@@ -35868,6 +35946,13 @@
       startEffect();
       if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
       triggerAmbientPupReaction(config.effect, true);
+    });
+  });
+  root.querySelectorAll('#st-tb-aurora-hues [data-ahue]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      config.auroraHue = btn.dataset.ahue;
+      saveConfig();
+      syncUI();
     });
   });
 
@@ -43391,8 +43476,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       b.className = 'st-tb-qd-btn';
       b.dataset.qd = it.id;
       b.textContent = it.label;
-      const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
-      b.style.borderRadius = `${Math.max(2, Math.min(qRad, 18))}px`;
+      const bRad2 = Number.isFinite(Number(config.quickDockBtnRadius)) ? clamp(Number(config.quickDockBtnRadius), 0, 20) : 12;
+      b.style.borderRadius = `${bRad2}px`;
       if (config.badgeTextColor) b.style.color = config.badgeTextColor;
       quickDockEl.appendChild(b);
     });
@@ -43638,7 +43723,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const bRad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
     const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
     const qMaxW = Number.isFinite(Number(config.quickDockMaxW)) ? clamp(Number(config.quickDockMaxW), 180, 420) : 320;
-    const btnRad = Math.max(2, Math.min(qRad, 18));
+    const btnRad = Number.isFinite(Number(config.quickDockBtnRadius)) ? clamp(Number(config.quickDockBtnRadius), 0, 20) : 12;
     if (badge) {
       badge.classList.remove('bstyle-thin', 'bstyle-frost', 'bstyle-plain', 'bstyle-outline', 'bstyle-soft', 'no-dot');
       if (bs !== 'default') badge.classList.add(`bstyle-${bs}`);
@@ -43662,6 +43747,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const qWVal = root.querySelector('#st-tb-qd-maxw-val');
     if (qWInp) qWInp.value = String(qMaxW);
     if (qWVal) qWVal.textContent = `${qMaxW}px`;
+    const qbRadInp = root.querySelector('#st-tb-qbtn-radius');
+    const qbRadVal = root.querySelector('#st-tb-qbtn-radius-val');
+    if (qbRadInp) qbRadInp.value = String(btnRad);
+    if (qbRadVal) qbRadVal.textContent = `${btnRad}px`;
     root.querySelectorAll('#st-tb-badge-styles [data-bstyle]').forEach(b => {
       b.classList.toggle('active', b.dataset.bstyle === bs);
     });
@@ -43759,6 +43848,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   });
   root.querySelector('#st-tb-qd-maxw')?.addEventListener('input', (e) => {
     config.quickDockMaxW = clamp(Number(e.target.value) || 320, 180, 420);
+    saveConfig();
+    applyBadgeAndDockStyle();
+  });
+  root.querySelector('#st-tb-qbtn-radius')?.addEventListener('input', (e) => {
+    config.quickDockBtnRadius = clamp(Number(e.target.value) || 0, 0, 20);
     saveConfig();
     applyBadgeAndDockStyle();
   });
