@@ -34562,6 +34562,9 @@ function bootGoulaicaiExtension() {
     config.swipeGuard = !config.swipeGuard;
     saveConfig();
     syncUI();
+    if (config.swipeGuard && typeof showKaPolicyNotice === 'function') {
+      showKaPolicyNotice('已开启防手滑，右滑新生成或重生成前会先弹窗确认');
+    }
   });
 
 
