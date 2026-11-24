@@ -17317,12 +17317,14 @@
           grid: ['...ll.....','..lwwl....','...ll.....','....c.....','..ccwwcc..','...cccc...','....p.....','..ppwwpp..','...pppp...','....l.....'] },
       ],
     },
-    // 5. 一线吃瓜汪 (SR)：右下咬了一口的翠绿红瓤大西瓜角（干净静态）
+    // 5. 一线吃瓜汪 (SR)：右下大西瓜角叠翠绿薄荷叶 + 左上溅出两颗粉红西瓜汁珠
     gb_gacha_melon_eater: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'right:-9px;bottom:-7px;', w: 13, h: 11, pal: { g: '#4ea864', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
-          grid: ['.....rr.....','....rrwr....','...rrkrr....','..rrr..rr...','.rrkrrrrkr..','llrrrrrrrll.','.gglllllgg..','..ggggggg...'] },
+        { pos: 'right:-10px;bottom:-7px;', w: 15, h: 12, pal: { g: '#4ea864', m: '#82d994', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
+          grid: ['.....rr..mm...','....rrwrmgg...','...rrkrrmg....','..rrr..rr.....','.rrkrrrrkr....','llrrrrrrrll...','.gglllllgg....','..ggggggg.....'] },
+        { pos: 'left:-7px;top:-6px;', w: 9, h: 8, anim: 'b-bob', pal: { r: '#f5788e', w: '#ffe0e6', g: '#62bf78' },
+          grid: ['..rr.....','.rwwr..g.','..rr..gg.','......g..'] },
       ],
     },
     // 6. 国家一级睡狗 (SR)：左下浅蓝软云枕 + 右上轻轻漂浮睡意泡泡
@@ -17335,20 +17337,24 @@
           grid: ['....lll..','...lwwl..','....lll..','.ll......','lwl......','.ll......'] },
       ],
     },
-    // 7. 零食质检员 (SR)：左上咬缺一口的巧克力豆曲奇（干净静态）
+    // 7. 零食质检员 (SR)：左上缺口巧克力曲奇配掉屑 + 右下暖白小牛奶杯
     gb_gacha_snack_thief: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-8px;top:-7px;', w: 11, h: 11, pal: { o: '#b87438', a: '#f0be7a', l: '#ffe2b0', k: '#5c341a' },
-          grid: ['..oooo....','.oaalao...','oakaal....','oaaalao...','oaakaaoo..','.oaaakao..','..ooooo...'] },
+        { pos: 'left:-9px;top:-8px;', w: 13, h: 12, pal: { o: '#b87438', a: '#f0be7a', l: '#ffe2b0', k: '#5c341a' },
+          grid: ['..oooo......','.oaalao..a..','oakaal....a.','oaaalao.....','oaakaaoo..k.','.oaaakao....','..ooooo.....'] },
+        { pos: 'right:-8px;bottom:-6px;', w: 10, h: 11, pal: { w: '#ffffff', b: '#a8d6f5', o: '#c49872' },
+          grid: ['.ooooooo..','.owwwwwwo.','.owbbbbwo.','.owbbbbwoo','.owwwwwwo.','.ooooooo..'] },
       ],
     },
-    // 8. 合法摸鱼狗 (SR)：右侧摆尾薄荷青小鱼配水纹（轻摇）
+    // 8. 合法摸鱼狗 (SR)：右侧摆尾薄荷小鱼 + 左下两颗透明水泡配水波纹
     gb_gacha_slacking_pro: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'right:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 12, anim: 'b-tilt', pal: { c: '#5cb8ad', l: '#b8f2ea', w: '#ffffff', k: '#234a48' },
-          grid: ['....cccc....','..ccllllcc..','.cclkllllcc.','cclllllllccc','.ccllllcc.cc','..cccccc..cc','............','..cc....cc..'] },
+        { pos: 'right:-12px;top:50%;transform:translateY(-50%);', w: 15, h: 13, anim: 'b-tilt', pal: { c: '#5cb8ad', l: '#b8f2ea', w: '#ffffff', k: '#234a48' },
+          grid: ['....cccc.....','..ccllllcc...','.cclkllllcc..','cclllllllccc.','.ccllllcc.cc.','..cccccc..cc.','.............','.cc..cc..cc..'] },
+        { pos: 'left:-8px;bottom:-6px;', w: 10, h: 10, anim: 'b-bob', pal: { c: '#72d4c8', w: '#ffffff' },
+          grid: ['....ccc...','...cwwc...','....ccc...','.cc.......','cwc.......','.cc.......'] },
       ],
     },
     // 9. 深夜干饭王 (SR)：左下冒热气暖橘小面碗配筷子（热气微浮）
@@ -17359,12 +17365,14 @@
           grid: ['..w...w...kk','...w...w.kk.','..yyyyyykk..','.yyyyyyyyy..','ooooooooooo.','.ooooroooo..','..ooooooo...','...ooooo....'] },
       ],
     },
-    // 10. 云端发呆冠军 (SR)：底边一整朵蓬松白云托起铭牌
+    // 10. 云端发呆冠军 (SR)：底边蓬松宽云托底 + 左上飘浮小纸飞机
     gb_gacha_cloud_drifter: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:50%;bottom:-8px;transform:translateX(-50%);', w: 24, h: 8, pal: { b: '#94bee6', w: '#ffffff', l: '#e6f4ff' },
+        { pos: 'left:50%;bottom:-8px;transform:translateX(-50%);', w: 26, h: 8, pal: { b: '#94bee6', w: '#ffffff', l: '#e6f4ff' },
           grid: ['....bbbb......bbbb....','..bbwwwwbb..bbwwwwbb..','.bwwwwwwwwbbwwwwwwwwb.','bwwwwwwwwwwwwwwwwwwwwb','.bbllllllllllllllllbb.'] },
+        { pos: 'left:-9px;top:-8px;', w: 12, h: 10, anim: 'b-bob', pal: { b: '#78aae6', w: '#ffffff', l: '#d6ecff' },
+          grid: ['........bb..','.....bbbww..','..bbbwwwww..','bbwwwwllll..','....bbll....','.....b......'] },
       ],
     },
     // 11. 满级幸运星 (SSR 豪华)：左侧翡翠四叶草缠金丝带 + 底边蓝金托底 + 右上弯弯金月（柔光呼吸）
@@ -17378,28 +17386,34 @@
           grid: ['...yyyy...','..yyww....','.yyy......','.yyy......','..yyww....','...yyyy...'] },
       ],
     },
-    // 12. 沙发粘合剂 (SR)：左侧淡紫格子软抱枕紧贴边缘（静态慵懒）
+    // 12. 沙发粘合剂 (SR)：左侧淡紫格子软抱枕 + 右下暖橘毛绒小毯角
     gb_gacha_couch_potato: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-9px;top:50%;transform:translateY(-50%);', w: 11, h: 12, pal: { l: '#9e90d9', a: '#dfd6ff', w: '#ffffff' },
+        { pos: 'left:-10px;top:50%;transform:translateY(-50%);', w: 12, h: 13, pal: { l: '#9e90d9', a: '#dfd6ff', w: '#ffffff' },
           grid: ['l........l','lllaaaalll','.lawwawal.','.laaawaal.','.lawaaaal.','.lawwawal.','lllaaaalll','l........l'] },
+        { pos: 'right:-8px;bottom:-6px;', w: 11, h: 9, pal: { a: '#f5c294', w: '#fff5e6', l: '#b49ee6' },
+          grid: ['..aaaaaaa..','.awwwwwwwa.','aalllllllaa','.aaaaaaaaa.'] },
       ],
     },
-    // 13. 退堂鼓鼓手 (SR)：左下绯红小太鼓配小鼓槌（静态俏皮）
+    // 13. 退堂鼓鼓手 (SR)：左下绯红小太鼓配交叉鼓槌 + 右上跳动声波弧与小红结
     gb_gacha_no_work_dog: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-9px;bottom:-6px;', w: 12, h: 12, pal: { r: '#e0586e', y: '#f5cc64', w: '#fff8ec', k: '#7a4830' },
+        { pos: 'left:-9px;bottom:-6px;', w: 12, h: 12, anim: 'b-tilt', pal: { r: '#e0586e', y: '#f5cc64', w: '#fff8ec', k: '#7a4830' },
           grid: ['k........k','.kk....kk.','..rrrrrr..','.rywwwwyr.','rywwwwwwyr','rywwwwwwyr','.rywwwwyr.','..rrrrrr..'] },
+        { pos: 'right:-8px;top:-7px;', w: 10, h: 9, anim: 'b-bob', pal: { r: '#eb7288', y: '#f5cc64' },
+          grid: ['..yy...r..','.y....rr..','..yy..r...','.....r....'] },
       ],
     },
-    // 14. 电子榨菜王 (SR)：右下翠绿玻璃酱菜罐贴红封条（静态搞怪）
+    // 14. 电子榨菜王 (SR)：右下翠绿酱菜罐贴红封条 + 左上脆嫩小菜叶与红辣椒
     gb_gacha_e_pickles: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
         { pos: 'right:-9px;bottom:-6px;', w: 11, h: 13, pal: { y: '#e0b048', g: '#5eb86e', l: '#b8f0be', r: '#e85a64', w: '#ffffff' },
           grid: ['..yyyyy...','.ggggggg..','gllwrrrllg','glggrrrggl','gllwrrrllg','glgggggggl','.ggggggg..'] },
+        { pos: 'left:-8px;top:-6px;', w: 11, h: 9, pal: { g: '#5ec472', l: '#c2f5c8', r: '#eb5a5a' },
+          grid: ['..ggg..rr.','.gllg.rrr.','.gggg..r..','..gg......'] },
       ],
     },
     // 15. 已读乱回专家 (SSR 豪华)：左上蓝粉叠层对话泡泡 + 右下小感叹号徽（丝光扫过）
@@ -17452,15 +17466,169 @@
           grid: ['...pp..oo...','..pllp.o....','.plwwlp.o...','..pllp..oo..','...pp..o.pp.','......o.pllp','....oo..pwlp','...o....plp.','..o.........'] },
       ],
     },
-    // 20. 绝版七彩萌主 (商店108币顶级豪华)：左侧华丽紫金权杖 + 底边七彩棱镜花环 + 右上斜戴七彩钻冠
+    // 20. 绝版七彩萌主 (商店108币顶级豪华)：左右华丽紫金权杖与七彩翼 + 顶边七彩钻冠 + 底边棱镜珍珠长花环（顶级奢华不输炽天使汪！）
     sb_supreme_rainbow: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['top', 'bottom', 'right'],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 13, h: 18, anim: 'b-bob', pal: { l: '#b47ae8', c: '#7edcf5', p: '#ff94c8', y: '#f5cc58', w: '#ffffff' },
+          grid: ['....yy....','..llwwll..','.lcwwwwcl.','..ppwwpp..','...yyyy...','....yy....','...ywwy...','....yy....','...lwwl...','....yy....'] },
+        { pos: 'right:-10px;top:-10px;', w: 14, h: 11, anim: 'b-tilt', pal: { y: '#f2c44c', l: '#b882eb', c: '#7edcf5', p: '#ff94c8', w: '#ffffff' },
+          grid: ['..y...y...y..','.lyl.ywy.ycy.','.yyyyyyyyyyy.','.ypyylwycypy.','..yyyyyyyyy..'] },
+      ],
+    },
+    // 21. 大明第一萌 (商店82币豪华)：左右翠玉雕栏与宫灯垂穗 + 底边祥云翡翠托底 + 左上小红灯笼
+    sb_ult_ancient_jade: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['bottom', 'right'],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 17, anim: 'b-tilt', pal: { y: '#e6b442', r: '#e04e58', w: '#fff5dc', g: '#52b88a', l: '#b8f2d8' },
+          grid: ['...yyyy...','..yrrrry..','.yrwrrwry.','.yrrwwrry.','..yrrrry..','...yyyy...','....gg....','...gllg...','...g..g...','...y..y...'] },
+        { pos: 'right:-8px;top:-9px;', w: 12, h: 10, pal: { g: '#4eb586', l: '#b8f5da', y: '#f2c858', w: '#ffffff' },
+          grid: ['..gggggg..','.gllwwllg.','gllggggllg','.gyyyyyyg.','...yyyy...'] },
+      ],
+    },
+    // 22. 发财小锦鲤 (商店85币豪华)：左侧跃浪红白大锦鲤 + 底部金浪花环 + 右上转运金铜钱流苏
+    sb_ult_star_emperor: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['bottom', 'right'],
+      pieces: [
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 17, anim: 'b-bob', pal: { r: '#f26a48', w: '#ffffff', y: '#f5cc58', c: '#8ce0f5', k: '#3b2418' },
+          grid: ['....rrr.....','..rrwwwrr...','.rrkwwwwrr..','rwwrrrrwwwr.','.rrwwwwrr...','...rrrr.....','..rr..rr....','.cc....cc...','cwwccccwwc..'] },
+        { pos: 'right:-9px;top:-9px;', w: 12, h: 11, pal: { y: '#e6a82e', w: '#fff6c4', r: '#e04e58' },
+          grid: ['...yyyy...','..ywwwwy..','.ywyyyywy.','..ywwwwy..','...yyyy...','....rr....','...r..r...'] },
+      ],
+    },
+    // 23. 宇宙无敌狗 (商店98币顶级豪华)：顶边星河星冕 + 左侧发光土星环 + 右侧星云光翼 + 底边双星轨托底
+    sb_ult_meow_dog_god: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['top', 'bottom', 'right'],
+      pieces: [
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-bob', pal: { l: '#a87ee8', c: '#7ed8ff', y: '#ffe484', w: '#ffffff', p: '#ffa6d4' },
+          grid: ['.....llll.....','...llwwwwll...','..llwwllwwll..','yyllllllllllyy','.yyccclllppyy.','...llllllll...','.....llll.....'] },
+      ],
+    },
+    // 24. 天选小可爱 (商店72币豪华)：底边珍珠蕾丝长裙边 + 左侧大号粉白双层蝴蝶结垂珠 + 右上迷你珍珠皇冠
+    sb_ult_moon_valkyrie: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-tilt', pal: { p: '#f28cb2', l: '#ffd6e6', w: '#ffffff', y: '#ffe494' },
+          grid: ['.ppp...ppp.','ppwpp.ppwpp','ppplppplppp','.ppppppppp.','..pp...pp..','.pp..w..pp.','.p..wyw..p.','.....w.....'] },
+        { pos: 'right:-8px;top:-9px;', w: 12, h: 10, pal: { w: '#ffffff', p: '#f294b8', y: '#f5cc58' },
+          grid: ['..w..y..w..','.ww.yyy.ww.','.ppppppppp.','.pwwpwpwwp.','..ppppppp..'] },
+      ],
+    },
+    // 25. 真龙天狗 (商店48币豪华)：左侧祥云金龙角徽 + 右下鎏金玉玺印章
+    sb_angel_whisper: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['top'],
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 15, pal: { y: '#e6a82e', l: '#fff2b0', r: '#e05454', w: '#ffffff' },
+          grid: ['.y......y.','yy..yy..yy','.yyylllyy.','..yylrlyy.','...yyyyy..','..wwwwwww.','.wlllllllw'] },
+        { pos: 'right:-8px;bottom:-6px;', w: 10, h: 10, pal: { r: '#d94848', y: '#f2c44c', w: '#fff5dc' },
+          grid: ['..yyyy..','.yrrrry.','yrwrrwry','yrrwwrry','.yrrrry.','..yyyy..'] },
+      ],
+    },
+    // 26. 满级宠狗狂 (商店55币豪华)：左侧极光水晶爱心翼 + 底边冰蓝柔雾光带
+    sb_aurora_halo: {
       cls: 'bespoke-lux bespoke-sheen',
       ult: ['bottom'],
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 17, pal: { l: '#b47ae8', c: '#7edcf5', p: '#ff94c8', y: '#f5cc58', w: '#ffffff' },
-          grid: ['....yy....','..llwwll..','.lcwwwwcl.','..ppwwpp..','....yy....','....yy....','...ywwy...','....yy....','....yy....','....yy....'] },
-        { pos: 'right:-9px;top:-9px;', w: 13, h: 10, anim: 'b-bob', pal: { y: '#f2c44c', l: '#b882eb', c: '#7edcf5', p: '#ff94c8', w: '#ffffff' },
-          grid: ['..y...y...y..','.lyl.ywy.ycy.','.yyyyyyyyyyy.','.ypyylwycypy.','..yyyyyyyyy..'] },
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-bob', pal: { c: '#68d4cf', l: '#c4faf5', p: '#ffa6cc', w: '#ffffff' },
+          grid: ['..ww...pp..','.wwww.pppp.','wwwccppwwpp','.wwcccpppp.','..wwcccpp..','...wwccp...','....wwc....'] },
+      ],
+    },
+    // 27. 人间富贵狗 (商店45币高阶)：左侧高定粉金小手提包 + 右上闪亮红宝石吊坠
+    sb_heart_devotion: {
+      cls: 'bespoke-std bespoke-glow',
+      pieces: [
+        { pos: 'left:-11px;top:50%;transform:translateY(-50%);', w: 12, h: 14, pal: { y: '#e6b242', p: '#eb7aa0', l: '#ffd4e4', w: '#ffffff' },
+          grid: ['...yyyy...','..y....y..','.pppppppp.','pppllllppp','pppwyywppp','pppllllppp','.pppppppp.'] },
+        { pos: 'right:-7px;top:-7px;', w: 9, h: 10, anim: 'b-bob', pal: { r: '#eb5878', w: '#ffd6e2', y: '#f2c44c' },
+          grid: ['...yy...','..rrrr..','.rrwwrr.','..rrrr..','...rr...'] },
+      ],
+    },
+    // 28. 大宋第一汪 (商店38币高阶)：左侧宋瓷青绿折扇 + 右下白玉流苏穗
+    sb_ancient_fan: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 13, pal: { g: '#58b896', l: '#c2f2e0', w: '#ffffff', y: '#d9a84e' },
+          grid: ['...gggggg...','.ggllwwllgg.','ggllggggllgg','.gggggggggg.','..ggyyyygg..','....yyyy....'] },
+        { pos: 'right:-7px;bottom:-6px;', w: 9, h: 11, anim: 'b-tilt', pal: { g: '#64c2a0', w: '#e6fff5', y: '#e6b84c' },
+          grid: ['..ggg..','.gwwwg.','..ggg..','...y...','..y.y..','..y.y..'] },
+      ],
+    },
+    // 29. 汪界顶流 (商店32币高阶)：左上大号粉紫应援蝴蝶结 + 右下小巧聚光灯星芒徽
+    sb_ribbon_idol: {
+      cls: 'bespoke-std bespoke-sheen',
+      pieces: [
+        { pos: 'left:-10px;top:-8px;', w: 14, h: 11, anim: 'b-tilt', pal: { p: '#eb7cb8', l: '#ffd6ec', w: '#ffffff', y: '#ffe484' },
+          grid: ['.ppp...ppp.','ppwpp.ppwpp','pppypppyppp','.ppp...ppp.','..pp...pp..'] },
+        { pos: 'right:-8px;bottom:-6px;', w: 10, h: 9, pal: { y: '#f5cc58', w: '#ffffff', l: '#c49ee6' },
+          grid: ['...lll...','..lwwwl..','.lywwwyl.','..lllll..'] },
+      ],
+    },
+    // 30. 暴富小狗 (商店35币高阶)：左下叠高高招财金币堆 + 右上大红福字小灯笼
+    sb_lantern_night: {
+      cls: 'bespoke-std bespoke-glow',
+      pieces: [
+        { pos: 'left:-10px;bottom:-6px;', w: 13, h: 11, pal: { y: '#e6a82e', l: '#fff2b0', o: '#9c6412' },
+          grid: ['....yyyy....','...ylllly...','.yyyyyyyyyy.','yllllyllllly','.yyyyyyyyyy.'] },
+        { pos: 'right:-8px;top:-8px;', w: 10, h: 12, anim: 'b-tilt', pal: { y: '#f2c44c', r: '#e05248', w: '#ffe6b8' },
+          grid: ['..yyyy..','.yrrrry.','yrwrrwry','.yrrrry.','..yyyy..','...yy...'] },
+      ],
+    },
+    // 31. 绝世小甜心 (商店36币高阶)：左下透明冰蓝水晶心 + 右上珍珠串花弧
+    sb_crystal_prism: {
+      cls: 'bespoke-std bespoke-sheen',
+      pieces: [
+        { pos: 'left:-10px;bottom:-6px;', w: 12, h: 11, pal: { c: '#6ec4e8', l: '#ccf4ff', w: '#ffffff', p: '#ffb8da' },
+          grid: ['.ccc..ccc.','cwwccccppc','cwwclllppc','.cccllppc.','..cccppc..','...ccpc...'] },
+        { pos: 'right:-8px;top:-7px;', w: 11, h: 9, anim: 'b-bob', pal: { w: '#ffffff', c: '#8cd8f5', p: '#ffc4e0' },
+          grid: ['....www...','..ccwwwpp.','..cc...pp.'] },
+      ],
+    },
+    // 32. 万元户 (成就传说豪华)：左侧大号鎏金聚宝盆冒金币 + 顶边皇室冠冕 + 底边金币花环（真豪华！）
+    ach_rich_10k: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['top', 'bottom'],
+      pieces: [
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 16, anim: 'b-bob', pal: { y: '#e6a82e', l: '#fff2a8', w: '#ffffff', o: '#9c5a14', r: '#e04e58' },
+          grid: ['...yy..yy...','..ywwyywwy..','.yyyyyyyyyy.','oooooooooooo','.ooyyyyyyoo.','.ooyrwwryoo.','..oooooooo..'] },
+        { pos: 'right:-9px;bottom:-7px;', w: 11, h: 10, pal: { y: '#f2c44c', w: '#fff7cc', o: '#a86c16' },
+          grid: ['..yyyyy..','.ywwwwwy.','ywyyyyywy','.ywwwwwy.','..yyyyy..'] },
+      ],
+    },
+    // 33. 衣橱主理人 (成就传说豪华)：左侧华丽礼服裙架 + 底边蕾丝珍珠花边 + 右上丝绒蝴蝶结
+    ach_wardrobe_30: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 17, pal: { y: '#e6b84c', l: '#c486e6', p: '#ffa6d4', w: '#ffffff' },
+          grid: ['....yy....','..yyyyyy..','..llwwll..','...lwwl...','..llpppl..','.llppppll.','lllpppplll','.llllllll.'] },
+        { pos: 'right:-9px;top:-8px;', w: 12, h: 9, anim: 'b-tilt', pal: { l: '#b478e0', p: '#ff9ec8', w: '#ffffff' },
+          grid: ['.lll..lll.','llwllllwll','lllpppllll','.lll..lll.'] },
+      ],
+    },
+    // 34. 小狗银行长 (隐藏传说豪华)：左侧圆滚滚招财小金猪储蓄罐 + 底边金砖托底 + 右上金钥匙
+    hidden_coin_hoarder: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['bottom'],
+      pieces: [
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-bob', pal: { y: '#f2c249', l: '#fff2b0', o: '#9c6216', p: '#ffa4b8', k: '#3b2418' },
+          grid: ['..yy....yy..','.yyyyyyyyyy.','yyykllllkyyy','yyylppppylyy','yyyyyyyyyyyy','.yyyyyyyyyy.','..yy....yy..'] },
+        { pos: 'right:-9px;top:-8px;', w: 11, h: 11, pal: { y: '#e6a82e', w: '#fff6c4' },
+          grid: ['..yyyy....','.yw..wy...','..yyyyyy..','......y.y.','........y.'] },
+      ],
+    },
+    // 35. 全成就七彩神话 (终极传说豪华)：完整四向七彩神话天使翼与彩虹冠 + 左上额外七彩棱镜光核（至高无上！）
+    hidden_all_master: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['top', 'bottom', 'left', 'right'],
+      pieces: [
+        { pos: 'left:-10px;top:-10px;', w: 12, h: 12, anim: 'b-bob', pal: { p: '#ff94c8', c: '#7edcf5', l: '#c496ff', y: '#ffe680', w: '#ffffff' },
+          grid: ['....yy....','..ppwwcc..','.pwwwwwwc.','..llwwyy..','....ww....'] },
       ],
     },
   };
