@@ -972,6 +972,12 @@
     { id: 'hidden_chat_100', title: '长篇追更王', desc: '当前对话突破 100 层长篇剧情，赠扭蛋券 ×2', reward: 15, tier: 3, frame: 'ribbons', hidden: true, bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#e8f5ff,#f2ecff,#fff2f6)', bd: '#7ca8e6', fg: '#234273', icon: 'chat_bubble' },
     { id: 'hidden_fashion_3', title: '百变造型师', desc: '保存至少 3 套小狗穿搭预设，赠扭蛋券 ×2', reward: 15, tier: 3, frame: 'petals', hidden: true, bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#ffecf5,#fff6e0,#eefcf4)', bd: '#e086b2', fg: '#702048', icon: 'ribbon_bow' },
     { id: 'hidden_style_player', title: '极简美学家', desc: '亲手定制过悬浮球外观或长按快捷键，赠扭蛋券 ×2', reward: 12, tier: 3, frame: 'prism', hidden: true, bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#eaf9ff,#f2ebff,#fff2f8)', bd: '#7ab8e6', fg: '#24466e', icon: 'palette_art' },
+    { id: 'hidden_garden_blooms_60', title: '繁花秘境主', desc: '在花园累计培育盛开 60 朵鲜花', reward: 18, tier: 4, frame: 'petals', hidden: true, bg: 'linear-gradient(115deg,#e8fff2,#fff4d9,#ffeaf4)', bd: '#68bd88', fg: '#1c5432', icon: 'mini_bouquet' },
+    { id: 'hidden_garden_rare_25', title: '珍稀花谱家', desc: '花园图鉴点亮 25 种不同花卉品种', reward: 20, tier: 4, frame: 'prism', hidden: true, bg: 'linear-gradient(115deg,#f0eaff,#e6faff,#fff3df)', bd: '#8c94e6', fg: '#2b3275', icon: 'clover_4' },
+    { id: 'hidden_garden_gift_30', title: '满庭花语客', desc: '亲手向小狗赠送鲜花累计达到 30 次', reward: 15, tier: 3, frame: 'hearts', hidden: true, bg: 'linear-gradient(120deg,#ffecf4,#fff5e8,#eefcf5)', bd: '#e68aa8', fg: '#752242', icon: 'mini_bouquet' },
+    { id: 'hidden_mem_perfect_5', title: '过目不忘', desc: '翻牌配对以极少步数完美通关累计 5 次', reward: 18, tier: 4, frame: 'gems', hidden: true, bg: 'linear-gradient(115deg,#e6f2ff,#f2e8ff,#fff6d9)', bd: '#7aa4e6', fg: '#233e73', icon: 'trophy' },
+    { id: 'hidden_mem_hard_3', title: '极限记忆王', desc: '翻牌困难模式全配对通关累计 3 次', reward: 22, tier: 4, frame: 'supreme_royal', hidden: true, bg: 'linear-gradient(115deg,#fff0d6,#ffe6f2,#e6f4ff)', bd: '#dfa042', fg: '#6b3e08', icon: 'crown' },
+    { id: 'hidden_mem_streak_5', title: '五连翻牌神', desc: '翻牌配对连续通关 5 局不失手', reward: 16, tier: 3, frame: 'bolts', hidden: true, bg: 'linear-gradient(120deg,#eaf4ff,#f5ecff,#e8fff7)', bd: '#829ce6', fg: '#263973', icon: 'bolt' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -9280,7 +9286,7 @@
                 <span id="st-tb-badge-radius-val">16px</span>
               </div>
               <div class="st-tb-slider-row" style="margin-bottom:8px;">
-                <span>上下内距</span>
+                <span>高度</span>
                 <input class="st-tb-range" id="st-tb-badge-pady" type="range" min="0" max="10" step="1" value="4" />
                 <span id="st-tb-badge-pady-val">4px</span>
               </div>
@@ -17491,6 +17497,12 @@
       hidden_chat_100: doc.querySelectorAll('#chat .mes').length >= 100,
       hidden_fashion_3: presetSavedCnt >= 3,
       hidden_style_player: Boolean((Array.isArray(config.quickDockItems) && config.quickDockItems.length) || (config.badgeStyle && config.badgeStyle !== 'default')),
+      hidden_garden_blooms_60: Number(config.puppyGarden?.blooms || 0) >= 60,
+      hidden_garden_rare_25: Object.keys(config.puppyGarden?.dex || {}).length >= 25,
+      hidden_garden_gift_30: (st.flowersGifted || 0) >= 30,
+      hidden_mem_perfect_5: (st.memPerfectWins || 0) >= 5,
+      hidden_mem_hard_3: (st.memHardClears || 0) >= 3,
+      hidden_mem_streak_5: (st.memWinStreak || 0) >= 5,
     };
 
     const newlyUnlocked = [];
@@ -17780,7 +17792,26 @@
         const topWrap = doc.createElement('div');
         topWrap.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;';
         const info = doc.createElement('div');
-        info.style.flex = '1';
+        info.style.cssText = 'flex:1;cursor:pointer;';
+        info.title = unlocked ? '点击预览佩戴效果并清除 NEW 标记' : '解锁后可预览佩戴效果';
+        info.addEventListener('click', () => {
+          if (!unlocked) return;
+          const hadNew = freshNewAchs.delete(ach.id);
+          if (hadNew) {
+            row.querySelector('.st-px-new-tag')?.remove();
+            if (achHeadEl) achHeadEl.innerHTML = `成就称号 (${unlockedSet.size}/${PUP_ACHIEVEMENTS.length})${freshNewAchs.size > 0 ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+          }
+          achListEl.querySelectorAll('.st-px-ach-item').forEach(el => { el.style.outline = ''; });
+          row.style.outline = '2px solid var(--px-accent, #c486b8)';
+          const idBadgeEl = root.querySelector('#st-px-id-title');
+          if (idBadgeEl) {
+            idBadgeEl.style.display = 'inline-flex';
+            fillAchBadgeEl(idBadgeEl, ach, false);
+          }
+          if (typeof showImmNotice === 'function') {
+            showImmNotice(`预览称号「${ach.title}」，点击右侧佩戴按钮才会正式戴上`);
+          }
+        });
         const topLine = doc.createElement('div');
         topLine.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
 
@@ -23657,8 +23688,8 @@
 
       coinGain = isLong ? randInt(2, 4) : randInt(1, 2);
       let extraEventTxt = '';
-      if (Math.random() < 0.35) {
-        const evPick = randInt(0, 5);
+      if (Math.random() < 0.58) {
+        const evPick = randInt(0, 15);
         if (evPick === 0) {
           if (!config.puppyGarden) config.puppyGarden = { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {}, dex: {} };
           if (!config.puppyGarden.unlocked) config.puppyGarden.unlocked = {};
@@ -23672,6 +23703,46 @@
           k.xp += 20;
           while (k.lv < 10 && k.xp >= k.lv * 40) { k.xp -= k.lv * 40; k.lv += 1; }
           extraEventTxt = ' · 奇遇: 偶遇露天甜品摊偷学秘诀(厨艺经验+20)';
+        } else if (evPick === 6) {
+          coinGain += 6;
+          extraEventTxt = ' · 奇遇: 在树洞里翻出被遗忘的小金币罐(额外+6币)';
+        } else if (evPick === 7) {
+          config.puppyInventory = config.puppyInventory || {};
+          config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+          extraEventTxt = ' · 奇遇: 帮迷路旅人指路获赠幸运扭蛋券x1';
+        } else if (evPick === 8) {
+          adjustPupStats(10, 15, 16);
+          extraEventTxt = ' · 奇遇: 偶遇山间暖泉舒舒服服泡了个澡(全状态恢复)';
+        } else if (evPick === 9 && typeof ensureKitchen === 'function') {
+          const k = ensureKitchen();
+          k.xp += 25;
+          while (k.lv < 10 && k.xp >= k.lv * 40) { k.xp -= k.lv * 40; k.lv += 1; }
+          extraEventTxt = ' · 奇遇: 路边烘焙老奶奶塞了秘方点心(厨艺经验+25)';
+        } else if (evPick === 10) {
+          const loss = Math.min(3, Math.max(0, Math.floor(config.puppyCoins || 0)));
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
+          adjustPupStats(0, 0, -5);
+          extraEventTxt = loss > 0 ? ` · 倒霉奇遇: 踩进泥水坑花 ${loss} 币去自助冲洗` : ' · 倒霉奇遇: 踩进水坑溅了一脚泥，抖抖毛继续出发';
+        } else if (evPick === 11) {
+          const loss = Math.min(4, Math.max(0, Math.floor(config.puppyCoins || 0)));
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
+          adjustPupStats(12, 0, 8);
+          extraEventTxt = loss > 0 ? ` · 贪吃奇遇: 路过烤肠摊没忍住花 ${loss} 币买了一根(饱食+12)` : ' · 贪吃奇遇: 在烤肠摊前流口水被老板塞了一小块试吃';
+        } else if (evPick === 12) {
+          adjustPupStats(-8, 0, -4);
+          extraEventTxt = ' · 倒霉奇遇: 被路过调皮麻雀顺走了半块随身干粮(饱食-8)';
+        } else if (evPick === 13) {
+          const loss = Math.min(2, Math.max(0, Math.floor(config.puppyCoins || 0)));
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
+          extraEventTxt = loss > 0 ? ` · 倒霉奇遇: 零钱袋没系紧颠掉了 ${loss} 币` : ' · 奇遇: 追蝴蝶一头扎进花丛沾了满头花粉';
+        } else if (evPick === 14) {
+          coinGain += 4;
+          addPupAffinity(2, 'adv_event');
+          extraEventTxt = ' · 奇遇: 街头艺人请小狗客串合影分到 4 币出场费';
+        } else if (evPick === 15) {
+          adjustPupStats(0, -10, 6);
+          coinGain += 2;
+          extraEventTxt = ' · 奇遇: 追松鼠跑了一大圈累得气喘吁吁，顺手捡到 2 币';
         } else if (evPick === 2) {
           addPupAffinity(2, 'adv_event');
           adjustPupStats(0, 0, 12);
@@ -32331,21 +32402,36 @@
 
       const roll = Math.random();
       let evType = 'gift_coin';
+      let visitorTwist = '';
       if (v.eventType === 'steal_coin') {
-        evType = roll < 0.62 ? 'mischief_steal' : pick(['gift_coin', 'gift_snack', 'play_together']);
+        if (roll < 0.80) {
+          evType = 'mischief_steal';
+        } else {
+          evType = pick(['gift_coin', 'gift_snack']);
+          visitorTwist = 'good_turn';
+        }
       } else if (v.eventType === 'trick_fox') {
         evType = roll < 0.42 ? 'mischief_steal' : pick(['gift_gear', 'gift_flower', 'gift_dish', 'fortune_blessing']);
       } else {
         const pool = v.rare
           ? ['gift_coin', 'gift_flower', 'gift_dish', 'gift_gear', 'fortune_blessing', 'play_together']
           : ['gift_coin', 'gift_snack', 'gift_gear', 'gift_flower', 'gift_dish', 'play_together', 'fortune_blessing'];
-        evType = roll < 0.05 ? 'mischief_steal' : pick(pool);
+        if (roll < 0.14) {
+          evType = 'mischief_steal';
+          visitorTwist = 'bad_turn';
+        } else {
+          evType = pick(pool);
+        }
       }
 
       const useUniqueLine = !isFirst && VISITOR_DYN_LINES[evType] && Math.random() < 0.78;
-      let lineTpl = useUniqueLine
-        ? pick(VISITOR_DYN_LINES[evType][curP] || VISITOR_DYN_LINES[evType].sleepyhead).replace(/\{vname\}/g, v.name)
-        : ((v.react && (v.react[curP] || v.react.default)) || `${v.name}来串门啦!`);
+      let lineTpl = visitorTwist === 'good_turn'
+        ? `${v.name}今天居然良心发现，红着脸把零花钱和小礼物塞给小狗才溜走`
+        : (visitorTwist === 'bad_turn'
+          ? `${v.name}今天居然有点调皮，趁小狗不注意偷偷顺走了几枚小狗币跑掉`
+          : (useUniqueLine
+            ? pick(VISITOR_DYN_LINES[evType][curP] || VISITOR_DYN_LINES[evType].sleepyhead).replace(/\{vname\}/g, v.name)
+            : ((v.react && (v.react[curP] || v.react.default)) || `${v.name}来串门啦!`)));
       let evSuffix = '';
       let nextState = 'happy';
 
@@ -32977,14 +33063,31 @@
           const penalty = messedUp ? (2 + Math.floor(Math.random() * 2)) : 0;
           const tip = gotTip ? (isAptitude ? (2 + Math.floor(Math.random() * 3)) : (1 + Math.floor(Math.random() * 2))) : 0;
           const totalWage = Math.max(1, baseWage + tip - penalty);
-          const failMsgs = {
-            boba: '{self}摇奶茶时盖子没扣紧甩了一桌珍珠，被店长扣了工资。',
-            bakery: '{self}盯着烤箱走了神，一盘可颂烤成了炭，扣了点赔偿金。',
-            florist: '{self}修剪花枝一不小心剪秃了半束，被扣了点损耗费。',
-            bookshop: '{self}踮脚放书碰塌了整排书山，重新理完被扣了点工资。',
+          const failMsgPools = {
+            boba: [
+              '{self}摇奶茶时盖子没扣紧甩了一桌珍珠，被店长扣了清洗费。',
+              '{self}把全糖听成三倍糖差点齁晕客人，被店长扣了一笔赔礼钱。',
+              '{self}偷喝试饮杯打翻了一整壶奶盖，被扣了原料损耗费。',
+            ],
+            bakery: [
+              '{self}盯着烤箱走了神，一盘可颂烤成了炭，扣了点赔偿金。',
+              '{self}揉面时打了个喷嚏把面粉扬了满屋，被扣了清洁费。',
+              '{self}挤奶油手抖挤成抽象派，只能自己买单扣了点工资。',
+            ],
+            florist: [
+              '{self}修剪花枝一不小心剪秃了半束，被扣了点损耗费。',
+              '{self}洒水壶水开太大把花店地板浇成了小水塘，被扣了工资。',
+              '{self}追蝴蝶撞翻了门口的小花盆，被店长扣了一点赔偿。',
+            ],
+            bookshop: [
+              '{self}踮脚放书碰塌了整排书山，重新理完被扣了点工资。',
+              '{self}偷偷看漫画看入迷漏算了账单，被店长扣了一点差额。',
+              '{self}贴标签贴歪了一整摞新书，返工重贴被扣了工时费。',
+            ],
           };
           if (messedUp) {
-            ev.msg = failMsgs[jObj.id] || '{self}今天打工手忙脚乱搞砸了一点小活，被扣了点工资。';
+            const fPool = failMsgPools[jObj.id];
+            ev.msg = fPool ? pick(fPool) : '{self}今天打工手忙脚乱搞砸了一点小活，被扣了点工资。';
           }
           config.puppyCoins = (config.puppyCoins || 0) + totalWage;
           config.puppyMood = Math.max(0, Math.min(100, (config.puppyMood || 80) + (messedUp ? -3 : (gotTip ? 6 : 3))));
@@ -33012,7 +33115,7 @@
           statusEl.innerHTML = `
             <div style="font-weight:700;color:#8c4e1f;margin-bottom:4px;">[${jObj.name} Lv.${rkAfter.lv} 结算小剧场] ${ev.star ? '(金牌好评)' : ''}</div>
             <div style="font-size:11px;line-height:1.5;margin-bottom:5px;">${formatPupText(ev.msg)}</div>
-            <div style="font-size:11px;font-weight:700;">基础工资: +${baseWage}币${tip ? ` · 额外小费: +${tip}币 · 共 +${totalWage}币` : ''}</div>
+            <div style="font-size:11px;font-weight:700;">基础工资: +${baseWage}币${tip ? ` · 额外小费: +${tip}币` : ''}${penalty ? ` · 搞砸扣款: -${penalty}币` : ''}${(tip || penalty) ? ` · 实发 +${totalWage}币` : ''}</div>
             ${promoHtml}
           `;
           syncPupBagUI();
@@ -34466,8 +34569,8 @@
       }
       if (shopPreviewItem && shopPreviewItem.kind === 'badge') {
         shopPreviewItem = null;
-        updatePupStatBars();
       }
+      updatePupStatBars();
       pupBagTab = btn.dataset.pxTab;
       syncPuppyBagUI();
       if (pupBagTab === 'game') restoreGameView();
@@ -35241,6 +35344,20 @@
     } else if (activeGameId === 'memory') {
       const p = mem.matched;
       const usedMoves = mem.maxMoves - mem.moves;
+      config.puppyStats = config.puppyStats || {};
+      const cleared = mem.mode === 'hard' ? (p >= 32) : (p >= 8);
+      if (cleared) {
+        config.puppyStats.memWins = (config.puppyStats.memWins || 0) + 1;
+        config.puppyStats.memWinStreak = (config.puppyStats.memWinStreak || 0) + 1;
+        if (mem.mode === 'hard') {
+          config.puppyStats.memHardClears = (config.puppyStats.memHardClears || 0) + 1;
+          if (usedMoves <= 64) config.puppyStats.memPerfectWins = (config.puppyStats.memPerfectWins || 0) + 1;
+        } else if (usedMoves <= 14) {
+          config.puppyStats.memPerfectWins = (config.puppyStats.memPerfectWins || 0) + 1;
+        }
+      } else {
+        config.puppyStats.memWinStreak = 0;
+      }
       if (mem.mode === 'hard') {
         coins = p >= 32 ? (usedMoves <= 68 ? 15 : 12) : (p >= 24 ? 7 : (p >= 16 ? 4 : (p >= 10 ? 2 : (p >= 6 ? 1 : 0))));
         if (p >= 24) unlocked = tryUnlockGameReward('memory');
