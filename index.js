@@ -2596,7 +2596,7 @@
     { id: 'bub_ach_fluff', name: '#暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
-    { id: 'bub_ck_vintage_post', name: '[签到60天] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
+    { id: 'bub_ck_vintage_post', name: '#邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
     { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
@@ -2607,7 +2607,7 @@
     { id: 'af_ach_velvet', name: '#高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
-    { id: 'af_ck_amber_press', name: '[签到99天] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
+    { id: 'af_ck_amber_press', name: '#琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
   ];
   const SECRET_ADV_TRAILS = [
@@ -9896,54 +9896,8 @@
     const recipe = config.fontRecipes.find(f => f.id === config.activeFontId);
     if (!recipe) return;
 
-    const _keepFontStyleLast = () => {
-      try {
-        if (config.activeFontId && fontStyleEl && doc.head && doc.head.lastElementChild !== fontStyleEl) {
-          doc.head.appendChild(fontStyleEl);
-        }
-      } catch (_) {}
-    };
-    if (!win.__stFontHeadObs && doc.head && typeof win.MutationObserver === 'function') {
-      let _reappT = null;
-      win.__stFontHeadObs = new win.MutationObserver(() => {
-        if (!config.activeFontId) return;
-        if (doc.head.lastElementChild === fontStyleEl) return;
-        clearTimeout(_reappT);
-        _reappT = setTimeout(_keepFontStyleLast, 120);
-      });
-      try { win.__stFontHeadObs.observe(doc.head, { childList: true }); } catch (_) {}
-    }
-
     const applyFamilyRule = (familyName) => {
-      const famStack = `"${familyName}", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif`;
-      const notIcon = ':not(.fa):not(.fas):not(.far):not(.fab):not(.fal):not(.fad):not(.fa-solid):not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not([class*="fa-"]):not(.material-icons):not(.material-symbols-outlined):not(.material-symbols-rounded):not(i):not(code):not(pre):not(kbd):not(svg):not(svg *)';
-      fontStyleEl.textContent += `
-:root, html, body { --mainFontFamily: ${famStack} !important; }
-html:root body,
-html:root body #sheld,
-html:root body #chat,
-html:root body #chat .mes,
-html:root body #chat .mes .mes_block,
-html:root body #chat .mes .mes_block .name_text,
-html:root body #chat .mes .mes_block .mes_text,
-html:root body #chat .mes .mes_block .mes_text *${notIcon},
-html:root body #chat .mes .mes_text p,
-html:root body #chat .mes .mes_text span${notIcon},
-html:root body #chat .mes .mes_text div${notIcon},
-html:root body #chat .mes .mes_text blockquote,
-html:root body #chat .mes .mes_text details,
-html:root body #chat .mes .mes_text summary,
-html:root body #chat .mes .mes_text em,
-html:root body #chat .mes .mes_text strong,
-html:root body #chat .mes .mes_text li,
-html:root body #chat .mes .mes_text td,
-html:root body #chat .mes .mes_text th,
-html:root body #send_textarea,
-html:root body #form_sheld textarea,
-html:root body .mes_edit_textarea {
-  font-family: ${famStack} !important;
-}`;
-      _keepFontStyleLast();
+      fontStyleEl.textContent += `\n#chat .mes_text, #chat .mes_text p, #chat .mes_block { font-family: "${familyName}", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif !important; }`;
     };
 
     if (recipe.type === 'local') {
@@ -19620,10 +19574,10 @@ html:root body .mes_edit_textarea {
             <button class="st-px-btn" id="st-px-lim-pop-close" type="button" style="height:18px;padding:0 6px;font-size:9px;">关闭</button>
           </div>
           <div class="st-px-lim-pop-body">
-            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">*</span><span>桌面挖宝隐藏限定、连续与累计签到、生日或节日彩蛋、好感满级纪念</span></div>
+            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">*</span><span>桌面挖宝隐藏限定、生日或节日彩蛋、好感满级纪念</span></div>
             <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">+</span><span>背包像素小游戏达标自动赢取限定</span></div>
             <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">^</span><span>像素扭蛋机抽取限定</span></div>
-            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">#</span><span>成就系统达成专属限定</span></div>
+            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">#</span><span>成就达成与连续累计签到限定</span></div>
           </div>
         </div>`;
       mask.addEventListener('click', (e) => {
@@ -19686,9 +19640,9 @@ html:root body .mes_edit_textarea {
       const allAccOwned = [
         ...FREE_PUP_ACCS.map(i => ({ ...i, _wcats: i.id === 'none' ? ['all'] : ['head'] })),
         ...SHOP_PUP_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, _wcats: [i.cat || 'head'] })),
-        ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `${/^ach_/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
+        ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `${/^(ach_|ck_)/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
         ...GAME_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
-        ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', 'head'] })),
+        ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `#${i.name}`, _wcats: ['limited', 'head'] })),
         ...GACHA_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
       ];
       const list = curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcats.includes(curSub));
@@ -19748,7 +19702,7 @@ html:root body .mes_edit_textarea {
         ...TREASURE_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
         ...GAME_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
         ...GACHA_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
-        ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `${/^ach_/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
+        ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `${/^(ach_|ck_)/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
       ];
       const list = curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcats.includes(curSub));
       const perPage = 20;
@@ -19786,7 +19740,7 @@ html:root body .mes_edit_textarea {
       const allCompOwned = [
         { id: 'none', name: '无', _wcat: 'all' },
         ...SHOP_PUP_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, _wcat: 'shop' })),
-        ...TREASURE_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `${/^(mini_)?ach_/.test(i.id) ? '#' : '*'}${i.name}`, _wcat: 'limited' })),
+        ...TREASURE_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `${/^(mini_)?ach_|^ck_/.test(i.id) ? '#' : '*'}${i.name}`, _wcat: 'limited' })),
         ...GAME_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcat: 'limited' })),
         ...GACHA_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcat: 'limited' })),
       ];
