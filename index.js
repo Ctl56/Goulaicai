@@ -9653,6 +9653,53 @@
     cmNotify('已填入输入框');
   };
 
+  const attachPhraseDrag = (handleEl, rowEl, listEl, idx, onReorder) => {
+    handleEl.style.touchAction = 'none';
+    handleEl.style.cursor = 'grab';
+    handleEl.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const rows = Array.from(listEl.children);
+      const startY = e.clientY;
+      rowEl.style.opacity = '0.7';
+      rowEl.style.outline = '1px dashed var(--tb-accent, #888)';
+      let targetIdx = idx;
+      const onMove = (ev) => {
+        const curY = ev.clientY;
+        const dy = curY - startY;
+        rowEl.style.transform = `translateY(${dy}px)`;
+        rowEl.style.zIndex = '5';
+        for (let i = 0; i < rows.length; i++) {
+          if (i === idx) continue;
+          const r = rows[i].getBoundingClientRect();
+          const mid = r.top + r.height / 2;
+          if (dy < 0 && curY < mid && i < targetIdx) targetIdx = i;
+          else if (dy > 0 && curY > mid && i > targetIdx) targetIdx = i;
+        }
+        rows.forEach((el, i) => {
+          el.style.borderTop = '';
+          el.style.borderBottom = '';
+          if (i === targetIdx && targetIdx < idx) el.style.borderTop = '2px solid var(--tb-accent, #6b8cff)';
+          if (i === targetIdx && targetIdx > idx) el.style.borderBottom = '2px solid var(--tb-accent, #6b8cff)';
+        });
+      };
+      const onEnd = () => {
+        win.removeEventListener('pointermove', onMove, true);
+        win.removeEventListener('pointerup', onEnd, true);
+        win.removeEventListener('pointercancel', onEnd, true);
+        rowEl.style.opacity = '';
+        rowEl.style.outline = '';
+        rowEl.style.transform = '';
+        rowEl.style.zIndex = '';
+        rows.forEach(el => { el.style.borderTop = ''; el.style.borderBottom = ''; });
+        if (targetIdx !== idx) onReorder(idx, targetIdx);
+      };
+      win.addEventListener('pointermove', onMove, true);
+      win.addEventListener('pointerup', onEnd, true);
+      win.addEventListener('pointercancel', onEnd, true);
+    });
+  };
+
   const renderPhraseList = () => {
     if (!phraseListEl) return;
     if (!Array.isArray(config.quickPhrases)) config.quickPhrases = [];
@@ -9680,19 +9727,18 @@
         b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
         return b;
       };
-      const movePhrase = (dir) => {
-        const to = idx + dir;
-        if (to < 0 || to >= config.quickPhrases.length) return;
-        const tmp = config.quickPhrases[to];
-        config.quickPhrases[to] = config.quickPhrases[idx];
-        config.quickPhrases[idx] = tmp;
+      const dragH = doc.createElement('span');
+      dragH.textContent = '⋮⋮';
+      dragH.title = '按住上下拖动排序';
+      dragH.style.cssText = 'font-size:12px;opacity:0.55;padding:0 3px;user-select:none;flex-shrink:0;';
+      attachPhraseDrag(dragH, row, phraseListEl, idx, (fromI, toI) => {
+        const [moved] = config.quickPhrases.splice(fromI, 1);
+        config.quickPhrases.splice(toI, 0, moved);
         saveConfig();
         renderPhraseList();
         if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
         if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
-      };
-      if (idx > 0) row.appendChild(mkBtn('↑', '上移', () => movePhrase(-1)));
-      if (idx < config.quickPhrases.length - 1) row.appendChild(mkBtn('↓', '下移', () => movePhrase(1)));
+      });
       const editB = mkBtn('编', '编辑名称与内容', () => {
         editingPhraseId = ph.id;
         if (phraseFormEl && phraseTitleInp && phraseTextInp) {
@@ -9718,7 +9764,7 @@
         });
       }, '#d9534f');
 
-      row.append(nm, editB, delB);
+      row.append(dragH, nm, editB, delB);
       phraseListEl.appendChild(row);
     });
   };
@@ -47491,20 +47537,20 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 b.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
                 return b;
               };
-              const moveQ = (dir) => {
-                const to = idx + dir;
-                if (to < 0 || to >= config.quickPhrases.length) return;
-                const tmp = config.quickPhrases[to];
-                config.quickPhrases[to] = config.quickPhrases[idx];
-                config.quickPhrases[idx] = tmp;
+              const dragHQ = doc.createElement('span');
+              dragHQ.textContent = '⋮⋮';
+              dragHQ.title = '按住上下拖动排序';
+              dragHQ.style.cssText = 'font-size:12px;opacity:0.55;padding:0 3px;user-select:none;flex-shrink:0;';
+              attachPhraseDrag(dragHQ, item, qList, idx, (fromI, toI) => {
+                const [moved] = config.quickPhrases.splice(fromI, 1);
+                config.quickPhrases.splice(toI, 0, moved);
                 saveConfig();
                 renderPhraseList();
                 syncQPop();
                 if (typeof win.__stSyncInlinePhraseBar === 'function') win.__stSyncInlinePhraseBar();
-              };
-              if (idx > 0) item.appendChild(mkB('↑', '上移', () => moveQ(-1)));
-              if (idx < arr.length - 1) item.appendChild(mkB('↓', '下移', () => moveQ(1)));
+              });
               item.append(
+                dragHQ,
                 nm,
                 mkB('编', '编辑名称与内容', () => { qEditId = ph.id; qTtl.value = ph.title || ''; qTxt.value = ph.text || ''; qForm.style.display = 'flex'; qTtl.focus(); }),
                 mkB('×', '删除', () => {
