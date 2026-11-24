@@ -879,6 +879,8 @@
     { id: 'mail_reader', title: '笔友小狗', desc: '累计查收 5 封小狗悄悄话信件', reward: 5, tier: 2, bg: 'linear-gradient(135deg,#fff5eb,#ffe8f0)', bd: '#e698a8', fg: '#782b40', icon: 'tag' },
     { id: 'hidden_secret_mail', title: '秘密收信人', desc: '收到任意 1 封隐藏悄悄话信件', reward: 7, tier: 3, hidden: true, frame: 'envelope', bg: 'linear-gradient(120deg,#fff0f6,#f0ebff,#fff8e0,#fff0f6)', bd: '#d982b8', fg: '#6b2050', icon: 'hearts' },
     { id: 'garden_bloom', title: '像素小花匠', desc: '亲手种出并收获 3 朵像素花', reward: 5, tier: 2, bg: 'linear-gradient(135deg,#eefce8,#fff8dc)', bd: '#7ac46a', fg: '#265c20', icon: 'flower' },
+    { id: 'garden_twin_miracle', title: '双生花蜜语', desc: '在花盆触发小蜜蜂催熟或双生花彩蛋', reward: 8, tier: 3, frame: 'twin_bee_bespoke', bg: 'linear-gradient(120deg,#ebfff4,#fffbe6,#f2faff)', bd: '#5fb882', fg: '#1d5434' },
+    { id: 'kitchen_god_stroke', title: '神来一笔厨', desc: '在小厨房做菜时触发「神来一笔」彩蛋', reward: 8, tier: 3, frame: 'copper_pan_bespoke', bg: 'linear-gradient(120deg,#fff3e6,#fff9d9,#ffece8)', bd: '#d98848', fg: '#6b3814' },
     { id: 'hidden_mutant_flower', title: '变异花语师', desc: '培育出 1 朵隐藏变异传说花朵', reward: 8, tier: 3, hidden: true, frame: 'bloom_ult', bg: 'linear-gradient(120deg,#e6fff2,#ffeef8,#e8f4ff,#e6fff2)', bd: '#6ec49c', fg: '#1a543c', icon: 'flower' },
     { id: 'fashion_s_rank', title: '时尚评审团', desc: '在穿搭主题挑战中获得 S 或以上评价', reward: 5, tier: 2, bg: 'linear-gradient(135deg,#fff0f8,#eef2ff)', bd: '#b38ce6', fg: '#4a2678', icon: 'dress' },
     { id: 'hidden_fashion_sss', title: '传说穿搭王', desc: '触发穿搭挑战隐藏 SSS 完美评价', reward: 8, tier: 3, hidden: true, frame: 'runway', bg: 'linear-gradient(120deg,#fff4d9,#ffe6f2,#e6f4ff,#fff4d9)', bd: '#e09e48', fg: '#6b3f08', icon: 'crown' },
@@ -4646,7 +4648,7 @@
     .st-tb-range { flex: 1; height: 3px; accent-color: var(--tb-accent); cursor: pointer; }
 
     .st-tb-chat-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 11px; color: var(--tb-sub); }
-    .st-tb-chat-list { display: flex; flex-direction: column; gap: 6px; max-height: 178px; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
+    .st-tb-chat-list { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
     .st-tb-chat-item {
       padding: 8px 9px;
       border-radius: 7px;
@@ -6416,6 +6418,8 @@
     }
     .st-px-bsp-piece.b-bob { animation: stBespokeBob 2.6s ease-in-out infinite; }
     .st-px-bsp-piece.b-tilt { animation: stBespokeTilt 2.8s ease-in-out infinite; }
+    @keyframes stBespokeSwayLR { 0%, 100% { transform: translateX(-2px); } 50% { transform: translateX(2px); } }
+    .st-px-bsp-piece.b-sway-lr { animation: stBespokeSwayLR 3.2s ease-in-out infinite; }
     .st-px-title-badge.bespoke-lux { margin: 8px 12px; }
     .st-px-title-badge.bespoke-std { margin: 5px 10px; }
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2::before,
@@ -8177,6 +8181,15 @@
               </div>
             </div>
           </div>
+          <div id="st-px-gacha-vendor" class="st-px-preview-wrap" style="display:none;margin-bottom:6px;">
+            <div class="st-px-preview-box" style="align-items:center;gap:8px;padding:6px 8px;">
+              <canvas id="st-px-gacha-vendor-cv" width="44" height="44" title="点点看招财喵老板~" style="width:44px;height:44px;flex-shrink:0;border:2px solid #3b2a22;background:#fff4e6;image-rendering:pixelated;cursor:pointer;"></canvas>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">幸运扭蛋屋 · 招财喵老板</div>
+                <div id="st-px-gacha-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「欢迎光临喵~ 今天手气一定超旺，十连保底 SR 哦！」</div>
+              </div>
+            </div>
+          </div>
           <div class="st-px-subtabs" style="grid-template-columns:repeat(6,1fr);margin-bottom:5px;" id="st-px-shop-main-tabs">
             <button class="st-px-btn active" data-shop-main="outfit" type="button">衣服</button>
             <button class="st-px-btn" data-shop-main="acc" type="button">配饰</button>
@@ -8186,15 +8199,6 @@
             <button class="st-px-btn" data-shop-main="sell" type="button">售卖</button>
           </div>
           <div id="st-px-gacha-view" style="display:none;">
-            <div id="st-px-gacha-vendor" class="st-px-preview-wrap" style="margin-bottom:6px;">
-              <div class="st-px-preview-box" style="align-items:center;gap:8px;padding:6px 8px;">
-                <canvas id="st-px-gacha-vendor-cv" width="44" height="44" title="点点看招财喵老板~" style="width:44px;height:44px;flex-shrink:0;border:2px solid #3b2a22;background:#fff4e6;image-rendering:pixelated;cursor:pointer;"></canvas>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">幸运扭蛋屋 · 招财喵老板</div>
-                  <div id="st-px-gacha-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「欢迎光临喵~ 今天手气一定超旺，十连保底 SR 哦！」</div>
-                </div>
-              </div>
-            </div>
             <div class="st-px-adv-card" style="text-align:center;">
               <canvas id="st-px-gacha-canvas" width="120" height="84" style="width:180px;height:126px;margin:0 auto 5px;display:block;border:2px solid var(--px-border,#bfa4ae);image-rendering:pixelated;background:#faf6f7;"></canvas>
               <div style="font-weight:700;margin-bottom:3px;" id="st-px-gacha-msg">扭蛋限定池与珍稀魔药等你来扭!</div>
@@ -9270,9 +9274,19 @@
               <span id="st-tb-font-status"></span>
             </div>
             <div class="st-tb-row">
+              <input class="st-tb-input" id="st-tb-font-search" type="text" placeholder="搜索字体配方" />
+            </div>
+            <div class="st-tb-row">
               <select class="st-tb-select" id="st-tb-font-select"></select>
               <button class="st-tb-btn" id="st-tb-font-rename" type="button">重命名</button>
               <button class="st-tb-btn" id="st-tb-font-del" type="button">删除</button>
+            </div>
+            <div id="st-tb-font-upload-name-box" style="display:none; margin-bottom:6px;">
+              <div class="st-tb-row">
+                <input class="st-tb-input" id="st-tb-font-upload-name" type="text" placeholder="为上传的本地字体取个名字" />
+                <button class="st-tb-btn primary" id="st-tb-font-upload-confirm" type="button">保存</button>
+                <button class="st-tb-btn" id="st-tb-font-upload-cancel" type="button">取消</button>
+              </div>
             </div>
             <div id="st-tb-font-rename-box" style="display:none; margin-bottom:6px;">
               <div class="st-tb-row">
@@ -9670,7 +9684,12 @@
   const uiFontSizeRange = root.querySelector('#st-tb-ui-fontsize');
   const uiFontSizeVal = root.querySelector('#st-tb-ui-fontsize-val');
   const fontSelect = root.querySelector('#st-tb-font-select');
+  const fontSearchInput = root.querySelector('#st-tb-font-search');
   const fontDelBtn = root.querySelector('#st-tb-font-del');
+  const fontUploadNameBox = root.querySelector('#st-tb-font-upload-name-box');
+  const fontUploadNameInput = root.querySelector('#st-tb-font-upload-name');
+  const fontUploadConfirmBtn = root.querySelector('#st-tb-font-upload-confirm');
+  const fontUploadCancelBtn = root.querySelector('#st-tb-font-upload-cancel');
   const fontRenameBtn = root.querySelector('#st-tb-font-rename');
   const fontRenameBox = root.querySelector('#st-tb-font-rename-box');
   const fontRenameInput = root.querySelector('#st-tb-font-rename-input');
@@ -9924,7 +9943,9 @@
     defOpt.textContent = '默认（跟随酒馆）';
     fontSelect.appendChild(defOpt);
 
+    const fq = String(fontSearchInput?.value || '').trim().toLowerCase();
     config.fontRecipes.forEach((f) => {
+      if (fq && !String(f.name || '').toLowerCase().includes(fq)) return;
       const opt = doc.createElement('option');
       opt.value = f.id;
       const tag = f.type === 'local' ? '[本地]' : '[链接]';
@@ -17578,6 +17599,53 @@
 
   // 20 款 100% 单独手绘的专属铭牌设计（每款独立构图与独立像素画，绝不复用模板）
   const BESPOKE_BADGE_DESIGNS = {
+    garden_twin_miracle: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-11px;top:-8px;', w: 14, h: 14, anim: 'b-sway-lr', pal: { c: '#8ce6ff', w: '#ffffff', p: '#ff96b8', q: '#ffd6e6', g: '#58b878', l: '#90e09c' },
+          grid: [
+            '....cc........',
+            '...cwwc.......',
+            '....cc..pp....',
+            '..pp...pqqp...',
+            '.pqqp..pppp...',
+            '.pppp...gg....',
+            '..gg...gllg...',
+            '..gllgg..gg...',
+            '...gggg.......',
+          ] },
+        { pos: 'left:28%;bottom:-7px;', w: 10, h: 8, anim: 'b-sway-lr', pal: { w: '#eef9ff', y: '#ffd24d', k: '#3b2a22' },
+          grid: [
+            '..ww..ww..',
+            '.w..ww..w.',
+            '..kykyky..',
+            '.kykykyky.',
+            '..kykyky..',
+          ] },
+      ],
+    },
+    kitchen_god_stroke: {
+      cls: 'bespoke-std bespoke-static',
+      pieces: [
+        { pos: 'left:-11px;top:-8px;', w: 14, h: 12, anim: 'b-sway-lr', pal: { y: '#ffe066', o: '#ff7d38', r: '#e84838', c: '#c97838', k: '#5c361c', w: '#fff8dc' },
+          grid: [
+            '....yy........',
+            '...ywwy.......',
+            '..yoooy.......',
+            '..orrrr.......',
+            '.ccccccccc....',
+            'ccccccccckkkk.',
+            '.cccccccc.....',
+            '..kkkkkk......',
+          ] },
+        { pos: 'left:30%;top:-6px;', w: 10, h: 7, anim: 'b-sway-lr', pal: { y: '#ffd84d', w: '#ffffff', o: '#ff9e38' },
+          grid: [
+            '..y....o..',
+            '.ywy..owo.',
+            '..y....o..',
+          ] },
+      ],
+    },
     // 1. 百愿必达星：左上暖金许愿玻璃瓶 + 右下飘出金色心愿丝带（静态柔美）
     wish_legend_100: {
       cls: 'bespoke-std bespoke-static',
@@ -18833,6 +18901,8 @@
       mail_reader: (config.puppyMailbox || []).length >= 5,
       hidden_secret_mail: (config.puppyMailbox || []).some(m => m.hidden),
       garden_bloom: (config.puppyGarden?.blooms || 0) >= 3,
+      garden_twin_miracle: Boolean((st.gardenBeeHelps || 0) >= 1 || (st.gardenTwinBlooms || 0) >= 1),
+      kitchen_god_stroke: (st.kitchenMasterpiece || 0) >= 1,
       hidden_mutant_flower: PUP_FLOWERS.some(f => f.hidden && config.puppyGarden?.unlocked?.[f.id]),
       fashion_s_rank: Boolean(st.fashionS),
       hidden_fashion_sss: Boolean(st.fashionSSS),
@@ -19069,7 +19139,7 @@
   const ACH_GROUPS = [
     { key: 'bond', name: '陪伴与好感', ids: ['named_pup', 'first_pet', 'pet_master', 'fun_stretch_cat', 'pet_legend_300', 'best_friend', 'soulmate', 'aff_lv10', 'bday_set', 'fun_bday_twin', 'fun_chat_bestie', 'ask_listener', 'mail_reader', 'wish_first_day', 'wish_master_15', 'lt_wish_50', 'wish_legend_100'] },
     { key: 'wardrobe', name: '衣橱与装扮', ids: ['dual_acc', 'companion_pal', 'preset_maker', 'fashionista', 'fun_dress_rainbow', 'wardrobe_king', 'collector_max', 'fun_mirror_star', 'fun_wing_angel', 'fun_aura_glow', 'fun_trad_lover', 'fun_neck_chic', 'fashion_s_rank', 'fun_color_artist', 'ach_trail_collector', 'ach_frame_collector', 'ach_bubble_collector'] },
-    { key: 'daily', name: '日常、花盆、厨房与玩具', ids: ['pin_home', 'sit_zen', 'chef_owner', 'ach_big_eater', 'care_legend_200', 'rich_pup', 'fun_coin_saver', 'rich_tycoon_500', 'lt_coins_5000', 'fun_weather_kid', 'garden_bloom', 'fun_flower_gifter', 'garden_collector_15', 'garden_collector_30', 'garden_bloom_100', 'garden_all_42', 'kitchen_first', 'kitchen_lv5', 'kitchen_dex_10', 'kitchen_lv10_master', 'lt_cook_100', 'kitchen_dex_all', 'toy_first', 'toy_all_4', 'toy_marathon_100', 'lt_toy_100', 'job_worker', 'fun_job_pro', 'job_legend_50', 'fun_diary_keeper', 'fun_fortune_fan', 'visitor_pal', 'visitor_host_30', 'festival_egg'] },
+    { key: 'daily', name: '日常、花盆、厨房与玩具', ids: ['pin_home', 'sit_zen', 'chef_owner', 'ach_big_eater', 'care_legend_200', 'rich_pup', 'fun_coin_saver', 'rich_tycoon_500', 'lt_coins_5000', 'fun_weather_kid', 'garden_bloom', 'garden_twin_miracle', 'fun_flower_gifter', 'garden_collector_15', 'garden_collector_30', 'garden_bloom_100', 'garden_all_42', 'kitchen_first', 'kitchen_god_stroke', 'kitchen_lv5', 'kitchen_dex_10', 'kitchen_lv10_master', 'lt_cook_100', 'kitchen_dex_all', 'toy_first', 'toy_all_4', 'toy_marathon_100', 'lt_toy_100', 'job_worker', 'fun_job_pro', 'job_legend_50', 'fun_diary_keeper', 'fun_fortune_fan', 'visitor_pal', 'visitor_host_30', 'festival_egg'] },
     { key: 'adv', name: '冒险与图鉴', ids: ['adv_first_trip', 'fun_photo_snap', 'adv_album_half', 'adv_curio_20', 'adv_album_all', 'adv_curio_all', 'adv_hidden_curio', 'treasure_hunter', 'ach_dig_lucky_3', 'adv_legend_50'] },
     { key: 'game', name: '游乐厅与扭蛋', ids: ['arcade_fan', 'arcade_pro', 'fun_game_all', 'game_legend_100', 'game_champ', 'ach_2048_512', 'ach_2048_2048', 'gacha_first', 'gacha_count_30', 'gacha_count_100', 'gacha_count_300', 'gacha_count_1000'] },
     { key: 'checkin', name: '签到打卡', ids: ['ach_ck_30', 'ach_ck_52', 'ach_ck_60', 'ach_ck_99', 'ach_ck_100'] },
@@ -20838,8 +20908,10 @@
     if (pupShopCatHeadEl?.parentElement) pupShopCatHeadEl.parentElement.style.display = isGachaTab ? 'none' : 'flex';
     const _vBoxG = root.querySelector('#st-px-sell-vendor');
     if (_vBoxG && isGachaTab) _vBoxG.style.display = 'none';
+    const _gBoxG = root.querySelector('#st-px-gacha-vendor');
+    if (_gBoxG) _gBoxG.style.display = isGachaTab ? 'block' : 'none';
     const _pvWrapG = root.querySelector('.st-px-pane[data-px-pane="shop"] .st-px-preview-wrap');
-    if (_pvWrapG && isGachaTab) _pvWrapG.style.display = '';
+    if (_pvWrapG && isGachaTab) _pvWrapG.style.display = 'none';
     if (isGachaTab) { renderGachaView(); return; }
     const subDefs = shopMainCat === 'outfit'
       ? [
@@ -20903,6 +20975,8 @@
       syncShopOwnFilterUI(true);
       const previewWrap = root.querySelector('.st-px-pane[data-px-pane="shop"] .st-px-preview-wrap');
       if (previewWrap) previewWrap.style.display = 'none';
+      const _gBoxS = root.querySelector('#st-px-gacha-vendor');
+      if (_gBoxS) _gBoxS.style.display = 'none';
       const merchantBox = root.querySelector('#st-px-merchant-box');
       if (merchantBox) merchantBox.style.display = 'none';
 
@@ -20936,17 +21010,21 @@
             if (sellPokeCnt >= 5 && nowT >= (ve.sellPokeCd || 0)) {
               sellPokeCnt = 0;
               ve.sellPokeCd = nowT + 10 * 60000;
-              if (Math.random() < 0.55) {
+              if (Math.random() < 0.70) {
                 ve.sellRateMult = 1.25;
                 ve.sellRateUntil = nowT + 3 * 60000;
                 saveConfig();
-                if (vMsg) vMsg.textContent = '「唔…耳朵被挠得好舒服！接下来 3 分钟阿狸给你加价 25% 回收！」';
+                const mTxt = '唔…耳朵被挠得好舒服！接下来 3 分钟阿狸给你加价 25% 回收！';
+                if (vMsg) vMsg.textContent = `「${mTxt}」`;
+                openGuardConfirm('触发隐藏彩蛋 · 阿狸开心啦！', mTxt, () => {}, '太棒了', true);
                 renderPupShop();
               } else {
                 ve.sellRateMult = 0.7;
                 ve.sellRateUntil = nowT + 3 * 60000;
                 saveConfig();
-                if (vMsg) vMsg.textContent = '「喂喂！再一直戳阿狸尾巴要生气了！3 分钟内回收价打 7 折哼！」';
+                const mTxt = '再一直戳阿狸尾巴要生气了！接下来 3 分钟回收价打 7 折哼！（原价 1 币物品保持不变）';
+                if (vMsg) vMsg.textContent = `「${mTxt}」`;
+                openGuardConfirm('触发隐藏彩蛋 · 阿狸生气啦！', mTxt, () => {}, '知道啦', true);
                 renderPupShop();
               }
             } else if (vMsg && sellPokeCnt >= 2) {
@@ -20984,14 +21062,39 @@
       if (vendorBox) vendorBox.style.display = 'block';
 
       const _ve = (config.puppyVendorEgg = config.puppyVendorEgg || {});
+      const _today = getTodayStr();
+      if (_ve.dailyDate !== _today) {
+        const moods = [
+          { mult: 1.2, txt: '阳光超好，阿狸今天心情大好（回收价 +20%）！' },
+          { mult: 1.1, txt: '喝了早茶精神满满，今天回收价微涨 10%~' },
+          { mult: 1.0, txt: '今天心情平静如水，按标准市价回收哦~' },
+          { mult: 0.9, txt: '昨晚没睡饱有点犯困，今天回收价略微压价 10%（1币不变）~' },
+        ];
+        const pickedM = pick(moods);
+        _ve.dailyDate = _today;
+        _ve.dailyMoodMult = pickedM.mult;
+        _ve.dailyMoodTxt = pickedM.txt;
+        saveConfig();
+      }
       const _nowT = Date.now();
-      const _rateMult = (_ve.sellRateUntil && _nowT < _ve.sellRateUntil) ? (_ve.sellRateMult || 1) : 1;
+      const _moodMult = Number(_ve.dailyMoodMult || 1);
+      const _pokeMult = (_ve.sellRateUntil && _nowT < _ve.sellRateUntil) ? (_ve.sellRateMult || 1) : 1;
+      const _rateMult = _moodMult * _pokeMult;
+      const calcSellPrice = (baseP) => {
+        const bp = Math.max(1, Math.round(baseP));
+        if (_rateMult < 1 && bp <= 1) return 1;
+        return Math.max(1, Math.round(bp * _rateMult));
+      };
       const _darkLocked = Boolean(_ve.sellDarkLockUntil && _nowT < _ve.sellDarkLockUntil);
       const _vMsgInit = root.querySelector('#st-px-sell-vendor-msg');
-      if (_vMsgInit && _nowT < (_ve.sellRateUntil || 0)) {
-        _vMsgInit.textContent = _rateMult > 1
-          ? '「心情超好~ 3 分钟内全场回收价 +25% 加成中！」'
-          : '「哼，还在生气中… 回收价暂时打 7 折哦。」';
+      if (_vMsgInit) {
+        if (_nowT < (_ve.sellRateUntil || 0)) {
+          _vMsgInit.textContent = _pokeMult > 1
+            ? '「心情超好~ 3 分钟内全场回收价 +25% 加成中！」'
+            : '「哼，还在生气中… 回收价暂时打 7 折哦（1币不变）。」';
+        } else if (_ve.dailyMoodTxt) {
+          _vMsgInit.textContent = `「${_ve.dailyMoodTxt}」`;
+        }
       }
       const sellCat = shopSubCat || 'all';
       const inv = config.puppyInventory || {};
@@ -21067,7 +21170,7 @@
             config.puppyKitchen.dishes[it.id] = Math.max(0, Math.floor(config.puppyKitchen.dishes[it.id] || 0) - cnt);
             if (config.puppyKitchen.dishes[it.id] <= 0) delete config.puppyKitchen.dishes[it.id];
           }
-          let gained = Math.max(1, Math.round(it.sellPrice * _rateMult)) * cnt;
+          let gained = calcSellPrice(it.sellPrice) * cnt;
           let eggMsg = '';
           const nowE = Date.now();
           if (it.isDark && nowE >= (_ve.sellMiscCd || 0) && Math.random() < 0.16) {
@@ -21092,6 +21195,7 @@
           renderPupShop();
           const vMsg = root.querySelector('#st-px-sell-vendor-msg');
           if (vMsg) vMsg.textContent = eggMsg || `「谢谢惠顾！${it.name} ×${cnt} 我收下啦，这是给你的 ${gained} 枚小狗币~」`;
+          if (eggMsg) openGuardConfirm('售卖铺隐藏彩蛋！', eggMsg.replace(/[「」]/g, ''), () => {}, '收到啦', true);
           if (config.puppyEnabled) showPuppyBubble(`卖出 ${it.name} x${cnt}，换到 ${gained} 枚小狗币啦~`, 2000);
         };
 
@@ -21103,7 +21207,7 @@
             return;
           }
           const cnt = Math.max(1, Math.min(it.qty, count));
-          const gained = Math.max(1, Math.round(it.sellPrice * _rateMult)) * cnt;
+          const gained = calcSellPrice(it.sellPrice) * cnt;
           openGuardConfirm(
             `确认售卖【${it.name}】？`,
             `将卖出 ${it.name} ×${cnt}，可获得 ${gained} 枚小狗币（售出后不可撤回）。`,
@@ -21141,7 +21245,7 @@
           const iconEl = makeItemIcon(it);
           const meta = doc.createElement('div');
           meta.style.cssText = 'flex:1;min-width:0;';
-          const _unitP = Math.max(1, Math.round(it.sellPrice * _rateMult));
+          const _unitP = calcSellPrice(it.sellPrice);
           meta.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0;">
             <span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${it.name}</span>
             <span style="font-size:9px;opacity:0.75;flex-shrink:0;">x${it.qty}</span>
@@ -27471,6 +27575,12 @@
       st.stage += 1;
       st.lastWaterAt = Date.now();
       if (typeof progressPupWish === 'function') progressPupWish('garden_act', 1);
+      if (st.stage < 4 && Math.random() < 0.08) {
+        st.stage += 1;
+        config.puppyStats = config.puppyStats || {};
+        config.puppyStats.gardenBeeHelps = (config.puppyStats.gardenBeeHelps || 0) + 1;
+        setTimeout(() => openGuardConfirm('花盆隐藏彩蛋 · 小蜜蜂来帮忙！', '一只勤劳的像素小蜜蜂飞来采蜜，帮你把花苗多催熟了一个阶段！', () => {}, '太棒了', true), 120);
+      }
       if (st.stage >= 4) {
         // 极低概率变异出 3 朵隐藏传说花（7%，开天气特效时微升至 10%）
         const potObj2 = GARDEN_POT_TIERS[st.potLv || 0] || GARDEN_POT_TIERS[0];
@@ -27507,8 +27617,15 @@
     } else {
       const fl = PUP_FLOWERS.find(f => f.id === st.flowerId) || PUP_FLOWERS[0];
       if (!st.unlocked) st.unlocked = {};
-      st.unlocked[fl.id] = (st.unlocked[fl.id] || 0) + 1;
-      st.blooms = (st.blooms || 0) + 1;
+      const isTwinBloom = Math.random() < 0.08;
+      const harvestQty = isTwinBloom ? 2 : 1;
+      st.unlocked[fl.id] = (st.unlocked[fl.id] || 0) + harvestQty;
+      st.blooms = (st.blooms || 0) + harvestQty;
+      if (isTwinBloom) {
+        config.puppyStats = config.puppyStats || {};
+        config.puppyStats.gardenTwinBlooms = (config.puppyStats.gardenTwinBlooms || 0) + 1;
+        setTimeout(() => openGuardConfirm('花盆隐藏彩蛋 · 双生花奇迹！', `太幸运啦！这盆【${fl.name}】开出了罕见的双生花，一次收获 2 朵！`, () => {}, '开心收下', true), 120);
+      }
       st.stage = 0;
       st.flowerId = '';
       st.nextPlantAt = Date.now() + 300000;
@@ -29373,7 +29490,14 @@
           }
           if (ok) {
             k.dex[r.id] = true;
-            k.dishes[r.id] = (k.dishes[r.id] || 0) + 1;
+            const isMasterpiece = Math.random() < 0.08;
+            k.dishes[r.id] = (k.dishes[r.id] || 0) + (isMasterpiece ? 2 : 1);
+            if (isMasterpiece) {
+              config.puppyStats = config.puppyStats || {};
+              config.puppyStats.kitchenMasterpiece = (config.puppyStats.kitchenMasterpiece || 0) + 1;
+              if (typeof addPupAffinity === 'function') addPupAffinity(2, 'kitchen_egg');
+              setTimeout(() => openGuardConfirm('厨房隐藏彩蛋 · 神来一笔！', `火候完美！做【${r.name}】时触发了神来一笔，直接出锅双份料理（+2 份）且好感 +2！`, () => {}, '哇塞', true), 120);
+            }
             const hrNow = new Date().getHours();
             if (hrNow >= 0 && hrNow < 5) { config.puppyStats = config.puppyStats || {}; config.puppyStats.midnightChef = true; }
             if (config.puppyEnabled) {
@@ -33642,17 +33766,21 @@
       if (gPokeCnt >= 5 && nowT >= (ve.gachaPokeCd || 0)) {
         gPokeCnt = 0;
         ve.gachaPokeCd = nowT + 10 * 60000;
-        if (Math.random() < 0.55) {
+        if (Math.random() < 0.70) {
           config.puppyInventory = config.puppyInventory || {};
           config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
           saveConfig();
           renderGachaView();
-          if (gachaVendorMsg) gachaVendorMsg.textContent = '「呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 85折扭蛋券！」';
+          const gTxt = '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 85折扭蛋券！';
+          if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
+          openGuardConfirm('触发隐藏彩蛋 · 招财喵超开心！', gTxt, () => {}, '谢谢老板', true);
           if (config.puppyEnabled) showPuppyBubble('招财喵老板开心送了 1 张扭蛋券!', 2200);
         } else {
           ve.gachaLockUntil = nowT + 2 * 60000;
           saveConfig();
-          if (gachaVendorMsg) gachaVendorMsg.textContent = '「喵呜！不准再揪胡子了！卷帘门拉下来冷静 2 分钟喵！」';
+          const gTxt = '喵呜！不准再揪胡子了！卷帘门拉下来冷静 2 分钟喵！';
+          if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
+          openGuardConfirm('触发隐藏彩蛋 · 招财喵生气啦！', gTxt, () => {}, '知错了', true);
         }
       } else if (gachaVendorMsg && gPokeCnt >= 2) {
         gachaVendorMsg.textContent = pick([
@@ -34212,6 +34340,7 @@
         }
         const veG = (config.puppyVendorEgg = config.puppyVendorEgg || {});
         const nowG = Date.now();
+        let gachaEggPop = '';
         if (nowG >= (veG.gachaMiscCd || 0)) {
           const rEgg = Math.random();
           if (count === 10 && rEgg < 0.10) {
@@ -34219,13 +34348,13 @@
             config.puppyInventory = config.puppyInventory || {};
             config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
             saveConfig();
-            if (gachaVendorMsg) gachaVendorMsg.textContent = '「十连气势太足了喵！老板偷偷再送你 1 张 85折扭蛋券！」';
+            gachaEggPop = '十连气势太足了喵！老板偷偷再送你 1 张 85折扭蛋券！';
           } else if (rEgg < 0.08) {
             veG.gachaMiscCd = nowG + 12 * 60000;
             config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + 2;
             saveConfig();
             updatePupStatBars();
-            if (gachaVendorMsg) gachaVendorMsg.textContent = '「咔哒！机器卡了一下多掉出 2 枚小狗币，算老板请客喵！」';
+            gachaEggPop = '咔哒！机器卡了一下多掉出 2 枚小狗币，算老板请客喵！';
           } else if (rEgg < 0.14) {
             veG.gachaMiscCd = nowG + 12 * 60000;
             const freeSn = pick(SHOP_PUP_GOODS.filter(x => x.cat === 'snack'));
@@ -34233,8 +34362,12 @@
               config.puppyInventory = config.puppyInventory || {};
               config.puppyInventory[freeSn.id] = (config.puppyInventory[freeSn.id] || 0) + 1;
               saveConfig();
-              if (gachaVendorMsg) gachaVendorMsg.textContent = `「刚打了个盹，顺手多塞了一颗【${freeSn.name}】进蛋里喵~」`;
+              gachaEggPop = `招财喵刚打了个盹，顺手多塞了一颗【${freeSn.name}】进蛋里喵~`;
             }
+          }
+          if (gachaEggPop) {
+            if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gachaEggPop}」`;
+            setTimeout(() => openGuardConfirm('扭蛋屋隐藏彩蛋！', gachaEggPop, () => {}, '太棒了', true), 260);
           }
         }
         renderGachaView();
@@ -35210,29 +35343,48 @@
           const extras = JOB_EXTRA_EVENTS[jObj.id] || [];
           const rkBefore = getJobRankInfo(jObj);
           const baseWage = rkBefore.wage[0] + Math.floor(Math.random() * (rkBefore.wage[1] - rkBefore.wage[0] + 1));
-          const persAptitude = Boolean(persEv && persEv.star);
-          // 性格只影响概率：优势性格搞砸率低(10%)且小费率高(52%)；普通性格搞砸率20%、小费率24%
+          const WEAK_JOB_PERS = {
+            boba: ['foodie'],
+            bakery: ['tsundere', 'gamer'],
+            florist: ['foodie', 'tsundere'],
+            bookshop: ['explorer', 'clingy'],
+          };
+          const isGoodFit = Boolean(persEv && persEv.star);
+          const isWeakFit = !isGoodFit && (WEAK_JOB_PERS[jObj.id] || []).includes(curP);
+          // 等级提升：每升 1 级提高 3% 小费概率（Lv.1 +0%，Lv.2 +3%，Lv.3 +6%）
+          const lvTipBonus = Math.max(0, rkBefore.lv - 1) * 0.03;
+          // 概率规则：失败概率永远较低，且“扣钱”略高于“暂停”；不擅长失败率变大、小费率变小；擅长反之
+          const deductRate = isGoodFit ? 0.05 : (isWeakFit ? 0.14 : 0.09);
+          const pauseRate = isGoodFit ? 0.03 : (isWeakFit ? 0.08 : 0.05);
+          const failRate = deductRate + pauseRate;
+          const tipRate = Math.min(0.85, (isGoodFit ? 0.38 : (isWeakFit ? 0.12 : 0.22)) + lvTipBonus);
+
           const jobRoll = Math.random();
-          const failRate = persAptitude ? 0.10 : 0.20;
-          const tipRate = persAptitude ? 0.52 : 0.24;
-          const messedUp = jobRoll < failRate;
+          const failType = jobRoll < deductRate ? 'deduct' : (jobRoll < failRate ? 'pause' : '');
+          const messedUp = Boolean(failType);
           let gotTip = !messedUp && (jobRoll < failRate + tipRate);
-          // 文案与小费严格对应：触发小费时才抽取含小费事件；未触发小费时不抽小费事件，若性格文案本身含小费/奖金也必定发放对应小费
+
           const useExtra = !messedUp && gotTip && extras.length > 0 && Math.random() < 0.72;
-          const ev = useExtra ? pick(extras) : persEv;
-          const isAptitude = Boolean(ev && ev.star);
-          const evMsgStr = String((ev && ev.msg) || '');
-          const isBigTipCopy = /大额小费|双倍小费|丰厚小费|满额小费|重金打赏/.test(evMsgStr) || Number(ev && ev.tip) >= 4;
-          const isAnyTipCopy = isBigTipCopy || /小费|打赏|奖金|红包/.test(evMsgStr) || Number(ev && ev.tip) > 0;
-          if (!messedUp && isAnyTipCopy) gotTip = true;
-          const penalty = messedUp ? (2 + Math.floor(Math.random() * 2)) : 0;
+          const baseEv = useExtra ? pick(extras) : persEv;
+          const ev = { ...(baseEv || {}) };
+          const evMsgStr = String(ev.msg || '');
+          const isBigTipCopy = /大额小费|双倍小费|丰厚小费|满额小费|重金打赏/.test(evMsgStr) || Number(ev.tip) >= 4;
+          const isAnyTipCopy = isBigTipCopy || /小费|打赏|奖金|红包/.test(evMsgStr) || Number(ev.tip) > 0;
+          // 文案里只要提到小费/打赏/奖金，结算时必定发放；若本次没触发小费但性格文案含小费词，则替换成普通顺利完成文案
+          if (!messedUp && !gotTip && isAnyTipCopy) {
+            ev.msg = `{self}安安静静地完成了今天的【${jObj.name}】班次，表现稳稳当当~`;
+          } else if (!messedUp && isAnyTipCopy) {
+            gotTip = true;
+          }
+          const isAptitude = isGoodFit;
+          const penalty = failType === 'deduct' ? (2 + Math.floor(Math.random() * 2)) : 0;
           let tip = 0;
           if (gotTip) {
             if (isBigTipCopy) {
-              tip = Math.max(Number(ev && ev.tip) || 4, 5 + Math.floor(Math.random() * 4));
-            } else if (Number(ev && ev.tip) >= 3) {
+              tip = Math.max(Number(ev.tip) || 4, 5 + Math.floor(Math.random() * 4));
+            } else if (Number(ev.tip) >= 3) {
               tip = Math.max(Number(ev.tip), 3 + Math.floor(Math.random() * 2));
-            } else if (Number(ev && ev.tip) > 0) {
+            } else if (Number(ev.tip) > 0) {
               tip = Math.max(Number(ev.tip), isAptitude ? 2 : 1);
             } else {
               tip = isAptitude ? (2 + Math.floor(Math.random() * 3)) : (1 + Math.floor(Math.random() * 2));
@@ -35261,7 +35413,9 @@
               '{self}贴标签贴歪了一整摞新书，返工重贴被扣了工时费。',
             ],
           };
-          if (messedUp) {
+          if (failType === 'pause') {
+            ev.msg = `{self}今天在【${jObj.name}】有点不在状态，店长先让它暂停打工、好好休息一会儿（冷却延长）。`;
+          } else if (failType === 'deduct') {
             const fPool = failMsgPools[jObj.id];
             ev.msg = fPool ? pick(fPool) : '{self}今天打工手忙脚乱搞砸了一点小活，被扣了点工资。';
           }
@@ -35279,15 +35433,23 @@
             config.puppyStats.jobFailCount = (config.puppyStats.jobFailCount || 0) + 1;
           }
           config.puppyJob = null;
-          config.puppyJobCooldownUntil = Date.now() + (messedUp ? 3600000 : 600000);
+          config.puppyJobCooldownUntil = Date.now() + (failType === 'pause' ? 3600000 : (failType === 'deduct' ? 1200000 : 600000));
           saveConfig();
           checkPupAchievements();
           if (pup.state !== 'drag' && pup.state !== 'sleep') setPuppyState(messedUp ? 'speechless' : (promoted ? 'love_firework' : 'happy'), 110);
-          logDiaryEvent(messedUp ? `在${jObj.name}打工搞砸被扣${penalty}币，实领${totalWage}币` : `在${jObj.name}打工赚了${totalWage}币${gotTip ? `（含小费${tip}币）` : ''}`);
+          logDiaryEvent(
+            failType === 'pause'
+              ? `在${jObj.name}状态不佳被店长暂停打工休息，领回${totalWage}币`
+              : (failType === 'deduct'
+                ? `在${jObj.name}打工搞砸被扣${penalty}币，实领${totalWage}币`
+                : `在${jObj.name}打工赚了${totalWage}币${gotTip ? `（含小费${tip}币）` : ''}`)
+          );
           showPuppyBubble(
-            messedUp
-              ? `呜，在${jObj.name}不小心搞砸被扣了 ${penalty} 币，只领回 ${totalWage} 币`
-              : (promoted ? getPersExtra('jobPromote', { shop: jObj.name, lv: rkAfter.lv, title: rkAfter.title, wage: totalWage }) : getPersTalk('jobBack', totalWage)),
+            failType === 'pause'
+              ? `呜，在${jObj.name}被店长暂停休息一会儿，先领回 ${totalWage} 币`
+              : (failType === 'deduct'
+                ? `呜，在${jObj.name}不小心搞砸被扣了 ${penalty} 币，只领回 ${totalWage} 币`
+                : (promoted ? getPersExtra('jobPromote', { shop: jObj.name, lv: rkAfter.lv, title: rkAfter.title, wage: totalWage }) : getPersTalk('jobBack', totalWage))),
             3400
           );
           const promoHtml = promoted ? `<div style="font-size:11px;font-weight:700;color:#b8456c;margin-top:3px;">恭喜晋升本店 Lv.${rkAfter.lv}【${rkAfter.title}】! 后续单次基础工资升至 ${rkAfter.wage[0]}~${rkAfter.wage[1]} 币!</div>` : '';
@@ -38160,22 +38322,60 @@
     fontFileInput.click();
   });
 
-  fontFileInput.addEventListener('change', async () => {
-    const file = fontFileInput.files?.[0];
+  if (fontSearchInput) {
+    fontSearchInput.addEventListener('input', () => renderFontSelect());
+  }
+
+  let pendingUploadFontFile = null;
+  const finishUploadFont = async () => {
+    const file = pendingUploadFontFile;
     if (!file) return;
+    const customNm = String(fontUploadNameInput?.value || '').trim() || (file.name.replace(/\.[^.]+$/, '') || file.name);
+    pendingUploadFontFile = null;
+    if (fontUploadNameBox) fontUploadNameBox.style.display = 'none';
     fontStatusEl.textContent = '写入本地库...';
     try {
       const id = `local_${Date.now()}`;
       await dbPutFont(id, file);
-      const name = file.name.replace(/\.[^.]+$/, '') || file.name;
       const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      config.fontRecipes.push({ id, name: `${name} (${sizeMB}MB)`, type: 'local' });
+      config.fontRecipes.push({ id, name: `${customNm} (${sizeMB}MB)`, type: 'local' });
       config.activeFontId = id;
       saveConfig();
       renderFontSelect();
       await applyCustomFont();
+      cmNotify(`已保存字体：${customNm}`);
     } catch (_) {
       fontStatusEl.textContent = '存储失败';
+    }
+  };
+  if (fontUploadConfirmBtn) fontUploadConfirmBtn.addEventListener('click', finishUploadFont);
+  if (fontUploadCancelBtn) fontUploadCancelBtn.addEventListener('click', () => {
+    pendingUploadFontFile = null;
+    if (fontUploadNameBox) fontUploadNameBox.style.display = 'none';
+    fontFileInput.value = '';
+  });
+  if (fontUploadNameInput) {
+    fontUploadNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') finishUploadFont();
+      if (e.key === 'Escape') {
+        pendingUploadFontFile = null;
+        if (fontUploadNameBox) fontUploadNameBox.style.display = 'none';
+      }
+    });
+  }
+
+  fontFileInput.addEventListener('change', () => {
+    const file = fontFileInput.files?.[0];
+    if (!file) return;
+    pendingUploadFontFile = file;
+    const defName = file.name.replace(/\.[^.]+$/, '') || file.name;
+    if (fontUploadNameBox && fontUploadNameInput) {
+      fontUploadNameInput.value = defName;
+      fontUploadNameBox.style.display = 'block';
+      fontUploadNameInput.focus();
+      fontUploadNameInput.select();
+    } else {
+      finishUploadFont();
     }
   });
 
