@@ -370,7 +370,7 @@
     { id: 'treasure_sakura_haori', name: '落樱羽织' },
   ];
   const TREASURE_ACCS = [
-    { id: 'ach_dice_clip', name: '[成就] 好运金骰发卡', cat: 'head', desc: '扭蛋收藏家成就专属限定：闪亮好运金骰发卡' },
+    { id: 'ach_dice_clip', name: '好运金骰发卡', cat: 'head', desc: '扭蛋收藏家成就专属限定：闪亮好运金骰发卡' },
     { id: 'acc_bond_lv7', name: '同心结挂坠' },
     { id: 'treasure_diamond_crown', name: '钻石皇冠' },
     { id: 'treasure_star_halo', name: '星辰光环' },
@@ -379,7 +379,7 @@
     { id: 'treasure_pearl_tiara', name: '珍珠小冠冕' },
   ];
   const TREASURE_COMPANIONS = [
-    { id: 'mini_ach_goldpig', name: '[成就] 招财小金猪', desc: '小狗银行长隐藏成就限定：圆滚滚招财小金猪跟班' },
+    { id: 'mini_ach_goldpig', name: '招财小金猪', desc: '小狗银行长隐藏成就限定：圆滚滚招财小金猪跟班' },
     { id: 'comp_bond_lv8', name: '迷你小狗玩偶' },
     { id: 'treasure_mini_dragon', name: '迷你小龙' },
     { id: 'treasure_mini_phoenix', name: '火焰小鸟' },
@@ -2585,7 +2585,7 @@
     lv10: { kind: 'outfit', id: 'outfit_bond_lv10', name: '[好感Lv10] 十级星纱礼裙' },
   };
   const SPECIAL_EVENT_OUTFITS = [
-    { id: 'ach_gold_robe', name: '[成就] 金丝锦袍', cat: 'trad', desc: '万元户成就专属限定：鎏金织锦富贵小袍' },
+    { id: 'ach_gold_robe', name: '金丝锦袍', cat: 'trad', desc: '万元户成就专属限定：鎏金织锦富贵小袍' },
     { id: 'outfit_bond_lv10', name: '[好感Lv10] 十级星纱礼裙' },
     { id: 'bday_cake_dress', name: '奶油生日礼裙' },
     { id: 'fest_lucky_cape', name: '瑞雪福运披风' },
@@ -2593,7 +2593,7 @@
     { id: 'ck_outfit_century_cloak', name: '百日纪念斗篷' },
   ];
   const SPECIAL_EVENT_BUBBLES = [
-    { id: 'bub_ach_fluff', name: '[成就] 暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
+    { id: 'bub_ach_fluff', name: '#暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
     { id: 'bub_ck_vintage_post', name: '[签到60天] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
@@ -2604,7 +2604,7 @@
     { id: 'af_adv_star', name: '[秘境] 星空小轨迹', dyn: 'gadyn_orbital_ring', charms: [], desc: '冒险极低概率偶遇的银河星轨动态头像框：双色星轨流光与双星绕框公转' },
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
-    { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
+    { id: 'af_ach_velvet', name: '#高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到99天] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
@@ -9896,8 +9896,54 @@
     const recipe = config.fontRecipes.find(f => f.id === config.activeFontId);
     if (!recipe) return;
 
+    const _keepFontStyleLast = () => {
+      try {
+        if (config.activeFontId && fontStyleEl && doc.head && doc.head.lastElementChild !== fontStyleEl) {
+          doc.head.appendChild(fontStyleEl);
+        }
+      } catch (_) {}
+    };
+    if (!win.__stFontHeadObs && doc.head && typeof win.MutationObserver === 'function') {
+      let _reappT = null;
+      win.__stFontHeadObs = new win.MutationObserver(() => {
+        if (!config.activeFontId) return;
+        if (doc.head.lastElementChild === fontStyleEl) return;
+        clearTimeout(_reappT);
+        _reappT = setTimeout(_keepFontStyleLast, 120);
+      });
+      try { win.__stFontHeadObs.observe(doc.head, { childList: true }); } catch (_) {}
+    }
+
     const applyFamilyRule = (familyName) => {
-      fontStyleEl.textContent += `\n#chat .mes_text, #chat .mes_text p, #chat .mes_block { font-family: "${familyName}", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif !important; }`;
+      const famStack = `"${familyName}", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif`;
+      const notIcon = ':not(.fa):not(.fas):not(.far):not(.fab):not(.fal):not(.fad):not(.fa-solid):not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not([class*="fa-"]):not(.material-icons):not(.material-symbols-outlined):not(.material-symbols-rounded):not(i):not(code):not(pre):not(kbd):not(svg):not(svg *)';
+      fontStyleEl.textContent += `
+:root, html, body { --mainFontFamily: ${famStack} !important; }
+html:root body,
+html:root body #sheld,
+html:root body #chat,
+html:root body #chat .mes,
+html:root body #chat .mes .mes_block,
+html:root body #chat .mes .mes_block .name_text,
+html:root body #chat .mes .mes_block .mes_text,
+html:root body #chat .mes .mes_block .mes_text *${notIcon},
+html:root body #chat .mes .mes_text p,
+html:root body #chat .mes .mes_text span${notIcon},
+html:root body #chat .mes .mes_text div${notIcon},
+html:root body #chat .mes .mes_text blockquote,
+html:root body #chat .mes .mes_text details,
+html:root body #chat .mes .mes_text summary,
+html:root body #chat .mes .mes_text em,
+html:root body #chat .mes .mes_text strong,
+html:root body #chat .mes .mes_text li,
+html:root body #chat .mes .mes_text td,
+html:root body #chat .mes .mes_text th,
+html:root body #send_textarea,
+html:root body #form_sheld textarea,
+html:root body .mes_edit_textarea {
+  font-family: ${famStack} !important;
+}`;
+      _keepFontStyleLast();
     };
 
     if (recipe.type === 'local') {
@@ -18015,8 +18061,11 @@
     setInterval(() => {
       if (doc.hidden || !pupBagEl || !pupBagEl.classList.contains('open')) return;
       bspF = (bspF + 1) % 2;
-      root.querySelectorAll('canvas.st-px-bsp-anim').forEach(cv => {
-        if (!cv.offsetParent || !cv.__bspFrames) return;
+      const sel = (pupBagTab === 'look' && achListEl && achListEl.classList.contains('open'))
+        ? '#st-px-id-badges-wrap canvas.st-px-bsp-anim, #st-px-ach-list canvas.st-px-bsp-anim'
+        : '#st-px-id-badges-wrap canvas.st-px-bsp-anim';
+      pupBagEl.querySelectorAll(sel).forEach(cv => {
+        if (!cv.__bspFrames) return;
         drawGridOnCtx(cv.getContext('2d'), cv.__bspFrames[bspF], cv.__bspPal);
       });
     }, 420);
@@ -18381,6 +18430,9 @@
     }
   };
 
+  let _cachedIdBadge1 = '__init__';
+  let _cachedIdBadge2 = '__init__';
+  win.__stInvalidateIdBadges = () => { _cachedIdBadge1 = '__init__'; _cachedIdBadge2 = '__init__'; };
   const updatePupStatBars = () => {
     const h = clamp(Math.round(config.puppyHunger), 0, 100);
     const t = clamp(Math.round(config.puppyThirst), 0, 100);
@@ -18397,12 +18449,16 @@
     if (pupAffLabelEl) pupAffLabelEl.textContent = `好感 Lv.${aff.lv} ${aff.name}`;
     if (pupIdNameEl) pupIdNameEl.textContent = getPupName();
     if (pupIdTitleEl) {
-      const tObj = PUP_ACHIEVEMENTS.find(a => a.id === config.puppyActiveTitle);
-      if (tObj) {
-        pupIdTitleEl.style.display = 'inline-flex';
-        fillAchBadgeEl(pupIdTitleEl, tObj, false);
-      } else {
-        pupIdTitleEl.style.display = 'none';
+      const nextId1 = config.puppyActiveTitle || '';
+      if (nextId1 !== _cachedIdBadge1) {
+        _cachedIdBadge1 = nextId1;
+        const tObj = nextId1 ? PUP_ACHIEVEMENTS.find(a => a.id === nextId1) : null;
+        if (tObj) {
+          pupIdTitleEl.style.display = 'inline-flex';
+          fillAchBadgeEl(pupIdTitleEl, tObj, false);
+        } else {
+          pupIdTitleEl.style.display = 'none';
+        }
       }
     }
     const idBadgesWrap = root.querySelector('#st-px-id-badges-wrap');
@@ -18416,12 +18472,16 @@
     if (pupIdShopBadgeEl) pupIdShopBadgeEl.style.transform = `translateX(${bothOn ? b2Off : b1Off}px)`;
     root.classList.toggle('no-badge-white-rim', config.badgeWhiteRim === false);
     if (pupIdShopBadgeEl) {
-      const bObj = [...SHOP_PUP_BADGES, ...GACHA_BADGES].find(b => b.id === config.puppyActiveShopBadge);
-      if (bObj) {
-        pupIdShopBadgeEl.style.display = 'inline-flex';
-        fillAchBadgeEl(pupIdShopBadgeEl, bObj, false);
-      } else {
-        pupIdShopBadgeEl.style.display = 'none';
+      const nextId2 = config.puppyActiveShopBadge || '';
+      if (nextId2 !== _cachedIdBadge2) {
+        _cachedIdBadge2 = nextId2;
+        const bObj = nextId2 ? [...SHOP_PUP_BADGES, ...GACHA_BADGES].find(b => b.id === nextId2) : null;
+        if (bObj) {
+          pupIdShopBadgeEl.style.display = 'inline-flex';
+          fillAchBadgeEl(pupIdShopBadgeEl, bObj, false);
+        } else {
+          pupIdShopBadgeEl.style.display = 'none';
+        }
       }
     }
     pxNumCoins.textContent = `${Math.max(0, Math.floor(config.puppyCoins || 0))}`;
@@ -18745,7 +18805,8 @@
     if (newInfo.lv > oldLv) {
       showPuppyBubble(getPersExtra('affUp', { lv: newInfo.lv, title: newInfo.name }), 2800);
     }
-    checkPupAchievements();
+    clearTimeout(win.__stAchCheckDebounce);
+    win.__stAchCheckDebounce = setTimeout(() => { checkPupAchievements(); }, 320);
     return delta;
   };
 
@@ -19562,6 +19623,7 @@
             <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">*</span><span>桌面挖宝隐藏限定、连续与累计签到、生日或节日彩蛋、好感满级纪念</span></div>
             <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">+</span><span>背包像素小游戏达标自动赢取限定</span></div>
             <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">^</span><span>像素扭蛋机抽取限定</span></div>
+            <div class="st-px-lim-pop-row"><span class="st-px-lim-tag">#</span><span>成就系统达成专属限定</span></div>
           </div>
         </div>`;
       mask.addEventListener('click', (e) => {
@@ -19624,7 +19686,7 @@
       const allAccOwned = [
         ...FREE_PUP_ACCS.map(i => ({ ...i, _wcats: i.id === 'none' ? ['all'] : ['head'] })),
         ...SHOP_PUP_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, _wcats: [i.cat || 'head'] })),
-        ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
+        ...TREASURE_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `${/^ach_/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
         ...GAME_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
         ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', 'head'] })),
         ...GACHA_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
@@ -19686,7 +19748,7 @@
         ...TREASURE_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
         ...GAME_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
         ...GACHA_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
-        ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
+        ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `${/^ach_/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
       ];
       const list = curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcats.includes(curSub));
       const perPage = 20;
@@ -19724,7 +19786,7 @@
       const allCompOwned = [
         { id: 'none', name: '无', _wcat: 'all' },
         ...SHOP_PUP_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, _wcat: 'shop' })),
-        ...TREASURE_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `*${i.name}`, _wcat: 'limited' })),
+        ...TREASURE_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `${/^(mini_)?ach_/.test(i.id) ? '#' : '*'}${i.name}`, _wcat: 'limited' })),
         ...GAME_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcat: 'limited' })),
         ...GACHA_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcat: 'limited' })),
       ];
@@ -20868,7 +20930,7 @@
       const _uCnt = new Set(config.puppyUnlockedTitles || []).size;
       achHeadEl.innerHTML = `成就称号 (${_uCnt}/${PUP_ACHIEVEMENTS.length})${freshNewAchs.size > 0 ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
     }
-    if (achListEl && achListEl.classList.contains('open')) renderPupAchievements();
+    if (pupBagTab === 'look' && achListEl && achListEl.classList.contains('open')) renderPupAchievements();
     pupFurInput.value = config.puppyFur || '#fffdf7';
     pupEarInput.value = config.puppyEar || '#e2ae74';
     pupCollarInput.value = config.puppyCollar || '#d66565';
@@ -34292,19 +34354,36 @@
           const curP = config.puppyPersonality || 'sleepyhead';
           const persEv = jObj.events[curP] || jObj.events.sleepyhead;
           const extras = JOB_EXTRA_EVENTS[jObj.id] || [];
-          const useExtra = extras.length > 0 && Math.random() < 0.65;
-          const ev = useExtra ? pick(extras) : persEv;
           const rkBefore = getJobRankInfo(jObj);
           const baseWage = rkBefore.wage[0] + Math.floor(Math.random() * (rkBefore.wage[1] - rkBefore.wage[0] + 1));
-          const isAptitude = Boolean(ev.star);
+          const persAptitude = Boolean(persEv && persEv.star);
           // 性格只影响概率：优势性格搞砸率低(10%)且小费率高(52%)；普通性格搞砸率20%、小费率24%
           const jobRoll = Math.random();
-          const failRate = isAptitude ? 0.10 : 0.20;
-          const tipRate = isAptitude ? 0.52 : 0.24;
+          const failRate = persAptitude ? 0.10 : 0.20;
+          const tipRate = persAptitude ? 0.52 : 0.24;
           const messedUp = jobRoll < failRate;
-          const gotTip = !messedUp && (jobRoll < failRate + tipRate);
+          let gotTip = !messedUp && (jobRoll < failRate + tipRate);
+          // 文案与小费严格对应：触发小费时才抽取含小费事件；未触发小费时不抽小费事件，若性格文案本身含小费/奖金也必定发放对应小费
+          const useExtra = !messedUp && gotTip && extras.length > 0 && Math.random() < 0.72;
+          const ev = useExtra ? pick(extras) : persEv;
+          const isAptitude = Boolean(ev && ev.star);
+          const evMsgStr = String((ev && ev.msg) || '');
+          const isBigTipCopy = /大额小费|双倍小费|丰厚小费|满额小费|重金打赏/.test(evMsgStr) || Number(ev && ev.tip) >= 4;
+          const isAnyTipCopy = isBigTipCopy || /小费|打赏|奖金|红包/.test(evMsgStr) || Number(ev && ev.tip) > 0;
+          if (!messedUp && isAnyTipCopy) gotTip = true;
           const penalty = messedUp ? (2 + Math.floor(Math.random() * 2)) : 0;
-          const tip = gotTip ? (isAptitude ? (2 + Math.floor(Math.random() * 3)) : (1 + Math.floor(Math.random() * 2))) : 0;
+          let tip = 0;
+          if (gotTip) {
+            if (isBigTipCopy) {
+              tip = Math.max(Number(ev && ev.tip) || 4, 5 + Math.floor(Math.random() * 4));
+            } else if (Number(ev && ev.tip) >= 3) {
+              tip = Math.max(Number(ev.tip), 3 + Math.floor(Math.random() * 2));
+            } else if (Number(ev && ev.tip) > 0) {
+              tip = Math.max(Number(ev.tip), isAptitude ? 2 : 1);
+            } else {
+              tip = isAptitude ? (2 + Math.floor(Math.random() * 3)) : (1 + Math.floor(Math.random() * 2));
+            }
+          }
           const totalWage = Math.max(1, baseWage + tip - penalty);
           const failMsgPools = {
             boba: [
@@ -35815,13 +35894,13 @@
       }
       if (shopPreviewItem && shopPreviewItem.kind === 'badge') {
         shopPreviewItem = null;
+        if (typeof win.__stInvalidateIdBadges === 'function') win.__stInvalidateIdBadges();
       }
-      updatePupStatBars();
       pupBagTab = btn.dataset.pxTab;
       syncPuppyBagUI();
       if (pupBagTab === 'game') restoreGameView();
       if (pupBagTab === 'adv') renderPupAdventure();
-      positionPupBag();
+      win.requestAnimationFrame(() => positionPupBag());
     });
   });
 
