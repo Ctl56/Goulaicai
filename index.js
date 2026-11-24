@@ -2553,7 +2553,7 @@
   ];
   const SPECIAL_EVENT_BUBBLES = [
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
-    { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'strawberry', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'dot_heart' }], desc: '生日当天专属限定：奶油草莓金边生日纪念气泡框' },
+    { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
     { id: 'bub_ck_vintage_post', name: '[签到60天] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
     { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
   ];
@@ -2563,7 +2563,7 @@
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
-    { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'sakura', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'berry' }], desc: '生日当天专属动态限定：奶油草莓小皇冠飘彩头像框' },
+    { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到99天] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
   ];
@@ -5181,7 +5181,7 @@
     .st-px-avatar-wrap.af-adv-cloud { border-color: #9ebcd4; background: linear-gradient(125deg,#eef6fc,#ffffff,#f2eef8); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 10px rgba(158,188,212,0.5); }
     .st-px-avatar-wrap.af-adv-star { border-color: #d4be7a; background: linear-gradient(125deg,#2e3657,#47416e,#2e3657); background-size: 240% 240%; animation: stAfFlow 4.5s ease infinite; box-shadow: 0 0 0 1px #b0a3d6, 0 0 11px rgba(212,190,122,0.52); }
     .st-px-avatar-wrap.af-bond-lv9 { border-color: #d9b56c; background: linear-gradient(125deg,#fff6e0,#fcebf2,#eef4ff); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 12px rgba(217,181,108,0.55); }
-    .st-px-avatar-wrap.af-bday-candle { border-color: #d6ae76; background: linear-gradient(125deg,#fcf5e6,#faebf0,#fffaf2); background-size: 240% 240%; animation: stAfFlow 3.8s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 10px rgba(214,174,118,0.5); }
+    .st-px-avatar-wrap.af-bday-candle { border-color: #f29ab8; background: linear-gradient(125deg,#ffeaf3,#fff6de,#e8f6ff,#ffeaf3); background-size: 240% 240%; animation: stAfFlow 3.4s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 10px rgba(242,154,184,0.48); }
     .st-px-avatar-wrap.af-fest-lantern { border-color: #c97272; background: linear-gradient(125deg,#faf0ec,#f7e5cf,#faf0ec); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; box-shadow: 0 0 0 1px #ffe6cf, 0 0 10px rgba(201,114,114,0.46); }
     .st-px-af-custom-bar { grid-column: 1 / -1; padding: 6px 7px; border: 1.5px dashed var(--px-bd, #bfa4ae); background: #ffffff; margin-bottom: 2px; font-size: 10px; }
     .st-px-af-custom-row { display: flex; align-items: center; justify-content: space-between; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
@@ -5526,6 +5526,42 @@
       user-select: none;
       -webkit-user-select: none;
     }
+    #st-tb-quick-dock { flex-wrap: wrap; max-width: min(310px, calc(100vw - 16px)); justify-content: center; }
+    .st-tb-qd-modal-mask {
+      position: fixed; inset: 0; z-index: 10035;
+      background: rgba(15, 20, 30, 0.42); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; padding: 14px;
+    }
+    .st-tb-qd-modal-mask.open { display: flex; }
+    .st-tb-qd-modal {
+      width: min(350px, calc(100vw - 28px)); max-height: min(78vh, 520px);
+      background: var(--tb-bg, #ffffff); color: var(--tb-text, #222222);
+      border: 1px solid var(--tb-border, rgba(0,0,0,0.12)); border-radius: 14px;
+      box-shadow: 0 12px 34px rgba(0,0,0,0.24); padding: 14px;
+      display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+      font-size: 12.5px; line-height: 1.5;
+    }
+    .st-tb-qd-modal-title { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; }
+    .st-tb-qd-list { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; max-height: 220px; padding-right: 2px; }
+    .st-tb-qd-item {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 7px; border-radius: 9px;
+      background: var(--tb-card, rgba(127,127,127,0.08));
+      border: 1px solid var(--tb-border, rgba(0,0,0,0.08));
+    }
+    .st-tb-qd-item-tag { font-size: 11px; opacity: 0.72; white-space: nowrap; flex-shrink: 0; }
+    .st-tb-qd-item input {
+      flex: 1; min-width: 0; height: 24px; padding: 0 6px; border-radius: 6px;
+      border: 1px solid var(--tb-border, rgba(0,0,0,0.14));
+      background: var(--tb-bg, #ffffff); color: var(--tb-text, #222222); font-size: 12px;
+    }
+    .st-tb-qd-pool { display: flex; flex-wrap: wrap; gap: 5px; max-height: 110px; overflow-y: auto; }
+    .st-tb-qd-chip {
+      padding: 4px 8px; border-radius: 999px; font-size: 11.5px; cursor: pointer;
+      border: 1px dashed var(--tb-border, rgba(0,0,0,0.22));
+      background: var(--tb-card, rgba(127,127,127,0.07)); color: var(--tb-text, #222222);
+    }
+    .st-tb-qd-chip:hover { border-color: var(--tb-accent, #6b8cff); }
     #st-tb-quick-dock {
       z-index: 10005 !important;
     }
@@ -6334,8 +6370,8 @@
     #st-tb-puppy-bubble.bub-gacha-mint-milk::after { background: #e5f7f1; border-color: #88c2b0; }
     #st-tb-puppy-bubble.bub-bond-lv6 { background: linear-gradient(125deg,#fff0f5,#fce3ec,#fff8fa); background-size: 240% 240%; animation: stBubSheen 3.8s ease infinite; border-color: #d993ab; color: #633447; box-shadow: 0 2px 10px rgba(217,147,171,0.42); }
     #st-tb-puppy-bubble.bub-bond-lv6::after { background: #fceaf0; border-color: #d993ab; }
-    #st-tb-puppy-bubble.bub-bday-cake { background: linear-gradient(125deg,#fcf6ea,#faeff3,#fffdf7); border-color: #d4b07e; color: #6b4938; box-shadow: 0 2px 9px rgba(212,176,126,0.4); }
-    #st-tb-puppy-bubble.bub-bday-cake::after { background: #fbf2ee; border-color: #d4b07e; }
+    #st-tb-puppy-bubble.bub-bday-cake { background: linear-gradient(125deg,#fff0f6,#fff8e8,#edf7ff); border-color: #f09bb8; color: #6e2d48; box-shadow: 0 2px 10px rgba(240,155,184,0.36); }
+    #st-tb-puppy-bubble.bub-bday-cake::after { background: #fff4f8; border-color: #f09bb8; }
     #st-tb-puppy-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
         #st-tb-puppy-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
     #st-tb-puppy-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
@@ -8578,21 +8614,21 @@
               <button class="st-tb-btn" id="st-tb-perf-noblur" type="button">去毛玻璃:关</button>
               <button class="st-tb-btn" id="st-tb-perf-clean" type="button">图片懒加载</button>
             </div>
-            <div class="st-tb-row" style="margin-bottom:0;">
-              <select class="st-tb-select" id="st-tb-perf-fold">
-                <option value="0">仅显示层数：全部</option>
-                <option value="3">仅显示最近 3 层</option>
-                <option value="5">仅显示最近 5 层</option>
-                <option value="8">仅显示最近 8 层</option>
-                <option value="10">仅显示最近 10 层</option>
-                <option value="15">仅显示最近 15 层</option>
-                <option value="20">仅显示最近 20 层</option>
-                <option value="30">仅显示最近 30 层</option>
-                <option value="40">仅显示最近 40 层</option>
-                <option value="50">仅显示最近 50 层</option>
-                <option value="60">仅显示最近 60 层</option>
-                <option value="80">仅显示最近 80 层</option>
-                <option value="100">仅显示最近 100 层</option>
+            <div class="st-tb-row" style="margin-bottom:0;gap:6px;align-items:center;">
+              <button class="st-tb-btn" id="st-tb-perf-fold-toggle" type="button" style="flex:1;">仅显示楼层：关</button>
+              <select class="st-tb-select" id="st-tb-perf-fold" style="width:76px;flex:0 0 auto;text-align:center;" title="选择仅显示的最近楼层数">
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="8">8</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+                <option value="60">60</option>
+                <option value="80">80</option>
+                <option value="100">100</option>
               </select>
             </div>
           </div>
@@ -8968,6 +9004,14 @@
                 <span id="st-tb-opacity-val"></span>
               </div>
             </div>
+          </div>
+
+          <div class="st-tb-section">
+            <div class="st-tb-label">
+              <span>长按悬浮球快捷栏</span>
+              <button class="st-tb-mini-btn" id="st-tb-qd-cfg-open" type="button">自定义快捷键</button>
+            </div>
+            <div class="st-tb-tip">自由挑选长按悬浮球时弹出的快捷按钮，支持调整顺序、增删功能与自定义名称。</div>
           </div>
 
           <div class="st-tb-section">
@@ -27711,205 +27755,216 @@
         px(ox - 1, oy - 1, 'rgba(255,255,255,0.24)', 4, 4);
         px(ox, oy, wCols[i % wCols.length], 2, 2);
       }
-    } else if (m === 'gdyn_prism_refract') {
-      // 糖晶梦境框：斜向糖果棱镜折射光带扫过 + 上下边缘跃动糖晶微粒
-      const pCols = ['rgba(255,176,214,0.42)', 'rgba(160,232,255,0.42)', 'rgba(255,232,148,0.42)', 'rgba(206,184,255,0.42)'];
-      const sweepX = ((t * 3) % (W + 24)) - 12;
-      for (let k = 0; k < 4; k++) {
-        for (let r = 0; r < H; r += 3) {
-          const rx = sweepX + k * 3 - Math.floor(r * 0.55);
-          if (rx >= 1 && rx < W - 2) px(rx, r, pCols[k], 2, 2);
-        }
-      }
-      for (let i = 0; i < 6; i++) {
-        const dx = 5 + ((i * 19 + t * 2) % Math.max(8, W - 10));
-        const dy = i % 2 === 0 ? 1 + (Math.floor((t + i) / 3) % 2) : H - 3 - (Math.floor((t + i) / 3) % 2);
-        px(dx, dy, '#ffffff', 2, 2);
-        px(dx + 1, dy, i % 2 === 0 ? '#ffa8d8' : '#8ce4ff', 1, 1);
+    } else if (m && m.startsWith('gdyn_')) {
+      renderGachaBubDyn(px, m, W, H, t);
+    }
+  }, 150);
+
+  // 高颜值像素艺术气泡动态渲染引擎（15 款扭蛋/秘境/生日专属原创，气泡与扭蛋预览共用）
+  const renderGachaBubDyn = (px, m, W, H, t) => {
+    const bob1 = Math.round(Math.sin(t * 0.24));
+    const bob2 = Math.round(Math.cos(t * 0.22));
+    if (m === 'gdyn_prism_refract') {
+      // 糖晶梦境框：左上与右下呼吸变色透明糖果棱镜心晶 + 顶边柔彩糖霜弧珠
+      const cIdx = Math.floor(t / 6) % 3;
+      const cA = ['#ff9ed2', '#8ce6ff', '#c9adff'][cIdx];
+      const cB = ['#ffe694', '#ffa8d8', '#98f0d8'][cIdx];
+      const drawGem = (gx, gy, c1, c2) => {
+        px(gx + 2, gy, '#ffffff', 2, 1);
+        px(gx + 1, gy + 1, c1, 4, 1);
+        px(gx, gy + 2, c2, 6, 2);
+        px(gx + 1, gy + 4, c1, 4, 1);
+        px(gx + 2, gy + 5, '#ffffff', 2, 1);
+        px(gx + 1, gy + 2, '#ffffff', 1, 1);
+      };
+      drawGem(2, 2 + bob1, cA, cB);
+      drawGem(W - 9, H - 8 - bob1, cB, cA);
+      const rCols = ['#ffb4dc', '#ffe694', '#a0f0d8', '#a0dcff', '#d4b8ff'];
+      for (let i = 0; i < 5; i++) {
+        const ax = Math.round(12 + ((W - 24) * i) / 4);
+        const ay = 2 + Math.round(Math.sin(t * 0.28 + i * 0.9) * 1.4);
+        px(ax, ay, rCols[(i + cIdx) % 5], 2, 2);
+        px(ax, ay, '#ffffff', 1, 1);
       }
     } else if (m === 'gdyn_royal_ribbon') {
-      // 鎏金星冕框：流动液态金带沿上下边起伏 + 巡游金珠光晕
-      for (let x = 2; x < W - 2; x += 2) {
-        const wave = Math.round(Math.sin(t * 0.22 + x * 0.25));
-        const shimmer = ((x + t * 2) % 14) < 4;
-        px(x, 1 + Math.max(0, wave), shimmer ? '#fff6c4' : '#e6b84c', 2, 1);
-        px(x, H - 2 - Math.max(0, -wave), shimmer ? '#fff6c4' : '#d49e35', 2, 1);
-      }
+      // 鎏金星冕框：右上立体像素金冠轻浮 + 左下丝绒金流苏轻摆 + 暖金光尘微珠
+      const cx = W - 11, cy = 1 + bob1;
+      px(cx + 1, cy + 1, '#fff3b0', 1, 1); px(cx + 4, cy, '#fff3b0', 1, 1); px(cx + 7, cy + 1, '#fff3b0', 1, 1);
+      px(cx + 1, cy + 2, '#f2c249', 7, 2);
+      px(cx + 2, cy + 2, '#ff6e94', 1, 1); px(cx + 4, cy + 2, '#ffffff', 1, 1); px(cx + 6, cy + 2, '#88d8ff', 1, 1);
+      px(cx + 1, cy + 4, '#d99e26', 7, 1);
+      const sw = Math.round(Math.sin(t * 0.2));
+      px(3, H - 8, '#f5ce5c', 3, 2);
+      px(4 + sw, H - 6, '#e0a938', 1, 2);
+      px(3 + sw, H - 4, '#fff0b3', 3, 2);
       for (let i = 0; i < 4; i++) {
-        const gx = 4 + ((t * 2 + i * 17) % Math.max(8, W - 8));
-        const gy = i % 2 === 0 ? 2 : H - 4;
-        px(gx - 1, gy, 'rgba(255,232,140,0.38)', 4, 2);
-        px(gx, gy, '#fff7cc', 2, 2);
+        const dx = 10 + ((t + i * 15) % Math.max(8, W - 22));
+        const dy = i % 2 === 0 ? 3 + ((t + i) % 2) : H - 4 - ((t + i) % 2);
+        px(dx, dy, (t + i * 3) % 8 < 4 ? '#fff6c4' : '#f0be4a', 2, 2);
       }
     } else if (m === 'gdyn_matcha_whisp') {
-      // 樱茶和果框：底角抹茶清雾袅袅升腾 + 粉白和果圆瓣随风斜飘
-      for (let i = 0; i < 3; i++) {
-        const sx = 5 + i * 3 + Math.round(Math.sin(t * 0.25 + i) * 1.5);
-        const sy = H - 3 - ((t + i * 5) % Math.max(8, H - 5));
-        px(sx, sy, 'rgba(136,208,158,0.68)', 2, 2);
-        px(W - sx - 2, sy, 'rgba(156,220,174,0.58)', 2, 1);
-      }
-      for (let i = 0; i < 5; i++) {
-        const px0 = (t * 2 + i * 17) % Math.max(8, W - 4);
-        const py0 = 2 + ((t + i * 7) % Math.max(6, H - 4));
-        px(px0, py0, i % 2 === 0 ? '#ffb5cc' : '#ffe0ea', 2, 2);
-        px(px0 + 1, py0 + 1, '#ffffff', 1, 1);
+      // 樱茶和果框：左上三色樱花团子轻晃 + 右下抹茶小碗升腾热雾 + 粉白樱瓣斜飘
+      const dx = 2, dy = 2 + bob1;
+      px(dx + 1, dy, '#ffb5cc', 3, 2); px(dx + 1, dy, '#ffe6ee', 1, 1);
+      px(dx + 2, dy + 2, '#fff9f0', 3, 2);
+      px(dx + 3, dy + 4, '#98d99c', 3, 2);
+      px(dx, dy - 1, '#b58863', 1, 1); px(dx + 6, dy + 6, '#b58863', 1, 1);
+      const tx = W - 10, ty = H - 6;
+      px(tx, ty, '#7cc285', 7, 3); px(tx + 1, ty + 3, '#5ea368', 5, 1);
+      px(tx + 1, ty, '#b8ebbc', 5, 1);
+      const sy = ty - 2 - (t % 5);
+      px(tx + 2 + bob2, sy, 'rgba(255,255,255,0.78)', 2, 2);
+      for (let i = 0; i < 4; i++) {
+        const fx = (12 + t * 2 + i * 16) % Math.max(8, W - 14);
+        const fy = 2 + ((t + i * 6) % Math.max(6, H - 5));
+        px(fx, fy, i % 2 === 0 ? '#ffc2d6' : '#ffffff', 2, 2);
       }
     } else if (m === 'gdyn_lunar_tide') {
-      // 月华流光框：底边银蓝月汐波纹起伏 + 顶边柔月弧光轻摇
-      for (let x = 2; x < W - 2; x += 2) {
-        const ty = H - 3 + Math.round(Math.sin(t * 0.24 + x * 0.22));
-        px(x, ty, (x + t) % 8 < 4 ? '#cfe8ff' : '#8eb8f0', 2, 1);
-        if (ty + 1 < H) px(x, ty + 1, 'rgba(130,178,240,0.45)', 2, 1);
-      }
-      const arcX = Math.round(W * 0.5 + Math.sin(t * 0.14) * Math.max(4, W * 0.28));
-      px(arcX - 3, 2, 'rgba(224,240,255,0.42)', 7, 2);
-      px(arcX - 1, 1, '#fff6c8', 3, 2);
-      px(arcX, 2, '#9ec4f5', 2, 1);
+      // 月华流光框：左上银蓝弯月枕柔云 + 右下发光小水母灯笼轻游
+      const mx = 2, my = 2 + bob1;
+      px(mx + 2, my, '#fff4b8', 3, 1); px(mx + 1, my + 1, '#ffe68c', 2, 3); px(mx + 2, my + 4, '#fff4b8', 3, 1);
+      px(mx + 3, my + 3, '#ffffff', 6, 2); px(mx + 4, my + 2, '#e6f2ff', 4, 1);
+      const jx = W - 10, jy = H - 9 + bob2;
+      px(jx + 1, jy, '#9cd4ff', 5, 2); px(jx, jy + 2, '#c8ebff', 7, 2); px(jx + 2, jy + 1, '#ffffff', 2, 1);
+      px(jx + 1, jy + 4, 'rgba(164,218,255,0.75)', 1, 2 + (t % 2));
+      px(jx + 3, jy + 4, 'rgba(220,242,255,0.85)', 1, 3 - (t % 2));
+      px(jx + 5, jy + 4, 'rgba(164,218,255,0.75)', 1, 2 + (t % 2));
     } else if (m === 'gdyn_nebula_constel') {
-      // 碎星丝绒框：暗紫星云微雾脉动 + 逐段点亮的星轨圆点连线
-      const pts = [[4, 3], [Math.round(W * 0.35), 2], [Math.round(W * 0.68), 3], [W - 6, 2], [W - 5, H - 4], [Math.round(W * 0.55), H - 3], [6, H - 4]];
-      const activeSeg = Math.floor(t / 5) % pts.length;
-      for (let i = 0; i < pts.length; i++) {
-        const [x0, y0] = pts[i];
-        const glow = i === activeSeg || i === (activeSeg + 1) % pts.length;
-        px(x0 - 1, y0 - 1, glow ? 'rgba(210,180,255,0.5)' : 'rgba(170,150,235,0.22)', 4, 4);
-        px(x0, y0, glow ? '#fff6c4' : '#cbb8ff', 2, 2);
-      }
-      const [ax, ay] = pts[activeSeg];
-      const [bx, by] = pts[(activeSeg + 1) % pts.length];
-      for (let s = 1; s < 5; s++) {
-        const lx = Math.round(ax + (bx - ax) * (s / 5));
-        const ly = Math.round(ay + (by - ay) * (s / 5));
-        px(lx, ly, 'rgba(232,216,255,0.62)', 1, 1);
+      // 碎星丝绒框：左上迷你土星环行星轻晃 + 右下星云光球 + 弧线流光微点
+      const sx = 3, sy = 2 + bob1;
+      px(sx + 2, sy, '#d4b8ff', 4, 4); px(sx + 3, sy + 1, '#ffffff', 1, 1);
+      px(sx, sy + 2, '#ffe89c', 8, 1); px(sx + 1, sy + 1, '#f7c4ff', 1, 1); px(sx + 6, sy + 3, '#98e2ff', 1, 1);
+      const gx = W - 9, gy = H - 8 - bob1;
+      px(gx + 1, gy, 'rgba(196,164,255,0.45)', 5, 5);
+      px(gx + 2, gy + 1, '#b894ff', 3, 3); px(gx + 2, gy + 1, '#ffffff', 1, 1);
+      for (let i = 0; i < 4; i++) {
+        const px0 = 12 + ((t * 2 + i * 14) % Math.max(8, W - 22));
+        const py0 = 2 + Math.round((Math.sin(t * 0.2 + i) + 1) * 2);
+        px(px0, py0, i % 2 === 0 ? '#fff4b8' : '#a8e2ff', 2, 2);
       }
     } else if (m === 'gdyn_toast_butter') {
-      // 烤吐司奶泡：顶边暖金黄油缓缓融滴 + 烤面包热气轻卷
-      for (let i = 0; i < 5; i++) {
-        const bx = 6 + Math.round(((W - 14) * i) / 4);
-        const drip = 2 + Math.floor((Math.sin(t * 0.18 + i * 1.4) + 1) * 2.2);
-        px(bx - 1, 1, '#f7cf68', 4, 2);
-        px(bx, 2, '#ffe89c', 2, drip);
-        px(bx, 1 + drip, '#fff6d4', 1, 1);
-      }
-      for (let i = 0; i < 3; i++) {
-        const sy = H - 3 - ((t + i * 5) % Math.max(8, H - 6));
-        const sx = (i % 2 === 0 ? 3 : W - 5) + Math.round(Math.sin(t * 0.25 + i));
-        px(sx, sy, 'rgba(255,244,224,0.68)', 2, 2);
-      }
+      // 烤吐司奶泡：左上酥脆小吐司配融化黄油块 + 右下暖白小牛奶杯冒热气
+      const tx = 2, ty = 2 + bob1;
+      px(tx, ty + 1, '#d9914e', 7, 6); px(tx + 1, ty, '#d9914e', 5, 1);
+      px(tx + 1, ty + 1, '#fff2d1', 5, 5);
+      px(tx + 2, ty + 2, '#ffe066', 3, 2); px(tx + 3, ty + 2, '#fff8cc', 1, 1);
+      const mx = W - 9, my = H - 8 - bob2;
+      px(mx + 1, my + 1, '#ffffff', 5, 5); px(mx + 2, my + 2, '#a8d8ff', 3, 2);
+      px(mx + 6, my + 2, '#ffffff', 1, 3);
+      px(mx + 2 + (t % 2), my - 1 - (t % 3), 'rgba(255,250,240,0.8)', 2, 1);
     } else if (m === 'gdyn_mint_swirl') {
-      // 薄荷奶糖框：清凉薄荷奶糖双色旋带沿上下框流转 + 跃动冰雾奶珠
-      for (let x = 2; x < W - 2; x += 3) {
-        const phase = (x + t * 2) % 12;
-        const cTop = phase < 6 ? '#7ee0bf' : '#ffffff';
-        const cBot = phase < 6 ? '#ffffff' : '#96ebd0';
-        px(x, 1, cTop, 2, 2);
-        px(x, H - 3, cBot, 2, 2);
-      }
-      for (let i = 0; i < 5; i++) {
-        const mx = 5 + ((i * 17 + t) % Math.max(8, W - 10));
-        const my = 4 + Math.round((Math.sin(t * 0.22 + i * 1.5) + 1) * Math.max(2, (H - 10) * 0.45));
-        px(mx - 1, my, 'rgba(182,250,228,0.45)', 4, 2);
-        px(mx, my, '#ffffff', 2, 2);
+      // 薄荷奶糖框：左上薄荷白螺旋棒棒糖轻晃 + 右下薄荷嫩叶托晶莹奶糖 + 冰雾小奶珠
+      const lx = 2, ly = 2 + bob1;
+      px(lx + 1, ly, '#6ad6b2', 5, 5); px(lx + 2, ly + 1, '#ffffff', 3, 3);
+      px(lx + 3, ly + 2, '#6ad6b2', 1, 1); px(lx + 2, ly + 1, '#a8f2da', 1, 1);
+      px(lx + 3, ly + 5, '#e6d8cc', 1, 3);
+      const cx = W - 10, cy = H - 7 - bob1;
+      px(cx, cy + 2, '#70c988', 3, 2); px(cx + 6, cy + 2, '#70c988', 3, 2);
+      px(cx + 2, cy + 1, '#ffffff', 5, 4); px(cx + 3, cy + 2, '#8ce8ca', 3, 2);
+      px(cx + 3, cy + 1, '#ffffff', 1, 1);
+      for (let i = 0; i < 4; i++) {
+        const fx = 12 + ((i * 15 + t) % Math.max(8, W - 24));
+        const fy = H - 3 - ((t + i * 5) % Math.max(6, H - 5));
+        px(fx, fy, i % 2 === 0 ? '#a8f5dd' : '#ffffff', 2, 2);
       }
     } else if (m === 'gdyn_fizz_cascade') {
-      // 汽水气泡框：顶层冰蓝苏打泡沫波浪起伏 + 上升气泡到顶炸开微水环
-      for (let x = 2; x < W - 2; x += 2) {
-        const fy = 1 + (Math.round(Math.sin(t * 0.28 + x * 0.3)) > 0 ? 1 : 0);
-        px(x, fy, 'rgba(225,248,255,0.85)', 2, 1);
-      }
+      // 汽水气泡框：右下冰蓝苏打小玻璃瓶轻晃 + 源源不断上升并绽开小水圈的透亮气泡
+      const bx = W - 9, by = H - 9 + bob1;
+      px(bx + 2, by, '#e8f8ff', 2, 2); px(bx + 1, by + 2, '#7ad8ff', 4, 5);
+      px(bx + 2, by + 3, '#ffffff', 1, 3);
       for (let i = 0; i < 6; i++) {
         const prog = (t * 2 + i * 6) % Math.max(10, H - 3);
-        const sx = 5 + Math.round(((W - 10) * ((i * 41) % 100)) / 100);
+        const sx = 4 + Math.round(((W - 14) * ((i * 37) % 100)) / 100);
         const sy = H - 2 - prog;
         if (sy <= 3) {
-          px(sx - 1, 2, 'rgba(168,232,255,0.75)', 1, 1);
-          px(sx + 2, 2, 'rgba(168,232,255,0.75)', 1, 1);
+          px(sx - 1, 2, 'rgba(148,224,255,0.82)', 1, 1);
+          px(sx + 2, 2, 'rgba(148,224,255,0.82)', 1, 1);
         } else {
-          px(sx, sy, '#88dcff', 2, 2);
-          px(sx, sy, '#ffffff', 1, 1);
+          px(sx, sy, '#88dcff', 2, 2); px(sx, sy, '#ffffff', 1, 1);
         }
       }
     } else if (m === 'gdyn_berry_milkshake') {
-      // 草莓牛奶泡：底边粉白奶昔波浪轻荡 + 浮沉圆润草莓粒与奶盖光点
-      for (let x = 2; x < W - 2; x += 2) {
-        const wy = H - 3 + Math.round(Math.sin(t * 0.22 + x * 0.28));
-        px(x, wy, (x + t) % 6 < 3 ? '#fff5f8' : '#ffb8ce', 2, 2);
-      }
+      // 草莓牛奶泡：左上条纹吸管草莓奶昔杯 + 右下小奶油草莓泡芙 + 漂浮粉白奶珠
+      const cx = 2, cy = 2 + bob1;
+      px(cx + 4, cy, '#ff6e8e', 1, 2); px(cx + 3, cy + 1, '#ffffff', 1, 1);
+      px(cx + 1, cy + 2, '#ffffff', 5, 2);
+      px(cx + 1, cy + 4, '#ffacc2', 5, 4); px(cx + 2, cy + 5, '#ffe6ee', 1, 2);
+      const px0 = W - 10, py0 = H - 7 - bob1;
+      px(px0 + 1, py0 + 2, '#f5c28c', 6, 3); px(px0 + 1, py0 + 1, '#ffffff', 6, 2);
+      px(px0 + 3, py0, '#f05674', 2, 2);
       for (let i = 0; i < 4; i++) {
-        const bx = 6 + Math.round(((W - 14) * i) / 3);
-        const by = 3 + Math.round((Math.sin(t * 0.2 + i * 1.7) + 1) * Math.max(2, (H - 10) * 0.4));
-        px(bx, by, '#f05d7a', 3, 2);
-        px(bx + 1, by - 1, '#78c97e', 1, 1);
-        px(bx, by, '#ffc2d0', 1, 1);
+        const dx = 11 + ((i * 13 + t) % Math.max(8, W - 22));
+        const dy = 2 + ((t + i * 5) % Math.max(6, H - 5));
+        px(dx, dy, i % 2 === 0 ? '#ffc2d6' : '#ffffff', 2, 2);
       }
     } else if (m === 'gdyn_glass_aurora') {
-      // 极光玻璃框：竖向极光幕帘轻摇 + 斜向琉璃高光扫过
-      const aCols = ['rgba(126,245,212,0.42)', 'rgba(130,206,255,0.42)', 'rgba(202,164,255,0.42)'];
-      for (let i = 0; i < 5; i++) {
-        const ax = 4 + Math.round(((W - 10) * i) / 4) + Math.round(Math.sin(t * 0.16 + i) * 2);
-        const ah = 4 + ((t + i * 3) % Math.max(5, Math.min(9, H - 4)));
-        px(ax, 1, aCols[i % 3], 3, ah);
-      }
-      const gl = ((t * 3) % (W + 16)) - 8;
-      for (let y = 1; y < H - 1; y += 2) {
-        const gx = gl - Math.floor(y * 0.4);
-        if (gx >= 1 && gx < W - 2) px(gx, y, 'rgba(255,255,255,0.65)', 1, 2);
-      }
-    } else if (m === 'gdyn_hotpot_boil') {
-      // 咕嘟火锅泡：底边番茄红汤翻滚鼓泡 + 白色热气螺旋上升
-      for (let i = 0; i < 5; i++) {
-        const phase = (t + i * 5) % 12;
-        const bx = 5 + Math.round(((W - 12) * i) / 4);
-        if (phase < 6) {
-          px(bx, H - 3, '#ff6e54', 3, 2);
-          px(bx + 1, H - 3, '#ffd2a6', 1, 1);
-        } else if (phase < 9) {
-          px(bx - 1, H - 4, 'rgba(255,132,96,0.75)', 1, 1);
-          px(bx + 3, H - 4, 'rgba(255,132,96,0.75)', 1, 1);
+      // 极光玻璃框：顶部柔和弯曲的三彩极光丝带拱桥 + 两侧晶莹玻璃露珠
+      const cols = ['#8cf5d8', '#8cd4ff', '#d4b4ff'];
+      for (let x = 6; x < W - 6; x += 2) {
+        const wave = Math.round(Math.sin(t * 0.2 + x * 0.18) * 1.4);
+        for (let b = 0; b < 3; b++) {
+          px(x, 1 + b + Math.max(0, wave), cols[(b + Math.floor(t / 8)) % 3], 2, 1);
         }
       }
-      for (let i = 0; i < 4; i++) {
-        const sx = 6 + Math.round(((W - 12) * i) / 3) + Math.round(Math.sin(t * 0.3 + i) * 1.5);
-        const sy = H - 4 - ((t * 2 + i * 5) % Math.max(8, H - 5));
-        px(sx, sy, 'rgba(255,250,245,0.72)', 2, 2);
-      }
+      px(2, H - 6 + bob1, '#c8f2ff', 3, 4); px(3, H - 5 + bob1, '#ffffff', 1, 2);
+      px(W - 6, H - 6 - bob1, '#e6d4ff', 3, 4); px(W - 5, H - 5 - bob1, '#ffffff', 1, 2);
+    } else if (m === 'gdyn_hotpot_boil') {
+      // 咕嘟火锅泡：左下红汤迷你小锅咕嘟冒泡 + 右上弹跳小鱼丸与嫩绿青菜叶
+      const px0 = 2, py0 = H - 7;
+      px(px0, py0 + 2, '#c94a38', 8, 4); px(px0 + 1, py0 + 1, '#ff7354', 6, 2);
+      px(px0 + 2 + (t % 3), py0, '#ffd4a8', 2, 1);
+      px(px0 + 3 + bob1, py0 - 2 - (t % 3), 'rgba(255,255,255,0.82)', 2, 2);
+      const fx = W - 10, fy = 2 + bob2;
+      px(fx + 1, fy + 1, '#fff3dc', 4, 4); px(fx + 2, fy + 2, '#ff8ca0', 2, 2);
+      px(fx + 5, fy, '#76cc7a', 3, 3); px(fx + 6, fy + 1, '#b8f0ba', 1, 1);
     } else if (m === 'gdyn_jade_tile') {
-      // 玉牌发财泡：翡翠白玉斜向温润光扫 + 四边竹绿金环脉动
-      const sw = ((t * 2) % (W + 14)) - 7;
-      for (let y = 1; y < H - 1; y += 2) {
-        const jx = sw - Math.floor(y * 0.35);
-        if (jx >= 1 && jx < W - 2) px(jx, y, 'rgba(196,255,232,0.52)', 2, 2);
-      }
-      const pulse = (t % 12) < 6;
-      px(2, 2, pulse ? '#5ec996' : '#a8ebd0', 2, 2);
-      px(W - 4, 2, pulse ? '#f5cf64' : '#fff0b3', 2, 2);
-      px(2, H - 4, pulse ? '#f5cf64' : '#fff0b3', 2, 2);
-      px(W - 4, H - 4, pulse ? '#5ec996' : '#a8ebd0', 2, 2);
+      // 玉牌发财泡：左上温润白玉翡翠麻将牌闪光 + 右下摇摆金铜钱流苏
+      const mx = 2, my = 2 + bob1;
+      px(mx, my, '#ffffff', 6, 7); px(mx, my + 6, '#5ec996', 6, 1);
+      px(mx + 2, my + 1, '#4db884', 2, 4); px(mx + 1, my + 3, '#4db884', 4, 1);
+      if ((t % 10) < 4) px(mx + 1, my + 1, '#c4ffe8', 4, 1);
+      const cx = W - 9, cy = H - 8;
+      px(cx + 1, cy, '#f5cc58', 5, 5); px(cx + 2, cy + 1, '#fff6c4', 3, 3);
+      px(cx + 3, cy + 2, '#5ec996', 1, 1);
+      px(cx + 3 + bob2, cy + 5, '#e85d68', 1, 2);
     } else if (m === 'gdyn_cloudsea_roll') {
-      // [秘境] 云海仙境框：底边层叠翻涌云海波涛 + 暖金霞光微粒升腾
-      for (let x = 1; x < W - 2; x += 4) {
-        const cy = H - 4 + Math.round(Math.sin(t * 0.18 + x * 0.25));
-        px(x, cy, 'rgba(255,255,255,0.88)', 4, 3);
-        px(x + 1, cy - 1, 'rgba(232,246,255,0.78)', 2, 1);
-      }
-      for (let i = 0; i < 4; i++) {
-        const gx = 6 + ((i * 19 + t) % Math.max(8, W - 12));
-        const gy = H - 4 - ((t + i * 6) % Math.max(8, H - 6));
-        px(gx, gy, i % 2 === 0 ? '#ffe8a8' : '#b8e4ff', 2, 2);
-      }
+      // [秘境] 云海仙境框：左右晚霞云团轻浮 + 云间探尾发光小云鲸 + 淡金霞光
+      px(1, H - 6 + bob1, '#ffffff', 9, 3); px(2, H - 7 + bob1, '#ffeef5', 6, 1);
+      px(W - 10, H - 6 - bob1, '#ffffff', 9, 3); px(W - 9, H - 7 - bob1, '#e8f4ff', 6, 1);
+      const wx = 10 + ((t * 2) % Math.max(12, W - 22));
+      const wy = 3 + Math.round(Math.sin(t * 0.25) * 1.5);
+      px(wx, wy, '#9cd8ff', 6, 3); px(wx + 1, wy + 2, '#ffffff', 4, 1);
+      px(wx - 2, wy + (t % 2), '#b8e4ff', 2, 2);
     } else if (m === 'gdyn_comet_arc') {
-      // [秘境] 星尘奇遇框：双色彗星弧光绕上下边反向滑行拖曳星尘尾迹
-      const p1 = (t * 2) % Math.max(10, W - 6);
-      const p2 = Math.max(10, W - 6) - p1;
+      // [秘境] 星尘奇遇框：左上发光水晶沙漏 + 粉蓝双色小流星优雅拖尾掠过
+      const hx = 2, hy = 2 + bob1;
+      px(hx + 1, hy, '#f5d278', 4, 1); px(hx + 2, hy + 1, '#b8e8ff', 2, 2);
+      px(hx + 2, hy + 3, '#ffbfd8', 2, 2); px(hx + 1, hy + 5, '#f5d278', 4, 1);
+      const p1 = (t * 2) % Math.max(10, W - 12);
       for (let k = 0; k < 5; k++) {
-        const x1 = Math.max(2, p1 - k * 2);
-        const x2 = Math.min(W - 4, p2 + k * 2);
-        px(x1, 2, k === 0 ? '#ffffff' : (k < 3 ? '#8ce4ff' : 'rgba(140,228,255,0.35)'), k === 0 ? 2 : 1, k === 0 ? 2 : 1);
-        px(x2, H - 4, k === 0 ? '#ffffff' : (k < 3 ? '#ffb4e0' : 'rgba(255,180,224,0.35)'), k === 0 ? 2 : 1, k === 0 ? 2 : 1);
+        const cx0 = Math.max(10, W - 4 - p1 + k * 2);
+        const cy0 = 2 + Math.floor(k * 0.6);
+        px(cx0, cy0, k === 0 ? '#ffffff' : (k < 3 ? '#96e4ff' : '#ffb8e0'), k === 0 ? 2 : 1, k === 0 ? 2 : 1);
+      }
+    } else if (m === 'gdyn_bday_celebrate') {
+      // [生日] 蜡烛礼赞框：左上双层草莓奶油生日小蛋糕带摇曳烛火 + 右下飘动马卡龙气球束 + 柔彩纸屑
+      const cx = 2, cy = 3 + bob1;
+      px(cx + 3, cy - 2, (t % 4) < 2 ? '#ffe066' : '#ff9854', 1, 2);
+      px(cx + 3, cy, '#ff8eb0', 1, 2);
+      px(cx + 1, cy + 2, '#ffffff', 5, 2); px(cx, cy + 4, '#ffd4e4', 7, 3);
+      px(cx + 2, cy + 2, '#f05a78', 1, 1); px(cx + 4, cy + 2, '#f05a78', 1, 1);
+      const bx = W - 10, by = H - 10 - bob1;
+      px(bx, by + 1, '#ff9ec2', 4, 4); px(bx + 1, by + 2, '#ffffff', 1, 1);
+      px(bx + 4, by, '#94dcff', 4, 4); px(bx + 5, by + 1, '#ffffff', 1, 1);
+      px(bx + 2, by + 5, '#e8c4d4', 1, 3); px(bx + 5, by + 4, '#c4e0f2', 1, 3);
+      const conf = ['#ff9ec2', '#ffe078', '#94e8cc', '#9cd8ff', '#d4b8ff'];
+      for (let i = 0; i < 4; i++) {
+        const fx = 12 + ((i * 14 + t) % Math.max(8, W - 24));
+        const fy = 2 + ((t + i * 5) % Math.max(6, H - 5));
+        px(fx, fy, conf[(i + Math.floor(t / 4)) % 5], 2, 1);
       }
     }
-  }, 150);
+  };
 
   let activeAfDynMode = '';
   let afFxTick = 0;
@@ -28827,6 +28882,26 @@
         g.fillRect(x1 - (k === 0 ? 1 : 0), y1 - (k === 0 ? 1 : 0), k === 0 ? 3 : 2, k === 0 ? 3 : 2);
         g.fillStyle = k === 0 ? '#ffffff' : (k < 3 ? '#f7a8e8' : 'rgba(247,168,232,0.35)');
         g.fillRect(x2 - (k === 0 ? 1 : 0), y2 - (k === 0 ? 1 : 0), k === 0 ? 3 : 2, k === 0 ? 3 : 2);
+      }
+    } else if (m === 'gadyn_bday_cake') {
+      // [生日] 奶油蛋糕框：顶边柔白草莓奶油淋面 + 摇曳双烛火 + 左右飘浮马卡龙小气球 + 柔彩飘花
+      for (let x = 10; x <= 50; x += 8) {
+        const dr = 3 + Math.floor((Math.sin(t * 0.2 + x) + 1) * 1.4);
+        g.fillStyle = '#ffffff'; g.fillRect(x, 6, 6, dr);
+        g.fillStyle = '#ffd4e4'; g.fillRect(x + 1, 6, 3, 2);
+      }
+      const fl = (t % 4) < 2;
+      g.fillStyle = '#ff8eb0'; g.fillRect(24, 3, 2, 4); g.fillRect(38, 3, 2, 4);
+      g.fillStyle = fl ? '#ffe066' : '#ff9c54'; g.fillRect(24, 0, 2, 3); g.fillRect(38, 0, 2, 3);
+      g.fillStyle = '#ffffff'; g.fillRect(24, 1, 1, 1); g.fillRect(38, 1, 1, 1);
+      const bob = Math.round(Math.sin(t * 0.22) * 2);
+      g.fillStyle = '#ff9ec2'; g.fillRect(1, 24 + bob, 6, 7); g.fillStyle = '#ffffff'; g.fillRect(2, 26 + bob, 2, 2);
+      g.fillStyle = '#94dcff'; g.fillRect(57, 26 - bob, 6, 7); g.fillStyle = '#ffffff'; g.fillRect(58, 28 - bob, 2, 2);
+      g.fillStyle = '#e6c2d4'; g.fillRect(3, 31 + bob, 1, 6); g.fillRect(59, 33 - bob, 1, 6);
+      const conf = ['#ff9ec2', '#ffe078', '#94e8cc', '#9cd8ff', '#d4b8ff'];
+      for (let i = 0; i < 5; i++) {
+        const [x, y] = perimPt(t * 2 + i * 36);
+        g.fillStyle = conf[i % 5]; g.fillRect(x, y, 2, 2);
       }
     }
     const shopFx = root.querySelector('#st-px-shop-af-fx');
@@ -30467,7 +30542,14 @@
 
   const perfStreamBtn = root.querySelector('#st-tb-perf-stream');
   const perfNoBlurBtn = root.querySelector('#st-tb-perf-noblur');
+  const perfFoldToggleBtn = root.querySelector('#st-tb-perf-fold-toggle');
   const perfFoldSel = root.querySelector('#st-tb-perf-fold');
+  if (typeof config.perfFoldEnabled !== 'boolean') {
+    config.perfFoldEnabled = Number(config.perfFoldKeep) > 0;
+  }
+  if (!Number(config.perfFoldCount) || Number(config.perfFoldCount) < 3) {
+    config.perfFoldCount = Number(config.perfFoldKeep) > 0 ? Number(config.perfFoldKeep) : 20;
+  }
   const perfCleanBtn = root.querySelector('#st-tb-perf-clean');
   const perfStatusEl = root.querySelector('#st-tb-perf-status');
   const perfTipEl = root.querySelector('#st-tb-perf-tip');
@@ -30655,7 +30737,17 @@
       perfNoBlurBtn.textContent = noBlur ? '去毛玻璃:开' : '去毛玻璃:关';
       perfNoBlurBtn.classList.toggle('primary', noBlur);
     }
-    if (perfFoldSel) perfFoldSel.value = String(Number(config.perfFoldKeep) || 0);
+    const foldOn = Boolean(config.perfFoldEnabled);
+    const foldCnt = Number(config.perfFoldCount) || 20;
+    config.perfFoldKeep = foldOn ? foldCnt : 0;
+    if (perfFoldToggleBtn) {
+      perfFoldToggleBtn.textContent = foldOn ? '仅显示楼层：开' : '仅显示楼层：关';
+      perfFoldToggleBtn.classList.toggle('primary', foldOn);
+    }
+    if (perfFoldSel) {
+      perfFoldSel.value = String(foldCnt);
+      perfFoldSel.style.opacity = foldOn ? '1' : '0.68';
+    }
     const { total, folded } = applyChatFold();
     if (perfStatusEl) {
       perfStatusEl.textContent = folded > 0 ? `已折 ${folded}/${total} 层` : (adaptOn ? '已开' : '已关');
@@ -30689,9 +30781,20 @@
       applyPerfOptimizer();
     });
   }
+  if (perfFoldToggleBtn) {
+    perfFoldToggleBtn.addEventListener('click', () => {
+      config.perfFoldEnabled = !Boolean(config.perfFoldEnabled);
+      config.perfFoldKeep = config.perfFoldEnabled ? (Number(config.perfFoldCount) || 20) : 0;
+      saveConfig();
+      applyPerfOptimizer();
+      if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+    });
+  }
   if (perfFoldSel) {
     perfFoldSel.addEventListener('change', () => {
-      config.perfFoldKeep = Number(perfFoldSel.value) || 0;
+      const n = Number(perfFoldSel.value) || 20;
+      config.perfFoldCount = n;
+      if (config.perfFoldEnabled) config.perfFoldKeep = n;
       saveConfig();
       applyPerfOptimizer();
     });
@@ -31022,25 +31125,46 @@
       return centerPixelCanvas(cvs, 16, 2);
     }
 
-    // 3. Bubble Skin: render a REAL mini pixel speech bubble styled with that skin's palette & charms!
+    // 3. Bubble Skin: 真实配色 + 实时动态画布预览（抽到哪款气泡就真实呈现哪款动态）
     if (type === 'bubble') {
+      const bObj = [...GACHA_BUBBLES, ...SECRET_ADV_BUBBLES, ...SPECIAL_EVENT_BUBBLES, ...SHOP_PUP_BUBBLES].find(b => b.id === itemId);
       const box = doc.createElement('div');
       box.className = 'st-px-gacha-bub-prev';
       const styles = {
         bub_gacha_crystal: 'background:linear-gradient(125deg,#fff0f8,#e8f8ff,#f5ecff);border-color:#c28ce6;color:#542878;',
-        bub_gacha_royal: 'background:linear-gradient(125deg,#2a2138,#423354);border-color:#f4c842;color:#fff5cc;',
+        bub_gacha_royal: 'background:linear-gradient(125deg,#302840,#473c5c);border-color:#d9be78;color:#faf2d6;',
         bub_gacha_sakura_tea: 'background:linear-gradient(125deg,#ffeef4,#fffdf5,#eaf7ee);border-color:#d98aa5;color:#633447;',
+        bub_gacha_moonlight: 'background:linear-gradient(125deg,#202a46,#344670);border-color:#98bdf2;color:#e6f2ff;',
+        bub_gacha_starry_velvet: 'background:linear-gradient(125deg,#2a1f44,#412e66);border-color:#b89cf2;color:#f2e8ff;',
+        bub_gacha_toast: 'background:linear-gradient(125deg,#fff5df,#fae3b8);border-color:#d9944e;color:#6b3f16;',
+        bub_gacha_mint_milk: 'background:linear-gradient(135deg,#eefaf6,#dcf5ec);border-color:#7bc7ad;color:#265244;',
+        bub_gacha_soda_pop: 'background:linear-gradient(135deg,#e8f8ff,#d2f0ff);border-color:#6bc4f0;color:#1d4e73;',
+        bub_gacha_milk_strawberry: 'background:linear-gradient(135deg,#fff0f5,#ffe0eb);border-color:#f088a8;color:#73243e;',
+        bub_gacha_aurora_glass: 'background:linear-gradient(125deg,#e6fff8,#e8f4ff,#f5ecff);border-color:#7ec8e8;color:#274469;',
+        bub_gacha_hotpot_bub: 'background:linear-gradient(135deg,#fff0ea,#ffe0d4);border-color:#e66b52;color:#782418;',
+        bub_gacha_mahjong_tile: 'background:linear-gradient(135deg,#f5fff9,#e3faed);border-color:#5ec492;color:#1d543a;',
       };
-      box.style.cssText = styles[itemId] || 'background:#fff9eb;border-color:#e3a530;color:#6b3d06;';
-      box.textContent = '汪~';
+      box.style.cssText = (styles[itemId] || 'background:#fff9eb;border-color:#e3a530;color:#6b3d06;') + 'position:relative;overflow:hidden;min-width:52px;height:36px;display:flex;align-items:center;justify-content:center;padding:0 8px;';
+      const lbl = doc.createElement('span');
+      lbl.textContent = '汪';
+      lbl.style.cssText = 'position:relative;z-index:2;font-size:10px;font-weight:700;';
+      box.appendChild(lbl);
+      if (bObj && bObj.dyn) {
+        const fx = doc.createElement('canvas');
+        fx.width = 44; fx.height = 26;
+        fx.dataset.gachaBubDyn = bObj.dyn;
+        fx.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none;z-index:1;';
+        box.appendChild(fx);
+      }
       return box;
     }
 
-    // 3b. Avatar Frame: render a mini real puppy framed by that exact avatar frame!
+    // 3b. Avatar Frame: 真实头像框样式 + 实时动态微效叠加预览
     if (type === 'avatarframe') {
+      const afObj = [...GACHA_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES, ...SHOP_PUP_AVATAR_FRAMES].find(a => a.id === itemId);
       const wrap = doc.createElement('div');
       wrap.className = `st-px-avatar-wrap ${itemId.replace(/_/g, '-')}`;
-      wrap.style.cssText = 'width:38px;height:38px;flex-shrink:0;';
+      wrap.style.cssText = 'width:40px;height:40px;flex-shrink:0;position:relative;overflow:visible;';
       const cvs = doc.createElement('canvas');
       cvs.width = 24; cvs.height = 24;
       cvs.style.cssText = 'width:100%;height:100%;image-rendering:pixelated;';
@@ -31054,6 +31178,13 @@
         }
       }
       wrap.appendChild(cvs);
+      if (afObj && afObj.dyn) {
+        const fx = doc.createElement('canvas');
+        fx.width = 64; fx.height = 64;
+        fx.dataset.gachaAfDyn = afObj.dyn;
+        fx.style.cssText = 'position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);image-rendering:pixelated;pointer-events:none;z-index:3;';
+        wrap.appendChild(fx);
+      }
       return wrap;
     }
 
@@ -31165,6 +31296,49 @@
       gachaPopGrid.appendChild(card);
     });
     gachaModalEl.style.display = 'flex';
+    clearInterval(win.__stGachaPrevAnimTimer);
+    let gPrevTick = 0;
+    const drawGachaPrevFrame = () => {
+      if (!gachaModalEl || gachaModalEl.style.display === 'none') {
+        clearInterval(win.__stGachaPrevAnimTimer);
+        win.__stGachaPrevAnimTimer = null;
+        return;
+      }
+      gPrevTick = (gPrevTick + 1) % 240;
+      gachaPopGrid.querySelectorAll('canvas[data-gacha-bub-dyn]').forEach(cv => {
+        const dyn = cv.dataset.gachaBubDyn;
+        const g = cv.getContext('2d');
+        const W = cv.width, H = cv.height;
+        g.clearRect(0, 0, W, H);
+        const px = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(Math.round(x), Math.round(y), w, h); };
+        if (dyn && dyn.startsWith('gdyn_') && typeof renderGachaBubDyn === 'function') {
+          renderGachaBubDyn(px, dyn, W, H, gPrevTick);
+        }
+      });
+      gachaPopGrid.querySelectorAll('canvas[data-gacha-af-dyn]').forEach(cv => {
+        const dyn = cv.dataset.gachaAfDyn;
+        const g = cv.getContext('2d');
+        g.clearRect(0, 0, 64, 64);
+        const perimPt = (p) => {
+          const n = ((p % 180) + 180) % 180;
+          if (n < 45) return [9 + n, 9];
+          if (n < 90) return [54, 9 + (n - 45)];
+          if (n < 135) return [54 - (n - 90), 54];
+          return [9, 54 - (n - 135)];
+        };
+        const t = gPrevTick;
+        const cols = ['#ff9ed2', '#8ce6ff', '#ffe68c', '#c8a8ff', '#92f0cc'];
+        for (let i = 0; i < 6; i++) {
+          const [x, y] = perimPt(t * 3 + i * 30);
+          g.fillStyle = dyn && dyn.includes('jade') ? (i % 2 === 0 ? '#54c98e' : '#f2c95a')
+            : (dyn && dyn.includes('hotpot') || dyn && dyn.includes('yuanyang') ? (i % 2 === 0 ? '#ff6248' : '#fff6e0')
+              : (dyn && dyn.includes('cheese') ? '#f5c24c' : cols[i % cols.length]));
+          g.fillRect(x - 1, y - 1, 3, 3);
+        }
+      });
+    };
+    drawGachaPrevFrame();
+    win.__stGachaPrevAnimTimer = setInterval(drawGachaPrevFrame, 160);
   };
 
   const rollOneGacha = (forceAtLeastSR, srInBatch = 0) => {
@@ -42760,13 +42934,242 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     readerMiniPill.addEventListener('pointercancel', endMpDrag);
   }
 
+  const QUICK_DOCK_CATALOG = [
+    { id: 'imm',       name: '沉浸模式',   defLabel: '沉浸' },
+    { id: 'mask',      name: '一键打码',   defLabel: '打码' },
+    { id: 'reader',    name: '悬浮阅读器', defLabel: '阅读' },
+    { id: 'bag',       name: '小狗背包',   defLabel: '小狗' },
+    { id: 'hide',      name: '完全隐藏',   defLabel: '隐藏' },
+    { id: 'keepalive', name: '后台保活',   defLabel: '保活' },
+    { id: 'guard',     name: '防手滑保护', defLabel: '防手滑' },
+    { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
+    { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
+    { id: 'fold',      name: '仅显示楼层', defLabel: '折楼' },
+    { id: 'chars',     name: '角色卡管理', defLabel: '角色' },
+    { id: 'persona',   name: 'User面具',   defLabel: '面具' },
+    { id: 'preset',    name: '预设管理',   defLabel: '预设' },
+    { id: 'music',     name: '一起听歌',   defLabel: '听歌' },
+    { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
+    { id: 'panel',     name: '工具箱面板', defLabel: '面板' },
+  ];
+  const QUICK_DOCK_DEFAULT = [
+    { id: 'imm', label: '沉浸' },
+    { id: 'mask', label: '打码' },
+    { id: 'reader', label: '阅读' },
+    { id: 'bag', label: '小狗' },
+    { id: 'hide', label: '隐藏' },
+  ];
+  const getQuickDockItems = () => {
+    if (!Array.isArray(config.quickDockItems) || !config.quickDockItems.length) {
+      return QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
+    }
+    const validIds = new Set(QUICK_DOCK_CATALOG.map(c => c.id));
+    const filtered = config.quickDockItems
+      .filter(it => it && validIds.has(it.id))
+      .map(it => {
+        const meta = QUICK_DOCK_CATALOG.find(c => c.id === it.id);
+        const lb = String(it.label || '').trim() || (meta ? meta.defLabel : it.id);
+        return { id: it.id, label: lb.slice(0, 8) };
+      });
+    return filtered.length ? filtered : QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
+  };
+
+  const renderQuickDock = () => {
+    if (!quickDockEl) return;
+    const items = getQuickDockItems();
+    quickDockEl.innerHTML = '';
+    items.forEach(it => {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = 'st-tb-qd-btn';
+      b.dataset.qd = it.id;
+      b.textContent = it.label;
+      quickDockEl.appendChild(b);
+    });
+    syncQuickDockUI();
+  };
+
   const syncQuickDockUI = () => {
     if (!quickDockEl) return;
-    quickDockEl.querySelector('[data-qd="imm"]')?.classList.toggle('active', Boolean(config.immersive));
-    quickDockEl.querySelector('[data-qd="mask"]')?.classList.toggle('active', Boolean(config.maskEnabled));
-    quickDockEl.querySelector('[data-qd="reader"]')?.classList.toggle('active', Boolean(readerOpen || readerMinimized));
-    quickDockEl.querySelector('[data-qd="bag"]')?.classList.toggle('active', Boolean(pupBagOpen));
+    const isAct = {
+      imm: Boolean(config.immersive),
+      mask: Boolean(config.maskEnabled),
+      reader: Boolean(readerOpen || readerMinimized),
+      bag: Boolean(pupBagOpen),
+      keepalive: Boolean(config.keepAlive),
+      guard: Boolean(config.guardEnabled),
+      ambient: Boolean(config.effect && config.effect !== 'none'),
+      storyedit: Boolean(config.storyEditEnabled),
+      fold: Boolean(config.perfFoldEnabled),
+      puppy: Boolean(config.puppyEnabled),
+      panel: Boolean(panelOpen),
+    };
+    quickDockEl.querySelectorAll('[data-qd]').forEach(btn => {
+      const id = btn.dataset.qd;
+      btn.classList.toggle('active', Boolean(isAct[id]));
+    });
   };
+
+  // 长按快捷栏自定义弹窗与首次长按提醒弹窗
+  let qdCfgMask = null;
+  let qdTipMask = null;
+
+  const openQuickDockCustomizer = () => {
+    if (!qdCfgMask) {
+      qdCfgMask = doc.createElement('div');
+      qdCfgMask.id = 'st-tb-qd-cfg-mask';
+      qdCfgMask.className = 'st-tb-qd-modal-mask';
+      qdCfgMask.innerHTML = `<div class="st-tb-qd-modal">
+        <div class="st-tb-qd-modal-title"><span>自定义长按悬浮球快捷栏</span><button class="st-tb-mini-btn" id="st-tb-qd-cfg-close" type="button">关闭</button></div>
+        <div style="font-size:11.5px;opacity:0.78;">已启用的快捷按钮，可上下调整顺序、直接修改名称或移除：</div>
+        <div class="st-tb-qd-list" id="st-tb-qd-active-list"></div>
+        <div style="font-size:11.5px;opacity:0.78;">点击下方功能即可加入长按快捷栏：</div>
+        <div class="st-tb-qd-pool" id="st-tb-qd-pool-list"></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
+          <button class="st-tb-mini-btn" id="st-tb-qd-cfg-reset" type="button">恢复默认</button>
+          <button class="st-tb-mini-btn active" id="st-tb-qd-cfg-done" type="button">完成</button>
+        </div>
+      </div>`;
+      root.appendChild(qdCfgMask);
+      const closeCfg = () => qdCfgMask.classList.remove('open');
+      qdCfgMask.querySelector('#st-tb-qd-cfg-close')?.addEventListener('click', closeCfg);
+      qdCfgMask.querySelector('#st-tb-qd-cfg-done')?.addEventListener('click', closeCfg);
+      qdCfgMask.addEventListener('click', (e) => { if (e.target === qdCfgMask) closeCfg(); });
+      qdCfgMask.querySelector('#st-tb-qd-cfg-reset')?.addEventListener('click', () => {
+        config.quickDockItems = QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
+        saveConfig();
+        renderQuickDock();
+        renderQdCfgBody();
+      });
+    }
+    const renderQdCfgBody = () => {
+      const listEl = qdCfgMask.querySelector('#st-tb-qd-active-list');
+      const poolEl = qdCfgMask.querySelector('#st-tb-qd-pool-list');
+      if (!listEl || !poolEl) return;
+      const cur = getQuickDockItems();
+      listEl.innerHTML = '';
+      cur.forEach((it, idx) => {
+        const meta = QUICK_DOCK_CATALOG.find(c => c.id === it.id);
+        const row = doc.createElement('div');
+        row.className = 'st-tb-qd-item';
+        const tag = doc.createElement('span');
+        tag.className = 'st-tb-qd-item-tag';
+        tag.textContent = meta ? meta.name : it.id;
+        const inp = doc.createElement('input');
+        inp.type = 'text';
+        inp.maxLength = 8;
+        inp.value = it.label;
+        inp.title = '输入自定义按钮名称';
+        inp.addEventListener('input', () => {
+          const next = getQuickDockItems();
+          if (next[idx]) {
+            next[idx].label = inp.value.trim().slice(0, 8) || (meta ? meta.defLabel : it.id);
+            config.quickDockItems = next;
+            saveConfig();
+            renderQuickDock();
+          }
+        });
+        const upBtn = doc.createElement('button');
+        upBtn.type = 'button'; upBtn.className = 'st-tb-mini-btn'; upBtn.textContent = '上';
+        upBtn.disabled = idx === 0;
+        upBtn.addEventListener('click', () => {
+          const next = getQuickDockItems();
+          if (idx > 0) {
+            [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+            config.quickDockItems = next;
+            saveConfig(); renderQuickDock(); renderQdCfgBody();
+          }
+        });
+        const dnBtn = doc.createElement('button');
+        dnBtn.type = 'button'; dnBtn.className = 'st-tb-mini-btn'; dnBtn.textContent = '下';
+        dnBtn.disabled = idx === cur.length - 1;
+        dnBtn.addEventListener('click', () => {
+          const next = getQuickDockItems();
+          if (idx < next.length - 1) {
+            [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
+            config.quickDockItems = next;
+            saveConfig(); renderQuickDock(); renderQdCfgBody();
+          }
+        });
+        const delBtn = doc.createElement('button');
+        delBtn.type = 'button'; delBtn.className = 'st-tb-mini-btn'; delBtn.textContent = '删';
+        delBtn.disabled = cur.length <= 1;
+        delBtn.addEventListener('click', () => {
+          const next = getQuickDockItems();
+          if (next.length > 1) {
+            next.splice(idx, 1);
+            config.quickDockItems = next;
+            saveConfig(); renderQuickDock(); renderQdCfgBody();
+          }
+        });
+        row.append(tag, inp, upBtn, dnBtn, delBtn);
+        listEl.appendChild(row);
+      });
+      const usedSet = new Set(cur.map(x => x.id));
+      poolEl.innerHTML = '';
+      QUICK_DOCK_CATALOG.filter(c => !usedSet.has(c.id)).forEach(c => {
+        const chip = doc.createElement('button');
+        chip.type = 'button';
+        chip.className = 'st-tb-qd-chip';
+        chip.textContent = `+ ${c.name}`;
+        chip.addEventListener('click', () => {
+          const next = getQuickDockItems();
+          next.push({ id: c.id, label: c.defLabel });
+          config.quickDockItems = next;
+          saveConfig(); renderQuickDock(); renderQdCfgBody();
+        });
+        poolEl.appendChild(chip);
+      });
+      if (!poolEl.children.length) {
+        poolEl.innerHTML = '<span style="font-size:11.5px;opacity:0.65;">全部快捷功能都已加入</span>';
+      }
+    };
+    renderQdCfgBody();
+    qdCfgMask.classList.add('open');
+  };
+
+  const showQuickDockFirstTip = () => {
+    if (config.quickDockTipHidden) return;
+    if (!qdTipMask) {
+      qdTipMask = doc.createElement('div');
+      qdTipMask.id = 'st-tb-qd-tip-mask';
+      qdTipMask.className = 'st-tb-qd-modal-mask';
+      qdTipMask.innerHTML = `<div class="st-tb-qd-modal" style="max-width:320px;">
+        <div class="st-tb-qd-modal-title"><span>长按快捷键支持自定义</span></div>
+        <div style="font-size:12.5px;opacity:0.9;">你可以在「工具箱 - 外观 - 长按悬浮球快捷栏」里自由增删功能、调整排序，还可以给每个按钮重新命名。</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;user-select:none;">
+          <input type="checkbox" id="st-tb-qd-tip-never" />
+          <span>下次不再出现</span>
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="st-tb-mini-btn" id="st-tb-qd-tip-go" type="button">立即去自定义</button>
+          <button class="st-tb-mini-btn active" id="st-tb-qd-tip-ok" type="button">知道了</button>
+        </div>
+      </div>`;
+      root.appendChild(qdTipMask);
+      const saveTipOpt = () => {
+        const chk = qdTipMask.querySelector('#st-tb-qd-tip-never');
+        if (chk && chk.checked) {
+          config.quickDockTipHidden = true;
+          saveConfig();
+        }
+        qdTipMask.classList.remove('open');
+      };
+      qdTipMask.querySelector('#st-tb-qd-tip-ok')?.addEventListener('click', saveTipOpt);
+      qdTipMask.querySelector('#st-tb-qd-tip-go')?.addEventListener('click', () => {
+        saveTipOpt();
+        toggleQuickDock(false);
+        openQuickDockCustomizer();
+      });
+      qdTipMask.addEventListener('click', (e) => { if (e.target === qdTipMask) saveTipOpt(); });
+    }
+    const chk = qdTipMask.querySelector('#st-tb-qd-tip-never');
+    if (chk) chk.checked = false;
+    qdTipMask.classList.add('open');
+  };
+
+  root.querySelector('#st-tb-qd-cfg-open')?.addEventListener('click', openQuickDockCustomizer);
+  renderQuickDock();
 
   const toggleQuickDock = (open) => {
     if (!quickDockEl) return;
@@ -42774,7 +43177,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       quickDockEl.classList.remove('open');
       return;
     }
-    syncQuickDockUI();
+    renderQuickDock();
     quickDockEl.classList.add('open');
     const br = badge.getBoundingClientRect();
     const dw = quickDockEl.offsetWidth || 226;
@@ -42785,6 +43188,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (top + dh > win.innerHeight - 10) top = Math.max(8, br.top - dh - 8);
     quickDockEl.style.left = `${Math.round(left)}px`;
     quickDockEl.style.top = `${Math.round(top)}px`;
+    showQuickDockFirstTip();
   };
 
   if (quickDockEl) {
@@ -42808,6 +43212,57 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       } else if (act === 'hide') {
         toggleQuickDock(false);
         if (fullHideBtn) fullHideBtn.click();
+      } else if (act === 'keepalive') {
+        if (keepAliveBtn) keepAliveBtn.click();
+        syncQuickDockUI();
+      } else if (act === 'guard') {
+        if (guardBtn) guardBtn.click();
+        syncQuickDockUI();
+      } else if (act === 'ambient') {
+        const curEff = config.effect && config.effect !== 'none' ? config.effect : 'none';
+        if (curEff !== 'none') {
+          config.lastQuickAmbient = curEff;
+          const noneBtn = root.querySelector('#st-tb-effects [data-effect="none"]');
+          if (noneBtn) noneBtn.click();
+          else { config.effect = 'none'; saveConfig(); }
+        } else {
+          const targetEff = config.lastQuickAmbient || 'snow';
+          const effBtn = root.querySelector(`#st-tb-effects [data-effect="${targetEff}"]`) || root.querySelector('#st-tb-effects [data-effect]:not([data-effect="none"])');
+          if (effBtn) effBtn.click();
+        }
+        syncQuickDockUI();
+      } else if (act === 'storyedit') {
+        const seBtn = root.querySelector('#st-se-toggle-btn');
+        if (seBtn) seBtn.click();
+        syncQuickDockUI();
+      } else if (act === 'fold') {
+        const flBtn = root.querySelector('#st-tb-perf-fold-toggle');
+        if (flBtn) flBtn.click();
+        syncQuickDockUI();
+      } else if (act === 'chars') {
+        toggleQuickDock(false);
+        togglePanel(true);
+        root.querySelector('.st-tb-tab[data-tab="chars"]')?.click();
+      } else if (act === 'persona') {
+        toggleQuickDock(false);
+        togglePanel(true);
+        root.querySelector('.st-tb-tab[data-tab="chars"]')?.click();
+        setTimeout(() => { root.querySelector('[data-cm-sub="persona"]')?.click(); }, 40);
+      } else if (act === 'preset') {
+        toggleQuickDock(false);
+        togglePanel(true);
+        root.querySelector('.st-tb-tab[data-tab="overview"]')?.click();
+        setTimeout(() => { root.querySelector('#st-pr-open-btn')?.click(); }, 40);
+      } else if (act === 'music') {
+        toggleQuickDock(false);
+        togglePupBag(true);
+        setTimeout(() => { root.querySelector('[data-px-tab="music"]')?.click(); }, 40);
+      } else if (act === 'puppy') {
+        if (puppyToggleBtn) puppyToggleBtn.click();
+        syncQuickDockUI();
+      } else if (act === 'panel') {
+        toggleQuickDock(false);
+        togglePanel(!panelOpen);
       }
     });
   }
@@ -42958,6 +43413,28 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }
       if (needUpdate) {
         setGlcUpdateUI(true, '发现新版本');
+        if (!win.__stGlcUpdatePupNotified && config.puppyEnabled) {
+          win.__stGlcUpdatePupNotified = true;
+          const curP = config.puppyPersonality || 'sleepyhead';
+          const UPD_TALK_BY_PERS = {
+            sleepyhead: '呼啊，刚才帮你扫了一眼，狗来财好像出新版本了，有空去扩展里更新一下吧',
+            clingy: '主人快看，我刚扫描到狗来财有新版本更新，快去升级陪我解锁新内容吧',
+            tsundere: '哼，才不是特意帮你盯着呢，只是顺手扫到狗来财有新版本了，记得自己去更新',
+            foodie: '刚闻到新版本的香味了，狗来财有更新可以升级，快去点一下说不定有新花样',
+            explorer: '开机雷达响了，刚刚扫描发现狗来财发布了新版本，快去扩展管理里更新吧',
+            fashionista: '顺手帮你查了一下，狗来财出新版本了，方便的时候去更新保持最新状态吧',
+            gamer: '滴，开机自检发现狗来财有新版本补丁，速去扩展管理里一键升级吧',
+            philosopher: '刚才帮你看过了，狗来财有新版本可用，有空的时候去更新一下就好',
+          };
+          const msg = UPD_TALK_BY_PERS[curP] || UPD_TALK_BY_PERS.sleepyhead;
+          setTimeout(() => {
+            try {
+              if (!config.puppyEnabled) return;
+              setPuppyState('happy', 120);
+              showPuppyBubble(formatPupText(msg), 5400);
+            } catch (_) {}
+          }, 1200);
+        }
       } else {
         setGlcUpdateUI(false, '已是最新版本');
       }
