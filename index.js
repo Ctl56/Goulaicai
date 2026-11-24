@@ -9634,13 +9634,80 @@ function bootGoulaicaiExtension() {
     if (!el) {
       el = doc.createElement('div');
       el.id = 'st-tb-ka-notice';
-      el.style.cssText = 'position:fixed;left:50%;top:18px;transform:translateX(-50%);max-width:min(320px,calc(100vw - 28px));padding:8px 13px;border-radius:10px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 20px rgba(0,0,0,0.18);font-size:11.5px;line-height:1.5;z-index:10035;pointer-events:none;opacity:0;transition:opacity 0.2s ease;text-align:center;';
+      el.style.cssText = 'position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);width:min(326px,calc(100vw - 32px));padding:11px 16px;border-radius:11px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 10px 28px rgba(0,0,0,0.22);font-size:12px;line-height:1.55;z-index:10040;pointer-events:none;opacity:0;transition:opacity 0.2s ease;text-align:center;box-sizing:border-box;';
       root.appendChild(el);
     }
     el.textContent = msg;
     el.style.opacity = '1';
     clearTimeout(kaNoticeTimer);
-    kaNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 3200);
+    kaNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 2800);
+  };
+
+  const showOnceDragTip = (kind) => {
+    const keyMap = { panel: 'dragTipV2_panel', bag: 'dragTipV2_bag', reader: 'dragTipV2_reader' };
+    const cfgKey = keyMap[kind];
+    if (!cfgKey || config[cfgKey]) return;
+
+    if (kind === 'bag' && pupBagEl) {
+      if (pupBagEl.querySelector('#st-px-drag-tip-pop')) return;
+      const mask = doc.createElement('div');
+      mask.id = 'st-px-drag-tip-pop';
+      mask.className = 'st-px-lim-pop-mask open';
+      mask.style.zIndex = '48';
+      mask.innerHTML = `<div class="st-px-lim-pop-box">` +
+        `<div class="st-px-head" style="cursor:default;"><span>操作提示</span></div>` +
+        `<div class="st-px-lim-pop-body">` +
+        `<div>按住顶栏可移动到任意位置，按住右下角边缘可拖动调整大小。</div>` +
+        `<div style="display:flex;justify-content:flex-end;margin-top:4px;">` +
+        `<button class="st-px-btn active" id="st-px-drag-tip-ok" type="button" style="height:22px;padding:0 12px;font-size:10px;">知道了</button>` +
+        `</div></div></div>`;
+      const box = mask.querySelector('.st-px-lim-pop-box');
+      const bagCs = win.getComputedStyle(pupBagEl);
+      if (box) {
+        box.style.background = bagCs.backgroundColor || '#faf6f7';
+        box.style.borderColor = bagCs.borderTopColor || '#bfa4ae';
+        box.style.color = bagCs.color || '#54444a';
+      }
+      const dismissBagTip = (e) => {
+        if (e) e.stopPropagation();
+        config[cfgKey] = true;
+        saveConfig();
+        mask.remove();
+      };
+      mask.querySelector('#st-px-drag-tip-ok')?.addEventListener('click', dismissBagTip);
+      mask.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === mask) dismissBagTip(e); });
+      pupBagEl.appendChild(mask);
+      return;
+    }
+
+    const maskId = `st-tb-drag-tip-${kind}`;
+    if (root.querySelector(`#${maskId}`)) return;
+    const isKdOrDark = kind === 'reader' && readerEl && (readerEl.classList.contains('kindle-mode') || readerEl.classList.contains('reader-dark'));
+    const cardBg = isKdOrDark ? '#242422' : 'var(--tb-bg,#fff)';
+    const cardFg = isKdOrDark ? '#e8e7e2' : 'var(--tb-text,#222)';
+    const cardSub = isKdOrDark ? '#c4c3bc' : 'var(--tb-sub,#555)';
+    const cardBd = isKdOrDark ? '#3a3a36' : 'var(--tb-border,#ddd)';
+    const descTxt = kind === 'reader'
+      ? '按住顶栏或底栏可移动阅读器，按住右下角边缘可拖动调整大小。'
+      : '按住顶部标题栏可移动到任意位置，按住右下角边缘可拖动调整大小。';
+    const mask = doc.createElement('div');
+    mask.id = maskId;
+    mask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.36);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10042;pointer-events:auto;';
+    mask.innerHTML = `<div style="width:min(296px,calc(100vw - 36px));background:${cardBg};color:${cardFg};border:1px solid ${cardBd};border-radius:12px;padding:14px 16px 12px;box-shadow:0 10px 28px rgba(0,0,0,0.24);box-sizing:border-box;">` +
+      `<div style="font-size:13px;font-weight:700;margin-bottom:6px;">操作提示</div>` +
+      `<div style="font-size:11.5px;line-height:1.6;color:${cardSub};margin-bottom:12px;">${descTxt}</div>` +
+      `<div style="display:flex;justify-content:flex-end;">` +
+      `<button type="button" class="st-tb-mini-btn active" id="${maskId}-ok" style="padding:4px 14px;height:26px;font-size:11.5px;${isKdOrDark ? 'background:#e8e7e2;color:#1b1b1b;border:none;' : ''}">知道了</button>` +
+      `</div></div>`;
+    const dismissTip = (e) => {
+      if (e) e.stopPropagation();
+      config[cfgKey] = true;
+      saveConfig();
+      mask.remove();
+    };
+    mask.querySelector(`#${maskId}-ok`)?.addEventListener('click', dismissTip);
+    mask.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === mask) dismissTip(e); });
+    root.appendChild(mask);
   };
 
   const kaRuntime = {
@@ -9674,8 +9741,8 @@ function bootGoulaicaiExtension() {
             saveConfig();
             startKeepAlive();
             showKaPolicyNotice(pol === 'exclusive'
-              ? '已切换为强保活：会占用系统音频栏，长时间息屏更稳，遇到其他软件发声时可能暂时让出通道'
-              : '已切换为轻保活：不占系统音频栏，可与微信语音、视频和游戏共存');
+              ? '已切换强保活：会占用音频栏与灵动岛，息屏常驻更稳'
+              : '已切换轻保活：不占音频栏与灵动岛，可与其他音频同时使用');
           });
         });
       }
@@ -17563,6 +17630,7 @@ function bootGoulaicaiExtension() {
       if (pupBagTab === 'game') restoreGameView();
       if (pupBagTab === 'adv') renderPupAdventure();
       positionPupBag();
+      setTimeout(() => { if (typeof showOnceDragTip === 'function') showOnceDragTip('bag'); }, 40);
     }
   };
 
@@ -34385,28 +34453,7 @@ function bootGoulaicaiExtension() {
     if (open) {
       positionPanel();
       updateStats();
-      if (!config.panelDragTipShown) {
-        let tipMask = root.querySelector('#st-tb-drag-tip-mask');
-        if (!tipMask) {
-          tipMask = doc.createElement('div');
-          tipMask.id = 'st-tb-drag-tip-mask';
-          tipMask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.36);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10038;pointer-events:auto;';
-          tipMask.innerHTML = `<div style="width:min(286px,calc(100vw - 36px));background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);border-radius:12px;padding:14px 15px 12px;box-shadow:0 10px 28px rgba(0,0,0,0.22);box-sizing:border-box;">` +
-            `<div style="font-size:13px;font-weight:700;margin-bottom:6px;">面板操作提示</div>` +
-            `<div style="font-size:11.5px;line-height:1.6;color:var(--tb-sub,#555);margin-bottom:12px;">所有面板按住顶部标题栏都可以移动到任意位置，按住右下角边缘可直接拖动调整大小。</div>` +
-            `<div style="display:flex;justify-content:flex-end;">` +
-            `<button type="button" class="st-tb-mini-btn active" id="st-tb-drag-tip-ok" style="padding:4px 14px;height:26px;font-size:11.5px;">知道了</button>` +
-            `</div></div>`;
-          const dismissTip = () => {
-            config.panelDragTipShown = true;
-            saveConfig();
-            tipMask.remove();
-          };
-          tipMask.querySelector('#st-tb-drag-tip-ok')?.addEventListener('click', dismissTip);
-          tipMask.addEventListener('click', (e) => { if (e.target === tipMask) dismissTip(); });
-          root.appendChild(tipMask);
-        }
-      }
+      setTimeout(() => { if (typeof showOnceDragTip === 'function') showOnceDragTip('panel'); }, 40);
       renderBookmarks();
       renderDrafts();
       attachDraftListener();
@@ -35016,6 +35063,7 @@ function bootGoulaicaiExtension() {
     if (open) {
       applyReaderLayout();
       loadActiveNovel();
+      setTimeout(() => { if (typeof showOnceDragTip === 'function') showOnceDragTip('reader'); }, 40);
     }
   };
 
