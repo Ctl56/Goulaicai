@@ -4646,7 +4646,7 @@
     .st-tb-range { flex: 1; height: 3px; accent-color: var(--tb-accent); cursor: pointer; }
 
     .st-tb-chat-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 11px; color: var(--tb-sub); }
-    .st-tb-chat-list { display: flex; flex-direction: column; gap: 6px; max-height: 230px; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
+    .st-tb-chat-list { display: flex; flex-direction: column; gap: 6px; max-height: 178px; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
     .st-tb-chat-item {
       padding: 8px 9px;
       border-radius: 7px;
@@ -8186,6 +8186,15 @@
             <button class="st-px-btn" data-shop-main="sell" type="button">售卖</button>
           </div>
           <div id="st-px-gacha-view" style="display:none;">
+            <div id="st-px-gacha-vendor" class="st-px-preview-wrap" style="margin-bottom:6px;">
+              <div class="st-px-preview-box" style="align-items:center;gap:8px;padding:6px 8px;">
+                <canvas id="st-px-gacha-vendor-cv" width="44" height="44" title="点点看招财喵老板~" style="width:44px;height:44px;flex-shrink:0;border:2px solid #3b2a22;background:#fff4e6;image-rendering:pixelated;cursor:pointer;"></canvas>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">幸运扭蛋屋 · 招财喵老板</div>
+                  <div id="st-px-gacha-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「欢迎光临喵~ 今天手气一定超旺，十连保底 SR 哦！」</div>
+                </div>
+              </div>
+            </div>
             <div class="st-px-adv-card" style="text-align:center;">
               <canvas id="st-px-gacha-canvas" width="120" height="84" style="width:180px;height:126px;margin:0 auto 5px;display:block;border:2px solid var(--px-border,#bfa4ae);image-rendering:pixelated;background:#faf6f7;"></canvas>
               <div style="font-weight:700;margin-bottom:3px;" id="st-px-gacha-msg">扭蛋限定池与珍稀魔药等你来扭!</div>
@@ -11431,6 +11440,8 @@
   };
 
   let activeChatCat = 'all';
+  let chatCatManage = false;
+  let editingChatCatId = null;
   const chatCatsBarEl = root.querySelector('#st-tb-chat-cats');
   const chatCatAddBtn = root.querySelector('#st-tb-chat-cat-add');
   const chatCatAddBox = root.querySelector('#st-tb-chat-cat-add-box');
@@ -11450,9 +11461,36 @@
     if (!config.chatGroups || typeof config.chatGroups !== 'object') config.chatGroups = {};
     chatCatsBarEl.innerHTML = '';
     const cats = [{ id: 'all', name: '全部' }, { id: 'none', name: '未分类' }, ...config.chatCustomGroups];
-    cats.forEach(cat => {
+    cats.forEach((cat) => {
       const wrap = doc.createElement('span');
       wrap.style.cssText = 'display:inline-flex;align-items:center;gap:2px;';
+      if (editingChatCatId === cat.id) {
+        const inp = doc.createElement('input');
+        inp.type = 'text';
+        inp.className = 'st-tb-input';
+        inp.value = cat.name;
+        inp.style.cssText = 'width:68px;height:22px;min-height:22px;padding:0 5px;font-size:11px;margin:0;';
+        const okB = doc.createElement('button');
+        okB.type = 'button';
+        okB.className = 'st-tb-mini-btn active';
+        okB.textContent = '存';
+        const saveNm = () => {
+          const nv = String(inp.value || '').trim().slice(0, 12);
+          if (nv) cat.name = nv;
+          editingChatCatId = null;
+          saveConfig();
+          renderChatList();
+        };
+        okB.addEventListener('click', saveNm);
+        inp.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') saveNm();
+          if (ev.key === 'Escape') { editingChatCatId = null; renderChatCatsBar(); }
+        });
+        wrap.append(inp, okB);
+        setTimeout(() => inp.focus(), 0);
+        chatCatsBarEl.appendChild(wrap);
+        return;
+      }
       const b = doc.createElement('button');
       b.type = 'button';
       b.className = `st-tb-mini-btn${activeChatCat === cat.id ? ' active' : ''}`;
@@ -11462,15 +11500,41 @@
         renderChatList();
       });
       wrap.appendChild(b);
-      if (cat.id !== 'all' && cat.id !== 'none') {
-        const delC = doc.createElement('button');
-        delC.type = 'button';
-        delC.className = 'st-tb-mini-btn';
-        delC.textContent = '×';
-        delC.title = `删除分类「${cat.name}」`;
-        delC.style.cssText = 'padding:0 4px;opacity:0.7;';
-        delC.addEventListener('click', (e) => {
-          e.stopPropagation();
+      if (chatCatManage && cat.id !== 'all' && cat.id !== 'none') {
+        const idx = config.chatCustomGroups.findIndex(g => g.id === cat.id);
+        const mkSmall = (txt, title, fn) => {
+          const sb = doc.createElement('button');
+          sb.type = 'button';
+          sb.className = 'st-tb-mini-btn';
+          sb.textContent = txt;
+          sb.title = title;
+          sb.style.cssText = 'padding:0 4px;font-size:10px;';
+          sb.addEventListener('click', (e) => { e.stopPropagation(); fn(); });
+          return sb;
+        };
+        if (idx > 0) {
+          wrap.appendChild(mkSmall('←', '左移', () => {
+            const tmp = config.chatCustomGroups[idx - 1];
+            config.chatCustomGroups[idx - 1] = config.chatCustomGroups[idx];
+            config.chatCustomGroups[idx] = tmp;
+            saveConfig();
+            renderChatList();
+          }));
+        }
+        if (idx >= 0 && idx < config.chatCustomGroups.length - 1) {
+          wrap.appendChild(mkSmall('→', '右移', () => {
+            const tmp = config.chatCustomGroups[idx + 1];
+            config.chatCustomGroups[idx + 1] = config.chatCustomGroups[idx];
+            config.chatCustomGroups[idx] = tmp;
+            saveConfig();
+            renderChatList();
+          }));
+        }
+        wrap.appendChild(mkSmall('改', '重命名分类', () => {
+          editingChatCatId = cat.id;
+          renderChatCatsBar();
+        }));
+        wrap.appendChild(mkSmall('×', `删除分类「${cat.name}」`, () => {
           openConfirmModal({
             title: '删除聊天分类',
             message: `确定删除分类「${cat.name}」吗？`,
@@ -11486,11 +11550,21 @@
               renderChatList();
             },
           });
-        });
-        wrap.appendChild(delC);
+        }));
       }
       chatCatsBarEl.appendChild(wrap);
     });
+    const mgBtn = doc.createElement('button');
+    mgBtn.type = 'button';
+    mgBtn.className = `st-tb-mini-btn${chatCatManage ? ' active' : ''}`;
+    mgBtn.textContent = chatCatManage ? '完成' : '管理分类';
+    mgBtn.style.cssText = 'margin-left:auto;';
+    mgBtn.addEventListener('click', () => {
+      chatCatManage = !chatCatManage;
+      editingChatCatId = null;
+      renderChatCatsBar();
+    });
+    chatCatsBarEl.appendChild(mgBtn);
   };
 
   if (chatCatAddBtn && chatCatAddBox && chatCatInput) {
@@ -11629,7 +11703,7 @@
 
         const catSel = doc.createElement('select');
         catSel.className = 'st-tb-select';
-        catSel.style.cssText = 'flex:0 0 auto;width:auto;max-width:74px;height:22px;font-size:10px;padding:0 4px;';
+        catSel.style.cssText = 'flex:0 0 auto;width:auto;max-width:76px;height:24px !important;min-height:24px !important;line-height:22px !important;font-size:10px;padding:0 4px !important;margin:0 !important;align-self:center;box-sizing:border-box;';
         const curGId = (config.chatGroups || {})[getChatGroupKey(item.file_name)] || '';
         const optNone = doc.createElement('option');
         optNone.value = '';
@@ -20849,6 +20923,42 @@
         // 绘制像素小狐狸/小狸花回收商人头像
         const vCv = vendorBox.querySelector('#st-px-sell-vendor-cv');
         if (vCv) {
+          vCv.style.cursor = 'pointer';
+          vCv.title = '点点看阿狸掌柜~';
+          let sellPokeCnt = 0;
+          let sellPokeLast = 0;
+          vCv.addEventListener('click', () => {
+            const nowT = Date.now();
+            sellPokeCnt = (nowT - sellPokeLast < 4000) ? sellPokeCnt + 1 : 1;
+            sellPokeLast = nowT;
+            const ve = (config.puppyVendorEgg = config.puppyVendorEgg || {});
+            const vMsg = root.querySelector('#st-px-sell-vendor-msg');
+            if (sellPokeCnt >= 5 && nowT >= (ve.sellPokeCd || 0)) {
+              sellPokeCnt = 0;
+              ve.sellPokeCd = nowT + 10 * 60000;
+              if (Math.random() < 0.55) {
+                ve.sellRateMult = 1.25;
+                ve.sellRateUntil = nowT + 3 * 60000;
+                saveConfig();
+                if (vMsg) vMsg.textContent = '「唔…耳朵被挠得好舒服！接下来 3 分钟阿狸给你加价 25% 回收！」';
+                renderPupShop();
+              } else {
+                ve.sellRateMult = 0.7;
+                ve.sellRateUntil = nowT + 3 * 60000;
+                saveConfig();
+                if (vMsg) vMsg.textContent = '「喂喂！再一直戳阿狸尾巴要生气了！3 分钟内回收价打 7 折哼！」';
+                renderPupShop();
+              }
+            } else if (vMsg && sellPokeCnt >= 2) {
+              vMsg.textContent = pick([
+                '「诶？别老盯着阿狸的毛茸茸大尾巴看啦~」',
+                '「忙着记账呢，再戳我要算错小狗币了哦！」',
+                '「今天也收到了好多有趣的小玩意呢~」',
+              ]);
+            }
+          });
+        }
+        if (vCv) {
           const vg = vCv.getContext('2d');
           vg.imageSmoothingEnabled = false;
           const p = (x, y, w, h, c) => { vg.fillStyle = c; vg.fillRect(x, y, w, h); };
@@ -20873,6 +20983,16 @@
       }
       if (vendorBox) vendorBox.style.display = 'block';
 
+      const _ve = (config.puppyVendorEgg = config.puppyVendorEgg || {});
+      const _nowT = Date.now();
+      const _rateMult = (_ve.sellRateUntil && _nowT < _ve.sellRateUntil) ? (_ve.sellRateMult || 1) : 1;
+      const _darkLocked = Boolean(_ve.sellDarkLockUntil && _nowT < _ve.sellDarkLockUntil);
+      const _vMsgInit = root.querySelector('#st-px-sell-vendor-msg');
+      if (_vMsgInit && _nowT < (_ve.sellRateUntil || 0)) {
+        _vMsgInit.textContent = _rateMult > 1
+          ? '「心情超好~ 3 分钟内全场回收价 +25% 加成中！」'
+          : '「哼，还在生气中… 回收价暂时打 7 折哦。」';
+      }
       const sellCat = shopSubCat || 'all';
       const inv = config.puppyInventory || {};
       const flInv = config.puppyGarden?.unlocked || {};
@@ -20947,7 +21067,23 @@
             config.puppyKitchen.dishes[it.id] = Math.max(0, Math.floor(config.puppyKitchen.dishes[it.id] || 0) - cnt);
             if (config.puppyKitchen.dishes[it.id] <= 0) delete config.puppyKitchen.dishes[it.id];
           }
-          const gained = it.sellPrice * cnt;
+          let gained = Math.max(1, Math.round(it.sellPrice * _rateMult)) * cnt;
+          let eggMsg = '';
+          const nowE = Date.now();
+          if (it.isDark && nowE >= (_ve.sellMiscCd || 0) && Math.random() < 0.16) {
+            _ve.sellMiscCd = nowE + 10 * 60000;
+            _ve.sellDarkLockUntil = nowE + 2 * 60000;
+            eggMsg = '「咳咳…这盘暗黑料理味道太冲了！阿狸得通风 2 分钟，先暂停收暗黑料理~」';
+          } else if (cnt >= 3 && nowE >= (_ve.sellMiscCd || 0) && Math.random() < 0.15) {
+            _ve.sellMiscCd = nowE + 10 * 60000;
+            const bonus = randInt(2, 4);
+            gained += bonus;
+            eggMsg = `「爽快的大主顾！阿狸额外多塞给你 ${bonus} 枚小狗币当回礼~」`;
+          } else if ((it.kind === 'flower' || it.kind === 'dish') && it.sellPrice >= 5 && nowE >= (_ve.sellMiscCd || 0) && Math.random() < 0.12) {
+            _ve.sellMiscCd = nowE + 12 * 60000;
+            gained += 2;
+            eggMsg = '「哇，这件成色真好！阿狸心情好，多赏你 2 枚小狗币！」';
+          }
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) + gained);
           config.puppyStats = config.puppyStats || {};
           config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + gained;
@@ -20955,13 +21091,19 @@
           updatePupStatBars();
           renderPupShop();
           const vMsg = root.querySelector('#st-px-sell-vendor-msg');
-          if (vMsg) vMsg.textContent = `「谢谢惠顾！${it.name} ×${cnt} 我收下啦，这是给你的 ${gained} 枚小狗币~」`;
+          if (vMsg) vMsg.textContent = eggMsg || `「谢谢惠顾！${it.name} ×${cnt} 我收下啦，这是给你的 ${gained} 枚小狗币~」`;
           if (config.puppyEnabled) showPuppyBubble(`卖出 ${it.name} x${cnt}，换到 ${gained} 枚小狗币啦~`, 2000);
         };
 
         const confirmAndSell = (it, count) => {
+          if (it.isDark && _darkLocked) {
+            const leftMin = Math.max(1, Math.ceil((_ve.sellDarkLockUntil - Date.now()) / 60000));
+            const vMsg = root.querySelector('#st-px-sell-vendor-msg');
+            if (vMsg) vMsg.textContent = `「阿狸还在开窗散味呢，约 ${leftMin} 分钟后再来卖暗黑料理吧~」`;
+            return;
+          }
           const cnt = Math.max(1, Math.min(it.qty, count));
-          const gained = it.sellPrice * cnt;
+          const gained = Math.max(1, Math.round(it.sellPrice * _rateMult)) * cnt;
           openGuardConfirm(
             `确认售卖【${it.name}】？`,
             `将卖出 ${it.name} ×${cnt}，可获得 ${gained} 枚小狗币（售出后不可撤回）。`,
@@ -20999,11 +21141,12 @@
           const iconEl = makeItemIcon(it);
           const meta = doc.createElement('div');
           meta.style.cssText = 'flex:1;min-width:0;';
+          const _unitP = Math.max(1, Math.round(it.sellPrice * _rateMult));
           meta.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0;">
             <span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${it.name}</span>
             <span style="font-size:9px;opacity:0.75;flex-shrink:0;">x${it.qty}</span>
           </div>
-          <div style="font-size:9px;opacity:0.78;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">[${it.catLabel}] ${it.sellPrice}币/个</div>`;
+          <div style="font-size:9px;opacity:0.78;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">[${it.catLabel}] ${_unitP}币/个</div>`;
           top.append(iconEl, meta);
 
           const btns = doc.createElement('div');
@@ -21012,7 +21155,7 @@
           b1.type = 'button';
           b1.className = 'st-px-btn';
           b1.style.cssText = 'flex:1;height:21px;font-size:9px;padding:0 2px;min-width:0;';
-          b1.textContent = it.qty > 1 ? `卖1(+${it.sellPrice})` : `卖出(+${it.sellPrice})`;
+          b1.textContent = it.qty > 1 ? `卖1(+${_unitP})` : `卖出(+${_unitP})`;
           b1.addEventListener('click', () => confirmAndSell(it, 1));
           btns.appendChild(b1);
           if (it.qty > 1) {
@@ -21020,7 +21163,7 @@
             bAll.type = 'button';
             bAll.className = 'st-px-btn active';
             bAll.style.cssText = 'flex:1;height:21px;font-size:9px;padding:0 2px;min-width:0;';
-            bAll.textContent = `全卖(+${it.sellPrice * it.qty})`;
+            bAll.textContent = `全卖(+${_unitP * it.qty})`;
             bAll.addEventListener('click', () => confirmAndSell(it, it.qty));
             btns.appendChild(bAll);
           }
@@ -21401,7 +21544,7 @@
       hx = ox + 11;
       hy = oy + 6;
       isFlatPose = true;
-    } else if (pup.state === 'sit' || pup.state === 'sit_yarn' || pup.state === 'sit_hum') {
+    } else if (pup.state === 'sit' || pup.state === 'sit_yarn' || pup.state === 'sit_hum' || pup.state === 'sit_draw') {
       const blinkCycle = pup.tick % 150;
       if (blinkCycle > 142) frame = 'sit_blink';
       else frame = Math.floor(pup.tick / 16) % 2 === 0 ? 'sit1' : 'sit2';
@@ -22175,6 +22318,23 @@
       px(yx, yy + 1, '#d95778');
       px(yx + 1, yy + 1, '#f27999');
       px(yx - 1, yy + 1, '#ffb5c8');
+    } else if (pup.state === 'sit_draw') {
+      const ex = ox + 15;
+      const ey = 14;
+      px(ex + 1, ey + 6, '#9c6638'); px(ex + 5, ey + 6, '#9c6638');
+      px(ex + 3, ey, '#b57b45');
+      for (let dy = 1; dy <= 5; dy++) {
+        for (let dx = 1; dx <= 5; dx++) px(ex + dx, ey + dy, '#fffdf9');
+      }
+      px(ex, ey + 6, '#87542c'); px(ex + 6, ey + 6, '#87542c');
+      const strokeStep = Math.floor(pup.tick / 14) % 4;
+      px(ex + 2, ey + 2, '#ff7d9e');
+      if (strokeStep >= 1) px(ex + 4, ey + 2, '#78c8ff');
+      if (strokeStep >= 2) px(ex + 3, ey + 3, '#ffd24d');
+      if (strokeStep >= 3) px(ex + 2, ey + 4, '#88d678');
+      const brushY = ey + 3 + (Math.floor(pup.tick / 8) % 2);
+      px(ex - 1, brushY, '#d97236');
+      px(ex, brushY - 1, '#ff7d9e');
     } else if (pup.state === 'sit_groom') {
       // 坐着理毛的小闪光像素
       if (Math.floor(pup.tick / 10) % 2 === 0) {
@@ -23899,6 +24059,18 @@
             if (pup.state === 'sit_yarn' || pup.state === 'sit_groom' || pup.state === 'sit_hum') {
               markPupSpecialCooldown(11, 18);
               setPuppyState('sit', 220 + Math.floor(Math.random() * 180));
+            } else if (pup.state === 'sit_draw') {
+              markPupSpecialCooldown(18, 28);
+              if (pupLastDrawnArt) showPuppyBubble(`画好啦！点我看看「${pupLastDrawnArt.title}」~`, 2600, true);
+              setPuppyState('sit', 200 + Math.floor(Math.random() * 140));
+            } else if ((pup.state === 'idle' || pup.state === 'sit') && now >= pupNextDrawAt && Math.random() < 0.22) {
+              pupNextDrawAt = now + randInt(210000, 360000);
+              const persKey = config.puppyPersonality || 'sleepyhead';
+              const artPool = PUP_PIXEL_ARTS[persKey] || PUP_PIXEL_ARTS.sleepyhead;
+              pupLastDrawnArt = pick(artPool);
+              pupLastDrawnAt = now;
+              setPuppyState('sit_draw', 180);
+              showPuppyBubble('突然来灵感啦，支起小画架画一幅画…（点我看画作）', 2500, true);
             } else if (pup.state === 'sit' && pup.sitCycles > 0) {
               if (now >= pup.nextSpecialAt) {
                 pup.sitCycles -= 1;
@@ -24860,6 +25032,183 @@
   doc.addEventListener('mouseup', onPupDragShield, true);
   doc.addEventListener('touchend', onPupDragShield, true);
 
+  const PUP_PIXEL_ARTS = {
+    sleepyhead: [
+      { title: '软绵枕头云', line: '画了一朵能直接躺上去睡午觉的云朵枕头，呼…', pal: { b: '#c9d8f0', w: '#ffffff', y: '#ffe478', p: '#ffb8d0' }, grid: [
+        '................','................','....bbbbbbbb....','...bwwwwwwwwb...','..bwwwwwwwwwwb..','..bwwpwwwwpwwb..','..bwwwwwwwwwwb..','...bbbbbbbbbb...','................','..y........y....','................','.....bbbbbb.....','....bwwwwwwb....','.....bbbbbb.....','................','................'
+      ]},
+      { title: '月亮摇篮曲', line: '晚安月亮画好啦，主人在月光下也早点休息呀~', pal: { n: '#2f3868', y: '#ffe478', w: '#fff9d6', s: '#9ed0ff' }, grid: [
+        'nnnnnnnnnnnnnnnn','nnnynnnnnnnnnsnn','nnyyynnnnnnnnnnn','nnyyynnnnnnwnnnn','nnyyynnnnnnnnnnn','nnnyyynnnnnnsnnn','nnnnyyyynnnnnnnn','nnnnnyyyyyynnnnn','nnnnnnyyyyynnnnn','nnwnnnnyyynnnnnn','nnnnnnnnnnnnnnnn','nsnnnnnnnnnnwnnn','nnnnnnnnnnnnnnnn','nnnnnnnnnnnnnnnn','nnnnnnnnnnnnnnnn','nnnnnnnnnnnnnnnn'
+      ]},
+      { title: '暖烘烘被窝', line: '这是本汪心中最幸福的格子小被窝，软乎乎的！', pal: { r: '#e87a8c', p: '#ffd1dc', w: '#fffdf7', b: '#7a4b2a' }, grid: [
+        '................','..bbbbbbbbbbbb..','..bwwwwwwwwwwb..','..bwwppppppwwb..','..brrrrrrrrrrb..','..brprprprprpb..','..brrrrrrrrrrb..','..brprprprprpb..','..brrrrrrrrrrb..','..brprprprprpb..','..brrrrrrrrrrb..','..bbbbbbbbbbbb..','................','................','................','................'
+      ]},
+      { title: '懒洋洋太阳', line: '太阳公公都在打盹呢，我们再赖五分钟床吧~', pal: { y: '#ffd24d', o: '#ff9642', w: '#ffffff', k: '#3b2a22' }, grid: [
+        '.......oo.......','..o....yy....o..','...o..yyyy..o...','....yyyyyyyy....','..oyyyyyyyyyyo..','..yyykwwwwkyyy..','ooyyyyyyyyyyyyoo','..yyyyyyyyyyyy..','..yyykkyyykkyy..','..oyyyyyyyyyyo..','....yyyyyyyy....','...o..yyyy..o...','..o....yy....o..','.......oo.......','................','................'
+      ]},
+    ],
+    clingy: [
+      { title: '比心小心意', line: '画了一个大大的爱心送给主人，每天都要贴贴！', pal: { r: '#ff5c8a', p: '#ffb3c8', w: '#ffffff' }, grid: [
+        '................','...rrr....rrr...','..rpppr..rpppr..','.rpwwwr..rpwwrr.','.rpwwrrrrrppprr.','.rppppppppppppr.','..rppppppppppr..','...rppppppppr...','....rppppppr....','.....rppppr.....','......rppr......','.......rr.......','................','................','................','................'
+      ]},
+      { title: '小情书信封', line: '里面折了满满一页“最喜欢你”哦，快收好！', pal: { c: '#fff6eb', b: '#d49a78', r: '#ff5c8a' }, grid: [
+        '................','................','..bbbbbbbbbbbb..','..bccccccccccb..','..bcbbccccbbcb..','..bcccbccbcbcb..','..bccccrrccccb..','..bcccrrrrcccb..','..bccccrrccccb..','..bccccccccccb..','..bbbbbbbbbbbb..','................','................','................','................','................'
+      ]},
+      { title: '双人小晴伞', line: '不管下雨还是出太阳，我都想和主人撑同一把伞~', pal: { p: '#ff9eb5', w: '#fff5f8', b: '#8c5a3c', y: '#ffe066' }, grid: [
+        '.......bb.......','.....pppppp.....','...ppwwwwwwpp...','..ppwwwwwwwwpp..','.ppwwwwwwwwwwpp.','.pppppppppppppp.','.......bb.......','.......bb.......','.......bb.......','.......bb.......','.......bb..bb...','.......bbbbbb...','................','................','................','................'
+      ]},
+      { title: '永远在一起', line: '左边的爪印是我的，右边是主人的，盖章生效！', pal: { p: '#ff85a1', b: '#d99b78', w: '#fffdf7' }, grid: [
+        '................','..pp........bb..','.pppp......bbbb.','..pp..pp....bb..','.....pppp.......','..pp..pp..bb....','.pppp....bbbb...','..pp..pp..bb....','.....pppp.......','....pppppp......','....pppppp......','.....pppp.......','................','................','................','................'
+      ]},
+    ],
+    tsundere: [
+      { title: '本汪的小皇冠', line: '哼，这顶皇冠也就本汪戴着最气派，给你看一眼吧！', pal: { y: '#ffd24d', o: '#d98a1e', r: '#ff5277', b: '#78c8ff' }, grid: [
+        '................','................','..y....yy....y..','..yy..yyyy..yy..','..yyy.yyyy.yyy..','..yyyyyyyyyyyy..','..yrryybyyyrry..','..yyyyyyyyyyyy..','..oooooooooooo..','................','................','................','................','................','................','................'
+      ]},
+      { title: '酷炫黑墨镜', line: '才、才不是为了耍帅给你看才画的呢！', pal: { k: '#2d2930', g: '#5a5460', w: '#ffffff' }, grid: [
+        '................','................','................','..kkkkkkkkkkkk..','.kkggkkkkkkggkk.','.kggggkkkkggggk.','.kggwwkkkkggwwk.','.kggggkkkkggggk.','..kkkkkkkkkkkk..','................','................','................','................','................','................','................'
+      ]},
+      { title: '傲娇小闪电', line: '记住啦，以后不许惹本汪生气，不然电你一下！', pal: { y: '#ffe066', o: '#ff9e2c', w: '#ffffff' }, grid: [
+        '........yyyy....','.......yyyy.....','......yyyy......','.....yyyyy......','....yyyyyyyyy...','...yyyyyyyyy....','.......yyyy.....','......yyyy......','.....yyyy.......','....yyyy........','...yyy..........','..yy............','................','................','................','................'
+      ]},
+      { title: '红色蝴蝶结', line: '勉强帮你挑了个蝴蝶结，戴上应该还算凑合吧！', pal: { r: '#e84a64', p: '#ff9eb5', k: '#8c2238' }, grid: [
+        '................','................','..rrr......rrr..','.rpppr....rpppr.','.rpppprkkrppppr.','.rppprkkkkpppr..','..rrr..kk..rrr..','......r..r......','.....rr..rr.....','....rr....rr....','................','................','................','................','................','................'
+      ]},
+    ],
+    foodie: [
+      { title: '香喷喷大鸡腿', line: '吸溜…画着画着肚子就咕噜咕噜叫起来了！', pal: { o: '#d97a38', y: '#f5b056', w: '#fffdf5' }, grid: [
+        '................','....oooo........','...oyyyyo.......','..oyyyyyyo......','..oyyyyyyo......','...oyyyyo.......','....ooooww......','........ww......','.........ww.....','..........www...','..........www...','................','................','................','................','................'
+      ]},
+      { title: '草莓奶油蛋糕', line: '顶上一定要放最大颗的红草莓才完美！', pal: { r: '#ff4d6d', g: '#5ec962', w: '#fffdf9', p: '#ffb8cc', c: '#f4c27a', b: '#9c6638' }, grid: [
+        '.......g........','......rrr.......','.....rrrrr......','....wwwwwww.....','...wwwwwwwww....','...ppppppppp....','...ccccccccc....','...ppppppppp....','...ccccccccc....','..bbbbbbbbbbb...','................','................','................','................','................','................'
+      ]},
+      { title: '珍珠奶茶杯', line: '加满黑糖波波和厚奶盖，今天也要干杯！', pal: { t: '#d99e6b', w: '#fffdf8', k: '#3b2a22', p: '#ff9eb5' }, grid: [
+        '........pp......','........pp......','....wwwwwwww....','...wwwwwwwwww...','....tttttttt....','....tttttttt....','....tttttttt....','....tktkttkt....','....kttkttkt....','.....kkkkkk.....','................','................','................','................','................','................'
+      ]},
+      { title: '焦糖铜锣烧', line: '刚出炉夹着满满红豆馅，分你一半要不要？', pal: { b: '#a85a2a', y: '#e08e45', r: '#782832' }, grid: [
+        '................','................','....bbbbbbbb....','...byyyyyyyyb...','..byyyyyyyyyyb..','..brrrrrrrrrrb..','..bbbbbbbbbbbb..','...byyyyyyyyb...','....bbbbbbbb....','................','................','................','................','................','................','................'
+      ]},
+    ],
+    explorer: [
+      { title: '神秘藏宝图', line: '我画了标记 X 的地方，下次一起去挖宝藏吧！', pal: { c: '#f5e2ba', b: '#8c5a32', r: '#e04258' }, grid: [
+        '................','..bbbbbbbbbbbb..','..bccccccccccb..','..bcbbcccccccb..','..bccccrrcrccb..','..bcccccrccccb..','..bccccrrcrccb..','..bccccccccccb..','..bccccccbbbcb..','..bbbbbbbbbbbb..','................','................','................','................','................','................'
+      ]},
+      { title: '彩虹热气球', line: '乘着风飞到云朵上面去冒险，想想就激动！', pal: { r: '#ff6b8b', y: '#ffe066', b: '#78c8ff', w: '#9c6638' }, grid: [
+        '.....rrrrrr.....','...rryyyyyyrr...','..rryybbbbyyrr..','..rryybbbbyyrr..','...rryyyyyyrr...','....rrrrrrrr....','.....r....r.....','......r..r......','......wwww......','......wwww......','................','................','................','................','................','................'
+      ]},
+      { title: '晴空小帆船', line: '扬帆起航咯！前面说不定有金银岛呢~', pal: { w: '#ffffff', r: '#ff6b78', b: '#9c6638', s: '#64b5f6' }, grid: [
+        '.......r........','.......ww.......','......wwww......','.....wwwwww.....','....wwwwwwww....','.......b........','..bbbbbbbbbbbb..','...bbbbbbbbbb...','ssssssssssssssss','..ssss....ssss..','................','................','................','................','................','................'
+      ]},
+      { title: '远方雪山峰', line: '山顶积着亮晶晶的雪，下次带我去爬山！', pal: { s: '#b8e0ff', w: '#ffffff', g: '#5ca882', b: '#78909c' }, grid: [
+        '................','.......ww.......','......wwww......','.....wwssww.....','....ssssssss....','...ssssbbssss...','..ssssbbbbssss..','.gggggggggggggg.','.gggggggggggggg.','................','................','................','................','................','................','................'
+      ]},
+    ],
+    fashionista: [
+      { title: '高定礼服裙', line: '今天给灵感本加了一套高定纱裙设计稿~', pal: { p: '#ff9ec4', w: '#fff5f9', y: '#ffd859' }, grid: [
+        '................','.....pp..pp.....','.....pppppp.....','......pppp......','......yyyy......','....pppppppp....','...ppwwwwwwpp...','..ppwwwwwwwwpp..','.ppwwwwwwwwwwpp.','.pppppppppppppp.','................','................','................','................','................','................'
+      ]},
+      { title: '玫瑰香水瓶', line: '优雅的瓶身配一点点玫瑰清香，品味满分！', pal: { y: '#ffd859', p: '#ffc2d6', w: '#ffffff', r: '#e85a7a' }, grid: [
+        '......yyyy......','......yyyy......','.......yy.......','....pppppppp....','...pwwwwwwwwp...','...pwwrrrrwwp...','...pwwrrrrwwp...','...pwwwwwwwwp...','....pppppppp....','................','................','................','................','................','................','................'
+      ]},
+      { title: '璀璨蓝宝石', line: '折射着清透星光的蓝钻，和今天的穿搭很配呢~', pal: { b: '#52b2ff', l: '#a8e4ff', w: '#ffffff' }, grid: [
+        '................','....llllllll....','...lbbwwwwbbl...','..lbbbbwwbbbbl..','..llllllllllll..','...lbbbbbbbbl...','....lbbbbbbl....','.....lbbbbl.....','......lbbl......','.......ll.......','................','................','................','................','................','................'
+      ]},
+      { title: '珍珠小提包', line: '精致女孩/男孩出门必备的迷你珍珠链条包！', pal: { w: '#fffdf9', p: '#ffadc6', y: '#ffd24d' }, grid: [
+        '......wwww......','.....w....w.....','....w......w....','...pppppppppp...','...ppppyypppp...','...pppppppppp...','...pppppppppp...','...pppppppppp...','....pppppppp....','................','................','................','................','................','................','................'
+      ]},
+    ],
+    gamer: [
+      { title: '像素小掌机', line: '画了台复古掌机，等下要不要再来一局小游戏？', pal: { b: '#7890d8', s: '#9ee8c8', k: '#2d2930', r: '#ff5c7c' }, grid: [
+        '................','...bbbbbbbbbb...','...bssssssssb...','...bssssssssb...','...bbbbbbbbbb...','...bbkbbbbbbb...','...bkkkbbbrbb...','...bbkbbbrbbb...','...bbbbbbbbbb...','...bbbbbbbbbb...','................','................','................','................','................','................'
+      ]},
+      { title: '满血红药水', line: '干了这瓶像素红药水，HP 和心情瞬间回满！', pal: { k: '#9c6638', w: '#e8f4ff', r: '#ff4d6d', p: '#ff9eb5' }, grid: [
+        '......kkkk......','......kkkk......','.......ww.......','.....wwwwww.....','....wwrrrrww....','...wwrrpprrww...','...wwrrrrrrww...','...wwrrrrrrww...','....wwwwwwww....','.....wwwwww.....','................','................','................','................','................','................'
+      ]},
+      { title: '传说金宝箱', line: '开箱必出 SSR！我已经把欧气画进箱子里了！', pal: { b: '#a85a2a', y: '#ffd24d', k: '#3b2a22' }, grid: [
+        '................','...yyyyyyyyyy...','..ybbbbbbbbbby..','..ybbbbbbbbbby..','..yyyyykyyyyyy..','..ybbbkkkbbbby..','..ybbbbkbbbbby..','..ybbbbbbbbbby..','...yyyyyyyyyy...','................','................','................','................','................','................','................'
+      ]},
+      { title: '超级无敌星', line: '吃到这颗无敌星，今天做什么都会顺顺利利！', pal: { y: '#ffe066', o: '#ff9e2c', k: '#3b2a22' }, grid: [
+        '.......yy.......','......yyyy......','..yyyyyyyyyyyy..','...yyyykykyyy...','....yyykykyy....','....yyyyyyyy....','...yyyy..yyyy...','..yy........yy..','................','................','................','................','................','................','................','................'
+      ]},
+    ],
+    philosopher: [
+      { title: '静谧夜灯塔', line: '哪怕在很暗的夜里，也会有一束光为你亮着~', pal: { w: '#fffdf7', r: '#e05a68', y: '#ffe478', b: '#4a6b9c' }, grid: [
+        '.......yy.......','......yyyy......','..yyyywwwwyyyy..','......wwww......','......rrrr......','......wwww......','.....rrrrrr.....','.....wwwwww.....','....rrrrrrrr....','bbbbbbbbbbbbbbbb','................','................','................','................','................','................'
+      ]},
+      { title: '时光小沙漏', line: '沙子一粒粒落下，和你一起发呆的时光最珍贵。', pal: { b: '#8c5a32', g: '#e8f4ff', y: '#f5cb66' }, grid: [
+        '..bbbbbbbbbbbb..','...gggggggggg...','...ggyyyyyygg...','....ggyyyygg....','.....ggyygg.....','......gggg......','.....ggyygg.....','....ggyyyygg....','...ggyyyyyygg...','..bbbbbbbbbbbb..','................','................','................','................','................','................'
+      ]},
+      { title: '星空下的树', line: '树叶沙沙响的时候，像在读一首很温柔的诗。', pal: { g: '#58a868', l: '#8ce08e', b: '#7a4b2a', y: '#ffe478' }, grid: [
+        '..y..........y..','.....gggggg.....','...ggllllllgg...','..gllllllllllg..','..gllllggllllg..','...gggggggggg...','.......bb.......','.......bb.......','......bbbb......','................','................','................','................','................','................','................'
+      ]},
+      { title: '鹅毛手账本', line: '把今天的风声和故事都记进小本子里吧~', pal: { w: '#fffdf7', b: '#6b4e3d', p: '#a8d0ff', k: '#4a4a52' }, grid: [
+        '.............pp.','..bbbbbbbbb.pp..','..bwwwwwwwbpp...','..bwkkkkkwbp....','..bwwwwwwwb.....','..bwkkkkkwb.....','..bwwwwwwwb.....','..bwkkkkkwb.....','..bbbbbbbbb.....','................','................','................','................','................','................','................'
+      ]},
+    ],
+  };
+
+  let pupLastDrawnArt = null;
+  let pupLastDrawnAt = 0;
+  let pupNextDrawAt = Date.now() + 90000;
+
+  const openPupDrawingModal = (art) => {
+    if (!art) return;
+    let modal = root.querySelector('#st-tb-pup-art-modal');
+    if (!modal) {
+      modal = doc.createElement('div');
+      modal.id = 'st-tb-pup-art-modal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10025;pointer-events:auto;';
+      modal.innerHTML = `<div style="width:248px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span id="st-px-art-title" style="font-size:12px;font-weight:700;"></span>
+          <button type="button" id="st-px-art-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+        </div>
+        <canvas id="st-px-art-cv" width="160" height="160" style="width:160px;height:160px;display:block;margin:0 auto 7px;border:2px solid #3b2a22;background:#fffdf8;image-rendering:pixelated;"></canvas>
+        <div id="st-px-art-line" style="font-size:10.5px;line-height:1.45;background:#ffffff;border:1px solid var(--px-border,#bfa4ae);padding:6px;margin-bottom:8px;"></div>
+        <div style="display:flex;gap:6px;">
+          <button type="button" id="st-px-art-praise" class="st-px-btn care" style="flex:1;">夸夸它 (+好感)</button>
+          <button type="button" id="st-px-art-ok" class="st-px-btn active" style="flex:1;">收下画作</button>
+        </div>
+      </div>`;
+      root.appendChild(modal);
+      const closeArt = () => { modal.style.display = 'none'; };
+      modal.querySelector('#st-px-art-close').addEventListener('click', closeArt);
+      modal.querySelector('#st-px-art-ok').addEventListener('click', closeArt);
+      modal.addEventListener('click', (ev) => { if (ev.target === modal) closeArt(); });
+      modal.querySelector('#st-px-art-praise').addEventListener('click', () => {
+        closeArt();
+        pupLastDrawnArt = null;
+        if (config.puppyEnabled) {
+          changePupStat('mood', 6);
+          addAffinity(2);
+          saveConfig();
+          updatePupStatBars();
+          setPuppyState('happy', 100);
+          showPuppyBubble('嘿嘿！被夸奖了，下次还要画更好看的给你看~', 2300);
+        }
+      });
+    }
+    modal.querySelector('#st-px-art-title').textContent = `小狗画作 · ${art.title}`;
+    modal.querySelector('#st-px-art-line').textContent = art.line;
+    const cv = modal.querySelector('#st-px-art-cv');
+    const g = cv.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.fillStyle = '#fffdf8';
+    g.fillRect(0, 0, 160, 160);
+    (art.grid || []).forEach((row, y) => {
+      for (let x = 0; x < row.length; x++) {
+        const ch = row[x];
+        if (ch === '.') continue;
+        const col = art.pal[ch];
+        if (col) {
+          g.fillStyle = col;
+          g.fillRect(x * 10, y * 10, 10, 10);
+        }
+      }
+    });
+    modal.style.display = 'flex';
+  };
+
   const endPuppyDrag = (e) => {
     if (!puppyDrag || puppyDrag.id !== e.pointerId) return;
     e.stopPropagation();
@@ -24897,6 +25246,10 @@
           const cnt = puppyClickCount;
           puppyClickCount = 0;
           if (cnt === 1 || cnt === 2) {
+            if (pupLastDrawnArt && (pup.state === 'sit_draw' || Date.now() - pupLastDrawnAt < 65000)) {
+              openPupDrawingModal(pupLastDrawnArt);
+              return;
+            }
             handleSinglePuppyTap();
           }
         }, 300);
@@ -33260,6 +33613,57 @@
     return false;
   };
 
+  const gachaVendorCv = root.querySelector('#st-px-gacha-vendor-cv');
+  const gachaVendorMsg = root.querySelector('#st-px-gacha-vendor-msg');
+  if (gachaVendorCv && !gachaVendorCv._inited) {
+    gachaVendorCv._inited = true;
+    const cg = gachaVendorCv.getContext('2d');
+    cg.imageSmoothingEnabled = false;
+    const p = (x, y, w, h, c) => { cg.fillStyle = c; cg.fillRect(x, y, w, h); };
+    p(0, 0, 44, 44, '#fff4e6');
+    p(9, 7, 7, 8, '#f09448'); p(11, 9, 3, 4, '#ffd0dc');
+    p(28, 7, 7, 8, '#f09448'); p(30, 9, 3, 4, '#ffd0dc');
+    p(9, 14, 26, 17, '#ffbe78');
+    p(20, 14, 4, 5, '#d97236'); p(16, 15, 2, 3, '#d97236'); p(26, 15, 2, 3, '#d97236');
+    p(13, 23, 18, 8, '#fff7ed');
+    p(14, 19, 3, 3, '#2d1e18'); p(27, 19, 3, 3, '#2d1e18');
+    p(14, 19, 1, 1, '#ffffff'); p(27, 19, 1, 1, '#ffffff');
+    p(21, 23, 2, 2, '#f27894');
+    p(12, 31, 20, 11, '#fff7ed');
+    p(12, 31, 20, 3, '#d94848');
+    p(20, 34, 4, 4, '#ffd24d');
+    let gPokeCnt = 0;
+    let gPokeLast = 0;
+    gachaVendorCv.addEventListener('click', () => {
+      const nowT = Date.now();
+      gPokeCnt = (nowT - gPokeLast < 4000) ? gPokeCnt + 1 : 1;
+      gPokeLast = nowT;
+      const ve = (config.puppyVendorEgg = config.puppyVendorEgg || {});
+      if (gPokeCnt >= 5 && nowT >= (ve.gachaPokeCd || 0)) {
+        gPokeCnt = 0;
+        ve.gachaPokeCd = nowT + 10 * 60000;
+        if (Math.random() < 0.55) {
+          config.puppyInventory = config.puppyInventory || {};
+          config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+          saveConfig();
+          renderGachaView();
+          if (gachaVendorMsg) gachaVendorMsg.textContent = '「呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 85折扭蛋券！」';
+          if (config.puppyEnabled) showPuppyBubble('招财喵老板开心送了 1 张扭蛋券!', 2200);
+        } else {
+          ve.gachaLockUntil = nowT + 2 * 60000;
+          saveConfig();
+          if (gachaVendorMsg) gachaVendorMsg.textContent = '「喵呜！不准再揪胡子了！卷帘门拉下来冷静 2 分钟喵！」';
+        }
+      } else if (gachaVendorMsg && gPokeCnt >= 2) {
+        gachaVendorMsg.textContent = pick([
+          '「喵？不要一直戳招财铃铛啦，会响个不停的！」',
+          '「老板正在擦扭蛋机玻璃呢，别捣乱喵~」',
+          '「摸摸头可以，可不许扯本喵胡须哦！」',
+        ]);
+      }
+    });
+  }
+
   const renderGachaView = () => {
     if (!gachaViewEl) return;
     drawGachaMachine(0, null);
@@ -33806,6 +34210,33 @@
             showPuppyBubble(getPersExtra('gachaSr', { label: results[0].label }), 2600);
           }
         }
+        const veG = (config.puppyVendorEgg = config.puppyVendorEgg || {});
+        const nowG = Date.now();
+        if (nowG >= (veG.gachaMiscCd || 0)) {
+          const rEgg = Math.random();
+          if (count === 10 && rEgg < 0.10) {
+            veG.gachaMiscCd = nowG + 15 * 60000;
+            config.puppyInventory = config.puppyInventory || {};
+            config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+            saveConfig();
+            if (gachaVendorMsg) gachaVendorMsg.textContent = '「十连气势太足了喵！老板偷偷再送你 1 张 85折扭蛋券！」';
+          } else if (rEgg < 0.08) {
+            veG.gachaMiscCd = nowG + 12 * 60000;
+            config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + 2;
+            saveConfig();
+            updatePupStatBars();
+            if (gachaVendorMsg) gachaVendorMsg.textContent = '「咔哒！机器卡了一下多掉出 2 枚小狗币，算老板请客喵！」';
+          } else if (rEgg < 0.14) {
+            veG.gachaMiscCd = nowG + 12 * 60000;
+            const freeSn = pick(SHOP_PUP_GOODS.filter(x => x.cat === 'snack'));
+            if (freeSn) {
+              config.puppyInventory = config.puppyInventory || {};
+              config.puppyInventory[freeSn.id] = (config.puppyInventory[freeSn.id] || 0) + 1;
+              saveConfig();
+              if (gachaVendorMsg) gachaVendorMsg.textContent = `「刚打了个盹，顺手多塞了一颗【${freeSn.name}】进蛋里喵~」`;
+            }
+          }
+        }
         renderGachaView();
         drawGachaMachine(0, topCol);
         showGachaRevealModal(results);
@@ -33816,7 +34247,17 @@
     }, 110);
   };
 
+  const checkGachaLock = () => {
+    const ve = config.puppyVendorEgg || {};
+    if (ve.gachaLockUntil && Date.now() < ve.gachaLockUntil) {
+      const leftMin = Math.max(1, Math.ceil((ve.gachaLockUntil - Date.now()) / 60000));
+      if (gachaVendorMsg) gachaVendorMsg.textContent = `「喵呜还在生气中！卷帘门大约 ${leftMin} 分钟后再开~」`;
+      return true;
+    }
+    return false;
+  };
   if (gachaPullBtn) gachaPullBtn.addEventListener('click', () => {
+    if (checkGachaLock()) return;
     const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
     const { availTickets, useTickets, coinCost } = calcGachaCostWithTickets(1, 10);
     if (curC < coinCost) { runGachaPull(1, 10); return; }
@@ -33826,6 +34267,7 @@
     openGuardConfirm('确认单抽扭蛋？', desc, () => runGachaPull(1, 10), '确认抽奖', true);
   });
   if (gachaPull10Btn) gachaPull10Btn.addEventListener('click', () => {
+    if (checkGachaLock()) return;
     const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
     const { availTickets, useTickets, coinCost } = calcGachaCostWithTickets(10, 90);
     if (curC < coinCost) { runGachaPull(10, 90); return; }
@@ -37548,9 +37990,9 @@
       try {
         const ctx = getContext();
         if (typeof ctx?.reloadCurrentChat === 'function') {
-          ctx.reloadCurrentChat().then(() => cmNotify('正则已变更，已刷新当前聊天页面')).catch(() => {});
+          ctx.reloadCurrentChat().then(() => cmNotify('已刷新当前聊天页面')).catch(() => {});
         } else if (typeof win.reloadCurrentChat === 'function') {
-          win.reloadCurrentChat().then(() => cmNotify('正则已变更，已刷新当前聊天页面')).catch(() => {});
+          win.reloadCurrentChat().then(() => cmNotify('已刷新当前聊天页面')).catch(() => {});
         }
       } catch (_) {}
     }
@@ -38470,7 +38912,7 @@
         if (!el) {
           el = doc.createElement('div');
           el.id = 'st-tb-inline-toast';
-          el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:6px 12px;border-radius:8px;background:var(--tb-bg,#1c1c1e);color:var(--tb-text,#f2f2f2);border:1px solid var(--tb-border,#3a3a3e);box-shadow:0 6px 18px rgba(0,0,0,0.35);font-size:12px;z-index:10030;pointer-events:none;opacity:0;transition:opacity 0.18s ease;';
+          el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:6px 14px;border-radius:8px;background:var(--tb-bg,#1c1c1e);color:var(--tb-text,#f2f2f2);border:1px solid var(--tb-border,#3a3a3e);box-shadow:0 6px 18px rgba(0,0,0,0.35);font-size:12px;line-height:1.2;white-space:nowrap;text-align:center;max-width:calc(100vw - 24px);overflow:hidden;text-overflow:ellipsis;z-index:10030;pointer-events:none;opacity:0;transition:opacity 0.18s ease;';
           root.appendChild(el);
         }
         el.textContent = String(msg || '');
