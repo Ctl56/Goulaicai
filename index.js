@@ -17280,9 +17280,9 @@
     wish_legend_100: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-9px;top:-8px;', w: 12, h: 14, pal: { o: '#8c5468', c: '#d99862', g: '#ffe8f4', w: '#ffffff', y: '#f5c84c', p: '#f282a8' },
+        { pos: 'left:10px;bottom:-9px;', w: 12, h: 14, pal: { o: '#8c5468', c: '#d99862', g: '#ffe8f4', w: '#ffffff', y: '#f5c84c', p: '#f282a8' },
           grid: ['....cccc....','....cccc....','...oooooo...','..ogwwwwgo..','.ogwwyywwgo.','.ogwpyypwgo.','.ogwwyywwgo.','.ogwppppwgo.','..oggggggo..','...oooooo...'] },
-        { pos: 'right:-8px;bottom:-6px;', w: 11, h: 8, pal: { y: '#f2bf49', w: '#fff6cc', p: '#f088ab' },
+        { pos: 'right:-10px;top:0px;', w: 11, h: 8, pal: { y: '#f2bf49', w: '#fff6cc', p: '#f088ab' },
           grid: ['.......pp..','.....ppyy..','...yywwyy..','.yywwyy....','yy.........'] },
       ],
     },
@@ -17321,9 +17321,9 @@
     gb_gacha_melon_eater: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'right:-10px;bottom:-7px;', w: 15, h: 12, pal: { g: '#4ea864', m: '#82d994', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
+        { pos: 'right:8px;top:-9px;', w: 15, h: 12, pal: { g: '#4ea864', m: '#82d994', l: '#e8fae8', r: '#f05a72', k: '#3b2428', w: '#ffc2cc' },
           grid: ['.....rr..mm...','....rrwrmgg...','...rrkrrmg....','..rrr..rr.....','.rrkrrrrkr....','llrrrrrrrll...','.gglllllgg....','..ggggggg.....'] },
-        { pos: 'left:-7px;top:-6px;', w: 9, h: 8, anim: 'b-bob', pal: { r: '#f5788e', w: '#ffe0e6', g: '#62bf78' },
+        { pos: 'right:-8px;bottom:-2px;', w: 9, h: 8, anim: 'b-bob', pal: { r: '#f5788e', w: '#ffe0e6', g: '#62bf78' },
           grid: ['..rr.....','.rwwr..g.','..rr..gg.','......g..'] },
       ],
     },
@@ -17331,9 +17331,9 @@
     gb_gacha_sleep_master: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-10px;bottom:-6px;', w: 14, h: 10, pal: { b: '#8ea8e6', w: '#ffffff', l: '#dce8ff' },
+        { pos: 'left:8px;bottom:-7px;', w: 14, h: 10, pal: { b: '#8ea8e6', w: '#ffffff', l: '#dce8ff' },
           grid: ['.b........b.','bbwwwwwwwwbb','bwwllllllwwb','bwwllllllwwb','bbwwwwwwwwbb','.b........b.'] },
-        { pos: 'right:-7px;top:-7px;', w: 9, h: 9, anim: 'b-bob', pal: { l: '#9e8ee6', w: '#ffffff' },
+        { pos: 'left:14px;top:-8px;', w: 9, h: 9, anim: 'b-bob', pal: { l: '#9e8ee6', w: '#ffffff' },
           grid: ['....lll..','...lwwl..','....lll..','.ll......','lwl......','.ll......'] },
       ],
     },
@@ -17341,7 +17341,7 @@
     gb_gacha_snack_thief: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-9px;top:-8px;', w: 13, h: 12, pal: { o: '#b87438', a: '#f0be7a', l: '#ffe2b0', k: '#5c341a' },
+        { pos: 'right:12px;bottom:-8px;', w: 13, h: 12, pal: { o: '#b87438', a: '#f0be7a', l: '#ffe2b0', k: '#5c341a' },
           grid: ['..oooo......','.oaalao..a..','oakaal....a.','oaaalao.....','oaakaaoo..k.','.oaaakao....','..ooooo.....'] },
         { pos: 'right:-8px;bottom:-6px;', w: 10, h: 11, pal: { w: '#ffffff', b: '#a8d6f5', o: '#c49872' },
           grid: ['.ooooooo..','.owwwwwwo.','.owbbbbwo.','.owbbbbwoo','.owwwwwwo.','.ooooooo..'] },
@@ -17410,9 +17410,9 @@
     gb_gacha_e_pickles: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'right:-9px;bottom:-6px;', w: 11, h: 13, pal: { y: '#e0b048', g: '#5eb86e', l: '#b8f0be', r: '#e85a64', w: '#ffffff' },
+        { pos: 'left:-10px;bottom:-5px;', w: 11, h: 13, pal: { y: '#e0b048', g: '#5eb86e', l: '#b8f0be', r: '#e85a64', w: '#ffffff' },
           grid: ['..yyyyy...','.ggggggg..','gllwrrrllg','glggrrrggl','gllwrrrllg','glgggggggl','.ggggggg..'] },
-        { pos: 'left:-8px;top:-6px;', w: 11, h: 9, pal: { g: '#5ec472', l: '#c2f5c8', r: '#eb5a5a' },
+        { pos: 'left:8px;bottom:-7px;', w: 11, h: 9, pal: { g: '#5ec472', l: '#c2f5c8', r: '#eb5a5a' },
           grid: ['..ggg..rr.','.gllg.rrr.','.gggg..r..','..gg......'] },
       ],
     },
@@ -17430,9 +17430,9 @@
     gb_gacha_chaos_king: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-8px;top:-8px;', w: 11, h: 10, pal: { r: '#e05a5a', y: '#f5cc64', w: '#fff4d6' },
+        { pos: 'left:12px;top:-8px;', w: 11, h: 10, pal: { r: '#e05a5a', y: '#f5cc64', w: '#fff4d6' },
           grid: ['.r......r.','rr......rr','rrr....rrr','.rryyyyrr.','..yywwyy..'] },
-        { pos: 'right:-7px;bottom:-5px;', w: 9, h: 8, pal: { p: '#f08a9e', w: '#ffd9e2' },
+        { pos: 'right:-8px;top:50%;transform:translateY(-50%);', w: 9, h: 8, pal: { p: '#f08a9e', w: '#ffd9e2' },
           grid: ['.p..p..p.','..ppppp..','.ppwwwpp.','..ppppp..'] },
       ],
     },
@@ -17446,24 +17446,26 @@
           grid: ['...yyyy...','..ywwwwy..','.yywyywyy.','ywwyyyywwy','.yyyyyyyy.'] },
       ],
     },
-    // 18. 甜心教主 (商店75币豪华)：底边豪华糖果城堡托底 + 左侧手绘双球甜筒冰淇淋 + 右上草莓糖霜蝴蝶结
+    // 18. 甜心教主 (商店75币豪华)：右下双球甜筒冰淇淋 + 顶边偏左糖果奶油波浪冠 + 左侧飘落小糖珠（重心在右下与顶左）
     sb_ult_candy_queen: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['bottom'],
+      ult: ['top'],
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 16, pal: { p: '#ff96be', g: '#98ebd0', w: '#ffffff', a: '#e6a868', o: '#b8743c', r: '#f05674' },
+        { pos: 'right:-12px;bottom:-6px;', w: 13, h: 17, anim: 'b-bob', pal: { p: '#ff96be', g: '#98ebd0', w: '#ffffff', a: '#e6a868', o: '#b8743c', r: '#f05674' },
           grid: ['....rr....','..pppppp..','.ppwwwwpp.','..gggggg..','.ggwwwwgg.','..aaaaaa..','...aooa...','....aa....','....oo....'] },
-        { pos: 'right:-9px;top:-8px;', w: 12, h: 9, anim: 'b-tilt', pal: { p: '#eb7aa8', w: '#fff0f6', r: '#e04e78' },
-          grid: ['.ppp..ppp.','ppwppppwpp','ppprrrpppp','.ppp..ppp.','..p....p..'] },
+        { pos: 'left:8px;bottom:-7px;', w: 12, h: 8, pal: { p: '#ff9ec2', y: '#ffe68c', c: '#94e6ff', w: '#ffffff' },
+          grid: ['..pp....cc..','.pwwp..cwwc.','..pp.yy.cc..','....ywwy....'] },
       ],
     },
-    // 19. 樱花公主汪 (商店78币豪华)：左侧斜伸完整古风樱花枝条 + 底部落樱花瓣托底
+    // 19. 樱花公主汪 (商店78币豪华)：右侧探入完整垂樱花枝 + 底边偏左落樱花簇与玉珠（重心在右与底左）
     sb_ult_sakura_empress: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['bottom'],
+      ult: ['right'],
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, pal: { o: '#7a4e42', p: '#ff9ec2', l: '#ffd9e8', w: '#ffffff', y: '#ffe078' },
-          grid: ['...pp..oo...','..pllp.o....','.plwwlp.o...','..pllp..oo..','...pp..o.pp.','......o.pllp','....oo..pwlp','...o....plp.','..o.........'] },
+        { pos: 'right:-13px;top:-8px;', w: 15, h: 16, anim: 'b-tilt', pal: { o: '#7a4e42', p: '#ff9ec2', l: '#ffd9e8', w: '#ffffff', y: '#ffe078' },
+          grid: ['...oo..pp...','....o.pllp..','...o.plwwlp.','..oo..pllp..','.pp.o..pp...','pllp.o......','pwlp..oo....','.plp....o...','.........o..'] },
+        { pos: 'left:6px;bottom:-8px;', w: 16, h: 9, pal: { p: '#f58cb4', l: '#ffd6e6', w: '#ffffff', y: '#ffe484' },
+          grid: ['..pp......pp..','.pllp.ww.pllp.','.pwlp.yy.pwlp.','..pp......pp..'] },
       ],
     },
     // 20. 绝版七彩萌主 (商店108币顶级豪华)：左右华丽紫金权杖与七彩翼 + 顶边七彩钻冠 + 底边棱镜珍珠长花环（顶级奢华不输炽天使汪！）
@@ -17508,14 +17510,14 @@
           grid: ['.....llll.....','...llwwwwll...','..llwwllwwll..','yyllllllllllyy','.yyccclllppyy.','...llllllll...','.....llll.....'] },
       ],
     },
-    // 24. 天选小可爱 (商店72币豪华)：底边珍珠蕾丝长裙边 + 左侧大号粉白双层蝴蝶结垂珠 + 右上迷你珍珠皇冠
+    // 24. 天选小可爱 (商店72币豪华)：右侧大号粉白双层蝴蝶结垂珠 + 顶边偏左迷你珍珠皇冠 + 左侧丝带珍珠链（彻底告别雷同）
     sb_ult_moon_valkyrie: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['bottom'],
+      ult: ['left'],
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-tilt', pal: { p: '#f28cb2', l: '#ffd6e6', w: '#ffffff', y: '#ffe494' },
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-tilt', pal: { p: '#f28cb2', l: '#ffd6e6', w: '#ffffff', y: '#ffe494' },
           grid: ['.ppp...ppp.','ppwpp.ppwpp','ppplppplppp','.ppppppppp.','..pp...pp..','.pp..w..pp.','.p..wyw..p.','.....w.....'] },
-        { pos: 'right:-8px;top:-9px;', w: 12, h: 10, pal: { w: '#ffffff', p: '#f294b8', y: '#f5cc58' },
+        { pos: 'left:12px;top:-10px;', w: 13, h: 10, anim: 'b-bob', pal: { w: '#ffffff', p: '#f294b8', y: '#f5cc58' },
           grid: ['..w..y..w..','.ww.yyy.ww.','.ppppppppp.','.pwwpwpwwp.','..ppppppp..'] },
       ],
     },
@@ -17563,9 +17565,9 @@
     sb_ribbon_idol: {
       cls: 'bespoke-std bespoke-sheen',
       pieces: [
-        { pos: 'left:-10px;top:-8px;', w: 14, h: 11, anim: 'b-tilt', pal: { p: '#eb7cb8', l: '#ffd6ec', w: '#ffffff', y: '#ffe484' },
+        { pos: 'right:10px;top:-9px;', w: 14, h: 11, anim: 'b-tilt', pal: { p: '#eb7cb8', l: '#ffd6ec', w: '#ffffff', y: '#ffe484' },
           grid: ['.ppp...ppp.','ppwpp.ppwpp','pppypppyppp','.ppp...ppp.','..pp...pp..'] },
-        { pos: 'right:-8px;bottom:-6px;', w: 10, h: 9, pal: { y: '#f5cc58', w: '#ffffff', l: '#c49ee6' },
+        { pos: 'left:-9px;bottom:-4px;', w: 10, h: 9, pal: { y: '#f5cc58', w: '#ffffff', l: '#c49ee6' },
           grid: ['...lll...','..lwwwl..','.lywwwyl.','..lllll..'] },
       ],
     },
@@ -17573,9 +17575,9 @@
     sb_lantern_night: {
       cls: 'bespoke-std bespoke-glow',
       pieces: [
-        { pos: 'left:-10px;bottom:-6px;', w: 13, h: 11, pal: { y: '#e6a82e', l: '#fff2b0', o: '#9c6412' },
+        { pos: 'right:10px;bottom:-7px;', w: 13, h: 11, pal: { y: '#e6a82e', l: '#fff2b0', o: '#9c6412' },
           grid: ['....yyyy....','...ylllly...','.yyyyyyyyyy.','yllllyllllly','.yyyyyyyyyy.'] },
-        { pos: 'right:-8px;top:-8px;', w: 10, h: 12, anim: 'b-tilt', pal: { y: '#f2c44c', r: '#e05248', w: '#ffe6b8' },
+        { pos: 'left:-10px;top:-3px;', w: 10, h: 12, anim: 'b-tilt', pal: { y: '#f2c44c', r: '#e05248', w: '#ffe6b8' },
           grid: ['..yyyy..','.yrrrry.','yrwrrwry','.yrrrry.','..yyyy..','...yy...'] },
       ],
     },
@@ -17583,9 +17585,9 @@
     sb_crystal_prism: {
       cls: 'bespoke-std bespoke-sheen',
       pieces: [
-        { pos: 'left:-10px;bottom:-6px;', w: 12, h: 11, pal: { c: '#6ec4e8', l: '#ccf4ff', w: '#ffffff', p: '#ffb8da' },
+        { pos: 'right:-10px;bottom:-5px;', w: 12, h: 11, pal: { c: '#6ec4e8', l: '#ccf4ff', w: '#ffffff', p: '#ffb8da' },
           grid: ['.ccc..ccc.','cwwccccppc','cwwclllppc','.cccllppc.','..cccppc..','...ccpc...'] },
-        { pos: 'right:-8px;top:-7px;', w: 11, h: 9, anim: 'b-bob', pal: { w: '#ffffff', c: '#8cd8f5', p: '#ffc4e0' },
+        { pos: 'left:10px;top:-7px;', w: 11, h: 9, anim: 'b-bob', pal: { w: '#ffffff', c: '#8cd8f5', p: '#ffc4e0' },
           grid: ['....www...','..ccwwwpp.','..cc...pp.'] },
       ],
     },
@@ -17768,9 +17770,13 @@
     }
     const idBadgesWrap = root.querySelector('#st-px-id-badges-wrap');
     if (idBadgesWrap) {
-      const gPx = Number.isFinite(Number(config.badgePairGap)) ? clamp(Number(config.badgePairGap), 0, 22) : 4;
-      idBadgesWrap.style.setProperty('--badge-pair-gap', `${gPx}px`);
+      idBadgesWrap.style.setProperty('--badge-pair-gap', '4px');
     }
+    const b1Off = Number.isFinite(Number(config.badge1OffsetX)) ? clamp(Number(config.badge1OffsetX), -40, 20) : -6;
+    const b2Off = Number.isFinite(Number(config.badge2OffsetX)) ? clamp(Number(config.badge2OffsetX), -40, 20) : 0;
+    const bothOn = Boolean(config.puppyActiveTitle && config.puppyActiveShopBadge);
+    if (pupIdTitleEl) pupIdTitleEl.style.transform = `translateX(${b1Off}px)`;
+    if (pupIdShopBadgeEl) pupIdShopBadgeEl.style.transform = `translateX(${bothOn ? b2Off : b1Off}px)`;
     root.classList.toggle('no-badge-white-rim', config.badgeWhiteRim === false);
     if (pupIdShopBadgeEl) {
       const bObj = [...SHOP_PUP_BADGES, ...GACHA_BADGES].find(b => b.id === config.puppyActiveShopBadge);
@@ -18187,25 +18193,39 @@
       filterBar.appendChild(fb);
     });
     achListEl.appendChild(filterBar);
-    const gapRow = doc.createElement('div');
-    gapRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:3px 6px;border-radius:6px;background:rgba(128,128,128,0.08);font-size:10px;';
-    const curGap = Number.isFinite(Number(config.badgePairGap)) ? clamp(Number(config.badgePairGap), 0, 22) : 4;
+    const posBox = doc.createElement('div');
+    posBox.style.cssText = 'display:flex;flex-direction:column;gap:4px;margin-bottom:6px;padding:4px 6px;border-radius:6px;background:rgba(128,128,128,0.08);font-size:10px;';
+    const hasT1 = Boolean(config.puppyActiveTitle);
+    const hasT2 = Boolean(config.puppyActiveShopBadge);
+    const hasBoth = hasT1 && hasT2;
+    const off1 = Number.isFinite(Number(config.badge1OffsetX)) ? clamp(Number(config.badge1OffsetX), -40, 20) : -6;
+    const off2 = Number.isFinite(Number(config.badge2OffsetX)) ? clamp(Number(config.badge2OffsetX), -40, 20) : 0;
     const whiteRimOn = config.badgeWhiteRim !== false;
-    const wrapEl = root.querySelector('#st-px-id-badges-wrap');
-    if (wrapEl) wrapEl.style.setProperty('--badge-pair-gap', `${curGap}px`);
+    const applyBadgeOffsets = () => {
+      const b1 = root.querySelector('#st-px-id-title');
+      const b2 = root.querySelector('#st-px-id-shopbadge');
+      const v1 = Number.isFinite(Number(config.badge1OffsetX)) ? clamp(Number(config.badge1OffsetX), -40, 20) : -6;
+      const v2 = Number.isFinite(Number(config.badge2OffsetX)) ? clamp(Number(config.badge2OffsetX), -40, 20) : 0;
+      const both = Boolean(config.puppyActiveTitle && config.puppyActiveShopBadge);
+      if (b1) b1.style.transform = `translateX(${v1}px)`;
+      if (b2) b2.style.transform = `translateX(${both ? v2 : v1}px)`;
+    };
+    applyBadgeOffsets();
     root.classList.toggle('no-badge-white-rim', !whiteRimOn);
-    gapRow.innerHTML = `<span style="white-space:nowrap;opacity:0.82;">双铭牌间距</span><input type="range" min="0" max="22" step="1" value="${curGap}" style="flex:1;height:14px;cursor:pointer;" /><span class="st-px-gap-val" style="min-width:26px;text-align:right;font-weight:700;">${curGap}px</span><button type="button" class="st-px-btn st-px-rim-btn" style="height:20px;padding:0 6px;font-size:9.5px;flex-shrink:0;">白边:${whiteRimOn ? '开' : '关'}</button>`;
-    const gInp = gapRow.querySelector('input');
-    const gVal = gapRow.querySelector('.st-px-gap-val');
-    const rimBtn = gapRow.querySelector('.st-px-rim-btn');
-    if (gInp) {
-      gInp.addEventListener('input', () => {
-        const v = clamp(Number(gInp.value) || 0, 0, 22);
-        config.badgePairGap = v;
+
+    const r1 = doc.createElement('div');
+    r1.style.cssText = 'display:flex;align-items:center;gap:6px;';
+    r1.innerHTML = `<span style="white-space:nowrap;opacity:0.82;">${hasBoth ? '铭牌1位置' : '铭牌位置'}</span><input type="range" min="-40" max="20" step="1" value="${off1}" style="flex:1;height:14px;cursor:pointer;" /><span class="st-px-off1-val" style="min-width:30px;text-align:right;font-weight:700;">${off1}px</span><button type="button" class="st-px-btn st-px-rim-btn" style="height:20px;padding:0 6px;font-size:9.5px;flex-shrink:0;">白边:${whiteRimOn ? '开' : '关'}</button>`;
+    const inp1 = r1.querySelector('input');
+    const val1 = r1.querySelector('.st-px-off1-val');
+    const rimBtn = r1.querySelector('.st-px-rim-btn');
+    if (inp1) {
+      inp1.addEventListener('input', () => {
+        const v = clamp(Number(inp1.value) || 0, -40, 20);
+        config.badge1OffsetX = v;
         saveConfig();
-        if (gVal) gVal.textContent = `${v}px`;
-        const w = root.querySelector('#st-px-id-badges-wrap');
-        if (w) w.style.setProperty('--badge-pair-gap', `${v}px`);
+        if (val1) val1.textContent = `${v}px`;
+        applyBadgeOffsets();
       });
     }
     if (rimBtn) {
@@ -18217,7 +18237,26 @@
         rimBtn.textContent = `白边:${on ? '开' : '关'}`;
       });
     }
-    achListEl.appendChild(gapRow);
+    posBox.appendChild(r1);
+
+    if (hasBoth) {
+      const r2 = doc.createElement('div');
+      r2.style.cssText = 'display:flex;align-items:center;gap:6px;';
+      r2.innerHTML = `<span style="white-space:nowrap;opacity:0.82;">铭牌2位置</span><input type="range" min="-40" max="20" step="1" value="${off2}" style="flex:1;height:14px;cursor:pointer;" /><span class="st-px-off2-val" style="min-width:30px;text-align:right;font-weight:700;">${off2}px</span>`;
+      const inp2 = r2.querySelector('input');
+      const val2 = r2.querySelector('.st-px-off2-val');
+      if (inp2) {
+        inp2.addEventListener('input', () => {
+          const v = clamp(Number(inp2.value) || 0, -40, 20);
+          config.badge2OffsetX = v;
+          saveConfig();
+          if (val2) val2.textContent = `${v}px`;
+          applyBadgeOffsets();
+        });
+      }
+      posBox.appendChild(r2);
+    }
+    achListEl.appendChild(posBox);
 
     // 分类筛选条：全部类型 / 各单独分类（不用反复上下滑动）
     const catBar = doc.createElement('div');
