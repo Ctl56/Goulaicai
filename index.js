@@ -6367,7 +6367,38 @@
     .st-px-ach-orn.top-right { right: 20%; left: auto; top: -8px; width: 9px; height: 9px; transform: none; }
     .st-px-ach-orn.bot-left { left: 24%; top: auto; bottom: -8px; width: 9px; height: 9px; transform: none; }
     .st-px-ach-orn.bot-right { right: 22%; left: auto; top: auto; bottom: -8px; width: 10px; height: 10px; transform: none; }
-    .st-px-title-badge.lay-creative { margin: 6px 10px; }
+    .st-px-title-badge.lay-creative { margin: 7px 11px; }
+    .st-px-title-badge.lay-lux { margin: 9px 13px; }
+    @keyframes stOrnSway {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(4deg); }
+    }
+    @keyframes stOrnFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-2px); }
+    }
+    @keyframes stOrnGlow {
+      0%, 100% { filter: brightness(1); transform: scale(1); }
+      50% { filter: brightness(1.18); transform: scale(1.04); }
+    }
+    .st-px-cluster-orn {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      pointer-events: none;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      z-index: 3;
+    }
+    .st-px-cluster-orn.c-tl { left: -9px; top: -8px; transform-origin: center; }
+    .st-px-cluster-orn.c-tr { right: -9px; top: -8px; transform-origin: center; }
+    .st-px-cluster-orn.c-bl { left: -9px; bottom: -8px; top: auto; transform-origin: center; }
+    .st-px-cluster-orn.c-br { right: -9px; bottom: -8px; top: auto; transform-origin: center; }
+    .st-px-cluster-orn.c-top-l { left: 10px; top: -10px; transform-origin: bottom center; }
+    .st-px-cluster-orn.c-bot-r { right: 10px; bottom: -9px; top: auto; transform-origin: top center; }
+    .st-px-cluster-orn.anim-sway { animation: stOrnSway 2.6s ease-in-out infinite; }
+    .st-px-cluster-orn.anim-float { animation: stOrnFloat 2.4s ease-in-out infinite; }
+    .st-px-cluster-orn.anim-glow { animation: stOrnGlow 2.2s ease-in-out infinite; }
     .st-px-title-badge.tier-3.lay-top { margin: 7px 6px 2px; }
     .st-px-title-badge.tier-3.lay-bottom { margin: 2px 6px 7px; }
     .st-px-title-badge.tier-3.lay-diag { margin: 5px 9px; }
@@ -17243,36 +17274,141 @@
     secret_key: 'lr', camera: 'lr',
   };
 
-  // 12 款全新迷你像素副饰（与主徽饰混搭，拒绝同元素重复与四芒星）
-  const BADGE_MINI_ACCENTS = [
-    ['..pp..','.pwwp.','..pp..','..p...'],
-    ['..yy..','.ywwy.','..yy..','......'],
-    ['..cc..','.cwwc.','..cc..','.c..c.'],
-    ['.g..g.','..gg..','.gwwg.','..gg..'],
-    ['..ll..','.lwwl.','.l..l.','......'],
-    ['.w..w.','wwmmww','.mmmm.','......'],
-    ['..aa..','.awwa.','..aa..','...a..'],
-    ['.p..p.','pppppp','.pwwp.','..pp..'],
-    ['..bb..','.bwwb.','..bb..','..b...'],
-    ['..yy..','.yyyy.','..yy..','.y..y.'],
-    ['..mm..','.mwwm.','..mm..','......'],
-    ['.c.p..','cwpw..','.c.p..','......'],
-  ];
+  // 6 款 12x12 完整紧凑复合像素角饰集群（自带轻摇/漂浮/流光动态，拒绝零散碎点）
+  const BADGE_CLUSTER_ART = {
+    bow_pearl: {
+      anim: 'anim-sway',
+      grid: [
+        '............',
+        '..ppp..ppp..',
+        '.ppwppppwpp.',
+        '.ppprrrpppp.',
+        '..ppprrppp..',
+        '....pp.pp...',
+        '...pp...pp..',
+        '..pp..w..pp.',
+        '..p..wzw..p.',
+        '......w.....',
+        '.....www....',
+        '......w.....',
+      ],
+    },
+    flower_leaf: {
+      anim: 'anim-sway',
+      grid: [
+        '....pp......',
+        '..ppwwpp....',
+        '..ppyypp.gg.',
+        '...pppp.ggg.',
+        '..gg..ggpp..',
+        '.ggg.gppwwp.',
+        '..gg..ppyypp',
+        '.......pppp.',
+        '....gg..pp..',
+        '...ggg......',
+        '....g.......',
+        '............',
+      ],
+    },
+    crown_gem: {
+      anim: 'anim-glow',
+      grid: [
+        '............',
+        '....y..y....',
+        '..y.yy.yy.y.',
+        '..yyyyyyyyy.',
+        '..yryywycyy.',
+        '..yyyyyyyyy.',
+        '...ywwwwwy..',
+        '...yyyyyyy..',
+        '....y...y...',
+        '...ww...ww..',
+        '............',
+        '............',
+      ],
+    },
+    cloud_moon: {
+      anim: 'anim-float',
+      grid: [
+        '......yyy...',
+        '.....yyw....',
+        '....yyy.....',
+        '....yyy.....',
+        '.....yyyy...',
+        '..cccc..yy..',
+        '.ccwwwcc....',
+        'cwwwwwwwcc..',
+        'cwwwwwwwwwc.',
+        '.ccccccccc..',
+        '............',
+        '............',
+      ],
+    },
+    berry_cream: {
+      anim: 'anim-float',
+      grid: [
+        '....ggg.....',
+        '...grrrg....',
+        '..rrwrrwr...',
+        '..rrrrrrr...',
+        '...rrrrr....',
+        '..wwwwwww...',
+        '.wwpwwwpww..',
+        'wwwwwwwwwww.',
+        '.wwpppppww..',
+        '..wwwwwww...',
+        '............',
+        '............',
+      ],
+    },
+    wing_ribbon: {
+      anim: 'anim-float',
+      grid: [
+        '..www.......',
+        '.wwwww......',
+        'wwwwwww.....',
+        '.wwcwwww....',
+        '..wwccwww...',
+        '...wwwcww...',
+        '....wwwww...',
+        '.....ppwww..',
+        '....ppwpp...',
+        '...pp...pp..',
+        '..pp.....pp.',
+        '............',
+      ],
+    },
+  };
 
-  const makeMiniAccentCanvas = (accIdx, posCls) => {
+  const makeClusterOrnCanvas = (clusterKey, posCls, flipX = false) => {
+    const def = BADGE_CLUSTER_ART[clusterKey] || BADGE_CLUSTER_ART.bow_pearl;
     const c = doc.createElement('canvas');
-    c.width = 6;
-    c.height = 4;
-    c.className = `st-px-ach-orn mini ${posCls}`;
+    c.width = 12;
+    c.height = 12;
+    c.className = `st-px-cluster-orn ${posCls} ${def.anim}`;
     const g = c.getContext('2d');
-    const grid = BADGE_MINI_ACCENTS[((accIdx % BADGE_MINI_ACCENTS.length) + BADGE_MINI_ACCENTS.length) % BADGE_MINI_ACCENTS.length];
-    for (let y = 0; y < grid.length; y++) {
-      for (let x = 0; x < grid[y].length; x++) {
-        const col = ACH_ICON_PAL[grid[y][x]];
-        if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
+    const pal = { ...ACH_ICON_PAL, z: '#ffe89e' };
+    for (let y = 0; y < def.grid.length; y++) {
+      const row = def.grid[y];
+      for (let x = 0; x < row.length; x++) {
+        const col = pal[row[x]];
+        if (col) {
+          g.fillStyle = col;
+          g.fillRect(flipX ? (11 - x) : x, y, 1, 1);
+        }
       }
     }
     return c;
+  };
+
+  const pickClusterForBadge = (ach, fKey) => {
+    const txt = `${ach.id || ''} ${ach.title || ''} ${fKey || ''}`;
+    if (/berry|cake|snack|tea|melon|cookie|ramen|candy|pickle|甜|奶|瓜|零食|饭|糖|茶|榨菜/.test(txt)) return 'berry_cream';
+    if (/sakura|petal|flower|clover|garden|jade|fan|樱|花|草|玉|宋|明|萌|园/.test(txt)) return 'flower_leaf';
+    if (/crown|royal|rich|lucky|king|wardrobe|dice|gold|coin|王|皇|富|贵|万|大亨|欧|财|锦鲤/.test(txt)) return 'crown_gem';
+    if (/cloud|moon|sleep|nap|sofa|night|dream|star|云|月|睡|盹|沙发|星|夜|呆/.test(txt)) return 'cloud_moon';
+    if (/wing|angel|fairy|seraph|feather|halo|kite|翅|羽|天|仙|精灵|风筝/.test(txt)) return 'wing_ribbon';
+    return 'bow_pearl';
   };
 
   const hashBadgeId = (str) => {
@@ -17310,7 +17446,44 @@
         el.appendChild(makeAchOrnCanvas(fKey, 'left'));
         el.appendChild(makeAchOrnCanvas(fKey, 'right'));
       }
+    } else if (tier >= 4 && !isMystery) {
+      // 高阶/高价豪华铭牌：保留华丽 makeUltOrn 立体质感 + 12x12 动态复合角饰，采用 5 种非对称豪华构图
+      const h = hashBadgeId(ach.id || ach.title || fKey);
+      const luxMode = h % 5;
+      const clKey = pickClusterForBadge(ach, fKey);
+      el.className = `st-px-title-badge tier-4 lay-lux${isGachaDynBadge ? ' gacha-dyn' : ''}`;
+      el.innerHTML = '';
+      el.style.background = ach.bg || '#fff8de';
+      el.style.borderColor = ach.bd || '#e0b860';
+      el.style.color = ach.fg || '#6b4d18';
+      if (luxMode === 0) {
+        // 顶冠 + 左侧华丽翼饰 + 右下复合动态集群
+        el.appendChild(makeUltOrn('top', fKey));
+        el.appendChild(makeUltOrn('left', fKey));
+        el.appendChild(makeClusterOrnCanvas(clKey, 'c-br', true));
+      } else if (luxMode === 1) {
+        // 底部托底花环 + 左上复合集群 + 右侧华丽翼饰
+        el.appendChild(makeUltOrn('bottom', fKey));
+        el.appendChild(makeClusterOrnCanvas(clKey, 'c-tl', false));
+        el.appendChild(makeUltOrn('right', fKey));
+      } else if (luxMode === 2) {
+        // 左右舒展双侧华丽装饰 + 顶左斜戴复合集群（无死板底框）
+        el.appendChild(makeUltOrn('left', fKey));
+        el.appendChild(makeUltOrn('right', fKey));
+        el.appendChild(makeClusterOrnCanvas(clKey, 'c-top-l', false));
+      } else if (luxMode === 3) {
+        // 左下大集群堆叠 + 右上斜扣集群 + 底部华丽托底
+        el.appendChild(makeUltOrn('bottom', fKey));
+        el.appendChild(makeClusterOrnCanvas(clKey, 'c-bl', false));
+        el.appendChild(makeClusterOrnCanvas(clKey === 'crown_gem' ? 'wing_ribbon' : 'crown_gem', 'c-tr', true));
+      } else {
+        // 顶部华丽冠冕 + 右侧华丽侧饰 + 左下复合动态集群
+        el.appendChild(makeUltOrn('top', fKey));
+        el.appendChild(makeUltOrn('right', fKey));
+        el.appendChild(makeClusterOrnCanvas(clKey, 'c-bl', false));
+      }
     } else {
+      // 常规高阶 (tier 3) 铭牌：4 种干净紧凑成簇动态构图，绝不零散乱丢
       el.className = `st-px-title-badge tier-${tier}${tier >= 3 ? ' lay-creative' : ''}${isGachaDynBadge ? ' gacha-dyn' : ''}`;
       el.innerHTML = '';
       el.style.background = isMystery ? '#efe9dd' : (ach.bg || '#fff8de');
@@ -17318,78 +17491,24 @@
       el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
       if (tier >= 3 && !isMystery) {
         const h = hashBadgeId(ach.id || ach.title || fKey);
-        const comp = h % 12;
-        const a1 = (h >> 3) % BADGE_MINI_ACCENTS.length;
-        const a2 = (a1 + 3 + ((h >> 6) % 5)) % BADGE_MINI_ACCENTS.length;
-        const mainOrn = (pos) => (tier >= 4 && (pos === 'top' || pos === 'bottom' || pos === 'left' || pos === 'right')
-          ? makeUltOrn(pos, fKey)
-          : makeAchOrnCanvas(fKey, pos));
-        // 12 种不对称、多位置、角落堆叠且多元素混搭的创意构图
-        if (comp === 0) {
-          // 左上错落堆叠 + 右下微光点
-          el.appendChild(mainOrn('tl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'tl-sub'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'br'));
-        } else if (comp === 1) {
-          // 左下双层堆叠 + 右上轻点
-          el.appendChild(mainOrn('bl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'bl-sub'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'bl-high'));
-          el.appendChild(makeMiniAccentCanvas(a1 + 2, 'tr'));
-        } else if (comp === 2) {
-          // 左上+右上双角挂饰（底部清爽留白）
-          el.appendChild(mainOrn('tl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'tr'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'tr-sub'));
-        } else if (comp === 3) {
-          // 右侧瀑布流堆叠 + 左下呼应
-          el.appendChild(mainOrn('tr'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'br-high'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'br'));
-          el.appendChild(makeMiniAccentCanvas(a1 + 1, 'bl'));
-        } else if (comp === 4) {
-          // 底边错落垂挂花环（上沿通透）
-          el.appendChild(mainOrn('bl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'bot-left'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'bot-right'));
-        } else if (comp === 5) {
-          // 右上斜戴主饰 + 左下小尾
-          el.appendChild(mainOrn('tr'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'tr-low'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'bl'));
-          el.appendChild(makeMiniAccentCanvas(a1 + 3, 'bl-sub'));
-        } else if (comp === 6) {
-          // 左侧花束簇拥（右侧完全留白）
-          el.appendChild(mainOrn('tl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'tl-low'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'bl'));
-        } else if (comp === 7) {
-          // 顶部偏左主饰 + 右上轻点
-          el.appendChild(mainOrn('top-left'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'top-right'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'br-sub'));
-        } else if (comp === 8) {
-          // 右下重簇堆叠 + 左上呼应
-          el.appendChild(mainOrn('br'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'br-sub'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'br-high'));
-          el.appendChild(makeMiniAccentCanvas(a1 + 4, 'tl'));
-        } else if (comp === 9) {
-          // 三角不对称星散
-          el.appendChild(mainOrn('tl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'top-right'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'bot-left'));
-        } else if (comp === 10) {
-          // 左下+右下双托底
-          el.appendChild(mainOrn('bl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'br'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'br-sub'));
+        const mode = h % 4;
+        const clKey = pickClusterForBadge(ach, fKey);
+        if (mode === 0) {
+          // 左上角完整复合动态角饰 + 右下轻呼应主题小饰
+          el.appendChild(makeClusterOrnCanvas(clKey, 'c-tl', false));
+          el.appendChild(makeAchOrnCanvas(fKey, 'br'));
+        } else if (mode === 1) {
+          // 左下角紧凑复合集群 + 右上角斜戴呼应
+          el.appendChild(makeClusterOrnCanvas(clKey, 'c-bl', false));
+          el.appendChild(makeAchOrnCanvas(fKey, 'tr'));
+        } else if (mode === 2) {
+          // 顶部偏左斜戴完整复合集群（左右下全部留白，利落精致）
+          el.appendChild(makeClusterOrnCanvas(clKey, 'c-top-l', false));
+          el.appendChild(makeAchOrnCanvas(fKey, 'br'));
         } else {
-          // 左上斜绕 + 右侧垂坠
-          el.appendChild(mainOrn('tl'));
-          el.appendChild(makeMiniAccentCanvas(a1, 'tl-sub'));
-          el.appendChild(makeMiniAccentCanvas(a2, 'tr-low'));
-          el.appendChild(makeMiniAccentCanvas(a1 + 2, 'br'));
+          // 左上+右上双角成对紧凑挂饰（底部清爽）
+          el.appendChild(makeClusterOrnCanvas(clKey, 'c-tl', false));
+          el.appendChild(makeClusterOrnCanvas(clKey, 'c-tr', true));
         }
       }
     }
