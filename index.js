@@ -4085,7 +4085,7 @@
     #st-tb-badge.bstyle-outline {
       height: 26px; padding: 0 10px; gap: 5px; font-size: 11.5px;
       background: transparent !important;
-      border: 1px solid color-mix(in srgb, var(--tb-accent, var(--tb-text)) 65%, transparent) !important;
+      border: 1px solid color-mix(in srgb, var(--tb-text) 18%, transparent) !important;
       box-shadow: none !important;
     }
     #st-tb-badge.bstyle-soft {
@@ -4100,10 +4100,35 @@
       border: 1px solid color-mix(in srgb, #ffffff 42%, var(--tb-border)) !important;
     }
     #st-tb-quick-dock.qstyle-outline {
-      background: color-mix(in srgb, var(--tb-bg) 28%, transparent) !important;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border: 1px solid color-mix(in srgb, var(--tb-accent, var(--tb-text)) 60%, transparent) !important;
+      background: color-mix(in srgb, var(--tb-bg) 36%, transparent) !important;
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid color-mix(in srgb, var(--tb-text) 16%, transparent) !important;
       box-shadow: none !important;
+    }
+    #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn {
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      box-shadow: none !important;
+    }
+    #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active {
+      color: var(--tb-accent) !important;
+      font-weight: 700;
+    }
+    #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn {
+      background: transparent !important;
+      border: 1px solid color-mix(in srgb, var(--tb-text) 16%, transparent) !important;
+    }
+    #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn.active {
+      border-color: color-mix(in srgb, var(--tb-accent) 62%, transparent) !important;
+      color: var(--tb-accent) !important;
+    }
+    #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn {
+      background: color-mix(in srgb, var(--tb-text) 8%, transparent) !important;
+      border: 1px solid transparent !important;
+    }
+    #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn.active {
+      background: color-mix(in srgb, var(--tb-accent) 22%, transparent) !important;
+      color: var(--tb-accent) !important;
     }
     #st-tb-quick-dock.qstyle-soft {
       border-color: transparent !important;
@@ -9149,7 +9174,7 @@
               <button class="st-tb-pill" data-effect="leaf" type="button">秋叶</button>
               <button class="st-tb-pill" data-effect="firefly" type="button">萤火</button>
               <button class="st-tb-pill" data-effect="auroraveil" type="button">极光</button>
-              <button class="st-tb-pill" data-effect="dandelion" type="button">蒲公英</button>
+              <button class="st-tb-pill" data-effect="golddust" type="button">碎金</button>
             </div>
             <div class="st-tb-slider-group">
               <div class="st-tb-slider-row">
@@ -9212,10 +9237,24 @@
                 <input class="st-tb-range" id="st-tb-qd-radius" type="range" min="0" max="24" step="1" value="16" />
                 <span id="st-tb-qd-radius-val">16px</span>
               </div>
-              <div class="st-tb-slider-row">
+              <div class="st-tb-slider-row" style="margin-bottom:8px;">
                 <span>栏宽</span>
                 <input class="st-tb-range" id="st-tb-qd-maxw" type="range" min="180" max="420" step="10" value="320" />
                 <span id="st-tb-qd-maxw-val">320px</span>
+              </div>
+              <div style="font-size:11px;opacity:0.78;margin:4px 0 5px;">快捷按钮样式</div>
+              <div class="st-tb-pills" id="st-tb-qbtn-styles" style="margin-bottom:8px;flex-wrap:wrap;">
+                <button class="st-tb-pill" data-qbstyle="default" type="button">默认</button>
+                <button class="st-tb-pill" data-qbstyle="ghost" type="button">纯字</button>
+                <button class="st-tb-pill" data-qbstyle="outline" type="button">极细线</button>
+                <button class="st-tb-pill" data-qbstyle="soft" type="button">柔底</button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px;">
+                <span style="font-size:11px;opacity:0.78;">悬浮球与快捷栏字色</span>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <input id="st-tb-badge-txtcol" type="color" value="#333333" title="自定义文字颜色" style="width:20px;height:20px;padding:0;border:1px solid var(--tb-border);border-radius:50%;background:none;cursor:pointer;overflow:hidden;" />
+                  <button class="st-tb-mini-btn" id="st-tb-badge-txtcol-reset" type="button">随主题</button>
+                </div>
               </div>
             </div>
           </div>
@@ -20708,32 +20747,31 @@
     }
 
     if (type === 'auroraveil') {
-      const idxBand = Math.floor(Math.random() * 3);
+      const idx = Math.floor(Math.random() * 3);
       return {
-        band: idxBand,
+        isRibbon: Math.random() < 0.22,
+        band: idx,
         x: Math.random() * w,
-        y: h * (0.04 + idxBand * 0.11 + Math.random() * 0.08),
-        span: 130 + Math.random() * 190,
-        height: 46 + Math.random() * 58,
-        vx: (idxBand % 2 === 0 ? 1 : -1) * (0.18 + Math.random() * 0.24),
+        y: Math.random() * (h * 0.38),
         phase: Math.random() * Math.PI * 2,
-        phaseSpeed: 0.012 + Math.random() * 0.014,
-        hue: ['108, 238, 204', '118, 198, 255', '194, 152, 255'][idxBand],
+        speed: 0.008 + Math.random() * 0.01,
+        r: 1.0 + Math.random() * 1.8,
+        hue: ['82, 232, 198', '104, 186, 255', '178, 138, 255'][idx],
       };
     }
 
-    if (type === 'dandelion') {
+    if (type === 'golddust') {
+      const isBokeh = Math.random() < 0.24;
       return {
+        isBokeh,
         x: Math.random() * w,
-        y: randomY ? Math.random() * h : -22,
-        scale: 0.65 + Math.random() * 0.65,
-        vx: 0.22 + Math.random() * 0.38,
-        vy: 0.24 + Math.random() * 0.36,
-        swayPhase: Math.random() * Math.PI * 2,
-        swaySpeed: 0.016 + Math.random() * 0.018,
-        rot: (Math.random() - 0.5) * 0.6,
-        rotSpeed: (Math.random() - 0.5) * 0.012,
-        alpha: 0.48 + Math.random() * 0.36,
+        y: Math.random() * h,
+        r: isBokeh ? (6 + Math.random() * 12) : (0.9 + Math.random() * 1.8),
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: -(0.12 + Math.random() * 0.26),
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: 0.02 + Math.random() * 0.032,
+        hue: pick(['255, 224, 140', '255, 238, 186', '242, 198, 104']),
       };
     }
 
@@ -20973,66 +21011,75 @@
           ctx2d.arc(p.x, p.y, p.r * 2.2, 0, Math.PI * 2);
           ctx2d.fill();
         } else if (type === 'auroraveil') {
-          p.phase += p.phaseSpeed * spd;
-          p.x += p.vx * spd;
-          if (p.x < -p.span) p.x = w + p.span * 0.5;
-          if (p.x > w + p.span) p.x = -p.span * 0.5;
-          const waveY = p.y + Math.sin(p.phase) * 18;
-          const breath = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(p.phase * 0.8));
-          const a = clamp((lightBg ? 0.14 : 0.19) * breath * opa, 0, 0.28);
-          ctx2d.save();
-          ctx2d.translate(p.x, waveY);
-          ctx2d.rotate(-0.14 + Math.sin(p.phase * 0.5) * 0.06);
-          const ag = ctx2d.createLinearGradient(-p.span * 0.5, 0, p.span * 0.5, p.height);
-          ag.addColorStop(0, `rgba(${p.hue}, 0)`);
-          ag.addColorStop(0.35, `rgba(${p.hue}, ${a})`);
-          ag.addColorStop(0.68, `rgba(${p.hue}, ${a * 0.8})`);
-          ag.addColorStop(1, `rgba(${p.hue}, 0)`);
-          ctx2d.fillStyle = ag;
-          ctx2d.beginPath();
-          ctx2d.ellipse(0, 0, p.span * 0.55, p.height * 0.48, 0, 0, Math.PI * 2);
-          ctx2d.fill();
-          ctx2d.restore();
-        } else if (type === 'dandelion') {
-          p.swayPhase += p.swaySpeed * spd;
-          p.rot += p.rotSpeed * spd;
-          p.x += (p.vx + Math.sin(p.swayPhase) * 0.35) * spd;
-          p.y += (p.vy + Math.cos(p.swayPhase * 0.7) * 0.14) * spd;
-          if (p.y > h + 24 || p.x > w + 28) {
-            p.y = -18 - Math.random() * 30;
-            p.x = Math.random() * w * 0.85 - 20;
-          }
-          const a = clamp(p.alpha * opa, 0, 0.86);
-          const strokeCol = lightBg ? `rgba(118, 128, 146, ${a * 0.88})` : `rgba(246, 250, 255, ${a})`;
-          const seedCol = lightBg ? `rgba(136, 112, 86, ${a * 0.92})` : `rgba(235, 224, 198, ${a})`;
-          ctx2d.save();
-          ctx2d.translate(p.x, p.y);
-          ctx2d.rotate(p.rot + Math.sin(p.swayPhase) * 0.22);
-          ctx2d.scale(p.scale, p.scale);
-          ctx2d.strokeStyle = strokeCol;
-          ctx2d.lineWidth = 0.85;
-          ctx2d.beginPath();
-          ctx2d.moveTo(0, 0);
-          ctx2d.lineTo(0, 10);
-          ctx2d.stroke();
-          ctx2d.fillStyle = seedCol;
-          ctx2d.beginPath();
-          ctx2d.ellipse(0, 11.2, 1.3, 2.2, 0, 0, Math.PI * 2);
-          ctx2d.fill();
-          for (let k = -3; k <= 3; k++) {
-            const ang = -Math.PI / 2 + k * 0.32;
-            const len = 7.5 - Math.abs(k) * 0.5;
+          p.phase += p.speed * spd;
+          if (p.isRibbon) {
+            const tw = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(p.phase * 2.2));
+            const a = clamp(tw * opa * (lightBg ? 0.36 : 0.65), 0, 0.72);
+            ctx2d.fillStyle = `rgba(${p.hue}, ${a})`;
             ctx2d.beginPath();
-            ctx2d.moveTo(0, 0);
-            ctx2d.lineTo(Math.cos(ang) * len, Math.sin(ang) * len);
-            ctx2d.stroke();
+            ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx2d.fill();
           }
-          ctx2d.fillStyle = lightBg ? `rgba(255, 255, 255, ${a * 0.9})` : `rgba(255, 255, 255, ${a})`;
-          ctx2d.beginPath();
-          ctx2d.arc(0, 0, 1.2, 0, Math.PI * 2);
-          ctx2d.fill();
-          ctx2d.restore();
+        } else if (type === 'golddust') {
+          p.phase += p.phaseSpeed * spd;
+          p.x += (p.vx + Math.sin(p.phase) * 0.14) * spd;
+          p.y += p.vy * spd;
+          if (p.y < -20) { p.y = h + 16; p.x = Math.random() * w; }
+          if (p.x < -20) p.x = w + 16;
+          if (p.x > w + 20) p.x = -16;
+          const tw = 0.32 + 0.68 * (0.5 + 0.5 * Math.sin(p.phase));
+          if (p.isBokeh) {
+            const a = clamp((lightBg ? 0.14 : 0.18) * tw * opa, 0, 0.24);
+            const g = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+            g.addColorStop(0, `rgba(${p.hue}, ${a})`);
+            g.addColorStop(0.55, `rgba(${p.hue}, ${a * 0.42})`);
+            g.addColorStop(1, `rgba(${p.hue}, 0)`);
+            ctx2d.fillStyle = g;
+            ctx2d.beginPath();
+            ctx2d.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx2d.fill();
+          } else {
+            const a = clamp((lightBg ? 0.68 : 0.9) * tw * opa, 0, 0.92);
+            const col = lightBg ? '214, 162, 56' : p.hue;
+            const g = ctx2d.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 2.4);
+            g.addColorStop(0, `rgba(255, 252, 232, ${a})`);
+            g.addColorStop(0.45, `rgba(${col}, ${a * 0.7})`);
+            g.addColorStop(1, `rgba(${col}, 0)`);
+            ctx2d.fillStyle = g;
+            ctx2d.beginPath();
+            ctx2d.arc(p.x, p.y, p.r * 2.4, 0, Math.PI * 2);
+            ctx2d.fill();
+          }
         }
+      }
+
+      if (type === 'auroraveil') {
+        const nowSec = performance.now() * 0.00045 * spd;
+        const curtains = [
+          { hue: '76, 232, 194', yBase: h * 0.14, amp: 24, freq: 0.0042, hSpan: h * 0.24, ph: 0 },
+          { hue: '108, 186, 255', yBase: h * 0.19, amp: 30, freq: 0.0034, hSpan: h * 0.26, ph: 2.1 },
+          { hue: '182, 142, 255', yBase: h * 0.12, amp: 20, freq: 0.0051, hSpan: h * 0.22, ph: 4.2 },
+        ];
+        ctx2d.save();
+        ctx2d.globalCompositeOperation = lightBg ? 'source-over' : 'screen';
+        const step = Math.max(12, Math.floor(w / 46));
+        curtains.forEach(c => {
+          const baseA = clamp((lightBg ? 0.085 : 0.13) * opa, 0, 0.22);
+          for (let x = 0; x <= w; x += step) {
+            const wave = Math.sin(x * c.freq + nowSec + c.ph) * c.amp + Math.cos(x * c.freq * 1.7 - nowSec * 0.8) * (c.amp * 0.45);
+            const topY = Math.max(0, c.yBase + wave - c.hSpan * 0.45);
+            const botY = topY + c.hSpan;
+            const colAlpha = baseA * (0.55 + 0.45 * Math.sin(x * 0.009 + nowSec * 1.3 + c.ph));
+            const grad = ctx2d.createLinearGradient(x, topY, x, botY);
+            grad.addColorStop(0, `rgba(${c.hue}, 0)`);
+            grad.addColorStop(0.32, `rgba(${c.hue}, ${colAlpha})`);
+            grad.addColorStop(0.62, `rgba(${c.hue}, ${colAlpha * 0.55})`);
+            grad.addColorStop(1, `rgba(${c.hue}, 0)`);
+            ctx2d.fillStyle = grad;
+            ctx2d.fillRect(x, topY, step + 1.5, c.hSpan);
+          }
+        });
+        ctx2d.restore();
       }
 
       if (type === 'snow') {
@@ -35778,21 +35825,21 @@
       gamer: ['隐藏奇观北极光已触发，据说在极光下抽扭蛋手气都会变好', '极光幕帘模式上线，柔雾感拉满还完全不晃眼'],
       philosopher: ['极光悄无声息地在天幕流转，适合配一段安静悠长的故事', '光带聚散无常却格外安宁，慢慢看，我就在一旁陪着'],
     },
-    dandelion: {
-      sleepyhead: ['小蒲公英晃悠悠飘到鼻尖上了，啊啾，毛茸茸的好痒呀', '跟着风慢慢飘的蒲公英，看得我眼皮都跟着轻飘飘起来了'],
-      clingy: ['主人你看，我对着飘过的蒲公英吹了一口气，把好运全都吹到你身边', '蒲公英飘到哪儿我就跟主人到哪儿，绝不松开爪爪'],
-      tsundere: ['啊啾，都怪这些毛茸茸的蒲公英乱飞，本汪才不是在追着它们玩', '哼，吹飞一朵蒲公英而已，本汪随随便便就能吹得比谁都远'],
-      foodie: ['白绒绒的蒲公英小伞飘过去，像极了刚扯下来的棉花糖细丝', '风一吹满屏都是软乎乎的小白绒球，好想来块松软舒芙蕾'],
-      explorer: ['快看，好多蒲公英种子乘着微风去旅行了，我也想跟着它们去探险', '每一朵蒲公英都是一把迷你降落伞，我来帮它们数一数落点'],
-      fashionista: ['轻盈的白色蒲公英绒丝随风轻旋，画面瞬间有了初夏电影感', '这么干净克制的飘浮绒毛，不管配什么主题背景都特别耐看'],
-      gamer: ['微风蒲公英特效激活，本汪正在尝试空中精准拦截路过的小白伞', '轻飘飘的蒲公英自带治愈光环，连刷几十层楼都不累'],
-      philosopher: ['风把蒲公英带去远方，故事也随着字句慢慢铺展开来', '细小的绒毛在微风里不疾不徐地旋转，看着格外静心'],
+    golddust: {
+      sleepyhead: ['暖洋洋的碎金光点飘过来，感觉空气都变得软绵绵的，好想打个盹', '金灿灿的柔光像黄昏洒进窗台的细尘，窝着看故事最舒服了'],
+      clingy: ['漫天暖金光尘飘在周围，主人快看，你整个人都在发光一样', '收集一把屏幕里的小金光送给主人，祝你今天顺顺利利'],
+      tsundere: ['哼，满屏碎金光尘才勉强配得上本汪的毛色，算你会挑氛围', '才不是在伸爪接金光呢，本汪只是顺手帮你扫一扫屏幕'],
+      foodie: ['亮晶晶的碎金微尘飘上去，好像刚洒在热可可上的金箔糖粉', '暖金色的浮光看着香喷喷的，突然好想吃焦糖布丁配小饼干'],
+      explorer: ['哇，空气里飘满会发光的细碎金尘，好像闯进了藏宝秘境一样', '看这些慢悠悠升起的碎金光点，说不定藏着什么好运彩蛋'],
+      fashionista: ['柔焦暖金浮光配极细光尘，这股油画电影滤镜感高级又克制', '碎金微光自带柔焦质感，不管配浅色还是深色页面都很耐看'],
+      gamer: ['碎金浮光特效已上线，全屏自带招财欧气光环，感觉抽卡都要出金了', '暖金光尘缓慢升空，既不挡视线又很有仪式感'],
+      philosopher: ['微尘在光里缓缓浮沉，让每一段文字都多了一层安静的温度', '细碎的暖光不喧闹，陪你安安静静读完这一章刚刚好'],
     },
   };
 
   const triggerAmbientPupReaction = (effKey, fromClick = true) => {
     if (!config.puppyEnabled) return;
-    if (effKey !== 'auroraveil' && effKey !== 'dandelion') return;
+    if (effKey !== 'auroraveil' && effKey !== 'golddust') return;
     const curP = config.puppyPersonality || 'sleepyhead';
     const bank = AMBIENT_PUP_TALK[effKey][curP] || AMBIENT_PUP_TALK[effKey].sleepyhead;
     const line = pick(bank);
@@ -35808,7 +35855,7 @@
 
   setInterval(() => {
     if (doc.hidden || !config.puppyEnabled) return;
-    if (config.effect !== 'auroraveil' && config.effect !== 'dandelion') return;
+    if (config.effect !== 'auroraveil' && config.effect !== 'golddust') return;
     if (puppyBubble && puppyBubble.classList.contains('show')) return;
     if (Math.random() < 0.28) triggerAmbientPupReaction(config.effect, false);
   }, 46000);
@@ -43346,6 +43393,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       b.textContent = it.label;
       const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
       b.style.borderRadius = `${Math.max(2, Math.min(qRad, 18))}px`;
+      if (config.badgeTextColor) b.style.color = config.badgeTextColor;
       quickDockEl.appendChild(b);
     });
     syncQuickDockUI();
@@ -43628,10 +43676,52 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         btn.style.borderRadius = `${btnRad}px`;
       });
     }
+    const validQbs = ['default', 'ghost', 'outline', 'soft'];
+    const qbs = validQbs.includes(config.quickDockBtnStyle) ? config.quickDockBtnStyle : 'default';
+    if (quickDockEl) {
+      quickDockEl.classList.remove('qbtn-ghost', 'qbtn-outline', 'qbtn-soft');
+      if (qbs !== 'default') quickDockEl.classList.add(`qbtn-${qbs}`);
+    }
+    root.querySelectorAll('#st-tb-qbtn-styles [data-qbstyle]').forEach(b => {
+      b.classList.toggle('active', b.dataset.qbstyle === qbs);
+    });
+    const customCol = String(config.badgeTextColor || '').trim();
+    if (badge) {
+      badge.style.color = customCol || '';
+      const dotEl = badge.querySelector('.st-tb-dot');
+      if (dotEl) dotEl.style.background = customCol || '';
+    }
+    if (quickDockEl) {
+      quickDockEl.style.color = customCol || '';
+      quickDockEl.querySelectorAll('.st-tb-qd-btn').forEach(btn => {
+        btn.style.color = customCol || '';
+      });
+    }
+    const colInp = root.querySelector('#st-tb-badge-txtcol');
+    const colReset = root.querySelector('#st-tb-badge-txtcol-reset');
+    if (colInp && customCol) colInp.value = customCol;
+    if (colReset) colReset.classList.toggle('active', !customCol);
     root.querySelectorAll('#st-tb-qd-styles [data-qstyle]').forEach(b => {
       b.classList.toggle('active', b.dataset.qstyle === qs);
     });
   };
+  root.querySelectorAll('#st-tb-qbtn-styles [data-qbstyle]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      config.quickDockBtnStyle = btn.dataset.qbstyle;
+      saveConfig();
+      applyBadgeAndDockStyle();
+    });
+  });
+  root.querySelector('#st-tb-badge-txtcol')?.addEventListener('input', (e) => {
+    config.badgeTextColor = e.target.value;
+    saveConfig();
+    applyBadgeAndDockStyle();
+  });
+  root.querySelector('#st-tb-badge-txtcol-reset')?.addEventListener('click', () => {
+    config.badgeTextColor = '';
+    saveConfig();
+    applyBadgeAndDockStyle();
+  });
   root.querySelector('#st-tb-badge-reset')?.addEventListener('click', () => {
     config.posX = null;
     config.posY = Math.max(56, Math.round(win.innerHeight * 0.42));
