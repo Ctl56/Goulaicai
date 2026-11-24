@@ -370,6 +370,7 @@
     { id: 'treasure_sakura_haori', name: '落樱羽织' },
   ];
   const TREASURE_ACCS = [
+    { id: 'ach_dice_clip', name: '[成就] 好运金骰发卡', cat: 'head', desc: '扭蛋收藏家成就专属限定：闪亮好运金骰发卡' },
     { id: 'acc_bond_lv7', name: '同心结挂坠' },
     { id: 'treasure_diamond_crown', name: '钻石皇冠' },
     { id: 'treasure_star_halo', name: '星辰光环' },
@@ -378,6 +379,7 @@
     { id: 'treasure_pearl_tiara', name: '珍珠小冠冕' },
   ];
   const TREASURE_COMPANIONS = [
+    { id: 'mini_ach_goldpig', name: '[成就] 招财小金猪', desc: '小狗银行长隐藏成就限定：圆滚滚招财小金猪跟班' },
     { id: 'comp_bond_lv8', name: '迷你小狗玩偶' },
     { id: 'treasure_mini_dragon', name: '迷你小龙' },
     { id: 'treasure_mini_phoenix', name: '火焰小鸟' },
@@ -960,6 +962,16 @@
     { id: 'ach_ck_60', title: '双月同行', desc: '连续签到满 60 天，收获邮戳明信片动态气泡', reward: 10, tier: 3, frame: 'clouds', bg: 'linear-gradient(120deg,#f5efe6,#eef4ff,#fffaf0)', bd: '#b88a68', fg: '#543520', icon: 'ck_hourglass_gold' },
     { id: 'ach_ck_99', title: '九十九日长情', desc: '连续签到满 99 天，收获琥珀标本动态头像框', reward: 12, tier: 3, frame: 'petals', bg: 'linear-gradient(120deg,#fff6db,#fae4b4,#fff8e6)', bd: '#d49642', fg: '#69410a', icon: 'ck_amber_ginkgo' },
     { id: 'ach_ck_100', title: '百日纪念章', desc: '累计签到满 100 天，收获百日纪念斗篷与扭蛋券', reward: 15, tier: 4, frame: 'pearl_lace', bg: 'linear-gradient(115deg,#ffe8ec,#fff2d6,#ffe4e8,#fff5e0)', bd: '#c9566b', fg: '#6e192a', icon: 'ck_century_medal' },
+    { id: 'ach_rich_10k', title: '万元户', desc: '累计获得 10000 枚小狗币，赠限定金丝锦袍与扭蛋券 ×5', reward: 50, tier: 4, frame: 'supreme_royal', bonus: { outfit: 'ach_gold_robe', tickets: 5 }, bg: 'linear-gradient(115deg,#fff3c4,#ffe29e,#fff7d6,#ffe5a8)', bd: '#dfa028', fg: '#6b3b06', icon: 'diamond_cup' },
+    { id: 'ach_gacha_30', title: '扭蛋收藏家', desc: '累计扭蛋满 30 次，赠限定好运金骰发卡与扭蛋券 ×3', reward: 15, tier: 3, frame: 'gems', bonus: { acc: 'ach_dice_clip', tickets: 3 }, bg: 'linear-gradient(120deg,#f2e8ff,#e6f4ff,#fff0f6)', bd: '#9e82e6', fg: '#3b2478', icon: 'crown' },
+    { id: 'ach_pet_200', title: '摸头大师', desc: '累计摸摸小狗满 200 次，赠暖绒云绵动态气泡框', reward: 15, tier: 3, frame: 'hearts', bonus: { bubble: 'bub_ach_fluff' }, bg: 'linear-gradient(120deg,#ffeaf2,#fff5e6,#ffedf6)', bd: '#eb8ca8', fg: '#782240', icon: 'paw' },
+    { id: 'ach_wardrobe_30', title: '衣橱主理人', desc: '累计拥有 30 件装扮，赠高定丝绒金动态头像框', reward: 20, tier: 4, frame: 'pearl_lace', bonus: { avatarframe: 'af_ach_velvet' }, bg: 'linear-gradient(115deg,#f5e8ff,#ffeaf5,#fff6dc)', bd: '#c486d9', fg: '#54206e', icon: 'dress' },
+    { id: 'hidden_night_owl', title: '午夜守望汪', desc: '凌晨时段仍与小狗相伴互动，赠扭蛋券 ×3', reward: 18, tier: 3, frame: 'moons', hidden: true, bonus: { tickets: 3 }, bg: 'linear-gradient(120deg,#e8eeff,#f0e8ff,#e6f6ff)', bd: '#7f92e0', fg: '#263470', icon: 'moon_ach' },
+    { id: 'hidden_early_bird', title: '晨光早起汪', desc: '清晨时分准时来和小狗打招呼，赠扭蛋券 ×3', reward: 18, tier: 3, frame: 'clouds', hidden: true, bonus: { tickets: 3 }, bg: 'linear-gradient(120deg,#fff7d9,#ffede0,#eef8ff)', bd: '#e6a852', fg: '#6e3f08', icon: 'sun_smile_ico' },
+    { id: 'hidden_coin_hoarder', title: '小狗银行长', desc: '身上存款一口气攒满 5000 枚小狗币，赠限定招财小金猪跟班与扭蛋券 ×3', reward: 25, tier: 4, frame: 'supreme_royal', hidden: true, bonus: { comp: 'mini_ach_goldpig', tickets: 3 }, bg: 'linear-gradient(115deg,#fff5cc,#ffe8b8,#fff9e0)', bd: '#e0a432', fg: '#6b3e06', icon: 'coins' },
+    { id: 'hidden_chat_100', title: '长篇追更王', desc: '当前对话突破 100 层长篇剧情，赠扭蛋券 ×2', reward: 15, tier: 3, frame: 'ribbons', hidden: true, bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#e8f5ff,#f2ecff,#fff2f6)', bd: '#7ca8e6', fg: '#234273', icon: 'chat_bubble' },
+    { id: 'hidden_fashion_3', title: '百变造型师', desc: '保存至少 3 套小狗穿搭预设，赠扭蛋券 ×2', reward: 15, tier: 3, frame: 'petals', hidden: true, bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#ffecf5,#fff6e0,#eefcf4)', bd: '#e086b2', fg: '#702048', icon: 'ribbon_bow' },
+    { id: 'hidden_style_player', title: '极简美学家', desc: '亲手定制过悬浮球外观或长按快捷键，赠扭蛋券 ×2', reward: 12, tier: 3, frame: 'prism', hidden: true, bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#eaf9ff,#f2ebff,#fff2f8)', bd: '#7ab8e6', fg: '#24466e', icon: 'palette_art' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -2557,6 +2569,7 @@
     lv10: { kind: 'outfit', id: 'outfit_bond_lv10', name: '[好感Lv10] 十级星纱礼裙' },
   };
   const SPECIAL_EVENT_OUTFITS = [
+    { id: 'ach_gold_robe', name: '[成就] 金丝锦袍', cat: 'trad', desc: '万元户成就专属限定：鎏金织锦富贵小袍' },
     { id: 'outfit_bond_lv10', name: '[好感Lv10] 十级星纱礼裙' },
     { id: 'bday_cake_dress', name: '奶油生日礼裙' },
     { id: 'fest_lucky_cape', name: '瑞雪福运披风' },
@@ -2564,6 +2577,7 @@
     { id: 'ck_outfit_century_cloak', name: '百日纪念斗篷' },
   ];
   const SPECIAL_EVENT_BUBBLES = [
+    { id: 'bub_ach_fluff', name: '[成就] 暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
     { id: 'bub_ck_vintage_post', name: '[签到60天] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
@@ -2574,6 +2588,7 @@
     { id: 'af_adv_star', name: '[秘境] 星空小轨迹', dyn: 'gadyn_orbital_ring', charms: [], desc: '冒险极低概率偶遇的银河星轨动态头像框：双色星轨流光与双星绕框公转' },
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
+    { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到99天] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
@@ -4081,12 +4096,13 @@
       border: 1px solid color-mix(in srgb, var(--tb-text) 24%, transparent);
       box-shadow: none;
     }
+    #st-tb-badge { height: auto !important; min-height: 0 !important; padding: var(--badge-pad-y, 4px) 10px !important; line-height: 1.2 !important; }
     #st-tb-badge.bstyle-frost {
-      height: 28px; padding: 0 11px; gap: 5px; font-size: 11.5px;
-      background: color-mix(in srgb, var(--tb-bg) 56%, transparent);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      border: 1px solid color-mix(in srgb, #ffffff 42%, var(--tb-border));
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      gap: 5px; font-size: 11.5px;
+      background: color-mix(in srgb, var(--tb-bg) 58%, transparent);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid color-mix(in srgb, #ffffff 36%, var(--tb-border));
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.06) !important;
     }
     #st-tb-badge.bstyle-plain {
       height: 24px; padding: 0 6px; gap: 4px; font-size: 12px; font-weight: 600;
@@ -4101,10 +4117,10 @@
       box-shadow: none !important;
     }
     #st-tb-badge.bstyle-soft {
-      height: 28px; padding: 0 11px; gap: 5px; font-size: 11.5px;
+      gap: 5px; font-size: 11.5px;
       background: color-mix(in srgb, var(--tb-bg) 92%, transparent);
       border-color: transparent !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07) !important;
     }
     #st-tb-quick-dock.qstyle-frost {
       background: color-mix(in srgb, var(--tb-bg) 58%, transparent) !important;
@@ -4120,51 +4136,41 @@
     #st-tb-quick-dock .st-tb-qd-btn {
       border-radius: var(--qd-btn-radius, 12px) !important;
     }
-    #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn {
+    #st-tb-root #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn {
       background: transparent !important;
       border: 1px solid transparent !important;
       color: var(--tb-text) !important;
       box-shadow: none !important;
-      opacity: 0.62;
-      position: relative;
-      transition: opacity 0.16s ease, transform 0.16s ease;
+      opacity: 0.52;
+      font-weight: 500 !important;
+      transition: opacity 0.15s ease, color 0.15s ease;
     }
-    #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active {
+    #st-tb-root #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active {
       background: transparent !important;
-      color: var(--tb-text) !important;
+      border-color: transparent !important;
+      color: var(--tb-accent, var(--tb-text)) !important;
       opacity: 1;
-      font-weight: 700;
+      font-weight: 700 !important;
       box-shadow: none !important;
-      text-shadow: 0 0 8px color-mix(in srgb, var(--tb-accent, var(--tb-text)) 45%, transparent);
+      text-shadow: none !important;
     }
-    #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      bottom: 1px;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--tb-accent, var(--tb-text));
-    }
-    #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn {
+    #st-tb-root #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn {
       background: transparent !important;
       border: 1px solid color-mix(in srgb, var(--tb-text) 18%, transparent) !important;
       color: var(--tb-text) !important;
     }
-    #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn.active {
+    #st-tb-root #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn.active {
       background: color-mix(in srgb, var(--tb-text) 11%, transparent) !important;
       border: 1.5px solid color-mix(in srgb, var(--tb-text) 68%, transparent) !important;
       color: var(--tb-text) !important;
       font-weight: 700;
     }
-    #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn {
+    #st-tb-root #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn {
       background: color-mix(in srgb, var(--tb-text) 7%, transparent) !important;
       border: 1px solid transparent !important;
       color: var(--tb-text) !important;
     }
-    #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn.active {
+    #st-tb-root #st-tb-quick-dock.qbtn-soft .st-tb-qd-btn.active {
       background: color-mix(in srgb, var(--tb-text) 20%, transparent) !important;
       border: 1px solid color-mix(in srgb, var(--tb-text) 24%, transparent) !important;
       color: var(--tb-text) !important;
@@ -4172,7 +4178,7 @@
     }
     #st-tb-quick-dock.qstyle-soft {
       border-color: transparent !important;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
     }
     .st-tb-check {
       display: inline-flex !important;
@@ -5775,7 +5781,7 @@
       height: 24px !important;
       min-height: 24px !important;
       padding: 0 8px !important;
-      border-radius: 999px !important;
+      border-radius: var(--qd-btn-radius, 12px) !important;
       border: 1px solid var(--tb-border) !important;
       background: var(--tb-surface) !important;
       color: var(--tb-text) !important;
@@ -9268,10 +9274,15 @@
                 <button class="st-tb-pill" data-bstyle="outline" type="button">线框</button>
                 <button class="st-tb-pill" data-bstyle="soft" type="button">柔影</button>
               </div>
-              <div class="st-tb-slider-row" style="margin-bottom:8px;">
+              <div class="st-tb-slider-row" style="margin-bottom:6px;">
                 <span>球圆角</span>
                 <input class="st-tb-range" id="st-tb-badge-radius" type="range" min="0" max="20" step="1" value="16" />
                 <span id="st-tb-badge-radius-val">16px</span>
+              </div>
+              <div class="st-tb-slider-row" style="margin-bottom:8px;">
+                <span>上下内距</span>
+                <input class="st-tb-range" id="st-tb-badge-pady" type="range" min="0" max="10" step="1" value="4" />
+                <span id="st-tb-badge-pady-val">4px</span>
               </div>
               <div style="font-size:11px;opacity:0.78;margin:4px 0 5px;">快捷栏样式</div>
               <div class="st-tb-pills" id="st-tb-qd-styles" style="margin-bottom:7px;flex-wrap:wrap;">
@@ -17470,6 +17481,16 @@
       ach_ck_60: Math.max(Number(config.puppyCheckin?.maxStreak || 0), Number(config.puppyCheckin?.streak || 0)) >= 60,
       ach_ck_99: Math.max(Number(config.puppyCheckin?.maxStreak || 0), Number(config.puppyCheckin?.streak || 0)) >= 99,
       ach_ck_100: Number(config.puppyCheckin?.total || 0) >= 100,
+      ach_rich_10k: (st.coinsEarned || 0) >= 10000 || (config.puppyCoins || 0) >= 10000,
+      ach_gacha_30: (st.gachaPulls || 0) >= 30,
+      ach_pet_200: (st.pets || 0) >= 200,
+      ach_wardrobe_30: ownedTotal >= 30,
+      hidden_night_owl: (new Date().getHours()) < 5,
+      hidden_early_bird: (new Date().getHours()) >= 5 && (new Date().getHours()) < 8,
+      hidden_coin_hoarder: (config.puppyCoins || 0) >= 5000,
+      hidden_chat_100: doc.querySelectorAll('#chat .mes').length >= 100,
+      hidden_fashion_3: presetSavedCnt >= 3,
+      hidden_style_player: Boolean((Array.isArray(config.quickDockItems) && config.quickDockItems.length) || (config.badgeStyle && config.badgeStyle !== 'default')),
     };
 
     const newlyUnlocked = [];
@@ -17480,6 +17501,17 @@
         freshNewAchs.add(ach.id);
         config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + ach.reward;
         st.coinsEarned = (st.coinsEarned || 0) + ach.reward;
+        if (ach.bonus) {
+          if (ach.bonus.outfit) { config.puppyOwnedOutfits = config.puppyOwnedOutfits || []; if (!config.puppyOwnedOutfits.includes(ach.bonus.outfit)) config.puppyOwnedOutfits.push(ach.bonus.outfit); }
+          if (ach.bonus.acc) { config.puppyOwnedAccs = config.puppyOwnedAccs || []; if (!config.puppyOwnedAccs.includes(ach.bonus.acc)) config.puppyOwnedAccs.push(ach.bonus.acc); }
+          if (ach.bonus.comp) { config.puppyOwnedCompanions = config.puppyOwnedCompanions || []; if (!config.puppyOwnedCompanions.includes(ach.bonus.comp)) config.puppyOwnedCompanions.push(ach.bonus.comp); }
+          if (ach.bonus.bubble) { config.puppyOwnedBubbles = config.puppyOwnedBubbles || []; if (!config.puppyOwnedBubbles.includes(ach.bonus.bubble)) config.puppyOwnedBubbles.push(ach.bonus.bubble); }
+          if (ach.bonus.avatarframe) { config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || []; if (!config.puppyOwnedAvatarFrames.includes(ach.bonus.avatarframe)) config.puppyOwnedAvatarFrames.push(ach.bonus.avatarframe); }
+          if (ach.bonus.tickets) {
+            config.puppyInventory = config.puppyInventory || {};
+            config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + ach.bonus.tickets;
+          }
+        }
         newlyUnlocked.push(ach);
       }
     }
@@ -21098,43 +21130,46 @@
         const tm = performance.now() * 0.00055 * spd;
         const hueMode = config.auroraHue || 'green';
         const palMap = {
-          green:  [['48, 242, 168', '110, 255, 212', '86, 206, 245'], ['72, 238, 184', '140, 248, 224', '132, 174, 255']],
-          purple: [['186, 118, 255', '224, 158, 255', '128, 178, 255'], ['156, 114, 252', '242, 156, 228', '104, 212, 248']],
-          blue:   [['78, 176, 255', '138, 224, 255', '102, 236, 214'], ['96, 154, 255', '166, 214, 255', '172, 148, 255']],
-          mix:    [['64, 240, 178', '112, 204, 255', '192, 134, 255'], ['198, 132, 255', '94, 232, 212', '108, 178, 255']],
+          green:  [['42, 242, 166', '132, 255, 218', '82, 206, 248'], ['68, 236, 182', '156, 255, 228', '132, 174, 255'], ['92, 248, 206', '186, 255, 236', '110, 190, 255']],
+          purple: [['186, 114, 255', '234, 176, 255', '124, 178, 255'], ['154, 112, 252', '246, 172, 236', '104, 214, 248'], ['212, 134, 255', '250, 198, 255', '142, 164, 255']],
+          blue:   [['74, 174, 255', '158, 234, 255', '98, 238, 214'], ['96, 152, 255', '184, 226, 255', '172, 148, 255'], ['68, 208, 255', '166, 246, 255', '118, 172, 255']],
+          mix:    [['58, 242, 176', '128, 218, 255', '196, 134, 255'], ['202, 132, 255', '104, 238, 216', '108, 178, 255'], ['96, 214, 255', '236, 164, 255', '84, 242, 196']],
         };
         const bands = palMap[hueMode] || palMap.green;
         ctx2d.save();
         ctx2d.globalCompositeOperation = lightBg ? 'source-over' : 'screen';
-        const cols = 72;
+        const cols = 80;
         const dx = w / cols;
         bands.forEach((colsArr, bIdx) => {
-          const yBase = h * (0.17 + bIdx * 0.11);
-          const hotCenter = ((Math.sin(tm * 0.55 + bIdx * 2.4) * 0.38 + 0.5) * w);
-          const hotCenter2 = ((Math.cos(tm * 0.42 + bIdx * 1.7) * 0.36 + 0.5) * w);
+          const dir = bIdx % 2 === 0 ? 1 : -1;
+          const yBase = h * (0.14 + bIdx * 0.095) + Math.sin(tm * 0.35 + bIdx * 1.6) * (h * 0.035);
+          const hot1 = ((Math.sin(tm * 0.62 * dir + bIdx * 2.1) * 0.42 + 0.5) * w);
+          const hot2 = ((Math.cos(tm * 0.48 - bIdx * 1.4) * 0.4 + 0.5) * w);
+          const bandPulse = 0.65 + 0.35 * Math.sin(tm * 0.72 + bIdx * 2.2);
           for (let i = 0; i <= cols; i++) {
             const x = i * dx;
             const nx = i / cols;
-            const fold = Math.sin(nx * 5.2 + tm * (1.1 + bIdx * 0.25) + bIdx * 1.9) * (36 + bIdx * 14)
-              + Math.sin(nx * 10.5 - tm * 0.75 + bIdx) * 16
-              + Math.cos(nx * 3.1 + tm * 0.4) * 22;
+            const fold = Math.sin(nx * (4.6 + bIdx * 1.1) + tm * 1.25 * dir + bIdx * 2.0) * (32 + bIdx * 12)
+              + Math.sin(nx * 9.8 - tm * 0.92 * dir + bIdx * 1.3) * 18
+              + Math.cos(nx * 2.8 + tm * 0.55) * 24;
             const ridgeY = yBase + fold;
-            const rayH = (h * (0.18 + 0.13 * (0.5 + 0.5 * Math.sin(nx * 7.4 + tm * 1.3 + bIdx)))) * (0.85 + 0.35 * Math.cos(nx * 4.1 - tm * 0.9));
-            const d1 = Math.exp(-Math.pow((x - hotCenter) / (w * 0.18), 2));
-            const d2 = Math.exp(-Math.pow((x - hotCenter2) / (w * 0.22), 2));
-            const shimmer = 0.22 + 0.78 * Math.min(1, d1 * 1.15 + d2 * 0.65);
+            const rayPulse = 0.55 + 0.45 * Math.sin(nx * 18.0 + tm * 2.6 * dir + bIdx * 3.1);
+            const rayH = h * (0.15 + 0.16 * (0.5 + 0.5 * Math.sin(nx * 6.2 + tm * 1.45 * dir + bIdx))) * (0.78 + 0.42 * rayPulse);
+            const d1 = Math.exp(-Math.pow((x - hot1) / (w * 0.16), 2));
+            const d2 = Math.exp(-Math.pow((x - hot2) / (w * 0.2), 2));
+            const shimmer = (0.16 + 0.84 * Math.min(1, d1 * 1.25 + d2 * 0.72)) * (0.7 + 0.3 * rayPulse) * bandPulse;
             const edgeFade = Math.sin(nx * Math.PI);
-            const alpha = clamp((lightBg ? 0.14 : 0.24) * shimmer * Math.pow(edgeFade, 0.55) * opa, 0, 0.42);
+            const alpha = clamp((lightBg ? 0.13 : 0.23) * shimmer * Math.pow(edgeFade, 0.5) * opa, 0, 0.44);
             if (alpha < 0.008) continue;
             const topY = Math.max(0, ridgeY - rayH);
-            const g = ctx2d.createLinearGradient(x, ridgeY + 12, x, topY);
+            const g = ctx2d.createLinearGradient(x, ridgeY + 10, x, topY);
             g.addColorStop(0, `rgba(${colsArr[0]}, 0)`);
-            g.addColorStop(0.14, `rgba(${colsArr[1]}, ${Math.min(0.55, alpha * 1.45)})`);
-            g.addColorStop(0.36, `rgba(${colsArr[0]}, ${alpha})`);
-            g.addColorStop(0.72, `rgba(${colsArr[2]}, ${alpha * 0.42})`);
+            g.addColorStop(0.12, `rgba(${colsArr[1]}, ${Math.min(0.58, alpha * 1.55)})`);
+            g.addColorStop(0.32, `rgba(${colsArr[0]}, ${alpha})`);
+            g.addColorStop(0.68, `rgba(${colsArr[2]}, ${alpha * 0.42})`);
             g.addColorStop(1, `rgba(${colsArr[2]}, 0)`);
             ctx2d.fillStyle = g;
-            ctx2d.fillRect(x - dx * 0.6, topY, dx * 2.1, ridgeY + 12 - topY);
+            ctx2d.fillRect(x - dx * 0.55, topY, dx * 2.0, ridgeY + 10 - topY);
           }
         });
         ctx2d.restore();
@@ -43738,6 +43773,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const bs = validBs.includes(config.badgeStyle) ? config.badgeStyle : 'default';
     const showDot = config.badgeShowDot !== false;
     const bRad = Number.isFinite(Number(config.badgeRadius)) ? clamp(Number(config.badgeRadius), 0, 20) : 16;
+    const bPadY = Number.isFinite(Number(config.badgePadY)) ? clamp(Number(config.badgePadY), 0, 10) : 4;
     const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
     const qMaxW = Number.isFinite(Number(config.quickDockMaxW)) ? clamp(Number(config.quickDockMaxW), 180, 420) : 320;
     const btnRad = Number.isFinite(Number(config.quickDockBtnRadius)) ? clamp(Number(config.quickDockBtnRadius), 0, 20) : 12;
@@ -43747,6 +43783,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (bs !== 'default') badge.classList.add(`bstyle-${bs}`);
       if (!showDot) badge.classList.add('no-dot');
       badge.style.borderRadius = `${bRad}px`;
+      badge.style.setProperty('--badge-pad-y', `${bPadY}px`);
     }
     const dotToggleBtn = root.querySelector('#st-tb-badge-dot-toggle');
     if (dotToggleBtn) {
@@ -43757,6 +43794,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const bRadVal = root.querySelector('#st-tb-badge-radius-val');
     if (bRadInp) bRadInp.value = String(bRad);
     if (bRadVal) bRadVal.textContent = `${bRad}px`;
+    const bPyInp = root.querySelector('#st-tb-badge-pady');
+    const bPyVal = root.querySelector('#st-tb-badge-pady-val');
+    if (bPyInp) bPyInp.value = String(bPadY);
+    if (bPyVal) bPyVal.textContent = `${bPadY}px`;
     const qRadInp = root.querySelector('#st-tb-qd-radius');
     const qRadVal = root.querySelector('#st-tb-qd-radius-val');
     if (qRadInp) qRadInp.value = String(qRad);
@@ -43858,6 +43899,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     config.badgeRadius = clamp(Number(e.target.value) || 0, 0, 20);
     saveConfig();
     applyBadgeAndDockStyle();
+  });
+  root.querySelector('#st-tb-badge-pady')?.addEventListener('input', (e) => {
+    config.badgePadY = clamp(Number(e.target.value) || 0, 0, 10);
+    saveConfig();
+    applyBadgeAndDockStyle();
+    applyBadgePosition(true);
   });
   root.querySelector('#st-tb-qd-radius')?.addEventListener('input', (e) => {
     config.quickDockRadius = clamp(Number(e.target.value) || 0, 0, 24);
