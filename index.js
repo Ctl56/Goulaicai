@@ -4117,19 +4117,36 @@
       border: 1px solid color-mix(in srgb, var(--tb-text) 16%, transparent) !important;
       box-shadow: none !important;
     }
+    #st-tb-quick-dock .st-tb-qd-btn {
+      border-radius: var(--qd-btn-radius, 12px) !important;
+    }
     #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn {
       background: transparent !important;
       border: 1px solid transparent !important;
       color: var(--tb-text) !important;
       box-shadow: none !important;
-      opacity: 0.78;
+      opacity: 0.62;
+      position: relative;
+      transition: opacity 0.16s ease, transform 0.16s ease;
     }
     #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active {
       background: transparent !important;
       color: var(--tb-text) !important;
       opacity: 1;
       font-weight: 700;
-      box-shadow: inset 0 -2px 0 var(--tb-accent, var(--tb-text)) !important;
+      box-shadow: none !important;
+      text-shadow: 0 0 8px color-mix(in srgb, var(--tb-accent, var(--tb-text)) 45%, transparent);
+    }
+    #st-tb-quick-dock.qbtn-ghost .st-tb-qd-btn.active::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 1px;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--tb-accent, var(--tb-text));
     }
     #st-tb-quick-dock.qbtn-outline .st-tb-qd-btn {
       background: transparent !important;
@@ -9282,7 +9299,7 @@
                 <button class="st-tb-pill" data-qbstyle="soft" type="button">柔底</button>
               </div>
               <div class="st-tb-slider-row" style="margin-bottom:8px;">
-                <span>按钮圆角</span>
+                <span>圆角</span>
                 <input class="st-tb-range" id="st-tb-qbtn-radius" type="range" min="0" max="20" step="1" value="12" />
                 <span id="st-tb-qbtn-radius-val">12px</span>
               </div>
@@ -43724,6 +43741,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const qRad = Number.isFinite(Number(config.quickDockRadius)) ? clamp(Number(config.quickDockRadius), 0, 24) : 16;
     const qMaxW = Number.isFinite(Number(config.quickDockMaxW)) ? clamp(Number(config.quickDockMaxW), 180, 420) : 320;
     const btnRad = Number.isFinite(Number(config.quickDockBtnRadius)) ? clamp(Number(config.quickDockBtnRadius), 0, 20) : 12;
+    if (quickDockEl) quickDockEl.style.setProperty('--qd-btn-radius', `${btnRad}px`);
     if (badge) {
       badge.classList.remove('bstyle-thin', 'bstyle-frost', 'bstyle-plain', 'bstyle-outline', 'bstyle-soft', 'no-dot');
       if (bs !== 'default') badge.classList.add(`bstyle-${bs}`);
