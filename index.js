@@ -55029,13 +55029,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (config.storyQuickBarEnabled === false) return;
     if (e.target && e.target.closest && e.target.closest('#st-tb-root')) return;
 
-    if (e.target && e.target.closest && e.target.closest('a, button, input, textarea, select, summary, .st-tb-masked, .mes_buttons, .extraMesButtons, .swipes-counter, .swipe_left, .swipe_right')) return;
-    let para = e.target && e.target.closest ? e.target.closest('#chat .mes_text p, #chat .mes_text blockquote, #chat .mes_text li, #chat .mes_reasoning, #chat .reasoning_content') : null;
-    if (!para && e.target && e.target.closest) {
-      const cand = e.target.closest('#chat .mes_text div, #chat .mes_text span, #chat .mes_text td, #chat .mes_text pre, #chat .mes_text h1, #chat .mes_text h2, #chat .mes_text h3, #chat .mes_text h4');
-      if (cand && String(cand.innerText || '').trim().length > 0) para = cand;
-    }
-    if (!para || !String(para.innerText || '').trim()) {
+    const para = e.target && e.target.closest ? e.target.closest('#chat .mes_text p, #chat .mes_text blockquote') : null;
+    if (!para) {
       lastSeParaTap = { para: null, time: 0 };
       if (!seMultiMode) hideSeFloatBar();
       return;
@@ -55044,6 +55039,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const isRapidSecondTap = !seMultiMode && lastSeParaTap.para === para && (nowSeTap - lastSeParaTap.time) < 460;
     const selTxt = String(win.getSelection?.()?.toString() || '').trim();
     if (selTxt && !isRapidSecondTap) return;
+    if (e.target.closest('a, button, input, textarea, select, details, summary, .st-tb-masked')) return;
 
     const mesNode = para.closest('.mes[mesid]');
     if (!mesNode) return;
@@ -55187,97 +55183,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     });
   }
   if (seActEdit) {
-    const openBlockTextEditorModal = (mesId, origText, isReasoningBlock = false) => {
-      let mask = root.querySelector('#st-se-block-edit-mask');
-      if (!mask) {
-        mask = doc.createElement('div');
-        mask.id = 'st-se-block-edit-mask';
-        mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9994;pointer-events:auto;box-sizing:border-box;';
-        root.appendChild(mask);
-      }
-      const hasRef = Boolean(win.__stStyleRefActive);
-      mask.innerHTML = `<div style="width:324px;max-width:calc(100vw - 24px);padding:14px 14px 12px;margin:0 auto;border-radius:10px;background:var(--tb-bg);color:var(--tb-text);border:1px solid var(--tb-border);box-sizing:border-box;">
-        <div class="st-tb-confirm-title">${isReasoningBlock ? '编辑思维链可见内容' : '编辑该区块可见文本'}</div>
-        <textarea id="st-seb-ta" class="st-tb-textarea" style="width:100%;min-height:110px;max-height:240px;margin:6px 0 8px 0;font-size:12px;box-sizing:border-box;">${escapeHtmlSimple(origText)}</textarea>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:8px;cursor:pointer;">
-          <input type="checkbox" id="st-seb-remember" style="margin:0;" />
-          <span>记住本次修改的文案/美化格式，后续生成按此参考</span>
-        </label>
-        <div class="st-tb-confirm-actions">
-          ${hasRef ? '<button class="st-tb-btn" id="st-seb-clear-ref" type="button" style="margin-right:auto;">清除参考</button>' : ''}
-          <button class="st-tb-btn" id="st-seb-cancel" type="button">取消</button>
-          <button class="st-tb-btn primary" id="st-seb-save" type="button">保存修改</button>
-        </div>
-      </div>`;
-      const closeB = () => { mask.style.display = 'none'; };
-      mask.onclick = (ev) => { if (ev.target === mask) closeB(); };
-      mask.querySelector('#st-seb-cancel')?.addEventListener('click', closeB);
-      mask.querySelector('#st-seb-clear-ref')?.addEventListener('click', () => {
-        try { getContext()?.setExtensionPrompt?.('goulaicai_edit_style_ref', '', 1, 0); } catch (_) {}
-        win.__stStyleRefActive = false;
-        showImmNotice('已清除后续生成格式参考');
-        closeB();
-      });
-      mask.querySelector('#st-seb-save')?.addEventListener('click', async () => {
-        const nextText = String(mask.querySelector('#st-seb-ta')?.value || '').trim();
-        const remember = Boolean(mask.querySelector('#st-seb-remember')?.checked);
-        const ctx = getContext();
-        const msg = ctx?.chat?.[mesId];
-        if (!msg) { closeB(); return; }
-        if (isReasoningBlock) {
-          msg.extra = msg.extra || {};
-          const oldR = String(msg.extra.reasoning || '');
-          if (oldR && oldR.includes(origText)) msg.extra.reasoning = oldR.replace(origText, nextText);
-          else msg.extra.reasoning = nextText;
-          try { if (typeof ctx.updateMessageBlock === 'function') ctx.updateMessageBlock(mesId, msg, { rerenderMessage: true }); } catch (_) {}
-          try { if (typeof ctx.saveChat === 'function') await ctx.saveChat(); } catch (_) {}
-        } else {
-          const raw = String(msg.mes || '');
-          if (origText && raw.includes(origText)) {
-            pushUndoSnapshot(mesId, raw);
-            await saveMessageRawText(mesId, raw.replace(origText, nextText));
-          } else {
-            closeB();
-            openCleanStoryEditor(mesId, origText);
-            showImmNotice('该段含复杂HTML标签，已为你打开纯净编辑窗');
-            return;
-          }
-        }
-        if (remember && nextText) {
-          try {
-            if (typeof ctx?.setExtensionPrompt === 'function') {
-              ctx.setExtensionPrompt(
-                'goulaicai_edit_style_ref',
-                `[输出格式与美化文案参考] 请在接下来的回复中，保持与以下用户修订后示例一致的美化文案与排版风格：
-${nextText.slice(0, 600)}`,
-                1,
-                1
-              );
-              win.__stStyleRefActive = true;
-            }
-          } catch (_) {}
-        }
-        closeB();
-        showImmNotice(remember ? '已保存修改，并记住为当前聊天的后续生成格式参考' : '已保存该区块文本修改');
-      });
-      if (typeof bringModalFront === 'function') bringModalFront(mask);
-      mask.style.display = 'flex';
-    };
-
     seActEdit.addEventListener('click', (e) => {
       e.stopPropagation();
       const mid = seActiveMesId;
-      const el = seActiveParaEl;
-      const snip = String(el?.innerText || '').trim();
+      const snip = String(seActiveParaEl?.innerText || '').trim();
       hideSeFloatBar();
-      if (mid < 0) return;
-      const isReasoning = Boolean(el && el.closest && el.closest('.mes_reasoning, .reasoning_content'));
-      const isStdPara = Boolean(el && (el.tagName === 'P' || el.tagName === 'BLOCKQUOTE') && !isReasoning);
-      if (isStdPara) {
-        openCleanStoryEditor(mid, snip);
-      } else {
-        openBlockTextEditorModal(mid, snip, isReasoning);
-      }
+      if (mid >= 0) openCleanStoryEditor(mid, snip);
     });
   }
   if (seActDel) {
