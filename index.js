@@ -3938,7 +3938,7 @@
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.58);
-      z-index: 10020;
+      z-index: 9994;
       display: none;
       align-items: center;
       justify-content: center;
@@ -4709,7 +4709,8 @@
     .st-tb-tip { font-size: calc(var(--tb-fs) - 2px); color: var(--tb-sub); line-height: 1.5; margin-top: 6px; }
 
     /* 防误触右滑/重新生成确认弹窗 */
-    #st-tb-confirm-mask {
+    #st-tb-confirm-mask,
+    #st-tb-jumpfloor-mask {
       position: fixed;
       inset: 0;
       display: none;
@@ -4718,8 +4719,20 @@
       padding: 16px;
       background: rgba(0, 0, 0, 0.42);
       pointer-events: auto;
-      z-index: 9998;
+      z-index: 9994;
       box-sizing: border-box;
+    }
+    #st-tb-jumpfloor-mask.open { display: flex; }
+    #st-tb-jumpfloor-box {
+      width: 324px;
+      max-width: calc(100vw - 24px);
+      padding: 14px 14px 12px !important;
+      margin: 0 auto !important;
+      border-radius: 10px;
+      background: var(--tb-bg);
+      color: var(--tb-text);
+      border: 1px solid var(--tb-border);
+      box-sizing: border-box !important;
     }
     #st-tb-confirm-mask.open { display: flex; }
     #st-tb-confirm-box {
@@ -8016,6 +8029,24 @@
         </div>
       </div>
     </div>
+    <div id="st-tb-jumpfloor-mask">
+      <div id="st-tb-jumpfloor-box">
+        <div class="st-tb-confirm-title">跳转楼层</div>
+        <div class="st-tb-confirm-desc" id="st-tb-jf-info">当前共 0 层</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px;width:100%;box-sizing:border-box;">
+          <button class="st-tb-btn" id="st-tb-jf-top" type="button" style="width:100%;margin:0;">去顶部</button>
+          <button class="st-tb-btn" id="st-tb-jf-ai" type="button" style="width:100%;margin:0;">最新AI</button>
+          <button class="st-tb-btn" id="st-tb-jf-bottom" type="button" style="width:100%;margin:0;">回底部</button>
+        </div>
+        <div style="width:100%;box-sizing:border-box;margin-bottom:10px;">
+          <input class="st-tb-input" id="st-tb-jf-input" type="number" min="0" step="1" placeholder="输入楼层号（如 0）" style="width:100%;box-sizing:border-box;" />
+        </div>
+        <div class="st-tb-confirm-actions">
+          <button class="st-tb-btn" id="st-tb-jf-cancel" type="button">取消</button>
+          <button class="st-tb-btn primary" id="st-tb-jf-go" type="button">跳转</button>
+        </div>
+      </div>
+    </div>
     <div id="st-tb-edge-tab" title="展开工具箱"></div>
 
     <div id="st-tb-puppy" title="单击互动 / 长按坐下自娱自乐 / 连点三下开背包 / 按住拖动">
@@ -9047,10 +9078,6 @@
               <button class="st-tb-btn" id="st-tb-keepalive-btn" type="button" title="切后台五六分钟以上也持续保活，切回自动同步">后台保活：关</button>
               <button class="st-tb-btn" id="st-tb-guard-btn" type="button" title="拦截右滑新生成与重新生成，确认后再调用API">防手滑：关</button>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
-              <button class="st-tb-btn" id="st-tb-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
-              <button class="st-tb-btn" id="st-tb-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
-            </div>
             <div class="st-tb-tip" id="st-tb-keepalive-tip" style="display:none;"></div>
           </div>
 
@@ -9210,9 +9237,10 @@
         <!-- 聊天管理（含聊天文件与一键打码） -->
         <div class="st-tb-pane" data-pane="chats">
           <div class="st-tb-section">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
               <button class="st-tb-btn" id="st-tb-chat-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
               <button class="st-tb-btn" id="st-tb-chat-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
+              <button class="st-tb-btn" id="st-tb-chat-jumpfloor-btn" type="button" title="输入楼层号，或一键去顶部/回底部">跳转楼层</button>
             </div>
           </div>
 
@@ -9810,10 +9838,17 @@
   const confirmCancelBtn = root.querySelector('#st-tb-confirm-cancel');
   const confirmAltBtn = root.querySelector('#st-tb-confirm-alt');
   const confirmOkBtn = root.querySelector('#st-tb-confirm-ok');
-  const partialRerollBtn = root.querySelector('#st-tb-partial-reroll-btn');
-  const jumpTopBtn = root.querySelector('#st-tb-jumptop-btn');
   const chatPartialRerollBtn = root.querySelector('#st-tb-chat-partial-reroll-btn');
   const chatJumpTopBtn = root.querySelector('#st-tb-chat-jumptop-btn');
+  const chatJumpFloorBtn = root.querySelector('#st-tb-chat-jumpfloor-btn');
+  const jumpFloorMask = root.querySelector('#st-tb-jumpfloor-mask');
+  const jfInfoEl = root.querySelector('#st-tb-jf-info');
+  const jfInputEl = root.querySelector('#st-tb-jf-input');
+  const jfTopBtn = root.querySelector('#st-tb-jf-top');
+  const jfAiBtn = root.querySelector('#st-tb-jf-ai');
+  const jfBottomBtn = root.querySelector('#st-tb-jf-bottom');
+  const jfCancelBtn = root.querySelector('#st-tb-jf-cancel');
+  const jfGoBtn = root.querySelector('#st-tb-jf-go');
   const reportBtn = root.querySelector('#st-tb-report-btn');
   const reportBox = root.querySelector('#st-tb-report-box');
   const openReaderBtn = root.querySelector('#st-tb-open-reader-btn');
@@ -10659,35 +10694,23 @@
     } catch (_) {}
   };
 
-  let kaNoticeTimer = null;
-  const showKaPolicyNotice = (msg) => {
-    const host = panel || root;
-    let el = host.querySelector('#st-tb-ka-notice');
-    if (!el) {
-      el = doc.createElement('div');
-      el.id = 'st-tb-ka-notice';
-      el.style.cssText = 'position:absolute;left:50%;top:42px;transform:translateX(-50%);max-width:calc(100% - 20px);width:max-content;padding:6px 13px;border-radius:999px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 18px rgba(0,0,0,0.16);font-size:11.5px;line-height:1.4;z-index:35;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
-      host.appendChild(el);
-    }
-    el.textContent = msg;
-    el.style.opacity = '1';
-    clearTimeout(kaNoticeTimer);
-    kaNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 2800);
-  };
-
   let immNoticeTimer = null;
   const showImmNotice = (msg) => {
     let el = root.querySelector('#st-tb-imm-notice');
     if (!el) {
       el = doc.createElement('div');
       el.id = 'st-tb-imm-notice';
-      el.style.cssText = 'position:fixed;left:50%;top:max(22px,env(safe-area-inset-top));transform:translateX(-50%);max-width:calc(100vw - 28px);padding:7px 15px;border-radius:999px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 18px rgba(0,0,0,0.16);font-size:12.5px;line-height:1.45;white-space:nowrap;z-index:10035;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
+      el.style.cssText = 'position:fixed;left:50%;top:max(22px,env(safe-area-inset-top));transform:translateX(-50%);width:max-content;max-width:min(300px,calc(100vw - 44px));padding:7px 15px;border-radius:18px;background:var(--tb-bg,#fff);color:var(--tb-text,#222);border:1px solid var(--tb-border,#ddd);box-shadow:0 6px 18px rgba(0,0,0,0.16);font-size:12.5px;line-height:1.45;white-space:normal;word-break:break-word;overflow-wrap:anywhere;z-index:9995;pointer-events:none;opacity:0;transition:opacity 0.22s ease;text-align:center;box-sizing:border-box;';
       root.appendChild(el);
     }
     el.textContent = msg;
     el.style.opacity = '1';
     clearTimeout(immNoticeTimer);
     immNoticeTimer = setTimeout(() => { el.style.opacity = '0'; }, 2800);
+  };
+
+  const showKaPolicyNotice = (msg) => {
+    showImmNotice(msg);
   };
 
   const showOnceDragTip = (kind) => {
@@ -13138,7 +13161,7 @@
     if (sw.total < 2) return false;
     openGuardConfirm(
       `选择重roll方式（第 ${sw.curNum}/${sw.total} 条）`,
-      `当前所在条目：第 ${sw.curNum} / ${sw.total} 条\n\n• 仅roll第 ${sw.curNum} 条：保留其余 ${sw.total - 1} 条分支，只重新生成当前这一条\n• roll整层：按酒馆默认方式重新生成整层\n\n关闭路径：「概览 → 局部重roll」或「快捷功能 → 局部重roll」`,
+      `当前所在条目：第 ${sw.curNum} / ${sw.total} 条\n\n• 仅roll第 ${sw.curNum} 条：保留其余 ${sw.total - 1} 条分支，只重新生成当前这一条\n• roll整层：按酒馆默认方式重新生成整层\n\n关闭路径：「聊天 → 局部重roll」或「快捷功能 → 局部重roll」`,
       () => { rerollFloorSwipeOnly(lastIdx, sw.curIdx); },
       `仅roll第 ${sw.curNum} 条`,
       false,
@@ -46011,17 +46034,9 @@
     guardBtn.classList.toggle('primary', Boolean(config.swipeGuard));
     const prOn = config.partialRerollLastPara !== false;
     const jtOn = Boolean(config.jumpToReplyTop);
-    if (partialRerollBtn) {
-      partialRerollBtn.textContent = '局部重roll';
-      partialRerollBtn.classList.toggle('primary', prOn);
-    }
     if (chatPartialRerollBtn) {
       chatPartialRerollBtn.textContent = '局部重roll';
       chatPartialRerollBtn.classList.toggle('primary', prOn);
-    }
-    if (jumpTopBtn) {
-      jumpTopBtn.textContent = '生成完回开头';
-      jumpTopBtn.classList.toggle('primary', jtOn);
     }
     if (chatJumpTopBtn) {
       chatJumpTopBtn.textContent = '生成完回开头';
@@ -46160,10 +46175,85 @@
     if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
     showImmNotice(config.jumpToReplyTop ? '已开启：生成回复完自动跳转到本层开头' : '已关闭：生成回复完不再自动跳转开头');
   };
-  if (partialRerollBtn) partialRerollBtn.addEventListener('click', togglePartialRerollSetting);
   if (chatPartialRerollBtn) chatPartialRerollBtn.addEventListener('click', togglePartialRerollSetting);
-  if (jumpTopBtn) jumpTopBtn.addEventListener('click', toggleJumpReplyTopSetting);
   if (chatJumpTopBtn) chatJumpTopBtn.addEventListener('click', toggleJumpReplyTopSetting);
+
+  const jumpToChatFloor = (targetIdx) => {
+    const ctx = getContext();
+    const chat = Array.isArray(ctx?.chat) ? ctx.chat : [];
+    const maxIdx = Math.max(0, chat.length - 1);
+    const idx = clamp(Number(targetIdx) || 0, 0, maxIdx);
+    const chatEl = doc.querySelector('#chat');
+    const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+    if (chatEl && mesEl) {
+      const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 8;
+      chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+      mesEl.style.transition = 'outline 0.2s ease';
+      mesEl.style.outline = '2px solid var(--tb-accent, #6b8cff)';
+      setTimeout(() => { mesEl.style.outline = ''; }, 1400);
+      showImmNotice(`已跳转到第 #${idx} 层`);
+    } else if (chatEl) {
+      if (idx === 0) chatEl.scrollTo({ top: 0, behavior: 'smooth' });
+      else chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
+      showImmNotice(idx === 0 ? '已滚动到聊天顶部' : '已滚动到聊天底部');
+    }
+  };
+
+  const closeJumpFloorModal = () => {
+    if (jumpFloorMask) jumpFloorMask.classList.remove('open');
+  };
+
+  const openJumpFloorModal = () => {
+    const ctx = getContext();
+    const chat = Array.isArray(ctx?.chat) ? ctx.chat : [];
+    const total = chat.length;
+    const maxIdx = Math.max(0, total - 1);
+    if (jfInfoEl) jfInfoEl.textContent = total ? `当前共 ${total} 层（可输入 0 ~ ${maxIdx}）` : '当前暂无聊天楼层';
+    if (jfInputEl) {
+      jfInputEl.max = String(maxIdx);
+      jfInputEl.value = '';
+      jfInputEl.placeholder = total ? `输入楼层号（0 ~ ${maxIdx}）` : '暂无楼层';
+    }
+    if (jumpFloorMask) jumpFloorMask.classList.add('open');
+  };
+
+  if (chatJumpFloorBtn) chatJumpFloorBtn.addEventListener('click', openJumpFloorModal);
+  if (jfCancelBtn) jfCancelBtn.addEventListener('click', closeJumpFloorModal);
+  if (jumpFloorMask) {
+    jumpFloorMask.addEventListener('click', (e) => {
+      if (e.target === jumpFloorMask) closeJumpFloorModal();
+    });
+  }
+  if (jfTopBtn) jfTopBtn.addEventListener('click', () => { closeJumpFloorModal(); jumpToChatFloor(0); });
+  if (jfBottomBtn) jfBottomBtn.addEventListener('click', () => {
+    const chat = getContext()?.chat;
+    const maxIdx = Array.isArray(chat) && chat.length ? chat.length - 1 : 0;
+    closeJumpFloorModal();
+    jumpToChatFloor(maxIdx);
+  });
+  if (jfAiBtn) jfAiBtn.addEventListener('click', () => {
+    const chat = Array.isArray(getContext()?.chat) ? getContext().chat : [];
+    let aiIdx = -1;
+    for (let i = chat.length - 1; i >= 0; i--) {
+      if (chat[i] && !chat[i].is_user) { aiIdx = i; break; }
+    }
+    closeJumpFloorModal();
+    if (aiIdx >= 0) jumpToChatFloor(aiIdx);
+    else showImmNotice('当前没有找到 AI 回复楼层');
+  });
+  if (jfGoBtn) jfGoBtn.addEventListener('click', () => {
+    const raw = String(jfInputEl?.value || '').trim();
+    if (!raw) { showImmNotice('请先输入要跳转的楼层号'); return; }
+    const num = Number(raw);
+    if (!Number.isFinite(num)) { showImmNotice('请输入有效数字楼层号'); return; }
+    closeJumpFloorModal();
+    jumpToChatFloor(Math.floor(num));
+  });
+  if (jfInputEl) {
+    jfInputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); jfGoBtn?.click(); }
+    });
+  }
 
   guardBtn.addEventListener('click', () => {
     config.swipeGuard = !config.swipeGuard;
@@ -54162,6 +54252,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'guard',     name: '防手滑保护', defLabel: '防手滑' },
     { id: 'partialreroll', name: '局部重roll', defLabel: '局部重roll' },
     { id: 'jumptop', name: '生成完回开头', defLabel: '回开头' },
+    { id: 'jumpfloor', name: '跳转楼层', defLabel: '跳楼层' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
     { id: 'fold',      name: '折叠楼层',   defLabel: '折楼' },
@@ -54719,6 +54810,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         syncUI();
         showImmNotice(config.jumpToReplyTop ? '已开启：生成回复完自动跳转到本层开头' : '已关闭：生成回复完不再自动跳转开头');
         syncQuickDockUI();
+      } else if (act === 'jumpfloor') {
+        toggleQuickDock(false);
+        openJumpFloorModal();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
         saveConfig();
