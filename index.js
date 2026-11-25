@@ -9227,13 +9227,27 @@
 
           <div class="st-tb-section">
             <div class="st-tb-label">
-              <span>聊天搜索</span>
-              <span id="st-tb-search-status"></span>
+              <span>换美化</span>
+              <span id="st-tb-theme-status"></span>
             </div>
             <div class="st-tb-row">
-              <input class="st-tb-input" id="st-tb-search-input" type="text" placeholder="搜索当前聊天关键词" />
-              <button class="st-tb-btn" id="st-tb-search-prev" type="button" title="上一条">‹</button>
-              <button class="st-tb-btn" id="st-tb-search-next" type="button" title="下一条">›</button>
+              <div class="st-pr-search-wrap" style="flex:1;">
+                <input class="st-tb-input" id="st-tb-theme-search" type="text" placeholder="搜索美化主题" />
+                <button class="st-pr-search-clear" id="st-tb-theme-search-clear" type="button" title="清空搜索">×</button>
+              </div>
+            </div>
+            <div id="st-tb-theme-search-results" style="display:none;flex-direction:column;gap:3px;max-height:110px;overflow-y:auto;margin-bottom:6px;padding:4px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);"></div>
+            <div class="st-tb-row">
+              <select class="st-tb-select" id="st-tb-theme-select"></select>
+              <button class="st-tb-btn" id="st-tb-theme-rename" type="button">重命名</button>
+              <button class="st-tb-btn" id="st-tb-theme-del" type="button">删除</button>
+            </div>
+            <div id="st-tb-theme-rename-box" style="display:none;margin-top:5px;">
+              <div class="st-tb-row">
+                <input class="st-tb-input" id="st-tb-theme-rename-inp" type="text" placeholder="输入新的美化名称" />
+                <button class="st-tb-btn primary" id="st-tb-theme-rename-ok" type="button">保存</button>
+                <button class="st-tb-btn" id="st-tb-theme-rename-cancel" type="button">取消</button>
+              </div>
             </div>
           </div>
 
@@ -11562,6 +11576,7 @@
   };
 
   const runSearch = (step = 1) => {
+    if (!searchInput) return;
     const kw = searchInput.value.trim().toLowerCase();
     if (!kw) {
       searchMatches = [];
@@ -13073,16 +13088,16 @@
     if (!Number.isFinite(idx) || !Array.isArray(ctx?.chat) || idx < 0 || idx >= ctx.chat.length) return false;
     try {
       ctx.chat.splice(idx);
-      if (typeof ctx.saveChat === 'function') await ctx.saveChat();
-      else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
-      if (typeof ctx.reloadCurrentChat === 'function') {
-        await ctx.reloadCurrentChat();
-      } else {
-        doc.querySelectorAll('#chat .mes[mesid]').forEach(el => {
-          const mid = Number(el.getAttribute('mesid'));
-          if (Number.isFinite(mid) && mid >= idx) el.remove();
-        });
-      }
+      // 静默移除 DOM 节点并更新 last_mes，不触发 reloadCurrentChat，彻底避免白屏闪屏
+      doc.querySelectorAll('#chat .mes[mesid]').forEach(el => {
+        const mid = Number(el.getAttribute('mesid'));
+        if (Number.isFinite(mid) && mid >= idx) el.remove();
+      });
+      const remain = doc.querySelectorAll('#chat .mes[mesid]');
+      remain.forEach(el => el.classList.remove('last_mes'));
+      if (remain.length) remain[remain.length - 1].classList.add('last_mes');
+      if (typeof ctx.saveChat === 'function') ctx.saveChat().catch?.(() => {});
+      else if (typeof win.saveChatConditional === 'function') win.saveChatConditional();
       return true;
     } catch (_) {
       return false;
@@ -13876,7 +13891,7 @@
         chip.className = 'st-tb-chip';
         chip.textContent = `${word} (${cnt})`;
         chip.addEventListener('click', () => {
-          searchInput.value = word;
+          if (searchInput) searchInput.value = word;
           runSearch(1);
         });
         chips.appendChild(chip);
@@ -42936,6 +42951,7 @@
   const applyChatFold = () => {
     const chatBox = doc.getElementById('chat');
     if (!chatBox) return { total: 0, folded: 0 };
+    if (Date.now() < (win.__stPerfFoldPauseUntil || 0)) return;
     const keepN = Number(config.perfFoldKeep) || 0;
     const kids = chatBox.children;
     const total = kids.length;
@@ -49211,6 +49227,7 @@
     if (letterSpacingInput && doc.activeElement !== letterSpacingInput) letterSpacingInput.value = config.letterSpacing ?? '';
     textIndentCheck.checked = Boolean(config.textIndent);
     renderFontSelect();
+    if (typeof renderStThemeSelect === 'function') renderStThemeSelect();
 
     immToggleBtn.textContent = config.immersive ? '沉浸：开' : '沉浸：关';
     immToggleBtn.classList.toggle('primary', Boolean(config.immersive));
@@ -49365,7 +49382,7 @@
   if (chatPartialRerollBtn) chatPartialRerollBtn.addEventListener('click', togglePartialRerollSetting);
   if (chatJumpTopBtn) chatJumpTopBtn.addEventListener('click', toggleJumpReplyTopSetting);
 
-  const jumpToChatFloor = (targetIdx) => {
+  const jumpToChatFloor = async (targetIdx) => {
     const ctx = getContext();
     const chat = Array.isArray(ctx?.chat) ? ctx.chat : [];
     const maxIdx = Math.max(0, chat.length - 1);
@@ -49373,46 +49390,65 @@
     const chatEl = doc.querySelector('#chat');
     if (!chatEl) return;
 
-    // 自动展开被折叠的目标楼层及其附近楼层，防止 display:none 导致坐标算成 0 而停在底部
+    // 暂停折叠观察器 4 秒，防止刚展开又被折回去
+    win.__stPerfFoldPauseUntil = Date.now() + 4000;
     doc.querySelectorAll('#chat .mes.st-tb-folded-mes').forEach(el => {
       const mid = Number(el.getAttribute('mesid'));
       if (Number.isFinite(mid) && mid >= idx) el.classList.remove('st-tb-folded-mes');
     });
-    const foldBar = doc.querySelector('#st-tb-fold-banner');
-    if (foldBar && idx === 0) foldBar.style.display = 'none';
 
-    const doScrollNow = () => {
+    // 如果目标楼层还没被酒馆渲染进 DOM，自动尝试点击「显示更多消息」加载出来
+    for (let tries = 0; tries < 6; tries++) {
+      const exists = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+      if (exists) break;
+      const moreBtn = doc.querySelector('#show_more_messages');
+      if (!moreBtn || moreBtn.offsetParent === null) break;
+      moreBtn.click();
+      await new Promise(r => setTimeout(r, 120));
+      doc.querySelectorAll('#chat .mes.st-tb-folded-mes').forEach(el => {
+        const mid = Number(el.getAttribute('mesid'));
+        if (Number.isFinite(mid) && mid >= idx) el.classList.remove('st-tb-folded-mes');
+      });
+    }
+
+    const forceJump = () => {
+      const sheldEl = doc.querySelector('#sheld');
       if (idx === 0) {
-        chatEl.scrollTo({ top: 0, behavior: 'smooth' });
-        const firstEl = doc.querySelector('#chat .mes[mesid="0"]');
-        if (firstEl && firstEl.offsetParent !== null) {
+        chatEl.scrollTop = 0;
+        if (sheldEl) sheldEl.scrollTop = 0;
+        win.scrollTo(0, 0);
+        const firstEl = doc.querySelector('#chat .mes[mesid="0"]') || doc.querySelector('#chat .mes');
+        if (firstEl) {
+          try { firstEl.scrollIntoView({ block: 'start', behavior: 'auto' }); } catch (_) {}
           firstEl.style.transition = 'outline 0.2s ease';
           firstEl.style.outline = '2px solid var(--tb-accent, #6b8cff)';
           setTimeout(() => { firstEl.style.outline = ''; }, 1400);
         }
-        showImmNotice('已跳转到顶部第 #0 层');
         return;
       }
       if (idx >= maxIdx) {
-        chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
-        showImmNotice(`已跳转到底部第 #${maxIdx} 层`);
+        chatEl.scrollTop = chatEl.scrollHeight;
+        const lastEl = doc.querySelector(`#chat .mes[mesid="${maxIdx}"]`) || doc.querySelector('#chat .mes:last-of-type');
+        if (lastEl) { try { lastEl.scrollIntoView({ block: 'end', behavior: 'auto' }); } catch (_) {} }
         return;
       }
       const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
-      if (mesEl && mesEl.offsetParent !== null) {
+      if (mesEl) {
+        mesEl.classList.remove('st-tb-folded-mes');
+        try { mesEl.scrollIntoView({ block: 'start', behavior: 'auto' }); } catch (_) {}
         const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 8;
-        chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+        if (Number.isFinite(topOffset)) chatEl.scrollTop = Math.max(0, topOffset);
         mesEl.style.transition = 'outline 0.2s ease';
         mesEl.style.outline = '2px solid var(--tb-accent, #6b8cff)';
         setTimeout(() => { mesEl.style.outline = ''; }, 1400);
-        showImmNotice(`已跳转到第 #${idx} 层`);
       } else {
-        // 如果酒馆懒加载还没渲染该楼层，滚动到顶部方便加载
-        chatEl.scrollTo({ top: 0, behavior: 'smooth' });
-        showImmNotice(`第 #${idx} 层尚未被酒馆加载，已滚到顶部，点上方“显示更多消息”即可展开`);
+        chatEl.scrollTop = 0;
       }
     };
-    setTimeout(doScrollNow, 40);
+
+    forceJump();
+    setTimeout(forceJump, 120);
+    showImmNotice(idx === 0 ? '已跳转到最顶部第 #0 层' : (idx >= maxIdx ? `已跳转到底部第 #${maxIdx} 层` : `已跳转到第 #${idx} 层`));
   };
 
   const closeJumpFloorModal = () => {
@@ -49594,6 +49630,201 @@
       fontSearchClearBtn.classList.toggle('show', Boolean(fontSearchInput.value));
     }
   };
+
+  // ==================== 换美化（酒馆主题搜索/切换/重命名/二次确认删除） ====================
+  const stThemeSearchInp = root.querySelector('#st-tb-theme-search');
+  const stThemeSearchClear = root.querySelector('#st-tb-theme-search-clear');
+  const stThemeSearchRes = root.querySelector('#st-tb-theme-search-results');
+  const stThemeSelect = root.querySelector('#st-tb-theme-select');
+  const stThemeStatus = root.querySelector('#st-tb-theme-status');
+  const stThemeRenameBtn = root.querySelector('#st-tb-theme-rename');
+  const stThemeDelBtn = root.querySelector('#st-tb-theme-del');
+  const stThemeRenameBox = root.querySelector('#st-tb-theme-rename-box');
+  const stThemeRenameInp = root.querySelector('#st-tb-theme-rename-inp');
+  const stThemeRenameOk = root.querySelector('#st-tb-theme-rename-ok');
+  const stThemeRenameCancel = root.querySelector('#st-tb-theme-rename-cancel');
+
+  const getNativeThemesSelect = () => doc.querySelector('#themes');
+  const getStThemeNames = () => {
+    const sel = getNativeThemesSelect();
+    if (!sel) return [];
+    return Array.from(sel.options).map(o => ({ val: o.value, label: o.textContent.trim() || o.value })).filter(x => x.val);
+  };
+  const applyStThemeByName = (themeName) => {
+    const sel = getNativeThemesSelect();
+    if (!sel || !themeName) return false;
+    sel.value = themeName;
+    if (typeof win.$ === 'function') {
+      try { win.$(sel).val(themeName).trigger('change'); } catch (_) { sel.dispatchEvent(new Event('change', { bubbles: true })); }
+    } else {
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    if (stThemeSelect) stThemeSelect.value = themeName;
+    if (stThemeStatus) stThemeStatus.textContent = `当前：${themeName}`;
+    showImmNotice(`已切换美化：${themeName}`);
+    return true;
+  };
+
+  const renderStThemeSelect = () => {
+    if (!stThemeSelect) return;
+    const list = getStThemeNames();
+    const nativeSel = getNativeThemesSelect();
+    const curVal = nativeSel ? nativeSel.value : '';
+    const q = String(stThemeSearchInp?.value || '').trim().toLowerCase();
+    const filtered = q ? list.filter(x => x.label.toLowerCase().includes(q) || x.val.toLowerCase().includes(q)) : list;
+    stThemeSelect.innerHTML = '';
+    if (!filtered.length) {
+      const opt = doc.createElement('option');
+      opt.value = '';
+      opt.textContent = list.length ? '无匹配美化' : '未读取到酒馆美化';
+      stThemeSelect.appendChild(opt);
+    } else {
+      filtered.forEach(item => {
+        const opt = doc.createElement('option');
+        opt.value = item.val;
+        opt.textContent = item.label;
+        stThemeSelect.appendChild(opt);
+      });
+      if (filtered.some(x => x.val === curVal)) stThemeSelect.value = curVal;
+    }
+    if (stThemeStatus) stThemeStatus.textContent = curVal ? `当前：${curVal}` : `共 ${list.length} 套`;
+  };
+
+  const renderStThemeSearchResults = () => {
+    if (!stThemeSearchRes || !stThemeSearchInp) return;
+    const q = String(stThemeSearchInp.value || '').trim().toLowerCase();
+    if (stThemeSearchClear) stThemeSearchClear.classList.toggle('show', Boolean(stThemeSearchInp.value));
+    if (!q) {
+      stThemeSearchRes.style.display = 'none';
+      stThemeSearchRes.innerHTML = '';
+      return;
+    }
+    const list = getStThemeNames().filter(x => x.label.toLowerCase().includes(q) || x.val.toLowerCase().includes(q));
+    stThemeSearchRes.style.display = 'flex';
+    stThemeSearchRes.innerHTML = '';
+    if (!list.length) {
+      stThemeSearchRes.innerHTML = '<div style="font-size:11px;opacity:0.65;padding:2px 4px;">没有匹配的美化主题</div>';
+      return;
+    }
+    const curVal = getNativeThemesSelect()?.value || '';
+    list.forEach(item => {
+      const btn = doc.createElement('button');
+      btn.type = 'button';
+      btn.className = `st-tb-btn${item.val === curVal ? ' primary' : ''}`;
+      btn.style.cssText = 'width:100%;text-align:left;justify-content:flex-start;padding:4px 8px;font-size:11px;height:auto;';
+      btn.textContent = item.label;
+      btn.addEventListener('click', () => {
+        applyStThemeByName(item.val);
+        renderStThemeSelect();
+        renderStThemeSearchResults();
+      });
+      stThemeSearchRes.appendChild(btn);
+    });
+  };
+
+  if (stThemeSearchInp) {
+    stThemeSearchInp.addEventListener('input', () => {
+      renderStThemeSelect();
+      renderStThemeSearchResults();
+    });
+  }
+  if (stThemeSearchClear && stThemeSearchInp) {
+    stThemeSearchClear.addEventListener('click', () => {
+      stThemeSearchInp.value = '';
+      renderStThemeSelect();
+      renderStThemeSearchResults();
+      stThemeSearchInp.focus();
+    });
+  }
+  if (stThemeSelect) {
+    stThemeSelect.addEventListener('change', () => {
+      if (stThemeSelect.value) {
+        applyStThemeByName(stThemeSelect.value);
+        renderStThemeSearchResults();
+      }
+    });
+  }
+  if (stThemeRenameBtn && stThemeRenameBox && stThemeRenameInp) {
+    stThemeRenameBtn.addEventListener('click', () => {
+      const cur = stThemeSelect?.value || getNativeThemesSelect()?.value || '';
+      if (!cur) { showImmNotice('请先选择一套美化主题'); return; }
+      stThemeRenameInp.value = cur;
+      stThemeRenameBox.style.display = 'block';
+      stThemeRenameInp.focus();
+    });
+  }
+  if (stThemeRenameCancel && stThemeRenameBox) {
+    stThemeRenameCancel.addEventListener('click', () => { stThemeRenameBox.style.display = 'none'; });
+  }
+  if (stThemeRenameOk && stThemeRenameInp && stThemeRenameBox) {
+    stThemeRenameOk.addEventListener('click', async () => {
+      const oldName = stThemeSelect?.value || getNativeThemesSelect()?.value || '';
+      const newName = String(stThemeRenameInp.value || '').trim();
+      if (!oldName || !newName || oldName === newName) { stThemeRenameBox.style.display = 'none'; return; }
+      try {
+        const ctx = getContext();
+        const headers = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+        // 获取当前已应用的美化配置并另存为新名，再删除旧名
+        if (getNativeThemesSelect()?.value !== oldName) applyStThemeByName(oldName);
+        const setResp = await fetch('/api/settings/get', { method: 'POST', headers, body: JSON.stringify({}) });
+        const setData = setResp.ok ? await setResp.json().catch(() => null) : null;
+        const themesArr = Array.isArray(setData?.themes) ? setData.themes : [];
+        const targetObj = themesArr.find(t => t && t.name === oldName);
+        if (!targetObj) {
+          showImmNotice('未在酒馆主题库中找到该美化，无法重命名');
+          stThemeRenameBox.style.display = 'none';
+          return;
+        }
+        const cloned = { ...targetObj, name: newName };
+        const saveResp = await fetch('/api/themes/save', { method: 'POST', headers, body: JSON.stringify(cloned) });
+        if (!saveResp.ok) throw new Error('save failed');
+        await fetch('/api/themes/delete', { method: 'POST', headers, body: JSON.stringify({ name: oldName }) });
+        const nativeSel = getNativeThemesSelect();
+        if (nativeSel) {
+          const opt = Array.from(nativeSel.options).find(o => o.value === oldName);
+          if (opt) { opt.value = newName; opt.textContent = newName; }
+          nativeSel.value = newName;
+        }
+        stThemeRenameBox.style.display = 'none';
+        renderStThemeSelect();
+        renderStThemeSearchResults();
+        showImmNotice(`已将美化「${oldName}」重命名为「${newName}」`);
+      } catch (_) {
+        showImmNotice('重命名美化失败，请稍后重试');
+      }
+    });
+  }
+  if (stThemeDelBtn) {
+    stThemeDelBtn.addEventListener('click', () => {
+      const targetName = stThemeSelect?.value || getNativeThemesSelect()?.value || '';
+      if (!targetName) { showImmNotice('请先选择要删除的美化主题'); return; }
+      openGuardConfirm(
+        `确认删除美化「${targetName}」？`,
+        '删除后该酒馆美化主题将从主题列表中永久移除，无法恢复。',
+        async () => {
+          try {
+            const ctx = getContext();
+            const headers = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+            const delResp = await fetch('/api/themes/delete', { method: 'POST', headers, body: JSON.stringify({ name: targetName }) });
+            if (!delResp.ok) throw new Error('del failed');
+            const nativeSel = getNativeThemesSelect();
+            if (nativeSel) {
+              const opt = Array.from(nativeSel.options).find(o => o.value === targetName);
+              if (opt) opt.remove();
+            }
+            renderStThemeSelect();
+            renderStThemeSearchResults();
+            showImmNotice(`已删除美化「${targetName}」`);
+          } catch (_) {
+            showImmNotice('删除美化失败，可能是内置默认主题不支持删除');
+          }
+        },
+        '确认删除'
+      );
+    });
+  }
+  setTimeout(renderStThemeSelect, 900);
+
   if (fontSearchInput) {
     fontSearchInput.addEventListener('input', () => {
       syncFontSearchClear();
@@ -49971,9 +50202,9 @@
     if (chatEl) chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
   });
 
-  searchNextBtn.addEventListener('click', () => runSearch(1));
-  searchPrevBtn.addEventListener('click', () => runSearch(-1));
-  searchInput.addEventListener('keydown', (e) => {
+  if (searchNextBtn) searchNextBtn.addEventListener('click', () => runSearch(1));
+  if (searchPrevBtn) searchPrevBtn.addEventListener('click', () => runSearch(-1));
+  if (searchInput) searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') runSearch(e.shiftKey ? -1 : 1);
   });
 
