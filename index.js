@@ -2679,6 +2679,7 @@
     guestPuppies: [],
     puppyUsedVisitCodes: [],
     photoWinRect: null,
+    photoRadius: 0,
     puppyVisitLog: [],
     puppyVisitPhotos: [],
     puppyVisitCoopDaily: { date: '', water: 0, cook: 0 },
@@ -5088,7 +5089,7 @@
       pointer-events: none;
       transition: opacity 0.16s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    #st-tb-puppy-bubble::after { left: var(--tail-x, 50%) !important; }
+    #st-tb-puppy-bubble::after, .st-tb-guest-bubble::after { left: var(--tail-x, 50%) !important; }
     #st-tb-puppy-bubble.is-split-mode {
       white-space: nowrap;
       max-width: calc(100vw - 24px);
@@ -27686,7 +27687,43 @@
     });
   };
 
-  const showGuestBubbleById = (guestId, txt, ms = 2600) => {
+  const clampGuestBubbleToViewport = (bub, bTxt) => {
+    if (!bub) return;
+    bub.style.marginLeft = '0px';
+    bub.style.width = '';
+    bub.style.setProperty('--tail-x', '50%');
+    win.requestAnimationFrame(() => {
+      if (!bub.classList.contains('show')) return;
+      if (bTxt && bTxt.firstChild && typeof doc.createRange === 'function') {
+        try {
+          const rng = doc.createRange();
+          rng.selectNodeContents(bTxt);
+          const rects = Array.from(rng.getClientRects());
+          if (rects.length > 1) {
+            let maxLineW = 0;
+            for (const r of rects) if (r.width > maxLineW) maxLineW = r.width;
+            if (maxLineW > 20) {
+              const cs = win.getComputedStyle(bub);
+              const padX = (parseFloat(cs.paddingLeft) || 8) + (parseFloat(cs.paddingRight) || 8);
+              const bdX = (parseFloat(cs.borderLeftWidth) || 2) + (parseFloat(cs.borderRightWidth) || 2);
+              bub.style.width = `${Math.ceil(maxLineW + padX + bdX + 1)}px`;
+            }
+          }
+        } catch (_) {}
+      }
+      const rect = bub.getBoundingClientRect();
+      let shift = 0;
+      if (rect.left < 8) shift = 8 - rect.left;
+      else if (rect.right > win.innerWidth - 8) shift = (win.innerWidth - 8) - rect.right;
+      if (shift !== 0) {
+        bub.style.marginLeft = `${Math.round(shift)}px`;
+        const tailPx = Math.round(clamp(rect.width / 2 - shift, 10, Math.max(10, rect.width - 10)));
+        bub.style.setProperty('--tail-x', `${tailPx}px`);
+      }
+    });
+  };
+
+  const showGuestBubbleById = (guestId, txt, ms = 3000) => {
     const guest = getGuestList().find(g => g.id === guestId);
     const rt = guestRuntimes.get(guestId);
     if (!guest || !rt || !rt.bubble) return;
@@ -27695,6 +27732,7 @@
     liftNearbyBubbles(guestId, rt.x, rt.y || defaultPupY());
     rt.bubble.classList.remove('lifted');
     rt.bubble.classList.add('show');
+    clampGuestBubbleToViewport(rt.bubble, rt.bubbleTxt);
     clearTimeout(rt.bubbleTimer);
     rt.bubbleTimer = setTimeout(() => {
       rt.bubble.classList.remove('show');
@@ -28409,6 +28447,7 @@
       timer: randInt(90, 160),
       tick: 0,
       talkingUntil: 0,
+      nextLieAt: Date.now() + randInt(55000, 110000),
       lastRenderKey: '',
       lastBubbleSkin: '',
       bubbleTimer: null,
@@ -28495,6 +28534,8 @@
       frame = Math.floor(rt.tick / 16) % 2 === 0 ? 'sit1' : 'sit2'; isSitPose = true;
     } else if (rt.state === 'sleep') {
       frame = 'sleep'; isFlatPose = true;
+    } else if (rt.state === 'lie') {
+      frame = (rt.tick % 140 > 132) ? 'sleep' : 'lie'; isFlatPose = true;
     } else if (rt.state === 'playdead') {
       frame = 'playdead'; isDead = true;
     } else if (rt.state === 'eat') {
@@ -28591,8 +28632,9 @@
   // 支持「自家小狗 ↔ 客人」以及「客人A ↔ 客人B」互相互动，全局锁防止多组冲突
   const playPairDialogue = (actorA, actorB, manual = false) => {
     const now = Date.now();
-    const lockUntil = now + 4800;
-    dualSocialBusyUntil = lockUntil;
+    // 第一句展示 2850ms，第 2700ms 第二句接棒并稳稳展示 3300ms，总锁 6300ms + 1500ms 缓冲
+    const lockUntil = now + 6300;
+    dualSocialBusyUntil = now + 7800;
     const persA = actorA.isHost ? (config.puppyPersonality || 'sleepyhead') : (actorA.guest.pers || 'sleepyhead');
     const persB = actorB.isHost ? (config.puppyPersonality || 'sleepyhead') : (actorB.guest.pers || 'sleepyhead');
     const nameA = actorA.isHost ? getPupName() : actorA.guest.name;
@@ -28604,28 +28646,28 @@
 
     const xA = actorA.isHost ? pup.x : actorA.rt.x;
     const xB = actorB.isHost ? pup.x : actorB.rt.x;
-    if (actorA.isHost) { pup.dir = xB >= xA ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 320); }
-    else { actorA.rt.dir = xB >= xA ? 1 : -1; actorA.rt.talkingUntil = lockUntil; actorA.rt.state = actState; actorA.rt.timer = 320; }
-    if (actorB.isHost) { pup.dir = xA >= xB ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 320); }
-    else { actorB.rt.dir = xA >= xB ? 1 : -1; actorB.rt.talkingUntil = lockUntil; actorB.rt.state = actState; actorB.rt.timer = 320; }
+    if (actorA.isHost) { pup.dir = xB >= xA ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 420); }
+    else { actorA.rt.dir = xB >= xA ? 1 : -1; actorA.rt.talkingUntil = lockUntil; actorA.rt.state = actState; actorA.rt.timer = 420; }
+    if (actorB.isHost) { pup.dir = xA >= xB ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 420); }
+    else { actorB.rt.dir = xA >= xB ? 1 : -1; actorB.rt.talkingUntil = lockUntil; actorB.rt.state = actState; actorB.rt.timer = 420; }
 
     if (actorA.isHost) {
       liftNearbyBubbles('host', pup.x, pup.y || defaultPupY());
       if (puppyBubble) puppyBubble.classList.remove('lifted');
-      showPuppyBubble(lineA, 2200, !manual);
+      showPuppyBubble(lineA, 2850, false);
     } else {
-      showGuestBubbleById(actorA.guest.id, lineA, 2200);
+      showGuestBubbleById(actorA.guest.id, lineA, 2850);
     }
 
     setTimeout(() => {
       if (actorB.isHost) {
         liftNearbyBubbles('host', pup.x, pup.y || defaultPupY());
         if (puppyBubble) puppyBubble.classList.remove('lifted');
-        showPuppyBubble(lineB, 2500, !manual);
+        showPuppyBubble(lineB, 3300, false);
       } else if (getGuestList().some(g => g.id === actorB.guest.id)) {
-        showGuestBubbleById(actorB.guest.id, lineB, 2500);
+        showGuestBubbleById(actorB.guest.id, lineB, 3300);
       }
-    }, 2000);
+    }, 2700);
   };
 
   const triggerPairSocial = (guestId, manual = false, partnerGuestId = null) => {
@@ -28650,17 +28692,32 @@
     const dyCur = (rtA.y || defaultPupY()) - tyRef;
     const dist = Math.hypot(dxCur, dyCur);
     const maxX = Math.max(8, win.innerWidth - 80);
+    const targetY = clamp(tyRef, 40, Math.max(40, win.innerHeight - 80));
+    const isSpotClear = (cx) => {
+      if (!actorB.isHost && Math.abs(pup.x - cx) < 54 && Math.abs((pup.y || defaultPupY()) - targetY) < 48) return false;
+      for (const [oid, ort] of guestRuntimes.entries()) {
+        if (oid === guestId || (!actorB.isHost && oid === actorB.guest.id)) continue;
+        const og = list.find(x => x.id === oid);
+        if (!og || og.onDesktop === false) continue;
+        if (Math.abs(ort.x - cx) < 56 && Math.abs((ort.y || defaultPupY()) - targetY) < 48) return false;
+      }
+      return true;
+    };
     const sideSign = dxCur === 0 ? (txRef > maxX / 2 ? -1 : 1) : (dxCur > 0 ? 1 : -1);
-    const idealX = clamp(txRef + sideSign * 62, 8, maxX);
+    const candXs = [
+      clamp(txRef + sideSign * 64, 8, maxX),
+      clamp(txRef - sideSign * 64, 8, maxX),
+      clamp(txRef + sideSign * 124, 8, maxX),
+    ];
+    const idealX = candXs.find(isSpotClear) ?? candXs[0];
 
-    // 若未重叠且距离合适（52~84px）直接互动；如果太近重叠（<52px）或太远（>84px）则先走位到舒适并排间距！
-    if (guestA.pinned || (Math.abs(dxCur) >= 52 && dist <= 86 && Math.abs(dyCur) <= 28)) {
+    if (guestA.pinned || (Math.abs(dxCur) >= 54 && dist <= 88 && Math.abs(dyCur) <= 28 && isSpotClear(rtA.x))) {
       playPairDialogue({ isHost: false, guest: guestA, rt: rtA }, actorB, manual);
       return;
     }
-    dualSocialBusyUntil = now + 9000;
+    dualSocialBusyUntil = now + 11000;
     rtA.targetX = idealX;
-    rtA.targetY = clamp(tyRef, 40, Math.max(40, win.innerHeight - 80));
+    rtA.targetY = targetY;
     rtA.pendingSocial = { actorB, manual };
     rtA.state = 'approach';
     rtA.timer = 480;
@@ -28707,7 +28764,7 @@
     { id: 'beach_day',   name: '海岛晴湾' },
     { id: 'lavender',    name: '薰衣草田' },
     { id: 'star_train',  name: '星河火车' },
-    { id: 'bakery',      name: '甜品烘焙' },
+    { id: 'camping',     name: '星空露营' },
     { id: 'rainbow',     name: '雨后彩虹' },
   ];
   const POLAROID_DOG_POSES = [
@@ -28811,28 +28868,41 @@
         ctx.fillStyle = lc; ctx.fillRect(lx, ly, 3, 2); ctx.fillRect(lx + 1, ly - 1, 1, 1);
       });
     } else if (bgId === 'bamboo') {
-      // 竹林清风：雾白淡青天空 + 远山薄雾 + 错落翠绿竹竿与竹叶 + 青石小径
-      ctx.fillStyle = '#e6f5ee'; ctx.fillRect(0, 0, W, 24);
-      ctx.fillStyle = '#f2faf5'; ctx.fillRect(0, 24, W, 22);
-      ctx.fillStyle = '#b4d9c6';
-      for (let x = 0; x < W; x++) {
-        const mh = Math.round(6 + Math.sin(x * 0.06) * 4);
-        ctx.fillRect(x, 42 - mh, 1, mh + 4);
+      // 非对称江南竹溪构图：左密青竹远雾 + 右侧蜿蜒浅碧小溪与青苔溪石
+      ctx.fillStyle = '#e4f4ec'; ctx.fillRect(0, 0, W, 22);
+      ctx.fillStyle = '#f3fbf7'; ctx.fillRect(0, 22, W, 22);
+      // 远景淡墨雾山（偏右低缓）
+      ctx.fillStyle = '#c2e0d2';
+      for (let x = 28; x < W; x++) {
+        const mh = Math.round(5 + Math.sin((x - 28) * 0.07) * 4);
+        ctx.fillRect(x, 43 - mh, 1, mh + 3);
       }
-      // 翠绿竹竿与竹节
-      [8, 18, 76, 86].forEach((bx, i) => {
-        ctx.fillStyle = i % 2 === 0 ? '#4e9e68' : '#66b87e';
-        ctx.fillRect(bx, 0, 3, 48);
-        ctx.fillStyle = '#d4f0dc';
-        for (let y = 8; y < 46; y += 10) ctx.fillRect(bx, y, 3, 1);
+      // 左侧层次竹林（远中近三层，错落不对称）
+      ctx.fillStyle = '#9ecfb0'; ctx.fillRect(30, 0, 2, 46); ctx.fillRect(40, 4, 2, 42);
+      [4, 12, 22].forEach((bx, i) => {
+        ctx.fillStyle = i === 1 ? '#3e8c58' : '#58ad72';
+        ctx.fillRect(bx, 0, i === 1 ? 4 : 3, 50);
+        ctx.fillStyle = '#d6f2df';
+        for (let y = 7 + i * 2; y < 48; y += 11) ctx.fillRect(bx, y, i === 1 ? 4 : 3, 1);
       });
-      // 竹叶剪影
-      [[4,6],[14,14],[22,8],[68,10],[78,16],[88,6]].forEach(([lx,ly]) => {
-        ctx.fillStyle = '#3b8254'; ctx.fillRect(lx, ly, 7, 2); ctx.fillRect(lx + 2, ly + 2, 5, 2);
+      // 斜伸向右的翠绿竹枝叶
+      [[15,8,14],[24,14,16],[10,20,12],[26,6,12],[34,19,10]].forEach(([lx,ly,lw]) => {
+        ctx.fillStyle = '#3b8254'; ctx.fillRect(lx, ly, lw, 2);
+        ctx.fillStyle = '#5eb878'; ctx.fillRect(lx + 2, ly + 2, lw - 3, 2);
       });
-      ctx.fillStyle = '#a8d9a0'; ctx.fillRect(0, 45, W, 27);
-      ctx.fillStyle = '#d8e3dc'; ctx.fillRect(28, 48, 40, 24);
-      ctx.fillStyle = '#c2cfc7'; ctx.fillRect(28, 56, 40, 2); ctx.fillRect(28, 65, 40, 2);
+      // 青草坡地 + 右侧蜿蜒浅碧溪流
+      ctx.fillStyle = '#a8d9a0'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#92c98a'; ctx.fillRect(0, 58, W, 14);
+      for (let y = 44; y < H; y++) {
+        const sx = Math.round(56 + Math.sin((y - 44) * 0.14) * 7 - (y - 44) * 0.35);
+        const sw = Math.round(18 + (y - 44) * 0.45);
+        ctx.fillStyle = '#98dce0'; ctx.fillRect(sx, y, sw, 1);
+        if (y % 5 === 0) { ctx.fillStyle = '#e0fafc'; ctx.fillRect(sx + 4, y, 6, 1); }
+      }
+      // 溪边青苔圆石与水面竹叶
+      ctx.fillStyle = '#8b9994'; ctx.fillRect(76, 46, 12, 7); ctx.fillRect(78, 44, 8, 2);
+      ctx.fillStyle = '#6db878'; ctx.fillRect(78, 44, 6, 2);
+      ctx.fillStyle = '#4ba366'; ctx.fillRect(62, 54, 4, 2); ctx.fillRect(54, 63, 4, 2);
     } else if (bgId === 'beach_day') {
       // 海岛晴湾：澄澈晴空 + 碧蓝果冻海 + 椰子树 + 金色沙滩
       ctx.fillStyle = '#7ec8ff'; ctx.fillRect(0, 0, W, 16);
@@ -28885,24 +28955,32 @@
       // 星光铁轨与夜色草地
       ctx.fillStyle = '#243054'; ctx.fillRect(0, 44, W, 28);
       ctx.fillStyle = '#9ec4f0'; ctx.fillRect(0, 43, W, 1); ctx.fillRect(0, 46, W, 1);
-    } else if (bgId === 'bakery') {
-      // 甜品烘焙屋：鹅黄格纹墙 + 玻璃甜品柜 + 草莓蛋糕与马卡龙 + 暖木柜台
-      ctx.fillStyle = '#fff8e6'; ctx.fillRect(0, 0, W, 44);
-      ctx.fillStyle = '#fae8c8';
-      for (let x = 0; x < W; x += 10) ctx.fillRect(x, 0, 2, 44);
-      for (let y = 0; y < 44; y += 10) ctx.fillRect(0, y, W, 2);
-      // 甜品展示架
-      ctx.fillStyle = '#c48a5c'; ctx.fillRect(14, 8, 68, 28);
-      ctx.fillStyle = '#eef8ff'; ctx.fillRect(17, 11, 62, 22);
-      ctx.fillStyle = '#c48a5c'; ctx.fillRect(17, 21, 62, 2);
-      // 架上小蛋糕与马卡龙
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(22, 15, 8, 6); ctx.fillStyle = '#ff5c7c'; ctx.fillRect(25, 13, 2, 2);
-      ctx.fillStyle = '#ffb8d0'; ctx.fillRect(38, 16, 6, 5); ctx.fillStyle = '#9ee6c8'; ctx.fillRect(48, 16, 6, 5);
-      ctx.fillStyle = '#ffe078'; ctx.fillRect(62, 15, 9, 6);
-      ctx.fillStyle = '#f2b880'; ctx.fillRect(26, 26, 10, 6); ctx.fillStyle = '#ff9eb5'; ctx.fillRect(54, 26, 10, 6);
-      // 暖木吧台与地板
-      ctx.fillStyle = '#d9a472'; ctx.fillRect(0, 44, W, 28);
-      ctx.fillStyle = '#b87f4c'; ctx.fillRect(0, 44, W, 3);
+    } else if (bgId === 'camping') {
+      // 星空露营：静谧暮蓝星空 + 远方松林山影 + 暖黄发光小帐篷 + 跳动小篝火
+      const cSky = ['#182040', '#202b54', '#2a3869', '#35477d'];
+      cSky.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 10, W, 11); });
+      [[10,6],[24,11],[42,5],[58,9],[78,7],[88,14],[34,17],[68,16]].forEach(([sx,sy]) => {
+        ctx.fillStyle = '#fff8cf'; ctx.fillRect(sx, sy, 1, 1);
+      });
+      // 远景松林剪影
+      ctx.fillStyle = '#1b2c40';
+      for (let x = 0; x < W; x += 9) {
+        const th = 10 + (x % 18 === 0 ? 4 : 0);
+        ctx.fillRect(x, 42 - th, 7, th + 4); ctx.fillRect(x + 2, 39 - th, 3, 3);
+      }
+      // 夜色草地
+      ctx.fillStyle = '#26424a'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#1e363d'; ctx.fillRect(0, 58, W, 14);
+      // 左侧暖黄小帐篷
+      ctx.fillStyle = '#e8b058';
+      for (let i = 0; i < 14; i++) ctx.fillRect(10 + i, 44 - i, 28 - i * 2, 1);
+      ctx.fillStyle = '#ffe58f';
+      for (let i = 0; i < 10; i++) ctx.fillRect(18 + Math.floor(i * 0.5), 44 - i, 12 - i, 1);
+      // 右侧小篝火与暖光晕
+      ctx.fillStyle = 'rgba(255,180,90,0.28)'; ctx.fillRect(66, 38, 16, 14);
+      ctx.fillStyle = '#7a4b2a'; ctx.fillRect(70, 47, 8, 2);
+      ctx.fillStyle = '#ff7b3b'; ctx.fillRect(71, 43, 6, 4); ctx.fillRect(72, 41, 4, 2);
+      ctx.fillStyle = '#ffe26a'; ctx.fillRect(72, 44, 4, 3); ctx.fillRect(73, 42, 2, 2);
     } else if (bgId === 'rainbow') {
       // 雨后彩虹：清透蓝天 + 柔美七彩拱形彩虹 + 白云 + 挂露草坡
       ctx.fillStyle = '#a8dcff'; ctx.fillRect(0, 0, W, 22);
@@ -29213,7 +29291,7 @@
       paperCol: savedPhoto?.paperCol || '#ffffff',
       borderCol: savedPhoto?.borderCol || '#d6ccc8',
       dots: savedPhoto?.dots !== false,
-      radius: typeof savedPhoto?.radius === 'number' ? savedPhoto.radius : 10,
+      radius: typeof savedPhoto?.radius === 'number' ? savedPhoto.radius : (typeof config.photoRadius === 'number' ? config.photoRadius : 0),
     };
     let activeDogIdx = 0;
 
@@ -29441,7 +29519,7 @@
       winEl.querySelector('#st-vph-flip')?.addEventListener('click', () => { const d0 = st.dogs[activeDogIdx]; if (d0) { d0.flip = !d0.flip; redrawCv(); } });
       paperInp?.addEventListener('input', (e) => { st.paperCol = e.target.value; syncCardStyle(); });
       bdInp?.addEventListener('input', (e) => { st.borderCol = e.target.value; syncCardStyle(); });
-      winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; syncCardStyle(); });
+      winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; config.photoRadius = st.radius; scheduleSaveConfig(); syncCardStyle(); });
       dotsBtn?.addEventListener('click', () => { st.dots = !st.dots; syncCardStyle(); });
       heartBtn?.addEventListener('click', () => { st.showHeart = !st.showHeart; syncCardStyle(); redrawCv(); });
 
@@ -29959,8 +30037,8 @@
     const now = Date.now();
     const maxX = Math.max(8, win.innerWidth - 80);
 
-    // 全局调度一对双狗互动（自家↔客人 或 客人A↔客人B），确保绝不冲突
-    if (config.puppyEnabled && now >= nextDualSocialAt && now >= dualSocialBusyUntil) {
+    // 全局调度一对双狗互动：频率跟随说话频率设置（安静模式不打扰，正常模式约 85~145 秒一次）
+    if (config.puppyEnabled && (config.puppyTalkFreq || 'normal') !== 'quiet' && now >= nextDualSocialAt && now >= dualSocialBusyUntil) {
       const idleGuests = list.filter(g => {
         if (g.onDesktop === false) return false;
         const rt = guestRuntimes.get(g.id);
@@ -29973,12 +30051,13 @@
         const pickGuestPartner = otherGuests.length && Math.random() < 0.45 ? pick(otherGuests) : null;
         const targetY = pickGuestPartner ? (guestRuntimes.get(pickGuestPartner.id)?.y || defaultPupY()) : (pup.y || defaultPupY());
         const sameRow = Math.abs((rtA.y || defaultPupY()) - targetY) < 68;
-        nextDualSocialAt = now + randInt(sameRow ? 18000 : 30000, sameRow ? 30000 : 48000);
-        if (sameRow || Math.random() < 0.6) {
+        const baseGap = getTalkFreqGapMs();
+        nextDualSocialAt = now + Math.max(35000, Math.round(baseGap * (sameRow ? 0.95 : 1.25)));
+        if (sameRow || Math.random() < 0.5) {
           triggerPairSocial(gA.id, false, pickGuestPartner ? pickGuestPartner.id : null);
         }
       } else {
-        nextDualSocialAt = now + 10000;
+        nextDualSocialAt = now + 20000;
       }
     }
 
@@ -30034,16 +30113,22 @@
           drawSingleGuestScene(guest, rt);
           return;
         }
+        // 睡觉/趴下/坐着/站立/走路概率与自家小狗保持一致，温和自然不乱跑
         const r = Math.random();
-        if (!guest.pinned && r < 0.38) {
+        if (!guest.pinned && r < 0.18) {
           if (Math.random() < 0.45) rt.dir *= -1;
-          rt.state = 'walk'; rt.timer = randInt(90, 170);
-        } else if (r < 0.72) {
-          rt.state = 'sit'; rt.timer = randInt(120, 220);
-        } else if (r < 0.84) {
-          rt.state = 'sleep'; rt.timer = randInt(150, 260);
+          rt.state = 'walk'; rt.timer = randInt(140, 260);
+        } else if (r < 0.48) {
+          rt.state = 'idle'; rt.timer = randInt(190, 340);
+        } else if (r < 0.78) {
+          rt.state = 'sit'; rt.timer = randInt(200, 360);
+        } else if (r < 0.86 && now >= (rt.nextLieAt || 0)) {
+          rt.nextLieAt = now + randInt(95000, 145000);
+          rt.state = 'lie'; rt.timer = randInt(900, 1500);
+        } else if (r < 0.94) {
+          rt.state = Math.random() < 0.5 ? 'spin' : 'bounce'; rt.timer = randInt(85, 115);
         } else {
-          rt.state = 'idle'; rt.timer = randInt(110, 190);
+          rt.state = 'sleep'; rt.timer = randInt(1400, 2200);
         }
       }
       drawSingleGuestScene(guest, rt);
@@ -30419,7 +30504,7 @@
         slice.forEach(ph => {
           const pBg = ph.paperCol || '#ffffff';
           const pBd = ph.borderCol || '#d6ccc8';
-          const pRad = Math.min(10, Math.round((typeof ph.radius === 'number' ? ph.radius : 10) * 0.6));
+          const pRad = Math.min(10, Math.round((typeof ph.radius === 'number' ? ph.radius : 0) * 0.6));
           const card = doc.createElement('div');
           card.style.cssText = `position:relative;background:${pBg};border:1.5px solid ${pBd};border-radius:${pRad}px;padding:3px;cursor:pointer;text-align:center;`;
           const delX = doc.createElement('button');
