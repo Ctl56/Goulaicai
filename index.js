@@ -4740,14 +4740,17 @@
       font-size: 11px;
       color: var(--tb-sub);
       line-height: 1.55;
-      margin-bottom: 12px;
+      margin: 0 0 12px 0;
+      padding: 0;
       max-height: 280px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding-right: 4px;
       white-space: pre-line;
       word-break: break-word;
+      box-sizing: border-box;
     }
+    .st-tb-confirm-desc::-webkit-scrollbar { width: 3px; }
+    .st-tb-confirm-desc::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.32); border-radius: 3px; }
     .st-tb-confirm-actions {
       display: flex;
       justify-content: flex-end;
@@ -13001,7 +13004,7 @@
       const nextVis = (vis.slice(0, pos) + cleanNew + vis.slice(pos + matchLen)).replace(/\n{3,}/g, '\n\n').trim();
       const nextRaw = reassembleVisibleAndHidden(nextVis, parsed);
       await saveMessageRawText(idx, nextRaw);
-      cmNotify('该段已局部重roll完成！（点“改本层正文 -> 撤销还原”可撤回）');
+      cmNotify('该段已局部重roll完成！（点“编辑本段 -> 撤销还原”可撤回）');
       return true;
     } catch (err) {
       cmNotify('局部重roll失败：' + (err?.message || '请稍后重试'));
@@ -13095,8 +13098,8 @@
         e.stopImmediatePropagation();
         e.stopPropagation();
         openGuardConfirm(
-          '确认右滑生成新回复？',
-          '当前已是最后一条分支，继续右滑将调用 API 生成新内容。',
+          '确认生成新回复？',
+          '当前已是最后一条分支，继续滑动将调用 API 生成新内容。',
           () => swipeRightBtn.click()
         );
       }
@@ -13115,22 +13118,40 @@
     e.preventDefault();
     e.stopImmediatePropagation();
     openGuardConfirm(
-      '确认右滑生成新回复？',
-      '检测到快捷键右滑，当前已是最后一条分支，确认后才调用 API。',
+      '确认生成新回复？',
+      '检测到快捷键滑动，当前已是最后一条分支，确认后才调用 API。',
       () => swipeBtn.click()
     );
   };
 
+  const getBottomSwipeMes = () => doc.querySelector('#chat .mes.last_mes') || doc.querySelector('#chat .mes:last-of-type');
+
   const onGuardTouchStartCapture = (e) => {
-    if (!config.swipeGuard) return;
+    if (!config.swipeGuard || Date.now() < guardBypassUntil) return;
     const t = e.touches?.[0];
     if (!t) return;
-    const lastMes = e.target?.closest?.('.mes');
-    if (!lastMes || !willSwipeRightGenerate(lastMes)) {
+    if (!e.target?.closest?.('#chat')) {
       guardTouchStart = null;
       return;
     }
-    guardTouchStart = { x: t.clientX, y: t.clientY, mes: lastMes };
+    const bottomMes = getBottomSwipeMes();
+    if (!bottomMes || !willSwipeRightGenerate(bottomMes)) {
+      guardTouchStart = null;
+      return;
+    }
+    guardTouchStart = { x: t.clientX, y: t.clientY, mes: bottomMes };
+  };
+
+  const onGuardTouchMoveCapture = (e) => {
+    if (!config.swipeGuard || !guardTouchStart || Date.now() < guardBypassUntil) return;
+    const t = e.touches?.[0];
+    if (!t) return;
+    const dx = t.clientX - guardTouchStart.x;
+    const dy = t.clientY - guardTouchStart.y;
+    if (dx < -28 && Math.abs(dx) > Math.abs(dy) * 1.25) {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+    }
   };
 
   const onGuardTouchEndCapture = (e) => {
@@ -13145,16 +13166,17 @@
     if (!t) return;
     const dx = t.clientX - start.x;
     const dy = t.clientY - start.y;
-    // 手指向左滑动即向右翻页生成新回复
-    if (dx < -45 && Math.abs(dx) > Math.abs(dy) * 1.25 && willSwipeRightGenerate(start.mes)) {
-      const swipeBtn = start.mes.querySelector('.swipe_right');
-      guardTouchSuppressUntil = Date.now() + 450;
+    // 在聊天区任意楼层向左滑动（含上方楼层），都会触发底部楼层翻页，必须统一拦截确认！
+    const bottomMes = getBottomSwipeMes() || start.mes;
+    if (dx < -45 && Math.abs(dx) > Math.abs(dy) * 1.25 && willSwipeRightGenerate(bottomMes)) {
+      const swipeBtn = bottomMes.querySelector('.swipe_right');
+      guardTouchSuppressUntil = Date.now() + 550;
       e.preventDefault();
       e.stopImmediatePropagation();
       e.stopPropagation();
       openGuardConfirm(
-        '确认滑动生成新回复？',
-        '当前已是最后一条分支，点击确认后才调用 API 生成新内容。',
+        '确认生成新回复？',
+        '检测到在聊天区滑动，当前已是最后一条分支，点击确认后才调用 API 生成新内容。',
         () => { if (swipeBtn) swipeBtn.click(); }
       );
     }
@@ -13172,6 +13194,7 @@
   doc.addEventListener('click', onGuardClickCapture, true);
   doc.addEventListener('keydown', onGuardKeyDownCapture, true);
   doc.addEventListener('touchstart', onGuardTouchStartCapture, { capture: true, passive: true });
+  doc.addEventListener('touchmove', onGuardTouchMoveCapture, { capture: true, passive: true });
   doc.addEventListener('touchend', onGuardTouchEndCapture, true);
   doc.addEventListener('pointerup', onGuardPointerSuppressCapture, true);
   doc.addEventListener('mouseup', onGuardPointerSuppressCapture, true);
@@ -51519,7 +51542,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const nextVis = (parsed.visibleText.slice(0, pos) + parsed.visibleText.slice(pos + txt.length)).replace(/\n{3,}/g, '\n\n').trim();
       const nextRaw = reassembleVisibleAndHidden(nextVis, parsed);
       await saveMessageRawText(mid, nextRaw);
-      cmNotify('已删除该段（点“改本层正文 -> 撤销还原”可撤回）');
+      cmNotify('已删除该段（点“编辑本段 -> 撤销还原”可撤回）');
     });
   }
   if (seActReroll) {
@@ -51538,10 +51561,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       let hitIdx = paras.findIndex(p => p.includes(txt) || norm(p) === targetNorm || (targetNorm.length >= 8 && norm(p).includes(targetNorm.slice(0, 20))));
       const curNum = hitIdx >= 0 ? (hitIdx + 1) : 1;
       const totalNum = Math.max(curNum, paras.length || 1);
-      const snip = txt.length > 90 ? txt.slice(0, 90) + '…' : txt;
       openGuardConfirm(
         '确认roll本段？',
-        `当前楼层：第 #${mid} 层\n当前段落：第 ${curNum}/${totalNum} 段\n\n段落内容：${snip}`,
+        `当前楼层：第 #${mid} 层\n当前段落：第 ${curNum}/${totalNum} 段\n\n段落内容：\n${txt}`,
         () => { rerollSpecificParagraph(mid, txt); },
         '确认roll本段'
       );
