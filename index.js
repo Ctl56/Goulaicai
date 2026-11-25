@@ -2887,6 +2887,7 @@
     puppyCoopAdv: null,
     puppyCoopAdvs: {},
     puppyCoopAdvCooldowns: {},
+    puppyPendingCloudGifts: [],
     keepAliveMode: 'strong', // 'strong' | 'light'
     fontSize: '',
     lineHeight: '',
@@ -29573,10 +29574,8 @@
       });
       modal.querySelector('#st-vg-ok')?.addEventListener('click', confirmAndAck);
       modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          if (pendingCloudGiftAckCb) confirmAndAck();
-          else hideOnly();
-        }
+        e.stopPropagation();
+        if (e.target === modal && !pendingCloudGiftAckCb) hideOnly();
       });
     }
     const thankWrap = modal.querySelector('#st-vg-thank-wrap');
@@ -29668,6 +29667,13 @@
       ...(typeof GACHA_BUBBLES !== 'undefined' ? GACHA_BUBBLES.map(x => x.id) : []),
       ...(typeof SPECIAL_EVENT_BUBBLES !== 'undefined' ? SPECIAL_EVENT_BUBBLES.map(x => x.id) : []),
     ]);
+    const avatarFrames = uniq([
+      'af_custom', 'af_none',
+      ...(typeof SHOP_PUP_AVATAR_FRAMES !== 'undefined' ? SHOP_PUP_AVATAR_FRAMES.map(x => x.id) : []),
+      ...(typeof SECRET_ADV_AVATAR_FRAMES !== 'undefined' ? SECRET_ADV_AVATAR_FRAMES.map(x => x.id) : []),
+      ...(typeof GACHA_AVATAR_FRAMES !== 'undefined' ? GACHA_AVATAR_FRAMES.map(x => x.id) : []),
+      ...(typeof SPECIAL_EVENT_AVATAR_FRAMES !== 'undefined' ? SPECIAL_EVENT_AVATAR_FRAMES.map(x => x.id) : []),
+    ]);
     const gifts = [
       ...SHOP_PUP_GOODS.map(x => ({ kind: x.cat === 'gear' ? 'gear' : 'snack', id: x.id })),
       ...GACHA_SNACKS.map(x => ({ kind: 'snack', id: x.id })),
@@ -29676,7 +29682,7 @@
       ...PUP_DARK_DISHES.map(x => ({ kind: 'dish', id: x.id })),
       { kind: 'gear', id: 'gacha_ticket' },
     ];
-    return { outfits, accs, comps, trails, bubbles, gifts };
+    return { outfits, accs, comps, trails, bubbles, avatarFrames, gifts };
   };
 
   const hexToRgbBytes = (hex, fallback) => {
@@ -29745,7 +29751,7 @@
     const cloudBytes = enc.encode(cloudIdStr);
     const buf = [];
     const pushU16 = (v) => { buf.push((v >> 8) & 255, v & 255); };
-    buf.push(7, flags);
+    buf.push(8, flags);
     buf.push(...hexToRgbBytes(config.puppyFur, '#fffdf7'));
     buf.push(...hexToRgbBytes(config.puppyEar, '#e2ae74'));
     buf.push(...hexToRgbBytes(config.puppyCollar, '#d66565'));
@@ -29768,6 +29774,8 @@
     const gStage = Math.max(0, Math.min(3, Math.floor(Number(gSt.stage) || 0)));
     const gFlIdx = gSt.flowerId ? PUP_FLOWERS.findIndex(f => f.id === gSt.flowerId) : -1;
     buf.push(gStage, gFlIdx >= 0 && gFlIdx < 255 ? gFlIdx : 255);
+    const afIdx = Math.max(0, (cat.avatarFrames || []).indexOf(config.puppyAvatarFrame || 'af_custom'));
+    pushU16(afIdx);
 
     return 'GLC:' + toB64Url(new Uint8Array(buf));
   };
@@ -29833,7 +29841,7 @@
       }
       const u8 = fromB64Any(body);
       const ver = u8[0];
-      if (u8.length < 25 || (ver < 2 || ver > 7)) return null;
+      if (u8.length < 25 || (ver < 2 || ver > 8)) return null;
       const cat = getVisitCatalogs();
       const persIds = PUP_PERSONALITIES.map(p => p.id);
       let pos = 1;
@@ -29905,6 +29913,12 @@
         garden = { stage: gStage, flowerId: flMeta ? flMeta.id : '', flowerName: flMeta ? flMeta.name : '' };
       }
 
+      let avatarFrame = 'af_custom';
+      if (ver >= 8 && pos + 1 < u8.length) {
+        const afIdx = readU16();
+        avatarFrame = (cat.avatarFrames && cat.avatarFrames[afIdx]) ? cat.avatarFrames[afIdx] : 'af_custom';
+      }
+
       return {
         v: ver,
         name,
@@ -29912,6 +29926,7 @@
         cloudId,
         garden,
         look: {
+          avatarFrame,
           fur, ear, collar, outline, showCollar,
           outfit: cat.outfits[outIdx] || 'none',
           accs,
@@ -32513,6 +32528,7 @@
     oe: Boolean(config.puppyOnesieShowEars),
     gs: Math.floor(Number(config.puppyGarden?.stage) || 0),
     gf: String(config.puppyGarden?.flowerId || ''),
+    af: String(config.puppyAvatarFrame || 'af_custom'),
   });
 
   const pushMyCloudPupNow = async (force = false) => {
@@ -32876,57 +32892,14 @@
             matchGuest.pendingGifts.push(g);
             const lines = GUEST_GIFT_WAIT_LINES[matchGuest.pers] || GUEST_GIFT_WAIT_LINES.sleepyhead;
             showGuestBubbleById(matchGuest.id, pick(lines), 86400000);
-          } else if (!fallbackGift) {
-            fallbackGift = g;
+          } else {
+            if (!Array.isArray(config.puppyPendingCloudGifts)) config.puppyPendingCloudGifts = [];
+            config.puppyPendingCloudGifts.push(g);
           }
         }
-        if (changed) saveConfig();
-
-        if (fallbackGift) {
-          const g = fallbackGift;
-          const received = grantGiftItems(g.gifts || []);
-          const rp = Math.max(0, Math.floor(Number(g.redPacket) || 0));
-          if (rp > 0) {
-            config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
-            config.puppyStats = config.puppyStats || {};
-            config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
-            updatePupStatBars();
-          }
+        if (changed) {
           saveConfig();
-          updatePupStatBars();
-          if (typeof renderPupShop === 'function') renderPupShop();
-          if (typeof renderGarden === 'function') renderGarden();
-          if (typeof renderKitchen === 'function') renderKitchen();
-          if (typeof syncPuppyBagUI === 'function') syncPuppyBagUI();
-          const summary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received.map(r => r.label)].join('、');
-          openVisitGiftModal(
-            g.fromName || '朋友',
-            g.msg || '给你送来了一份小心意~',
-            received,
-            rp,
-            false,
-            {
-              title: `收到「${g.fromName || '朋友'}」送来的礼物！`,
-              okLabel: '收下并表达感谢',
-              onAck: async (thankMsg) => {
-                try {
-                  await fetch(`${baseUrl}/ack`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      myId,
-                      myName: getPupName(),
-                      fromId: g.fromId,
-                      gid: g.gid,
-                      thankMsg: thankMsg || '已经开心收下你的礼物啦~',
-                      summary,
-                    }),
-                  });
-                  openPixelPupNoticeModal('已收下礼物', `已向「${g.fromName || '朋友'}」发送感谢提醒啦~`, '好哒');
-                } catch (_) {}
-              },
-            }
-          );
+          syncDesktopGiftBox();
         }
       }
     } catch (_) {
@@ -33022,7 +32995,7 @@
     }
 
     const closeCsg = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeCsg(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-csg-close')?.addEventListener('click', closeCsg);
     mask.querySelector('#st-csg-cancel')?.addEventListener('click', closeCsg);
     let csgSending = false;
@@ -33111,10 +33084,23 @@
   };
 
   const makeFriendAvatarCanvas = (look) => {
+    const wrap = doc.createElement('div');
+    wrap.className = 'st-px-avatar-wrap';
+    wrap.style.cssText = 'position:relative;width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:1px;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;';
+    const afId = look?.avatarFrame || 'af_custom';
+    if (afId && afId !== 'af_custom' && afId !== 'af_none') {
+      wrap.classList.add(afId.replace(/_/g, '-'));
+      const allAf = [...SHOP_PUP_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...GACHA_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES];
+      const afObj = allAf.find(a => a.id === afId);
+      if (afObj && afObj.dyn) wrap.classList.add('is-dyn');
+      if (afObj && Array.isArray(afObj.charms) && typeof makeAfCharm9 === 'function') {
+        afObj.charms.forEach(ch => { try { wrap.appendChild(makeAfCharm9(ch.key, ch.pos)); } catch (_) {} });
+      }
+    }
     const cv = doc.createElement('canvas');
     cv.width = 120;
     cv.height = 120;
-    cv.style.cssText = 'width:38px;height:38px;display:block;flex-shrink:0;border:1.5px solid var(--px-border,#bfa4ae);background:#fff;image-rendering:pixelated;';
+    cv.style.cssText = 'width:34px;height:34px;display:block;image-rendering:pixelated;';
     try {
       const ctx2 = cv.getContext('2d');
       ctx2.setTransform(5, 0, 0, 5, 0, 0);
@@ -33147,7 +33133,8 @@
         config.puppyAccOffsets = prevOffsets;
       }
     } catch (_) {}
-    return cv;
+    wrap.appendChild(cv);
+    return wrap;
   };
 
   const NOTE_WAIT_BUBBLES = {
@@ -33159,6 +33146,110 @@
     gamer: ['新支线消息！桌面像素留言板有未读纸条，点击立即查收！', '叮！留言板刷新了好友留言，快点开领剧情！'],
     sleepyhead: ['唔……桌面留言板上好像贴了新纸条，点一下就能看哦~', '有朋友给你留纸条啦，记得点开像素留言板看看呀……'],
     fashionista: ['桌面像素留言板收到了新纸条，优雅地点开读一读吧~', '有好友在留言板给你留了言，快去看看写了什么！'],
+  };
+
+  let deskGiftBoxEl = null;
+  let giftBoxBubbleActive = false;
+
+  const claimNextDeskCloudGift = () => {
+    if (!Array.isArray(config.puppyPendingCloudGifts) || !config.puppyPendingCloudGifts.length) return;
+    const g = config.puppyPendingCloudGifts.shift();
+    const baseUrl = getCloudBaseUrl();
+    const myId = ensureMyCloudId();
+    const received = grantGiftItems(g.gifts || []);
+    const rp = Math.max(0, Math.floor(Number(g.redPacket) || 0));
+    if (rp > 0) {
+      config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
+      config.puppyStats = config.puppyStats || {};
+      config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
+      updatePupStatBars();
+    }
+    saveConfig();
+    updatePupStatBars();
+    if (typeof renderPupShop === 'function') renderPupShop();
+    if (typeof renderGarden === 'function') renderGarden();
+    if (typeof renderKitchen === 'function') renderKitchen();
+    if (typeof syncPuppyBagUI === 'function') syncPuppyBagUI();
+    syncDesktopGiftBox();
+    const summary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received.map(r => r.label)].join('、');
+    openVisitGiftModal(
+      g.fromName || '好友',
+      g.msg || '给你送来了一份小心意~',
+      received,
+      rp,
+      false,
+      {
+        title: `收到「${g.fromName || '好友'}」送来的礼物！`,
+        okLabel: '收下并表达感谢',
+        onAck: async (thankMsg) => {
+          try {
+            await fetch(`${baseUrl}/ack`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                myId,
+                myName: getPupName(),
+                fromId: g.fromId,
+                gid: g.gid,
+                thankMsg: thankMsg || '已经开心收下你的礼物啦~',
+                summary,
+              }),
+            });
+            openPixelPupNoticeModal('已收下礼物', `已把感谢回执发给「${g.fromName || '好友'}」啦~`, '好哒');
+          } catch (_) {}
+        },
+      }
+    );
+  };
+
+  const syncDesktopGiftBox = () => {
+    const list = Array.isArray(config.puppyPendingCloudGifts) ? config.puppyPendingCloudGifts : [];
+    if (!list.length || !config.puppyEnabled) {
+      if (deskGiftBoxEl) deskGiftBoxEl.style.display = 'none';
+      if (giftBoxBubbleActive) {
+        giftBoxBubbleActive = false;
+        const pb = root.querySelector('#st-tb-puppy-bubble');
+        if (pb) pb.classList.remove('show');
+      }
+      return;
+    }
+    if (!deskGiftBoxEl) {
+      deskGiftBoxEl = doc.createElement('div');
+      deskGiftBoxEl.id = 'st-tb-desk-giftbox';
+      deskGiftBoxEl.style.cssText = 'position:fixed;right:18px;bottom:206px;width:54px;height:54px;z-index:9993;pointer-events:auto;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;';
+      const cv = doc.createElement('canvas');
+      cv.width = 48; cv.height = 48;
+      cv.style.cssText = 'width:48px;height:48px;display:block;image-rendering:pixelated;filter:drop-shadow(2px 3px 0 rgba(59,42,34,0.3));';
+      const c = cv.getContext('2d');
+      c.imageSmoothingEnabled = false;
+      // 手绘像素精致蝴蝶结礼物盒
+      c.fillStyle = '#9c3650'; c.fillRect(8, 16, 32, 24);
+      c.fillStyle = '#ff7aa2'; c.fillRect(10, 18, 28, 20);
+      c.fillStyle = '#9c3650'; c.fillRect(6, 12, 36, 8);
+      c.fillStyle = '#ff96b8'; c.fillRect(8, 14, 32, 4);
+      c.fillStyle = '#ffe066'; c.fillRect(21, 14, 6, 24); c.fillRect(10, 25, 28, 4);
+      c.fillStyle = '#f5b838'; c.fillRect(15, 7, 8, 6); c.fillRect(25, 7, 8, 6);
+      c.fillStyle = '#fff5b8'; c.fillRect(17, 9, 4, 2); c.fillRect(27, 9, 4, 2);
+      deskGiftBoxEl.appendChild(cv);
+      const badge = doc.createElement('span');
+      badge.id = 'st-tb-gb-badge';
+      badge.style.cssText = 'position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#e04854;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;box-sizing:border-box;';
+      deskGiftBoxEl.appendChild(badge);
+      deskGiftBoxEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        claimNextDeskCloudGift();
+      });
+      root.appendChild(deskGiftBoxEl);
+    }
+    const bEl = deskGiftBoxEl.querySelector('#st-tb-gb-badge');
+    if (bEl) bEl.textContent = String(list.length);
+    deskGiftBoxEl.style.display = 'flex';
+    if (!giftBoxBubbleActive) {
+      giftBoxBubbleActive = true;
+      const myPers = config.puppyPersonality || 'sleepyhead';
+      const lines = GUEST_GIFT_WAIT_LINES[myPers] || GUEST_GIFT_WAIT_LINES.sleepyhead;
+      showPuppyBubble(pick(lines), 86400000);
+    }
   };
 
   let deskNoteboardEl = null;
@@ -33674,13 +33765,19 @@
     syncCloudGuestLooks(true);
     pollCloudInbox();
     syncDesktopNoteboard();
+    syncDesktopGiftBox();
     if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
   }, 3500);
   setInterval(() => {
     if (doc.hidden) return;
     pollCloudInbox();
     if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
-  }, 8000);
+  }, 4000);
+  win.addEventListener('focus', () => {
+    if (typeof pollCloudInbox === 'function') pollCloudInbox();
+    if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
+    if (typeof syncDesktopNoteboard === 'function') syncDesktopNoteboard();
+  });
   setInterval(() => {
     if (doc.hidden) return;
     syncCloudGuestLooks(true);
@@ -35151,55 +35248,91 @@
           if (!locked) {
             card.addEventListener('click', () => {
               if (freshNewDualPhotos.delete(ph.id)) renderPupAdventure();
-              const shots = Array.isArray(rec.history) && rec.history.length ? rec.history : [];
-              let shotIdx = clamp(typeof rec.coverShotIdx === 'number' ? rec.coverShotIdx : 0, 0, Math.max(0, shots.length - 1));
+              const shots = Array.isArray(rec.history) && rec.history.length ? rec.history : [{ date: rec.date || '', friendName: '好友', variant: rec.variant || null }];
+              const getDualCoverIdx = () => clamp(typeof rec.coverShotIdx === 'number' ? rec.coverShotIdx : 0, 0, Math.max(0, shots.length - 1));
+              let shotIdx = getDualCoverIdx();
+              let metaBox = photoViewerEl.querySelector('#st-px-photo-meta-extra');
+              if (!metaBox) {
+                metaBox = doc.createElement('div');
+                metaBox.id = 'st-px-photo-meta-extra';
+                metaBox.style.cssText = 'margin-top:5px;font-size:9.5px;color:#6b5446;text-align:center;line-height:1.45;';
+                photoBigNoteEl.parentNode.insertBefore(metaBox, photoBigNoteEl.nextSibling);
+              }
               const renderDualShot = () => {
-                const cur = shots[shotIdx] || {};
+                const cur = shots[shotIdx] || shots[0];
+                const coverIdx = getDualCoverIdx();
+                const isCover = shotIdx === coverIdx;
                 if (photoBigCanvas.width !== 540 || photoBigCanvas.height !== 360) { photoBigCanvas.width = 540; photoBigCanvas.height = 360; }
                 drawDualAdvPhotoCanvas(photoBigCanvas, ph, false, rec, cur);
-                photoBigTitleEl.textContent = `${ph.title}${shots.length > 1 ? ` (${shotIdx + 1}/${shots.length})` : ''}`;
-                photoBigNoteEl.textContent = `${ph.note} · 搭档：${cur.friendName || '好友'} (${cur.date || rec.date || ''})`;
-                let strip = photoViewerEl.querySelector('#st-px-photo-strip');
-                if (strip) {
-                  strip.innerHTML = '';
-                  if (shots.length > 1) {
-                    strip.style.display = 'flex';
-                    shots.forEach((s, si) => {
-                      const th = doc.createElement('canvas');
-                      th.width = 54; th.height = 36;
-                      th.style.cssText = `width:42px;height:28px;border:2px solid ${si === shotIdx ? '#e06894' : '#bfa4ae'};cursor:pointer;flex-shrink:0;image-rendering:pixelated;`;
-                      drawDualAdvPhotoCanvas(th, ph, false, rec, s);
-                      th.addEventListener('click', () => { shotIdx = si; renderDualShot(); });
-                      strip.appendChild(th);
-                    });
-                  } else {
-                    strip.style.display = 'none';
+                const cntTxt = (rec.count || shots.length) > 1 ? ` · 共拍到 ${rec.count || shots.length} 次` : '';
+                photoBigTitleEl.textContent = `${ph.title} · 搭档：${cur.friendName || '好友'} (${cur.date || rec.date || ''}${cntTxt})`;
+                photoBigNoteEl.textContent = ph.note;
+                metaBox.innerHTML = `<div id="st-pv-shot-thumbs" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:5px;"></div>
+                  <div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;">
+                    <button type="button" id="st-pv-shot-prev" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;"${shotIdx <= 0 ? ' disabled' : ''}>较新</button>
+                    <span style="font-weight:700;">留念 ${shotIdx + 1}/${shots.length}</span>
+                    <button type="button" id="st-pv-shot-next" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;"${shotIdx >= shots.length - 1 ? ' disabled' : ''}>较早</button>
+                    <button type="button" id="st-pv-shot-cover" class="st-px-btn${isCover ? ' active' : ' care'}" style="height:20px;padding:0 6px;font-size:9px;"${isCover ? ' disabled' : ''}>${isCover ? '当前首图' : '设为首图'}</button>
+                    <button type="button" id="st-pv-shot-del" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;color:#a94442;">删除</button>
+                  </div>
+                  ${shots.length <= 1 ? '<div style="margin-top:4px;font-size:8.5px;color:#8c7366;">下次再拍到此景会自动留存不同站位动作与穿搭，点缩略图即可切换并自选首图~</div>' : ''}`;
+                const thumbsWrap = metaBox.querySelector('#st-pv-shot-thumbs');
+                shots.forEach((sh, idx) => {
+                  const tb = doc.createElement('button');
+                  tb.type = 'button';
+                  tb.style.cssText = `position:relative;padding:2px;background:#fff;border:2px solid ${idx === shotIdx ? '#c95b7a' : '#bfa4ae'};cursor:pointer;line-height:0;`;
+                  const tcv = doc.createElement('canvas');
+                  tcv.width = 108; tcv.height = 72;
+                  tcv.style.cssText = 'width:42px;height:28px;display:block;image-rendering:pixelated;';
+                  drawDualAdvPhotoCanvas(tcv, ph, false, rec, sh);
+                  tb.appendChild(tcv);
+                  if (idx === coverIdx) {
+                    const badge = doc.createElement('span');
+                    badge.textContent = '首';
+                    badge.style.cssText = 'position:absolute;left:1px;top:1px;background:#c95b7a;color:#fff;font-size:8px;line-height:11px;padding:0 2px;font-weight:700;';
+                    tb.appendChild(badge);
                   }
-                }
-                const pinBtn = photoViewerEl.querySelector('#st-px-photo-pin');
-                if (pinBtn) {
-                  pinBtn.style.display = shots.length > 1 ? '' : 'none';
-                  pinBtn.onclick = () => {
-                    rec.coverShotIdx = shotIdx;
-                    rec.pinnedCover = true;
-                    saveConfig();
-                    renderPupAdventure();
-                    openPixelPupNoticeModal('已设为首图', `已将第 ${shotIdx + 1} 张设为【${ph.title}】的封面首图~`, '好哒');
-                  };
-                }
-                const delBtn = photoViewerEl.querySelector('#st-px-photo-del');
-                if (delBtn) {
-                  delBtn.onclick = () => {
-                    openGuardConfirm('删除这张双人照片？', `确认删除【${ph.title}】的当前这张合照吗？`, () => {
-                      shots.splice(shotIdx, 1);
-                      if (!shots.length) delete config.puppyDualAlbum[ph.id];
-                      else { rec.history = shots; rec.count = shots.length; rec.coverShotIdx = 0; }
-                      saveConfig();
-                      photoViewerEl.classList.remove('open');
-                      renderPupAdventure();
-                    }, '确认删除', true);
-                  };
-                }
+                  tb.addEventListener('click', (ev) => { ev.stopPropagation(); shotIdx = idx; renderDualShot(); });
+                  thumbsWrap.appendChild(tb);
+                });
+                metaBox.querySelector('#st-pv-shot-prev')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx > 0) { shotIdx--; renderDualShot(); } });
+                metaBox.querySelector('#st-pv-shot-next')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx < shots.length - 1) { shotIdx++; renderDualShot(); } });
+                metaBox.querySelector('#st-pv-shot-cover')?.addEventListener('click', (ev) => {
+                  ev.stopPropagation();
+                  rec.coverShotIdx = shotIdx;
+                  rec.pinnedCover = true;
+                  rec.history = shots;
+                  saveConfig();
+                  renderDualShot();
+                  if (typeof renderPupAdventure === 'function') renderPupAdventure();
+                });
+                metaBox.querySelector('#st-pv-shot-del')?.addEventListener('click', (ev) => {
+                  ev.stopPropagation();
+                  const isLast = shots.length <= 1;
+                  openGuardConfirm(
+                    '删除这张双人照片？',
+                    isLast ? `这是「${ph.title}」的最后一张留念，删除后该场景将恢复未解锁状态，确定删除吗？` : `确定要删除「${ph.title}」的第 ${shotIdx + 1} 张留念合照吗？`,
+                    () => {
+                      if (isLast) {
+                        delete config.puppyDualAlbum[ph.id];
+                        saveConfig();
+                        photoViewerEl.classList.remove('open');
+                        renderPupAdventure();
+                      } else {
+                        shots.splice(shotIdx, 1);
+                        rec.history = shots;
+                        rec.count = shots.length;
+                        rec.coverShotIdx = clamp(shotIdx < coverIdx ? coverIdx - 1 : (shotIdx === coverIdx ? 0 : coverIdx), 0, shots.length - 1);
+                        shotIdx = clamp(shotIdx, 0, shots.length - 1);
+                        saveConfig();
+                        renderDualShot();
+                        renderPupAdventure();
+                      }
+                    },
+                    '确认删除',
+                    true
+                  );
+                });
               };
               renderDualShot();
               photoViewerEl.classList.add('open');
@@ -48873,7 +49006,7 @@
     const bagVis = Boolean(pupBagOpen);
     const gpVis = Boolean(guestPopEl && guestPopEl.style.display !== 'none');
     if (!bagVis && !gpVis) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-bond-mask, #st-tb-freq-mask')) return;
+    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask')) return;
     if (gachaModalEl && gachaModalEl.contains(e.target)) return;
     if (confirmMask && confirmMask.contains(e.target)) return;
     if (readerEl && readerEl.contains(e.target)) return;
