@@ -5892,6 +5892,21 @@
     #st-tb-pup-bag.custom-h .st-px-body {
       max-height: none;
     }
+    .st-px-in, .st-px-ta {
+      background: var(--px-card, #ffffff) !important;
+      color: var(--px-fg, #54444a) !important;
+      border: 2px solid var(--px-border, #bfa4ae) !important;
+      border-radius: 0 !important;
+      padding: 4px 7px !important;
+      font-family: inherit !important;
+      outline: none !important;
+      box-shadow: inset 1px 1px 0 rgba(59,42,34,0.08) !important;
+      box-sizing: border-box !important;
+    }
+    .st-px-in::placeholder, .st-px-ta::placeholder {
+      color: var(--px-fg, #54444a) !important;
+      opacity: 0.48 !important;
+    }
     .st-px-resize-br {
       position: absolute;
       right: 0;
@@ -32044,103 +32059,16 @@
     const guest = getGuestList().find(g => g.id === guestId);
     if (!guest) return;
     if (guestPopEl) guestPopEl.style.display = 'none';
-    let modal = root.querySelector('#st-tb-return-gift-modal');
-    if (!modal) {
-      modal = doc.createElement('div');
-      modal.id = 'st-tb-return-gift-modal';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10030;pointer-events:auto;';
-      root.appendChild(modal);
+    const rt = guestRuntimes.get(guestId);
+    if (rt) {
+      if (rt.bubbleTimer) clearTimeout(rt.bubbleTimer);
+      if (rt.el) rt.el.remove();
+      guestRuntimes.delete(guestId);
     }
-    const retPicked = {};
-    const renderRetModal = (genCode = '') => {
-      const giftables = getAllGiftableItems();
-      const totalP = Object.values(retPicked).reduce((a, b) => a + b, 0);
-      const curCoins = Math.max(0, Math.floor(config.puppyCoins || 0));
-      modal.innerHTML = `<div style="width:262px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;font-size:11px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-weight:700;">礼貌送走「${guest.name}」</span>
-          <button type="button" id="st-rg-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
-        </div>
-        ${genCode ? `
-          <div style="font-size:10.5px;margin-bottom:5px;color:#2f6626;font-weight:700;">回礼返程码已生成并复制！发回给朋友即可拆礼：</div>
-          <div style="display:flex;gap:4px;margin-bottom:8px;">
-            <input type="text" id="st-rg-out" readonly value="${genCode}" style="flex:1;min-width:0;height:24px;font-size:10px;border:1px solid var(--px-border,#bfa4ae);padding:2px 5px;background:#fff;" />
-            <button type="button" id="st-rg-copy" class="st-px-btn active" style="height:24px;padding:0 8px;font-size:10px;">复制</button>
-          </div>
-          <button type="button" id="st-rg-done" class="st-px-btn care" style="width:100%;">挥手送客</button>
-        ` : `
-          <div style="font-size:10px;color:#6b5446;margin-bottom:5px;">可顺手塞点回礼或红包生成「返程码」发回给朋友，也可直接送客：</div>
-          <div style="font-size:10px;font-weight:700;margin-bottom:3px;">挑选回礼（已选 ${totalP}/5）：</div>
-          <div id="st-rg-grid" style="display:flex;flex-wrap:wrap;gap:3px;max-height:74px;overflow-y:auto;margin-bottom:6px;"></div>
-          <div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px;">
-            <span style="font-weight:700;">回礼红包(币):</span>
-            <input type="number" id="st-rg-rp" min="0" max="${Math.min(9999, curCoins)}" value="0" style="width:68px;height:22px;font-size:10px;border:1px solid var(--px-border,#bfa4ae);padding:1px 4px;" />
-            <span style="color:#7a6258;">余 ${curCoins}</span>
-          </div>
-          <input type="text" id="st-rg-msg" class="st-tb-input" placeholder="给朋友带句回信（可选）" style="width:100%;font-size:10px;padding:4px 6px;margin-bottom:7px;box-sizing:border-box;" />
-          <div style="display:flex;gap:5px;">
-            <button type="button" id="st-rg-direct" class="st-px-btn" style="flex:1;">直接送客</button>
-            <button type="button" id="st-rg-pack" class="st-px-btn care" style="flex:1;">生成返程码</button>
-          </div>
-        `}
-      </div>`;
-      modal.querySelector('#st-rg-x')?.addEventListener('click', () => { modal.style.display = 'none'; });
-      if (genCode) {
-        modal.querySelector('#st-rg-copy')?.addEventListener('click', () => { copyVisitCodeReliable(genCode); cmNotify('已复制返程码！'); });
-        modal.querySelector('#st-rg-done')?.addEventListener('click', () => { modal.style.display = 'none'; finishDismissGuest(guestId); });
-      } else {
-        const gEl = modal.querySelector('#st-rg-grid');
-        if (!giftables.length) {
-          gEl.innerHTML = '<span style="font-size:10px;color:#8c7366;">暂无可带物品</span>';
-        } else {
-          giftables.forEach(it => {
-            const key = `${it.kind}:${it.id}`;
-            const pk = retPicked[key] || 0;
-            const b = doc.createElement('button');
-            b.type = 'button';
-            b.className = `st-px-btn${pk > 0 ? ' active' : ''}`;
-            b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
-            b.textContent = `${it.name}(${it.qty})${pk > 0 ? `×${pk}` : ''}`;
-            b.addEventListener('click', () => {
-              const tot = Object.values(retPicked).reduce((a, c) => a + c, 0);
-              if (pk > 0 && (pk >= it.qty || tot >= 5)) delete retPicked[key];
-              else if (tot < 5 && pk < it.qty) retPicked[key] = pk + 1;
-              else delete retPicked[key];
-              renderRetModal('');
-            });
-            gEl.appendChild(b);
-          });
-        }
-        modal.querySelector('#st-rg-direct')?.addEventListener('click', () => { modal.style.display = 'none'; finishDismissGuest(guestId); });
-        modal.querySelector('#st-rg-pack')?.addEventListener('click', () => {
-          const rp = Math.max(0, Math.min(curCoins, Math.min(9999, Math.floor(Number(modal.querySelector('#st-rg-rp')?.value) || 0))));
-          const msgTxt = String(modal.querySelector('#st-rg-msg')?.value || '').trim();
-          const gifts = [];
-          const allMap = new Map(giftables.map(it => [`${it.kind}:${it.id}`, it]));
-          for (const [k, qty] of Object.entries(retPicked)) {
-            const it = allMap.get(k);
-            if (!it || qty <= 0) continue;
-            const take = Math.min(qty, it.qty);
-            gifts.push({ kind: it.kind, id: it.id, qty: take });
-            if (it.kind === 'gear' || it.kind === 'snack') config.puppyInventory[it.id] = Math.max(0, Math.floor(config.puppyInventory[it.id] || 0) - take);
-            else if (it.kind === 'flower') config.puppyGarden.unlocked[it.id] = Math.max(0, Math.floor(config.puppyGarden.unlocked[it.id] || 0) - take);
-            else if (it.kind === 'dish') config.puppyKitchen.dishes[it.id] = Math.max(0, Math.floor(config.puppyKitchen.dishes[it.id] || 0) - take);
-          }
-          if (rp > 0) {
-            config.puppyCoins = Math.max(0, curCoins - rp);
-            recordCoinsSpent(rp);
-            updatePupStatBars();
-          }
-          const rCode = encodeReturnGiftCard(msgTxt, gifts, rp);
-          saveConfig();
-          checkPupAchievements();
-          copyVisitCodeReliable(rCode);
-          renderRetModal(rCode);
-        });
-      }
-    };
-    renderRetModal('');
-    modal.style.display = 'flex';
+    config.puppyGuests = getGuestList().filter(g => g.id !== guestId);
+    saveConfig();
+    syncGuestDomNodes();
+    if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
   };
 
   const interactWithGuest = (guestId, kind) => {
@@ -32237,7 +32165,7 @@
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
     guestPopEl.style.display = 'flex';
-    guestPopEl.style.zIndex = '9990';
+    if (typeof bringFloatFront === 'function') bringFloatFront(guestPopEl);
     showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
 
     const head = guestPopEl.querySelector('#st-gp-drag-head');
@@ -32359,7 +32287,6 @@
   let modalStackZ = 9991;
   const bringModalFront = (maskEl) => {
     if (!maskEl) return;
-    if (guestPopEl && guestPopEl.style.display !== 'none') guestPopEl.style.zIndex = '9990';
     modalStackZ += 1;
     if (modalStackZ > 9995) modalStackZ = 9992;
     maskEl.style.zIndex = String(modalStackZ);
@@ -33023,7 +32950,7 @@
       <div style="font-size:11px;margin-bottom:5px;">选择要送出的物品（点击选中，再点取消）：</div>
       <div id="st-csg-list" style="display:flex;flex-wrap:wrap;gap:5px;max-height:145px;overflow-y:auto;padding:6px;border:1px solid ${pxBd};background:#fff;margin-bottom:8px;box-sizing:border-box;"></div>
       <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:6px;margin-bottom:9px;">
-        <input type="number" id="st-csg-rp" class="st-px-in" min="0" max="${Math.floor(config.puppyCoins || 0)}" placeholder="红包币(余${Math.floor(config.puppyCoins || 0)})" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
+        <input type="number" id="st-csg-rp" class="st-px-in" min="0" max="${Math.floor(config.puppyCoins || 0)}" placeholder="小狗币(余${Math.floor(config.puppyCoins || 0)})" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
         <input type="text" id="st-csg-msg" class="st-px-in" placeholder="附言（可选）" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
       </div>
       <div style="display:flex;justify-content:flex-end;gap:6px;">
@@ -33073,7 +33000,7 @@
       const rp = Math.max(0, Math.min(Math.floor(config.puppyCoins || 0), Math.floor(Number(mask.querySelector('#st-csg-rp')?.value || 0) || 0)));
       const msgTxt = String(mask.querySelector('#st-csg-msg')?.value || '').trim() || '给你带了份小礼物，快拆开看看~';
       const gifts = Array.from(selectedMap.values());
-      if (!gifts.length && rp <= 0) { openPixelPupNoticeModal('提示', '请先选至少一件礼物或填一点红包币~'); return; }
+      if (!gifts.length && rp <= 0) { openPixelPupNoticeModal('提示', '请先选至少一件礼物或填一点小狗币~'); return; }
       csgSending = true; if (sBtn) { sBtn.disabled = true; sBtn.textContent = '寄出中…'; }
 
       // 扣除物品与金币，若发送失败会回滚
@@ -33266,7 +33193,8 @@
   };
 
   let noteboardPage = 1;
-  const openCloudNoteboardModal = (targetPage = null) => {
+  const openCloudNoteboardModal = (targetPage = null, skipPoll = false) => {
+    if (!skipPoll && typeof pollCloudInbox === 'function') pollCloudInbox().then(() => { const m = root.querySelector('#st-tb-noteboard-mask'); if (m && m.style.display === 'flex') openCloudNoteboardModal(noteboardPage, true); }).catch(() => {});
     if (!Array.isArray(config.puppyNotes)) config.puppyNotes = [];
     let hadUnread = false;
     config.puppyNotes.forEach(n => { if (n && !n.read) { n.read = true; hadUnread = true; } });
@@ -33715,9 +33643,12 @@
   }, 3500);
   setInterval(() => {
     if (doc.hidden) return;
-    syncCloudGuestLooks(true);
     pollCloudInbox();
-  }, 45000);
+  }, 8000);
+  setInterval(() => {
+    if (doc.hidden) return;
+    syncCloudGuestLooks(true);
+  }, 35000);
 
   const stepGuestPuppy = () => {
     const list = getGuestList();
@@ -48877,25 +48808,44 @@
   restoreGameView();
 
   const onOutsidePupBagClick = (e) => {
-    if (!pupBagOpen) return;
-    if (pupBagEl.contains(e.target) || puppyEl.contains(e.target)) return;
+    const bagVis = Boolean(pupBagOpen);
+    const gpVis = Boolean(guestPopEl && guestPopEl.style.display !== 'none');
+    if (!bagVis && !gpVis) return;
+    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-bond-mask, #st-tb-freq-mask')) return;
+    if (gachaModalEl && gachaModalEl.contains(e.target)) return;
+    if (confirmMask && confirmMask.contains(e.target)) return;
     if (readerEl && readerEl.contains(e.target)) return;
     const _rMini = doc.getElementById('st-tb-reader-mini-pill');
     if (_rMini && _rMini.contains(e.target)) return;
-    if (gachaModalEl && gachaModalEl.contains(e.target)) return;
-    if (confirmMask && confirmMask.contains(e.target)) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-bond-mask, #st-tb-freq-mask')) return;
-    togglePupBag(false);
-    if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
-    if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
+
+    const inBag = Boolean(bagVis && (pupBagEl.contains(e.target) || puppyEl.contains(e.target)));
+    const inGp = Boolean(gpVis && (guestPopEl.contains(e.target) || (e.target.closest && e.target.closest('.st-tb-guest-puppy'))));
+    if (inBag || inGp) return;
+
+    // 两个都在打开状态时，点击空白只关闭最上层那一个，保留底下的！
+    if (bagVis && gpVis) {
+      const zBag = Number(pupBagEl.style.zIndex || 0);
+      const zGp = Number(guestPopEl.style.zIndex || 0);
+      if (zGp >= zBag) {
+        guestPopEl.style.display = 'none';
+      } else {
+        togglePupBag(false);
+        if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
+        if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
+      }
+      return;
+    }
+    if (gpVis) {
+      guestPopEl.style.display = 'none';
+      return;
+    }
+    if (bagVis) {
+      togglePupBag(false);
+      if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
+      if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
+    }
   };
   doc.addEventListener('pointerdown', onOutsidePupBagClick);
-  doc.addEventListener('pointerdown', (e) => {
-    if (!guestPopEl || guestPopEl.style.display === 'none') return;
-    if (guestPopEl.contains(e.target)) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('.st-tb-guest-puppy, #st-tb-bond-mask, #st-tb-px-notice-mask, #st-tb-cloud-send-mask, #st-tb-writenote-mask, #st-tb-noteboard-mask, #st-tb-confirm-mask, #st-tb-visit-gift-modal, #st-tb-friends-mask, #st-tb-freq-mask, #st-tb-coop-cook-modal, #st-tb-return-gift-modal, #st-tb-visit-photo-win')) return;
-    guestPopEl.style.display = 'none';
-  });
 
   // ==================== UI 同步与事件 ====================
   const syncUI = () => {
@@ -57097,9 +57047,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         el.addEventListener('pointerdown', () => bringFloatFront(el), true);
       }
     }
-    const baseZ = Math.min(9984, 9995 - floatOrder.length + 1);
+    const baseZ = Math.min(9984, 9991 - floatOrder.length + 1);
     floatOrder.forEach((node, i) => {
-      if (node) node.style.zIndex = String(Math.min(9995, baseZ + i));
+      if (node) node.style.zIndex = String(Math.min(9991, baseZ + i));
     });
   };
   floatOrder.forEach(el => {
