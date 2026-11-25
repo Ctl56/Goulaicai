@@ -2855,6 +2855,9 @@
     swipeGuard: false,
     partialRerollLastPara: true,
     jumpToReplyTop: false,
+    puppyCloudUrl: 'https://goulaicai-sync.chanbaek99461.workers.dev',
+    puppyCloudId: '',
+    puppyCloudProcessedGids: [],
     keepAliveMode: 'strong', // 'strong' | 'light'
     fontSize: '',
     lineHeight: '',
@@ -2921,6 +2924,7 @@
   if (!Number.isFinite(Number(config.puppyMood))) config.puppyMood = 86;
 
   const saveConfig = () => {
+    if (typeof scheduleCloudPupPush === 'function') scheduleCloudPupPush();
     try {
       win.localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
     } catch (_) {}
@@ -28987,37 +28991,75 @@
     return received;
   };
 
-  const openVisitGiftModal = (guestName, guestMsg, receivedList, redPacket = 0, isReturnReport = false) => {
+  let pendingCloudGiftAckCb = null;
+  const openVisitGiftModal = (guestName, guestMsg, receivedList, redPacket = 0, isReturnReport = false, cloudAckOpts = null) => {
+    pendingCloudGiftAckCb = (cloudAckOpts && typeof cloudAckOpts.onAck === 'function') ? cloudAckOpts.onAck : null;
     let modal = root.querySelector('#st-tb-visit-gift-modal');
     if (!modal) {
       modal = doc.createElement('div');
       modal.id = 'st-tb-visit-gift-modal';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10028;pointer-events:auto;';
-      modal.innerHTML = `<div style="width:262px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:11px;color:var(--px-fg,#54444a);font-family:inherit;">
+      modal.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9994;pointer-events:auto;box-sizing:border-box;';
+      modal.innerHTML = `<div style="width:286px;max-width:calc(100vw - 24px);background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:12px 12px 11px;margin:0 auto;color:var(--px-fg,#54444a);font-family:inherit;box-sizing:border-box;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
           <span id="st-vg-title" style="font-size:12px;font-weight:700;"></span>
           <button type="button" id="st-vg-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
         </div>
-        <div id="st-vg-msg" style="font-size:10.5px;line-height:1.45;background:#ffffff;border:1.5px solid var(--px-border,#bfa4ae);padding:6px 7px;margin-bottom:7px;"></div>
+        <div id="st-vg-msg" style="font-size:10.5px;line-height:1.45;background:#ffffff;border:1.5px solid var(--px-border,#bfa4ae);padding:6px 7px;margin-bottom:7px;box-sizing:border-box;"></div>
         <div id="st-vg-gifts" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;"></div>
+        <div id="st-vg-thank-wrap" style="display:none;margin-bottom:8px;">
+          <input type="text" id="st-vg-thank-input" class="st-px-in" style="width:100%;box-sizing:border-box;font-size:10.5px;margin-bottom:5px;" placeholder="写一句感谢的话给对方（可选）" />
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            <button type="button" class="st-px-btn st-vg-qthank" style="height:20px;padding:0 6px;font-size:9.5px;">谢谢你超喜欢！</button>
+            <button type="button" class="st-px-btn st-vg-qthank" style="height:20px;padding:0 6px;font-size:9.5px;">收到啦超开心~</button>
+          </div>
+        </div>
         <button type="button" id="st-vg-ok" class="st-px-btn care" style="width:100%;">开心收下，欢迎来做客</button>
       </div>`;
       root.appendChild(modal);
-      const hide = () => { modal.style.display = 'none'; };
-      modal.querySelector('#st-vg-close')?.addEventListener('click', hide);
-      modal.querySelector('#st-vg-ok')?.addEventListener('click', hide);
-      modal.addEventListener('click', (e) => { if (e.target === modal) hide(); });
+      const hideOnly = () => { modal.style.display = 'none'; };
+      const confirmAndAck = () => {
+        const ackFn = pendingCloudGiftAckCb;
+        pendingCloudGiftAckCb = null;
+        const thankTxt = String(modal.querySelector('#st-vg-thank-input')?.value || '').trim();
+        modal.style.display = 'none';
+        if (typeof ackFn === 'function') ackFn(thankTxt);
+      };
+      modal.querySelectorAll('.st-vg-qthank').forEach(b => {
+        b.addEventListener('click', () => {
+          const inp = modal.querySelector('#st-vg-thank-input');
+          if (inp) inp.value = b.textContent || '';
+        });
+      });
+      modal.querySelector('#st-vg-close')?.addEventListener('click', () => {
+        if (pendingCloudGiftAckCb) confirmAndAck();
+        else hideOnly();
+      });
+      modal.querySelector('#st-vg-ok')?.addEventListener('click', confirmAndAck);
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          if (pendingCloudGiftAckCb) confirmAndAck();
+          else hideOnly();
+        }
+      });
     }
+    const thankWrap = modal.querySelector('#st-vg-thank-wrap');
+    const thankInp = modal.querySelector('#st-vg-thank-input');
+    if (thankWrap) thankWrap.style.display = pendingCloudGiftAckCb ? 'block' : 'none';
+    if (thankInp) thankInp.value = '';
     const tEl = modal.querySelector('#st-vg-title');
     const mEl = modal.querySelector('#st-vg-msg');
     const gEl = modal.querySelector('#st-vg-gifts');
     const okBtn = modal.querySelector('#st-vg-ok');
     if (tEl) {
-      tEl.textContent = isReturnReport
-        ? `从「${guestName}」家串门回来啦`
-        : ((receivedList.length || redPacket > 0) ? `${guestName} 带着礼物来串门啦` : `${guestName} 来桌面做客啦`);
+      if (cloudAckOpts && cloudAckOpts.title) {
+        tEl.textContent = cloudAckOpts.title;
+      } else {
+        tEl.textContent = isReturnReport
+          ? `从「${guestName}」家串门回来啦`
+          : ((receivedList.length || redPacket > 0) ? `${guestName} 带着礼物来串门啦` : `${guestName} 来桌面做客啦`);
+      }
     }
-    if (okBtn) okBtn.textContent = isReturnReport ? '开心收下回礼' : '开心收下，欢迎来做客';
+    if (okBtn) okBtn.textContent = (cloudAckOpts && cloudAckOpts.okLabel) ? cloudAckOpts.okLabel : (isReturnReport ? '开心收下回礼' : '开心收下，欢迎来做客');
     if (mEl) mEl.textContent = `「${guestMsg || (isReturnReport ? '去玩得超开心，带了点回礼给你~' : '来找你们玩啦~')}」`;
     if (gEl) {
       gEl.innerHTML = '';
@@ -29161,9 +29203,11 @@
       if (gi >= 0) giftEntries.push({ gi, qty: Math.max(1, Math.min(255, Math.floor(g.qty || 1))) });
     });
 
+    const cloudIdStr = (typeof ensureMyCloudId === 'function' ? ensureMyCloudId() : String(config.puppyCloudId || '')).slice(0, 40);
+    const cloudBytes = enc.encode(cloudIdStr);
     const buf = [];
     const pushU16 = (v) => { buf.push((v >> 8) & 255, v & 255); };
-    buf.push(5, flags);
+    buf.push(6, flags);
     buf.push(...hexToRgbBytes(config.puppyFur, '#fffdf7'));
     buf.push(...hexToRgbBytes(config.puppyEar, '#e2ae74'));
     buf.push(...hexToRgbBytes(config.puppyCollar, '#d66565'));
@@ -29181,6 +29225,7 @@
     buf.push(msgBytes.length, ...msgBytes);
     buf.push(giftEntries.length);
     giftEntries.forEach(ge => { pushU16(ge.gi); buf.push(ge.qty); });
+    buf.push(cloudBytes.length, ...cloudBytes);
 
     return 'GLC:' + toB64Url(new Uint8Array(buf));
   };
@@ -29246,7 +29291,7 @@
       }
       const u8 = fromB64Any(body);
       const ver = u8[0];
-      if (u8.length < 25 || (ver < 2 || ver > 5)) return null;
+      if (u8.length < 25 || (ver < 2 || ver > 6)) return null;
       const cat = getVisitCatalogs();
       const persIds = PUP_PERSONALITIES.map(p => p.id);
       let pos = 1;
@@ -29302,10 +29347,20 @@
         if (o2dx || o2dy) accOffsets[cat.accs[a2Idx]] = { dx: o2dx, dy: o2dy };
       }
 
+      let cloudId = '';
+      if (ver >= 6 && pos < u8.length) {
+        const cLen = u8[pos++] || 0;
+        if (cLen > 0 && pos + cLen <= u8.length) {
+          cloudId = dec.decode(u8.slice(pos, pos + cLen));
+          pos += cLen;
+        }
+      }
+
       return {
         v: ver,
         name,
         pers: persIds[pIdx] || 'sleepyhead',
+        cloudId,
         look: {
           fur, ear, collar, outline, showCollar,
           outfit: cat.outfits[outIdx] || 'none',
@@ -31627,8 +31682,9 @@
         <button type="button" id="st-gp-photo" class="st-px-btn active">拍合照</button>
         <button type="button" id="st-gp-name-tg" class="st-px-btn${hideName ? '' : ' active'}">${hideName ? '显示名字' : '隐藏名字'}</button>
       </div>
-      <div style="margin-bottom:4px;">
-        <button type="button" id="st-gp-update-look" class="st-px-btn" style="width:100%;">检测更新穿搭 / 气泡 / 足迹</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+        <button type="button" id="st-gp-update-look" class="st-px-btn">检查外观</button>
+        <button type="button" id="st-gp-send-gift" class="st-px-btn care">在线送礼</button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
         <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
@@ -31730,11 +31786,41 @@
       openGuestPop(guestId);
       if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
     });
-    guestPopEl.querySelector('#st-gp-update-look')?.addEventListener('click', () => {
+    guestPopEl.querySelector('#st-gp-update-look')?.addEventListener('click', async () => {
       guestPopEl.style.display = 'none';
-      openGuestLookUpdateModal(guestId);
+      const g = getGuestList().find(x => x.id === guestId);
+      if (g && g.cloudId) {
+        await syncCloudGuestLooks(false, guestId);
+      } else {
+        openGuestLookUpdateModal(guestId);
+      }
+    });
+    guestPopEl.querySelector('#st-gp-send-gift')?.addEventListener('click', () => {
+      guestPopEl.style.display = 'none';
+      openCloudSendGiftModal(guestId);
     });
     guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', () => dismissGuestPuppy(guestId));
+  };
+
+  const getCloudBaseUrl = () => String(config.puppyCloudUrl || 'https://goulaicai-sync.chanbaek99461.workers.dev').trim().replace(/\/+$/, '');
+
+  const ensureMyCloudId = () => {
+    if (!config.puppyCloudId || !/^[a-zA-Z0-9_-]{4,40}$/.test(config.puppyCloudId)) {
+      config.puppyCloudId = 'pup_' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+    }
+    return config.puppyCloudId;
+  };
+  ensureMyCloudId();
+
+  const GUEST_OUTFIT_CHANGE_LINES = {
+    clingy: ['快看快看！我刚换了一身新打扮跑来找你贴贴啦~', '换好新衣服第一时间就冲来给你看，好不好看嘛！'],
+    tsundere: ['哼、我才不是特意换好看的衣服来给你看的呢，勉强夸一下吧。', '稍微换了身新行头而已，别盯着看了啦！'],
+    foodie: ['换好新衣服更有食欲啦，今天带什么好吃的？', '新造型配小点心最绝了，是不是看起来超香！'],
+    explorer: ['整装换新出发！这身新行头最适合到处溜达探险啦~', '刚换好新装扮，感觉走起路来都带风！'],
+    philosopher: ['外在装束焕然一新，今日的散步心境也随之轻盈了几分。', '衣饰虽只是表象，但换个新模样确实让人心情不错。'],
+    gamer: ['新皮肤加载完成！这波外观特效必须给满分吧！', '刚解锁并换上新皮肤，战斗力和可爱度双双拉满！'],
+    sleepyhead: ['迷迷糊糊换了一身新衣服……这样窝着好像更舒服了~', '换好软乎乎的新打扮继续打盹，你觉得好看吗？'],
+    social: ['换了新穿搭来刷存在感啦！快夸夸本汪今天的搭配~', '今日份新造型上线！记得多看看我、多和我玩哦！'],
   };
 
   const applyGuestLookFromParsed = (guest, parsed) => {
@@ -31743,14 +31829,16 @@
     const changes = [];
     if ((oldL.outfit || 'none') !== (newL.outfit || 'none')) changes.push('服装');
     if (JSON.stringify(oldL.accs || []) !== JSON.stringify(newL.accs || []) || JSON.stringify(oldL.accOffsets || {}) !== JSON.stringify(newL.accOffsets || {})) changes.push('配饰');
-    if ((oldL.companion || 'none') !== (newL.companion || 'none')) changes.push('跟宠');
-    if ((oldL.bubbleSkin || 'bub_default') !== (newL.bubbleSkin || 'bub_default')) changes.push('气泡');
-    if ((oldL.walkTrail || 'trail_paw') !== (newL.walkTrail || 'trail_paw')) changes.push('足迹');
+    if ((oldL.comp || 'none') !== (newL.comp || 'none')) changes.push('跟宠');
+    if ((oldL.bubble || 'bub_default') !== (newL.bubble || 'bub_default')) changes.push('气泡');
+    if ((oldL.trail || 'trail_paw') !== (newL.trail || 'trail_paw')) changes.push('足迹');
     if ((oldL.fur || '') !== (newL.fur || '') || (oldL.ear || '') !== (newL.ear || '') || (oldL.collar || '') !== (newL.collar || '') || (oldL.outline || '') !== (newL.outline || '')) changes.push('毛色');
     if (Boolean(oldL.showCollar !== false) !== Boolean(newL.showCollar !== false) || Boolean(oldL.onesieShowEars) !== Boolean(newL.onesieShowEars)) changes.push('细节');
+    if (parsed.pers && guest.pers !== parsed.pers) changes.push('性格');
 
     guest.pers = parsed.pers || guest.pers || 'sleepyhead';
     guest.look = newL;
+    if (parsed.cloudId) guest.cloudId = parsed.cloudId;
     if (parsed.msg) guest.msg = parsed.msg;
     const rt = guestRuntimes.get(guest.id);
     if (rt) {
@@ -31763,6 +31851,321 @@
     if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
     return changes;
   };
+
+  let lastCloudPushSig = '';
+  let cloudPushTimer = null;
+  const getMyCloudAppearanceSig = () => JSON.stringify({
+    n: config.puppyName || '',
+    p: config.puppyPersonality || 'sleepyhead',
+    o: config.puppyOutfit || 'none',
+    a: config.puppyAccs || [],
+    ao: config.puppyAccOffsets || {},
+    c: config.puppyCompanion || 'none',
+    t: config.puppyWalkTrail || 'trail_paw',
+    b: config.puppyBubbleSkin || 'bub_default',
+    f: config.puppyFur || '',
+    e: config.puppyEar || '',
+    cl: config.puppyCollar || '',
+    ol: config.puppyOutline || '',
+    sc: config.puppyShowCollar !== false,
+    oe: Boolean(config.puppyOnesieShowEars),
+  });
+
+  const pushMyCloudPupNow = async () => {
+    const baseUrl = getCloudBaseUrl();
+    if (!baseUrl) return;
+    const sig = getMyCloudAppearanceSig();
+    if (sig === lastCloudPushSig) return;
+    try {
+      const id = ensureMyCloudId();
+      const code = encodePupVisitCard('', [], 0);
+      const res = await fetch(`${baseUrl}/pup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, code }),
+      });
+      if (res.ok) lastCloudPushSig = sig;
+    } catch (_) {}
+  };
+
+  const scheduleCloudPupPush = () => {
+    const sig = getMyCloudAppearanceSig();
+    if (sig === lastCloudPushSig) return;
+    clearTimeout(cloudPushTimer);
+    cloudPushTimer = setTimeout(pushMyCloudPupNow, 1200);
+  };
+
+  let cloudSyncBusy = false;
+  const syncCloudGuestLooks = async (silent = true, onlyGuestId = null) => {
+    if (cloudSyncBusy && silent) return;
+    const baseUrl = getCloudBaseUrl();
+    if (!baseUrl) return;
+    const list = getGuestList().filter(g => g && g.cloudId && (!onlyGuestId || g.id === onlyGuestId));
+    if (!list.length) {
+      if (!silent) showImmNotice('该小狗还没有绑定云端名片，请先用新版名片码请它来做客一次');
+      return;
+    }
+    cloudSyncBusy = true;
+    try {
+      let updatedCount = 0;
+      for (const guest of list) {
+        try {
+          const resp = await fetch(`${baseUrl}/pup?id=${encodeURIComponent(guest.cloudId)}`, { cache: 'no-store' });
+          if (!resp.ok) continue;
+          const data = await resp.json().catch(() => null);
+          if (!data || !data.code) continue;
+          const parsed = decodePupVisitCard(data.code);
+          if (!parsed || parsed.isReturn) continue;
+          const changes = applyGuestLookFromParsed(guest, parsed);
+          if (changes.length) {
+            updatedCount++;
+            const lines = GUEST_OUTFIT_CHANGE_LINES[guest.pers] || GUEST_OUTFIT_CHANGE_LINES.sleepyhead;
+            showGuestBubbleById(guest.id, pick(lines), 3200);
+            if (!silent || list.length === 1) {
+              showImmNotice(`「${guest.name}」换新装啦：已更新 ${changes.join('、')}`);
+            }
+          }
+        } catch (_) {}
+      }
+      if (!silent && updatedCount === 0) {
+        showImmNotice('当前外观和性格已是最新，没有检测到变化');
+      }
+    } finally {
+      cloudSyncBusy = false;
+    }
+  };
+
+  let cloudInboxBusy = false;
+  const pollCloudInbox = async () => {
+    if (cloudInboxBusy) return;
+    const baseUrl = getCloudBaseUrl();
+    if (!baseUrl) return;
+    const myId = ensureMyCloudId();
+    cloudInboxBusy = true;
+    try {
+      const resp = await fetch(`${baseUrl}/inbox?id=${encodeURIComponent(myId)}`, { cache: 'no-store' });
+      if (!resp.ok) return;
+      const data = await resp.json().catch(() => null);
+      if (!data) return;
+
+      if (Array.isArray(data.acks) && data.acks.length) {
+        data.acks.forEach((ack, i) => {
+          setTimeout(() => {
+            const msg = `「${ack.fromName || '朋友'}」已开心收下你的礼物${ack.summary ? '（' + ack.summary + '）' : ''}：${ack.thankMsg || '谢谢你~'}`;
+            showImmNotice(msg);
+            if (config.puppyEnabled) {
+              setPuppyState('happy', 110);
+              showPuppyBubble(`${ack.fromName || '朋友'}收下我们的礼物啦~`, 3000);
+            }
+          }, i * 3200);
+        });
+      }
+
+      if (Array.isArray(data.gifts) && data.gifts.length) {
+        if (!Array.isArray(config.puppyCloudProcessedGids)) config.puppyCloudProcessedGids = [];
+        const g = data.gifts.find(x => x && x.gid && !config.puppyCloudProcessedGids.includes(x.gid));
+        if (g) {
+          config.puppyCloudProcessedGids.unshift(g.gid);
+          if (config.puppyCloudProcessedGids.length > 200) config.puppyCloudProcessedGids.length = 200;
+          const received = grantGiftItems(g.gifts || []);
+          const rp = Math.max(0, Math.floor(Number(g.redPacket) || 0));
+          if (rp > 0) {
+            config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
+            config.puppyStats = config.puppyStats || {};
+            config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
+            updatePupStatBars();
+          }
+          saveConfig();
+          const summary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received.map(r => r.label)].join('、');
+          openVisitGiftModal(
+            g.fromName || '朋友',
+            g.msg || '给你送来了一份小心意~',
+            received,
+            rp,
+            false,
+            {
+              title: `收到「${g.fromName || '朋友'}」送来的礼物！`,
+              okLabel: '收下并表达感谢',
+              onAck: async (thankMsg) => {
+                try {
+                  await fetch(`${baseUrl}/ack`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      myId,
+                      myName: getPupName(),
+                      fromId: g.fromId,
+                      gid: g.gid,
+                      thankMsg: thankMsg || '已经开心收下你的礼物啦~',
+                      summary,
+                    }),
+                  });
+                  showImmNotice('已收下礼物并向对方发送感谢提醒');
+                } catch (_) {}
+              },
+            }
+          );
+        }
+      }
+    } catch (_) {
+    } finally {
+      cloudInboxBusy = false;
+    }
+  };
+
+  const openCloudSendGiftModal = (guestId) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    if (!guest) return;
+    if (!guest.cloudId) {
+      showImmNotice('这位小伙伴还是旧版名片，请让对方发一次新名片码即可开启在线送礼');
+      return;
+    }
+    const baseUrl = getCloudBaseUrl();
+    if (!baseUrl) { showImmNotice('请先配置云端同步地址'); return; }
+
+    const inv = config.puppyInventory || {};
+    const unlockedFl = config.puppyGarden?.unlocked || {};
+    const dishes = config.puppyKitchen?.dishes || {};
+    const sendable = [];
+    if ((inv.gacha_ticket || 0) > 0) sendable.push({ kind: 'gear', id: 'gacha_ticket', name: '扭蛋券', own: inv.gacha_ticket });
+    [...SHOP_PUP_GOODS, ...GACHA_SNACKS].forEach(x => {
+      if ((inv[x.id] || 0) > 0) sendable.push({ kind: x.type === 'snack' ? 'snack' : 'gear', id: x.id, name: x.name, own: inv[x.id], raw: x });
+    });
+    PUP_FLOWERS.forEach(x => {
+      if ((unlockedFl[x.id] || 0) > 0) sendable.push({ kind: 'flower', id: x.id, name: x.name, own: unlockedFl[x.id], raw: x });
+    });
+    [...PUP_KITCHEN_RECIPES, ...PUP_DARK_DISHES].forEach(x => {
+      if ((dishes[x.id] || 0) > 0) sendable.push({ kind: 'dish', id: x.id, name: x.name, own: dishes[x.id], raw: x });
+    });
+
+    let mask = root.querySelector('#st-tb-cloud-send-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-cloud-send-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);pointer-events:auto;z-index:9994;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+
+    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:2px solid ${pxBd};box-shadow:0 6px 20px rgba(50,34,42,0.24);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12.5px;font-weight:700;">在线送礼给「${escapeHtmlSimple(guest.name)}」</span>
+        <button type="button" id="st-csg-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div style="font-size:11px;margin-bottom:5px;">选择要送出的物品（点击选中，再点取消）：</div>
+      <div id="st-csg-list" style="display:flex;flex-wrap:wrap;gap:5px;max-height:145px;overflow-y:auto;padding:6px;border:1px solid ${pxBd};background:#fff;margin-bottom:8px;box-sizing:border-box;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:6px;margin-bottom:9px;">
+        <input type="number" id="st-csg-rp" class="st-px-in" min="0" max="${Math.floor(config.puppyCoins || 0)}" placeholder="红包币(余${Math.floor(config.puppyCoins || 0)})" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
+        <input type="text" id="st-csg-msg" class="st-px-in" placeholder="附言（可选）" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:6px;">
+        <button type="button" id="st-csg-cancel" class="st-px-btn" style="height:24px;padding:0 12px;font-size:11px;">取消</button>
+        <button type="button" id="st-csg-send" class="st-px-btn active care" style="height:24px;padding:0 12px;font-size:11px;">确认送出</button>
+      </div>
+    </div>`;
+
+    const listEl = mask.querySelector('#st-csg-list');
+    const selectedMap = new Map();
+    if (!sendable.length) {
+      listEl.innerHTML = '<div style="font-size:10.5px;opacity:0.75;">背包里暂无物品，也可以直接发小狗币红包~</div>';
+    } else {
+      sendable.forEach(item => {
+        const key = `${item.kind}:${item.id}`;
+        const btn = doc.createElement('button');
+        btn.type = 'button';
+        btn.className = 'st-px-btn';
+        btn.style.cssText = 'display:inline-flex;align-items:center;gap:4px;height:auto;padding:3px 6px;font-size:10px;';
+        const ic = makeVisitGiftIcon(item);
+        if (ic) btn.appendChild(ic);
+        const lb = doc.createElement('span');
+        lb.textContent = `${item.name}(${item.own})`;
+        btn.appendChild(lb);
+        btn.addEventListener('click', () => {
+          if (selectedMap.has(key)) {
+            selectedMap.delete(key);
+            btn.classList.remove('active', 'care');
+          } else {
+            if (selectedMap.size >= 5) { showImmNotice('一次最多选 5 种礼物哦'); return; }
+            selectedMap.set(key, { kind: item.kind, id: item.id, qty: 1 });
+            btn.classList.add('active', 'care');
+          }
+        });
+        listEl.appendChild(btn);
+      });
+    }
+
+    const closeCsg = () => { mask.style.display = 'none'; };
+    mask.onclick = (e) => { if (e.target === mask) closeCsg(); };
+    mask.querySelector('#st-csg-close')?.addEventListener('click', closeCsg);
+    mask.querySelector('#st-csg-cancel')?.addEventListener('click', closeCsg);
+    mask.querySelector('#st-csg-send')?.addEventListener('click', async () => {
+      const rp = Math.max(0, Math.min(Math.floor(config.puppyCoins || 0), Math.floor(Number(mask.querySelector('#st-csg-rp')?.value || 0) || 0)));
+      const msgTxt = String(mask.querySelector('#st-csg-msg')?.value || '').trim() || '给你带了份小礼物，快拆开看看~';
+      const gifts = Array.from(selectedMap.values());
+      if (!gifts.length && rp <= 0) { showImmNotice('请先选至少一件礼物或填一点红包币'); return; }
+
+      // 扣除物品与金币，若发送失败会回滚
+      gifts.forEach(g => {
+        if (g.id === 'gacha_ticket' || g.kind === 'gear' || g.kind === 'snack') {
+          config.puppyInventory[g.id] = Math.max(0, (config.puppyInventory[g.id] || 0) - 1);
+        } else if (g.kind === 'flower') {
+          config.puppyGarden.unlocked[g.id] = Math.max(0, (config.puppyGarden.unlocked[g.id] || 0) - 1);
+        } else if (g.kind === 'dish') {
+          config.puppyKitchen.dishes[g.id] = Math.max(0, (config.puppyKitchen.dishes[g.id] || 0) - 1);
+        }
+      });
+      if (rp > 0) config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - rp);
+
+      try {
+        const resp = await fetch(`${baseUrl}/gift`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fromId: ensureMyCloudId(),
+            fromName: getPupName(),
+            toId: guest.cloudId,
+            gifts,
+            redPacket: rp,
+            msg: msgTxt,
+          }),
+        });
+        if (!resp.ok) throw new Error('send failed');
+        saveConfig();
+        updatePupStatBars();
+        closeCsg();
+        showGuestBubbleById(guest.id, '收到礼物心意啦，回去就拆开给你回信~', 2800);
+        showImmNotice(`已把礼物直接寄给「${guest.name}」，对方收下后会提醒你`);
+      } catch (_) {
+        // 回滚
+        gifts.forEach(g => {
+          if (g.id === 'gacha_ticket' || g.kind === 'gear' || g.kind === 'snack') {
+            config.puppyInventory[g.id] = (config.puppyInventory[g.id] || 0) + 1;
+          } else if (g.kind === 'flower') {
+            config.puppyGarden.unlocked[g.id] = (config.puppyGarden.unlocked[g.id] || 0) + 1;
+          } else if (g.kind === 'dish') {
+            config.puppyKitchen.dishes[g.id] = (config.puppyKitchen.dishes[g.id] || 0) + 1;
+          }
+        });
+        if (rp > 0) config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
+        showImmNotice('在线送礼发送失败，物品与金币已退回');
+      }
+    });
+    mask.style.display = 'flex';
+  };
+
+  setTimeout(() => {
+    pushMyCloudPupNow();
+    syncCloudGuestLooks(true);
+    pollCloudInbox();
+  }, 3500);
+  setInterval(() => {
+    if (doc.hidden) return;
+    syncCloudGuestLooks(true);
+    pollCloudInbox();
+  }, 45000);
 
   const openGuestLookUpdateModal = async (guestId) => {
     const guest = getGuestList().find(g => g.id === guestId);
@@ -32216,6 +32619,7 @@
       if (gObj) {
         gObj.pers = parsed.pers || 'sleepyhead';
         gObj.look = parsed.look || {};
+        if (parsed.cloudId) gObj.cloudId = parsed.cloudId;
         gObj.msg = parsed.msg || '来找你们玩啦~';
         gObj.onDesktop = true;
         const rtOld = guestRuntimes.get(gObj.id);
@@ -32227,6 +32631,7 @@
           name: cleanName,
           pers: parsed.pers || 'sleepyhead',
           look: parsed.look || {},
+          cloudId: parsed.cloudId || '',
           msg: parsed.msg || '来找你们玩啦~',
           pinned: false,
           hideName: false,
@@ -39612,6 +40017,8 @@
   doc.addEventListener('visibilitychange', () => {
     if (!doc.hidden) {
       stopTitleFlash();
+      if (typeof syncCloudGuestLooks === 'function') setTimeout(() => syncCloudGuestLooks(true), 600);
+      if (typeof pollCloudInbox === 'function') setTimeout(() => pollCloudInbox(), 900);
       if (pendingJumpToReplyTopMesId !== null) {
         const jumpMid = pendingJumpToReplyTopMesId;
         pendingJumpToReplyTopMesId = null;
