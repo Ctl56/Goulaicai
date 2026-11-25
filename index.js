@@ -8366,11 +8366,14 @@
           </div>
         </div>
         <div class="st-px-pane" data-px-pane="acc">
-          <div class="st-px-subtabs" id="st-px-ward-tabs">
-            <button class="st-px-btn active" data-ward-tab="acc" type="button">配饰</button>
-            <button class="st-px-btn" data-ward-tab="outfit" type="button">衣服</button>
-            <button class="st-px-btn" data-ward-tab="comp" type="button">跟班</button>
-            <button class="st-px-btn" data-ward-tab="preset" type="button">配方</button>
+          <div id="st-px-ward-sticky-top" style="position:sticky;top:-8px;z-index:8;background:var(--px-bg,#faf6f7);padding:6px 0 4px;margin-bottom:4px;">
+            <div class="st-px-subtabs" id="st-px-ward-tabs" style="margin-bottom:5px;">
+              <button class="st-px-btn active" data-ward-tab="acc" type="button">配饰</button>
+              <button class="st-px-btn" data-ward-tab="outfit" type="button">衣服</button>
+              <button class="st-px-btn" data-ward-tab="comp" type="button">跟班</button>
+              <button class="st-px-btn" data-ward-tab="preset" type="button">配方</button>
+            </div>
+            <div id="st-px-ward-sticky-preview"></div>
           </div>
           <div class="st-px-slider-row" style="margin-bottom:5px;justify-content:space-between;padding:4px 6px;border:1.5px dashed var(--px-border,#bfa4ae);background:var(--px-card,#ffffff);flex-wrap:wrap;gap:4px;">
             <span style="width:auto;font-size:10px;">小狗看心情自主搭配</span>
@@ -12904,13 +12907,23 @@
         box.style.setProperty('--px-fg', pxFg.trim());
         box.style.setProperty('--px-bg-soft', pxSoft.trim());
         box.style.setProperty('--px-card', pxCard.trim());
-        if (confirmCancelBtn) { confirmCancelBtn.className = 'st-px-btn'; confirmCancelBtn.style.cssText = 'height:24px;padding:0 12px;font-size:11px;'; }
-        if (confirmOkBtn) { confirmOkBtn.className = 'st-px-btn active care'; confirmOkBtn.style.cssText = 'height:24px;padding:0 12px;font-size:11px;'; }
+        if (confirmCancelBtn) { confirmCancelBtn.className = 'st-px-btn'; confirmCancelBtn.style.cssText = 'height:24px;padding:0 10px;font-size:11px;'; }
+        if (confirmAltBtn) {
+          confirmAltBtn.className = 'st-px-btn';
+          if (altOpts && typeof altOpts.onAlt === 'function') confirmAltBtn.style.cssText = 'height:24px;padding:0 10px;font-size:11px;';
+          else confirmAltBtn.style.setProperty('display', 'none', 'important');
+        }
+        if (confirmOkBtn) { confirmOkBtn.className = 'st-px-btn active care'; confirmOkBtn.style.cssText = 'height:24px;padding:0 10px;font-size:11px;'; }
       } else {
         box.style.background = '';
         box.style.borderColor = '';
         box.style.color = '';
         if (confirmCancelBtn) { confirmCancelBtn.className = 'st-tb-btn'; confirmCancelBtn.style.cssText = ''; }
+        if (confirmAltBtn) {
+          confirmAltBtn.className = 'st-tb-btn';
+          if (altOpts && typeof altOpts.onAlt === 'function') confirmAltBtn.style.cssText = '';
+          else confirmAltBtn.style.setProperty('display', 'none', 'important');
+        }
         if (confirmOkBtn) { confirmOkBtn.className = 'st-tb-btn primary'; confirmOkBtn.style.cssText = ''; }
       }
     }
@@ -21808,24 +21821,32 @@
     outfit: config.puppyOutfit || 'none',
     accs: Array.isArray(config.puppyAccs) ? [...config.puppyAccs] : [],
     comp: config.puppyCompanion || 'none',
+    accOffsets: config.puppyAccOffsets ? JSON.parse(JSON.stringify(config.puppyAccOffsets)) : {},
   });
   const ensureWardDraft = () => {
     if (!wardDraft) wardDraft = getWardrobeCurrentLook();
+    if (!wardDraft.accOffsets || typeof wardDraft.accOffsets !== 'object') wardDraft.accOffsets = {};
     return wardDraft;
   };
   const hasUnsavedWardDraft = () => {
     if (!wardDraft) return false;
     const cur = getWardrobeCurrentLook();
-    return wardDraft.outfit !== cur.outfit || wardDraft.comp !== cur.comp || JSON.stringify(wardDraft.accs) !== JSON.stringify(cur.accs);
+    return wardDraft.outfit !== cur.outfit
+      || wardDraft.comp !== cur.comp
+      || JSON.stringify(wardDraft.accs) !== JSON.stringify(cur.accs)
+      || JSON.stringify(wardDraft.accOffsets || {}) !== JSON.stringify(cur.accOffsets || {});
   };
   const applyWardDraftToPuppy = () => {
     if (!wardDraft) return;
     config.puppyOutfit = wardDraft.outfit || 'none';
     config.puppyAccs = Array.isArray(wardDraft.accs) ? wardDraft.accs.slice(0, 3) : [];
     config.puppyCompanion = wardDraft.comp || 'none';
+    config.puppyAccOffsets = wardDraft.accOffsets ? JSON.parse(JSON.stringify(wardDraft.accOffsets)) : {};
     wardDraft = null;
+    pup._lastRenderKey = '';
     saveConfig();
     if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
+    if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
     renderPupWardrobe();
     renderPupShop();
     updatePupStatBars();
@@ -21835,6 +21856,58 @@
       showPuppyBubble('换好新穿搭啦，是不是超好看~', 2200);
       if (typeof progressPupWish === 'function') progressPupWish('dress', 1);
     }
+  };
+  const redrawWardStickyPreview = () => {
+    const host = root.querySelector('#st-px-ward-sticky-preview');
+    if (!host) return;
+    const wd = ensureWardDraft();
+    const dirty = hasUnsavedWardDraft();
+    host.innerHTML = '';
+    const prevWrap = doc.createElement('div');
+    prevWrap.style.cssText = 'display:flex;align-items:center;gap:10px;padding:6px 8px;background:var(--px-card,#fff);border:2px solid var(--px-border,#bfa4ae);box-sizing:border-box;';
+    const pCv = doc.createElement('canvas');
+    pCv.width = 240; pCv.height = 240;
+    pCv.style.cssText = 'width:84px;height:84px;display:block;flex-shrink:0;border:1.5px solid var(--px-border,#bfa4ae);background:var(--px-bg-soft,#f8f2f5);image-rendering:pixelated;';
+    try {
+      const pCtx = pCv.getContext('2d');
+      pCtx.setTransform(10, 0, 0, 10, 0, 0);
+      pCtx.imageSmoothingEnabled = false;
+      pCtx.clearRect(0, 0, 24, 24);
+      const pal = getPupPalette({ fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline, showCollar: config.puppyShowCollar !== false });
+      const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
+      const grid = PUP_SPRITES.idle1;
+      for (let y = 0; y < grid.length; y++) {
+        const row = grid[y];
+        for (let x = 0; x < row.length; x++) {
+          const col = pal[row[x]];
+          if (col) { pCtx.fillStyle = col; pCtx.fillRect(ox + x, oy + y, 1, 1); }
+        }
+      }
+      const prevCtx = activePxCtx;
+      const prevOff = config.puppyAccOffsets;
+      try {
+        activePxCtx = pCtx;
+        config.puppyAccOffsets = wd.accOffsets || {};
+        drawPupOutfit(wd.outfit || 'none', ox, oy, hx, hy, false, false, false, false);
+        if (Array.isArray(wd.accs)) wd.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+        drawPupCompanion(wd.comp || 'none', ox, oy, false);
+      } finally {
+        activePxCtx = prevCtx;
+        config.puppyAccOffsets = prevOff;
+      }
+    } catch (_) {}
+    const pRight = doc.createElement('div');
+    pRight.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;';
+    pRight.innerHTML = `<div style="font-size:10.5px;font-weight:700;">${dirty ? '试装预览（未保存）' : '当前穿搭预览'}</div>
+      <div style="font-size:9.5px;opacity:0.75;line-height:1.35;">试穿衣服、配饰与微调位置仅在此预览，点保存才同步到桌面与云端~</div>
+      <div style="display:flex;gap:5px;">
+        <button type="button" id="st-wd-save" class="st-px-btn${dirty ? ' care active' : ''}" style="flex:1;height:23px;font-size:10px;" ${dirty ? '' : 'disabled'}>保存穿搭</button>
+        <button type="button" id="st-wd-reset" class="st-px-btn" style="height:23px;padding:0 8px;font-size:10px;" ${dirty ? '' : 'disabled'}>还原</button>
+      </div>`;
+    pRight.querySelector('#st-wd-save')?.addEventListener('click', applyWardDraftToPuppy);
+    pRight.querySelector('#st-wd-reset')?.addEventListener('click', () => { discardWardDraft(); renderPupWardrobe(); });
+    prevWrap.append(pCv, pRight);
+    host.appendChild(prevWrap);
   };
   const discardWardDraft = () => {
     wardDraft = null;
@@ -21889,55 +21962,7 @@
     }
 
     pupWardBodyEl.innerHTML = '';
-    // 衣柜大图试装预览区（点击物品仅试穿，点「保存穿搭」才真正换到桌面小狗身上）
-    if (wardTab === 'acc' || wardTab === 'outfit' || wardTab === 'comp') {
-      const dirty = hasUnsavedWardDraft();
-      const prevWrap = doc.createElement('div');
-      prevWrap.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 8px;margin-bottom:7px;background:var(--px-card,#fff);border:2px solid var(--px-border,#bfa4ae);box-sizing:border-box;';
-      const pCv = makeFriendAvatarCanvas({
-        fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
-        showCollar: config.puppyShowCollar !== false, outfit: wd.outfit, accs: wd.accs,
-        accOffsets: config.puppyAccOffsets || {}, comp: wd.comp, onesieShowEars: Boolean(config.puppyOnesieShowEars),
-      });
-      pCv.width = 240; pCv.height = 240;
-      pCv.style.cssText = 'width:82px;height:82px;display:block;flex-shrink:0;border:1.5px solid var(--px-border,#bfa4ae);background:var(--px-bg-soft,#f8f2f5);image-rendering:pixelated;';
-      // 重新以 10x 清晰度绘制试装小狗
-      try {
-        const pCtx = pCv.getContext('2d');
-        pCtx.setTransform(10, 0, 0, 10, 0, 0);
-        pCtx.imageSmoothingEnabled = false;
-        pCtx.clearRect(0, 0, 24, 24);
-        const pal = getPupPalette({ fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline, showCollar: config.puppyShowCollar !== false });
-        const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
-        const grid = PUP_SPRITES.idle1;
-        for (let y = 0; y < grid.length; y++) {
-          const row = grid[y];
-          for (let x = 0; x < row.length; x++) {
-            const col = pal[row[x]];
-            if (col) { pCtx.fillStyle = col; pCtx.fillRect(ox + x, oy + y, 1, 1); }
-          }
-        }
-        const prevCtx = activePxCtx;
-        try {
-          activePxCtx = pCtx;
-          drawPupOutfit(wd.outfit || 'none', ox, oy, hx, hy, false, false, false, false);
-          if (Array.isArray(wd.accs)) wd.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
-          drawPupCompanion(wd.comp || 'none', ox, oy, false);
-        } finally { activePxCtx = prevCtx; }
-      } catch (_) {}
-      const pRight = doc.createElement('div');
-      pRight.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;';
-      pRight.innerHTML = `<div style="font-size:10.5px;font-weight:700;">${dirty ? '试装预览（未保存）' : '当前穿搭预览'}</div>
-        <div style="font-size:9.5px;opacity:0.75;line-height:1.35;">点击下方物品可先试穿效果，满意后点保存才会换上~</div>
-        <div style="display:flex;gap:5px;">
-          <button type="button" id="st-wd-save" class="st-px-btn${dirty ? ' care active' : ''}" style="flex:1;height:23px;font-size:10px;" ${dirty ? '' : 'disabled'}>保存穿搭</button>
-          <button type="button" id="st-wd-reset" class="st-px-btn" style="height:23px;padding:0 8px;font-size:10px;" ${dirty ? '' : 'disabled'}>还原</button>
-        </div>`;
-      pRight.querySelector('#st-wd-save')?.addEventListener('click', applyWardDraftToPuppy);
-      pRight.querySelector('#st-wd-reset')?.addEventListener('click', () => { discardWardDraft(); renderPupWardrobe(); });
-      prevWrap.append(pCv, pRight);
-      pupWardBodyEl.appendChild(prevWrap);
-    }
+    redrawWardStickyPreview();
     let totalPages = 1;
 
     if (wardTab === 'acc') {
@@ -21995,11 +22020,11 @@
       });
       pupWardBodyEl.appendChild(grid);
       if (wornAccs.length > 0) {
-        if (!config.puppyAccOffsets || typeof config.puppyAccOffsets !== 'object') config.puppyAccOffsets = {};
+        const draftOffsets = wd.accOffsets || (wd.accOffsets = {});
         const wornItems = wornAccs.map(id => allAccOwned.find(x => x.id === id) || { id, name: id });
         if (!wornItems.some(x => x.id === window.__stEditAccId)) window.__stEditAccId = wornItems[0].id;
         const editId = window.__stEditAccId;
-        const curOff = config.puppyAccOffsets[editId] || { dx: 0, dy: 0 };
+        const curOff = draftOffsets[editId] || { dx: 0, dy: 0 };
         let dx = Number(curOff.dx) || 0;
         let dy = Number(curOff.dy) || 0;
 
@@ -22028,11 +22053,9 @@
         adjBox.appendChild(headRow);
 
         const applyLiveOffset = () => {
-          config.puppyAccOffsets = config.puppyAccOffsets || {};
-          config.puppyAccOffsets[editId] = { dx: Number(dx.toFixed(2)), dy: Number(dy.toFixed(2)) };
-          pup._lastRenderKey = '';
-          if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
-          if (config.puppyEnabled) drawPuppyScene();
+          wd.accOffsets = wd.accOffsets || {};
+          wd.accOffsets[editId] = { dx: Number(dx.toFixed(2)), dy: Number(dy.toFixed(2)) };
+          redrawWardStickyPreview();
         };
 
         const makeAxisRow = (axisLabel, getVal, setVal) => {
@@ -22085,10 +22108,7 @@
         saveMemBtn.textContent = '保存此配饰位置';
         saveMemBtn.addEventListener('click', () => {
           applyLiveOffset();
-          saveConfig();
-          if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
-          cmNotify('已保存并同步此配饰位置');
-          if (config.puppyEnabled) showPuppyBubble('记好这个位置啦，下次戴还在这里~', 1800);
+          applyWardDraftToPuppy();
         });
         const rstMemBtn = doc.createElement('button');
         rstMemBtn.type = 'button';
@@ -22097,11 +22117,7 @@
         rstMemBtn.textContent = '归零';
         rstMemBtn.addEventListener('click', () => {
           dx = 0; dy = 0;
-          if (config.puppyAccOffsets) delete config.puppyAccOffsets[editId];
-          saveConfig();
-          if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
-          if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
-          if (config.puppyEnabled) drawPuppyScene();
+          if (wd.accOffsets) delete wd.accOffsets[editId];
           renderPupWardrobe();
         });
         actRow.append(saveMemBtn, rstMemBtn);
@@ -47684,7 +47700,7 @@
     btn.addEventListener('click', () => {
       if (pupBagTab === btn.dataset.pxTab) return;
       const targetTab = btn.dataset.pxTab;
-      if (pupBagTab === 'look' && typeof hasUnsavedWardDraft === 'function' && hasUnsavedWardDraft()) {
+      if (typeof hasUnsavedWardDraft === 'function' && hasUnsavedWardDraft()) {
         guardUnsavedWardrobe(() => {
           pupBagTab = targetTab;
           syncPuppyBagUI();
@@ -52851,12 +52867,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   if (pupWardStripBtn) {
     pupWardStripBtn.addEventListener('click', () => {
       const doStrip = () => {
-        config.puppyOutfit = 'none';
-        config.puppyAccs = [];
-        config.puppyCompanion = 'none';
-        saveConfig();
+        const d = ensureWardDraft();
+        d.outfit = 'none';
+        d.accs = [];
+        d.comp = 'none';
         if (typeof renderPupWardrobe === 'function') renderPupWardrobe();
-        if (typeof drawPuppyScene === 'function' && config.puppyEnabled) drawPuppyScene();
       };
       if (typeof openGuardConfirm === 'function') {
         openGuardConfirm('一键脱下装扮', '确定脱下小狗当前穿戴的所有衣服、配饰和伙伴吗？', doStrip, '确认脱下', true);
