@@ -2853,6 +2853,7 @@
     immersive: false,
     keepAlive: false,
     swipeGuard: false,
+    partialRerollLastPara: true,
     keepAliveMode: 'strong', // 'strong' | 'light'
     fontSize: '',
     lineHeight: '',
@@ -7951,6 +7952,7 @@
         </div>
         <div class="st-tb-confirm-actions">
           <button class="st-tb-btn" id="st-tb-confirm-cancel" type="button">取消</button>
+          <button class="st-tb-btn" id="st-tb-confirm-alt" type="button" style="display:none;">整层重roll</button>
           <button class="st-tb-btn primary" id="st-tb-confirm-ok" type="button">确认生成</button>
         </div>
       </div>
@@ -8845,6 +8847,7 @@
       <button class="st-tb-mini-btn" id="st-se-act-multi" type="button">多选段落</button>
       <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">改本层正文</button>
       <button class="st-tb-mini-btn" id="st-se-act-del" type="button">删本段</button>
+      <button class="st-tb-mini-btn" id="st-se-act-del-floor" type="button" style="color:#d9534f;">删整层</button>
     </div>
 
     <div class="st-se-multi-bar" id="st-se-multi-bar">
@@ -8983,6 +8986,9 @@
               <button class="st-tb-btn" id="st-tb-imm-toggle-btn" type="button">沉浸：关</button>
               <button class="st-tb-btn" id="st-tb-keepalive-btn" type="button" title="切后台五六分钟以上也持续保活，切回自动同步">后台保活：关</button>
               <button class="st-tb-btn" id="st-tb-guard-btn" type="button" title="拦截右滑新生成与重新生成，确认后再调用API">防手滑：关</button>
+            </div>
+            <div style="margin-top:6px;">
+              <button class="st-tb-btn" id="st-tb-partial-reroll-btn" type="button" style="width:100%;" title="当本层有多段内容时，点击重roll会提示选择仅重roll最后一段或整层重roll">局部重roll（保留前段）：开</button>
             </div>
             <div class="st-tb-tip" id="st-tb-keepalive-tip" style="display:none;"></div>
           </div>
@@ -9731,7 +9737,9 @@
   const confirmTitleEl = root.querySelector('#st-tb-confirm-title');
   const confirmDescEl = root.querySelector('#st-tb-confirm-desc');
   const confirmCancelBtn = root.querySelector('#st-tb-confirm-cancel');
+  const confirmAltBtn = root.querySelector('#st-tb-confirm-alt');
   const confirmOkBtn = root.querySelector('#st-tb-confirm-ok');
+  const partialRerollBtn = root.querySelector('#st-tb-partial-reroll-btn');
   const reportBtn = root.querySelector('#st-tb-report-btn');
   const reportBox = root.querySelector('#st-tb-report-box');
   const openReaderBtn = root.querySelector('#st-tb-open-reader-btn');
@@ -12692,19 +12700,32 @@
   let guardBypassUntil = 0;
   let delGuardBypassUntil = 0;
   let pendingConfirmAction = null;
+  let pendingAltAction = null;
   let guardTouchStart = null;
 
   const closeGuardConfirm = () => {
     pendingConfirmAction = null;
+    pendingAltAction = null;
+    if (confirmAltBtn) confirmAltBtn.style.display = 'none';
     confirmMask.classList.remove('open');
     const sw = root.querySelector('#st-tb-confirm-skip-wrap');
     if (sw) sw.classList.remove('show');
   };
 
-  const openGuardConfirm = (title, desc, onConfirm, okLabel = '确认生成', isPixelBag = false) => {
+  const openGuardConfirm = (title, desc, onConfirm, okLabel = '确认生成', isPixelBag = false, altOpts = null) => {
     confirmTitleEl.textContent = title;
     confirmDescEl.textContent = desc;
     if (confirmOkBtn) confirmOkBtn.textContent = okLabel || (isPixelBag ? '确认' : '确认生成');
+    if (confirmAltBtn) {
+      if (altOpts && typeof altOpts.onAlt === 'function') {
+        pendingAltAction = altOpts.onAlt;
+        confirmAltBtn.textContent = altOpts.label || '整层重roll';
+        confirmAltBtn.style.display = '';
+      } else {
+        pendingAltAction = null;
+        confirmAltBtn.style.display = 'none';
+      }
+    }
     const box = root.querySelector('#st-tb-confirm-box');
     if (box) {
       box.classList.toggle('pixel-mode', Boolean(isPixelBag));
@@ -12749,6 +12770,16 @@
       fn();
     }
   });
+  if (confirmAltBtn) {
+    confirmAltBtn.addEventListener('click', () => {
+      const fn = pendingAltAction;
+      closeGuardConfirm();
+      if (typeof fn === 'function') {
+        guardBypassUntil = Date.now() + 900;
+        fn();
+      }
+    });
+  }
 
   // 判断右滑是否真的会调用 API（自动放行第 0 层切换开场白，以及浏览已有分支如 1/3 -> 2/3）
   const willSwipeRightGenerate = (mesEl) => {
@@ -12774,14 +12805,101 @@
     return true;
   };
 
-  const getVisibleFloorPreview = (mesEl) => {
+  const getVisibleFloorPreview = (mesEl, mesNum = NaN) => {
     const txtEl = mesEl?.querySelector('.mes_text');
-    if (!txtEl) return '（该层暂无可见正文）';
-    const clone = txtEl.cloneNode(true);
-    clone.querySelectorAll('script, style, details:not([open]), .mes_reasoning, .reasoning_content').forEach(n => n.remove());
-    const raw = String(clone.textContent || '').replace(/\s+/g, ' ').trim();
+    let raw = '';
+    if (txtEl) {
+      const clone = txtEl.cloneNode(true);
+      clone.querySelectorAll('script, style, details:not([open]), .mes_reasoning, .reasoning_content').forEach(n => n.remove());
+      raw = String(clone.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!raw) {
+        const clone2 = txtEl.cloneNode(true);
+        clone2.querySelectorAll('script, style, .mes_reasoning, .reasoning_content').forEach(n => n.remove());
+        raw = String(clone2.textContent || '').replace(/\s+/g, ' ').trim();
+      }
+    }
+    if (!raw && Number.isFinite(mesNum)) {
+      const msgRaw = String(getContext()?.chat?.[mesNum]?.mes || '');
+      if (msgRaw) {
+        const vis = typeof splitVisibleAndHidden === 'function' ? splitVisibleAndHidden(msgRaw).visibleText : msgRaw;
+        raw = String(vis || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      }
+    }
     if (!raw) return '（该层暂无可见正文）';
     return raw.length > 110 ? raw.slice(0, 110) + '…' : raw;
+  };
+
+  const openFloorDeleteConfirmModal = (mesEl, onConfirmDel) => {
+    if (!mesEl) return;
+    const mesidAttr = mesEl.getAttribute('mesid');
+    const mesNum = Number(mesidAttr);
+    const isUser = mesEl.getAttribute('is_user') === 'true';
+    const speaker = isUser ? '你的消息' : (mesEl.querySelector('.name_text')?.textContent?.trim() || 'AI 回复');
+    const domMes = Array.from(doc.querySelectorAll('#chat .mes[mesid]'));
+    const belowDom = domMes.filter(m => Number(m.getAttribute('mesid')) > mesNum).length;
+    const ctxChat = getContext()?.chat;
+    const belowChat = (Number.isFinite(mesNum) && Array.isArray(ctxChat)) ? Math.max(0, ctxChat.length - 1 - mesNum) : 0;
+    const belowCnt = Math.max(belowDom, belowChat);
+    const belowLine = belowCnt > 0
+      ? `⚠️ 下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）`
+      : '当前是最底部一层，下方没有其他内容。';
+    const preview = getVisibleFloorPreview(mesEl, mesNum);
+    openGuardConfirm(
+      `确认删除第 #${mesidAttr} 层？`,
+      `当前楼层：第 #${mesidAttr} 层（${speaker}）\n${belowLine}\n可见内容预览：${preview}`,
+      onConfirmDel,
+      '继续删除'
+    );
+  };
+
+  const triggerPartialLastParaReroll = async (mesNum) => {
+    const ctx = getContext();
+    const msg = ctx?.chat?.[mesNum];
+    if (!msg) return false;
+    const raw = String(msg.mes || '');
+    const parsed = splitVisibleAndHidden(raw);
+    const paras = String(parsed.visibleText || '').split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
+    const singleParas = paras.length >= 2 ? paras : String(parsed.visibleText || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+    if (singleParas.length < 2) return false;
+    pushUndoSnapshot(mesNum, raw);
+    const keptText = singleParas.slice(0, -1).join('\n\n');
+    const nextRaw = reassembleVisibleAndHidden(keptText, parsed);
+    await saveMessageRawText(mesNum, nextRaw);
+    const contBtn = doc.querySelector('#option_continue, #continue_button');
+    if (contBtn) {
+      guardBypassUntil = Date.now() + 900;
+      contBtn.click();
+      cmNotify('已保留前几段，正在仅重roll最后一段~');
+      return true;
+    }
+    cmNotify('已帮你保留前几段并移除最后一段，请点酒馆「继续(Continue)」生成新段落');
+    return true;
+  };
+
+  const maybePromptPartialReroll = (triggerFn) => {
+    if (config.partialRerollLastPara === false) return false;
+    const ctx = getContext();
+    const chat = ctx?.chat;
+    if (!Array.isArray(chat) || !chat.length) return false;
+    const lastIdx = chat.length - 1;
+    const lastMsg = chat[lastIdx];
+    if (!lastMsg || lastMsg.is_user) return false;
+    const parsed = splitVisibleAndHidden(String(lastMsg.mes || ''));
+    let paras = String(parsed.visibleText || '').split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
+    if (paras.length < 2) paras = String(parsed.visibleText || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
+    if (paras.length < 2) return false;
+    openGuardConfirm(
+      '只重roll最后一段，还是整层重roll？',
+      `当前回复共有 ${paras.length} 段内容，直接重roll会覆盖整层。\n提示：可在「概览 → 局部重roll」或悬浮球「快捷功能 → 局部重roll」里随时关闭此提醒。`,
+      () => { triggerPartialLastParaReroll(lastIdx); },
+      '仅重roll最后一段',
+      false,
+      {
+        label: '整层重roll',
+        onAlt: () => { triggerFn(); },
+      }
+    );
+    return true;
   };
 
   const onGuardClickCapture = (e) => {
@@ -12790,42 +12908,33 @@
     if (target.closest('#st-tb-root')) return;
 
     // 删层前二次核对弹窗：显示楼层号、下方是否还有其他楼层、前端可见正文预览（不含草稿）
-    const delBtn = target.closest('.mes_edit_delete, .mes_delete, #option_delete_mes');
+    const delBtn = target.closest('.mes_edit_delete, .mes_delete, .del_mes');
     if (delBtn && Date.now() >= delGuardBypassUntil) {
       const mesEl = delBtn.closest('.mes[mesid]');
       if (mesEl) {
         e.preventDefault();
         e.stopImmediatePropagation();
         e.stopPropagation();
-        const mesidAttr = mesEl.getAttribute('mesid');
-        const mesNum = Number(mesidAttr);
-        const isUser = mesEl.getAttribute('is_user') === 'true';
-        const speaker = isUser ? '你的消息' : (mesEl.querySelector('.name_text')?.textContent?.trim() || 'AI 回复');
-        const domMes = Array.from(doc.querySelectorAll('#chat .mes[mesid]'));
-        const belowDom = domMes.filter(m => Number(m.getAttribute('mesid')) > mesNum).length;
-        const ctxChat = getContext()?.chat;
-        const belowChat = (Number.isFinite(mesNum) && Array.isArray(ctxChat)) ? Math.max(0, ctxChat.length - 1 - mesNum) : 0;
-        const belowCnt = Math.max(belowDom, belowChat);
-        const belowLine = belowCnt > 0
-          ? `⚠️ 下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）`
-          : '当前是最底部一层，下方没有其他内容。';
-        const preview = getVisibleFloorPreview(mesEl);
-        openGuardConfirm(
-          `确认删除第 #${mesidAttr} 层？`,
-          `当前楼层：第 #${mesidAttr} 层（${speaker}）\n${belowLine}\n可见内容预览：${preview}`,
-          () => {
-            delGuardBypassUntil = Date.now() + 900;
-            delBtn.click();
-          },
-          '继续删除'
-        );
+        openFloorDeleteConfirmModal(mesEl, () => {
+          delGuardBypassUntil = Date.now() + 900;
+          delBtn.click();
+        });
+        return;
+      }
+    }
+
+    const regenBtn = target.closest('#option_regenerate, .mes_regenerate, #regenerate_button');
+    if (regenBtn && Date.now() >= guardBypassUntil) {
+      if (maybePromptPartialReroll(() => regenBtn.click())) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
         return;
       }
     }
 
     if (!config.swipeGuard || Date.now() < guardBypassUntil) return;
 
-    const regenBtn = target.closest('#option_regenerate, .mes_regenerate, #regenerate_button');
     if (regenBtn) {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -45611,6 +45720,11 @@
     updateKeepAliveUI();
     guardBtn.textContent = config.swipeGuard ? '防手滑：开' : '防手滑：关';
     guardBtn.classList.toggle('primary', Boolean(config.swipeGuard));
+    if (partialRerollBtn) {
+      const prOn = config.partialRerollLastPara !== false;
+      partialRerollBtn.textContent = prOn ? '局部重roll（保留前段）：开' : '局部重roll（保留前段）：关';
+      partialRerollBtn.classList.toggle('primary', prOn);
+    }
 
     maskStyleBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.maskStyle === config.maskStyle));
     customMaskBox.style.display = config.maskStyle === 'custom' ? 'block' : 'none';
@@ -45730,6 +45844,16 @@
     if (config.keepAlive) startKeepAlive();
     else stopKeepAlive();
   });
+  if (partialRerollBtn) {
+    partialRerollBtn.addEventListener('click', () => {
+      config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
+      saveConfig();
+      syncUI();
+      if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+      showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：多段回复重roll时可保留前面段落' : '已关闭局部重roll提示');
+    });
+  }
+
   guardBtn.addEventListener('click', () => {
     config.swipeGuard = !config.swipeGuard;
     saveConfig();
@@ -50769,6 +50893,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const seActMulti = root.querySelector('#st-se-act-multi');
   const seActEdit = root.querySelector('#st-se-act-edit');
   const seActDel = root.querySelector('#st-se-act-del');
+  const seActDelFloor = root.querySelector('#st-se-act-del-floor');
   const seMultiBar = root.querySelector('#st-se-multi-bar');
   const seMultiCount = root.querySelector('#st-se-multi-count');
   const seMultiRange = root.querySelector('#st-se-multi-range');
@@ -51242,6 +51367,34 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const nextRaw = reassembleVisibleAndHidden(nextVis, parsed);
       await saveMessageRawText(mid, nextRaw);
       cmNotify('已删除该段（点“改本层正文 -> 撤销还原”可撤回）');
+    });
+  }
+  if (seActDelFloor) {
+    seActDelFloor.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const mid = seActiveMesId;
+      hideSeFloatBar();
+      if (mid < 0) return;
+      const mesEl = doc.querySelector(`#chat .mes[mesid="${mid}"]`);
+      if (!mesEl) return;
+      openFloorDeleteConfirmModal(mesEl, () => {
+        delGuardBypassUntil = Date.now() + 900;
+        let nativeDel = mesEl.querySelector('.mes_edit_delete, .mes_delete, .del_mes');
+        if (nativeDel) {
+          nativeDel.click();
+          return;
+        }
+        const editBtn = mesEl.querySelector('.mes_edit');
+        if (editBtn) {
+          editBtn.click();
+          setTimeout(() => {
+            delGuardBypassUntil = Date.now() + 900;
+            const d2 = mesEl.querySelector('.mes_edit_delete, .mes_delete, .del_mes');
+            if (d2) d2.click();
+            else cmNotify('未找到酒馆删层按钮，请点楼层编辑里的删除图标');
+          }, 80);
+        }
+      });
     });
   }
   const syncSeFmtUI = () => {
@@ -53686,6 +53839,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'hide',      name: '完全隐藏',   defLabel: '隐藏' },
     { id: 'keepalive', name: '后台保活',   defLabel: '保活' },
     { id: 'guard',     name: '防手滑保护', defLabel: '防手滑' },
+    { id: 'partialreroll', name: '局部重roll', defLabel: '局部重roll' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
     { id: 'fold',      name: '折叠楼层',   defLabel: '折楼' },
@@ -53748,6 +53902,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       bag: Boolean(pupBagOpen),
       keepalive: Boolean(config.keepAlive),
       guard: Boolean(config.swipeGuard),
+      partialreroll: config.partialRerollLastPara !== false,
       ambient: Boolean(config.effect && config.effect !== 'none'),
       storyedit: config.storyQuickBarEnabled !== false,
       fold: Boolean(config.perfFoldEnabled),
@@ -54228,6 +54383,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         saveConfig();
         syncUI();
         showImmNotice(config.swipeGuard ? '已开启防手滑保护：右滑新生成或重生成前会先确认' : '已关闭防手滑保护');
+        syncQuickDockUI();
+      } else if (act === 'partialreroll') {
+        config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
+        saveConfig();
+        syncUI();
+        showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：多段回复重roll时可仅重roll最后一段' : '已关闭局部重roll提示');
         syncQuickDockUI();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
