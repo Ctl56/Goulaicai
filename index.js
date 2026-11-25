@@ -4737,8 +4737,10 @@
     .st-tb-confirm-desc {
       font-size: 11px;
       color: var(--tb-sub);
-      line-height: 1.5;
+      line-height: 1.55;
       margin-bottom: 12px;
+      white-space: pre-line;
+      word-break: break-word;
     }
     .st-tb-confirm-actions {
       display: flex;
@@ -12688,6 +12690,7 @@
 
   // ==================== 防误触右滑新生成与重新生成（确认后才调用 API） ====================
   let guardBypassUntil = 0;
+  let delGuardBypassUntil = 0;
   let pendingConfirmAction = null;
   let guardTouchStart = null;
 
@@ -12771,11 +12774,56 @@
     return true;
   };
 
+  const getVisibleFloorPreview = (mesEl) => {
+    const txtEl = mesEl?.querySelector('.mes_text');
+    if (!txtEl) return '（该层暂无可见正文）';
+    const clone = txtEl.cloneNode(true);
+    clone.querySelectorAll('script, style, details:not([open]), .mes_reasoning, .reasoning_content').forEach(n => n.remove());
+    const raw = String(clone.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!raw) return '（该层暂无可见正文）';
+    return raw.length > 110 ? raw.slice(0, 110) + '…' : raw;
+  };
+
   const onGuardClickCapture = (e) => {
-    if (!config.swipeGuard || Date.now() < guardBypassUntil) return;
     const target = e.target;
     if (!target || !target.closest) return;
     if (target.closest('#st-tb-root')) return;
+
+    // 删层前二次核对弹窗：显示楼层号、下方是否还有其他楼层、前端可见正文预览（不含草稿）
+    const delBtn = target.closest('.mes_edit_delete, .mes_delete, #option_delete_mes');
+    if (delBtn && Date.now() >= delGuardBypassUntil) {
+      const mesEl = delBtn.closest('.mes[mesid]');
+      if (mesEl) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        const mesidAttr = mesEl.getAttribute('mesid');
+        const mesNum = Number(mesidAttr);
+        const isUser = mesEl.getAttribute('is_user') === 'true';
+        const speaker = isUser ? '你的消息' : (mesEl.querySelector('.name_text')?.textContent?.trim() || 'AI 回复');
+        const domMes = Array.from(doc.querySelectorAll('#chat .mes[mesid]'));
+        const belowDom = domMes.filter(m => Number(m.getAttribute('mesid')) > mesNum).length;
+        const ctxChat = getContext()?.chat;
+        const belowChat = (Number.isFinite(mesNum) && Array.isArray(ctxChat)) ? Math.max(0, ctxChat.length - 1 - mesNum) : 0;
+        const belowCnt = Math.max(belowDom, belowChat);
+        const belowLine = belowCnt > 0
+          ? `⚠️ 下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）`
+          : '当前是最底部一层，下方没有其他内容。';
+        const preview = getVisibleFloorPreview(mesEl);
+        openGuardConfirm(
+          `确认删除第 #${mesidAttr} 层？`,
+          `当前楼层：第 #${mesidAttr} 层（${speaker}）\n${belowLine}\n可见内容预览：${preview}`,
+          () => {
+            delGuardBypassUntil = Date.now() + 900;
+            delBtn.click();
+          },
+          '继续删除'
+        );
+        return;
+      }
+    }
+
+    if (!config.swipeGuard || Date.now() < guardBypassUntil) return;
 
     const regenBtn = target.closest('#option_regenerate, .mes_regenerate, #regenerate_button');
     if (regenBtn) {
