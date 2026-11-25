@@ -1007,6 +1007,14 @@
     { id: 'cloud_poke_15', title: '隔空贴贴狂魔', desc: '累计向好友小狗发送隔空贴贴达到 15 次，赠扭蛋券 ×2', reward: 15, tier: 3, frame: 'cloud_poke15_bespoke', bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#ffecf5,#fff4e8,#f0ebff)', bd: '#e07ca8', fg: '#731f48', icon: 'heart' },
     { id: 'hidden_cloud_santa', title: '暖心圣诞汪', desc: '累计通过在线送礼给好友寄出礼物或红包达到 10 次，赠扭蛋券 ×3', reward: 18, tier: 3, hidden: true, frame: 'cloud_santa_bespoke', bonus: { tickets: 3 }, bg: 'linear-gradient(120deg,#ffeef0,#fff7e2,#edf9f2)', bd: '#d9626c', fg: '#701d24', icon: 'boutique_bag' },
     { id: 'hidden_cloud_soulmate', title: '跨屏挚友', desc: '与云端好友累计完成 50 次联机互动，赠限定「双子星讯框」动态头像框', reward: 25, tier: 4, hidden: true, frame: 'cloud_soulmate_bespoke', bonus: { avatarframe: 'af_cloud_twinstar' }, bg: 'linear-gradient(115deg,#eef0ff,#ffeef8,#fff7df)', bd: '#8a82e0', fg: '#2f2470', icon: 'crown' },
+    { id: 'cloud_coadv_5', title: '双爪启程', desc: '累计完成 5 次联机双狗探险，赠扭蛋券 ×1', reward: 15, tier: 2, frame: 'coadv5_bespoke', bonus: { tickets: 1 }, bg: 'linear-gradient(120deg,#eaf7ff,#fff6e8,#f2f0ff)', bd: '#6ea2e0', fg: '#21406e', icon: 'compass_ach' },
+    { id: 'cloud_coadv_20', title: '黄金探险搭档', desc: '累计完成 20 次联机双狗探险，赠扭蛋券 ×3', reward: 28, tier: 3, frame: 'coadv20_bespoke', bonus: { tickets: 3 }, bg: 'linear-gradient(120deg,#fff5df,#ffedf4,#e8f6ff)', bd: '#dfa04a', fg: '#6b400c', icon: 'trophy' },
+    { id: 'cloud_coadv_50', title: '传说双子旅人', desc: '累计完成 50 次联机双狗探险，赠限定「双星罗盘泡」动态气泡', reward: 45, tier: 4, frame: 'coadv50_bespoke', bonus: { bubble: 'bub_cloud_compass' }, bg: 'linear-gradient(115deg,#e8efff,#f6ebff,#fff3de)', bd: '#7c82e0', fg: '#282673', icon: 'compass_ach' },
+    { id: 'cloud_dual_album_10', title: '双人胶片藏家', desc: '点亮 10 张不同的双人探险相册，赠扭蛋券 ×2', reward: 22, tier: 3, frame: 'dualalb10_bespoke', bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#ffeff5,#fff7e6,#edf6ff)', bd: '#df8aa2', fg: '#6e243e', icon: 'palette_art' },
+    { id: 'cloud_dual_album_25', title: '环游双狗纪念册', desc: '点亮 25 张不同的双人探险相册，赠限定「双影星芒迹」足迹', reward: 40, tier: 4, frame: 'dualalb25_bespoke', bonus: { trail: 'trail_cloud_twincomet' }, bg: 'linear-gradient(115deg,#ebfbff,#f4ecff,#ffeff5)', bd: '#7ca8e6', fg: '#223e70', icon: 'ribbon_medal' },
+    { id: 'hidden_cloud_dual_album_all', title: '全图鉴双子星', desc: '集齐全部 30 张双人探险相册，赠限定「双子纪念馆框」动态头像框', reward: 66, tier: 4, hidden: true, frame: 'dualalball_bespoke', bonus: { avatarframe: 'af_cloud_gallery' }, bg: 'linear-gradient(115deg,#ffecf5,#fff4d9,#e8f5ff,#f3ebff)', bd: '#d470a2', fg: '#661a44', icon: 'crown' },
+    { id: 'cloud_bond_lv5', title: '默契星火', desc: '与任意一位好友的汪汪羁绊达到 Lv.5，赠扭蛋券 ×2', reward: 25, tier: 3, frame: 'bond5_bespoke', bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#fff0f5,#fff5ea,#f0edff)', bd: '#e07ca0', fg: '#70203e', icon: 'heart' },
+    { id: 'hidden_cloud_bond_lv10', title: '宿命双星誓约', desc: '与任意一位好友的汪汪羁绊达到满级 Lv.10，赠扭蛋券 ×5', reward: 88, tier: 4, hidden: true, frame: 'bond10_bespoke', bonus: { tickets: 5 }, bg: 'linear-gradient(115deg,#ffeaf2,#f2e8ff,#e6f4ff,#fff6d9)', bd: '#c86cd4', fg: '#541a66', icon: 'crown' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -2625,6 +2633,7 @@
     { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
     { id: 'bub_spend_5k_vinyl', name: '[成就] 黑胶咖啡馆泡', dyn: 'spend_vinyl_cafe', charms: [], desc: '消费满 5000 币成就专属动态限定：暖咖手冲拿铁蒸汽配旋转复古黑胶唱片气泡' },
     { id: 'bub_cloud_memo', name: '[成就] 手账纸条泡', dyn: 'poststamp', charms: [{ pos: 'tr', key: 'dot_heart' }], desc: '软木板笔友成就专属动态限定：奶油手账便签框配樱红小图钉与飘动邮戳' },
+    { id: 'bub_cloud_compass', name: '[成就] 双星罗盘泡', dyn: 'gdyn_cloudsea_roll', charms: [{ pos: 'tl', key: 'bow' }], desc: '传说双子旅人成就专属动态限定：蓝金星航罗盘配云海流光气泡框' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
     { id: 'af_adv_cloud', name: '[秘境] 云端小翅膀', dyn: 'gadyn_feather_drift', charms: [], desc: '冒险极低概率偶遇的云端仙羽动态头像框：双侧柔羽轻扇配上升云雾光环' },
@@ -2638,11 +2647,13 @@
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
     { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
     { id: 'af_cloud_twinstar', name: '[成就] 双子星讯框', dyn: 'gadyn_orbital_ring', charms: [{ pos: 'tl', key: 'heart' }], desc: '跨屏挚友成就专属动态限定：蓝粉双子星轨环绕流光纪念头像框' },
+    { id: 'af_cloud_gallery', name: '[成就] 双子纪念馆框', dyn: 'gadyn_prism_orbit', charms: [{ pos: 'tr', key: 'crown' }, { pos: 'bl', key: 'heart' }], desc: '全图鉴双子星成就专属动态限定：七彩棱镜光轨双人纪念馆头像框' },
   ];
   const SECRET_ADV_TRAILS = [
     { id: 'trail_adv_meteor', name: '[秘境] 流星碎光', cols: ['#ffe478', '#9ee8ff', '#ffffff'], desc: '冒险极低概率偶遇的流星碎光足迹' },
     { id: 'trail_adv_rainbow_paw', name: '[秘境] 七彩小爪印', cols: ['#ff9eb5', '#ffe066', '#9de3cc', '#8ac4ff', '#d4b8ff'], desc: '冒险极低概率偶遇的七彩肉垫爪印' },
     { id: 'trail_cloud_dewpetal', name: '[成就] 晨露花瓣雨', cols: ['#9ee8d4', '#ffd0e0', '#b8e4ff', '#fff2b8'], achOnly: true, desc: '跨屏花神使成就专属限定：晶莹晨露与粉蓝花瓣交织的清新足迹' },
+    { id: 'trail_cloud_twincomet', name: '[成就] 双影星芒迹', cols: ['#ff9ec8', '#8cc8ff', '#ffe278', '#d4b2ff'], achOnly: true, desc: '环游双狗纪念册成就专属限定：粉蓝双星尾迹交织的漫步光点' },
   ];
 
   // 好感度十级体系（Lv.1 ~ Lv.10）
@@ -2872,6 +2883,8 @@
     puppyCloudProcessedGids: [],
     puppyFriends: [],
     puppyNotes: [],
+    puppyDualAlbum: {},
+    puppyCoopAdv: null,
     keepAliveMode: 'strong', // 'strong' | 'light'
     fontSize: '',
     lineHeight: '',
@@ -5145,11 +5158,11 @@
     }
     .st-tb-guest-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .st-tb-guest-bubble.lifted, #st-tb-puppy-bubble.lifted { bottom: 112px !important; }
-    #st-tb-guest-pop { min-width: 210px; max-width: 340px; box-sizing: border-box; }
-    .st-gp-resize { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; background: transparent; }
     #st-tb-guest-pop {
       position: fixed;
-      width: 224px;
+      min-width: 210px;
+      max-width: 360px;
+      width: 232px;
       background: var(--px-bg, #fff9fb);
       border: 3px solid var(--px-border, #bfa4ae);
       box-shadow: 4px 4px 0 rgba(59,42,34,0.24);
@@ -5157,9 +5170,33 @@
       color: var(--px-fg, #54444a);
       z-index: 9991;
       display: none;
-      overflow-y: auto;
+      flex-direction: column;
+      overflow: hidden;
       pointer-events: auto;
       font-size: 11px;
+      box-sizing: border-box;
+    }
+    .st-gp-resize {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 28px;
+      height: 28px;
+      cursor: nwse-resize;
+      touch-action: none;
+      background: transparent;
+      z-index: 25;
+    }
+    .st-gp-resize::after {
+      content: "";
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid var(--px-border, #bfa4ae);
+      border-bottom: 2px solid var(--px-border, #bfa4ae);
+      pointer-events: none;
     }
 
     /* 像素风气泡 */
@@ -19757,6 +19794,116 @@
           ] },
       ],
     },
+    cloud_coadv_5: {
+      cls: 'bespoke-lux',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 12, anim: 'b-bob',
+          pal: { o: '#8c5a38', b: '#e8b678', l: '#fff2d6', r: '#e05868' },
+          grid: [
+            '..oooooo..',
+            '.obllllbo.',
+            'obllrrllbo',
+            '.obllllbo.',
+            '..oooooo..',
+          ] },
+      ],
+    },
+    cloud_coadv_20: {
+      cls: 'bespoke-lux bespoke-sheen',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14,
+          pal: { y: '#f5c249', w: '#fff8d6', b: '#6ea8f0', o: '#9c6822' },
+          frames: [
+            ['..yyyyyy..', '.ywwbbwwy.', 'ywwbbbbwwy', '.ywwbbwwy.', '..yyyyyy..', '....oo....'],
+            ['..yyyyyy..', '.ywwbbwwy.', 'ywwbwwbwwy', '.ywwbbwwy.', '..yyyyyy..', '....oo....'],
+          ] },
+      ],
+    },
+    cloud_coadv_50: {
+      cls: 'bespoke-lux bespoke-sheen',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
+          pal: { b: '#4c6cc4', c: '#a6dcff', y: '#ffe066', w: '#ffffff' },
+          frames: [
+            ['...yyyy...', '.bbccccbb.', 'bccywwyccb', 'bcwyccywcb', '.bbccccbb.', '...yyyy...'],
+            ['...yyyy...', '.bbccccbb.', 'bcwyccywcb', 'bccywwyccb', '.bbccccbb.', '...yyyy...'],
+          ] },
+        { pos: 'right:-10px;top:-8px;', w: 12, h: 10, anim: 'b-tilt',
+          pal: { w: '#ffffff', b: '#96c8ff' },
+          grid: ['..wwww..', '.wwbbww.', 'wwwwwwww'] },
+      ],
+    },
+    cloud_dual_album_10: {
+      cls: 'bespoke-lux',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 12, anim: 'b-tilt',
+          pal: { d: '#4a3a44', w: '#ffffff', p: '#ff96b8', b: '#7eb8f5' },
+          grid: [
+            'dddddddddd',
+            'dwppdwbbwd',
+            'dwppdwbbwd',
+            'dddddddddd',
+          ] },
+      ],
+    },
+    cloud_dual_album_25: {
+      cls: 'bespoke-lux bespoke-sheen',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 14,
+          pal: { p: '#ff8eb8', b: '#78b8ff', y: '#ffe078', w: '#ffffff' },
+          frames: [
+            ['..pp....', '.pwwp..y', '..pp.bb.', '....bwwb', '..y..bb.'],
+            ['..pp..y.', '.pwwp...', '..pp.bb.', '.y..bwwb', '.....bb.'],
+          ] },
+      ],
+    },
+    hidden_cloud_dual_album_all: {
+      cls: 'bespoke-lux bespoke-sheen',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
+          pal: { y: '#f5c84c', p: '#ff8ab8', b: '#7ac4ff', w: '#ffffff' },
+          frames: [
+            ['..y..y..y..', '.yyyyyyyyy.', 'ypwwpbbwwby', 'yppwwbbwwpy', '.yyyyyyyyy.'],
+            ['.y...y...y.', '.yyyyyyyyy.', 'yppwwbbwwpy', 'ypwwpbbwwby', '.yyyyyyyyy.'],
+          ] },
+        { pos: 'right:-11px;top:-9px;', w: 13, h: 11, anim: 'b-bob',
+          pal: { p: '#ffa6cc', c: '#a6e4ff', w: '#ffffff' },
+          grid: ['..p....c..', '.pwp..cwc.', '..p....c..'] },
+      ],
+    },
+    cloud_bond_lv5: {
+      cls: 'bespoke-lux',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 13,
+          pal: { p: '#ff6e9c', l: '#ffc2d6', y: '#ffe066', w: '#ffffff' },
+          frames: [
+            ['.pp..pp.', 'pllppllp', 'plwwwwlp', '.pllllp.', '..pllp..', '...pp...'],
+            ['.pp..pp.', 'pyyppyyP'.toLowerCase(), 'plwwwwlp', '.pllllp.', '..pllp..', '...pp...'],
+          ] },
+      ],
+    },
+    hidden_cloud_bond_lv10: {
+      cls: 'bespoke-lux bespoke-sheen',
+      trim: [['bottom', 0]],
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
+          pal: { p: '#ff70a6', b: '#78b4ff', y: '#ffe066', w: '#ffffff' },
+          frames: [
+            ['...yyyy...', '.pp....bb.', 'pwwpyybwwb', '.pp.yy.bb.', '...yyyy...'],
+            ['..y.yy.y..', '.pp....bb.', 'pwwpyybwwb', '.pp.yy.bb.', '..y.yy.y..'],
+          ] },
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 13, anim: 'b-bob',
+          pal: { y: '#f5cc58', w: '#ffffff', p: '#ff96c0' },
+          grid: ['..y..y..', '.ywywyy.', 'ywwppwwy', '.yyyyyy.'] },
+      ],
+    },
     cloud_first_friend: {
       cls: 'bespoke-lux',
       trim: [['bottom', 0]],
@@ -20665,7 +20812,15 @@
       cloud_note_30: (st.cloudNotes || 0) >= 30,
       cloud_poke_15: (st.cloudPokes || 0) >= 15,
       hidden_cloud_santa: (st.cloudGiftsSent || 0) >= 10,
-      hidden_cloud_soulmate: ((st.cloudWaters || 0) + (st.cloudNotes || 0) + (st.cloudPokes || 0) + (st.cloudGiftsSent || 0)) >= 50,
+      hidden_cloud_soulmate: ((st.cloudWaters || 0) + (st.cloudNotes || 0) + (st.cloudPokes || 0) + (st.cloudGiftsSent || 0) + (st.cloudCoAdvs || 0)) >= 50,
+      cloud_coadv_5: (st.cloudCoAdvs || 0) >= 5,
+      cloud_coadv_20: (st.cloudCoAdvs || 0) >= 20,
+      cloud_coadv_50: (st.cloudCoAdvs || 0) >= 50,
+      cloud_dual_album_10: Object.keys(config.puppyDualAlbum || {}).length >= 10,
+      cloud_dual_album_25: Object.keys(config.puppyDualAlbum || {}).length >= 25,
+      hidden_cloud_dual_album_all: Object.keys(config.puppyDualAlbum || {}).length >= 30,
+      cloud_bond_lv5: (typeof getMaxFriendBondLv === 'function' ? getMaxFriendBondLv() : 1) >= 5,
+      hidden_cloud_bond_lv10: (typeof getMaxFriendBondLv === 'function' ? getMaxFriendBondLv() : 1) >= 10,
     };
 
     const newlyUnlocked = [];
@@ -21811,7 +21966,8 @@
         saveMemBtn.addEventListener('click', () => {
           applyLiveOffset();
           saveConfig();
-          cmNotify('已保存此配饰位置');
+          if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
+          cmNotify('已保存并同步此配饰位置');
           if (config.puppyEnabled) showPuppyBubble('记好这个位置啦，下次戴还在这里~', 1800);
         });
         const rstMemBtn = doc.createElement('button');
@@ -21823,6 +21979,7 @@
           dx = 0; dy = 0;
           if (config.puppyAccOffsets) delete config.puppyAccOffsets[editId];
           saveConfig();
+          if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
           if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
           if (config.puppyEnabled) drawPuppyScene();
           renderPupWardrobe();
@@ -28545,6 +28702,7 @@
         // 东西颠丢了，但抓拍了一张照片回来
         const ph = pick(PUP_PHOTOS.filter(p => p.dest === dest.id));
         const isNewPh = !config.puppyAlbum[ph.id];
+        freshNewPhotos.add(ph.id);
         const prevRec = config.puppyAlbum[ph.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
@@ -28628,7 +28786,7 @@
         const unowned = destPhotos.filter(p => !config.puppyAlbum[p.id]);
         gotPhoto = (gearId === 'filter_cam' && unowned.length) ? pick(unowned) : pick(destPhotos);
         isNewPhoto = !config.puppyAlbum[gotPhoto.id];
-        if (isNewPhoto) freshNewPhotos.add(gotPhoto.id);
+        freshNewPhotos.add(gotPhoto.id);
         const prevRec = config.puppyAlbum[gotPhoto.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
@@ -31896,38 +32054,40 @@
     if (!guest || !rt || !guestPopEl) return;
     const isPinned = Boolean(guest.pinned);
     const hideName = Boolean(guest.hideName);
-    guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:move;user-select:none;padding-bottom:3px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
-        <span style="font-weight:700;">${guest.name}</span>
-        <button type="button" id="st-gp-close" class="st-px-btn" style="height:18px;padding:0 5px;font-size:10px;">×</button>
+    guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:move;user-select:none;touch-action:none;padding:2px 0 5px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
+        <span style="font-weight:700;pointer-events:none;">${guest.name}</span>
+        <button type="button" id="st-gp-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
-      <div style="font-size:10px;background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:4px 6px;margin-bottom:6px;">「${guest.msg || '来找你们玩啦~'}」${guest.cloudUpdatedAt ? `<div style="margin-top:3px;font-size:9px;opacity:0.65;">最近活跃：${formatCloudAgo(guest.cloudUpdatedAt)}</div>` : ''}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px;">
-        <button type="button" id="st-gp-pet" class="st-px-btn care">摸摸头</button>
-        <button type="button" id="st-gp-nuzzle" class="st-px-btn care">贴贴蹭蹭</button>
-        <button type="button" id="st-gp-feed" class="st-px-btn">喂小点心</button>
-        <button type="button" id="st-gp-praise" class="st-px-btn">夸夸可爱</button>
-        <button type="button" id="st-gp-play" class="st-px-btn">逗TA玩</button>
-        <button type="button" id="st-gp-dual" class="st-px-btn">双狗贴贴</button>
-        <button type="button" id="st-gp-water" class="st-px-btn">一起浇花</button>
-        <button type="button" id="st-gp-cook" class="st-px-btn">一起做菜</button>
+      <div id="st-gp-body" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px;">
+        <div style="font-size:10px;background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:4px 6px;margin-bottom:6px;">「${guest.msg || '来找你们玩啦~'}」${guest.cloudUpdatedAt ? `<div style="margin-top:3px;font-size:9px;opacity:0.65;">最近活跃：${formatCloudAgo(guest.cloudUpdatedAt)}</div>` : ''}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px;">
+          <button type="button" id="st-gp-pet" class="st-px-btn care">摸摸头</button>
+          <button type="button" id="st-gp-nuzzle" class="st-px-btn care">贴贴蹭蹭</button>
+          <button type="button" id="st-gp-feed" class="st-px-btn">喂小点心</button>
+          <button type="button" id="st-gp-praise" class="st-px-btn">夸夸可爱</button>
+          <button type="button" id="st-gp-play" class="st-px-btn">逗TA玩</button>
+          <button type="button" id="st-gp-dual" class="st-px-btn">双狗贴贴</button>
+          <button type="button" id="st-gp-water" class="st-px-btn">一起浇花</button>
+          <button type="button" id="st-gp-cook" class="st-px-btn">一起做菜</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+          <button type="button" id="st-gp-photo" class="st-px-btn active">拍合照</button>
+          <button type="button" id="st-gp-name-tg" class="st-px-btn${hideName ? '' : ' active'}">${hideName ? '显示名字' : '隐藏名字'}</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+          <button type="button" id="st-gp-send-gift" class="st-px-btn care">在线送礼</button>
+          <button type="button" id="st-gp-remote-poke" class="st-px-btn active">隔空贴贴</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+          <button type="button" id="st-gp-cloud-water" class="st-px-btn">帮TA浇花</button>
+          <button type="button" id="st-gp-cloud-note" class="st-px-btn">留小纸条</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+          <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
+          <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
-        <button type="button" id="st-gp-photo" class="st-px-btn active">拍合照</button>
-        <button type="button" id="st-gp-name-tg" class="st-px-btn${hideName ? '' : ' active'}">${hideName ? '显示名字' : '隐藏名字'}</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
-        <button type="button" id="st-gp-send-gift" class="st-px-btn care">在线送礼</button>
-        <button type="button" id="st-gp-remote-poke" class="st-px-btn active">隔空贴贴</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
-        <button type="button" id="st-gp-cloud-water" class="st-px-btn">帮TA浇花</button>
-        <button type="button" id="st-gp-cloud-note" class="st-px-btn">留小纸条</button>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-        <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
-        <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
-      </div>
-      <div id="st-gp-resize" class="st-gp-resize"></div>`;
+      <div id="st-gp-resize" class="st-gp-resize" title="按住拖动缩放大小"></div>`;
 
     if (config.guestPopRect && config.guestPopRect.width) {
       guestPopEl.style.width = `${clamp(config.guestPopRect.width, 210, 360)}px`;
@@ -31945,7 +32105,7 @@
       : clamp(Math.round((rt.y || defaultPupY()) - 215), 10, Math.max(10, win.innerHeight - 230));
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
-    guestPopEl.style.display = 'block';
+    guestPopEl.style.display = 'flex';
     if (typeof bringFloatFront === 'function') bringFloatFront(guestPopEl);
     showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
 
@@ -31953,43 +32113,57 @@
     head?.addEventListener('pointerdown', (e) => {
       if (e.target.closest('button')) return;
       e.preventDefault();
-      head.setPointerCapture(e.pointerId);
+      e.stopPropagation();
+      try { head.setPointerCapture(e.pointerId); } catch (_) {}
+      const pid = e.pointerId;
       const sx = e.clientX, sy = e.clientY;
       const rect = guestPopEl.getBoundingClientRect();
       const ox = rect.left, oy = rect.top;
       const onMove = (ev) => {
+        if (ev.pointerId !== pid) return;
         guestPopEl.style.left = `${Math.round(clamp(ox + (ev.clientX - sx), 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
         guestPopEl.style.top = `${Math.round(clamp(oy + (ev.clientY - sy), 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
       };
-      const onUp = () => {
-        head.removeEventListener('pointermove', onMove);
-        head.removeEventListener('pointerup', onUp);
+      const onUp = (ev) => {
+        if (ev.pointerId !== pid) return;
+        win.removeEventListener('pointermove', onMove);
+        win.removeEventListener('pointerup', onUp);
+        win.removeEventListener('pointercancel', onUp);
+        try { head.releasePointerCapture(pid); } catch (_) {}
         const r2 = guestPopEl.getBoundingClientRect();
         config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width), height: config.guestPopRect?.height || 0 };
         saveConfig();
       };
-      head.addEventListener('pointermove', onMove);
-      head.addEventListener('pointerup', onUp);
+      win.addEventListener('pointermove', onMove);
+      win.addEventListener('pointerup', onUp);
+      win.addEventListener('pointercancel', onUp);
     });
     const rsz = guestPopEl.querySelector('#st-gp-resize');
     rsz?.addEventListener('pointerdown', (e) => {
-      e.preventDefault(); e.stopPropagation();
-      rsz.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      e.stopPropagation();
+      try { rsz.setPointerCapture(e.pointerId); } catch (_) {}
+      const pid = e.pointerId;
       const rect0 = guestPopEl.getBoundingClientRect();
       const sx = e.clientX, sy = e.clientY, ow = rect0.width, oh = rect0.height;
       const onMove = (ev) => {
+        if (ev.pointerId !== pid) return;
         guestPopEl.style.width = `${clamp(Math.round(ow + (ev.clientX - sx)), 210, 360)}px`;
         guestPopEl.style.height = `${clamp(Math.round(oh + (ev.clientY - sy)), 180, Math.round(win.innerHeight * 0.85))}px`;
       };
-      const onUp = () => {
-        rsz.removeEventListener('pointermove', onMove);
-        rsz.removeEventListener('pointerup', onUp);
+      const onUp = (ev) => {
+        if (ev.pointerId !== pid) return;
+        win.removeEventListener('pointermove', onMove);
+        win.removeEventListener('pointerup', onUp);
+        win.removeEventListener('pointercancel', onUp);
+        try { rsz.releasePointerCapture(pid); } catch (_) {}
         const r2 = guestPopEl.getBoundingClientRect();
         config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width), height: Math.round(r2.height) };
         saveConfig();
       };
-      rsz.addEventListener('pointermove', onMove);
-      rsz.addEventListener('pointerup', onUp);
+      win.addEventListener('pointermove', onMove);
+      win.addEventListener('pointerup', onUp);
+      win.addEventListener('pointercancel', onUp);
     });
 
     guestPopEl.querySelector('#st-gp-close')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; });
@@ -32196,6 +32370,8 @@
     if (parsed.msg) guest.msg = parsed.msg;
     const rt = guestRuntimes.get(guest.id);
     if (rt) {
+      rt._lookRef = null;
+      rt._palCache = null;
       rt.lastRenderKey = '';
       rt.lastBubbleSkin = '';
       drawSingleGuestScene(guest, rt);
@@ -32227,11 +32403,11 @@
     gf: String(config.puppyGarden?.flowerId || ''),
   });
 
-  const pushMyCloudPupNow = async () => {
+  const pushMyCloudPupNow = async (force = false) => {
     const baseUrl = getCloudBaseUrl();
     if (!baseUrl) return;
     const sig = getMyCloudAppearanceSig();
-    if (sig === lastCloudPushSig) return;
+    if (!force && sig === lastCloudPushSig) return;
     try {
       const id = ensureMyCloudId();
       const code = encodePupVisitCard('', [], 0);
@@ -32361,6 +32537,28 @@
           if (config.puppyCloudProcessedGids.length > 200) config.puppyCloudProcessedGids.length = 200;
           changed = true;
 
+          // 收到好友组队双狗探险邀请：同步赠送双人明信片与双倍币
+          if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__coadv__') {
+            const ph = PUP_DUAL_PHOTOS.find(x => x.id === g.gifts[0].id) || pick(PUP_DUAL_PHOTOS);
+            const frMatch = getFriendList().find(x => x.cloudId === g.fromId);
+            const bonusCoins = randInt(16, 26);
+            config.puppyCoins = Math.floor(config.puppyCoins || 0) + bonusCoins;
+            config.puppyStats = config.puppyStats || {};
+            config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + bonusCoins;
+            config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
+            saveDualAlbumShot(ph, g.fromName || '好友', frMatch?.look || {}, null);
+            addFriendBondExp(g.fromId, 15, true);
+            saveConfig();
+            updatePupStatBars();
+            checkPupAchievements();
+            openPixelPupNoticeModal(
+              `「${g.fromName || '好友'}」约你组队探险啦！`,
+              `两只小狗一起打卡了【${ph.title}】，收获 +${bonusCoins} 小狗币，全新双人明信片已存入「相册 → 双人」！`,
+              '开心收下'
+            );
+            continue;
+          }
+
           // 联机帮浇花
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__water__') {
             let waterResult = '你的花园暂时没有需要浇水的花苗，心意收到啦~';
@@ -32415,6 +32613,7 @@
             if (config.puppyNotes.length > 60) config.puppyNotes.length = 60;
             config.puppyStats = config.puppyStats || {};
             config.puppyStats.cloudNotes = (config.puppyStats.cloudNotes || 0) + 1;
+        addFriendBondExp(toCloudId, 6, false);
             saveConfig();
             checkPupAchievements();
             syncDesktopNoteboard();
@@ -32433,22 +32632,68 @@
             continue;
           }
 
-          // 隔空贴贴互动消息（大幅度转圈跳动+连串爱心特效）
+          // 隔空贴贴创意特效：像素爱心云团跨屏飞扑 + 360度爱心光环 + 转圈蹭蹭连招
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__poke__') {
             if (config.puppyEnabled) {
-              setPuppyState('happy', 190);
-              for (let i = 0; i < 6; i++) {
-                setTimeout(() => {
-                  spawnPupFx(i % 2 === 0 ? 'heart' : 'sparkle', 6 + (i % 4) * 4, 4 + (i % 2) * 2);
-                }, i * 240);
-              }
-              showPuppyBubble(`「${g.fromName || '好友'}」隔空冲过来大大贴贴抱抱啦！`, 4800);
-              const gMatch = getGuestList().find(x => x && ((g.fromId && x.cloudId === g.fromId) || (g.fromName && x.name === g.fromName)));
-              if (gMatch) {
-                const rtM = guestRuntimes.get(gMatch.id);
-                if (rtM) { rtM.state = 'happy'; rtM.timer = 170; }
-                showGuestBubbleById(gMatch.id, '隔空大大抱住你贴贴！', 3800);
-              }
+              const playCreativeRemotePoke = () => {
+                try {
+                  const targetX = Math.round((pup.x || 120) + 36);
+                  const targetY = Math.round((pup.y || defaultPupY()) + 28);
+                  const fly = doc.createElement('canvas');
+                  fly.width = 40;
+                  fly.height = 40;
+                  fly.style.cssText = `position:fixed;left:${targetX > win.innerWidth / 2 ? -48 : win.innerWidth + 8}px;top:${Math.max(40, targetY - 120)}px;width:44px;height:44px;z-index:9996;pointer-events:none;image-rendering:pixelated;transition:left 0.72s cubic-bezier(.22,1,.36,1), top 0.72s cubic-bezier(.22,1,.36,1), transform 0.72s ease, opacity 0.35s ease;`;
+                  const fc = fly.getContext('2d');
+                  fc.imageSmoothingEnabled = false;
+                  // 绘制像素软绵爱心云团
+                  fc.fillStyle = '#fff5fa';
+                  fc.fillRect(6, 16, 28, 12); fc.fillRect(10, 10, 20, 18); fc.fillRect(14, 7, 12, 6);
+                  fc.fillStyle = '#ff7aa8';
+                  fc.fillRect(14, 15, 4, 4); fc.fillRect(22, 15, 4, 4);
+                  fc.fillRect(12, 17, 16, 5); fc.fillRect(15, 22, 10, 3); fc.fillRect(18, 25, 4, 3);
+                  fc.fillStyle = '#ffffff';
+                  fc.fillRect(15, 16, 2, 2);
+                  root.appendChild(fly);
+                  requestAnimationFrame(() => {
+                    fly.style.left = `${targetX - 22}px`;
+                    fly.style.top = `${targetY - 22}px`;
+                    fly.style.transform = 'scale(1.18) rotate(-8deg)';
+                  });
+                  setTimeout(() => {
+                    fly.style.transform = 'scale(1.45)';
+                    fly.style.opacity = '0';
+                    setTimeout(() => fly.remove(), 380);
+                    // 命中后：360度爱心光环绽放 + 小狗转圈->左右蹭蹭->害羞贴贴连招
+                    setPuppyState('spin', 75);
+                    for (let k = 0; k < 10; k++) {
+                      const ang = (Math.PI * 2 * k) / 10;
+                      const fx = 12 + Math.cos(ang) * 7;
+                      const fy = 8 + Math.sin(ang) * 4;
+                      spawnPupFx(k % 3 === 0 ? 'sparkle' : 'heart', fx, fy);
+                    }
+                    showPuppyBubble(`咻——接住「${g.fromName || '好友'}」跨屏飞来的软绵爱心贴贴啦！`, 4800);
+                    setTimeout(() => {
+                      setPuppyState('nuzzle', 95);
+                      for (let k = 0; k < 4; k++) spawnPupFx('heart', 7 + k * 3, 5);
+                    }, 900);
+                    setTimeout(() => {
+                      setPuppyState('sit', 110);
+                    }, 2200);
+                  }, 730);
+                } catch (_) {
+                  setPuppyState('nuzzle', 140);
+                }
+                const gMatch = getGuestList().find(x => x && ((g.fromId && x.cloudId === g.fromId) || (g.fromName && x.name === g.fromName)));
+                if (gMatch) {
+                  const rtM = guestRuntimes.get(gMatch.id);
+                  if (rtM) {
+                    rtM.state = 'spin_hug';
+                    rtM.timer = 150;
+                  }
+                  showGuestBubbleById(gMatch.id, '跨屏飞扑过来紧紧贴住你蹭蹭！', 4000);
+                }
+              };
+              playCreativeRemotePoke();
             }
             fetch(`${baseUrl}/ack`, {
               method: 'POST',
@@ -32653,6 +32898,7 @@
         if (!resp.ok) throw new Error('send failed');
         config.puppyStats = config.puppyStats || {};
         config.puppyStats.cloudGiftsSent = (config.puppyStats.cloudGiftsSent || 0) + 1;
+        addFriendBondExp(guest.cloudId, 10, false);
         saveConfig();
         checkPupAchievements();
         updatePupStatBars();
@@ -32979,6 +33225,7 @@
       if (!resp.ok) throw new Error('water fail');
       config.puppyStats = config.puppyStats || {};
       config.puppyStats.cloudWaters = (config.puppyStats.cloudWaters || 0) + 1;
+      addFriendBondExp(toCloudId, 8, false);
       saveConfig();
       checkPupAchievements();
       openPixelPupNoticeModal('浇花成功！', `已跨屏帮「${toName}」的「${g.flowerName || '花苗'}」浇了一壶水，对方上线就能看到花朵长高啦~`, '真棒');
@@ -33114,6 +33361,7 @@
       if (!resp.ok) throw new Error('poke fail');
       config.puppyStats = config.puppyStats || {};
       config.puppyStats.cloudPokes = (config.puppyStats.cloudPokes || 0) + 1;
+      addFriendBondExp(targetCloudId, 5, false);
       saveConfig();
       checkPupAchievements();
       if (guest) showGuestBubbleById(guest.id, '隔空抱抱已发出，等对方上线就能感受到啦~', 2600);
@@ -33289,6 +33537,447 @@
   let visitStampPage = 1;
   let visitPhotoPage = 1;
   let visitPhotoFilter = 'all';
+
+  // ==================== 好友亲密羁绊（「汪汪羁绊」）+ 联机双狗探险 + 30张全新双人专属相册 ====================
+  const freshNewDualPhotos = new Set();
+  let advAlbumMode = 'single'; // 'single' | 'dual'
+
+  const FRIEND_BOND_LEVELS = [
+    { lv: 1, min: 0, title: '初遇汪友', unlock: '开启好友串门与日常互动' },
+    { lv: 2, min: 60, title: '熟面孔', unlock: '解锁双人纪念徽章「初识脚印」' },
+    { lv: 3, min: 180, title: '零食搭子', unlock: '解锁联机动作「双狗碰拳庆贺」' },
+    { lv: 4, min: 400, title: '串门常客', unlock: '解锁双人纪念徽章「甜心茶点」' },
+    { lv: 5, min: 750, title: '默契拍档', unlock: '解锁联机动作「星光双人舞」' },
+    { lv: 6, min: 1250, title: '暖心挚友', unlock: '解锁双人纪念徽章「暖阳围巾」' },
+    { lv: 7, min: 1950, title: '星光同伴', unlock: '双人探险额外 +4 小狗币加成' },
+    { lv: 8, min: 2900, title: '灵魂搭子', unlock: '解锁联机动作「跨屏烟花告白」+「星轨纪念章」' },
+    { lv: 9, min: 4200, title: '永昼知己', unlock: '双人探险额外 +8 小狗币加成' },
+    { lv: 10, min: 6000, title: '宿命双星', unlock: '解锁至臻纪念章「宿命双星」（满级后羁绊值仍无限增长）' },
+  ];
+  const BOND_DAILY_CAP = 40;
+
+  const ensureFriendBond = (fr) => {
+    if (!fr) return { exp: 0, dailyDate: '', dailyExp: 0, interactions: 0, coAdventures: 0 };
+    if (!fr.bond || typeof fr.bond !== 'object') {
+      fr.bond = { exp: 0, dailyDate: '', dailyExp: 0, interactions: 0, coAdventures: 0 };
+    }
+    const today = getTodayStr();
+    if (fr.bond.dailyDate !== today) {
+      fr.bond.dailyDate = today;
+      fr.bond.dailyExp = 0;
+    }
+    return fr.bond;
+  };
+
+  const getFriendBondInfo = (fr) => {
+    const b = ensureFriendBond(fr);
+    const exp = Math.max(0, Math.floor(Number(b.exp) || 0));
+    let cur = FRIEND_BOND_LEVELS[0];
+    let next = FRIEND_BOND_LEVELS[1] || null;
+    for (let i = 0; i < FRIEND_BOND_LEVELS.length; i++) {
+      if (exp >= FRIEND_BOND_LEVELS[i].min) {
+        cur = FRIEND_BOND_LEVELS[i];
+        next = FRIEND_BOND_LEVELS[i + 1] || null;
+      }
+    }
+    const pct = next ? clamp(((exp - cur.min) / Math.max(1, next.min - cur.min)) * 100, 0, 100) : 100;
+    return { lv: cur.lv, title: cur.title, exp, next, pct, dailyExp: b.dailyExp || 0, dailyCap: BOND_DAILY_CAP, bond: b };
+  };
+
+  const getMaxFriendBondLv = () => {
+    const list = getFriendList();
+    let mx = 1;
+    list.forEach(fr => { const info = getFriendBondInfo(fr); if (info.lv > mx) mx = info.lv; });
+    return mx;
+  };
+
+  const addFriendBondExp = (cloudId, delta, isCoAdv = false) => {
+    if (!cloudId || delta <= 0) return 0;
+    const fr = getFriendList().find(x => x && x.cloudId === cloudId);
+    if (!fr) return 0;
+    const b = ensureFriendBond(fr);
+    b.interactions = (b.interactions || 0) + 1;
+    if (isCoAdv) b.coAdventures = (b.coAdventures || 0) + 1;
+    const rem = Math.max(0, BOND_DAILY_CAP - (b.dailyExp || 0));
+    const gain = Math.min(rem, Math.floor(delta));
+    if (gain > 0) {
+      const oldLv = getFriendBondInfo(fr).lv;
+      b.exp = (b.exp || 0) + gain;
+      b.dailyExp = (b.dailyExp || 0) + gain;
+      const newInfo = getFriendBondInfo(fr);
+      saveConfig();
+      checkPupAchievements();
+      if (newInfo.lv > oldLv) {
+        openPixelPupNoticeModal(
+          `汪汪羁绊升级 · Lv.${newInfo.lv}！`,
+          `你和「${fr.name}」的羁绊升到了 Lv.${newInfo.lv}【${newInfo.title}】！`,
+          '太棒了',
+          FRIEND_BOND_LEVELS[newInfo.lv - 1]?.unlock || ''
+        );
+      }
+    } else {
+      saveConfig();
+    }
+    return gain;
+  };
+
+  // 30 张彻底全新、与单人完全不重复的双人专属探险场景
+  const PUP_DUAL_PHOTOS = [
+    { id: 'dp_01', title: '云端热气球', sky: ['#7ec8ff', '#d4f0ff'], ground: '#eef8ff', acc: '#ff7e9d', motif: 'balloon', note: '两只小狗趴在热气球藤篮边数云朵' },
+    { id: 'dp_02', title: '海底玻璃隧道', sky: ['#124e78', '#2282a8'], ground: '#1c5d85', acc: '#7ef2ff', motif: 'aquarium', note: '头顶游过发光水母群的透明海底长廊' },
+    { id: 'dp_03', title: '露天星光影院', sky: ['#1b1e3d', '#3a3566'], ground: '#2a2645', acc: '#ffe078', motif: 'cinema', note: '捧着爆米花并排看复古幕布电影' },
+    { id: 'dp_04', title: '雪顶高山缆车', sky: ['#88c4f5', '#e8f5ff'], ground: '#f5fbff', acc: '#e05868', motif: 'cablecar', note: '红白缆车缓缓掠过皑皑雪峰' },
+    { id: 'dp_05', title: '霓虹夜市小摊', sky: ['#241b3d', '#4c2c66'], ground: '#3b2b4a', acc: '#ff96c2', motif: 'nightmarket', note: '暖黄灯串下一起逛热闹的章鱼烧摊位' },
+    { id: 'dp_06', title: '向日葵列车站', sky: ['#74c2ff', '#d9f2ff'], ground: '#78b85c', acc: '#ffd640', motif: 'sunflower_train', note: '绿皮小火车驶过金黄花海站台' },
+    { id: 'dp_07', title: '星空露营帐篷', sky: ['#141a38', '#2c386e'], ground: '#2f4f3e', acc: '#ffb85c', motif: 'camp', note: '三角帐篷外烤着棉花糖看银河' },
+    { id: 'dp_08', title: '彩虹玻璃温室', sky: ['#c4f0ff', '#fff2f8'], ground: '#94d49a', acc: '#ff9eb8', motif: 'greenhouse', note: '阳光穿透玻璃穹顶折射出细碎彩虹' },
+    { id: 'dp_09', title: '日落海湾摩天轮', sky: ['#ff8e78', '#ffd894'], ground: '#4a4263', acc: '#ff6e9c', motif: 'ferris', note: '橘子汽水色晚霞里的巨大摩天轮' },
+    { id: 'dp_10', title: '樱花温泉庭院', sky: ['#ffdbe8', '#fff4f8'], ground: '#8c6d5a', acc: '#94d6f5', motif: 'onsen', note: '冒着暖呼呼白气的露天木桶温泉' },
+    { id: 'dp_11', title: '藏宝海盗木船', sky: ['#4ea4db', '#b8e8ff'], ground: '#b57b45', acc: '#ffd659', motif: 'pirate', note: '戴着纸船帽在甲板上发现闪亮宝箱' },
+    { id: 'dp_12', title: '法式街角甜品屋', sky: ['#ffe8f0', '#fffaf2'], ground: '#d9c2b8', acc: '#ff8aa8', motif: 'patisserie', note: '条纹遮阳棚下共享双层马卡龙塔' },
+    { id: 'dp_13', title: '极光冰屋营地', sky: ['#122640', '#24665c'], ground: '#e6f7ff', acc: '#7effc4', motif: 'igloo', note: '翡翠色极光在圆滚滚的雪屋顶舞动' },
+    { id: 'dp_14', title: '森林树屋吊桥', sky: ['#a8e0b8', '#e8ffe8'], ground: '#6e9c58', acc: '#c98850', motif: 'treehouse', note: '高高挂在巨树间的木吊桥与小木屋' },
+    { id: 'dp_15', title: '月亮船萤火河', sky: ['#1b234a', '#39467a'], ground: '#243a66', acc: '#fff08a', motif: 'moonboat', note: '弯月形小船顺着发光河面缓缓漂流' },
+    { id: 'dp_16', title: '齿轮钟楼露台', sky: ['#c99472', '#f7d8b5'], ground: '#6b5348', acc: '#f0be59', motif: 'clocktower', note: '黄昏下的巨大金色时钟与旋转齿轮' },
+    { id: 'dp_17', title: '热带珊瑚栈桥', sky: ['#52c4e8', '#c4f5ff'], ground: '#d9a870', acc: '#ff8a78', motif: 'coral', note: '踩在浅蓝海水上的木栈桥看彩色珊瑚' },
+    { id: 'dp_18', title: '红叶山谷索道', sky: ['#ffbe8a', '#fff0d6'], ground: '#b84a38', acc: '#ff9640', motif: 'maple_valley', note: '满山绯红枫叶间穿梭的小索道' },
+    { id: 'dp_19', title: '萤火虫竹林道', sky: ['#1d3b32', '#386b58'], ground: '#2a4d3f', acc: '#d9ff78', motif: 'bamboo', note: '翠绿竹影间飞舞着点点荧光' },
+    { id: 'dp_20', title: '薰衣草风车丘', sky: ['#b8c4ff', '#f0ebff'], ground: '#9c7cd9', acc: '#ffffff', motif: 'windmill', note: '紫色花坡上吱呀转动的白色大风车' },
+    { id: 'dp_21', title: '雪夜圣诞集市', sky: ['#1a2547', '#354878'], ground: '#edf5ff', acc: '#ff5e6c', motif: 'xmasmarket', note: '挂满彩灯与姜饼屋的冬夜小木摊' },
+    { id: 'dp_22', title: '童话糖果小屋', sky: ['#ffd6ec', '#e8f5ff'], ground: '#f7c4d8', acc: '#ff70a6', motif: 'candyhouse', note: '拐杖糖柱子与奶油屋顶的甜蜜庭院' },
+    { id: 'dp_23', title: '沙漠绿洲星夜', sky: ['#1c244f', '#42427a'], ground: '#d9b074', acc: '#62c4b8', motif: 'oasis', note: '棕榈树倒映在澄澈的沙漠月牙泉' },
+    { id: 'dp_24', title: '云海天空之梯', sky: ['#8cd4ff', '#ffeef8'], ground: '#ffffff', acc: '#ffe078', motif: 'skystairs', note: '通向粉白云海深处的洁白阶梯' },
+    { id: 'dp_25', title: '海边灯塔悬崖', sky: ['#6cb8eb', '#d9f0ff'], ground: '#78b068', acc: '#e05252', motif: 'lighthouse', note: '红白条纹灯塔守望着浪花拍岸' },
+    { id: 'dp_26', title: '水城彩船小桥', sky: ['#88cef5', '#ffefd6'], ground: '#4a98c4', acc: '#f0826c', motif: 'venice', note: '彩色小楼夹岸的石拱桥与彩船' },
+    { id: 'dp_27', title: '黑胶唱片小屋', sky: ['#4f362e', '#855c4a'], ground: '#634338', acc: '#f2c258', motif: 'vinyl', note: '暖橘灯光里一起听转动的复古黑胶' },
+    { id: 'dp_28', title: '梦幻水晶溶洞', sky: ['#252254', '#4d3b8c'], ground: '#322b66', acc: '#94f2ff', motif: 'crystal', note: '洞壁长满粉蓝发光晶簇的秘境' },
+    { id: 'dp_29', title: '雾气红桥溪畔', sky: ['#ffd6c4', '#fff2e8'], ground: '#6ba8c4', acc: '#d94c4c', motif: 'redbridge', note: '朱红拱桥下溪水潺潺飘着落叶' },
+    { id: 'dp_30', title: '太空漫步观测舱', sky: ['#0d1229', '#202b5c'], ground: '#4c5878', acc: '#96e4ff', motif: 'space', note: '透过圆窗俯瞰蓝色星球一起失重漂浮' },
+  ];
+
+  const rollDualPhotoVariant = () => {
+    const layouts = [
+      { name: 'side', x1: 9, y1: 18, d1: 1, x2: 29, y2: 18, d2: -1 },
+      { name: 'cuddle', x1: 13, y1: 18, d1: 1, x2: 24, y2: 18, d2: -1 },
+      { name: 'hop', x1: 10, y1: 15, d1: 1, x2: 29, y2: 19, d2: -1 },
+      { name: 'chase', x1: 8, y1: 19, d1: 1, x2: 27, y2: 17, d2: 1 },
+      { name: 'back', x1: 13, y1: 18, d1: -1, x2: 25, y2: 18, d2: 1 },
+      { name: 'nap', x1: 11, y1: 19, d1: 1, x2: 27, y2: 19, d2: -1 },
+    ];
+    const poses = ['idle1', 'happy', 'sit1', 'walk1', 'lie', 'idle_tilt'];
+    const fxs = ['heart', 'sparkle', 'note', 'flower_fx'];
+    return {
+      layout: pick(layouts),
+      p1: pick(poses),
+      p2: pick(poses),
+      fx: pick(fxs),
+      seed: randInt(1, 9999),
+    };
+  };
+
+  const drawDualAdvPhotoCanvas = (canvas, ph, locked, rec, overrideShot = null) => {
+    if (!canvas) return;
+    const ctx2 = canvas.getContext('2d');
+    const W = canvas.width || 54, H = canvas.height || 36;
+    const sx = W / 54, sy = H / 36;
+    ctx2.save();
+    ctx2.imageSmoothingEnabled = false;
+    ctx2.setTransform(sx, 0, 0, sy, 0, 0);
+
+    if (locked || !ph) {
+      ctx2.fillStyle = '#e8e0e4'; ctx2.fillRect(0, 0, 54, 36);
+      ctx2.fillStyle = '#c4b4bc'; ctx2.fillRect(4, 4, 46, 28);
+      ctx2.fillStyle = '#ffffff'; ctx2.font = 'bold 12px monospace';
+      ctx2.textAlign = 'center'; ctx2.fillText('?', 27, 22);
+      ctx2.restore();
+      return;
+    }
+
+    // 渐变天空
+    const grad = ctx2.createLinearGradient(0, 0, 0, 25);
+    grad.addColorStop(0, ph.sky[0]); grad.addColorStop(1, ph.sky[1]);
+    ctx2.fillStyle = grad; ctx2.fillRect(0, 0, 54, 26);
+    // 地面/水面
+    ctx2.fillStyle = ph.ground; ctx2.fillRect(0, 24, 54, 12);
+
+    // 专属场景特色建筑与道具（与单人完全不重样）
+    const m = ph.motif;
+    ctx2.fillStyle = ph.acc;
+    if (m === 'balloon' || m === 'skystairs') {
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(4, 7, 10, 4); ctx2.fillRect(38, 5, 12, 4);
+      ctx2.fillStyle = ph.acc; ctx2.fillRect(21, 3, 12, 10);
+      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(24, 3, 6, 10);
+      ctx2.fillStyle = '#a86e44'; ctx2.fillRect(24, 15, 6, 4);
+    } else if (m === 'aquarium' || m === 'crystal' || m === 'space') {
+      ctx2.fillStyle = ph.acc;
+      ctx2.fillRect(7, 5, 4, 4); ctx2.fillRect(42, 7, 5, 5); ctx2.fillRect(24, 4, 6, 3);
+      ctx2.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx2.fillRect(0, 2, 54, 2); ctx2.fillRect(0, 22, 54, 2);
+    } else if (m === 'ferris' || m === 'clocktower' || m === 'windmill') {
+      ctx2.strokeStyle = ph.acc; ctx2.lineWidth = 1.5;
+      ctx2.beginPath(); ctx2.arc(27, 13, 9, 0, Math.PI * 2); ctx2.stroke();
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(26, 4, 2, 18); ctx2.fillRect(18, 12, 18, 2);
+    } else if (m === 'camp' || m === 'igloo' || m === 'candyhouse' || m === 'treehouse') {
+      ctx2.fillStyle = ph.acc;
+      ctx2.beginPath(); ctx2.moveTo(15, 24); ctx2.lineTo(27, 8); ctx2.lineTo(39, 24); ctx2.fill();
+      ctx2.fillStyle = '#fff5d6'; ctx2.fillRect(24, 17, 6, 7);
+    } else if (m === 'cinema' || m === 'nightmarket' || m === 'xmasmarket' || m === 'patisserie' || m === 'vinyl') {
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(8, 5, 38, 14);
+      ctx2.fillStyle = ph.acc; ctx2.fillRect(8, 5, 38, 3);
+      for (let i = 0; i < 6; i++) { ctx2.fillStyle = i % 2 ? '#ffe078' : ph.acc; ctx2.fillRect(9 + i * 6, 9, 4, 2); }
+    } else {
+      ctx2.fillStyle = ph.acc;
+      ctx2.fillRect(5, 12, 8, 12); ctx2.fillRect(41, 10, 8, 14);
+      ctx2.fillStyle = '#fff6d6'; ctx2.fillRect(24, 5, 6, 6);
+    }
+
+    // 绘制两只小狗（使用各自最新/快照外观 + 随机位置/姿势/朝向）
+    const shot = overrideShot || (Array.isArray(rec?.history) && rec.history[rec.coverShotIdx || 0]) || rec || {};
+    const v = shot.variant || rollDualPhotoVariant();
+    const lay = v.layout || { x1: 9, y1: 18, d1: 1, x2: 29, y2: 18, d2: -1 };
+    const drawMiniDog = (lk, pose, dx, dy, dir) => {
+      const pal = getPupPalette(lk || {});
+      const grid = PUP_SPRITES[pose] || PUP_SPRITES.idle1;
+      const isSit = pose === 'sit1', isFlat = pose === 'lie';
+      ctx2.save();
+      ctx2.translate(dx + 8, dy + 8);
+      ctx2.scale(dir < 0 ? -0.78 : 0.78, 0.78);
+      ctx2.translate(-12, -16);
+      const ox = 4, oy = 10;
+      const hx = isSit ? ox + 9 : (isFlat ? ox + 11 : ox + 10);
+      const hy = isFlat ? oy + 6 : oy + 2;
+      for (let y = 0; y < grid.length; y++) {
+        const row = grid[y];
+        for (let x = 0; x < row.length; x++) {
+          const col = pal[row[x]];
+          if (col) { ctx2.fillStyle = col; ctx2.fillRect(ox + x, oy + y, 1, 1); }
+        }
+      }
+      const prevCtx = activePxCtx, prevShowEars = config.puppyOnesieShowEars, prevOffsets = config.puppyAccOffsets;
+      try {
+        activePxCtx = ctx2;
+        if (lk) {
+          config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
+          if (lk.accOffsets) config.puppyAccOffsets = lk.accOffsets;
+          drawPupOutfit(lk.outfit || 'none', ox, oy, hx, hy, isFlat, false, isSit, false);
+          if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false));
+          drawPupCompanion(lk.comp || lk.companion || 'none', ox, oy, false);
+        }
+      } finally {
+        activePxCtx = prevCtx;
+        config.puppyOnesieShowEars = prevShowEars;
+        config.puppyAccOffsets = prevOffsets;
+      }
+      ctx2.restore();
+    };
+
+    drawMiniDog(shot.myLook || {
+      fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
+      showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit, accs: config.puppyAccs,
+      accOffsets: config.puppyAccOffsets, comp: config.puppyCompanion, onesieShowEars: config.puppyOnesieShowEars,
+    }, v.p1 || 'happy', lay.x1, lay.y1, lay.d1);
+    drawMiniDog(shot.frLook || {}, v.p2 || 'idle1', lay.x2, lay.y2, lay.d2);
+
+    // 氛围粒子（爱心/星光/音符）
+    ctx2.fillStyle = v.fx === 'heart' ? '#ff6e9c' : (v.fx === 'note' ? '#6eb8ff' : '#ffe066');
+    ctx2.fillRect(25, 13, 2, 2); ctx2.fillRect(28, 11, 2, 2);
+    ctx2.restore();
+  };
+
+  const saveDualAlbumShot = (ph, frName, frLook, myLook) => {
+    if (!config.puppyDualAlbum || typeof config.puppyDualAlbum !== 'object') config.puppyDualAlbum = {};
+    const prevRec = config.puppyDualAlbum[ph.id];
+    const shotDate = getTodayStr();
+    const shotVariant = rollDualPhotoVariant();
+    const snapMy = myLook || {
+      fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
+      showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit || 'none',
+      accs: Array.isArray(config.puppyAccs) ? [...config.puppyAccs] : [],
+      accOffsets: config.puppyAccOffsets ? JSON.parse(JSON.stringify(config.puppyAccOffsets)) : {},
+      comp: config.puppyCompanion || 'none', onesieShowEars: Boolean(config.puppyOnesieShowEars),
+    };
+    const snapFr = frLook ? JSON.parse(JSON.stringify(frLook)) : {};
+    const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : [];
+    const newShot = { date: shotDate, friendName: frName || '好友', myLook: snapMy, frLook: snapFr, variant: shotVariant };
+    const newHist = [newShot, ...prevHist].slice(0, 12);
+    const keepPinned = Boolean(prevRec?.pinnedCover);
+    const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
+    config.puppyDualAlbum[ph.id] = {
+      date: shotDate,
+      firstDate: prevRec?.firstDate || shotDate,
+      count: (prevRec?.count || 0) + 1,
+      pinnedCover: keepPinned,
+      coverShotIdx: nextCoverIdx,
+      history: newHist,
+    };
+    freshNewDualPhotos.add(ph.id);
+    return newShot;
+  };
+
+  let coAdvBusy = false;
+  const startCoopCloudAdventure = async (fr) => {
+    if (!fr || !fr.cloudId || coAdvBusy) return;
+    if (config.puppyCoopAdv && config.puppyCoopAdv.endAt > Date.now()) {
+      const rem = Math.ceil((config.puppyCoopAdv.endAt - Date.now()) / 60000);
+      openPixelPupNoticeModal('双狗正在探险中', `你和「${config.puppyCoopAdv.friendName}」还在探险中，还剩约 ${rem} 分钟就能回来拆双人明信片啦~`);
+      return;
+    }
+    coAdvBusy = true;
+    try {
+      const durMs = 10 * 60 * 1000;
+      const ph = pick(PUP_DUAL_PHOTOS);
+      config.puppyCoopAdv = {
+        friendCloudId: fr.cloudId,
+        friendName: fr.name || '好友',
+        friendLook: fr.look ? JSON.parse(JSON.stringify(fr.look)) : {},
+        photoId: ph.id,
+        startAt: Date.now(),
+        endAt: Date.now() + durMs,
+      };
+      saveConfig();
+      const baseUrl = getCloudBaseUrl();
+      fetch(`${baseUrl}/gift`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromId: ensureMyCloudId(),
+          fromName: getPupName(),
+          toId: fr.cloudId,
+          gifts: [{ kind: '__coadv__', id: ph.id, qty: 1 }],
+          redPacket: 0,
+          msg: `约你的小狗一起去了【${ph.title}】探险~`,
+        }),
+      }).catch(() => {});
+      renderPupVisitPanel();
+      openPixelPupNoticeModal('组队探险出发！', `已约上「${fr.name}」一起出发去双人探险（10 分钟）！回来后可领取双倍小狗币与全新双人探险明信片~`, '一路顺风');
+    } finally {
+      coAdvBusy = false;
+    }
+  };
+
+  const claimCoopCloudAdventure = () => {
+    const ca = config.puppyCoopAdv;
+    if (!ca || Date.now() < ca.endAt) return;
+    config.puppyCoopAdv = null;
+    const ph = PUP_DUAL_PHOTOS.find(x => x.id === ca.photoId) || pick(PUP_DUAL_PHOTOS);
+    const fr = getFriendList().find(x => x.cloudId === ca.friendCloudId);
+    const bondInfo = fr ? getFriendBondInfo(fr) : { lv: 1 };
+    const extraBonus = bondInfo.lv >= 9 ? 8 : (bondInfo.lv >= 7 ? 4 : 0);
+    const coins = randInt(24, 36) + extraBonus;
+    config.puppyCoins = Math.floor(config.puppyCoins || 0) + coins;
+    config.puppyStats = config.puppyStats || {};
+    config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coins;
+    config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
+    saveDualAlbumShot(ph, ca.friendName, fr?.look || ca.friendLook, null);
+    addFriendBondExp(ca.friendCloudId, 15, true);
+    saveConfig();
+    updatePupStatBars();
+    checkPupAchievements();
+    renderPupVisitPanel();
+    openPixelPupNoticeModal(
+      '双狗探险满载而归！',
+      `你和「${ca.friendName}」从【${ph.title}】回来啦！共获得 +${coins} 小狗币，并拍下全新双人明信片（已存入「冒险 → 相册 → 双人」并标 NEW）！`,
+      '去相册看看'
+    );
+  };
+
+  const openFriendBondModal = (cloudId) => {
+    const fr = getFriendList().find(x => x && x.cloudId === cloudId);
+    if (!fr) return;
+    const info = getFriendBondInfo(fr);
+    let mask = root.querySelector('#st-tb-bond-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-bond-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9994;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxCard = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-card') || '#ffffff')) || '#ffffff';
+
+    const myLookObj = {
+      fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
+      showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit, accs: config.puppyAccs,
+      accOffsets: config.puppyAccOffsets, comp: config.puppyCompanion, onesieShowEars: config.puppyOnesieShowEars,
+    };
+
+    const badges = [
+      { lv: 2, name: '初识脚印' },
+      { lv: 4, name: '甜心茶点' },
+      { lv: 6, name: '暖阳围巾' },
+      { lv: 8, name: '星轨纪念' },
+      { lv: 10, name: '宿命双星' },
+    ];
+    const badgeHtml = badges.map(b => {
+      const ok = info.lv >= b.lv;
+      return `<span style="padding:2px 6px;font-size:9.5px;border:1px solid ${pxBd};background:${ok ? 'var(--px-bg-soft,#f3eeff)' : '#eee'};opacity:${ok ? '1' : '0.45'};font-weight:${ok ? '700' : '400'};">${ok ? '★ ' : '🔒 '}${b.name}(Lv.${b.lv})</span>`;
+    }).join('');
+
+    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12.5px;font-weight:700;">汪汪羁绊 · ${escapeHtmlSimple(fr.name)}</span>
+        <button type="button" id="st-bm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div id="st-bm-avatars" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;"></div>
+      <div style="padding:7px 8px;background:${pxCard};border:1.5px solid ${pxBd};margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;margin-bottom:4px;">
+          <span>Lv.${info.lv} · ${info.title}</span>
+          <span>羁绊值 ${info.exp}${info.next ? ` / ${info.next.min}` : '（已满级 · 持续累积）'}</span>
+        </div>
+        <div style="width:100%;height:7px;background:#e8e0e6;border:1px solid ${pxBd};overflow:hidden;margin-bottom:4px;">
+          <div style="width:${info.pct.toFixed(1)}%;height:100%;background:#e06894;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9.5px;opacity:0.78;">
+          <span>今日羁绊额度：${info.dailyExp}/${info.dailyCap}</span>
+          <span>累计互动 ${info.bond.interactions || 0} 次 · 探险 ${info.bond.coAdventures || 0} 次</span>
+        </div>
+      </div>
+      <div style="font-size:10.5px;font-weight:700;margin-bottom:4px;">专属联机解锁动作</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
+        <button type="button" id="st-bm-coadv" class="st-px-btn care" style="height:24px;font-size:10px;">组队双狗探险</button>
+        <button type="button" id="st-bm-act1" class="st-px-btn${info.lv >= 3 ? ' active' : ''}" style="height:24px;font-size:10px;${info.lv >= 3 ? '' : 'opacity:0.48;'}">碰拳庆贺(Lv.3)</button>
+        <button type="button" id="st-bm-act2" class="st-px-btn${info.lv >= 5 ? ' active' : ''}" style="height:24px;font-size:10px;${info.lv >= 5 ? '' : 'opacity:0.48;'}">星光双人舞(Lv.5)</button>
+        <button type="button" id="st-bm-act3" class="st-px-btn${info.lv >= 8 ? ' active' : ''}" style="height:24px;font-size:10px;${info.lv >= 8 ? '' : 'opacity:0.48;'}">跨屏烟花(Lv.8)</button>
+      </div>
+      <div style="font-size:10.5px;font-weight:700;margin-bottom:4px;">双人纪念徽章</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px;">${badgeHtml}</div>
+      <button type="button" id="st-bm-ok" class="st-px-btn" style="width:100%;">关闭</button>
+    </div>`;
+
+    const avWrap = mask.querySelector('#st-bm-avatars');
+    if (avWrap) {
+      avWrap.appendChild(makeFriendAvatarCanvas(myLookObj));
+      const ht = doc.createElement('span');
+      ht.style.cssText = 'font-size:16px;color:#e05884;font-weight:700;';
+      ht.textContent = '♥';
+      avWrap.appendChild(ht);
+      avWrap.appendChild(makeFriendAvatarCanvas(fr.look));
+    }
+
+    const closeBm = () => { mask.style.display = 'none'; };
+    mask.onclick = (e) => { if (e.target === mask) closeBm(); };
+    mask.querySelector('#st-bm-close')?.addEventListener('click', closeBm);
+    mask.querySelector('#st-bm-ok')?.addEventListener('click', closeBm);
+    mask.querySelector('#st-bm-coadv')?.addEventListener('click', () => { closeBm(); startCoopCloudAdventure(fr); });
+    const runBondAction = (needLv, label, bub) => {
+      if (info.lv < needLv) { openPixelPupNoticeModal('尚未解锁', `与「${fr.name}」的汪汪羁绊达到 Lv.${needLv} 后即可解锁【${label}】哦~`); return; }
+      closeBm();
+      if (config.puppyEnabled) {
+        setPuppyState('spin', 120);
+        for (let i = 0; i < 8; i++) spawnPupFx(i % 2 ? 'heart' : 'sparkle', 6 + (i % 4) * 4, 4 + (i % 2) * 3);
+        showPuppyBubble(bub, 3800);
+      }
+      sendCloudRemotePoke(fr.cloudId, fr.name);
+    };
+    mask.querySelector('#st-bm-act1')?.addEventListener('click', () => runBondAction(3, '碰拳庆贺', `和「${fr.name}」隔空双爪碰拳庆贺啦！`));
+    mask.querySelector('#st-bm-act2')?.addEventListener('click', () => runBondAction(5, '星光双人舞', `伴着星光和「${fr.name}」跳了一支双人舞~`));
+    mask.querySelector('#st-bm-act3')?.addEventListener('click', () => runBondAction(8, '跨屏烟花告白', `为「${fr.name}」在星空下点亮了跨屏烟花！`));
+    mask.style.display = 'flex';
+  };
+
   const buildFriendCardEl = (fr, onAfterChange) => {
     const curGuests = getGuestList();
     const gMatch = curGuests.find(g => g.cloudId === fr.cloudId || g.name === fr.name);
@@ -33305,10 +33994,14 @@
     const info = doc.createElement('div');
     info.style.cssText = 'flex:1;min-width:0;';
     info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
-        <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
+        <div style="display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;">
+          <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
+          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="height:18px;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">♥Lv.${getFriendBondInfo(fr).lv}</button>
+        </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <span style="font-size:9px;opacity:0.65;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
           <button type="button" class="st-px-btn${fr.starred ? ' active care' : ''} st-fr-star" style="height:19px;padding:0 5px;font-size:9px;">${fr.starred ? '已星标' : '星标'}</button>
+          <button type="button" class="st-px-btn st-fr-del" style="height:19px;padding:0 4px;font-size:9px;color:#a94442;" title="删除好友">×</button>
         </div>
       </div>
       <div style="font-size:9.5px;opacity:0.78;margin-top:2px;">${escapeHtmlSimple(gardenHint)}</div>`;
@@ -33322,7 +34015,8 @@
       <button type="button" class="st-px-btn st-fr-note" style="height:21px;font-size:9.5px;">留纸条</button>
       <button type="button" class="st-px-btn care st-fr-gift" style="height:21px;font-size:9.5px;">送礼</button>
       <button type="button" class="st-px-btn st-fr-poke" style="height:21px;font-size:9.5px;">贴贴</button>
-      <button type="button" class="st-px-btn st-fr-del" style="height:21px;font-size:9.5px;color:#a94442;">删好友</button>`;
+      <button type="button" class="st-px-btn st-fr-coadv" style="height:21px;font-size:9.5px;">组队探险</button>`;
+    info.querySelector('.st-fr-bond')?.addEventListener('click', () => openFriendBondModal(fr.cloudId));
     info.querySelector('.st-fr-star')?.addEventListener('click', () => {
       fr.starred = !fr.starred;
       saveConfig();
@@ -33337,7 +34031,8 @@
     actRow.querySelector('.st-fr-note')?.addEventListener('click', () => openCloudWriteNoteModal(fr.cloudId, fr.name));
     actRow.querySelector('.st-fr-gift')?.addEventListener('click', () => openCloudSendGiftModal(fr.cloudId));
     actRow.querySelector('.st-fr-poke')?.addEventListener('click', () => sendCloudRemotePoke(fr.cloudId, fr.name));
-    actRow.querySelector('.st-fr-del')?.addEventListener('click', () => {
+    actRow.querySelector('.st-fr-coadv')?.addEventListener('click', () => startCoopCloudAdventure(fr));
+    info.querySelector('.st-fr-del')?.addEventListener('click', () => {
       openGuardConfirm(
         `删除好友「${fr.name}」？`,
         '删除后将从云端好友列表移除，但不会影响你已收到的礼物和相册记录。',
@@ -33423,6 +34118,28 @@
   function renderPupVisitPanel() {
     if (!advVisitView) return;
     advVisitView.innerHTML = '';
+
+    // 0) 联机双狗探险进度条/领奖卡片
+    if (config.puppyCoopAdv) {
+      const ca = config.puppyCoopAdv;
+      const remMs = Math.max(0, ca.endAt - Date.now());
+      const caBox = doc.createElement('div');
+      caBox.className = 'st-px-adv-card';
+      caBox.style.marginBottom = '6px';
+      if (remMs <= 0) {
+        caBox.innerHTML = `<div style="font-weight:700;font-size:11px;margin-bottom:5px;">双狗探险归来！和「${escapeHtmlSimple(ca.friendName)}」带回了双人明信片~</div>
+          <button type="button" id="st-ca-claim" class="st-px-btn care" style="width:100%;">领取双倍小狗币 & 双人明信片</button>`;
+        caBox.querySelector('#st-ca-claim')?.addEventListener('click', claimCoopCloudAdventure);
+      } else {
+        const mins = Math.floor(remMs / 60000);
+        const secs = Math.floor((remMs % 60000) / 1000);
+        caBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:10.5px;">
+          <span>正在与「${escapeHtmlSimple(ca.friendName)}」组队探险中…</span>
+          <b>${mins}分${String(secs).padStart(2, '0')}秒</b>
+        </div>`;
+      }
+      advVisitView.appendChild(caBox);
+    }
 
     // 1) 云端好友系统：好友列表弹窗入口 + 留言板 + 仅展示星标置顶好友（2个高度可滚动）
     const myFid = ensureMyCloudId();
@@ -33818,8 +34535,107 @@
         });
       }
     } else if (advSubTab === 'album') {
-      if (albumHeadEl) albumHeadEl.textContent = `像素相册 (${albumCount}/${PUP_PHOTOS.length})`;
+      const dualAlbumCount = Object.keys(config.puppyDualAlbum || {}).length;
+      if (albumHeadEl) {
+        albumHeadEl.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;width:100%;">
+          <span>${advAlbumMode === 'dual' ? `双人相册 (${dualAlbumCount}/${PUP_DUAL_PHOTOS.length})` : `单人相册 (${albumCount}/${PUP_PHOTOS.length})`}</span>
+          <div style="display:flex;gap:4px;">
+            <button type="button" id="st-alb-mode-single" class="st-px-btn${advAlbumMode === 'single' ? ' active' : ''}" style="height:20px;padding:0 7px;font-size:9.5px;">单人${freshNewPhotos.size ? '·NEW' : ''}</button>
+            <button type="button" id="st-alb-mode-dual" class="st-px-btn${advAlbumMode === 'dual' ? ' active' : ''}" style="height:20px;padding:0 7px;font-size:9.5px;">双人${freshNewDualPhotos.size ? '·NEW' : ''}</button>
+          </div>
+        </div>`;
+        albumHeadEl.querySelector('#st-alb-mode-single')?.addEventListener('click', () => { advAlbumMode = 'single'; renderPupAdventure(); });
+        albumHeadEl.querySelector('#st-alb-mode-dual')?.addEventListener('click', () => { advAlbumMode = 'dual'; renderPupAdventure(); });
+      }
       albumGridEl.innerHTML = '';
+      if (advAlbumMode === 'dual') {
+        PUP_DUAL_PHOTOS.forEach(ph => {
+          const rec = config.puppyDualAlbum?.[ph.id];
+          const locked = !rec;
+          const card = doc.createElement('button');
+          card.type = 'button';
+          card.className = `st-px-photo-card${locked ? ' locked' : ''}`;
+          const cv = doc.createElement('canvas');
+          cv.width = 54; cv.height = 36;
+          drawDualAdvPhotoCanvas(cv, ph, locked, rec);
+          const lb = doc.createElement('div');
+          lb.style.fontSize = '9px';
+          lb.style.fontWeight = '700';
+          const pCnt = rec?.count || 1;
+          if (locked) {
+            lb.textContent = '???';
+          } else {
+            lb.innerHTML = `${pCnt > 1 ? `${ph.title} x${pCnt}` : ph.title}${freshNewDualPhotos.has(ph.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+          }
+          card.append(cv, lb);
+          if (!locked) {
+            card.addEventListener('click', () => {
+              if (freshNewDualPhotos.delete(ph.id)) renderPupAdventure();
+              const shots = Array.isArray(rec.history) && rec.history.length ? rec.history : [];
+              let shotIdx = clamp(typeof rec.coverShotIdx === 'number' ? rec.coverShotIdx : 0, 0, Math.max(0, shots.length - 1));
+              const renderDualShot = () => {
+                const cur = shots[shotIdx] || {};
+                drawDualAdvPhotoCanvas(photoBigCanvas, ph, false, rec, cur);
+                photoBigTitleEl.textContent = `${ph.title}${shots.length > 1 ? ` (${shotIdx + 1}/${shots.length})` : ''}`;
+                photoBigNoteEl.textContent = `${ph.note} · 搭档：${cur.friendName || '好友'} (${cur.date || rec.date || ''})`;
+                let strip = photoViewerEl.querySelector('#st-px-photo-strip');
+                if (strip) {
+                  strip.innerHTML = '';
+                  if (shots.length > 1) {
+                    strip.style.display = 'flex';
+                    shots.forEach((s, si) => {
+                      const th = doc.createElement('canvas');
+                      th.width = 54; th.height = 36;
+                      th.style.cssText = `width:42px;height:28px;border:2px solid ${si === shotIdx ? '#e06894' : '#bfa4ae'};cursor:pointer;flex-shrink:0;image-rendering:pixelated;`;
+                      drawDualAdvPhotoCanvas(th, ph, false, rec, s);
+                      th.addEventListener('click', () => { shotIdx = si; renderDualShot(); });
+                      strip.appendChild(th);
+                    });
+                  } else {
+                    strip.style.display = 'none';
+                  }
+                }
+                const pinBtn = photoViewerEl.querySelector('#st-px-photo-pin');
+                if (pinBtn) {
+                  pinBtn.style.display = shots.length > 1 ? '' : 'none';
+                  pinBtn.onclick = () => {
+                    rec.coverShotIdx = shotIdx;
+                    rec.pinnedCover = true;
+                    saveConfig();
+                    renderPupAdventure();
+                    openPixelPupNoticeModal('已设为首图', `已将第 ${shotIdx + 1} 张设为【${ph.title}】的封面首图~`, '好哒');
+                  };
+                }
+                const delBtn = photoViewerEl.querySelector('#st-px-photo-del');
+                if (delBtn) {
+                  delBtn.onclick = () => {
+                    openGuardConfirm('删除这张双人照片？', `确认删除【${ph.title}】的当前这张合照吗？`, () => {
+                      shots.splice(shotIdx, 1);
+                      if (!shots.length) delete config.puppyDualAlbum[ph.id];
+                      else { rec.history = shots; rec.count = shots.length; rec.coverShotIdx = 0; }
+                      saveConfig();
+                      photoViewerEl.classList.remove('open');
+                      renderPupAdventure();
+                    }, '确认删除', true);
+                  };
+                }
+              };
+              renderDualShot();
+              photoViewerEl.classList.add('open');
+              const bodySc = pupBagEl?.querySelector('.st-px-body');
+              if (bodySc) bodySc.scrollTop = 0;
+            });
+          }
+          albumGridEl.appendChild(card);
+        });
+        if (freshNewDualPhotos.size > 0) {
+          setTimeout(() => {
+            const firstNew = albumGridEl.querySelector('.st-px-new-tag');
+            if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 90);
+        }
+        return;
+      }
       PUP_PHOTOS.forEach(ph => {
         const rec = config.puppyAlbum?.[ph.id];
         const locked = !rec;
@@ -33985,6 +34801,12 @@
         }
         albumGridEl.appendChild(card);
       });
+      if (freshNewPhotos.size > 0) {
+        setTimeout(() => {
+          const firstNew = albumGridEl.querySelector('.st-px-new-tag');
+          if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 90);
+      }
     } else if (advSubTab === 'museum') {
       if (musTabCurioBtn) musTabCurioBtn.classList.toggle('active', museumSubMode === 'curio');
       if (musTabVisitorBtn) musTabVisitorBtn.classList.toggle('active', museumSubMode === 'visitor');
@@ -46297,6 +47119,7 @@
     });
   });
 
+  let colorCloudSyncT = null;
   const bindPupColorInput = (inputEl, key) => {
     inputEl.addEventListener('input', () => {
       config[key] = inputEl.value;
@@ -46305,6 +47128,10 @@
       drawShopPreview();
       drawPupAvatarPhoto();
       drawPuppyScene();
+      clearTimeout(colorCloudSyncT);
+      colorCloudSyncT = setTimeout(() => {
+        if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
+      }, 380);
     });
   };
   bindPupColorInput(pupFurInput, 'puppyFur');
@@ -46354,6 +47181,12 @@
   achToggleBtn.addEventListener('click', () => {
     const open = !achListEl.classList.contains('open');
     achListEl.classList.toggle('open', open);
+    if (open && freshNewAchs.size > 0) {
+      setTimeout(() => {
+        const firstNew = achListEl.querySelector('.st-px-new-tag');
+        if (firstNew) firstNew.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 90);
+    }
     achToggleBtn.textContent = open ? '收起' : '展开';
     if (open) renderPupAchievements();
     else revertAchPreview();
@@ -47436,7 +48269,7 @@
     if (_rMini && _rMini.contains(e.target)) return;
     if (gachaModalEl && gachaModalEl.contains(e.target)) return;
     if (confirmMask && confirmMask.contains(e.target)) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard')) return;
+    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-bond-mask')) return;
     togglePupBag(false);
     if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
     if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
