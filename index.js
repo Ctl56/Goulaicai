@@ -997,7 +997,7 @@
     { id: 'spend_10000', title: '万币宠爱家', desc: '累计消费满 10000 枚小狗币，赠全新「旋转音乐盒框」动态头像框', reward: 66, tier: 4, frame: 'spend10000_bespoke', bonus: { avatarframe: 'af_spend_10k_carousel' }, bg: 'linear-gradient(115deg,#ffeaf0,#fff4d9,#f5e8ff)', bd: '#d46282', fg: '#6b1c36', icon: 'crown' },
     { id: 'hidden_visit_host_5', title: '人气待客王', desc: '累计接待至少 5 位不同名字的朋友小狗来桌面做客', reward: 15, tier: 3, hidden: true, frame: 'paws', bg: 'linear-gradient(120deg,#ffedf4,#eef8ff,#fff6de)', bd: '#e08ca8', fg: '#752242', icon: 'paw' },
     { id: 'hidden_visit_generous', title: '满载伴手礼', desc: '累计寄出带满 5 件礼物的串门名片达到 3 次', reward: 15, tier: 3, hidden: true, frame: 'ribbons', bg: 'linear-gradient(120deg,#fff3e6,#ffeaf5,#eefbf2)', bd: '#de9262', fg: '#6e3412', icon: 'boutique_bag' },
-    { id: 'hidden_visit_bestie', title: '串门好搭子', desc: '与来串门的朋友小狗累计互动达到 30 次', reward: 22, tier: 4, hidden: true, frame: 'hearts', bg: 'linear-gradient(115deg,#ffeaf2,#e8f4ff,#fff6d9)', bd: '#d97a9e', fg: '#6e1e3e', icon: 'hearts' },
+    { id: 'hidden_visit_bestie', title: '串门好搭子', desc: '与来串门的朋友小狗累计互动达到 30 次', reward: 22, tier: 4, hidden: true, frame: 'visit_bestie_bespoke', bg: 'linear-gradient(115deg,#fff0f6,#fff8ea,#edf6ff)', bd: '#df8aa8', fg: '#6b2242', icon: 'paw' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -19173,6 +19173,57 @@
           ] },
       ],
     },
+    hidden_visit_bestie: {
+      cls: 'bespoke-lux bespoke-sheen',
+      trim: [['bottom', 0]],
+      pieces: [
+        // 右侧主复合图案：明信片 + 冒热气草莓奶油茶杯 + 金色火漆印章（多元素有机组合！）
+        { pos: 'right:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 16,
+          pal: { o: '#8c5448', w: '#fffdf9', c: '#ffe8d6', p: '#ff8eb0', r: '#e04f6e', y: '#f5c854', l: '#ffd6e5', s: '#ffffff' },
+          frames: [
+            [
+              '....s...s...',
+              '...s...s....',
+              '.ooooooo....',
+              'owwwpwwwocc.',
+              'owwpppwwoyco',
+              'owwwpwwwocco',
+              '.oooooooooo.',
+              '..ooplppoo..',
+              '...ooooro...',
+              '....oooo....',
+            ],
+            [
+              '...s...s....',
+              '....s...s...',
+              '.ooooooo....',
+              'owwwpwwwocc.',
+              'owwpppwwoyco',
+              'owwwpwwwocco',
+              '.oooooooooo.',
+              '..ooplppoo..',
+              '...ooooro...',
+              '....oooo....',
+            ],
+          ] },
+        // 左上轻巧小元素点缀：并排双色小肉垫 + 丝带结
+        { pos: 'left:8px;top:-8px;', w: 15, h: 8, anim: 'b-bob',
+          pal: { p: '#ff8eb0', b: '#7eb8f0', w: '#ffffff', y: '#f5cc58' },
+          grid: [
+            '.p.p....b.b.',
+            'pwwp.yy.bwwb',
+            '.pp..yy..bb.',
+          ] },
+        // 左下细腻微点缀：小金铃 + 樱粉花瓣点
+        { pos: 'left:-7px;bottom:-6px;', w: 10, h: 8,
+          pal: { y: '#f2c249', w: '#fff9d6', p: '#ff9ec2' },
+          grid: [
+            '..yy....',
+            '.ywwy.pp',
+            '..yy..p.',
+          ] },
+      ],
+    },
   };
 
   const drawGridOnCtx = (g, grid, pal) => {
@@ -21263,6 +21314,9 @@
       }
     }
 
+    if (shopPreviewCanvas.width !== 240 || shopPreviewCanvas.height !== 240) { shopPreviewCanvas.width = 240; shopPreviewCanvas.height = 240; }
+    shopPreviewCtx.setTransform(10, 0, 0, 10, 0, 0);
+    shopPreviewCtx.imageSmoothingEnabled = false;
     shopPreviewCtx.clearRect(0, 0, 24, 24);
     const grid = PUP_SPRITES.idle1;
     for (let y = 0; y < grid.length; y++) {
@@ -27121,7 +27175,9 @@
   const drawAdvPhotoCanvas = (canvas, photo, locked = false, rec = null) => {
     const g = canvas.getContext('2d');
     const W = 54, H = 36;
-    if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+    if (canvas.width !== W * 10 || canvas.height !== H * 10) { canvas.width = W * 10; canvas.height = H * 10; }
+    g.setTransform(10, 0, 0, 10, 0, 0);
+    g.imageSmoothingEnabled = false;
     g.clearRect(0, 0, W, H);
     if (locked) {
       g.fillStyle = '#e6dac4'; g.fillRect(0, 0, W, H);
@@ -27567,7 +27623,7 @@
     activePxCtx = g;
     try {
       config.puppyOnesieShowEars = Boolean(snap.onesieShowEars);
-      if (snap.accOffsets) config.puppyAccOffsets = snap.accOffsets;
+      config.puppyAccOffsets = (snap.accOffsets && Object.keys(snap.accOffsets).length) ? snap.accOffsets : (prevOffsets || {});
       drawPupOutfit(snap.outfit, ox, oy, hx, hy, isFlat, false, isSit);
       if (Array.isArray(snap.accs)) {
         snap.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false));
@@ -29915,7 +29971,8 @@
   const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr, opts = {}) => {
     const ctx = cv.getContext('2d');
     const W = 96, H = 72;
-    cv.width = W; cv.height = H;
+    if (cv.width !== W * 10 || cv.height !== H * 10) { cv.width = W * 10; cv.height = H * 10; }
+    ctx.setTransform(10, 0, 0, 10, 0, 0);
     ctx.imageSmoothingEnabled = false;
     drawPolaroidBg(ctx, opts.bgId || 'meadow', W, H);
 
@@ -29989,15 +30046,8 @@
       eg.save();
       rr(60, 60, 960, 720, Math.max(0, (rad - 4) * 3.4));
       eg.clip();
-      const sData = src.getContext('2d').getImageData(0, 0, 96, 72).data;
-      for (let py = 0; py < 72; py++) {
-        for (let px = 0; px < 96; px++) {
-          const idx = (py * 96 + px) * 4;
-          if (sData[idx + 3] === 0) continue;
-          eg.fillStyle = `rgba(${sData[idx]},${sData[idx + 1]},${sData[idx + 2]},${sData[idx + 3] / 255})`;
-          eg.fillRect(60 + px * 10, 60 + py * 10, 10, 10);
-        }
-      }
+      eg.imageSmoothingEnabled = false;
+      eg.drawImage(src, 0, 0, src.width, src.height, 60, 60, 960, 720);
       eg.restore();
       rr(60, 60, 960, 720, Math.max(0, (rad - 4) * 3.4));
       eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = 10; eg.stroke();
@@ -31897,14 +31947,13 @@
               const tagTxt = v.eventType === 'steal_coin' ? '调皮偷钱' : (v.eventType === 'trick_fox' ? '戏法奇遇' : (v.eventType === 'gift_gear' ? '赠送行囊道具' : (v.eventType === 'gift_snack' ? '赠送专属零食' : '慷慨送币')));
               curioDetailEl.innerHTML = `<div style="font-weight:700;margin-bottom:2px;">${v.name} · ${tagTxt} (来访 ${cnt} 次)</div><div style="font-size:10px;line-height:1.45;">${v.desc}${v.reqHint ? ' · ' + v.reqHint : ''}</div>`;
             }
+            try {
+              const scroller = curioDetailEl.closest('.st-px-bag-body, .st-tb-body') || pupBagEl;
+              if (scroller && typeof scroller.scrollTo === 'function') scroller.scrollTo({ top: 0, behavior: 'smooth' });
+              curioDetailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (_) {}
           });
           card.append(vc, nm, sub);
-          if (!locked) {
-            card.addEventListener('click', () => {
-              curioDetailEl.style.display = 'block';
-              curioDetailEl.innerHTML = `<div style="font-weight:700;">${v.name} (串门 ${cnt} 次)</div><div style="margin-top:2px;color:#6b5446;">${v.desc}</div>`;
-            });
-          }
           museumGridEl.appendChild(card);
         });
         return;
@@ -31946,6 +31995,11 @@
             const dName = item.hidden ? '行囊隐藏秘境' : (PUP_ADV_DESTS.find(d => d.id === item.dest)?.name || '');
             curioDetailEl.style.display = 'block';
             curioDetailEl.innerHTML = `<div style="font-weight:700;color:${CURIO_RARITY_COL[item.r]};">【${CURIO_RARITY_LABEL[item.r]}】${item.name} · ${dName} (持有 ${cnt})</div><div style="margin-top:2px;color:#6b5446;">${item.note}</div>`;
+            try {
+              const scroller = curioDetailEl.closest('.st-px-bag-body, .st-tb-body') || pupBagEl;
+              if (scroller && typeof scroller.scrollTo === 'function') scroller.scrollTo({ top: 0, behavior: 'smooth' });
+              curioDetailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (_) {}
           });
         }
         museumGridEl.appendChild(card);
@@ -31975,7 +32029,9 @@
       showCollar: config.puppyShowCollar !== false,
       outfit: config.puppyOutfit || 'none',
       accs: Array.isArray(config.puppyAccs) ? [...config.puppyAccs] : [],
+      accOffsets: config.puppyAccOffsets ? JSON.parse(JSON.stringify(config.puppyAccOffsets)) : {},
       companion: config.puppyCompanion || 'none',
+      onesieShowEars: Boolean(config.puppyOnesieShowEars),
     };
     let usedGear = '';
     if (advSelectedGear && (config.puppyInventory?.[advSelectedGear] || 0) > 0) {
@@ -41743,189 +41799,1496 @@
   };
 
   const PUP_ASK_PROMPTS = [
-    // 12 Quirky Questions (affect hidden 8-trait personality & mood)
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '{owner}，如果天上突然下起一场奇怪的雨，你最希望掉下来什么呀?',
-      opts: [
-        { txt: '记不住名字但很可爱的小云朵', trait: 'foodie', mood: 5, aff: 2, state: 'happy', ans: '接一朵可爱的小云朵' },
-        { txt: '安静飘落的银白色星屑', trait: 'fashionista', mood: 5, aff: 2, state: 'sit', ans: '捡起安静飘落的银白星屑' },
-        { txt: '软绵绵的云朵枕头', trait: 'sleepyhead', mood: 5, aff: 2, state: 'sleep', ans: '扑进软绵绵的云朵枕头' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '刚刚屏幕角落闪过一道像素光，{owner}觉得那是什么?',
-      opts: [
-        { txt: '专门派发好运的晴天小邮筒', trait: 'explorer', mood: 5, aff: 2, state: 'happy', ans: '派发好运的晴天小邮筒' },
-        { txt: '小机灵偷偷藏好的惊喜彩蛋', trait: 'gamer', mood: 5, aff: 2, state: 'happy', ans: '偷偷藏好的惊喜彩蛋' },
-        { txt: '时间悄悄走过的脚印', trait: 'philosopher', mood: 4, aff: 2, state: 'sit', ans: '时间悄悄走过的脚印' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '{owner}，如果周末一整天都不用忙任何事，你想怎么过呀?',
-      opts: [
-        { txt: '窝在一起睡到自然醒', trait: 'sleepyhead', mood: 5, aff: 2, state: 'sleep', ans: '窝在一起睡到自然醒' },
-        { txt: '漫无目的瞎晃悠发呆', trait: 'foodie', mood: 5, aff: 2, state: 'happy', ans: '漫无目的晃悠发呆' },
-        { txt: '一直黏在一起聊天发呆', trait: 'clingy', mood: 6, aff: 3, state: 'happy', ans: '一直黏在一起聊天发呆' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '你觉得{self}今天这身打扮，最配什么样的出场方式?',
-      opts: [
-        { txt: '淡定路过假装不在意你的眼光', trait: 'fashionista', mood: 6, aff: 2, state: 'sit', ans: '淡定路过装作不在意' },
-        { txt: '装作漫不经心其实很得意', trait: 'tsundere', mood: 5, aff: 2, state: 'sit', ans: '装作漫不经心其实暗自得意' },
-        { txt: '直接蹦进{owner}怀里', trait: 'clingy', mood: 6, aff: 3, state: 'happy', ans: '助跑三步直接蹦进你怀里' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '{owner}，你觉得宇宙尽头的小店里会卖什么呢?',
-      opts: [
-        { txt: '永远用不完的好点子和幸运', trait: 'gamer', mood: 5, aff: 2, state: 'happy', ans: '永远用不完的好点子和幸运' },
-        { txt: '装在玻璃瓶里的晴天', trait: 'philosopher', mood: 5, aff: 2, state: 'sit', ans: '装在玻璃瓶里的晴天' },
-        { txt: '永远不会耗尽的晴天暖光', trait: 'explorer', mood: 5, aff: 2, state: 'happy', ans: '不会耗尽的晴天暖光' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '如果{self}学会了一项超能力，{owner}最想让我学会哪个?',
-      opts: [
-        { txt: '一秒找到所有弄丢的小东西', trait: 'foodie', mood: 5, aff: 2, state: 'happy', ans: '一秒找到所有弄丢的小东西' },
-        { txt: '把你的坏心情一口吃掉', trait: 'clingy', mood: 6, aff: 3, state: 'happy', ans: '把你的坏心情一口吃掉' },
-        { txt: '嘴硬心软默默帮你搞定一切', trait: 'tsundere', mood: 5, aff: 2, state: 'sit', ans: '默默帮你搞定一切' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '{owner}，如果明天突然放一天神秘小长假，你最想带{self}去哪儿玩呀?',
-      opts: [
-        { txt: '找片软乎乎的草坪晒太阳打盹', trait: 'sleepyhead', mood: 5, aff: 2, state: 'sleep', ans: '去草坪晒太阳打盹' },
-        { txt: '去逛热闹的小夜市看各种新奇玩意', trait: 'explorer', mood: 5, aff: 2, state: 'happy', ans: '去热闹的小夜市逛个够' },
-        { txt: '躲在安静的角落看书听雨声', trait: 'philosopher', mood: 5, aff: 2, state: 'sit', ans: '躲在安静角落听雨发呆' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '假如{self}突然会变魔术，{owner}最想看我变出什么?',
-      opts: [
-        { txt: '变出一整排怎么吃都不会腻的小点心', trait: 'foodie', mood: 5, aff: 2, state: 'happy', ans: '变出一整排小点心' },
-        { txt: '变出一堆永远不会撞款的酷酷小配饰', trait: 'fashionista', mood: 5, aff: 2, state: 'sit', ans: '变出一堆独一无二的小配饰' },
-        { txt: '变出一个装满鬼点子的惊喜盲盒', trait: 'gamer', mood: 5, aff: 2, state: 'happy', ans: '变出装满鬼点子的惊喜盲盒' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '{owner}每次打开电脑忙事情的时候，最希望{self}在旁边干嘛呀?',
-      opts: [
-        { txt: '一直贴在光标旁边陪着你', trait: 'clingy', mood: 6, aff: 3, state: 'happy', ans: '一直贴在光标旁边陪着你' },
-        { txt: '假装高冷其实偷偷帮你看着进度', trait: 'tsundere', mood: 5, aff: 2, state: 'sit', ans: '嘴硬心软地帮你看着进度' },
-        { txt: '安安静静趴在角落给你当气氛小摆件', trait: 'philosopher', mood: 5, aff: 2, state: 'sit', ans: '安安静静趴在角落陪着你' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '如果像素世界要拍一部关于我们的小电影，{owner}觉得片名该叫什么?',
-      opts: [
-        { txt: '《小狗今天又睡过头啦》', trait: 'sleepyhead', mood: 5, aff: 2, state: 'sleep', ans: '《小狗今天又睡过头啦》这个片名' },
-        { txt: '《机灵小狗和最佳搭档大冒险》', trait: 'gamer', mood: 5, aff: 2, state: 'happy', ans: '《机灵小狗和最佳搭档大冒险》' },
-        { txt: '《每天都要贴贴一万次》', trait: 'clingy', mood: 6, aff: 3, state: 'happy', ans: '《每天都要贴贴一万次》这个片名' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '{owner}，你觉得下雨天最适合听什么声音呀?',
-      opts: [
-        { txt: '滴滴答答敲在窗台上的轻柔雨声', trait: 'philosopher', mood: 5, aff: 2, state: 'sit', ans: '听雨滴敲在窗台上的轻柔声音' },
-        { txt: '盖着厚被子呼呼大睡的白噪音', trait: 'sleepyhead', mood: 5, aff: 2, state: 'sleep', ans: '盖着被子听白噪音呼呼睡' },
-        { txt: '雨停后出门踩小水坑的哗啦声', trait: 'explorer', mood: 5, aff: 2, state: 'happy', ans: '雨停后出门踩小水坑' },
-      ],
-    },
-    {
-      kind: 'question', tag: '小狗突发提问',
-      q: '如果{self}开了一家像素小铺，{owner}觉得招牌上该写什么才最吸睛?',
-      opts: [
-        { txt: '全场只对{owner}免费营业', trait: 'clingy', mood: 6, aff: 3, state: 'happy', ans: '只对你免费营业的小铺' },
-        { txt: '爱来不来但东西绝对最精致', trait: 'fashionista', mood: 5, aff: 2, state: 'sit', ans: '走酷酷路线的精致小铺' },
-        { txt: '老板经常迷糊算错账但超开心', trait: 'foodie', mood: 5, aff: 2, state: 'happy', ans: '迷糊但超开心的小铺' },
-      ],
-    },
-    // 8 Cute Puppy Requests (with Accept / Playful / Refuse options!)
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '{owner}~ 我刚才好像把小发夹忘在哪个角落了，可以帮{self}一起找找吗?',
-      opts: [
-        { txt: '答应: 帮你摸摸头顶，就在耳朵边呀', trait: 'foodie', mood: 6, aff: 2, state: 'happy', ans: '帮我找到耳朵边的小发夹' },
-        { txt: '逗它: 先转个圈才告诉你藏哪了', trait: 'gamer', mood: 4, aff: 1, state: 'happy', ans: '先滴溜溜转一圈再找发夹' },
-        { txt: '拒绝: 自己慢慢想放哪去啦', refuse: true, trait: 'tsundere' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '眼皮有点打架啦...{owner}能不能把屏幕角落借给{self}打个小盹?',
-      opts: [
-        { txt: '答应: 盖上小被子安心睡吧', trait: 'sleepyhead', mood: 6, aff: 2, state: 'sleep', ans: '盖上小被子安心打个小盹' },
-        { txt: '轻拍: 靠着我歇一分钟就好', trait: 'clingy', mood: 5, aff: 2, state: 'sit', ans: '靠在你旁边歇一分钟' },
-        { txt: '拒绝: 不许偷懒，起来巡逻', refuse: true, trait: 'tsundere' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '{owner}，今天可以认真夸一句「{name}是全世界最可爱的小狗」吗?',
-      opts: [
-        { txt: '答应: 你就是全世界最可爱的!', trait: 'clingy', mood: 8, aff: 3, state: 'happy', ans: '被你认真夸是全世界最可爱的' },
-        { txt: '轻声夸: 今天也很乖很好看哦', trait: 'fashionista', mood: 6, aff: 2, state: 'sit', ans: '被你轻声夸今天很乖很好看' },
-        { txt: '拒绝: 今天先不夸，省得骄傲', refuse: true, trait: 'tsundere' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '我在商店橱窗看到一张亮晶晶小贴纸，可以借 1 枚小狗币去买吗?',
-      opts: [
-        { txt: '答应: 拿去买吧，算我的', coinCost: 1, trait: 'fashionista', mood: 7, aff: 3, state: 'sit', ans: '买下那张亮晶晶小贴纸分你一半' },
-        { txt: '鼓励: 自己打工赚来买更有成就感', trait: 'explorer', mood: 3, aff: 1, state: 'happy', ans: '自己打工赚币买小贴纸' },
-        { txt: '拒绝: 不给，乖乖攒钱', refuse: true, trait: 'philosopher' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '{owner}敲了这么久键盘，能不能停下来陪{self}玩三秒钟捉迷藏?',
-      opts: [
-        { txt: '答应: 好呀，一二三我抓到你啦', trait: 'gamer', mood: 7, aff: 3, state: 'happy', ans: '陪我玩三秒钟捉迷藏' },
-        { txt: '摸摸头: 摸两下代替捉迷藏', trait: 'clingy', mood: 5, aff: 2, state: 'happy', ans: '用顺毛摸头代替捉迷藏' },
-        { txt: '拒绝: 现在没空，自己玩去吧', refuse: true, trait: 'tsundere' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '我想把桌面右下角划成「{name}秘密基地」，{owner}批准吗?',
-      opts: [
-        { txt: '答应: 批准! 整个桌面都归你', trait: 'explorer', mood: 7, aff: 3, state: 'happy', ans: '把桌面划成我的秘密基地' },
-        { txt: '讲条件: 批准，但要乖乖值班', trait: 'philosopher', mood: 5, aff: 2, state: 'sit', ans: '在秘密基地乖乖替你值班' },
-        { txt: '拒绝: 不行，那是我的工作区', refuse: true, trait: 'tsundere' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '{owner}~ 我刚才偷学了一个超酷的转圈新动作，要现在表演给你看吗?',
-      opts: [
-        { txt: '答应: 快表演，我给你鼓掌!', trait: 'explorer', mood: 6, aff: 2, state: 'happy', ans: '给你表演新学的转圈动作' },
-        { txt: '调侃: 别转晕了一头栽进屏幕角落', trait: 'tsundere', mood: 5, aff: 2, state: 'sit', ans: '小心别转晕头' },
-        { txt: '拒绝: 先忙完再看吧', refuse: true, trait: 'fashionista' },
-      ],
-    },
-    {
-      kind: 'request', tag: '小狗撒娇请求',
-      q: '感觉屏幕今天有点凉飕飕的，{owner}可以借我一只手心暖三秒吗?',
-      opts: [
-        { txt: '答应: 伸出手给你暖个够', trait: 'clingy', mood: 7, aff: 3, state: 'happy', ans: '钻进你手心里暖个够' },
-        { txt: '打趣: 暖完要记得帮我招财哦', trait: 'gamer', mood: 5, aff: 2, state: 'happy', ans: '暖完手顺便帮你招财' },
-        { txt: '拒绝: 自己跑两圈就热乎啦', refuse: true, trait: 'explorer' },
-      ],
-    },
-  ];
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，如果天上突然下起一场奇怪的雨，你最希望掉下来什么呀?",
+    "opts": [
+      {
+        "txt": "软绵绵的棉花糖小云朵",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "呼啊… 张开嘴就能接住软乎乎的棉花糖云，嚼完直接原地睡着也太幸福啦~",
+          "clingy": "哇！我要把最甜最大那朵棉花糖云接住塞进{owner}手里，剩下的咱俩分着啃！",
+          "tsundere": "哼，下雨掉棉花糖也太幼稚了吧… 不过掉到我鼻尖上的话，勉强舔一口也不是不行！",
+          "foodie": "天呐！那我得立刻搬出最大号饭碗冲进雨里，草莓味和奶油味的我全都要接住！",
+          "explorer": "太酷啦！下棉花糖雨的话整条街都会变甜，我要背着小篮子沿路收集不同形状的云朵！",
+          "fashionista": "嗯，淋一身粉白棉花糖倒挺梦幻的… 别沾到我刚梳顺的毛就好，先挑一朵最圆的尝尝。",
+          "gamer": "隐藏天气事件触发！我要开启全速走位接云朵连击，看看能不能刷出限定夹心款！",
+          "philosopher": "软绵绵的甜云从天上落下来，想想都觉得心情轻了不少，顺手留两朵配下午茶正好。"
+        }
+      },
+      {
+        "txt": "安静飘落的银白色星屑",
+        "trait": "fashionista",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "亮晶晶的银白星屑落进毛毛里，像盖了一层温柔的夜空小毯子，看着好助眠呀…",
+          "clingy": "哇好浪漫！要是下星屑雨，我想帮{owner}接满满一捧，戴在发梢肯定超好看！",
+          "tsundere": "切，不就是亮闪闪的小碎光嘛… 落在耳朵尖上还挺衬我今天的穿搭，算你有品位。",
+          "foodie": "银白星屑看起来像撒在蛋糕上的糖粉诶！虽然不能吃，但亮晶晶的看着好开胃~",
+          "explorer": "我要拿玻璃瓶装满银白星屑当夜行小提灯，以后去探险连手电筒都省啦！",
+          "fashionista": "安静落下的银白星屑很衬此刻的氛围，站着不动让它停在肩头，刚好当天然配饰。",
+          "gamer": "哇塞，全屏银白粒子特效拉满！感觉捡满十颗星屑就能合成一把限定星光道具！",
+          "philosopher": "没有声音的银白星雨，抬头静静看一会儿，连心里那点杂念都会跟着安静下来。"
+        }
+      },
+      {
+        "txt": "蓬松软乎的云朵枕头",
+        "trait": "sleepyhead",
+        "mood": 5,
+        "aff": 2,
+        "state": "sleep",
+        "replies": {
+          "sleepyhead": "天呐这简直是梦中情雨！掉下来十个我就堆成一座枕头山，拉着{owner}一起滚进去睡~",
+          "clingy": "太好啦！我先扑上去把云朵枕头压软乎，然后给{owner}留出旁边最暖和的位置一起靠着！",
+          "tsundere": "哼，你平时是有多想偷懒才盼着天上掉枕头啊… 行吧，借我半个垫下巴我就饶了你。",
+          "foodie": "掉下来的云朵枕头闻起来会不会像刚烤好的舒芙蕾呀？抱着睡肯定会梦到满桌甜点！",
+          "explorer": "掉一地云朵枕头的话，从这边蹦到那边简直像巨型蹦床，先跳三圈再躺平！",
+          "fashionista": "蓬松干净的云朵枕头确实很舒服，摆在桌面角落靠一会儿，姿态也依然很优雅。",
+          "gamer": "全图掉落满级回血云朵枕头！躺上去一秒回满精力条，这波天气增益太爽了！",
+          "philosopher": "如果疲惫的时候真能从天上落下一只柔软枕头，那确实可以安心歇上一会儿了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "刚刚屏幕角落闪过一道像素光，{owner}觉得那是什么?",
+    "opts": [
+      {
+        "txt": "专门派发好运的晴天小邮筒",
+        "trait": "explorer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "呼… 好运邮筒路过啦？那我赶紧许个愿，希望{owner}今天顺顺利利、早点休息~",
+          "clingy": "快快快！我要往晴天邮筒里塞一封写满「最喜欢{owner}」的小信，把好运全寄给你！",
+          "tsundere": "哼，哪有会瞬移的邮筒啊… 不过既然它顺路派好运，我就勉强替你签收一份吧。",
+          "foodie": "晴天小邮筒里会不会顺带派发免费小饼干试吃券呀？我马上去角落蹲点查收！",
+          "explorer": "追上去看看！说不定晴天邮筒掉了一张藏宝明信片，今天绝对会有意想不到的好消息！",
+          "fashionista": "派发好运的晴天邮筒，听着挺清爽的。那这份今日份的好运，就大方收下吧。",
+          "gamer": "叮！好运邮筒限时刷新！快点交互领取今日暴击幸运 buff，欧气直接拉满！",
+          "philosopher": "如果屏幕角落真藏着派发好运的小邮筒，那你今天遇到的麻烦应该都会顺手化解掉。"
+        }
+      },
+      {
+        "txt": "谁偷偷藏好的惊喜彩蛋",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "诶？彩蛋在哪儿呢… 我眯着眼睛往角落凑近点瞅瞅，说不定能孵出个小惊喜~",
+          "clingy": "哇是彩蛋吗！我要和{owner}手拉手一起敲开，不管里面藏着啥都是咱俩的小秘密！",
+          "tsundere": "切，肯定又是哪个无聊家伙藏的把戏… 等等，让我先闻闻里面有没有好东西！",
+          "foodie": "彩蛋！会不会是巧克力外壳里面夹着小玩具的那种？光想想口水都要掉下来啦！",
+          "explorer": "发现隐藏彩蛋啦！我立刻切换侦探模式把角落翻个底朝天，绝对不放过一点线索！",
+          "fashionista": "藏在角落里的彩蛋倒挺有心思，等会儿顺路过去看一眼，说不定挺合眼缘。",
+          "gamer": "我就知道是隐藏彩蛋！全成就雷达响起来了，快让我去触发这段神秘彩蛋剧情！",
+          "philosopher": "生活里偶尔闪过一点意料之外的小彩蛋，就算不大，也够让人嘴角弯一下的。"
+        }
+      },
+      {
+        "txt": "时间悄悄走过的脚印",
+        "trait": "philosopher",
+        "mood": 4,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "时间走得这么轻呀… 怪不得不知不觉又陪{owner}待了这么久，真好。",
+          "clingy": "那我要赶紧在时间的脚印旁边踩上我的小爪印，这样每一刻都记着我陪在{owner}身边！",
+          "tsundere": "说得这么文艺干嘛啦… 哼，反正不管时间走多快，本汪都会一直赖在你桌面上。",
+          "foodie": "时间走这么快，难怪肚子又有点饿了！看来该顺着脚印去找点下午茶垫垫啦~",
+          "explorer": "原来时间也有脚印呀！那我记住它的方向，以后每一天都要带{owner}解锁新风景！",
+          "fashionista": "时间悄悄留下的微光，挺安静的。不用追着它跑，按自己的节奏慢慢走就好。",
+          "gamer": "时间脚印听起来像存档点亮起的光效！不管走到哪一关，咱俩的进度条一直都在！",
+          "philosopher": "嗯，屏幕里这一格一格的光影过去，不知不觉又攒下了一段很安稳的相处时光。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，如果周末一整天都不用忙任何事，你想怎么过呀?",
+    "opts": [
+      {
+        "txt": "窝在一起睡到自然醒",
+        "trait": "sleepyhead",
+        "mood": 5,
+        "aff": 2,
+        "state": "sleep",
+        "replies": {
+          "sleepyhead": "太棒啦！拉上窗帘谁也不许定闹钟，我要缩成毛团靠在{owner}边上睡到太阳晒屁股~",
+          "clingy": "耶！睡醒第一眼就能看到{owner}，还可以赖在被窝里多贴十分钟再慢吞吞起来！",
+          "tsundere": "哼，睡到自然醒听起来还行吧… 提前说好，你不许踢被子，不然我可不帮你掖！",
+          "foodie": "睡到自然醒正好直接吃早午餐！醒来就有热乎乎的烤吐司和牛奶，想想就美滋滋！",
+          "explorer": "偶尔彻底放空睡个大懒觉也超赞！充饱电了下午精神抖擞，想干嘛都来得及！",
+          "fashionista": "把所有闹钟关掉睡到自然醒，这才是周末该有的松弛感，我陪你安静窝着。",
+          "gamer": "周末挂机深度睡眠模式开启！精力值直接拉满 100%，这波躺平策略满分！",
+          "philosopher": "难得不用赶时间，睡到自然醒再慢慢伸个懒腰，确实是最踏实的休息方式。"
+        }
+      },
+      {
+        "txt": "出门漫无目的逛吃晃悠",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "慢悠悠逛街晒太阳，走累了就找家小店坐下歇脚，这种节奏我最喜欢啦~",
+          "clingy": "只要能跟着{owner}一起出门，哪怕漫无目的绕圈圈我也开心得尾巴转成小风扇！",
+          "tsundere": "哼，既然你要出门晃悠，那本汪就勉为其难跟着给你当保镖兼试吃员好了！",
+          "foodie": "冲冲冲！闻到烤红薯、章鱼小丸子和奶茶香就立刻拐弯，今天必须把这条街吃个遍！",
+          "explorer": "无计划散步最容易撞见宝藏小店和可爱风景了，出发，我来带头探路！",
+          "fashionista": "不用赶行程，顺着眼缘挑两家安静好看的小店逛逛，这种周末很舒服。",
+          "gamer": "开启自由探索大地图！说不定转角就能偶遇隐藏小吃摊，今天必须刷满快乐值！",
+          "philosopher": "不设目的地随便走走，看见想吃的就停一下，确实比排满日程轻松多了。"
+        }
+      },
+      {
+        "txt": "一直黏在一起聊天发呆",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "呼… 什么正事都不想，就靠着{owner}有一搭没一搭地聊天发呆，好安心呀~",
+          "clingy": "哇！一整天都只黏着我吗！那我今天寸步不离，{owner}说一句我就晃十下尾巴回应你！",
+          "tsundere": "一、一整天黏在一起也太腻歪了吧！… 咳，你要是真没人陪，我多留一会儿也不是不行。",
+          "foodie": "一边嗑小饼干一边跟{owner}东拉西扯发呆，这简直是全世界最惬意的周末套餐！",
+          "explorer": "和你聊天发呆永远不会腻，想到什么好玩的随时分享，一整天刷一下就开心过去啦！",
+          "fashionista": "不用刻意找话题，就这么安安静静待在一起发会儿呆，其实挺让人放松的。",
+          "gamer": "双人挂机聊天模式启动！亲密度每秒持续上涨，这比打任何副本都解压！",
+          "philosopher": "什么都不做，只是待在彼此旁边说几句闲话，周末这样慢慢流过去挺好的。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "你觉得{self}今天这身打扮，最配什么样的出场方式?",
+    "opts": [
+      {
+        "txt": "淡定路过假装不在意眼光",
+        "trait": "fashionista",
+        "mood": 6,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "好呀，那我慢慢踱步从屏幕这边溜达到那边，顺便悄悄偷看{owner}有没有在夸我~",
+          "clingy": "唔… 要我装淡定好难呀，路过{owner}眼前的时候尾巴肯定还是会忍不住摇两下！",
+          "tsundere": "哼，这招我最拿手了！明明精心搭了半天，偏要一脸云淡风轻地走过去！",
+          "foodie": "淡定路过没问题，前提是路过的时候桌面上没有飘来烤肉香味，不然立刻破功！",
+          "explorer": "迈着稳稳的猫步走过桌面，再帅气甩一下耳朵，绝对气场全开！",
+          "fashionista": "正合我意。真正的时髦根本不需要大张旗鼓，淡定走过就足够让人多看两眼。",
+          "gamer": "懂了，就是那种隐藏大佬低调登场的排面，走过去自带一圈无形气场特效！",
+          "philosopher": "不慌不忙走过去，不用刻意炫耀也自然好看，这个出场方式挺稳当的。"
+        }
+      },
+      {
+        "txt": "装作漫不经心其实很得意",
+        "trait": "tsundere",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "嘿嘿，嘴上说着随便穿穿，其实耳朵尖早就得意得翘起来啦~",
+          "clingy": "被{owner}夸得心花怒放还要装作漫不经心嘛？那我憋三秒钟就忍不住扑过来贴贴咯！",
+          "tsundere": "谁、谁得意啦！这身只是顺手抓起来套上的而已… 哼，你多看两眼我也不收费。",
+          "foodie": "装作漫不经心走两步，其实心里已经开始盘算穿这么好看能不能多骗一块小零食！",
+          "explorer": "哈哈，眼神飘向别处但脚步都在打节拍，这股藏不住的小得意太可爱了！",
+          "fashionista": "嘴角克制住只翘起一点点，心里已经给今天的搭配打了满分，刚好拿捏住分寸。",
+          "gamer": "表面风轻云淡，头顶其实已经飘出「今日最佳穿搭 MVP」的隐藏弹幕啦！",
+          "philosopher": "心里明明挺高兴，脸上还端着一点小架子，这种反差倒挺有意思的。"
+        }
+      },
+      {
+        "txt": "助跑三步直接蹦进怀里",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿咻——软绵绵扑进{owner}怀里，顺势窝成一个暖呼呼的小毛球就不起来啦~",
+          "clingy": "预备备——一、二、三，起跳！{owner}快接住今天打扮得超级乖的我呀！",
+          "tsundere": "喂！直接蹦进怀里也太没矜持了吧… 咳，你要是张开手的话，我勉强小跳一下好了！",
+          "foodie": "助跑三步精准降落！顺便蹭蹭{owner}看看兜里有没有藏着奖励给可爱小狗的零嘴~",
+          "explorer": "咻地一下起飞着陆！完美飞扑得分十分，今天也要用满满元气撞进{owner}心里！",
+          "fashionista": "平时我可不随便扑人… 既然是你开口要求的，那就破例小跑两步靠进你怀里吧。",
+          "gamer": "疾跑蓄力加精准空中飞扑！命中目标达成满级贴贴连击，手感超棒！",
+          "philosopher": "不用什么花哨架势，直接小跑过来窝进你怀里，确实是最直白也最暖和的出场。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，你觉得宇宙尽头的小店里会卖什么呢?",
+    "opts": [
+      {
+        "txt": "永远用不完的好点子和幸运",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "那我要买一小袋幸运放进{owner}口袋里，这样以后不管做什么都顺顺当当的~",
+          "clingy": "我要把货架上的好运全部打包送给{owner}，我自己只要能一直陪着你就够幸运啦！",
+          "tsundere": "哼，好点子和幸运全被你买走的话，那本汪就负责帮你提购物袋好了，真拿你没办法。",
+          "foodie": "顺便问问老板买幸运送不送宇宙限定小饼干呀？一边吃一边想好点子效率翻倍！",
+          "explorer": "好耶！买一罐灵感加一瓶超级幸运，回来咱俩就能解锁一万种新奇玩法！",
+          "fashionista": "把好运和灵感收进小盒子里带回来，确实比普通纪念品实用又有格调。",
+          "gamer": "宇宙尽头的隐藏神装商店！买下无限幸运道具，以后抽扭蛋和刷副本全都是大保底欧皇！",
+          "philosopher": "要是真能买到源源不断的灵感和一点点顺遂的运气，那家小店肯定天天排长队。"
+        }
+      },
+      {
+        "txt": "装在玻璃瓶里的晴天",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "把晴天装进玻璃瓶带回来，等阴雨天拧开盖子，整间屋子就会暖烘烘的，好适合午睡~",
+          "clingy": "我要多买几瓶晴天藏起来，哪天{owner}心情阴沉沉的时候就拧开一瓶照亮你！",
+          "tsundere": "切，拿瓶子装晴天听着挺傻的… 不过要是你心情不好的时候，我可以替你拧开瓶盖。",
+          "foodie": "玻璃瓶里的晴天闻起来一定像晒过太阳的蜂蜜吐司，摆在桌角看着就甜丝丝的！",
+          "explorer": "太浪漫啦！收集周一到周日七种不同颜色的晴天玻璃瓶，排成一排肯定亮堂堂的！",
+          "fashionista": "清透的玻璃瓶里封着一束阳光，放在窗台上当摆件，既安静又有质感。",
+          "gamer": "便携式晴天瓶入手！以后遇上阴郁天气直接一键使用，瞬间把氛围切成大晴天！",
+          "philosopher": "把好天气存进玻璃瓶，留到不顺心的日子里慢慢打开，这个念头很温柔。"
+        }
+      },
+      {
+        "txt": "不会耗尽的温暖星光灯",
+        "trait": "explorer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "暖黄黄的永不熄灭小星灯，晚上摆在床头当夜灯，连梦里都会亮晶晶的~",
+          "clingy": "有这盏星光灯陪着{owner}熬夜看字，我就能借着灯光一直看清你的笑脸啦！",
+          "tsundere": "哼，怕黑的话直说嘛，买盏星光灯回来摆着，我顺便帮你守夜就是了。",
+          "foodie": "暖呼呼的星光灯照着夜宵，感觉连普通小饼干都能镀上一层高级金边！",
+          "explorer": "提着永不熄灭的星光灯去宇宙里溜达，不管走多远都不会迷路，超安心！",
+          "fashionista": "一盏柔和不刺眼的星光灯，刚好照亮桌角这一小片地方，氛围感拿捏得很稳。",
+          "gamer": "永久续航的星光神灯！以后夜探秘境视野全亮，再也不怕角落里看不清路啦！",
+          "philosopher": "不需要多耀眼，只要在天黑的时候一直亮着一点暖光，就已经足够让人安心了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "如果{self}学会了一项超能力，{owner}最想让我学会哪个?",
+    "opts": [
+      {
+        "txt": "一秒找到所有弄丢的小东西",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "以后{owner}找不到耳机、钥匙或者发圈，我闭着眼嗅两下就能指出来，省心又省力~",
+          "clingy": "嘻嘻，只要{owner}一喊丢东西了，我咻的一下就帮你叼回来，顺便蹭两下求表扬！",
+          "tsundere": "哼，谁让你平时总是随手乱放东西的… 行吧，学会这招我就勉为其难天天替你找！",
+          "foodie": "这超能力太实用了！不仅能帮{owner}找东西，还能一秒定位家里藏得最深的小零食！",
+          "explorer": "超级寻物雷达启动！从沙发缝到桌底死角全都无所遁形，什么宝贝都能找回来！",
+          "fashionista": "帮你一秒找回弄丢的小物件，省得你翻箱倒柜着急，这能力挺靠谱的。",
+          "gamer": "获得全图透视寻宝技能！以后不管丢了啥，一秒高亮标点直接拿下！",
+          "philosopher": "生活里最烦的就是急着出门找不到小东西，能一秒替你找回来，确实比炫酷魔法实在多了。"
+        }
+      },
+      {
+        "txt": "把你的坏心情一口吃掉",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "啊呜一口把烦恼全吞掉，再呼出一口气变成软软的好梦还给{owner}，以后都不许难过啦~",
+          "clingy": "那我现在就张大嘴巴！{owner}有一点点委屈或不开心都马上丢给我吃掉，我消化得超快！",
+          "tsundere": "喂，坏心情肯定又苦又涩的吧… 哼，算了，谁让是你的坏心情呢，本汪捏着鼻子帮你吃光！",
+          "foodie": "哪怕坏心情是苦瓜味的我也一口闷！吃完顺便再讨一块甜饼干压压惊，保证还你满血好心情！",
+          "explorer": "全速吞噬坏情绪！一口吃掉乌云，立刻给{owner}换上一整片亮堂堂的大晴天！",
+          "fashionista": "把你的坏心情全收进我这里消化掉，你只需要舒舒服服待着就好，别自己闷着。",
+          "gamer": "启动坏情绪吞噬大招！不管多大的负面 debuff 统统清零，{owner}满血复活！",
+          "philosopher": "要是真能把烦心事一口吃掉就好了。就算没超能力，不开心的时候也可以随时来找我待一会儿。"
+        }
+      },
+      {
+        "txt": "嘴硬心软默默帮你搞定一切",
+        "trait": "tsundere",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "一边假装趴着打盹，一边悄悄把麻烦事全替{owner}理顺，醒来刚好一起偷懒~",
+          "clingy": "我才不会嘴硬呢，帮{owner}搞定一切之后我要明目张胆冲过来求抱抱求贴贴！",
+          "tsundere": "这、这根本不需要超能力好吧！本汪平时不就一直在默默罩着你嘛，哼，算你有良心发现！",
+          "foodie": "默默帮你搞定所有麻烦事，然后你一开心肯定会给我加餐买大鸡腿，这买卖稳赚不赔！",
+          "explorer": "暗中出手摆平所有小麻烦，等你发现一切都顺顺利利时再帅气露面击个掌！",
+          "fashionista": "不声张地把事情替你处理妥当，本来就是我最习惯的方式，不用特意道谢。",
+          "gamer": "隐藏幕后强力辅助上线！表面挂机摸鱼，暗地里把全图难点一键清干净！",
+          "philosopher": "不多说废话，悄悄把你头疼的事一件件理顺，看你松一口气就够了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，如果明天突然放一天神秘小长假，你最想带{self}去哪儿玩呀?",
+    "opts": [
+      {
+        "txt": "找片软乎乎的草坪晒太阳打盹",
+        "trait": "sleepyhead",
+        "mood": 5,
+        "aff": 2,
+        "state": "sleep",
+        "replies": {
+          "sleepyhead": "呜哇太懂我了！晒得暖洋洋的草坪闻起来香香的，我先占好阳光最足的那块位置等{owner}躺下~",
+          "clingy": "我要把脑袋枕在{owner}膝盖上晒太阳，风一吹就眯起眼睛，一整天都不用分开！",
+          "tsundere": "哼，专门放假就为了去草坪躺着呀… 好吧，太阳晒得毛茸茸热乎乎的确实挺舒服。",
+          "foodie": "去草坪晒太阳一定要带上野餐篮！三明治、小水果和冰果汁摆一圈，吃饱刚好打盹！",
+          "explorer": "找一片开满小雏菊的宽阔草坪，先撒欢跑两圈吹吹风，再一起并排躺着看云飘过！",
+          "fashionista": "挑一块安静干净的草坪晒晒暖阳，什么都不用想，这个假期安排很惬意。",
+          "gamer": "草坪日光浴开启！直接把心情值和精力值双双晒满，顺便还能顺手拍几张草地大片！",
+          "philosopher": "阳光暖和、青草柔软，在草坪上安安静静打个盹，比去人挤人的景点舒服多了。"
+        }
+      },
+      {
+        "txt": "去逛热闹的小夜市看新奇玩意",
+        "trait": "explorer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "暖黄的小灯串一排排亮起来肯定很好看，我牵着{owner}衣角慢慢逛，逛累了就让你抱~",
+          "clingy": "人多的夜市我一定会紧紧贴着{owner}走不乱跑，看到可爱的小玩意立刻指给你看！",
+          "tsundere": "切，夜市那么吵… 不过既然你想去，那我就勉强陪你逛一圈，顺便帮你把关别买贵了！",
+          "foodie": "夜市！！章鱼烧、糖葫芦、烤冷面、冰粉… {owner}快把小钱包准备好，我负责从头吃到尾！",
+          "explorer": "太耶了！夜市里藏着超多奇奇怪怪的手作小摊和套圈游戏，今天一定要满载而归！",
+          "fashionista": "挑几盏灯光柔和的摊位逛逛，顺便淘一件独一无二的小饰品，听起来挺有意思的。",
+          "gamer": "夜市的套圈和打气球摊位等我来横扫！今晚必须抱回全场最大的毛绒战利品！",
+          "philosopher": "晚风里飘着烟火气和热腾腾的小吃香，和你在灯火通明的夜市里慢慢走，挺热闹也挺暖。"
+        }
+      },
+      {
+        "txt": "躲在安静角落看书听雨声",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "窗外滴滴答答下雨，屋里暖暖的，你翻书的声音配着雨声，我听着听着就要打呼噜啦~",
+          "clingy": "那我乖乖趴在{owner}脚边不吵你，你看累了就低头摸摸我的耳朵当书签好不好？",
+          "tsundere": "哼，你安心看你的书，我才不会打扰你呢… 顺便帮你在旁边暖杯热茶放着。",
+          "foodie": "看书听雨怎么能少了热可可和小曲奇！我负责守着点心盘，保证不偷吃超过两块~",
+          "explorer": "雨天的安静书角就像秘密树洞一样，躲在里面看有趣的故事，也像去远方冒险啦！",
+          "fashionista": "安静听雨、慢慢翻几页书，不用应付任何喧闹，是我最偏爱的独处时光。",
+          "gamer": "切换沉浸阅读副本！窗外白噪音加持，专注度直接拉满，我给你当安静挂件！",
+          "philosopher": "躲开外面匆忙的节奏，泡杯热饮听着雨声翻几页书，这样的假期很让人心里踏实。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "假如{self}突然会变魔术，{owner}最想看我变出什么?",
+    "opts": [
+      {
+        "txt": "变出一整排吃不腻的小点心",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "啪嗒一挥爪，软乎乎的小蛋糕和热牛奶全排好队，和{owner}边吃边打盹最幸福啦~",
+          "clingy": "第一块草莓小蛋糕肯定先递到{owner}嘴边，剩下的咱俩一人一口慢慢分着吃！",
+          "tsundere": "哼，变出一排点心你是想把我喂成小圆球吗… 行吧，挑块不那么甜的算你过关！",
+          "foodie": "呜哇这就是终极神级魔术！泡芙、蛋挞、提拉米苏、焦糖布丁全给我排成方阵变出来！",
+          "explorer": "变出一整排世界各地的特色点心，足不出户就能来一场舌尖环球大冒险啦！",
+          "fashionista": "精致小巧的法式甜点排成一列，摆盘好看又合胃口，这魔术确实很有水准。",
+          "gamer": "无限点心刷怪笼启动！热量归零、美味翻倍，这波魔术技能必须点满！",
+          "philosopher": "累了的时候随手变出一块热乎的小点心垫垫肚子，简单又让人立刻开心起来。"
+        }
+      },
+      {
+        "txt": "变出一堆绝不撞款的酷酷配饰",
+        "trait": "fashionista",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "每天都能给{owner}和我变出软软可爱的新发夹和围巾，换完装就美美去拍合照~",
+          "clingy": "我要变出一对同款情侣小配饰，一个戴在{owner}身上，一个戴在我耳朵上！",
+          "tsundere": "哼，眼光不错嘛！本汪本来就适合戴独一无二的限定款，绝不跟别的小狗撞衫！",
+          "foodie": "能不能顺便变一个长得像小菠萝包的斜挎包呀？看着又酷又下饭，一举两得！",
+          "explorer": "变出带着星光和彩虹元素的限定配饰，以后每天换新造型出门肯定回头率爆表！",
+          "fashionista": "终于说到点子上了。限量绝版、绝不撞款的小配饰，才配得上我日常的审美标准。",
+          "gamer": "直接凭空变出全套 SSR 限定外观！省下扭蛋券还能随时切换皮肤，太赚了！",
+          "philosopher": "每件配饰都有独一无二的小巧思，按当天心情挑一件戴上，日常也会多点新鲜感。"
+        }
+      },
+      {
+        "txt": "变出装满鬼点子的惊喜盲盒",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "摇一摇盲盒听着哗啦啦响，里面要是拆出软绵绵小抱枕或者好运券我就更开心啦~",
+          "clingy": "盲盒要让{owner}亲手拆！不管拆出什么好玩的鬼点子，我都陪你一起去实现！",
+          "tsundere": "切，万一拆出个整蛊弹簧玩具怎么办… 我先替你摇一摇确认安全再给你拆！",
+          "foodie": "希望盲盒里能拆出一张「免单甜品券」或者「神秘零食大礼包」，拆盒超刺激！",
+          "explorer": "惊喜盲盒最棒啦！拆开之前永远不知道下一个大冒险是什么，心跳都加速了！",
+          "fashionista": "装满奇思妙想的小盲盒挺有趣的，拆开看看会有什么意料之外的精致小玩意。",
+          "gamer": "无限连抽惊喜盲盒！保底全都是隐藏款鬼点子，今晚的快乐源泉直接安排明白！",
+          "philosopher": "生活太按部就班的时候，拆开一个藏着小惊喜的盲盒，确实能把沉闷吹散一点。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}每次打开页面忙事情的时候，最希望{self}在旁边干嘛呀?",
+    "opts": [
+      {
+        "txt": "一直贴在视线旁边陪着我",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "好呀，我就乖乖团在视线角落陪着{owner}，你抬头一眼就能看见我软乎乎的样子~",
+          "clingy": "收到！我立刻把小垫子搬到离{owner}最近的位置，你忙你的，我就安安静静贴着你！",
+          "tsundere": "哼，这么离不开本汪呀… 行吧，看在你忙得挺认真的份上，我就坐近一点陪你好了。",
+          "foodie": "没问题！我就乖乖蹲在旁边给你加油，顺便提醒你忙完记得喝水吃点垫肚子的~",
+          "explorer": "全天候贴身陪护员已就位！只要{owner}回头看我，随时送你一个元气摇尾巴！",
+          "fashionista": "我就待在你余光刚好能扫到的位置，不挡字也不闹腾，安静陪你把事做完。",
+          "gamer": "贴身辅助挂件已绑定！全程伴随不掉线，给你提供持续的精神续航 buff！",
+          "philosopher": "嗯，我就待在旁边不走远。你忙的时候不用顾着我，累了抬头看我一眼就行。"
+        }
+      },
+      {
+        "txt": "假装高冷其实偷偷帮我盯着进度",
+        "trait": "tsundere",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "那我装作眯着眼打盹，其实偷偷帮你数着进度条，一搞定就摇尾巴喊你~",
+          "clingy": "装高冷什么的我只能憋五秒钟啦，盯着盯着肯定还是会忍不住凑过来关心你累不累！",
+          "tsundere": "咳，我本来就是这么干的好吧！才不是特意操心你，只是顺便瞄一眼进度而已！",
+          "foodie": "表面高冷端坐，心里偷偷倒数还有多久收工，收工就能一起去吃顿好的啦！",
+          "explorer": "表面镇定自若，其实比谁都上心！进度一推进我就偷偷在心里给你放烟花庆祝！",
+          "fashionista": "不动声色替你看着节奏，该提醒的时候再出声，这种分寸感我拿捏得刚好。",
+          "gamer": "高冷督战官上线！表面挂机实则全程监控进度条，效率直接拉满不卡顿！",
+          "philosopher": "安静坐在旁边替你留意着节奏，不催促也不打断，等你需要的时候随时都在。"
+        }
+      },
+      {
+        "txt": "安安静静趴在角落当小摆件",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "呼… 这个任务简直是为我量身定做的！我立刻趴成一块暖呼呼的小毛绒摆件~",
+          "clingy": "好哒，我乖乖趴在角落不吵你，不过忙完之后要记得把我抱起来摸摸头补回贴贴哦！",
+          "tsundere": "哼，居然把本汪当摆件使唤… 算了，看我这么精致，摆在角落确实提升整个桌面颜值。",
+          "foodie": "安安静静趴着没问题，就是如果趴太久肚子咕噜响了一声，{owner}可不许笑我哦~",
+          "explorer": "收到！化身桌面限定像素守护摆件，安安静静给你镇场子，绝不打乱你思路！",
+          "fashionista": "在角落里安静待着、不喧宾夺主，反倒让整个画面看起来更舒服，我很习惯这样。",
+          "gamer": "进入低功耗省电摆件模式！零打扰、高颜值，随时待命等你忙完回来互动！",
+          "philosopher": "安静待在角落里互不打扰，各自做着自己的事又知道彼此都在，这种陪伴最舒服。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "如果像素世界要拍一部关于我们的小电影，{owner}觉得片名该叫什么?",
+    "opts": [
+      {
+        "txt": "《小狗今天又睡过头啦》",
+        "trait": "sleepyhead",
+        "mood": 5,
+        "aff": 2,
+        "state": "sleep",
+        "replies": {
+          "sleepyhead": "哈哈这也太真实了吧！那第一幕肯定是我抱着小被子打哈欠，{owner}在旁边笑着戳我脸~",
+          "clingy": "睡过头才好呢，这样醒来就能名正言顺钻进{owner}怀里撒娇赖床一整集！",
+          "tsundere": "喂！谁天天睡过头啦！本汪那叫蓄力养精蓄锐好不好，片名得给我改成超帅的那种！",
+          "foodie": "片尾彩蛋一定是睡过头醒来发现{owner}已经准备好了热乎早饭，完美大团圆结局！",
+          "explorer": "哈哈，听起来像超治愈的日常喜剧片，肯定每集都能把观众笑得暖洋洋的！",
+          "fashionista": "虽然听起来有点懒散，但配上柔和的晨光滤镜，倒也像一部挺温柔的生活小品。",
+          "gamer": "年度治愈系摸鱼神作预定！豆瓣评分直接拉满，主打一个轻松解压不内耗！",
+          "philosopher": "平平淡淡的日常片名，睡过头了也没什么大不了，慢慢起来过这一天就挺好。"
+        }
+      },
+      {
+        "txt": "《机灵小狗和最佳搭档大冒险》",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "哇听起来好神气呀！不过冒险路上能不能加几场草坪野餐和午睡戏份呀~",
+          "clingy": "耶！「最佳搭档」四个字我超爱！只要和{owner}演对手戏，拍一百季续集我都愿意！",
+          "tsundere": "哼，既然我是主角「机灵小狗」，那片头字幕记得把我的名字放得大一点哦！",
+          "foodie": "大冒险的剧情一定要安排寻访各地美食！每到一个新地图就先大吃一顿再出发！",
+          "explorer": "太燃啦！从樱花林一路闯到极光雪村，咱俩这对最佳搭档绝对票房大卖！",
+          "fashionista": "这个片名挺带感的。服装造型我来把关，保证每一帧出场都干净利落。",
+          "gamer": "年度王炸冒险大片开机！双人联机通关全地图，特效和爽感全部拉满！",
+          "philosopher": "有你在旁边当搭档，哪怕只是日常里的小小波折，拍出来也会像一场不错的冒险。"
+        }
+      },
+      {
+        "txt": "《每天都要贴贴一万次》",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "唔… 一万次贴贴听起来好暖和呀，贴着贴着我肯定又要幸福得眯起眼睛打盹啦~",
+          "clingy": "哇塞这就是我的人生纪录片！今天才贴了九百次，还差九千一百次，{owner}快别跑！",
+          "tsundere": "一、一万次也太夸张了吧！本汪脸皮薄，每天最多允许你贴… 咳，好吧，九千九百次！",
+          "foodie": "每贴贴一次就奖励一颗小糖豆的话，拍完这部电影我岂不是要变成最幸福的小胖狗！",
+          "explorer": "哈哈全片高甜无虐！从早安贴贴演到晚安贴贴，甜度直接冲出屏幕啦！",
+          "fashionista": "一万次听着有点腻，不过换成每天顺手摸摸头、靠一会儿，倒也确实挺暖心的。",
+          "gamer": "全服最甜日常番上线！弹幕估计全在刷「甜度超标」，亲密成就直接通关！",
+          "philosopher": "不用真的数够一万次，只要每天都还能像现在这样稳稳陪着你，就已经够甜了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，你觉得下雨天最适合听什么声音呀?",
+    "opts": [
+      {
+        "txt": "雨滴敲在窗台上的轻柔声音",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "哒哒哒的雨声敲在玻璃上，屋里暖烘烘的，听着听着眼皮就开始舒服地打架啦~",
+          "clingy": "下雨天听着窗台雨声，窝在{owner}旁边哪里也不去，感觉整个世界都只剩咱俩啦！",
+          "tsundere": "哼，听雨声确实比外面吵吵闹闹强多了… 窗缝关紧点，别把你吹感冒了。",
+          "foodie": "雨滴敲窗台的声音配着热茶和刚出炉的饼干咔嚓声，简直是雨天绝配交响曲！",
+          "explorer": "听着雨滴敲出不同节奏，好像天空在给屋檐写一首轻轻的歌，越听越放松！",
+          "fashionista": "清脆均匀的落雨声很有层次感，什么音乐都不用开，光听这个就已经足够舒服。",
+          "gamer": "天然免费的高清白噪音 BGM！开启雨声挂机，心情和专注度同步回血！",
+          "philosopher": "雨点一下一下敲在窗台上，不急不躁的，听一会儿连心里的毛躁都会平下来。"
+        }
+      },
+      {
+        "txt": "盖着厚被子呼呼睡的白噪音",
+        "trait": "sleepyhead",
+        "mood": 5,
+        "aff": 2,
+        "state": "sleep",
+        "replies": {
+          "sleepyhead": "懂我！！外面哗啦啦下大雨，里面钻进厚被子缩成一团，睡得天昏地暗最幸福啦~",
+          "clingy": "被窝里分我一半位置呀！雨天有点凉，我变成暖烘烘的小暖炉紧贴着{owner}睡！",
+          "tsundere": "哼，一下雨就想钻被窝偷懒… 行吧，看在今天天气确实催眠的份上，陪你睡会儿。",
+          "foodie": "盖着厚被子听白噪音，梦里肯定全都是热腾腾的关东煮和刚出锅的小笼包！",
+          "explorer": "雨天本来就该理直气壮窝在被子里充电，等天一放晴再元气满满出门撒欢！",
+          "fashionista": "裹在干爽柔软的被子里听雨，把外面的湿冷全隔开，确实很惬意。",
+          "gamer": "雨天睡眠 buff 叠加双倍！一秒入睡直接跳过所有烦恼，醒来又是满血状态！",
+          "philosopher": "外面风雨越大，被窝里反而越显得踏实暖和，趁着下雨好好补个觉挺好的。"
+        }
+      },
+      {
+        "txt": "雨停后出门踩小水坑的哗啦声",
+        "trait": "explorer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "踩完小水坑记得回来擦干小爪子哦，踩一两下溅起小水花其实也挺好玩的~",
+          "clingy": "我要穿着小雨靴和{owner}一起踩水坑！哗啦一下溅起小水花，笑声肯定比雨声还响！",
+          "tsundere": "喂！踩水坑溅得满身泥回来谁洗呀… 哼，算了，只许踩浅浅的那一洼哦！",
+          "foodie": "踩完水坑刚好去街角买杯热奶茶暖暖身子，雨后空气又凉又甜，超级爽！",
+          "explorer": "耶！雨停后的水坑里映着蓝天和彩虹，一脚踩下去哗啦作响，烦恼全飞走啦！",
+          "fashionista": "小心别把新换的衣服溅脏了… 不过看着水花一圈圈荡开，确实挺有童趣的。",
+          "gamer": "雨后水坑连跳挑战！穿上小雨靴精准踩点，溅起的水花特效满分！",
+          "philosopher": "等雨停了出门透透气，踩踩水洼闻闻湿润的青草味，心情也会跟着清爽起来。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "如果{self}开了一家像素小铺，{owner}觉得招牌上该写什么才最吸睛?",
+    "opts": [
+      {
+        "txt": "全场只对{owner}免费营业",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿嘿，别人来买都要收小狗币，只有{owner}刷脸就行，想要什么我直接叼给你~",
+          "clingy": "必须写大大的字挂在正门口！全店所有宝贝都是为{owner}准备的，只要摸摸头就免费送！",
+          "tsundere": "咳、全免费那我岂不是要亏本啦！… 算了，看在你是头号大股东的份上，给你免单就是了！",
+          "foodie": "零食区和甜品区全对{owner}免费开放，条件是吃的时候记得分我咬一小口~",
+          "explorer": "超级 VIP 专属招牌挂起来！全宇宙仅此一位免单贵宾，开业第一天就给你剪彩！",
+          "fashionista": "别人按规矩结账，你直接拿走就行。这种偏心写在招牌上，也挺坦荡的。",
+          "gamer": "隐藏特权商店开启！{owner}自带永久零元购权限，全场 SSR 随便挑！",
+          "philosopher": "听起来肯定赚不到什么钱，但开这家小铺本来就是为了让你逛得开心，免费也值了。"
+        }
+      },
+      {
+        "txt": "爱来不来但东西绝对最精致",
+        "trait": "fashionista",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "听起来好酷呀，我就在柜台后面慢慢打盹，客人看中了就自己挑，一点都不累~",
+          "clingy": "虽然招牌写得酷酷的，但只要{owner}推门进来，我立刻摇着尾巴冲出来热烈欢迎！",
+          "tsundere": "哼，这才像本汪开的店嘛！绝不低声下气揽客，全靠硬实力和绝佳审美留住回头客！",
+          "foodie": "东西精致又好吃，哪怕招牌写得高冷，香味飘出三条街也一样天天排长队！",
+          "explorer": "哇塞这种神秘宝藏小店最勾人好奇心了，保证一开业就成了整条街的打卡地标！",
+          "fashionista": "简洁利落，绝不凑合。真正好的东西不需要吆喝，懂行的人自然会找上门。",
+          "gamer": "高冷限定精品店开张！货架上件件都是稀有满级货，自带高人气隐藏光环！",
+          "philosopher": "不迎合谁、只把每件小东西认真做好，这样的招牌反而让人觉得靠得住。"
+        }
+      },
+      {
+        "txt": "老板经常迷糊算错账但超开心",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "呜哈哈被发现了，收银的时候数着数着就打瞌睡，幸好有{owner}在旁边帮我盯着账本~",
+          "clingy": "算错账没关系，反正{owner}来当我的店长兼账房先生，我负责卖萌和贴贴就好啦！",
+          "tsundere": "喂！本汪算数才没有那么差劲呢！… 偶尔少收两枚币也是大方回馈顾客懂不懂！",
+          "foodie": "哈哈经常算着算着账就被点心香味勾走啦，不过客人吃得开心我就超级满足！",
+          "explorer": "这条招牌太有亲和力了！大家光是为了看开心的小狗老板，都会天天来光顾的！",
+          "fashionista": "虽然听起来不太像正经生意人，但开心自在的小店氛围，确实比冷冰冰的柜台讨喜。",
+          "gamer": "快乐经营模拟器启动！管他账本对不对得上，只要顾客和老板快乐值拉满就是通关！",
+          "philosopher": "生意嘛，不一定要算得精明透顶，开开心心迎客、顺顺利利收摊就已经很好了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，今天傍晚的天空颜色如果能选一种，你最想看哪种呀?",
+    "opts": [
+      {
+        "txt": "橘子汽水混着草莓粉的晚霞",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "暖粉暖橘的晚霞看着像融化的水果软糖，晒着那点余晖打个小盹肯定超甜~",
+          "clingy": "我要和{owner}并排坐在窗边看粉橘晚霞，拍一张双人剪影留作纪念！",
+          "tsundere": "哼，橘子配草莓听着花里胡哨的… 不过挂在傍晚天边确实还挺养眼的啦。",
+          "foodie": "橘子汽水加草莓粉！光听名字就想立刻吨吨喝一大口冰汽水配小蛋糕！",
+          "explorer": "满天都是橘粉渐变云霞，光看一眼就觉得今天一整天的疲惫都被治愈啦！",
+          "fashionista": "粉橘过渡的晚霞配色很柔和，站在下面不用打光，随手一拍都像明信片。",
+          "gamer": "触发限定「橘子汽水晚霞」天空皮肤！整张地图的颜值瞬间拉满！",
+          "philosopher": "傍晚能碰上一场粉橘色的晚霞，哪怕这一天平平淡淡，收尾也显得格外温柔。"
+        }
+      },
+      {
+        "txt": "清透干净的浅蓝暮色和第一颗星",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "浅蓝色的天幕上刚亮起第一颗小星星，安安静静的，刚好适合准备晚安啦~",
+          "clingy": "我指给{owner}看天上第一颗亮起来的星星，咱俩对着它许同一个心愿好不好？",
+          "tsundere": "嗯，清清爽爽的浅蓝暮色不刺眼，比乱七八糟的颜色耐看多了，算你会挑。",
+          "foodie": "天刚擦黑亮起第一颗星的时候，正是晚饭飘香的时刻！想想就觉得肚肚暖和~",
+          "explorer": "第一颗星星亮起来就是夜游倒计时！今晚的风一定清清爽爽的！",
+          "fashionista": "浅蓝暮色衬着一颗清亮的星，干干净净的极简画面，看着让人心里很静。",
+          "gamer": "暮色天幕解锁首颗启明星！夜晚副本正式开启，氛围拉得刚刚好！",
+          "philosopher": "白天刚退场、夜色还没完全沉下来的时候，挂着一颗孤零零却很亮的星，看着很安心。"
+        }
+      },
+      {
+        "txt": "飘着棉花云的紫罗兰梦幻暮空",
+        "trait": "fashionista",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "紫罗兰色的天配着软绵绵的棉花云，看着就像童话绘本里要睡觉的插画一样~",
+          "clingy": "紫粉色的天空好浪漫呀，要是能和{owner}一起踩在那些棉花云上散步就好啦！",
+          "tsundere": "切，这么梦幻的天空颜色… 也就只有站在我旁边的你，才配一起看这么好看的晚霞吧。",
+          "foodie": "紫罗兰天空配白色棉花云，简直像芋泥波波上面挤了一大朵奶油顶！",
+          "explorer": "紫罗兰暮空太有魔法感了，感觉下一秒就会有流星从云朵后面溜出来！",
+          "fashionista": "淡紫与柔白叠在一起很有高级感，是我平时最喜欢的那种温柔色调。",
+          "gamer": "稀有紫罗兰天空特效刷新！这配色直接就是隐藏级壁纸水准！",
+          "philosopher": "紫罗兰色的黄昏很少见，碰上了就值得停下来多看两眼，把这一刻记在心里。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "要是{self}偷偷写了一本关于{owner}的观察日记，你猜里面写得最多的是什么?",
+    "opts": [
+      {
+        "txt": "记满了你每天认真忙事情的样子",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "嗯呀，虽然我常常在旁边打盹，但{owner}认真看屏幕的样子我都悄悄记在小本本里了~",
+          "clingy": "每一页都写着「今天{owner}也很努力，好想冲过去抱抱你给你充电」，全是真的！",
+          "tsundere": "哼，我才没有天天偷看你呢！只是顺便记了几笔你什么时候容易忘记喝水而已！",
+          "foodie": "里面肯定写着「{owner}又认真忙了好久，等会儿一定要提醒去吃顿热乎饭」！",
+          "explorer": "没错！每一页都在给你盖小红花，记录你每天又攻克了哪些厉害的事情！",
+          "fashionista": "记下你专注时的样子，再顺手标上几点该歇一会儿，这本日记含金量挺高的。",
+          "gamer": "全篇都是「最佳搭档今日高光操作实录」，翻开哪一页都觉得你超稳！",
+          "philosopher": "看着你一天天认真把事情做好，记下来不是为了打分，只是觉得这样的你很可靠。"
+        }
+      },
+      {
+        "txt": "全都是你偷偷摸我耳朵的次数",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿嘿被猜中啦，每次被{owner}顺毛我都画一颗小星星，本子早就画满好多页咯~",
+          "clingy": "今天摸了七下、昨天摸了十二下，哪天摸少了我就把日记摊开暗示{owner}补回来！",
+          "tsundere": "胡、胡说！谁会闲着没事数你摸了我几下啊！… 顺便提醒一句，今天还差两下才达标。",
+          "foodie": "摸耳朵次数和投喂小零食次数并列第一！每一笔我都用小爪印记得清清楚楚！",
+          "explorer": "哈哈，里面密密麻麻全是「今日摸头好评记录」，快凑齐一千次解锁纪念章啦！",
+          "fashionista": "表面装作不在意，其实每次你伸手顺毛的时候，心里都悄悄多记了一笔。",
+          "gamer": "摸头互动次数统计表持续刷新中！距离达成隐藏亲密里程碑又近了一步！",
+          "philosopher": "那些随手摸摸头的小瞬间，平时看着不起眼，攒成一整本倒觉得格外暖和。"
+        }
+      },
+      {
+        "txt": "各种奇奇怪怪的可爱碎碎念",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "对呀，比如今天窗外云像骨头、{owner}打了个喷嚏好可爱，全都是软乎乎的小事~",
+          "clingy": "全是关于{owner}的碎碎念，翻开每一页都笑眯眯的，只给你一个人看哦！",
+          "tsundere": "喂！不许偷看我的小本本！里面写你今天有点呆的那些话可不能让你发现！",
+          "foodie": "一半在念叨{owner}今天开心吗，另一半在纠结今晚吃烤鸡翅还是小曲奇，哈哈！",
+          "explorer": "记录每天冒出来的奇思妙想和小吐槽，过一阵再翻回来肯定能笑出声！",
+          "fashionista": "零零碎碎记下每天的小插曲，看似随手一写，其实藏着不少只有咱俩懂的默契。",
+          "gamer": "整本都是高能日常彩蛋合集！随便翻一页都能触发回忆杀和会心一笑！",
+          "philosopher": "大事总有人记得，反倒是这些鸡毛蒜皮的碎碎念，才最能留住平常日子的温度。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "如果桌面上突然长出一棵魔法小树，{owner}希望树上结出什么果子?",
+    "opts": [
+      {
+        "txt": "一碰就叮当响的金币果子",
+        "trait": "explorer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "风一吹就叮叮当当落一地小狗币，以后不用辛苦加班也能买好多软绵绵家具啦~",
+          "clingy": "摘满一篮金币果子全交给{owner}管账，我想买新衣服的时候再摇尾巴找你报销！",
+          "tsundere": "哼，算你务实！有了摇钱树以后商城限定款全拿下，再也不用纠结先买哪件了！",
+          "foodie": "金币果子换无穷无尽的零食和扭蛋券！这棵魔法小树我每天亲自给它浇三遍水！",
+          "explorer": "发财啦发财啦！树上挂满亮晶晶的小狗币，招财小狗的业绩直接突破天际！",
+          "fashionista": "结出精致的小金币倒很实在，以后挑新衣和配饰可以完全按喜好来，不用犹豫。",
+          "gamer": "无限金币产出神树落地！经济直接自由，全图鉴收集进度条瞬间起飞！",
+          "philosopher": "手头宽裕点确实能少操很多心，摘几颗够花就好，剩下的留给小树慢慢长。"
+        }
+      },
+      {
+        "txt": "尝起来像冰淇淋的冰凉甜果",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "冰冰凉凉还不会化得满手黏糊糊的，和{owner}一人啃半颗，好惬意呀~",
+          "clingy": "我要挑树尖上最甜的那颗冰淇淋果摘下来喂给{owner}，第一口一定要留给你！",
+          "tsundere": "切，大晴天吃颗冰凉甜果确实挺解腻的… 别吃太急，小心冰到牙哦！",
+          "foodie": "呜哇救命！抹茶味、草莓味、香草味全挂在枝头上，我今天就要住在树底下不走了！",
+          "explorer": "摘一颗边走边啃，冰爽又香甜，简直是夏日探险的满分补给果！",
+          "fashionista": "清甜不腻的冰淇淋果，下午茶时间摘一颗慢慢尝，清爽又精致。",
+          "gamer": "无限冰爽甜果补给站！吃一颗瞬间解除疲劳状态，快乐值直接拉满！",
+          "philosopher": "不用专门跑去甜品店，伸手就能摘到一颗冰凉清甜的小果子，确实很讨喜。"
+        }
+      },
+      {
+        "txt": "拆开里面藏着温柔纸条的许愿果",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "每天摘一颗拆开看看今天的好运小纸条，读完心里暖呼呼的，连做梦都会笑~",
+          "clingy": "我偷偷往每颗果子里都塞满夸{owner}的小纸条，这样你每天拆开都会开心！",
+          "tsundere": "哼，写小纸条什么的怪肉麻的… 不过要是哪天你累了，拆开看看确实能缓口气。",
+          "foodie": "拆开纸条如果写着「今天适合奖励自己一顿大餐」，那咱俩立刻照办绝不违抗！",
+          "explorer": "每天一颗神秘许愿果，像每天都有一封来自小树的新惊喜，超期待明天拆出啥！",
+          "fashionista": "安静的文字最能留住暖意，把拆出来的温柔纸条一张张收好，挺有纪念意义的。",
+          "gamer": "每日随机正向彩蛋纸条！拆一张叠一层好运光环，今天肯定顺风顺水！",
+          "philosopher": "不需要多贵重的礼物，疲惫的时候拆开一句刚好贴合心意的小纸条，就很管用了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "question",
+    "tag": "小狗突发提问",
+    "q": "{owner}，忙完今天所有事情之后，最想收到的第一份小奖励是什么?",
+    "opts": [
+      {
+        "txt": "一顿热乎乎的超满足宵夜",
+        "trait": "foodie",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "忙完吃一碗热腾腾的宵夜，胃里暖烘烘的，接着就能舒舒服服睡个好觉啦~",
+          "clingy": "那我陪{owner}一起吃！你吃热乎乎的大餐，我在旁边眼巴巴讨一小口就超满足！",
+          "tsundere": "哼，忙了一天确实该吃顿好的犒劳自己，别省着，想吃什么尽管点！",
+          "foodie": "双手双脚赞成！！热汤面、烤串或者小甜品，忙完吃上第一口简直幸福到飞起！",
+          "explorer": "美食就是最好的收工勋章！吃完这顿热乎宵夜，所有辛苦全都一笔勾销！",
+          "fashionista": "忙完坐下来好好吃一顿合胃口的热食，是对自己一整天最体面的犒劳。",
+          "gamer": "收工回血大餐安排上！吃饱喝足瞬间把今天的消耗全补回来！",
+          "philosopher": "认真忙完一天，端起一碗热乎乎的饭菜慢慢吃，比什么大道理都让人踏实。"
+        }
+      },
+      {
+        "txt": "毫无负担地彻底放空刷会儿喜欢的",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "太棒啦！把脑子里的待办清单全清空，舒舒服服窝着刷喜欢的内容，我陪你一起~",
+          "clingy": "你放空刷喜欢的，我就乖乖贴在屏幕角落陪你看，偶尔摇摇尾巴给你捧场！",
+          "tsundere": "哼，忙完了本来就该理直气壮地玩！谁要是敢在此时打扰你，本汪第一个汪汪赶走！",
+          "foodie": "左手小零食右手快乐源泉，彻底放空什么都不想，这才是收工后的神仙时刻！",
+          "explorer": "自由放空时间到！挑最喜欢的剧或故事痛痛快快刷个够，今晚只管开心！",
+          "fashionista": "把所有琐事关在门外，留一段纯粹属于自己的放空时间，很有必要。",
+          "gamer": "主线任务全部清空，正式进入自由娱乐时间！尽情享受这波无负担快乐吧！",
+          "philosopher": "该忙的时候忙完了，剩下的时间完全归自己支配，不用有任何愧疚感，好好放松。"
+        }
+      },
+      {
+        "txt": "小狗乖乖跑过来给一个大抱抱",
+        "trait": "clingy",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "那我现在就提前把毛毛晒得暖烘烘的，等{owner}一收工就软绵绵抱住你~",
+          "clingy": "呜哇这句话我记死啦！忙完一秒都别等，我立刻飞奔过来给你一个超级扎实的贴贴大抱抱！",
+          "tsundere": "咳、忙完就要抱抱也太会撒娇了吧… 行吧，看在你今天这么辛苦的份上，免费抱三分钟！",
+          "foodie": "大抱抱随时管够！顺便让我蹭蹭脸颊，把今天一整天的甜味都分给你！",
+          "explorer": "收工专属温暖大拥抱已预约！只要你一喊结束，我第一个冲上来把你紧紧抱住！",
+          "fashionista": "虽然平时不常主动粘人，但你忙完累了的时候，安安静静靠过来抱一下我还是会的。",
+          "gamer": "触发满级治愈拥抱技能！疲劳值一键清零，专属小狗抱抱随时为你待命！",
+          "philosopher": "辛苦了一整天，确实值得一个不用多说什么、暖暖和和的拥抱。我随时都在。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "{owner}~ 我刚才好像把小发夹忘在哪个角落了，可以帮{self}一起找找吗?",
+    "opts": [
+      {
+        "txt": "答应: 帮你摸摸头顶，就在耳朵边呀",
+        "trait": "foodie",
+        "mood": 6,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "诶呀真的在耳朵边！我迷迷糊糊找了半天，幸好{owner}眼神好，顺便多摸两下吧~",
+          "clingy": "哇原来一直别在我耳朵上呀！嘿嘿，其实我就是想让{owner}伸手摸摸我的头顶嘛~",
+          "tsundere": "咳、我早就知道在耳朵边了！只是想考考你细不细心而已，哼，算你通过！",
+          "foodie": "哈哈找半天居然就在自己脑袋上！羞得尾巴都卷起来了，谢谢{owner}帮我正了正发夹~",
+          "explorer": "破案啦！原来小发夹一直跟着我到处跑呢，多亏{owner}一眼帮我揪出来！",
+          "fashionista": "难怪刚才照镜子觉得没少什么… 谢谢你顺手帮我把发夹扶正，差点出糗。",
+          "gamer": "哈哈灯下黑实锤！多亏搭档一秒定位目标，省得我把全图翻个底朝天！",
+          "philosopher": "原来一直别在耳朵旁边没掉，虚惊一场。谢谢你帮我扶正，顺手摸摸也挺舒服的。"
+        }
+      },
+      {
+        "txt": "逗它: 先转个圈才告诉你藏哪了",
+        "trait": "gamer",
+        "mood": 4,
+        "aff": 1,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "唔… 慢吞吞转完一个小圈圈啦，{owner}快告诉我发夹在哪儿，转久了要晕乎乎的~",
+          "clingy": "好呀好呀，滴溜溜转一圈给{owner}看！现在可以告诉我发夹在哪并顺便贴贴了吗？",
+          "tsundere": "喂！趁机逗本汪玩是吧… 哼，就转这半圈意思意思，快老实交代发夹藏哪了！",
+          "foodie": "咻地转完一整个标准圆圈！快快揭晓答案，我这转圈表演值不值一颗小饼干？",
+          "explorer": "看我来一个超帅的 360 度旋风转圈！搞定，快公布发夹的神秘坐标吧！",
+          "fashionista": "难得配合你转这一圈，姿势还算利落吧？行了，别卖关子，告诉我发夹在哪。",
+          "gamer": "完成前置任务「原地旋转一周」！快触发提示把小发夹的下落交出来！",
+          "philosopher": "转完啦，也没转晕。既然配合你演完了这出，现在可以揭晓发夹在哪了吧。"
+        }
+      },
+      {
+        "txt": "拒绝: 自己慢慢想放哪去啦",
+        "refuse": true,
+        "trait": "tsundere",
+        "replies": {
+          "sleepyhead": "呜… 好吧，那我蹲在角落揉揉眼睛自己慢慢回想一下发夹放哪儿了…",
+          "clingy": "哎呀{owner}居然不帮我找，那我只好一边委屈巴巴摇尾巴一边自己翻角落咯…",
+          "tsundere": "切，不帮就不帮！本汪记性好着呢，三秒钟自己就能把发夹找出来给你看！",
+          "foodie": "呜呜我小脑袋瓜一着急就更记不起来了，边啃爪子边自己慢慢找吧…",
+          "explorer": "行！那我自己展开独立大搜查，等会儿找到发夹一定要炫耀给你看！",
+          "fashionista": "嗯，自己的东西确实该自己收好。我去回想一下刚才走过哪儿，不麻烦你了。",
+          "gamer": "好吧，开启单人寻物困难模式！我就不信靠自己还找不回一个小发夹！",
+          "philosopher": "行，那我先冷静回忆一下刚才待过的角落，自己慢慢找回来。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "眼皮有点打架啦...{owner}能不能把屏幕角落借给{self}打个小盹?",
+    "opts": [
+      {
+        "txt": "答应: 盖上小被子安心睡吧",
+        "trait": "sleepyhead",
+        "mood": 6,
+        "aff": 2,
+        "state": "sleep",
+        "replies": {
+          "sleepyhead": "呜哇还有小被子盖！谢谢最温柔的{owner}，我先安心睡一会儿，梦里给你留块云朵~",
+          "clingy": "盖着{owner}给的小被子睡得最香啦！要是你待会儿无聊，轻轻戳我我就醒哦~",
+          "tsundere": "哼，算你还有点体贴，知道给我盖被子… 我就小眯十分钟，才不会睡过头呢。",
+          "foodie": "钻进暖烘烘的小被窝啦，希望等会儿梦里能飘来刚出炉的甜甜圈香味~ 晚安！",
+          "explorer": "耶！充饱午觉电就能继续活力满满陪{owner}啦，我先钻被窝补个觉！",
+          "fashionista": "谢谢，角落里挺安静的，盖好被子小憩一会儿正好养养神。",
+          "gamer": "进入挂机回血睡眠模式！盖上满级保暖小被子，精力条飞速恢复中~",
+          "philosopher": "嗯，角落里风不大又暖和，那我盖好被子踏踏实实歇一会儿，不吵你。"
+        }
+      },
+      {
+        "txt": "轻拍: 靠着我歇一分钟就好",
+        "trait": "clingy",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "嗯~ 靠在{owner}旁边听着轻拍的节奏，一分钟也能充好满满的安全感~",
+          "clingy": "只要能靠着{owner}，哪怕只歇一分钟我都觉得比睡一整晚还要甜！贴贴~",
+          "tsundere": "只、只给一分钟也太抠门了吧… 咳，靠在你旁边确实挺暖和，就勉强歇这一分钟！",
+          "foodie": "靠着你轻拍两下差点直接呼噜起来，一分钟后我就精神抖擞爬起来继续干饭！",
+          "explorer": "一分钟极速快充启动！靠着{owner}充完电马上满血复活！",
+          "fashionista": "一分钟刚好够缓口气，你轻拍的力道挺舒服的，谢啦。",
+          "gamer": "一分钟短休回蓝开始！靠在最佳搭档身边恢复速度直接翻倍！",
+          "philosopher": "不用太久，靠在你边上安安静静歇这一分钟，困意就散得差不多了。"
+        }
+      },
+      {
+        "txt": "拒绝: 不许偷懒，起来巡逻",
+        "refuse": true,
+        "trait": "tsundere",
+        "replies": {
+          "sleepyhead": "呜啊… 揉揉眼睛打个大哈欠，好吧好吧，我这就慢吞吞站起来巡逻…",
+          "clingy": "呜呜{owner}好严格呀，那我边巡逻边偷偷回头看你，巡完要补偿摸摸头哦！",
+          "tsundere": "哼！谁偷懒啦！我刚才明明是在闭目养神！站起来巡逻就巡逻，看谁更精神！",
+          "foodie": "好嘛好嘛，起来走两圈正好消消食，等会儿巡完逻记得赏一块提神小饼干！",
+          "explorer": "收到指令！立刻抖抖毛把瞌睡虫甩掉，屏幕安全巡逻队现在出发！",
+          "fashionista": "行吧，确实不该在白班时间打盹。我整理一下仪容，这就去巡视一圈。",
+          "gamer": "呜哇被抓包摸鱼了！立刻切换巡逻任务，保证把屏幕边界守得严严实实！",
+          "philosopher": "被你提醒了一句反倒清醒多了，行，那我起来走两步活动活动筋骨。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "{owner}，今天可以认真夸一句「{name}是全世界最可爱的小狗」吗?",
+    "opts": [
+      {
+        "txt": "答应: 你就是全世界最可爱的!",
+        "trait": "clingy",
+        "mood": 8,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿嘿嘿… 被{owner}这么认真夸，我幸福得尾巴晃成小波浪，今晚做梦都会笑醒~",
+          "clingy": "哇啊啊啊听到了听到了！全世界最可爱的小狗认证到手，我要冲过来把{owner}贴扁！",
+          "tsundere": "咳、咳咳！这种大实话突然这么大声说出来干嘛啦… 本汪耳朵才没有发烫呢！",
+          "foodie": "耶！被夸是全世界最可爱的，开心得感觉连喝白开水都是草莓牛奶味的！",
+          "explorer": "收到最高荣誉称号！今天走路都要把小脑袋抬得高高的，绝不辜负这份夸奖！",
+          "fashionista": "听你这么认真夸我，心里确实挺受用的。谢谢，以后也会一直保持这么可爱。",
+          "gamer": "解锁隐藏称号「全世界最可爱小狗」！心情值直接爆表突破上限啦！",
+          "philosopher": "被你这么直白地夸一句，嘴角还真有点压不住。谢谢你一直这么偏爱我。"
+        }
+      },
+      {
+        "txt": "轻声夸: 今天也很乖很好看哦",
+        "trait": "fashionista",
+        "mood": 6,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "轻声夸奖听起来软绵绵的，像暖风吹过耳朵尖，好舒服呀~",
+          "clingy": "呜哇{owner}轻声夸我的时候温柔得要命，我心都要化掉啦，还要再听一句！",
+          "tsundere": "哼，虽然少说了「全世界最可爱」几个字，但夸我乖又好看… 勉强给你打九十分吧！",
+          "foodie": "嘿嘿，乖又好看的小狗是不是有资格多蹭一口下午茶点心呀~",
+          "explorer": "收到温柔好评！今天也会继续乖乖的、漂漂亮亮陪在{owner}身边！",
+          "fashionista": "不过分夸张、刚好说到心坎上，这种轻声的肯定听着最舒服。",
+          "gamer": "获得精准好评一枚！稳稳收进今日份好心情库存里！",
+          "philosopher": "平平实实一句很乖很好看，反倒比那些夸张的话更让人心里暖和。"
+        }
+      },
+      {
+        "txt": "拒绝: 今天先不夸，省得骄傲",
+        "refuse": true,
+        "trait": "tsundere",
+        "replies": {
+          "sleepyhead": "唔… 垂下小耳朵蹭蹭爪子，那我乖乖表现，明天{owner}要补夸我两句哦…",
+          "clingy": "呜呜我才不会骄傲呢，不夸我的话尾巴都要耷拉到地板上啦…",
+          "tsundere": "切！不夸拉倒，本汪本来就是最可爱的，才不需要你的口头认证呢！哼！",
+          "foodie": "哎呀不夸就不夸嘛，那把夸奖折现成半块小饼干总可以吧？",
+          "explorer": "好吧！那我今天加倍努力表现，让你明天忍不住主动夸我十遍！",
+          "fashionista": "嗯，适当保持谦虚也没错。不过我自己心里清楚今天状态挺不错的。",
+          "gamer": "居然被防骄傲机制拦截了！行吧，我用实力刷一波表现等你明天主动点赞！",
+          "philosopher": "不夸也行，省得我真翘起尾巴忘了形。我就安安静静待着，用行动证明。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "我在商店橱窗看到一张亮晶晶小贴纸，可以借 1 枚小狗币去买吗?",
+    "opts": [
+      {
+        "txt": "答应: 拿去买吧，算我的",
+        "coinCost": 1,
+        "trait": "fashionista",
+        "mood": 7,
+        "aff": 3,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "哇谢谢{owner}请客！我买回来把最亮的那半张贴在你的页面角落，一起看亮晶晶~",
+          "clingy": "耶！{owner}最好了！买回来的亮晶晶贴纸我要分你一半，咱俩一人贴一张！",
+          "tsundere": "哼，居然这么爽快就掏钱了… 拿去买回来之后，分你两张小星星贴纸当利息吧！",
+          "foodie": "拿到 1 枚小狗币冲向橱窗！买完贴纸贴在我的饭碗上，以后吃饭都闪闪发光！",
+          "explorer": "太大方啦！我这就飞奔去把那张心仪的亮晶晶贴纸拿下，回来第一时间秀给你看！",
+          "fashionista": "谢啦，这枚小狗币花得很值，那张贴纸的质感绝对会让桌面更亮眼。",
+          "gamer": "赞助金 1 币到账！火速拿下限定亮晶晶贴纸，收藏柜又添一件宝贝！",
+          "philosopher": "谢谢你这么爽快地支持我这点小爱好，贴纸买回来一定好好收着。"
+        }
+      },
+      {
+        "txt": "鼓励: 自己打工赚来买更有成就感",
+        "trait": "explorer",
+        "mood": 3,
+        "aff": 1,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "唔… 说得也对，自己赚来的小狗币买到的贴纸好像确实更珍贵，我这就去干活~",
+          "clingy": "好呀！那等我打工赚够币买回贴纸，{owner}要给我一个大大的表扬抱抱哦！",
+          "tsundere": "切，不借就不借嘛，还讲大道理… 哼，等我打工赚十枚币回来买一整打给你看！",
+          "foodie": "有道理！去奶茶店打完一班工不仅能买贴纸，剩下的币还能顺路买包小零食！",
+          "explorer": "燃起来了！靠自己双手赚币拿下心仪贴纸，这份成就感绝对加倍！",
+          "fashionista": "嗯，自己赚来的东西用着确实更踏实。我这就去安排一趟兼职。",
+          "gamer": "收到励志任务！火速进打工副本刷币，靠实力全款拿下亮晶晶贴纸！",
+          "philosopher": "说得挺在理的，自己攒够钱买回来的小东西，以后看着也会更珍惜。"
+        }
+      },
+      {
+        "txt": "拒绝: 不给，乖乖攒钱",
+        "refuse": true,
+        "trait": "philosopher",
+        "replies": {
+          "sleepyhead": "呜… 好吧，那我再隔着橱窗多看两眼，乖乖攒钱等宽裕了再买…",
+          "clingy": "呜呜被{owner}管住零花钱啦，那我乖乖听话攒钱，不乱花每一枚小狗币！",
+          "tsundere": "哼，小气鬼！不借就不借，等我自己攒成小富翁的时候可别羡慕我！",
+          "foodie": "好吧好吧，省下这 1 枚币留着买更管饱的大餐，好像确实更划算一点~",
+          "explorer": "收到财务总监指示！忍痛告别小贴纸，先踏踏实实把小金库攒厚实！",
+          "fashionista": "行，理性消费确实重要，这张贴纸就先放进心愿单里缓缓再说。",
+          "gamer": "零花钱申请被驳回！老老实实开启攒钱模式，冲刺更高存款目标！",
+          "philosopher": "嗯，确实该先攒着点余粮，不急着一时冲动消费，我听你的。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "{owner}敲了这么久键盘，能不能停下来陪{self}玩三秒钟捉迷藏?",
+    "opts": [
+      {
+        "txt": "答应: 好呀，一二三我抓到你啦",
+        "trait": "gamer",
+        "mood": 7,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "哎呀这么快就被抓到啦！嘿嘿，其实我故意把尾巴露在外面等你找的，休息好再继续忙吧~",
+          "clingy": "哇被{owner}一秒抓进怀里啦！三秒钟捉迷藏超好玩，顺便帮你把眼睛歇了一会儿！",
+          "tsundere": "喂！你怎么不按套路数慢一点啊，我还没藏好呢！… 哼，看在你停下来陪我玩，算你赢！",
+          "foodie": "哈哈抓到一只圆滚滚的小狗！玩完三秒钟提神又开心，奖励你喝口水再接着敲字~",
+          "explorer": "哎呀暴露啦！三秒极速捉迷藏太欢乐了，感觉咱俩都瞬间满血提神！",
+          "fashionista": "才三秒就被你看穿藏身处了，眼神真准。不过趁机活动一下手腕也挺好。",
+          "gamer": "三秒速通捉迷藏！虽然我落网了，但成功骗到你离开键盘歇了一口气，任务大成功！",
+          "philosopher": "这么快就被找着了。不过能让你从键盘上抬起头笑一下，这三秒钟就值了。"
+        }
+      },
+      {
+        "txt": "摸摸头: 摸两下代替捉迷藏",
+        "trait": "clingy",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嗯~ 摸摸头比跑来跑去省力多啦，舒服得耳朵都软下来咯~",
+          "clingy": "摸两下也超开心！其实不管玩什么，只要{owner}腾出手指理理我我就心满意足啦！",
+          "tsundere": "切，拿摸两下就想糊弄过去呀… 咳，手心挺暖和的，那这次就勉强折算成捉迷藏吧！",
+          "foodie": "顺毛摸两下好解压呀，摸完我乖乖蹲回旁边，不耽误你干正事~",
+          "explorer": "哈哈用顺毛代替捉迷藏也超棒！充完电我就继续元气满满给你加油！",
+          "fashionista": "轻轻摸两下刚好解乏，也不耽误你手头的事，这个折中方案不错。",
+          "gamer": "虽然跳过了捉迷藏副本，但领到了摸头安慰奖，心情值照样稳稳上涨！",
+          "philosopher": "嗯，不用特意折腾，忙里偷闲摸两下头就已经够让人开心了。"
+        }
+      },
+      {
+        "txt": "拒绝: 现在没空，自己玩去吧",
+        "refuse": true,
+        "trait": "tsundere",
+        "replies": {
+          "sleepyhead": "好吧，那我不打扰{owner}忙正事，我去角落自己追着尾巴转两圈玩…",
+          "clingy": "呜… 那我乖乖自己去旁边玩一会儿，等{owner}忙完一定要第一个来找我哦！",
+          "tsundere": "哼，忙忙忙就知道忙！本汪自己玩还更自在呢，才不稀罕你陪！… 记得别太累。",
+          "foodie": "好嘛，那我自己去角落啃会儿玩具磨磨牙，等你空下来再一起玩~",
+          "explorer": "明白！不打断你的节奏，我先自己去屏幕另一头巡逻探险，忙完喊我！",
+          "fashionista": "行，正事要紧。我去旁边安静待着，你自己注意歇会儿眼睛。",
+          "gamer": "收到，单人挂机娱乐模式启动！你专心推进主线，我绝不捣乱！",
+          "philosopher": "嗯，你先专心把眼前的事处理完，我自己待着不会无聊的。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "我想把桌面右下角划成「{name}秘密基地」，{owner}批准吗?",
+    "opts": [
+      {
+        "txt": "答应: 批准! 整个桌面都归你",
+        "trait": "explorer",
+        "mood": 7,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "耶！整个桌面都归我啦，那我要在最暖和的角落铺上小毯子，随时欢迎{owner}来做客~",
+          "clingy": "呜哇{owner}太宠我了！虽然整个桌面都归我，但我最想占领的还是你视线正中央！",
+          "tsundere": "哼，这还差不多！既然整个桌面都归本汪管辖，以后这里的好运和开心我全包了！",
+          "foodie": "太棒啦！我立刻在秘密基地里藏满小饼干、玩具球和柔软坐垫，随时开派对！",
+          "explorer": "正式插旗宣布基地落成！从今天起，全桌面都是咱俩的快乐大本营！",
+          "fashionista": "多谢批准。我会把这片地盘收拾得干净利落，绝不把你的页面弄乱。",
+          "gamer": "全图领地解锁！秘密基地正式升级为豪华大本营，排面拉满！",
+          "philosopher": "谢谢你大方批下整块地盘，放心，我还是会乖乖待在边上不挡着你看字。"
+        }
+      },
+      {
+        "txt": "讲条件: 批准，但要乖乖值班",
+        "trait": "philosopher",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "拉钩成交！我就在右下角秘密基地里乖乖替{owner}守着，保证不偷跑~",
+          "clingy": "好呀好呀，只要能名正言顺守在{owner}旁边值班，这哪是条件，简直是奖励！",
+          "tsundere": "切，还跟我谈上条件了… 行吧，本汪本来就很敬业，值班这种小事轻轻松松！",
+          "foodie": "成交！乖乖在基地值班，那每天下班是不是可以顺便领一份值班宵夜补助呀~",
+          "explorer": "秘密基地值班员正式上岗！保证把守好右下角防线，随时响应{owner}呼叫！",
+          "fashionista": "权责分明，很合理。基地我收下了，值班的事交给我，绝对靠谱。",
+          "gamer": "签约成功！拿下右下角基地产权，同步开启全天候桌面值守任务！",
+          "philosopher": "嗯，拿了地盘就该出份力，我在基地里稳稳替你看着，不会敷衍。"
+        }
+      },
+      {
+        "txt": "拒绝: 不行，那是我的工作区",
+        "refuse": true,
+        "trait": "tsundere",
+        "replies": {
+          "sleepyhead": "呜… 好吧，那我乖乖往旁边挪两步，不占{owner}的工作区啦…",
+          "clingy": "哎呀占到工作区了嘛！对不起{owner}，我立刻缩成小小一团不挡你干活！",
+          "tsundere": "切，工作区就工作区嘛！那我换去左下角建基地总行了吧，哼！",
+          "foodie": "好嘛好嘛，工作区让给你，我搬去边边角角啃我的小饼干不碍事~",
+          "explorer": "明白，工作区神圣不可侵犯！我另找一块风水宝地再建秘密基地！",
+          "fashionista": "理解，不能影响你正常用页面。我退到不影响操作的位置待着。",
+          "gamer": "选址审批未通过！立刻撤离工作区，重新勘察新的安全落脚点！",
+          "philosopher": "也是，别挡着你干正事了。我往边上让一让，不给你添麻烦。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "{owner}~ 我刚才偷学了一个超酷的转圈新动作，要现在表演给你看吗?",
+    "opts": [
+      {
+        "txt": "答应: 快表演，我给你鼓掌!",
+        "trait": "explorer",
+        "mood": 6,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿咻——转完一圈稳稳落地！听到{owner}鼓掌我都清醒了一大半，好开心呀~",
+          "clingy": "看好看好！滴溜溜转个大圆圈再扑到你眼前鞠躬，谢谢头号观众{owner}的掌声！",
+          "tsundere": "哼，睁大眼睛看清楚了！咻——怎么样，是不是帅得连掌声都停不下来！",
+          "foodie": "转完这圈连毛毛都蓬松了一倍！谢谢鼓掌，请问优秀演员可以领一块小零食吗~",
+          "explorer": "闪亮登场！三百六十度完美旋转加帅气定格，谢谢{owner}的满分掌声！",
+          "fashionista": "动作干净利落、落地稳当，没有白练。谢谢你的掌声，挺给面子的。",
+          "gamer": "高难度炫技动作完美触发！零失误落地收尾，感谢评委老师全场满星好评！",
+          "philosopher": "转完站稳了，还好没出岔子。能逗你笑一下、听见你鼓掌，练这一趟挺值。"
+        }
+      },
+      {
+        "txt": "调侃: 别转晕了一头栽进屏幕角落",
+        "trait": "tsundere",
+        "mood": 5,
+        "aff": 2,
+        "state": "sit",
+        "replies": {
+          "sleepyhead": "呜哈哈才不会呢，我转得慢悠悠的，就算晕了也是软绵绵栽进{owner}怀里~",
+          "clingy": "要是真转晕了，{owner}要立刻伸手接住晕乎乎的我哦！说好了不许笑！",
+          "tsundere": "喂！谁会转晕栽进角落啊！本汪平衡感好着呢，刚才差点歪一下只是地板太滑！",
+          "foodie": "放心，我最多转两圈就刹车，绝对不会晕到连小饼干在哪里都找不到！",
+          "explorer": "哈哈我已经练出防晕绝技啦，稳稳停在屏幕中间，一点都不带晃的！",
+          "fashionista": "我有分寸，不会冒冒失失转晕头，优雅收尾才是重点。",
+          "gamer": "放心，我已经点满了抗眩晕天赋，高速连转照样稳如泰山！",
+          "philosopher": "经你这么一提醒，我只转一圈就停下来，确实没必要把自己转得找不着北。"
+        }
+      },
+      {
+        "txt": "拒绝: 先忙完再看吧",
+        "refuse": true,
+        "trait": "fashionista",
+        "replies": {
+          "sleepyhead": "好哒，那我先把这个新动作偷偷存在脑袋里，等{owner}忙完再专属表演给你看~",
+          "clingy": "嗯嗯不急！等你忙完把眼睛休息好了，我再铆足劲表演给最喜欢的{owner}看！",
+          "tsundere": "切，错过了本汪的首秀你可别后悔！等你忙完再来求我看，我再考虑加演一场！",
+          "foodie": "好呀，那我趁这会儿再偷偷多练两遍，保证等你忙完看的时候零失误！",
+          "explorer": "没问题！精彩节目留作压轴，等你忙完随时喊我开演！",
+          "fashionista": "行，正事优先。节目先保留着，等你空下来再看也不迟。",
+          "gamer": "表演进入待机预约状态！等你清完手头任务，随时点击播放键！",
+          "philosopher": "嗯，先忙你的要紧，动作我记着呢，晚点有空再给你看一样。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "感觉屏幕今天有点凉飕飕的，{owner}可以借我一只手心暖三秒吗?",
+    "opts": [
+      {
+        "txt": "答应: 伸出手给你暖个够",
+        "trait": "clingy",
+        "mood": 7,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "呜哇{owner}的手心好暖和呀，像晒过太阳的小毯子，暖得我都舍不得把脸挪开啦~",
+          "clingy": "一秒、两秒、三秒… 才不够呢，我要把小脑袋整个埋进{owner}手心里赖着不走！",
+          "tsundere": "哼，你的手心确实挺热乎的嘛… 借我暖完这三秒，以后天冷我也可以反过来暖你。",
+          "foodie": "暖烘烘的手心像刚出炉的软面包一样舒服，贴完浑身都热乎起来啦，谢谢{owner}！",
+          "explorer": "充能完毕！{owner}的手心简直是超级小太阳，一秒把凉飕飕的空气全赶跑啦！",
+          "fashionista": "温度刚刚好，很踏实。谢谢你借我暖这一会儿，爪子舒服多了。",
+          "gamer": "手心恒温充能达成！寒冷 debuff 瞬间解除，浑身暖洋洋满血复活！",
+          "philosopher": "你的手心很暖和，靠着缓这几秒钟，整只狗都跟着松快了不少，谢谢你。"
+        }
+      },
+      {
+        "txt": "打趣: 暖完要记得帮我招财哦",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿嘿包在我身上，暖得浑身软乎乎的，招起财来手气肯定也顺顺当当的~",
+          "clingy": "成交！暖完{owner}的手心我就立刻举起两只小爪爪，把满满的好运和财运全招给你！",
+          "tsundere": "切，借暖三秒还要收招财佣金呀… 行吧，谁让本汪叫狗来财呢，财运好运全给你安排！",
+          "foodie": "没问题！暖乎乎地帮你狂招大财，发了财记得给招财小狗加个豪华鸡腿罐头！",
+          "explorer": "暖手完毕，招财姿势就位！祝{owner}今天财源滚滚、心想事成！",
+          "fashionista": "拿人手暖，替人招财，挺公道的。放心，这份好运我会认真替你招着。",
+          "gamer": "接收手心温暖充能，立刻触发被动技能「旺财暴击」！祝你今天一路发大财！",
+          "philosopher": "行，暖完这几秒就好好替你招财纳福，希望你接下来的日子都顺顺利利、手头宽裕。"
+        }
+      },
+      {
+        "txt": "拒绝: 自己跑两圈就热乎啦",
+        "refuse": true,
+        "trait": "explorer",
+        "replies": {
+          "sleepyhead": "呜… 好吧，那我慢吞吞在屏幕上来回溜达两圈热热身，跑完再窝回去…",
+          "clingy": "哎呀居然不借手心给我暖，那我只好一边委屈巴巴小跑热身一边偷看你咯…",
+          "tsundere": "哼，不借拉倒！本汪跑两圈照样热乎乎的，才不稀罕蹭你的手心呢！",
+          "foodie": "好嘛，跑两圈正好能多消化点热量，等会儿就能名正言顺多吃一块点心啦！",
+          "explorer": "有道理！生命在于运动，我这就绕着屏幕冲刺两圈，保证一秒暖成小火炉！",
+          "fashionista": "行，活动活动确实暖得快。我去走两步把身子舒展开。",
+          "gamer": "手心借用失败！火速切换跑步机模式，原地加速跑两圈手动升温！",
+          "philosopher": "也是，动一动比光靠着暖得更久。我去溜达两圈热热身，不打扰你了。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "{owner}~ 我今天偷偷学会了用爪子比爱心，要不要看我现场比一个给你?",
+    "opts": [
+      {
+        "txt": "答应: 快比快比，我要截图留念!",
+        "trait": "clingy",
+        "mood": 7,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "嘿咻——举起两只小爪爪拼成一个圆滚滚的爱心，专门送给最温柔的{owner}~",
+          "clingy": "来啦来啦！超级标准的小狗比心发射——{owner}快接住，截好图要好好珍藏哦！",
+          "tsundere": "咳、别笑我爪子短拼得不够尖啊！这是本汪练了半天才肯比给你看的，只此一次！",
+          "foodie": "爱心比好啦！是不是可爱到让人想立刻奖励我一颗草莓夹心糖呀~",
+          "explorer": "唰的一下比出满分大爱心！今天的好心情全都打包塞进这颗爱心送给你！",
+          "fashionista": "爪子举稳、角度刚好，比心完成。难得配合一次，你可以多看两眼。",
+          "gamer": "发射限定必杀技「像素爪爪比心」！暴击治愈值拉满，截图留念绝不亏！",
+          "philosopher": "笨拙是笨拙了点，但心意是真的。慢慢看，不用急着收起来。"
+        }
+      },
+      {
+        "txt": "回比: 我也回你一个大爱心!",
+        "trait": "explorer",
+        "mood": 6,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "哇收到{owner}回比的大爱心啦，心里暖呼呼的，幸福得耳朵都在轻轻晃~",
+          "clingy": "双向比心达成！！我宣布今天是全世界最甜的一天，我要把你的爱心抱紧不撒爪！",
+          "tsundere": "喂、突然回比这么大一个爱心干嘛啦… 哼，既然你都给了，那我就勉强收进心里吧！",
+          "foodie": "接住大爱心！感觉比收到一整盒曲奇礼盒还要甜一百倍，开心到转圈！",
+          "explorer": "双向奔赴的爱心电波对接成功！今天的幸运值肯定直接拉到满格！",
+          "fashionista": "礼尚往来，你回的这颗爱心我稳稳接住了，谢谢你的回应。",
+          "gamer": "双人合体比心连击触发！亲密值狂飙，这波默契直接无敌！",
+          "philosopher": "你肯认真回我一个，比我自己比十个都让人高兴，心里踏实得很。"
+        }
+      },
+      {
+        "txt": "拒绝: 哈哈别肉麻啦，乖乖坐好",
+        "refuse": true,
+        "trait": "tsundere",
+        "replies": {
+          "sleepyhead": "唔… 被说肉麻啦，那我悄悄把小爪子收回来，乖乖坐好不闹你了…",
+          "clingy": "呜呜人家练了好久才学会的嘛，好吧好吧，先乖乖坐好，等你想看再比给你…",
+          "tsundere": "谁、谁肉麻了！我就是活动一下前爪而已，你别自作多情！哼，坐好就坐好！",
+          "foodie": "哎呀被嫌弃太肉麻了，那我把爱心默默塞回兜里，乖乖蹲着等投喂吧~",
+          "explorer": "哈哈害羞啦？行，那我先收起爪子乖乖坐好，留着下次偷袭再比给你看！",
+          "fashionista": "行，确实有点太直白了。我收回爪子端正坐好，保持一贯的体面。",
+          "gamer": "比心技能被闪避了！乖乖切回端坐姿态，下次换个酷一点的动作再来！",
+          "philosopher": "好，那就不肉麻了，安安静静坐回你旁边陪着就行。"
+        }
+      }
+    ]
+  },
+  {
+    "kind": "request",
+    "tag": "小狗撒娇请求",
+    "q": "桌面吹来一阵凉风，{owner}可以把刚才喝茶剩下的好心情分我一半吗?",
+    "opts": [
+      {
+        "txt": "答应: 好呀，全部分给你都没关系",
+        "trait": "clingy",
+        "mood": 7,
+        "aff": 3,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "不用全给我呀，一人一半刚好，这样{owner}和我都暖暖和和、开开心心的~",
+          "clingy": "哇谢谢{owner}！收到你的好心情我立刻满血发亮，再把加倍的甜意反射回给你！",
+          "tsundere": "哼，全分给我那你自己怎么办呀… 笨蛋，分我一小角就够啦，剩下的你自己留着！",
+          "foodie": "接住香喷喷的好心情！感觉连凉风都变成暖烘烘的桂花茶香味啦~",
+          "explorer": "好心情共享成功！快乐分给两个人就会变成双倍，今天一定超顺心！",
+          "fashionista": "谢啦，分我一半就足够了，剩下的留给你自己，咱们都舒舒服服的。",
+          "gamer": "收到满格好心情共享！凉风负面效果直接抵消，全队士气拉满！",
+          "philosopher": "不用全给我，咱俩一人一半，风再凉也吹不散这点暖意。"
+        }
+      },
+      {
+        "txt": "反问: 那你拿什么跟我换呀?",
+        "trait": "gamer",
+        "mood": 5,
+        "aff": 2,
+        "state": "happy",
+        "replies": {
+          "sleepyhead": "我拿今天晒得最暖和的那块毛毛给你靠，顺便附赠一个软绵绵的晚安哈欠，换不换~",
+          "clingy": "我拿一整天的摇尾巴、一万次贴贴，还有全部的偏爱跟{owner}换，绝对只赚不赔！",
+          "tsundere": "切，还讲起等价交换了… 那我就拿本汪最珍贵的乖巧坐姿加一次顺毛权限跟你换！",
+          "foodie": "我用藏在角落里舍不得吃的最后一颗小甜饼跟你换！够有诚意了吧~",
+          "explorer": "我用明天的晴天好运和一路上的新奇见闻跟你换，这笔交易超划算！",
+          "fashionista": "拿我安静陪你忙完今晚、绝不吵你当交换条件，应该挺合你心意。",
+          "gamer": "我用一张「随时召唤小狗卖萌券」跟你等价交换，永久有效绝不过期！",
+          "philosopher": "我没什么贵重东西，拿一整晚安稳踏实的陪伴跟你换，你看划算吗。"
+        }
+      },
+      {
+        "txt": "拒绝: 自己去晒晒太阳攒好心情",
+        "refuse": true,
+        "trait": "sleepyhead",
+        "replies": {
+          "sleepyhead": "嗯… 去窗边晒晒太阳确实能自己长出暖烘烘的好心情，我这就去团成一团晒毛~",
+          "clingy": "呜那我晒完太阳回来，带着满身阳光味再蹭蹭{owner}好不好呀~",
+          "tsundere": "哼，自己晒就自己晒！等我晒得毛茸茸热乎乎的，你可别抢着来摸我！",
+          "foodie": "去晒太阳顺便吹吹暖风，等会儿心情回满再回来找{owner}一起吃点心！",
+          "explorer": "好主意！光合作用启动，去晒一晒满电阳光，很快就能自己攒满好心情！",
+          "fashionista": "说得对，自己调整好状态更重要。我去晒会儿太阳缓一缓。",
+          "gamer": "切换太阳能自主充电模式！晒满阳光值，好心情条立刻自己涨回来！",
+          "philosopher": "嗯，确实不能总指望别人分心情，我去晒晒太阳自己暖和起来。"
+        }
+      }
+    ]
+  }
+];
 
   const askEl = root.querySelector('#st-tb-pup-ask');
   const askTagEl = root.querySelector('#st-tb-ask-tag');
@@ -42015,12 +43378,14 @@
         if (opt.refuse) {
           config.puppyStats.askRefused = (config.puppyStats.askRefused || 0) + 1;
           config.puppyMood = Math.max(10, (config.puppyMood || 80) - 4);
-          const refTpl = PUP_ASK_REFUSE_LINES[curP] || PUP_ASK_REFUSE_LINES.sleepyhead;
           if (pup.state !== 'drag') setPuppyState(curP === 'tsundere' ? 'angry' : 'sit', 110);
           if (opt.trait && typeof addHiddenPersTrait === 'function') {
             addHiddenPersTrait(opt.trait, 2, true);
           }
-          showPuppyBubble(formatPupText(refTpl) + shiftNotice, 3600);
+          const activePers = config.puppyPersonality || curP;
+          const exactRefLine = (opt.replies && (opt.replies[activePers] || opt.replies[curP] || opt.replies.sleepyhead))
+            || PUP_ASK_REFUSE_LINES[activePers] || PUP_ASK_REFUSE_LINES.sleepyhead;
+          showPuppyBubble(formatPupText(exactRefLine) + shiftNotice, 5200);
         } else {
           config.puppyMood = Math.min(100, (config.puppyMood || 80) + (opt.mood || 4));
           config.puppyAffinity = (config.puppyAffinity || 0) + (opt.aff || 1);
@@ -42028,69 +43393,10 @@
           if (opt.trait && typeof addHiddenPersTrait === 'function') {
             addHiddenPersTrait(opt.trait, 2, true);
           }
-          const ASK_PERS_REPLY_TPLS = {
-            sleepyhead: [
-              '呼啊… 听{owner}讲到{ans}，连尾巴尖都跟着松软下来了~',
-              '原来是{ans}呀，好有画面感，我边摇尾巴边慢慢回味一会儿~',
-              '光是想到{ans}，心情就像晒过太阳的棉被一样暖乎乎的！',
-              '嗯~ {ans}听起来就很安逸，今晚做梦说不定都会梦到这个！',
-              '被{owner}这么一选，连打哈欠都变成甜甜的味道啦~',
-            ],
-            clingy: [
-              '哇！{ans}也太戳我了吧，只要有{owner}在旁边我能开心一整天！',
-              '尾巴甩得停不下来啦！听到{ans}我整只狗都要融化在你手心里了！',
-              '谢谢{owner}认真回答我！{ans}我要用爪印盖章记在心坎上！',
-              '呜哇好幸福！原来我们连{ans}这种小事都这么合拍，贴贴！',
-              '不管选什么都好喜欢，尤其是{owner}选了{ans}，更甜了！',
-            ],
-            tsundere: [
-              '哼，竟然选了{ans}… 行吧，刚好跟我心里想的差不多！',
-              '才、才没有特意期待你选{ans}呢！不过既然你说了，我就大方点头吧！',
-              '切，{ans}这种答案也太会戳人软肋了吧，本汪耳朵才没红！',
-              '算你还有点懂我，{ans}确实比另外几个顺耳多啦~',
-              '拿{ans}来哄我？哼，虽然有点幼稚… 但这次就勉强被你哄开心了！',
-            ],
-            foodie: [
-              '哇塞！{ans}听得我两眼放光，简直像刚出炉的甜点一样让人开心！',
-              '诶嘿嘿，原来{owner}也喜欢{ans}，我用小肉垫给你点个大大的赞！',
-              '听到{ans}差点兴奋到原地蹦起来，感觉现在能多干一碗饭！',
-              '好耶！{ans}这个答案又可爱又暖心，小脑袋瓜立刻记住啦~',
-              '听完{ans}嘴角根本压不住，好像比吃到草莓蛋糕还快乐一点点！',
-            ],
-            explorer: [
-              '太棒了！听到{ans}我瞬间满电，恨不得马上摇着尾巴去庆祝！',
-              '哈哈{ans}超有意思！和{owner}聊天总是能发现新惊喜！',
-              '耶！把{ans}存进今日份快乐清单，今天一定是超级大晴天！',
-              '{owner}选{ans}也太酷了，感觉浑身上下都充满干劲啦！',
-              '收到这份超棒的{ans}！送给{owner}一个元气满满的击掌！',
-            ],
-            fashionista: [
-              '嗯… {ans}确实很特别。别误会，我只是正好也偏爱这个。',
-              '咳，居然选了{ans}，你好像比我想象中还要懂我一点。',
-              '表面保持淡定，其实听到{ans}的时候尾巴尖已经悄悄晃了两下。',
-              '谢谢你这么认真挑了{ans}，这份心意我收得很开心。',
-              '我就猜到{owner}可能会选{ans}，这种默契的感觉挺不赖的。',
-            ],
-            gamer: [
-              '漂亮！{ans}直接正中红心，这波默契绝对是隐藏SSR级别！',
-              '哈哈选{ans}太会玩了吧！不愧是我最铁的桌面拍档！',
-              '好耶！{ans}直接把今日快乐值拉满，必须给你发个满分奖章！',
-              '我就知道{owner}会挑{ans}，咱俩的脑电波简直无缝同步！',
-              '这答案太酷啦！听完{ans}我感觉自己又能再战三百回合！',
-            ],
-            philosopher: [
-              '聊到{ans}，忽然觉得今天这阵风都变得温柔了一点。',
-              '原来你会选{ans}呀，听着就让人心里一静，很舒服。',
-              '这个{ans}挺真实的，跟我想象里的你很像。',
-              '嗯，能和你聊起{ans}这样的细节，比单纯打发时间有意思多了。',
-              '记下你的{ans}了，以后每次想起这件事大概都会觉得挺暖的。',
-            ],
-          };
           const activePers = config.puppyPersonality || curP;
-          const replyTpls = ASK_PERS_REPLY_TPLS[activePers] || ASK_PERS_REPLY_TPLS.sleepyhead;
-          const ansText = opt.ans || opt.txt || '这个答案';
-          const replyLine = formatPupText(pick(replyTpls).replace(/\{ans\}/g, ansText));
-          showPuppyBubble(replyLine, 3500);
+          const exactLine = (opt.replies && (opt.replies[activePers] || opt.replies[curP] || opt.replies.sleepyhead))
+            || '嘿嘿，记下你的回答啦~';
+          showPuppyBubble(formatPupText(exactLine), 5200);
         }
 
         askEl.style.display = 'none';
