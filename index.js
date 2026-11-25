@@ -462,6 +462,12 @@
     { id: 'ph_forest_6', dest: 'magic_forest', title: '精灵花藤', scene: 'forest_vine', note: '垂落下来的发光藤蔓上开满了会轻轻唱歌的小铃花~' },
     { id: 'ph_snow_5', dest: 'snow_village', title: '极光冰湖', scene: 'snow_lake', note: '结冰的湖面像一面大镜子，把漫天极光完整映了出来!' },
     { id: 'ph_snow_6', dest: 'snow_village', title: '雪国列车', scene: 'snow_train', note: '冒着暖白蒸汽的小火车穿过挂满霜花的松林缓缓驶来~' },
+    { id: 'ph_sakura_7', dest: 'sakura_park', title: '樱下邮筒', scene: 'sakura_post', note: '在飘满花瓣的复古红邮筒旁寄出了一张像素明信片~' },
+    { id: 'ph_beach_7', dest: 'starry_beach', title: '浪花秋千', scene: 'beach_swing', note: '坐在浅海滩边挂满贝壳风铃的木秋千上晃呀晃，浪花轻轻拍着爪尖!' },
+    { id: 'ph_town_7', dest: 'ancient_town', title: '河灯夜景', scene: 'town_lotus', note: '夜幕下的江南水岸漂满暖橙荷花河灯，倒影在水面闪闪发光。' },
+    { id: 'ph_cloud_7', dest: 'cloud_meadow', title: '云顶野餐', scene: 'cloud_picnic', note: '趴在软绵绵的云朵野餐桌旁喝云朵汽水，旁边还有彩虹小风向标~' },
+    { id: 'ph_forest_7', dest: 'magic_forest', title: '星灯书屋', scene: 'forest_library', note: '藏在巨树枝桠间的发光树屋图书馆，窗边飘出好多小萤火虫!' },
+    { id: 'ph_snow_7', dest: 'snow_village', title: '冰雕城堡', scene: 'snow_castle', note: '极光下晶莹剔透的冰蓝像素小城堡，尖顶闪着星星微光!' },
   ];
 
   // 60 种冒险收藏品（每目的地 10 种；rarity: 1常见 / 2稀有 / 3珍稀 / 4传说）
@@ -27137,7 +27143,9 @@
         }
       }
     };
-    const isNightScene = photo.scene === 'sakura_night' || photo.scene === 'town_firework' || photo.scene === 'town_pagoda' || photo.scene === 'beach_pier';
+    const _v = rec?.variant || {};
+    const _styleIdx = typeof _v.styleIdx === 'number' ? _v.styleIdx : 0; // 0经典 / 1微光加小物件 / 2星夜梦幻版
+    const isNightScene = photo.scene === 'sakura_night' || photo.scene === 'town_firework' || photo.scene === 'town_pagoda' || photo.scene === 'beach_pier' || photo.scene === 'town_lotus' || (_styleIdx === 2 && (photo.dest === 'sakura_park' || photo.dest === 'ancient_town' || photo.dest === 'cloud_meadow'));
     const isSunsetScene = photo.scene === 'cloud_sunset';
     const isRainScene = photo.scene === 'town_rain';
 
@@ -27147,14 +27155,14 @@
       cols.forEach((c, i) => { g.fillStyle = c; g.fillRect(0, i * bh, W, bh + 1); });
     };
     if (isSunsetScene) paintSkyBands(['#e88078', '#f7aa82', '#ffd49c', '#ffefc4']);
-    else if (isNightScene) paintSkyBands(['#111838', '#1c2854', '#29396e', '#3c4d82']);
+    else if (isNightScene) paintSkyBands(_styleIdx === 2 ? ['#1a1742', '#2d2666', '#4a3a82', '#6b5094'] : ['#111838', '#1c2854', '#29396e', '#3c4d82']);
     else if (isRainScene) paintSkyBands(['#7088a1', '#94abc2', '#bacbd9']);
-    else if (photo.dest === 'sakura_park') paintSkyBands(['#bfe3ff', '#dff0ff', '#fff0f7']);
-    else if (photo.dest === 'starry_beach') paintSkyBands(['#121d42', '#1f3369', '#325191', '#4a70b0']);
-    else if (photo.dest === 'ancient_town') paintSkyBands(['#f0b696', '#fad3b2', '#ffebd4']);
-    else if (photo.dest === 'cloud_meadow') paintSkyBands(['#6ec2ff', '#a8dcff', '#dff4ff']);
-    else if (photo.dest === 'magic_forest') paintSkyBands(['#122433', '#1d3b47', '#2d5754']);
-    else paintSkyBands(['#142145', '#233866', '#3d5a8c', '#6988b8']);
+    else if (photo.dest === 'sakura_park') paintSkyBands(_styleIdx === 1 ? ['#ffd2c4', '#ffe6d8', '#fff5e6'] : ['#bfe3ff', '#dff0ff', '#fff0f7']);
+    else if (photo.dest === 'starry_beach') paintSkyBands(_styleIdx === 1 ? ['#40326b', '#7a4d7d', '#c47488', '#f5b098'] : ['#121d42', '#1f3369', '#325191', '#4a70b0']);
+    else if (photo.dest === 'ancient_town') paintSkyBands(_styleIdx === 1 ? ['#a8d2f2', '#d4ebfc', '#f2faff'] : ['#f0b696', '#fad3b2', '#ffebd4']);
+    else if (photo.dest === 'cloud_meadow') paintSkyBands(_styleIdx === 1 ? ['#c2c4f5', '#ebd0f5', '#ffe8f0'] : ['#6ec2ff', '#a8dcff', '#dff4ff']);
+    else if (photo.dest === 'magic_forest') paintSkyBands(_styleIdx === 1 ? ['#1c1e42', '#2c3063', '#3e4d7a'] : ['#122433', '#1d3b47', '#2d5754']);
+    else paintSkyBands(_styleIdx === 1 ? ['#3b3666', '#695287', '#a87ca3', '#e8b5c0'] : ['#142145', '#233866', '#3d5a8c', '#6988b8']);
 
     // 分层地面底色
     if (photo.dest === 'sakura_park') {
@@ -27212,6 +27220,11 @@
         aDot(26, 25, '#d94858', 24, 8); aDot(27, 26, '#f06a78', 22, 1);
         aDot(37, 13, '#7a4b2c', 2, 14);
         for (let i = 0; i < 6; i++) aDot(29 + i, 14 - i, 18 - i * 2, 1, '#e85a72');
+      } else if (photo.scene === 'sakura_post') {
+        // 复古红邮筒 + 飘落樱花明信片
+        aDot(38, 16, '#d63a48', 7, 13); aBlob(41, 16, 4, 2, '#e84c5a');
+        aDot(39, 19, '#3b2a22', 5, 1); aDot(40, 22, '#ffe066', 3, 2);
+        aDot(37, 28, '#8c2832', 9, 2); aDot(34, 20, '#fffdf7', 3, 2);
       } else {
         aDot(36, 5, '#7a4b2c', 2, 19); aDot(47, 5, '#7a4b2c', 2, 19); aDot(35, 5, '#7a4b2c', 15, 2);
         aDot(39, 7, '#a88468', 1, 11); aDot(45, 7, '#a88468', 1, 11);
@@ -27238,6 +27251,11 @@
       } else if (photo.scene === 'beach_pier') {
         aDot(0, 24, '#9c6e46', W, 3);
         [6,18,30,42].forEach(x => { aDot(x, 27, '#734d2c', 2, 7); aBlob(x + 2, 21, 3, 2, 'rgba(255,228,120,0.28)'); aDot(x + 1, 20, '#ffe888', 2, 2); });
+      } else if (photo.scene === 'beach_swing') {
+        // 浅滩木秋千与贝壳风铃
+        aDot(32, 6, '#8c5a36', 2, 21); aDot(46, 6, '#8c5a36', 2, 21); aDot(30, 6, '#8c5a36', 19, 2);
+        aDot(36, 8, '#d9c4a8', 1, 12); aDot(43, 8, '#d9c4a8', 1, 12); aDot(35, 20, '#f2c480', 10, 2);
+        aDot(33, 8, '#ffbfd4', 2, 2); aDot(45, 8, '#92f0f5', 2, 2);
       } else {
         aDot(8, 28, '#ff8ea8', 3, 2); aDot(9, 27, '#ff8ea8', 1, 4);
         aDot(42, 29, '#ffbfd4', 3, 2); aDot(36, 31, '#ff9c6e', 3, 2);
@@ -27307,6 +27325,14 @@
           aDot(23, 8, '#5c3c32', 8, 14);
           aDot(19, 8, '#3d465c', 16, 2); aDot(20, 13, '#3d465c', 14, 2); aDot(21, 18, '#3d465c', 12, 2);
           aDot(26, 10, '#ffe078', 2, 2); aDot(26, 15, '#ffe078', 2, 2);
+        } else if (photo.scene === 'town_lotus') {
+          // 江南夜水岸 + 漂浮暖橙荷花河灯
+          aDot(0, 23, '#1c3257', W, 13); aDot(0, 27, '#25406b', W, 6);
+          [[10,28],[22,31],[36,27],[45,32],[30,25]].forEach(([lx,ly]) => {
+            aBlob(lx, ly, 3, 2, 'rgba(255,180,96,0.34)');
+            aDot(lx - 1, ly, '#ff8aa8', 3, 1); aDot(lx, ly - 1, '#fff099', 1, 2);
+            aDot(lx - 1, ly + 2, 'rgba(255,220,120,0.45)', 3, 1);
+          });
         }
       }
     } else if (photo.dest === 'cloud_meadow') {
@@ -27328,6 +27354,11 @@
       } else if (photo.scene === 'cloud_plane') {
         aDot(34, 9, '#ffffff', 10, 2); aDot(38, 7, '#ffffff', 7, 2); aDot(41, 6, '#e8f4ff', 4, 1);
         [[16,13],[21,13],[26,12],[30,11]].forEach(([x,y]) => aDot(x, y, 'rgba(255,255,255,0.75)', 2, 1));
+      } else if (photo.scene === 'cloud_picnic') {
+        // 云朵野餐桌 + 彩虹小风向标 + 汽水杯
+        aBlob(36, 28, 10, 4, '#ffffff'); aBlob(36, 26, 8, 3, '#fff6fa');
+        aDot(33, 23, '#8ce8ff', 3, 4); aDot(34, 21, '#ff9eb5', 1, 2);
+        aDot(43, 15, '#8c6b54', 1, 11); aDot(44, 15, '#ff8ea8', 5, 2); aDot(44, 17, '#ffe066', 4, 2);
       } else {
         [[7,27],[13,25],[39,26],[45,28],[28,15],[18,13]].forEach(([x,y]) => { aBlob(x, y, 2, 2, '#ffffff'); aDot(x, y + 2, '#6eb86e', 1, 3); });
       }
@@ -27345,6 +27376,12 @@
           for (let dy = 0; dy < 14; dy++) aDot(x + Math.round(Math.sin(dy * 0.4)), dy, '#7ef2a8', 1, 1);
           aBlob(x, 14, 2, 2, '#fff5b8');
         });
+      } else if (photo.scene === 'forest_library') {
+        // 巨树枝桠间的暖光树屋图书馆
+        aDot(31, 9, '#6e452b', 14, 12);
+        for (let i = 0; i < 5; i++) aDot(29 + i, 9 - i, 18 - i * 2, 1, '#3b734e');
+        aBlob(38, 15, 5, 4, 'rgba(255,228,128,0.34)');
+        aDot(35, 13, '#ffe888', 6, 5); aDot(37, 13, '#6e452b', 1, 5); aDot(35, 15, '#6e452b', 6, 1);
       }
       [[10,8],[24,6],[34,10],[38,16],[28,13],[46,9]].forEach(([x,y]) => {
         aBlob(x, y, 2, 2, 'rgba(232,255,120,0.3)'); aDot(x, y, '#e8ff78', 2, 2);
@@ -27372,11 +27409,73 @@
       } else if (photo.scene === 'snow_train') {
         aDot(5, 17, '#c94858', 23, 7); [8,14,20].forEach(wx => aDot(wx, 19, '#ffe478', 3, 2));
         aBlob(23, 13, 3, 2, 'rgba(255,255,255,0.85)'); aBlob(19, 10, 2, 2, 'rgba(255,255,255,0.72)');
+      } else if (photo.scene === 'snow_castle') {
+        // 晶莹冰蓝小城堡
+        aDot(12, 12, '#a8e4ff', 16, 11); aDot(10, 9, '#c4efff', 5, 14); aDot(25, 9, '#c4efff', 5, 14);
+        aDot(17, 7, '#d9f6ff', 6, 16); aDot(19, 4, '#ffffff', 2, 3);
+        aDot(12, 6, '#e8f9ff', 1, 3); aDot(27, 6, '#e8f9ff', 1, 3);
+        aDot(18, 17, '#5c9ec4', 4, 6); aDot(19, 10, '#fff4b8', 2, 2);
       }
       [[6,6],[12,11],[24,4],[49,8],[31,15]].forEach(([x,y]) => aDot(x, y, '#ffffff', 1, 1));
     }
 
-    // 每个场景专属的小狗站位、朝向与动作（告别永远站正中间呆站！）
+    // 同场景不同表现形式：按 styleIdx 叠加特色小物件与氛围细节！
+    if (_styleIdx === 1) {
+      if (photo.dest === 'sakura_park') {
+        // 金色小蝴蝶 + 额外飘花
+        aDot(26, 11, '#ffe066', 2, 1); aDot(27, 10, '#fff6b8', 1, 2);
+        aDot(43, 14, '#ffb5cf', 2, 1); aDot(18, 25, '#ffdce8', 2, 1);
+      } else if (photo.dest === 'starry_beach') {
+        // 晚霞流星 + 沙滩小螃蟹
+        aDot(18, 5, '#ffffff', 2, 1); aDot(15, 6, '#ffe49e', 3, 1); aDot(12, 7, 'rgba(255,228,158,0.5)', 3, 1);
+        aDot(32, 31, '#ff5c5c', 3, 2); aDot(31, 30, '#ff5c5c', 1, 1); aDot(35, 30, '#ff5c5c', 1, 1);
+      } else if (photo.dest === 'ancient_town') {
+        // 桂花飘瓣 + 额外河灯小点缀
+        [[18,12],[32,9],[40,18],[24,15]].forEach(([x,y]) => aDot(x, y, '#ffd466', 2, 1));
+        aDot(8, 30, '#ff8aa8', 2, 1); aDot(9, 29, '#fff099', 1, 1);
+      } else if (photo.dest === 'cloud_meadow') {
+        // 飞过的小白鸟 + 粉彩星点
+        aDot(20, 9, '#ffffff', 2, 1); aDot(22, 10, '#ffffff', 1, 1); aDot(23, 9, '#ffffff', 2, 1);
+        aDot(33, 6, '#fff0f6', 2, 1); aDot(35, 7, '#fff0f6', 2, 1);
+      } else if (photo.dest === 'magic_forest') {
+        // 发光蓝晶小蘑菇 + 弦月微光
+        aBlob(44, 6, 3, 3, '#fff6cc'); aBlob(45, 5, 2, 2, '#1c1e42');
+        aBlob(43, 27, 3, 2, '#78e8ff'); aDot(42, 28, '#e0fbff', 2, 3);
+      } else {
+        // 极光流星 + 小雪兔
+        aDot(16, 4, '#ffffff', 2, 1); aDot(13, 5, '#c8f5ff', 3, 1);
+        aBlob(44, 29, 3, 2, '#ffffff'); aDot(43, 26, '#ffffff', 1, 2); aDot(45, 26, '#ffffff', 1, 2); aDot(43, 28, '#ff789c', 1, 1);
+      }
+    } else if (_styleIdx === 2) {
+      if (photo.dest === 'sakura_park') {
+        // 梦幻星夜萤火樱林
+        [[16,5],[29,4],[44,7],[36,12],[22,26],[46,27]].forEach(([x,y]) => { aBlob(x, y, 2, 2, 'rgba(232,255,140,0.28)'); aDot(x, y, '#f4ff9e', 1, 1); });
+      } else if (photo.dest === 'starry_beach') {
+        // 蓝眼泪发光海浪 + 弯月
+        aBlob(10, 6, 3, 3, '#fff6cc'); aBlob(11, 5, 2, 2, '#121d42');
+        [[4,23,8],[18,24,10],[35,23,9]].forEach(([x,y,w]) => aDot(x, y, '#6ef2ff', w, 1));
+      } else if (photo.dest === 'ancient_town') {
+        // 漫天飘升孔明灯！
+        [[14,6],[26,4],[38,8],[47,5]].forEach(([x,y]) => {
+          aBlob(x, y, 3, 3, 'rgba(255,190,96,0.3)');
+          aDot(x - 1, y - 1, '#ff944d', 3, 3); aDot(x, y, '#fff4b8', 1, 2);
+        });
+      } else if (photo.dest === 'cloud_meadow') {
+        // 梦幻紫霞星月云海
+        aBlob(45, 6, 3, 3, '#fff8cc'); aBlob(46, 5, 2, 2, '#1a1742');
+        [[8,4],[19,6],[31,3],[38,9],[14,12]].forEach(([x,y]) => aDot(x, y, '#fffbe0', 1, 1));
+      } else if (photo.dest === 'magic_forest') {
+        // 金粉精灵星尘 + 粉紫荧光孢子
+        [[18,10],[32,12],[24,20],[42,14],[10,18]].forEach(([x,y]) => { aBlob(x, y, 2, 2, 'rgba(255,212,120,0.32)'); aDot(x, y, '#ffe98a', 1, 1); });
+      } else {
+        // 暖灯小圣诞松 + 细雪纷飞
+        aDot(5, 19, '#2e6b54', 5, 7); aDot(6, 16, '#2e6b54', 3, 3); aDot(7, 14, '#ffe066', 1, 2);
+        aDot(6, 20, '#ff6b8a', 1, 1); aDot(8, 22, '#78d4ff', 1, 1);
+        [[14,8],[28,12],[40,6],[20,18],[48,16]].forEach(([x,y]) => aDot(x, y, '#ffffff', 1, 1));
+      }
+    }
+
+    // 每个场景专属的小狗站位、朝向与动作（每次拍到还会随机微调位置、动作与朝向！）
     const ADV_STAGING = {
       sakura_picnic:    { ox: 25, oy: 19, flip: true,  frame: 'eat1' },
       sakura_bridge:    { ox: 19, oy: 13, flip: false, frame: 'happy' },
@@ -27414,8 +27513,20 @@
       snow_onsen:       { ox: 18, oy: 19, flip: false, frame: 'sleep' },
       snow_lake:        { ox: 26, oy: 19, flip: true,  frame: 'idle_tilt' },
       snow_train:       { ox: 27, oy: 19, flip: true,  frame: 'happy' },
+      sakura_post:      { ox: 15, oy: 19, flip: false, frame: 'happy' },
+      beach_swing:      { ox: 12, oy: 19, flip: false, frame: 'idle_tilt' },
+      town_lotus:       { ox: 14, oy: 18, flip: false, frame: 'sit1' },
+      cloud_picnic:     { ox: 12, oy: 19, flip: false, frame: 'eat1' },
+      forest_library:   { ox: 13, oy: 19, flip: false, frame: 'sit2' },
+      snow_castle:      { ox: 30, oy: 19, flip: true,  frame: 'happy' },
     };
-    const stg = ADV_STAGING[photo.scene] || { ox: 18, oy: 19, flip: false, frame: 'happy' };
+    const baseStg = ADV_STAGING[photo.scene] || { ox: 18, oy: 19, flip: false, frame: 'happy' };
+    const stg = {
+      ox: clamp(baseStg.ox + (Number(_v.oxOff) || 0), 4, 34),
+      oy: clamp(baseStg.oy + (Number(_v.oyOff) || 0), baseStg.oy <= 14 ? 7 : 17, 21),
+      flip: typeof _v.flip === 'boolean' ? _v.flip : baseStg.flip,
+      frame: _v.pose || baseStg.frame,
+    };
 
     // 使用拍下这张照片时的装扮快照（包含最新配饰微调与耳朵设置）
     const snap = rec?.look || {
@@ -27467,7 +27578,38 @@
       config.puppyOnesieShowEars = prevShowEars;
       config.puppyAccOffsets = prevOffsets;
     }
+    // 每次拍照附带的小狗神态微特效（爱心 / 音符 / 星光 / 小花）
+    if (_v.fxKind) {
+      const fxX = stg.ox + (stg.flip ? 2 : 12);
+      const fxY = Math.max(2, stg.oy - 2);
+      if (_v.fxKind === 'heart') {
+        aDot(fxX, fxY, '#ff6b94', 1, 1); aDot(fxX + 2, fxY, '#ff6b94', 1, 1);
+        aDot(fxX, fxY + 1, '#ff6b94', 3, 1); aDot(fxX + 1, fxY + 2, '#ff6b94', 1, 1);
+      } else if (_v.fxKind === 'note') {
+        aDot(fxX + 1, fxY, '#6ba8f2', 1, 3); aDot(fxX + 2, fxY, '#6ba8f2', 2, 1); aDot(fxX, fxY + 2, '#6ba8f2', 2, 1);
+      } else if (_v.fxKind === 'flower') {
+        aDot(fxX + 1, fxY, '#ff9eb8', 1, 3); aDot(fxX, fxY + 1, '#ff9eb8', 3, 1); aDot(fxX + 1, fxY + 1, '#ffe066', 1, 1);
+      } else {
+        aDot(fxX + 1, fxY, '#ffe066', 2, 2); aDot(fxX + 1, fxY, '#ffffff', 1, 1);
+      }
+    }
     g.restore();
+  };
+
+  const rollAdvPhotoVariant = (sceneId) => {
+    const posePool = sceneId === 'snow_onsen'
+      ? ['sleep', 'sit1', 'happy']
+      : (sceneId === 'town_bridge'
+        ? ['idle_tilt', 'happy', 'sit1', 'walk1']
+        : ['happy', 'sit1', 'sit2', 'walk1', 'idle_tilt', 'eat1', 'blink']);
+    return {
+      styleIdx: randInt(0, 2),
+      pose: pick(posePool),
+      oxOff: randInt(-5, 5),
+      oyOff: randInt(-1, 1),
+      flip: Math.random() < 0.5,
+      fxKind: Math.random() < 0.72 ? pick(['heart', 'note', 'sparkle', 'flower']) : '',
+    };
   };
 
   const rollAdventureCurio = (destId, isLong, gearId = '') => {
@@ -27521,8 +27663,9 @@
         const prevRec = config.puppyAlbum[ph.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
-        const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null }] : []);
-        const newHist = [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12);
+        const shotVariant = rollAdvPhotoVariant(ph.scene);
+        const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null, variant: prevRec.variant || null }] : []);
+        const newHist = [{ date: shotDate, look: shotLook || prevRec?.look || null, variant: shotVariant }, ...prevHist].slice(0, 12);
         const keepPinned = Boolean(prevRec?.pinnedCover);
         const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
         const coverShot = newHist[nextCoverIdx] || newHist[0];
@@ -27531,6 +27674,7 @@
           firstDate: prevRec?.firstDate || prevRec?.date || shotDate,
           count: (prevRec?.count || 0) + 1,
           look: coverShot.look || shotLook || prevRec?.look || null,
+          variant: coverShot.variant || shotVariant,
           pinnedCover: keepPinned,
           coverShotIdx: nextCoverIdx,
           history: newHist,
@@ -27603,8 +27747,9 @@
         const prevRec = config.puppyAlbum[gotPhoto.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
-        const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null }] : []);
-        const newHist = [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12);
+        const shotVariant = rollAdvPhotoVariant(gotPhoto.scene);
+        const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null, variant: prevRec.variant || null }] : []);
+        const newHist = [{ date: shotDate, look: shotLook || prevRec?.look || null, variant: shotVariant }, ...prevHist].slice(0, 12);
         const keepPinned = Boolean(prevRec?.pinnedCover);
         const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
         const coverShot = newHist[nextCoverIdx] || newHist[0];
@@ -27613,6 +27758,7 @@
           firstDate: prevRec?.firstDate || prevRec?.date || shotDate,
           count: (prevRec?.count || 0) + 1,
           look: coverShot.look || shotLook || prevRec?.look || null,
+          variant: coverShot.variant || shotVariant,
           pinnedCover: keepPinned,
           coverShotIdx: nextCoverIdx,
           history: newHist,
@@ -29870,7 +30016,7 @@
   };
 
   // 删除拍立得二次确认弹窗（绝不误关小狗背包）
-  const confirmDeletePolaroid = (titleStr, onConfirm) => {
+  const confirmDeletePolaroid = (titleStr, onConfirm, customTitle = '确认删除拍立得', customBody = '') => {
     let cm = root.querySelector('#st-tb-photo-del-confirm');
     if (!cm) {
       cm = doc.createElement('div');
@@ -29884,8 +30030,8 @@
     }
     const safeTitle = String(titleStr || '这张合照').replace(/[<>&"']/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' }[c]));
     cm.innerHTML = `<div style="width:236px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.3);padding:12px;color:var(--px-fg,#54444a);font-family:inherit;">
-      <div style="font-size:12px;font-weight:700;margin-bottom:6px;">确认删除拍立得</div>
-      <div style="font-size:10.5px;line-height:1.5;margin-bottom:10px;opacity:0.9;">确定要删除「${safeTitle}」吗？删除后无法恢复。</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px;">${customTitle}</div>
+      <div style="font-size:10.5px;line-height:1.5;margin-bottom:10px;opacity:0.9;">${customBody || `确定要删除「${safeTitle}」吗？删除后无法恢复。`}</div>
       <div style="display:flex;gap:6px;">
         <button type="button" id="st-pdc-cancel" class="st-px-btn" style="flex:1;">取消</button>
         <button type="button" id="st-pdc-ok" class="st-px-btn" style="flex:1;background:#d9534f;color:#ffffff;border-color:#a94442;">确认删除</button>
@@ -31575,7 +31721,7 @@
             const dName = PUP_ADV_DESTS.find(d => d.id === ph.dest)?.name || '';
             const shots = (Array.isArray(rec.history) && rec.history.length)
               ? rec.history
-              : [{ date: rec.date || '', look: rec.look || null }];
+              : [{ date: rec.date || '', look: rec.look || null, variant: rec.variant || null }];
             let shotIdx = 0;
             const lookupName = (arrs, id) => {
               if (!id || id === 'none') return '';
@@ -31616,20 +31762,23 @@
               const cur = shots[shotIdx] || shots[0];
               const coverIdx = getCoverIdx();
               const isCover = shotIdx === coverIdx;
-              drawAdvPhotoCanvas(photoBigCanvas, ph, false, { ...rec, look: cur.look, date: cur.date });
+              drawAdvPhotoCanvas(photoBigCanvas, ph, false, { ...rec, look: cur.look, date: cur.date, variant: cur.variant || rec.variant });
+              const styleLabels = ['经典版', '微光版', '星梦版'];
+              const stLbl = cur.variant && typeof cur.variant.styleIdx === 'number' ? ` · ${styleLabels[cur.variant.styleIdx] || '经典版'}` : '';
               const cntTxt = (rec.count || 1) > 1 ? ` · 共拍到 ${rec.count} 次` : '';
-              photoBigTitleEl.textContent = `${ph.title} · ${dName} (${cur.date || rec.date || ''}${cntTxt})`;
+              photoBigTitleEl.textContent = `${ph.title} · ${dName}${stLbl} (${cur.date || rec.date || ''}${cntTxt})`;
               photoBigNoteEl.textContent = ph.note;
               const outfitLine = `当时穿搭：${describeShotLook(cur.look)}`;
               metaBox.innerHTML = `<div style="margin-bottom:5px;">${outfitLine}</div>
                 <div id="st-pv-shot-thumbs" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:5px;"></div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;">
                   <button type="button" id="st-pv-shot-prev" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;"${shotIdx <= 0 ? ' disabled' : ''}>较新</button>
                   <span style="font-weight:700;">留念 ${shotIdx + 1}/${shots.length}</span>
                   <button type="button" id="st-pv-shot-next" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;"${shotIdx >= shots.length - 1 ? ' disabled' : ''}>较早</button>
-                  <button type="button" id="st-pv-shot-cover" class="st-px-btn${isCover ? ' active' : ' care'}" style="height:20px;padding:0 7px;font-size:9px;"${isCover ? ' disabled' : ''}>${isCover ? '当前首图' : '设为首图'}</button>
+                  <button type="button" id="st-pv-shot-cover" class="st-px-btn${isCover ? ' active' : ' care'}" style="height:20px;padding:0 6px;font-size:9px;"${isCover ? ' disabled' : ''}>${isCover ? '当前首图' : '设为首图'}</button>
+                  <button type="button" id="st-pv-shot-del" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;color:#a94442;">删除</button>
                 </div>
-                ${shots.length <= 1 ? '<div style="margin-top:4px;font-size:8.5px;color:#8c7366;">下次再拍到此景会自动留存新旧穿搭，点缩略图即可切换并自选首图~</div>' : ''}`;
+                ${shots.length <= 1 ? '<div style="margin-top:4px;font-size:8.5px;color:#8c7366;">下次再拍到此景会自动留存不同光影动作与穿搭，点缩略图即可切换并自选首图~</div>' : ''}`;
               const thumbsWrap = metaBox.querySelector('#st-pv-shot-thumbs');
               shots.forEach((sh, idx) => {
                 const tb = doc.createElement('button');
@@ -31638,7 +31787,7 @@
                 const tcv = doc.createElement('canvas');
                 tcv.width = 54; tcv.height = 36;
                 tcv.style.cssText = 'width:42px;height:28px;display:block;image-rendering:pixelated;image-rendering:crisp-edges;';
-                drawAdvPhotoCanvas(tcv, ph, false, { ...rec, look: sh.look, date: sh.date });
+                drawAdvPhotoCanvas(tcv, ph, false, { ...rec, look: sh.look, date: sh.date, variant: sh.variant || rec.variant });
                 tb.appendChild(tcv);
                 if (idx === coverIdx) {
                   const badge = doc.createElement('span');
@@ -31657,15 +31806,57 @@
                 rec.pinnedCover = true;
                 rec.look = cur.look || rec.look || null;
                 rec.date = cur.date || rec.date || '';
+                rec.variant = cur.variant || rec.variant || null;
                 rec.history = shots;
                 saveConfig();
-                cmNotify('已将这张穿搭设为该场景首图！');
+                cmNotify('已将这张留念设为该场景首图！');
                 renderShot();
                 if (typeof renderPupAdventure === 'function') renderPupAdventure();
+              });
+              metaBox.querySelector('#st-pv-shot-del')?.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                const isLast = shots.length <= 1;
+                const msg = isLast
+                  ? `这是「${ph.title}」的最后一张留念，删除后该场景将恢复未解锁状态，确定删除吗？`
+                  : `确定要删除「${ph.title}」的第 ${shotIdx + 1} 张留念穿搭吗？删除后无法恢复。`;
+                confirmDeletePolaroid(ph.title, () => {
+                  if (isLast) {
+                    delete config.puppyAlbum[ph.id];
+                    saveConfig();
+                    photoViewerEl.classList.remove('open');
+                    cmNotify('已删除该照片');
+                    if (typeof renderPupAdventure === 'function') renderPupAdventure();
+                  } else {
+                    shots.splice(shotIdx, 1);
+                    const oldCov = getCoverIdx();
+                    let nextCov = oldCov;
+                    if (shotIdx < oldCov) nextCov = oldCov - 1;
+                    else if (shotIdx === oldCov) nextCov = 0;
+                    nextCov = clamp(nextCov, 0, shots.length - 1);
+                    const newCovShot = shots[nextCov] || shots[0];
+                    rec.history = shots;
+                    rec.coverShotIdx = nextCov;
+                    rec.look = newCovShot.look || null;
+                    rec.date = newCovShot.date || '';
+                    rec.variant = newCovShot.variant || null;
+                    rec.count = Math.max(shots.length, (rec.count || 1) - 1);
+                    shotIdx = clamp(shotIdx, 0, shots.length - 1);
+                    saveConfig();
+                    cmNotify('已删除该张留念');
+                    renderShot();
+                    if (typeof renderPupAdventure === 'function') renderPupAdventure();
+                  }
+                }, '确认删除冒险照片', msg);
               });
             };
             renderShot();
             photoViewerEl.classList.add('open');
+            // 自动平滑滚到顶部放大图，不用手动往上翻！
+            try {
+              const scroller = photoViewerEl.closest('.st-px-bag-body, .st-tb-body') || pupBagEl;
+              if (scroller && typeof scroller.scrollTo === 'function') scroller.scrollTo({ top: 0, behavior: 'smooth' });
+              photoViewerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (_) {}
           });
         }
         albumGridEl.appendChild(card);
