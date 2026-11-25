@@ -5041,6 +5041,9 @@
       transition: opacity 0.16s ease, transform 0.18s ease;
     }
     #st-tb-guest-puppy-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #st-tb-guest-puppy-bubble.lifted, #st-tb-puppy-bubble.lifted { bottom: 112px !important; }
+    #st-tb-guest-pop { min-width: 210px; max-width: 340px; box-sizing: border-box; }
+    .st-gp-resize { position: absolute; right: 2px; bottom: 2px; width: 12px; height: 12px; cursor: nwse-resize; opacity: 0.55; }
     #st-tb-guest-pop {
       position: fixed;
       width: 224px;
@@ -5132,52 +5135,52 @@
       0% { opacity: 0.98; transform: translateY(10px) scale(0.98); }
       100% { opacity: 0.92; transform: translateY(0) scale(1); }
     }
-    #st-tb-puppy-bubble.bub-gacha-soda-pop { background: linear-gradient(135deg,#ebf8ff,#dff5ff,#f5fbff); border-color: #6ab8e8; color: #224d6e; box-shadow: 0 2px 8px rgba(106,184,232,0.36); }
-    #st-tb-puppy-bubble.bub-gacha-soda-pop::after { background: #e6f6ff; border-color: #6ab8e8; }
-    #st-tb-puppy-bubble.bub-gacha-aurora-glass { background: linear-gradient(120deg,#e4fff5,#e8f3ff,#f4eaff,#e4fff5); background-size: 260% 260%; animation: stBubSheen 3.8s ease infinite; border-color: #7cc9c4; color: #234c54; box-shadow: 0 2px 11px rgba(124,201,196,0.44), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-gacha-aurora-glass::after { background: #eaf9f6; border-color: #7cc9c4; }
-    #st-tb-puppy-bubble.bub-dyn-strawberry { background: linear-gradient(125deg,#fff5f8,#ffe6ef,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #e08fa8; color: #633042; box-shadow: 0 2px 9px rgba(224,143,168,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-strawberry::after { background: #ffeff5; border-color: #e08fa8; }
-    #st-tb-puppy-bubble.bub-dyn-koipond { background: linear-gradient(125deg,#eefaf8,#e0f4f2,#f5fcfb); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #78b8b2; color: #225450; box-shadow: 0 2px 9px rgba(120,184,178,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-koipond::after { background: #e8f7f5; border-color: #78b8b2; }
-    #st-tb-puppy-bubble.bub-dyn-lemon-tea { background: linear-gradient(125deg,#fffdf0,#fdf6cc,#fffef5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d9bd59; color: #5c4a14; box-shadow: 0 2px 9px rgba(217,189,89,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-lemon-tea::after { background: #fef9dd; border-color: #d9bd59; }
-    #st-tb-puppy-bubble.bub-dyn-cat-paw { background: linear-gradient(125deg,#fff6f8,#fce8ee,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d99ab0; color: #633446; box-shadow: 0 2px 9px rgba(217,154,176,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-cat-paw::after { background: #fdf0f4; border-color: #d99ab0; }
-    #st-tb-puppy-bubble.bub-dyn-paper-plane { background: linear-gradient(125deg,#f5faff,#eef5fc,#fffdf7); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #8cb2d9; color: #2b4c6e; box-shadow: 0 2px 9px rgba(140,178,217,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-paper-plane::after { background: #f2f7fd; border-color: #8cb2d9; }
-    #st-tb-puppy-bubble.bub-dyn-train-ticket { background: linear-gradient(135deg,#fffaf0,#f7ecd6); border-color: #c29a6b; color: #5c4022; box-shadow: 0 2px 8px rgba(194,154,107,0.3); }
-    #st-tb-puppy-bubble.bub-dyn-train-ticket::after { background: #fbf3e3; border-color: #c29a6b; }
-    #st-tb-puppy-bubble.bub-dyn-washi-note { background: linear-gradient(135deg,#fffdf8,#fcf5eb); border-color: #d4a6b4; color: #593b44; box-shadow: 0 2px 8px rgba(212,166,180,0.3); }
-    #st-tb-puppy-bubble.bub-dyn-washi-note::after { background: #fdf8f0; border-color: #d4a6b4; }
-    #st-tb-puppy-bubble.bub-dyn-rain-window { background: linear-gradient(135deg,#eef6fc,#e0eef8); border-color: #8ab0cc; color: #2d4c66; box-shadow: 0 2px 8px rgba(138,176,204,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-rain-window::after { background: #e8f2fa; border-color: #8ab0cc; }
-    #st-tb-puppy-bubble.bub-dyn-cassette { background: linear-gradient(135deg,#fff5f0,#fae4dc); border-color: #cf8474; color: #5e3128; box-shadow: 0 2px 8px rgba(207,132,116,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-cassette::after { background: #fcede6; border-color: #cf8474; }
-    #st-tb-puppy-bubble.bub-dyn-snowfall { background: linear-gradient(135deg,#eef7ff,#e2f0fc,#f7fbff); border-color: #8cbce0; color: #264a6b; box-shadow: 0 2px 9px rgba(140,188,224,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-snowfall::after { background: #eaf4fd; border-color: #8cbce0; }
-    #st-tb-puppy-bubble.bub-dyn-matcha-whirl { background: linear-gradient(135deg,#f2faf0,#e3f2e0,#f7fcf6); border-color: #7eb07a; color: #2b5428; box-shadow: 0 2px 9px rgba(126,176,122,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-matcha-whirl::after { background: #ebf6e8; border-color: #7eb07a; }
-    #st-tb-puppy-bubble.bub-dyn-ocean-tide { background: linear-gradient(135deg,#ebf8fc,#daf1fa,#f2fbff); border-color: #74b4d4; color: #204d66; box-shadow: 0 2px 9px rgba(116,180,212,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-ocean-tide::after { background: #e4f5fc; border-color: #74b4d4; }
-    #st-tb-puppy-bubble.bub-dyn-lantern-glow { background: linear-gradient(135deg,#383452,#4f4566,#3d3654); border-color: #e0b36e; color: #fff5de; box-shadow: 0 2px 10px rgba(224,179,110,0.36); }
-    #st-tb-puppy-bubble.bub-dyn-lantern-glow::after { background: #433c5c; border-color: #e0b36e; }
-    #st-tb-puppy-bubble.bub-dyn-peach-soda { background: linear-gradient(135deg,#fff5f0,#ffe3d6,#fffaf5); border-color: #e39a84; color: #663526; box-shadow: 0 2px 9px rgba(227,154,132,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-peach-soda::after { background: #ffece3; border-color: #e39a84; }
-    #st-tb-puppy-bubble.bub-dyn-sakura-tea { background: linear-gradient(135deg,#fff5f8,#fbe4ec,#fffaf5); border-color: #db9ab0; color: #633344; box-shadow: 0 2px 9px rgba(219,154,176,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-sakura-tea::after { background: #fdeef3; border-color: #db9ab0; }
-    #st-tb-puppy-bubble.bub-dyn-maple-wind { background: linear-gradient(135deg,#fff8ef,#fae8d2,#fffdf7); border-color: #cf8a58; color: #5e3618; box-shadow: 0 2px 9px rgba(207,138,88,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-maple-wind::after { background: #fcf0e0; border-color: #cf8a58; }
-    #st-tb-puppy-bubble.bub-dyn-wish-jar { background: linear-gradient(135deg,#2e3959,#424e75,#303b5c); border-color: #9ec4e8; color: #f2f7ff; box-shadow: 0 2px 10px rgba(158,196,232,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-wish-jar::after { background: #384469; border-color: #9ec4e8; }
-    #st-tb-puppy-bubble.bub-dyn-dandelion { background: linear-gradient(135deg,#f7fbf2,#eef7eb,#fbfdf8); border-color: #96bf8e; color: #365232; box-shadow: 0 2px 9px rgba(150,191,142,0.3); }
-    #st-tb-puppy-bubble.bub-dyn-dandelion::after { background: #f3f9ee; border-color: #96bf8e; }
-    #st-tb-puppy-bubble.bub-dyn-honeybee { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
+    #st-tb-puppy-bubble.bub-gacha-soda-popNone, #st-tb-guest-puppy-bubble.bub-gacha-soda-popNone { background: linear-gradient(135deg,#ebf8ff,#dff5ff,#f5fbff); border-color: #6ab8e8; color: #224d6e; box-shadow: 0 2px 8px rgba(106,184,232,0.36); }
+    #st-tb-puppy-bubble.bub-gacha-soda-pop::after, #st-tb-guest-puppy-bubble.bub-gacha-soda-pop::after { background: #e6f6ff; border-color: #6ab8e8; }
+    #st-tb-puppy-bubble.bub-gacha-aurora-glassNone, #st-tb-guest-puppy-bubble.bub-gacha-aurora-glassNone { background: linear-gradient(120deg,#e4fff5,#e8f3ff,#f4eaff,#e4fff5); background-size: 260% 260%; animation: stBubSheen 3.8s ease infinite; border-color: #7cc9c4; color: #234c54; box-shadow: 0 2px 11px rgba(124,201,196,0.44), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-gacha-aurora-glass::after, #st-tb-guest-puppy-bubble.bub-gacha-aurora-glass::after { background: #eaf9f6; border-color: #7cc9c4; }
+    #st-tb-puppy-bubble.bub-dyn-strawberryNone, #st-tb-guest-puppy-bubble.bub-dyn-strawberryNone { background: linear-gradient(125deg,#fff5f8,#ffe6ef,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #e08fa8; color: #633042; box-shadow: 0 2px 9px rgba(224,143,168,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-strawberry::after, #st-tb-guest-puppy-bubble.bub-dyn-strawberry::after { background: #ffeff5; border-color: #e08fa8; }
+    #st-tb-puppy-bubble.bub-dyn-koipondNone, #st-tb-guest-puppy-bubble.bub-dyn-koipondNone { background: linear-gradient(125deg,#eefaf8,#e0f4f2,#f5fcfb); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #78b8b2; color: #225450; box-shadow: 0 2px 9px rgba(120,184,178,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-koipond::after, #st-tb-guest-puppy-bubble.bub-dyn-koipond::after { background: #e8f7f5; border-color: #78b8b2; }
+    #st-tb-puppy-bubble.bub-dyn-lemon-teaNone, #st-tb-guest-puppy-bubble.bub-dyn-lemon-teaNone { background: linear-gradient(125deg,#fffdf0,#fdf6cc,#fffef5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d9bd59; color: #5c4a14; box-shadow: 0 2px 9px rgba(217,189,89,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-lemon-tea::after, #st-tb-guest-puppy-bubble.bub-dyn-lemon-tea::after { background: #fef9dd; border-color: #d9bd59; }
+    #st-tb-puppy-bubble.bub-dyn-cat-pawNone, #st-tb-guest-puppy-bubble.bub-dyn-cat-pawNone { background: linear-gradient(125deg,#fff6f8,#fce8ee,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d99ab0; color: #633446; box-shadow: 0 2px 9px rgba(217,154,176,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-cat-paw::after, #st-tb-guest-puppy-bubble.bub-dyn-cat-paw::after { background: #fdf0f4; border-color: #d99ab0; }
+    #st-tb-puppy-bubble.bub-dyn-paper-planeNone, #st-tb-guest-puppy-bubble.bub-dyn-paper-planeNone { background: linear-gradient(125deg,#f5faff,#eef5fc,#fffdf7); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #8cb2d9; color: #2b4c6e; box-shadow: 0 2px 9px rgba(140,178,217,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-paper-plane::after, #st-tb-guest-puppy-bubble.bub-dyn-paper-plane::after { background: #f2f7fd; border-color: #8cb2d9; }
+    #st-tb-puppy-bubble.bub-dyn-train-ticketNone, #st-tb-guest-puppy-bubble.bub-dyn-train-ticketNone { background: linear-gradient(135deg,#fffaf0,#f7ecd6); border-color: #c29a6b; color: #5c4022; box-shadow: 0 2px 8px rgba(194,154,107,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-train-ticket::after, #st-tb-guest-puppy-bubble.bub-dyn-train-ticket::after { background: #fbf3e3; border-color: #c29a6b; }
+    #st-tb-puppy-bubble.bub-dyn-washi-noteNone, #st-tb-guest-puppy-bubble.bub-dyn-washi-noteNone { background: linear-gradient(135deg,#fffdf8,#fcf5eb); border-color: #d4a6b4; color: #593b44; box-shadow: 0 2px 8px rgba(212,166,180,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-washi-note::after, #st-tb-guest-puppy-bubble.bub-dyn-washi-note::after { background: #fdf8f0; border-color: #d4a6b4; }
+    #st-tb-puppy-bubble.bub-dyn-rain-windowNone, #st-tb-guest-puppy-bubble.bub-dyn-rain-windowNone { background: linear-gradient(135deg,#eef6fc,#e0eef8); border-color: #8ab0cc; color: #2d4c66; box-shadow: 0 2px 8px rgba(138,176,204,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-rain-window::after, #st-tb-guest-puppy-bubble.bub-dyn-rain-window::after { background: #e8f2fa; border-color: #8ab0cc; }
+    #st-tb-puppy-bubble.bub-dyn-cassetteNone, #st-tb-guest-puppy-bubble.bub-dyn-cassetteNone { background: linear-gradient(135deg,#fff5f0,#fae4dc); border-color: #cf8474; color: #5e3128; box-shadow: 0 2px 8px rgba(207,132,116,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-cassette::after, #st-tb-guest-puppy-bubble.bub-dyn-cassette::after { background: #fcede6; border-color: #cf8474; }
+    #st-tb-puppy-bubble.bub-dyn-snowfallNone, #st-tb-guest-puppy-bubble.bub-dyn-snowfallNone { background: linear-gradient(135deg,#eef7ff,#e2f0fc,#f7fbff); border-color: #8cbce0; color: #264a6b; box-shadow: 0 2px 9px rgba(140,188,224,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-snowfall::after, #st-tb-guest-puppy-bubble.bub-dyn-snowfall::after { background: #eaf4fd; border-color: #8cbce0; }
+    #st-tb-puppy-bubble.bub-dyn-matcha-whirlNone, #st-tb-guest-puppy-bubble.bub-dyn-matcha-whirlNone { background: linear-gradient(135deg,#f2faf0,#e3f2e0,#f7fcf6); border-color: #7eb07a; color: #2b5428; box-shadow: 0 2px 9px rgba(126,176,122,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-matcha-whirl::after, #st-tb-guest-puppy-bubble.bub-dyn-matcha-whirl::after { background: #ebf6e8; border-color: #7eb07a; }
+    #st-tb-puppy-bubble.bub-dyn-ocean-tideNone, #st-tb-guest-puppy-bubble.bub-dyn-ocean-tideNone { background: linear-gradient(135deg,#ebf8fc,#daf1fa,#f2fbff); border-color: #74b4d4; color: #204d66; box-shadow: 0 2px 9px rgba(116,180,212,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-ocean-tide::after, #st-tb-guest-puppy-bubble.bub-dyn-ocean-tide::after { background: #e4f5fc; border-color: #74b4d4; }
+    #st-tb-puppy-bubble.bub-dyn-lantern-glowNone, #st-tb-guest-puppy-bubble.bub-dyn-lantern-glowNone { background: linear-gradient(135deg,#383452,#4f4566,#3d3654); border-color: #e0b36e; color: #fff5de; box-shadow: 0 2px 10px rgba(224,179,110,0.36); }
+    #st-tb-puppy-bubble.bub-dyn-lantern-glow::after, #st-tb-guest-puppy-bubble.bub-dyn-lantern-glow::after { background: #433c5c; border-color: #e0b36e; }
+    #st-tb-puppy-bubble.bub-dyn-peach-sodaNone, #st-tb-guest-puppy-bubble.bub-dyn-peach-sodaNone { background: linear-gradient(135deg,#fff5f0,#ffe3d6,#fffaf5); border-color: #e39a84; color: #663526; box-shadow: 0 2px 9px rgba(227,154,132,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-peach-soda::after, #st-tb-guest-puppy-bubble.bub-dyn-peach-soda::after { background: #ffece3; border-color: #e39a84; }
+    #st-tb-puppy-bubble.bub-dyn-sakura-teaNone, #st-tb-guest-puppy-bubble.bub-dyn-sakura-teaNone { background: linear-gradient(135deg,#fff5f8,#fbe4ec,#fffaf5); border-color: #db9ab0; color: #633344; box-shadow: 0 2px 9px rgba(219,154,176,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-sakura-tea::after, #st-tb-guest-puppy-bubble.bub-dyn-sakura-tea::after { background: #fdeef3; border-color: #db9ab0; }
+    #st-tb-puppy-bubble.bub-dyn-maple-windNone, #st-tb-guest-puppy-bubble.bub-dyn-maple-windNone { background: linear-gradient(135deg,#fff8ef,#fae8d2,#fffdf7); border-color: #cf8a58; color: #5e3618; box-shadow: 0 2px 9px rgba(207,138,88,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-maple-wind::after, #st-tb-guest-puppy-bubble.bub-dyn-maple-wind::after { background: #fcf0e0; border-color: #cf8a58; }
+    #st-tb-puppy-bubble.bub-dyn-wish-jarNone, #st-tb-guest-puppy-bubble.bub-dyn-wish-jarNone { background: linear-gradient(135deg,#2e3959,#424e75,#303b5c); border-color: #9ec4e8; color: #f2f7ff; box-shadow: 0 2px 10px rgba(158,196,232,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-wish-jar::after, #st-tb-guest-puppy-bubble.bub-dyn-wish-jar::after { background: #384469; border-color: #9ec4e8; }
+    #st-tb-puppy-bubble.bub-dyn-dandelionNone, #st-tb-guest-puppy-bubble.bub-dyn-dandelionNone { background: linear-gradient(135deg,#f7fbf2,#eef7eb,#fbfdf8); border-color: #96bf8e; color: #365232; box-shadow: 0 2px 9px rgba(150,191,142,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-dandelion::after, #st-tb-guest-puppy-bubble.bub-dyn-dandelion::after { background: #f3f9ee; border-color: #96bf8e; }
+    #st-tb-puppy-bubble.bub-dyn-honeybeeNone, #st-tb-guest-puppy-bubble.bub-dyn-honeybeeNone { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-honeybee::after, #st-tb-guest-puppy-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
     #st-tb-puppy-bubble.bub-spend-5k-vinyl, #st-tb-guest-puppy-bubble.bub-spend-5k-vinyl { background: linear-gradient(135deg,#fff8ef,#f7e8d8,#fdf1e4); border-color: #8c5a3c; color: #4a2c1c; box-shadow: 0 2px 10px rgba(140,90,60,0.34); }
-    #st-tb-puppy-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
-    #st-tb-puppy-bubble.bub-gacha-milk-strawberry { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
+    #st-tb-puppy-bubble.bub-spend-5k-vinyl::after, #st-tb-guest-puppy-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
+    #st-tb-puppy-bubble.bub-gacha-milk-strawberryNone, #st-tb-guest-puppy-bubble.bub-gacha-milk-strawberryNone { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after, #st-tb-guest-puppy-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
 
     #st-tb-puppy-bubble::after {
       content: "";
@@ -6630,7 +6633,7 @@
       margin-top: 0;
       margin-bottom: 0;
     }
-    #st-tb-bub-fx {
+    #st-tb-bub-fx, #st-tb-guest-bub-fx {
       position: absolute;
       inset: -10px;
       width: calc(100% + 20px);
@@ -7930,7 +7933,7 @@
       <canvas id="st-tb-pup-prop-sign" width="9" height="12"></canvas>
     </div>
     <div id="st-tb-guest-puppy" title="朋友来串门的小狗 · 点我互动 / 按住拖动">
-      <div id="st-tb-guest-puppy-bubble"></div>
+      <div id="st-tb-guest-puppy-bubble"><span id="st-tb-guest-puppy-bubble-txt"></span><canvas id="st-tb-guest-bub-fx" width="160" height="44"></canvas></div>
       <canvas id="st-tb-guest-puppy-canvas" width="24" height="24"></canvas>
       <div id="st-tb-guest-puppy-tag"></div>
     </div>
@@ -27595,62 +27598,67 @@
   let guestDraftGifts = {};
   let lastGeneratedVisitCode = '';
 
-  const GUEST_BUB_THEME_MAP = {
-    bub_cloud: ['#edf7ff', '#8fbce6', '#264b73'],
-    bub_mint: ['#ebfaf4', '#7cc4a8', '#1f5440'],
-    bub_peach: ['#fff4ec', '#e6a888', '#6b3b24'],
-    bub_matcha: ['#f2f8ec', '#98b882', '#334d24'],
-    bub_cocoa: ['#f9f1e8', '#b89476', '#543824'],
-    bub_sakura: ['#fff0f5', '#e6a0b8', '#732b44'],
-    bub_violet: ['#f4f0ff', '#b29ee0', '#402c6e'],
-    bub_snow: ['#f0f8ff', '#a0c4e0', '#2b4a66'],
-    bub_starry: ['#2c365e', '#d9bc7a', '#fff5d6'],
-    bub_pixelgold: ['#fffaf0', '#d9ba78', '#5e4418'],
-    bub_scroll: ['#faf4e8', '#c49a84', '#543426'],
-    bub_candy: ['#fff2f8', '#e6a2cc', '#6b2854'],
-    bub_spend_5k_vinyl: ['#fff6eb', '#8c5a3c', '#4a2c1c'],
-  };
-
+  const guestPupBubbleTxt = root.querySelector('#st-tb-guest-puppy-bubble-txt');
   const applyGuestBubbleSkin = (bubId) => {
     if (!guestPupBubble) return;
     if (gPup.lastBubbleSkin === (bubId || '')) return;
     gPup.lastBubbleSkin = bubId || '';
     const allBubs = [...SHOP_PUP_BUBBLES, ...SECRET_ADV_BUBBLES, ...GACHA_BUBBLES, ...SPECIAL_EVENT_BUBBLES];
     allBubs.forEach(b => guestPupBubble.classList.remove(b.id.replace(/_/g, '-')));
+    guestPupBubble.querySelectorAll('.st-px-bub-orn').forEach(n => n.remove());
     guestPupBubble.style.background = '';
     guestPupBubble.style.borderColor = '';
     guestPupBubble.style.color = '';
+    let nextDyn = '';
     if (bubId && bubId !== 'bub_default') {
       guestPupBubble.classList.add(bubId.replace(/_/g, '-'));
-      const preset = GUEST_BUB_THEME_MAP[bubId];
-      if (preset) {
-        guestPupBubble.style.background = preset[0];
-        guestPupBubble.style.borderColor = preset[1];
-        guestPupBubble.style.color = preset[2];
-      } else {
-        // 动态/限定气泡根据色系自动匹配温柔边框与底色
-        if (bubId.includes('star') || bubId.includes('galaxy') || bubId.includes('wish')) {
-          guestPupBubble.style.background = '#2b345c'; guestPupBubble.style.borderColor = '#d4b878'; guestPupBubble.style.color = '#fff6dc';
-        } else if (bubId.includes('mint') || bubId.includes('clover') || bubId.includes('matcha') || bubId.includes('dandelion')) {
-          guestPupBubble.style.background = '#eefaf2'; guestPupBubble.style.borderColor = '#78bd94'; guestPupBubble.style.color = '#205236';
-        } else if (bubId.includes('ocean') || bubId.includes('bubble') || bubId.includes('rain') || bubId.includes('snow') || bubId.includes('aurora') || bubId.includes('sky')) {
-          guestPupBubble.style.background = '#eef7ff'; guestPupBubble.style.borderColor = '#7cb2e0'; guestPupBubble.style.color = '#1e466e';
-        } else if (bubId.includes('honey') || bubId.includes('lemon') || bubId.includes('lantern') || bubId.includes('maple') || bubId.includes('firefly')) {
-          guestPupBubble.style.background = '#fff8ea'; guestPupBubble.style.borderColor = '#dfa24c'; guestPupBubble.style.color = '#633c0c';
-        } else {
-          guestPupBubble.style.background = '#fff2f7'; guestPupBubble.style.borderColor = '#df8ca8'; guestPupBubble.style.color = '#6e2440';
-        }
+      const bObj = allBubs.find(b => b.id === bubId);
+      if (bObj && bObj.dyn) nextDyn = bObj.dyn;
+      if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
+        bObj.charms.forEach(ch => {
+          const c = makeAfCharm9(ch.key, ch.pos);
+          c.className = `st-px-bub-orn ${ch.pos}`;
+          guestPupBubble.appendChild(c);
+        });
       }
+    }
+    guestBubDynMode = nextDyn;
+    if (!guestBubDynMode) {
+      const gbf = root.querySelector('#st-tb-guest-bub-fx');
+      if (gbf) gbf.getContext('2d').clearRect(0, 0, gbf.width, gbf.height);
     }
   };
 
-  const showGuestBubble = (txt, ms = 2800) => {
+  const syncBubbleNoOverlap = (speaker) => {
+    if (!puppyBubble || !guestPupBubble) return;
+    const close = Math.abs(pup.x - gPup.x) < 175 && Math.abs((pup.y || 0) - (gPup.y || 0)) < 95;
+    if (!close) {
+      puppyBubble.classList.remove('lifted');
+      guestPupBubble.classList.remove('lifted');
+      return;
+    }
+    if (speaker === 'guest' && puppyBubble.classList.contains('show')) {
+      puppyBubble.classList.add('lifted');
+      guestPupBubble.classList.remove('lifted');
+    } else if (speaker === 'host' && guestPupBubble.classList.contains('show')) {
+      guestPupBubble.classList.add('lifted');
+      puppyBubble.classList.remove('lifted');
+    }
+  };
+
+  const showGuestBubble = (txt, ms = 2600) => {
     if (!guestPupBubble) return;
     applyGuestBubbleSkin(config.guestPuppy?.look?.bubble || '');
-    guestPupBubble.textContent = txt;
+    if (guestPupBubbleTxt) guestPupBubbleTxt.textContent = txt;
+    else guestPupBubble.textContent = txt;
+    syncBubbleNoOverlap('guest');
     guestPupBubble.classList.add('show');
     clearTimeout(gPup.bubbleTimer);
-    gPup.bubbleTimer = setTimeout(() => guestPupBubble.classList.remove('show'), ms);
+    gPup.bubbleTimer = setTimeout(() => {
+      guestPupBubble.classList.remove('show');
+      guestPupBubble.classList.remove('lifted');
+      if (puppyBubble) puppyBubble.classList.remove('lifted');
+    }, ms);
   };
 
   const GUEST_INTERACT_LINES = {
@@ -27740,6 +27748,30 @@
     return list;
   };
 
+  const makeVisitGiftIcon = (it) => {
+    if (!it || it.id === 'gacha_ticket') return null;
+    try {
+      if (it.kind === 'gear' || it.kind === 'snack') {
+        const cv = makeGoodsIconCanvas(it.id, false);
+        cv.style.cssText = 'width:22px;height:22px;display:block;flex-shrink:0;image-rendering:pixelated;';
+        return cv;
+      }
+      if (it.kind === 'flower' && it.raw) {
+        const cv = doc.createElement('canvas');
+        cv.width = 24; cv.height = 24;
+        cv.style.cssText = 'width:22px;height:22px;display:block;flex-shrink:0;';
+        drawFlowerBlossom(cv.getContext('2d'), it.raw, 12, 12, 9);
+        return cv;
+      }
+      if (it.kind === 'dish' && it.raw) {
+        const cv = makeDishCanvas(it.raw, Boolean(it.isDark), false);
+        cv.style.cssText = 'width:22px;height:22px;display:block;flex-shrink:0;image-rendering:pixelated;';
+        return cv;
+      }
+    } catch (_) {}
+    return null;
+  };
+
   const grantGiftItems = (gifts) => {
     const received = [];
     if (!Array.isArray(gifts)) return received;
@@ -27748,27 +27780,28 @@
       if (g.id === 'gacha_ticket') {
         config.puppyInventory = config.puppyInventory || {};
         config.puppyInventory.gacha_ticket = Math.floor(config.puppyInventory.gacha_ticket || 0) + qty;
-        received.push(`扭蛋券 ×${qty}`);
+        received.push({ kind: 'gear', id: 'gacha_ticket', name: '扭蛋券', qty, label: `扭蛋券 ×${qty}` });
       } else if (g.kind === 'gear' || g.kind === 'snack') {
         const meta = [...SHOP_PUP_GOODS, ...GACHA_SNACKS].find(x => x.id === g.id);
         if (!meta) return;
         config.puppyInventory = config.puppyInventory || {};
         config.puppyInventory[g.id] = Math.floor(config.puppyInventory[g.id] || 0) + qty;
-        received.push(`${meta.name} ×${qty}`);
+        received.push({ kind: g.kind, id: g.id, name: meta.name, qty, raw: meta, label: `${meta.name} ×${qty}` });
       } else if (g.kind === 'flower') {
         const meta = PUP_FLOWERS.find(x => x.id === g.id);
         if (!meta) return;
         config.puppyGarden = config.puppyGarden || { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {} };
         config.puppyGarden.unlocked = config.puppyGarden.unlocked || {};
         config.puppyGarden.unlocked[g.id] = Math.floor(config.puppyGarden.unlocked[g.id] || 0) + qty;
-        received.push(`${meta.name} ×${qty}`);
+        received.push({ kind: 'flower', id: g.id, name: meta.name, qty, raw: meta, label: `${meta.name} ×${qty}` });
       } else if (g.kind === 'dish') {
-        const meta = [...PUP_KITCHEN_RECIPES, ...PUP_DARK_DISHES].find(x => x.id === g.id);
+        const meta = PUP_KITCHEN_RECIPES.find(x => x.id === g.id) || PUP_DARK_DISHES.find(x => x.id === g.id);
         if (!meta) return;
+        const isDark = PUP_DARK_DISHES.some(x => x.id === g.id);
         config.puppyKitchen = config.puppyKitchen || { lv: 1, xp: 0, cooked: 0, failed: 0, darkFed: 0, dex: {}, dishes: {} };
         config.puppyKitchen.dishes = config.puppyKitchen.dishes || {};
         config.puppyKitchen.dishes[g.id] = Math.floor(config.puppyKitchen.dishes[g.id] || 0) + qty;
-        received.push(`${meta.name} ×${qty}`);
+        received.push({ kind: 'dish', id: g.id, name: meta.name, qty, raw: meta, isDark, label: `${meta.name} ×${qty}` });
       }
     });
     return received;
@@ -27780,13 +27813,13 @@
       modal = doc.createElement('div');
       modal.id = 'st-tb-visit-gift-modal';
       modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10028;pointer-events:auto;';
-      modal.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:11px;color:var(--px-fg,#54444a);font-family:inherit;">
+      modal.innerHTML = `<div style="width:262px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:11px;color:var(--px-fg,#54444a);font-family:inherit;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
           <span id="st-vg-title" style="font-size:12px;font-weight:700;"></span>
           <button type="button" id="st-vg-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
         </div>
         <div id="st-vg-msg" style="font-size:10.5px;line-height:1.45;background:#ffffff;border:1.5px solid var(--px-border,#bfa4ae);padding:6px 7px;margin-bottom:7px;"></div>
-        <div id="st-vg-gifts" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px;"></div>
+        <div id="st-vg-gifts" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;"></div>
         <button type="button" id="st-vg-ok" class="st-px-btn care" style="width:100%;">开心收下，欢迎来做客</button>
       </div>`;
       root.appendChild(modal);
@@ -27810,15 +27843,19 @@
       gEl.innerHTML = '';
       if (redPacket > 0) {
         const rpTag = doc.createElement('span');
-        rpTag.style.cssText = 'display:inline-block;padding:2px 7px;font-size:10px;font-weight:700;background:#ffe4e8;border:1.5px solid #d95268;color:#8c1d30;';
+        rpTag.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 7px;font-size:10px;font-weight:700;background:#ffe4e8;border:1.5px solid #d95268;color:#8c1d30;';
         rpTag.textContent = `红包 +${redPacket} 小狗币`;
         gEl.appendChild(rpTag);
       }
       if (receivedList.length) {
-        receivedList.forEach(itemTxt => {
+        receivedList.forEach(item => {
           const tag = doc.createElement('span');
-          tag.style.cssText = 'display:inline-block;padding:2px 6px;font-size:10px;font-weight:700;background:#fff4d9;border:1.5px solid #d9a048;color:#6b3f08;';
-          tag.textContent = itemTxt;
+          tag.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:3px 6px;font-size:10px;font-weight:700;background:#fff4d9;border:1.5px solid #d9a048;color:#6b3f08;';
+          const ic = makeVisitGiftIcon(item);
+          if (ic) tag.appendChild(ic);
+          const tx = doc.createElement('span');
+          tx.textContent = item.label || String(item);
+          tag.appendChild(tx);
           gEl.appendChild(tag);
         });
       }
@@ -28107,7 +28144,10 @@
       return;
     }
     guestPupEl.classList.add('active');
-    if (guestPupTag) guestPupTag.textContent = guest.name || '小伙伴';
+    if (guestPupTag) {
+      guestPupTag.textContent = guest.name || '小伙伴';
+      guestPupTag.style.display = guest.hideName ? 'none' : 'block';
+    }
     guestPupEl.style.left = `${Math.round(gPup.x)}px`;
     guestPupEl.style.top = `${Math.round(gPup.y || defaultPupY())}px`;
 
@@ -28118,7 +28158,7 @@
     let hop = false;
     let bob = false;
 
-    if (gPup.state === 'walk') {
+    if (gPup.state === 'walk' || gPup.state === 'approach') {
       const f = Math.floor(gPup.tick / 8) % 2;
       frame = f === 0 ? 'walk1' : 'walk2';
       bob = f === 1;
@@ -28193,53 +28233,66 @@
     }
   };
 
-  const triggerDualPuppySocial = (manual = false) => {
+  const DUAL_SOCIAL_SCENES = [
+    { gState: 'nuzzle', hState: 'nuzzle', hLine: '贴贴 {g}！你的毛毛也太软乎啦~', gLine: '蹭蹭 {h}！你们家好暖和呀~' },
+    { gState: 'nuzzle', hState: 'happy', hLine: '凑近蹭蹭 {g} 的小耳朵，香喷喷的！', gLine: '嘿嘿好痒呀 {h}，我也回蹭一下！' },
+    { gState: 'spin', hState: 'spin', hLine: '来呀 {g}，比比看谁转圈圈更圆！', gLine: '哈哈 {h} 看我的旋转小旋风！' },
+    { gState: 'bounce', hState: 'bounce', hLine: '{g} 一起原地蹦高高，看谁跳得高！', gLine: '嘿咻！{h} 别落下我，我也起飞啦！' },
+    { gState: 'happy', hState: 'happy', hLine: '碰碰鼻头打招呼！欢迎 {g} 常来玩呀~', gLine: '蹭蹭鼻尖！和 {h} 玩得太开心啦~' },
+    { gState: 'eat', hState: 'happy', hLine: '{g} 把我藏的小饼干分你一半，一起吃！', gLine: '哇谢谢 {h}！你真是全桌面最好客的小狗！' },
+    { gState: 'sleep', hState: 'sit', hLine: '{g} 累了就靠着我眯一会儿吧，我帮你站岗~', gLine: '呼啊… 靠着 {h} 晒太阳好舒服呀~' },
+    { gState: 'playdead', hState: 'happy', hLine: '哈哈 {g} 别装死啦，我拿小零食哄你起来！', gLine: '偷偷睁一只眼，{h} 真的有零食吗？' },
+    { gState: 'nuzzle', hState: 'nuzzle', hLine: '悄悄跟 {g} 咬耳朵说个桌面小秘密~', gLine: '哇真的吗 {h}！我保证替你保密！' },
+    { gState: 'happy', hState: 'spin', hLine: '{g} 今天这身打扮超好看，转个圈让我瞧瞧！', gLine: '嘿嘿谢谢 {h} 夸我，你也超精致！' },
+  ];
+
+  const playDualSocialDialogue = (sc, manual = false) => {
     const guest = config.guestPuppy;
     if (!guest || !config.puppyEnabled) return;
-    const maxX = Math.max(8, win.innerWidth - 80);
-    if (!guest.pinned) {
-      gPup.x = clamp(pup.x + (pup.x > maxX / 2 ? -54 : 54), 8, maxX);
-      gPup.y = pup.y || defaultPupY();
-    }
     gPup.dir = pup.x >= gPup.x ? 1 : -1;
     pup.dir = gPup.x >= pup.x ? 1 : -1;
     const gName = guest.name || '小伙伴';
     const hName = getPupName();
-    const scenes = [
-      {
-        gState: 'nuzzle', hState: 'nuzzle',
-        hLine: `贴贴 ${gName}！你的毛毛也太软乎啦~`,
-        gLine: `蹭蹭 ${hName}！你们家好暖和呀~`,
-      },
-      {
-        gState: 'spin', hState: 'spin',
-        hLine: `来呀 ${gName}，我们比比谁转圈圈更圆！`,
-        gLine: `哈哈 ${hName} 看我的旋转小旋风！`,
-      },
-      {
-        gState: 'bounce', hState: 'happy',
-        hLine: `${gName} 把我的小零食分你一半，一起吃！`,
-        gLine: `哇谢谢 ${hName}！你真是全桌面最好客的小狗！`,
-      },
-      {
-        gState: 'happy', hState: 'happy',
-        hLine: `碰碰鼻头打招呼！欢迎 ${gName} 常来玩呀~`,
-        gLine: `蹭蹭鼻尖！和 ${hName} 玩得太开心啦~`,
-      },
-    ];
-    const sc = pick(scenes);
+    const hText = sc.hLine.replace(/\{g\}/g, gName).replace(/\{h\}/g, hName);
+    const gText = sc.gLine.replace(/\{g\}/g, gName).replace(/\{h\}/g, hName);
     gPup.state = sc.gState;
-    gPup.timer = 115;
-    setPuppyState(sc.hState, 115);
-    showPuppyBubble(sc.hLine, 2600, !manual);
+    gPup.timer = 140;
+    setPuppyState(sc.hState, 140);
+    // 一前一后说话，绝不同时重叠：先由自家小狗说 2100ms，快消失时客人小狗再开口把前句顶上去
+    syncBubbleNoOverlap('host');
+    showPuppyBubble(hText, 2150, !manual);
     setTimeout(() => {
-      if (config.guestPuppy) showGuestBubble(sc.gLine, 2600);
-    }, 950);
+      if (config.guestPuppy) {
+        if (puppyBubble) puppyBubble.classList.add('lifted');
+        showGuestBubble(gText, 2500);
+      }
+    }, 1950);
+  };
+
+  const triggerDualPuppySocial = (manual = false) => {
+    const guest = config.guestPuppy;
+    if (!guest || !config.puppyEnabled) return;
+    const maxX = Math.max(8, win.innerWidth - 80);
+    const sc = pick(DUAL_SOCIAL_SCENES);
+    const dist = Math.hypot(gPup.x - pup.x, (gPup.y || defaultPupY()) - (pup.y || defaultPupY()));
+    if (dist <= 74 || guest.pinned) {
+      playDualSocialDialogue(sc, manual);
+      return;
+    }
+    // 走路过去找自家小狗互动（绝不瞬移！）
+    gPup.targetX = clamp(pup.x + (pup.x > maxX / 2 ? -54 : 54), 8, maxX);
+    gPup.targetY = clamp(pup.y || defaultPupY(), 40, Math.max(40, win.innerHeight - 80));
+    gPup.pendingSocial = { sc, manual };
+    gPup.state = 'approach';
+    gPup.timer = 480;
   };
 
   const renderPupSpriteToCtx = (ctx2d, look, ox, oy, flipX = false, frameName = 'happy') => {
     const pal = getPupPalette(look || {});
     const grid = PUP_SPRITES[frameName] || PUP_SPRITES.idle1;
+    const isSit = frameName === 'sit1' || frameName === 'sit2';
+    const isFlat = frameName === 'sleep';
+    const isDead = frameName === 'playdead';
     ctx2d.save();
     if (flipX) {
       ctx2d.translate(ox + 24, oy);
@@ -28247,7 +28300,8 @@
       ox = 0; oy = 0;
     }
     const baseOx = ox + 4, baseOy = oy + 10;
-    const hx = baseOx + 10, hy = baseOy + 2;
+    const hx = isSit ? baseOx + 9 : (isFlat ? baseOx + 11 : baseOx + 10);
+    const hy = isFlat ? baseOy + 6 : baseOy + 2;
     for (let y = 0; y < grid.length; y++) {
       const row = grid[y];
       for (let x = 0; x < row.length; x++) {
@@ -28261,9 +28315,9 @@
       activePxCtx = ctx2d;
       if (look) {
         config.puppyOnesieShowEars = Boolean(look.onesieShowEars);
-        drawPupOutfit(look.outfit || 'none', baseOx, baseOy, hx, hy, false, false, false, false);
-        if (Array.isArray(look.accs)) look.accs.forEach(a => drawPupAccessory(a, hx, hy, baseOx, baseOy, false, false));
-        drawPupCompanion(look.comp || 'none', baseOx, baseOy, false);
+        drawPupOutfit(look.outfit || 'none', baseOx, baseOy, hx, hy, isFlat, isDead, isSit, false);
+        if (Array.isArray(look.accs)) look.accs.forEach(a => drawPupAccessory(a, hx, hy, baseOx, baseOy, isFlat, isDead));
+        drawPupCompanion(look.comp || 'none', baseOx, baseOy, isDead);
       }
     } finally {
       activePxCtx = prevCtx;
@@ -28272,31 +28326,87 @@
     ctx2d.restore();
   };
 
-  const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr) => {
+  const POLAROID_BGS = [
+    { id: 'meadow', name: '晴空草地' },
+    { id: 'sakura', name: '樱花树下' },
+    { id: 'night',  name: '星夜萤火' },
+    { id: 'sunset', name: '海边日落' },
+    { id: 'cafe',   name: '暖灯咖啡' },
+    { id: 'snow',   name: '雪地小屋' },
+  ];
+  const POLAROID_POSES = [
+    { id: 'happy',  name: '开心贴贴', f1: 'happy',    f2: 'happy',    heart: true },
+    { id: 'sit',    name: '乖巧坐姿', f1: 'sit1',     f2: 'sit1',     heart: false },
+    { id: 'sleep',  name: '贴贴打盹', f1: 'sleep',    f2: 'sleep',    heart: false },
+    { id: 'belly',  name: '翻肚卖萌', f1: 'playdead', f2: 'happy',    heart: true },
+    { id: 'tilt',   name: '歪头比心', f1: 'idle_tilt',f2: 'idle_tilt',heart: true },
+  ];
+  const POLAROID_FRAMES = [
+    { id: 'classic', name: '经典白边', bg: '#ffffff', bd: '#3b2a22', cap: '#5a4034', date: '#8c7366' },
+    { id: 'pink',    name: '樱粉波点', bg: '#fff0f5', bd: '#d97a9a', cap: '#782644', date: '#a85a76' },
+    { id: 'kraft',   name: '复古牛皮', bg: '#f2e2c8', bd: '#7a5234', cap: '#54351c', date: '#8a6646' },
+    { id: 'starry',  name: '星夜金边', bg: '#262e4f', bd: '#e0be6e', cap: '#fff3cc', date: '#b8c4e8' },
+    { id: 'grid',    name: '格子手账', bg: '#f5f9f2', bd: '#6e9e74', cap: '#2c5432', date: '#688c6e' },
+  ];
+
+  const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr, opts = {}) => {
     const ctx = cv.getContext('2d');
     const W = 64, H = 48;
     cv.width = W; cv.height = H;
     ctx.imageSmoothingEnabled = false;
-    // 天空渐变像素带
-    ctx.fillStyle = '#dff2ff'; ctx.fillRect(0, 0, W, 18);
-    ctx.fillStyle = '#eef8ff'; ctx.fillRect(0, 18, W, 12);
-    // 蓬松小白云
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(6, 5, 12, 4); ctx.fillRect(8, 3, 8, 2);
-    ctx.fillRect(46, 7, 11, 4); ctx.fillRect(48, 5, 7, 2);
-    // 草地与小花
-    ctx.fillStyle = '#b8e8a8'; ctx.fillRect(0, 30, W, 18);
-    ctx.fillStyle = '#9cd98a'; ctx.fillRect(0, 38, W, 10);
-    [[5,35,'#ff9eb5'],[14,42,'#ffe066'],[54,36,'#ff9eb5'],[44,43,'#ffffff'],[31,41,'#ffd27d']].forEach(([fx,fy,fc]) => {
-      ctx.fillStyle = fc; ctx.fillRect(fx, fy, 2, 2);
-    });
-    // 顶部居中双狗爱心
-    ctx.fillStyle = '#ff6b94';
-    ctx.fillRect(29, 9, 2, 2); ctx.fillRect(33, 9, 2, 2);
-    ctx.fillRect(28, 10, 8, 2); ctx.fillRect(29, 12, 6, 2); ctx.fillRect(31, 14, 2, 1);
-    // 左边自家小狗面向右，右边客人小狗面向左
-    renderPupSpriteToCtx(ctx, hostLook, 6, 15, false, 'happy');
-    renderPupSpriteToCtx(ctx, guestLook, 34, 15, true, 'happy');
+    const bgId = opts.bgId || 'meadow';
+    const pose = POLAROID_POSES.find(p => p.id === (opts.poseId || 'happy')) || POLAROID_POSES[0];
+
+    if (bgId === 'sakura') {
+      ctx.fillStyle = '#ffeef5'; ctx.fillRect(0, 0, W, 28);
+      ctx.fillStyle = '#ffdae8'; ctx.fillRect(0, 28, W, 20);
+      ctx.fillStyle = '#a86b54'; ctx.fillRect(0, 0, 5, 34); ctx.fillRect(5, 6, 12, 3);
+      ctx.fillStyle = '#ff9eb8'; ctx.fillRect(2, 0, 26, 9); ctx.fillRect(10, 8, 16, 4);
+      [[18,14],[30,8],[44,15],[54,10],[24,38],[48,40]].forEach(([x,y]) => { ctx.fillStyle = '#ff7fa6'; ctx.fillRect(x, y, 2, 2); });
+    } else if (bgId === 'night') {
+      ctx.fillStyle = '#1e2547'; ctx.fillRect(0, 0, W, 30);
+      ctx.fillStyle = '#28365c'; ctx.fillRect(0, 30, W, 18);
+      ctx.fillStyle = '#ffe878'; ctx.fillRect(50, 5, 6, 6);
+      ctx.fillStyle = '#1e2547'; ctx.fillRect(52, 5, 4, 4);
+      [[8,7],[20,4],[34,9],[14,16],[42,14],[56,22]].forEach(([x,y]) => { ctx.fillStyle = '#fff5b8'; ctx.fillRect(x, y, 1, 1); });
+      [[12,34],[28,40],[48,35],[55,42]].forEach(([x,y]) => { ctx.fillStyle = '#d4ff78'; ctx.fillRect(x, y, 2, 2); });
+    } else if (bgId === 'sunset') {
+      ctx.fillStyle = '#ff9e78'; ctx.fillRect(0, 0, W, 12);
+      ctx.fillStyle = '#ffc48c'; ctx.fillRect(0, 12, W, 12);
+      ctx.fillStyle = '#ffe6a8'; ctx.fillRect(26, 14, 12, 10);
+      ctx.fillStyle = '#68a8d8'; ctx.fillRect(0, 24, W, 10);
+      ctx.fillStyle = '#f5d8a8'; ctx.fillRect(0, 34, W, 14);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 33, W, 1);
+    } else if (bgId === 'cafe') {
+      ctx.fillStyle = '#f5e4d0'; ctx.fillRect(0, 0, W, 30);
+      ctx.fillStyle = '#d4a678'; ctx.fillRect(0, 30, W, 18);
+      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(0, 29, W, 2);
+      ctx.fillStyle = '#ffe082'; ctx.fillRect(14, 4, 6, 4); ctx.fillRect(44, 4, 6, 4);
+      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(16, 0, 2, 4); ctx.fillRect(46, 0, 2, 4);
+    } else if (bgId === 'snow') {
+      ctx.fillStyle = '#cfe4f7'; ctx.fillRect(0, 0, W, 28);
+      ctx.fillStyle = '#f5fbff'; ctx.fillRect(0, 28, W, 20);
+      ctx.fillStyle = '#e0eef8'; ctx.fillRect(0, 38, W, 10);
+      [[8,6],[20,12],[36,5],[50,11],[14,20],[44,19],[58,7]].forEach(([x,y]) => { ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, 2, 2); });
+    } else {
+      ctx.fillStyle = '#dff2ff'; ctx.fillRect(0, 0, W, 18);
+      ctx.fillStyle = '#eef8ff'; ctx.fillRect(0, 18, W, 12);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(6, 5, 12, 4); ctx.fillRect(8, 3, 8, 2);
+      ctx.fillRect(46, 7, 11, 4); ctx.fillRect(48, 5, 7, 2);
+      ctx.fillStyle = '#b8e8a8'; ctx.fillRect(0, 30, W, 18);
+      ctx.fillStyle = '#9cd98a'; ctx.fillRect(0, 38, W, 10);
+      [[5,35,'#ff9eb5'],[14,42,'#ffe066'],[54,36,'#ff9eb5'],[44,43,'#ffffff'],[31,41,'#ffd27d']].forEach(([fx,fy,fc]) => {
+        ctx.fillStyle = fc; ctx.fillRect(fx, fy, 2, 2);
+      });
+    }
+    if (pose.heart) {
+      ctx.fillStyle = '#ff6b94';
+      ctx.fillRect(29, 9, 2, 2); ctx.fillRect(33, 9, 2, 2);
+      ctx.fillRect(28, 10, 8, 2); ctx.fillRect(29, 12, 6, 2); ctx.fillRect(31, 14, 2, 1);
+    }
+    renderPupSpriteToCtx(ctx, hostLook, 6, 15, false, pose.f1);
+    renderPupSpriteToCtx(ctx, guestLook, 34, 15, true, pose.f2);
   };
 
   const openDualPhotoModal = (savedPhoto = null) => {
@@ -28314,65 +28424,98 @@
     const guestLook = savedPhoto ? savedPhoto.guestLook : (guest.look || {});
     const d = new Date();
     const dateStr = savedPhoto ? savedPhoto.date : `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    let curBg = savedPhoto?.bgId || 'meadow';
+    let curPose = savedPhoto?.poseId || 'happy';
+    let curFrame = savedPhoto?.frameId || 'classic';
 
     let modal = root.querySelector('#st-tb-visit-photo-modal');
     if (!modal) {
       modal = doc.createElement('div');
       modal.id = 'st-tb-visit-photo-modal';
       modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:none;align-items:center;justify-content:center;z-index:10029;pointer-events:auto;';
-      modal.innerHTML = `<div style="width:248px;background:#fffdf9;border:3px solid #3b2a22;box-shadow:5px 5px 0 rgba(59,42,34,0.3);padding:10px 10px 12px;color:#3b2a22;font-family:inherit;">
+      root.appendChild(modal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    }
+
+    const renderModal = () => {
+      const fr = POLAROID_FRAMES.find(f => f.id === curFrame) || POLAROID_FRAMES[0];
+      modal.innerHTML = `<div style="width:274px;background:var(--px-bg,#fff9fb);border:3px solid #3b2a22;box-shadow:5px 5px 0 rgba(59,42,34,0.3);padding:10px;color:#3b2a22;font-family:inherit;max-height:88vh;overflow-y:auto;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
           <span style="font-size:11.5px;font-weight:700;">双狗像素拍立得</span>
           <button type="button" id="st-vph-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
         </div>
-        <div style="background:#ffffff;border:2px solid #d9c8be;padding:6px 6px 8px;margin-bottom:8px;">
-          <canvas id="st-vph-cv" width="64" height="48" style="width:100%;height:156px;display:block;image-rendering:pixelated;border:1.5px solid #3b2a22;"></canvas>
-          <div id="st-vph-cap" style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;color:#5a4034;"></div>
-          <div id="st-vph-date" style="text-align:center;font-size:9.5px;color:#8c7366;"></div>
+        <div id="st-vph-card" style="background:${fr.bg};border:2.5px solid ${fr.bd};padding:7px 7px 9px;margin-bottom:7px;">
+          <canvas id="st-vph-cv" width="64" height="48" style="width:100%;height:152px;display:block;image-rendering:pixelated;border:1.5px solid ${fr.bd};"></canvas>
+          <div style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;color:${fr.cap};">${hostName} & ${guestName}</div>
+          <div style="text-align:center;font-size:9.5px;color:${fr.date};">${dateStr}</div>
         </div>
+        ${savedPhoto ? '' : `
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景</div>
+          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">小狗姿势</div>
+          <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">拍立得样式</div>
+          <div id="st-vph-frames" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
+        `}
         <div style="display:flex;gap:5px;">
-          <button type="button" id="st-vph-save" class="st-px-btn care" style="flex:1;">存入相册</button>
+          ${savedPhoto ? '' : '<button type="button" id="st-vph-save" class="st-px-btn care" style="flex:1;">存入相册</button>'}
           <button type="button" id="st-vph-dl" class="st-px-btn active" style="flex:1;">下载图片</button>
         </div>
       </div>`;
-      root.appendChild(modal);
+      const cv = modal.querySelector('#st-vph-cv');
+      drawDualPolaroidCanvas(cv, hostName, hostLook, guestName, guestLook, dateStr, { bgId: curBg, poseId: curPose, frameId: curFrame });
       modal.querySelector('#st-vph-close')?.addEventListener('click', () => { modal.style.display = 'none'; });
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
-    }
-    const cv = modal.querySelector('#st-vph-cv');
-    drawDualPolaroidCanvas(cv, hostName, hostLook, guestName, guestLook, dateStr);
-    modal.querySelector('#st-vph-cap').textContent = `${hostName} & ${guestName}`;
-    modal.querySelector('#st-vph-date').textContent = dateStr;
-    const saveBtn = modal.querySelector('#st-vph-save');
-    saveBtn.style.display = savedPhoto ? 'none' : 'block';
-    saveBtn.onclick = () => {
-      if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
-      config.puppyVisitPhotos.unshift({ id: `vp_${Date.now()}`, hostName, hostLook, guestName, guestLook, date: dateStr });
-      if (config.puppyVisitPhotos.length > 24) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 24);
-      saveConfig();
-      cmNotify('双狗合照已存入串门相册！');
-      if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
-      modal.style.display = 'none';
+
+      if (!savedPhoto) {
+        const mkChips = (elId, arr, curVal, setter) => {
+          const box = modal.querySelector(elId);
+          arr.forEach(item => {
+            const b = doc.createElement('button');
+            b.type = 'button';
+            b.className = `st-px-btn${curVal === item.id ? ' active' : ''}`;
+            b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+            b.textContent = item.name;
+            b.addEventListener('click', () => { setter(item.id); renderModal(); });
+            box.appendChild(b);
+          });
+        };
+        mkChips('#st-vph-bgs', POLAROID_BGS, curBg, v => { curBg = v; });
+        mkChips('#st-vph-poses', POLAROID_POSES, curPose, v => { curPose = v; });
+        mkChips('#st-vph-frames', POLAROID_FRAMES, curFrame, v => { curFrame = v; });
+
+        modal.querySelector('#st-vph-save')?.addEventListener('click', () => {
+          if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
+          config.puppyVisitPhotos.unshift({ id: `vp_${Date.now()}`, hostName, hostLook, guestName, guestLook, date: dateStr, bgId: curBg, poseId: curPose, frameId: curFrame });
+          if (config.puppyVisitPhotos.length > 48) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 48);
+          saveConfig();
+          cmNotify('双狗合照已存入串门相册！');
+          if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+          modal.style.display = 'none';
+        });
+      }
+
+      modal.querySelector('#st-vph-dl')?.addEventListener('click', () => {
+        try {
+          const exp = doc.createElement('canvas');
+          exp.width = 320; exp.height = 294;
+          const eg = exp.getContext('2d');
+          eg.fillStyle = fr.bg; eg.fillRect(0, 0, 320, 294);
+          eg.strokeStyle = fr.bd; eg.lineWidth = 5; eg.strokeRect(2.5, 2.5, 315, 289);
+          eg.imageSmoothingEnabled = false;
+          eg.drawImage(cv, 16, 16, 288, 216);
+          eg.strokeStyle = fr.bd; eg.lineWidth = 2; eg.strokeRect(16, 16, 288, 216);
+          eg.fillStyle = fr.cap; eg.font = 'bold 16px sans-serif'; eg.textAlign = 'center';
+          eg.fillText(`${hostName} & ${guestName}`, 160, 258);
+          eg.fillStyle = fr.date; eg.font = '12px sans-serif';
+          eg.fillText(dateStr, 160, 278);
+          const a = doc.createElement('a');
+          a.href = exp.toDataURL('image/png');
+          a.download = `puppy_photo_${Date.now()}.png`;
+          a.click();
+        } catch (_) { cmNotify('导出失败，请长按截图保存'); }
+      });
     };
-    modal.querySelector('#st-vph-dl').onclick = () => {
-      try {
-        const exp = doc.createElement('canvas');
-        exp.width = 320; exp.height = 290;
-        const eg = exp.getContext('2d');
-        eg.fillStyle = '#fffdf9'; eg.fillRect(0, 0, 320, 290);
-        eg.strokeStyle = '#3b2a22'; eg.lineWidth = 4; eg.strokeRect(2, 2, 316, 286);
-        eg.imageSmoothingEnabled = false;
-        eg.drawImage(cv, 16, 16, 288, 216);
-        eg.fillStyle = '#5a4034'; eg.font = 'bold 16px sans-serif'; eg.textAlign = 'center';
-        eg.fillText(`${hostName} & ${guestName}`, 160, 256);
-        eg.fillStyle = '#8c7366'; eg.font = '12px sans-serif';
-        eg.fillText(dateStr, 160, 275);
-        const a = doc.createElement('a');
-        a.href = exp.toDataURL('image/png');
-        a.download = `puppy_photo_${Date.now()}.png`;
-        a.click();
-      } catch (_) { cmNotify('导出失败，请长按截图保存'); }
-    };
+    renderModal();
     modal.style.display = 'flex';
   };
 
@@ -28385,7 +28528,50 @@
     return config.puppyVisitCoopDaily;
   };
 
-  const runDualCoopActivity = (mode) => {
+  const openCoopCookPickerModal = () => {
+    const guest = config.guestPuppy;
+    if (!guest) return;
+    const daily = getCoopDaily();
+    if (daily.cook >= 3) { showGuestBubble('今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
+    let modal = root.querySelector('#st-tb-coop-cook-modal');
+    if (!modal) {
+      modal = doc.createElement('div');
+      modal.id = 'st-tb-coop-cook-modal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10030;pointer-events:auto;';
+      root.appendChild(modal);
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    }
+    const recipes = PUP_KITCHEN_RECIPES.filter(r => !r.gachaOnly && r.rarity !== 'legend');
+    modal.innerHTML = `<div style="width:266px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:11.5px;font-weight:700;">选一道和「${guest.name}」合作做的菜 (${3 - daily.cook}/3)</span>
+        <button type="button" id="st-cc-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div id="st-cc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:210px;overflow-y:auto;"></div>
+    </div>`;
+    modal.querySelector('#st-cc-x')?.addEventListener('click', () => { modal.style.display = 'none'; });
+    const grid = modal.querySelector('#st-cc-grid');
+    recipes.forEach(dish => {
+      const btn = doc.createElement('button');
+      btn.type = 'button';
+      btn.className = 'st-px-btn';
+      btn.style.cssText = 'height:auto;padding:5px;display:flex;align-items:center;gap:5px;text-align:left;';
+      const ic = makeDishCanvas(dish, false, false);
+      ic.style.cssText = 'width:22px;height:22px;flex-shrink:0;image-rendering:pixelated;';
+      const sp = doc.createElement('span');
+      sp.style.cssText = 'font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      sp.textContent = dish.name;
+      btn.append(ic, sp);
+      btn.addEventListener('click', () => {
+        modal.style.display = 'none';
+        runDualCoopActivity('cook', dish);
+      });
+      grid.appendChild(btn);
+    });
+    modal.style.display = 'flex';
+  };
+
+  const runDualCoopActivity = (mode, chosenDish = null) => {
     const guest = config.guestPuppy;
     if (!guest) return;
     const daily = getCoopDaily();
@@ -28407,24 +28593,25 @@
       }
       saveConfig();
       updatePupStatBars();
-      showPuppyBubble(`和 ${gName} 一起提着小水壶浇花，${bonusTxt}`, 3000);
-      setTimeout(() => { if (config.guestPuppy) showGuestBubble(`和 ${hName} 配合得真默契，花花都精神啦~`, 2600); }, 950);
+      syncBubbleNoOverlap('host');
+      showPuppyBubble(`和 ${gName} 一起提着小水壶浇花，${bonusTxt}`, 2200);
+      setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`和 ${hName} 配合得真默契，花花都精神啦~`, 2400); } }, 2000);
     } else if (mode === 'cook') {
+      if (!chosenDish) { openCoopCookPickerModal(); return; }
       if (daily.cook >= 3) { showGuestBubble('今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
       daily.cook += 1;
       gPup.state = 'spin'; gPup.timer = 115;
       setPuppyState('happy', 115);
-      const dishPool = PUP_KITCHEN_RECIPES.filter(r => !r.gachaOnly && r.rarity !== 'legend');
-      const dish = pick(dishPool.length ? dishPool : PUP_KITCHEN_RECIPES);
       config.puppyKitchen = config.puppyKitchen || { lv: 1, xp: 0, cooked: 0, failed: 0, darkFed: 0, dex: {}, dishes: {} };
       config.puppyKitchen.dishes = config.puppyKitchen.dishes || {};
-      config.puppyKitchen.dishes[dish.id] = Math.floor(config.puppyKitchen.dishes[dish.id] || 0) + 1;
+      config.puppyKitchen.dishes[chosenDish.id] = Math.floor(config.puppyKitchen.dishes[chosenDish.id] || 0) + 1;
       config.puppyKitchen.coopLog = config.puppyKitchen.coopLog || [];
-      config.puppyKitchen.coopLog.unshift(`${dish.name}（与 ${gName} 合作）`);
+      config.puppyKitchen.coopLog.unshift(`${chosenDish.name}（与 ${gName} 合作）`);
       if (config.puppyKitchen.coopLog.length > 20) config.puppyKitchen.coopLog.length = 20;
       saveConfig();
-      showPuppyBubble(`和 ${gName} 联手做出了「${dish.name}（双狗合作版）」！`, 3200);
-      setTimeout(() => { if (config.guestPuppy) showGuestBubble(`哇好香！和 ${hName} 一起掌勺太好玩啦~`, 2600); }, 1000);
+      syncBubbleNoOverlap('host');
+      showPuppyBubble(`和 ${gName} 联手做出了「${chosenDish.name}（双狗合作版）」！`, 2300);
+      setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`哇好香！和 ${hName} 一起掌勺太好玩啦~`, 2400); } }, 2100);
     }
   };
 
@@ -28566,14 +28753,15 @@
     else if (kind === 'feed') { gPup.state = 'eat'; gPup.timer = 105; }
     else if (kind === 'praise') { gPup.state = 'spin'; gPup.timer = 95; }
     else if (kind === 'play') { gPup.state = pick(['bounce', 'playdead', 'spin']); gPup.timer = 110; }
-    showGuestBubble(line, 2900);
+    showGuestBubble(line, 2800);
   };
 
   const openGuestPop = () => {
     const guest = config.guestPuppy;
     if (!guest || !guestPopEl) return;
     const isPinned = Boolean(guest.pinned);
-    guestPopEl.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+    const hideName = Boolean(guest.hideName);
+    guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:move;user-select:none;padding-bottom:3px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
         <span style="font-weight:700;">${guest.name}</span>
         <button type="button" id="st-gp-close" class="st-px-btn" style="height:18px;padding:0 5px;font-size:10px;">×</button>
       </div>
@@ -28588,16 +28776,81 @@
         <button type="button" id="st-gp-water" class="st-px-btn">一起浇花</button>
         <button type="button" id="st-gp-cook" class="st-px-btn">一起做菜</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
         <button type="button" id="st-gp-photo" class="st-px-btn active">拍合照</button>
-        <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定' : '固定'}</button>
-        <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">送客</button>
-      </div>`;
-    const left = clamp(Math.round(gPup.x) - 60, 8, Math.max(8, win.innerWidth - 234));
-    const top = clamp(Math.round((gPup.y || defaultPupY()) - 188), 10, Math.max(10, win.innerHeight - 200));
+        <button type="button" id="st-gp-name-tg" class="st-px-btn${hideName ? '' : ' active'}">${hideName ? '显示名字' : '隐藏名字'}</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+        <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
+        <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
+      </div>
+      <div id="st-gp-resize" class="st-gp-resize" title="拖动右下角缩放"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 9L9 2M5 9L9 5M8 9L9 8" stroke="currentColor" stroke-width="1.3"/></svg></div>`;
+
+    if (config.guestPopRect && config.guestPopRect.width) {
+      guestPopEl.style.width = `${clamp(config.guestPopRect.width, 210, 340)}px`;
+    }
+    const left = (config.guestPopRect && typeof config.guestPopRect.left === 'number')
+      ? clamp(config.guestPopRect.left, 8, Math.max(8, win.innerWidth - 230))
+      : clamp(Math.round(gPup.x) - 60, 8, Math.max(8, win.innerWidth - 234));
+    const top = (config.guestPopRect && typeof config.guestPopRect.top === 'number')
+      ? clamp(config.guestPopRect.top, 8, Math.max(8, win.innerHeight - 220))
+      : clamp(Math.round((gPup.y || defaultPupY()) - 215), 10, Math.max(10, win.innerHeight - 230));
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
     guestPopEl.style.display = 'block';
+
+    // 拖动标题栏移动
+    const head = guestPopEl.querySelector('#st-gp-drag-head');
+    if (head) {
+      head.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('button')) return;
+        e.preventDefault();
+        head.setPointerCapture(e.pointerId);
+        const sx = e.clientX, sy = e.clientY;
+        const rect = guestPopEl.getBoundingClientRect();
+        const ox = rect.left, oy = rect.top;
+        const onMove = (ev) => {
+          const nx = clamp(ox + (ev.clientX - sx), 4, Math.max(4, win.innerWidth - rect.width - 4));
+          const ny = clamp(oy + (ev.clientY - sy), 4, Math.max(4, win.innerHeight - rect.height - 4));
+          guestPopEl.style.left = `${Math.round(nx)}px`;
+          guestPopEl.style.top = `${Math.round(ny)}px`;
+        };
+        const onUp = () => {
+          head.removeEventListener('pointermove', onMove);
+          head.removeEventListener('pointerup', onUp);
+          const r2 = guestPopEl.getBoundingClientRect();
+          config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
+          saveConfig();
+        };
+        head.addEventListener('pointermove', onMove);
+        head.addEventListener('pointerup', onUp);
+      });
+    }
+    // 右下角拖拽缩放
+    const rsz = guestPopEl.querySelector('#st-gp-resize');
+    if (rsz) {
+      rsz.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        rsz.setPointerCapture(e.pointerId);
+        const sx = e.clientX;
+        const ow = guestPopEl.getBoundingClientRect().width;
+        const onMove = (ev) => {
+          const nw = clamp(Math.round(ow + (ev.clientX - sx)), 210, 340);
+          guestPopEl.style.width = `${nw}px`;
+        };
+        const onUp = () => {
+          rsz.removeEventListener('pointermove', onMove);
+          rsz.removeEventListener('pointerup', onUp);
+          const r2 = guestPopEl.getBoundingClientRect();
+          config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
+          saveConfig();
+        };
+        rsz.addEventListener('pointermove', onMove);
+        rsz.addEventListener('pointerup', onUp);
+      });
+    }
+
     guestPopEl.querySelector('#st-gp-close')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; });
     guestPopEl.querySelector('#st-gp-pet')?.addEventListener('click', () => interactWithGuest('pet'));
     guestPopEl.querySelector('#st-gp-nuzzle')?.addEventListener('click', () => interactWithGuest('nuzzle'));
@@ -28606,8 +28859,15 @@
     guestPopEl.querySelector('#st-gp-play')?.addEventListener('click', () => interactWithGuest('play'));
     guestPopEl.querySelector('#st-gp-dual')?.addEventListener('click', () => interactWithGuest('dual'));
     guestPopEl.querySelector('#st-gp-water')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; runDualCoopActivity('water'); });
-    guestPopEl.querySelector('#st-gp-cook')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; runDualCoopActivity('cook'); });
+    guestPopEl.querySelector('#st-gp-cook')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; openCoopCookPickerModal(); });
     guestPopEl.querySelector('#st-gp-photo')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; openDualPhotoModal(); });
+    guestPopEl.querySelector('#st-gp-name-tg')?.addEventListener('click', () => {
+      guest.hideName = !guest.hideName;
+      saveConfig();
+      gPup.lastRenderKey = '';
+      drawGuestPuppyScene();
+      openGuestPop();
+    });
     guestPopEl.querySelector('#st-gp-pin')?.addEventListener('click', () => {
       guest.pinned = !guest.pinned;
       if (guest.pinned) {
@@ -28674,9 +28934,37 @@
     const now = Date.now();
     const maxX = Math.max(8, win.innerWidth - 80);
 
-    if (now >= gPup.nextSocialAt && Math.abs(gPup.x - pup.x) < 280) {
-      gPup.nextSocialAt = now + randInt(26000, 42000);
-      triggerDualPuppySocial(false);
+    if (gPup.state === 'approach' && !guest.pinned) {
+      const tx = typeof gPup.targetX === 'number' ? gPup.targetX : pup.x;
+      const ty = typeof gPup.targetY === 'number' ? gPup.targetY : (pup.y || defaultPupY());
+      const dx = tx - gPup.x;
+      const dy = ty - gPup.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist <= 4 || gPup.timer <= 0) {
+        const pending = gPup.pendingSocial;
+        gPup.pendingSocial = null;
+        if (pending && pending.sc) playDualSocialDialogue(pending.sc, pending.manual);
+        else { gPup.state = 'idle'; gPup.timer = 100; }
+      } else {
+        const spd = 1.15;
+        gPup.x += (dx / dist) * spd;
+        gPup.y += (dy / dist) * spd;
+        gPup.dir = dx >= 0 ? 1 : -1;
+        const gTrail = guest.look?.trail;
+        if (gTrail && gTrail !== 'trail_none' && gPup.tick % 20 === 0) {
+          spawnWalkTrailDot(gTrail, 0, { x: gPup.x, y: gPup.y, dir: gPup.dir });
+        }
+      }
+      drawGuestPuppyScene();
+      return;
+    }
+
+    const sameRow = Math.abs((gPup.y || defaultPupY()) - (pup.y || defaultPupY())) < 68;
+    if (now >= gPup.nextSocialAt) {
+      gPup.nextSocialAt = now + randInt(sameRow ? 18000 : 32000, sameRow ? 30000 : 50000);
+      if (sameRow || Math.random() < 0.55) {
+        triggerDualPuppySocial(false);
+      }
     } else if (gPup.state === 'walk' && !guest.pinned) {
       gPup.x += gPup.dir * 0.65;
       if (gPup.x <= 8) { gPup.x = 8; gPup.dir = 1; }
@@ -28708,6 +28996,8 @@
   };
 
   let visitBookTab = 'stamps';
+  let visitStampPage = 1;
+  let visitPhotoPage = 1;
   function renderPupVisitPanel() {
     if (!advVisitView) return;
     advVisitView.innerHTML = '';
@@ -28888,16 +29178,16 @@
         look: parsed.look || {},
         msg: parsed.msg || '来找你们玩啦~',
         pinned: false,
+        hideName: false,
       };
       config.puppyStats = config.puppyStats || {};
       if (!Array.isArray(config.puppyStats.visitGuestNames)) config.puppyStats.visitGuestNames = [];
       if (!config.puppyStats.visitGuestNames.includes(cleanName)) config.puppyStats.visitGuestNames.push(cleanName);
 
-      // 记录到访客印章本
       if (!Array.isArray(config.puppyVisitLog)) config.puppyVisitLog = [];
       const d = new Date();
       const dStr = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-      const giftSummary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received].join('、');
+      const giftSummary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received.map(r => r.label)].join('、');
       const existing = config.puppyVisitLog.find(x => x.name === cleanName);
       if (existing) {
         existing.count = (existing.count || 1) + 1;
@@ -28907,7 +29197,7 @@
         if (giftSummary) existing.lastGift = giftSummary;
       } else {
         config.puppyVisitLog.unshift({ name: cleanName, count: 1, lastDate: dStr, msg: config.guestPuppy.msg, look: config.guestPuppy.look, lastGift: giftSummary });
-        if (config.puppyVisitLog.length > 30) config.puppyVisitLog.length = 30;
+        if (config.puppyVisitLog.length > 60) config.puppyVisitLog.length = 60;
       }
 
       gPup.x = clamp(pup.x + 64, 16, Math.max(16, win.innerWidth - 90));
@@ -28921,8 +29211,8 @@
       checkPupAchievements();
       if (config.puppyEnabled) {
         drawGuestPuppyScene();
-        showGuestBubble(`哈喽！我是 ${cleanName}，来串门啦~`, 2800);
-        showPuppyBubble(`哇！${cleanName} 来做客啦~`, 2600);
+        showPuppyBubble(`哇！${cleanName} 来做客啦~`, 2100);
+        setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`哈喽！我是 ${cleanName}，来串门啦~`, 2600); } }, 1900);
       }
       openVisitGiftModal(cleanName, config.guestPuppy.msg, received, rp, false);
       renderPupVisitPanel();
@@ -28930,7 +29220,7 @@
     inBox.append(inTa, inBtn);
     advVisitView.appendChild(inBox);
 
-    // 底部：访客印章本 & 双狗合照相册
+    // 底部：访客印章本 & 双狗合照相册（带 首页/上页/下页/末页 分页）
     const bookBox = doc.createElement('div');
     bookBox.className = 'st-px-adv-card';
     const logs = Array.isArray(config.puppyVisitLog) ? config.puppyVisitLog : [];
@@ -28938,15 +29228,41 @@
     bookBox.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px;">
       <button type="button" id="st-vb-stamps" class="st-px-btn${visitBookTab === 'stamps' ? ' active' : ''}" style="height:22px;font-size:10px;">访客印章本 (${logs.length})</button>
       <button type="button" id="st-vb-photos" class="st-px-btn${visitBookTab === 'photos' ? ' active' : ''}" style="height:22px;font-size:10px;">双狗合照 (${photos.length})</button>
-    </div><div id="st-vb-body" style="max-height:112px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;"></div>`;
+    </div><div id="st-vb-body" style="display:flex;flex-direction:column;gap:4px;"></div><div id="st-vb-pager" style="display:none;align-items:center;justify-content:space-between;gap:3px;margin-top:5px;"></div>`;
     bookBox.querySelector('#st-vb-stamps')?.addEventListener('click', () => { visitBookTab = 'stamps'; renderPupVisitPanel(); });
     bookBox.querySelector('#st-vb-photos')?.addEventListener('click', () => { visitBookTab = 'photos'; renderPupVisitPanel(); });
     const vbBody = bookBox.querySelector('#st-vb-body');
+    const vbPager = bookBox.querySelector('#st-vb-pager');
+
+    const renderPager = (curP, totalP, onPage) => {
+      if (totalP <= 1) { vbPager.style.display = 'none'; return; }
+      vbPager.style.display = 'flex';
+      vbPager.innerHTML = '';
+      const mkP = (lbl, target, disabled) => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-px-btn';
+        b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+        b.textContent = lbl;
+        b.disabled = disabled;
+        b.addEventListener('click', () => onPage(target));
+        return b;
+      };
+      const ind = doc.createElement('span');
+      ind.style.cssText = 'font-size:9.5px;font-weight:700;';
+      ind.textContent = `${curP} / ${totalP}`;
+      vbPager.append(mkP('首页', 1, curP <= 1), mkP('上页', curP - 1, curP <= 1), ind, mkP('下页', curP + 1, curP >= totalP), mkP('末页', totalP, curP >= totalP));
+    };
+
+    const PAGE_SIZE = 4;
     if (visitBookTab === 'stamps') {
       if (!logs.length) {
         vbBody.innerHTML = '<div style="font-size:10px;color:#8c7366;text-align:center;padding:8px;">还没有朋友来盖过串门印章哦~</div>';
       } else {
-        logs.forEach(lg => {
+        const totalP = Math.max(1, Math.ceil(logs.length / PAGE_SIZE));
+        visitStampPage = clamp(visitStampPage, 1, totalP);
+        const slice = logs.slice((visitStampPage - 1) * PAGE_SIZE, visitStampPage * PAGE_SIZE);
+        slice.forEach(lg => {
           const row = doc.createElement('div');
           row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:4px 5px;background:#fff;border:1px solid var(--px-border,#bfa4ae);font-size:10px;';
           const cv = doc.createElement('canvas');
@@ -28960,26 +29276,32 @@
           row.append(cv, info);
           vbBody.appendChild(row);
         });
+        renderPager(visitStampPage, totalP, (np) => { visitStampPage = np; renderPupVisitPanel(); });
       }
     } else {
       if (!photos.length) {
         vbBody.innerHTML = '<div style="font-size:10px;color:#8c7366;text-align:center;padding:8px;">客人来的时候点「拍合照」就能存进这里哦~</div>';
       } else {
+        const totalP = Math.max(1, Math.ceil(photos.length / PAGE_SIZE));
+        visitPhotoPage = clamp(visitPhotoPage, 1, totalP);
+        const slice = photos.slice((visitPhotoPage - 1) * PAGE_SIZE, visitPhotoPage * PAGE_SIZE);
         vbBody.style.display = 'grid';
         vbBody.style.gridTemplateColumns = '1fr 1fr';
-        photos.forEach(ph => {
+        slice.forEach(ph => {
+          const fr = POLAROID_FRAMES.find(f => f.id === (ph.frameId || 'classic')) || POLAROID_FRAMES[0];
           const card = doc.createElement('div');
-          card.style.cssText = 'background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:3px;cursor:pointer;text-align:center;';
+          card.style.cssText = `background:${fr.bg};border:1.5px solid ${fr.bd};padding:3px;cursor:pointer;text-align:center;`;
           const cv = doc.createElement('canvas');
-          cv.style.cssText = 'width:100%;height:56px;display:block;image-rendering:pixelated;border:1px solid #d4c2ba;';
-          drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date);
+          cv.style.cssText = `width:100%;height:56px;display:block;image-rendering:pixelated;border:1px solid ${fr.bd};`;
+          drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, { bgId: ph.bgId, poseId: ph.poseId, frameId: ph.frameId });
           const cap = doc.createElement('div');
-          cap.style.cssText = 'font-size:9px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+          cap.style.cssText = `font-size:9px;font-weight:700;margin-top:2px;color:${fr.cap};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
           cap.textContent = `${ph.hostName}&${ph.guestName}`;
           card.addEventListener('click', () => openDualPhotoModal(ph));
           card.append(cv, cap);
           vbBody.appendChild(card);
         });
+        renderPager(visitPhotoPage, totalP, (np) => { visitPhotoPage = np; renderPupVisitPanel(); });
       }
     }
     advVisitView.appendChild(bookBox);
@@ -32923,17 +33245,13 @@
   };
 
   let activeBubDynMode = '';
+  let guestBubDynMode = '';
   let bubFxTick = 0;
-  setInterval(() => {
-    if (doc.hidden || !activeBubDynMode || !puppyBubble || !puppyBubble.classList.contains('show')) return;
-    const bf = root.querySelector('#st-tb-bub-fx');
-    if (!bf) return;
+  const drawBubFxToCanvas = (bf, m, t) => {
+    if (!bf || !m) return;
     const g = bf.getContext('2d');
     const W = bf.width, H = bf.height;
     g.clearRect(0, 0, W, H);
-    bubFxTick = (bubFxTick + 1) % 240;
-    const t = bubFxTick;
-    const m = activeBubDynMode;
 
     // 1:1 精致小装饰绘图助手（气泡实际边框位于 x=5..W-6, y=5..H-6）
     const px = (x, y, c, w = 1, h = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
@@ -33463,6 +33781,15 @@
     } else if (m && m.startsWith('gdyn_')) {
       renderGachaBubDyn(px, m, W, H, t);
     }
+  };
+  setInterval(() => {
+    if (doc.hidden) return;
+    const hostOn = Boolean(activeBubDynMode && puppyBubble && puppyBubble.classList.contains('show'));
+    const guestOn = Boolean(guestBubDynMode && guestPupBubble && guestPupBubble.classList.contains('show'));
+    if (!hostOn && !guestOn) return;
+    bubFxTick = (bubFxTick + 1) % 240;
+    if (hostOn) drawBubFxToCanvas(root.querySelector('#st-tb-bub-fx'), activeBubDynMode, bubFxTick);
+    if (guestOn) drawBubFxToCanvas(root.querySelector('#st-tb-guest-bub-fx'), guestBubDynMode, bubFxTick);
   }, 150);
 
   // 高颜值像素艺术气泡动态渲染引擎（15 款扭蛋/秘境/生日专属原创，气泡与扭蛋预览共用）
