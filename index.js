@@ -5015,6 +5015,8 @@
     .st-tb-guest-puppy.flip.bob .st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-2px); }
     .st-tb-guest-puppy.hop .st-tb-guest-puppy-canvas { transform: translateY(-7px); }
     .st-tb-guest-puppy.flip.hop .st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-7px); }
+    .st-tb-guest-puppy.shake .st-tb-guest-puppy-canvas { transform: translateX(2px); }
+    .st-tb-guest-puppy.flip.shake .st-tb-guest-puppy-canvas { transform: scaleX(-1) translateX(2px); }
     .st-tb-guest-puppy-tag {
       position: absolute;
       left: 50%;
@@ -20520,6 +20522,9 @@
   };
 
   const setPuppyState = (st, durationFrames = 140) => {
+    if (config.puppyPinned && (st === 'walk' || st === 'sneak' || st === 'chase' || st === 'run')) {
+      st = 'sit';
+    }
     pup.state = st;
     pup.timer = durationFrames;
     if (st === 'happy') { pup.happyStyle = randInt(0, 5); pup.happyFxKind = pick(['heart', 'sparkle', 'flower_fx', 'clover_fx', 'note']); }
@@ -25292,7 +25297,7 @@
           if (pup.state === 'spin' || (pup.state === 'happy' && pup.happyStyle === 1)) {
             if (pup.tick % 10 === 0) pup.dir *= -1;
           } else if (pup.state === 'sniff') {
-            pup.x += pup.dir * 0.35 * pSpd;
+            if (!config.puppyPinned) pup.x += pup.dir * 0.35 * pSpd;
             if (pup.x <= 12) { pup.x = 12; pup.dir = 1; }
             else if (pup.x >= maxX) { pup.x = maxX; pup.dir = -1; }
           } else if (
@@ -27038,19 +27043,59 @@
     const cv = modal.querySelector('#st-px-art-cv');
     const g = cv.getContext('2d');
     g.imageSmoothingEnabled = false;
-    g.fillStyle = '#fffdf8';
+    // 暖奶油纸纹画框底衬 + 内框装饰线，让小狗画作像装裱好的精致像素小画！
+    g.fillStyle = '#f5ece0';
     g.fillRect(0, 0, 160, 160);
-    (art.grid || []).forEach((row, y) => {
+    g.fillStyle = '#fffdf8';
+    g.fillRect(10, 10, 140, 140);
+    g.strokeStyle = '#dfd0be';
+    g.lineWidth = 2;
+    g.strokeRect(11, 11, 138, 138);
+    // 四个精致小画钉点缀
+    g.fillStyle = '#c9a68a';
+    [[16,16],[140,16],[16,140],[140,140]].forEach(([px,py]) => g.fillRect(px, py, 4, 4));
+    const grid = art.grid || [];
+    let minX = 999, minY = 999, maxX = -1, maxY = -1;
+    grid.forEach((row, y) => {
       for (let x = 0; x < row.length; x++) {
-        const ch = row[x];
-        if (ch === '.') continue;
-        const col = art.pal[ch];
-        if (col) {
-          g.fillStyle = col;
-          g.fillRect(x * 10, y * 10, 10, 10);
+        if (row[x] !== '.' && art.pal[row[x]]) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
         }
       }
     });
+    if (maxX >= minX && maxY >= minY) {
+      const bw = maxX - minX + 1;
+      const bh = maxY - minY + 1;
+      const cell = clamp(Math.floor(Math.min(116 / bw, 116 / bh)), 6, 12);
+      const drawW = bw * cell;
+      const drawH = bh * cell;
+      const offX = Math.round((160 - drawW) / 2);
+      const offY = Math.round((160 - drawH) / 2);
+      // 柔和画作投影，立体感更强
+      g.fillStyle = 'rgba(130,104,88,0.13)';
+      grid.forEach((row, y) => {
+        for (let x = 0; x < row.length; x++) {
+          if (row[x] !== '.' && art.pal[row[x]]) {
+            g.fillRect(offX + (x - minX) * cell + 3, offY + (y - minY) * cell + 3, cell, cell);
+          }
+        }
+      });
+      // 精准居中绘制像素画本体
+      grid.forEach((row, y) => {
+        for (let x = 0; x < row.length; x++) {
+          const ch = row[x];
+          if (ch === '.') continue;
+          const col = art.pal[ch];
+          if (col) {
+            g.fillStyle = col;
+            g.fillRect(offX + (x - minX) * cell, offY + (y - minY) * cell, cell, cell);
+          }
+        }
+      });
+    }
     modal.style.display = 'flex';
   };
 
@@ -28860,7 +28905,70 @@
         }
         saveConfig();
       }
-      if (!moved) openGuestPop(guest.id);
+      if (!moved) {
+        const nowTap = Date.now();
+        if (rt._tapTimer && nowTap - (rt._lastTapAt || 0) < 320) {
+          clearTimeout(rt._tapTimer);
+          rt._tapTimer = null;
+          rt._lastTapAt = 0;
+          openGuestPop(guest.id);
+        } else {
+          rt._lastTapAt = nowTap;
+          clearTimeout(rt._tapTimer);
+          rt._tapTimer = setTimeout(() => {
+            rt._tapTimer = null;
+            const tNow = Date.now();
+            rt._pokeBurst = (tNow - (rt._lastPokeAt || 0) < 3500) ? ((rt._pokeBurst || 0) + 1) : 1;
+            rt._lastPokeAt = tNow;
+            // 单击串门小狗：和自家小狗一样会跳起来高兴、生气、无语、转圈、装死或花式贴贴！
+            if (rt.state === 'sleep') {
+              const wakeAngry = Math.random() < 0.45;
+              rt.state = wakeAngry ? 'angry' : 'shock';
+              rt.timer = 95;
+              spawnGuestFx(rt, wakeAngry ? 'anger_fx' : 'sweat_fx', 14, 5);
+              showGuestBubbleById(guest.id, wakeAngry ? '哼！人家正做美梦呢怎么戳醒我啦！' : '呜哇吓我一跳！刚睡着就被你点醒啦~', 2600);
+            } else if (rt._pokeBurst >= 3) {
+              const mad = Math.random() < 0.6;
+              rt.state = mad ? 'angry' : 'speechless';
+              rt.timer = 105;
+              spawnGuestFx(rt, mad ? 'anger_fx' : 'sweat_fx', 14, 5);
+              const lines = mad
+                ? ['喂喂！别一直戳我嘛，毛都被你戳炸啦哼！', '再戳我就要鼓起脸生气三秒钟给你看！', '哼，连戳这么多下是欺负我来串门好脾气嘛！']
+                : ['……你是不是把人家当成解压泡泡纸在连点？', '无语地眨了眨眼……手指头不累嘛？', '……行吧，你开心就好，我先静静看你点。'];
+              showGuestBubbleById(guest.id, pick(lines), 2600);
+            } else {
+              const r = Math.random();
+              if (r < 0.30) {
+                rt.state = pick(['happy', 'hop_sync']); rt.timer = 100;
+                spawnGuestFx(rt, pick(['heart', 'sparkle']), 12, 5);
+                showGuestBubbleById(guest.id, pick(['耶！开心得原地蹦起来啦~', '嘿嘿被点到好开心，跳高高给你看！', '哇塞好热情！尾巴甩成小螺旋桨咯！']), 2400);
+              } else if (r < 0.50) {
+                rt.state = pick(['nuzzle', 'tilt_cuddle', 'sit_cuddle', 'spin_hug']); rt.timer = 115;
+                spawnGuestFx(rt, 'heart', 12, 5);
+                if (typeof interactWithGuest === 'function') interactWithGuest(guest.id, 'nuzzle');
+              } else if (r < 0.66) {
+                rt.state = 'speechless'; rt.timer = 95;
+                spawnGuestFx(rt, 'sweat_fx', 15, 6);
+                showGuestBubbleById(guest.id, pick(['……刚才是不是又手滑戳到我鼻尖了？', '歪着嘴沉默两秒……突然点我干嘛呀？', '……本汪只是来串个门，怎么突然被戳了一下。']), 2500);
+              } else if (r < 0.80) {
+                rt.state = 'angry'; rt.timer = 90;
+                spawnGuestFx(rt, 'anger_fx', 14, 5);
+                showGuestBubbleById(guest.id, pick(['哼！别随便戳客人耳朵呀，会痒的！', '鼓起腮帮子瞪你一眼，快拿小饼干哄我！', '喂！我刚理好的发型差点被你戳歪啦！']), 2500);
+              } else if (r < 0.90) {
+                rt.state = 'spin'; rt.timer = 95;
+                spawnGuestFx(rt, 'note', 12, 5);
+                showGuestBubbleById(guest.id, pick(['咻咻咻原地转个漂亮圈圈给你看~', '滴溜溜转一圈！怎么样，动作帅不帅？']), 2400);
+              } else {
+                rt.state = 'playdead'; rt.timer = 100;
+                showGuestBubbleById(guest.id, pick(['啊——被手指光波击中啦，装死三秒！', '扑通倒下装晕，除非摸摸头不然不起来~']), 2500);
+              }
+            }
+            if (typeof showOneTimePanelTip === 'function') {
+              showOneTimePanelTip('seenGuestTapTip', '串门小狗互动提示', '单击串门小狗会有高兴、生气、无语、贴贴等各种反应，双击小狗就能打开它的专属面板哦~');
+            }
+          }, 260);
+        }
+      }
     };
     el.addEventListener('pointerup', endDrag);
     el.addEventListener('pointercancel', endDrag);
@@ -28916,12 +29024,15 @@
     }
 
     let frame = 'idle1';
-    let isSitPose = false, isFlatPose = false, isDead = false, hop = false, bob = false;
+    let isSitPose = false, isFlatPose = false, isDead = false, hop = false, bob = false, shake = false;
     if (rt.state === 'walk' || rt.state === 'approach') {
       const f = Math.floor(rt.tick / 8) % 2;
       frame = f === 0 ? 'walk1' : 'walk2'; bob = f === 1;
     } else if (rt.state === 'sit') {
       frame = Math.floor(rt.tick / 16) % 2 === 0 ? 'sit1' : 'sit2'; isSitPose = true;
+    } else if (rt.state === 'sit_cuddle') {
+      const f = Math.floor(rt.tick / 12) % 2;
+      frame = f === 0 ? 'sit1' : 'sit2'; isSitPose = true; bob = f === 1;
     } else if (rt.state === 'sleep') {
       frame = 'sleep'; isFlatPose = true;
     } else if (rt.state === 'lie') {
@@ -28930,18 +29041,27 @@
       frame = 'playdead'; isDead = true;
     } else if (rt.state === 'eat') {
       frame = Math.floor(rt.tick / 8) % 2 === 0 ? 'eat1' : 'eat2';
-    } else if (rt.state === 'spin') {
+    } else if (rt.state === 'angry') {
+      frame = 'angry'; shake = Math.floor(rt.tick / 4) % 2 === 0;
+    } else if (rt.state === 'shock') {
+      frame = 'shock'; hop = Math.floor(rt.tick / 6) % 2 === 0;
+    } else if (rt.state === 'speechless') {
+      frame = Math.floor(rt.tick / 20) % 2 === 0 ? 'speechless' : 'blink';
+    } else if (rt.state === 'spin' || rt.state === 'spin_hug') {
       const f = Math.floor(rt.tick / 5) % 2;
       frame = f === 0 ? 'walk1' : 'happy'; hop = f === 1;
       if (rt.tick % 10 === 0) rt.dir *= -1;
-    } else if (rt.state === 'bounce') {
+    } else if (rt.state === 'bounce' || rt.state === 'hop_sync') {
       const f = Math.floor(rt.tick / 6) % 2;
       frame = f === 0 ? 'happy' : 'idle2'; hop = f === 0;
+    } else if (rt.state === 'tilt_cuddle') {
+      const f = Math.floor(rt.tick / 11) % 2;
+      frame = f === 0 ? 'idle_tilt' : 'happy'; bob = f === 1;
     } else if (rt.state === 'nuzzle' || rt.state === 'happy') {
       const f = Math.floor(rt.tick / 8) % 2;
       frame = f === 0 ? 'happy' : 'idle2';
       hop = rt.state === 'happy' && f === 0;
-      bob = rt.state === 'nuzzle' && f === 0;
+      shake = rt.state === 'nuzzle' && f === 0;
     } else {
       frame = Math.floor(rt.tick / 18) % 2 === 0 ? 'idle1' : 'idle2';
     }
@@ -28950,10 +29070,18 @@
     if (rt._flip !== wantFlip) { rt.el.classList.toggle('flip', wantFlip); rt._flip = wantFlip; }
     if (rt._bob !== bob) { rt.el.classList.toggle('bob', bob); rt._bob = bob; }
     if (rt._hop !== hop) { rt.el.classList.toggle('hop', hop); rt._hop = hop; }
+    if (rt._shake !== shake) { rt.el.classList.toggle('shake', shake); rt._shake = shake; }
 
-    const fxActiveState = rt.state === 'happy' || rt.state === 'nuzzle' || rt.state === 'spin' || rt.state === 'bounce';
-    if (fxActiveState && rt.tick % 18 === 0) {
-      spawnGuestFx(rt, pick(['heart', 'sparkle', 'flower_fx', 'note']), 12 + (Math.random() - 0.5) * 8, 5);
+    const fxActiveState = ['happy', 'nuzzle', 'spin', 'spin_hug', 'bounce', 'hop_sync', 'tilt_cuddle', 'sit_cuddle'].includes(rt.state);
+    if (fxActiveState && rt.tick % 16 === 0) {
+      const fxPool = (rt.state === 'nuzzle' || rt.state === 'sit_cuddle') ? ['heart', 'heart', 'flower_fx'] : ['heart', 'sparkle', 'flower_fx', 'note'];
+      spawnGuestFx(rt, pick(fxPool), 12 + (Math.random() - 0.5) * 8, 5);
+    } else if (rt.state === 'sleep' && rt.tick % 24 === 0) {
+      spawnGuestFx(rt, 'zzz', 16, 10);
+    } else if (rt.state === 'angry' && rt.tick % 16 === 0) {
+      spawnGuestFx(rt, 'anger_fx', 14, 5);
+    } else if (rt.state === 'speechless' && rt.tick % 20 === 0) {
+      spawnGuestFx(rt, 'sweat_fx', 15, 6);
     }
     const hasFx = Array.isArray(rt.fxParticles) && rt.fxParticles.length > 0;
     // 缓存外观引用，避免每帧 JSON.stringify 造成卡顿！
@@ -29019,6 +29147,18 @@
             rt.ctx.fillRect(gx - 1, gy, 1, 1); rt.ctx.fillRect(gx + 1, gy, 1, 1);
             rt.ctx.fillRect(gx, gy - 1, 1, 1); rt.ctx.fillRect(gx, gy + 1, 1, 1);
             rt.ctx.fillStyle = '#ffe066'; rt.ctx.fillRect(gx, gy, 1, 1);
+          } else if (fp.kind === 'zzz') {
+            rt.ctx.fillStyle = '#8fa4c7';
+            rt.ctx.fillRect(gx, gy, 2, 1);
+            rt.ctx.fillRect(gx + 1, gy + 1, 1, 1);
+            rt.ctx.fillRect(gx, gy + 2, 2, 1);
+          } else if (fp.kind === 'anger_fx') {
+            rt.ctx.fillStyle = '#e84858';
+            rt.ctx.fillRect(gx, gy, 1, 3); rt.ctx.fillRect(gx - 1, gy + 1, 3, 1);
+          } else if (fp.kind === 'sweat_fx') {
+            rt.ctx.fillStyle = '#7ec8f2';
+            rt.ctx.fillRect(gx, gy, 1, 1); rt.ctx.fillRect(gx - 1, gy + 1, 3, 2);
+            rt.ctx.fillStyle = '#ffffff'; rt.ctx.fillRect(gx, gy + 1, 1, 1);
           } else {
             rt.ctx.fillStyle = '#ffe066';
             rt.ctx.fillRect(gx, gy, 2, 2);
@@ -29053,13 +29193,14 @@
 
     const lineA = pick((DUAL_SOCIAL_BY_PERS[persA] || DUAL_SOCIAL_BY_PERS.sleepyhead).open).replace(/\{other\}/g, nameB);
     const lineB = pick((DUAL_SOCIAL_BY_PERS[persB] || DUAL_SOCIAL_BY_PERS.sleepyhead).reply).replace(/\{other\}/g, nameA);
-    const actState = pick(['nuzzle', 'happy', 'spin', 'bounce']);
+    const actState = pick(['nuzzle', 'hop_sync', 'spin_hug', 'tilt_cuddle', 'sit_cuddle']);
 
     const xA = actorA.isHost ? pup.x : actorA.rt.x;
     const xB = actorB.isHost ? pup.x : actorB.rt.x;
-    if (actorA.isHost) { pup.dir = xB >= xA ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 420); }
+    const hostActMap = { nuzzle: 'nuzzle', hop_sync: 'happy', spin_hug: 'happy', tilt_cuddle: 'nuzzle', sit_cuddle: 'sit' };
+    if (actorA.isHost) { pup.dir = xB >= xA ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(hostActMap[actState] || 'nuzzle', 420); }
     else { actorA.rt.dir = xB >= xA ? 1 : -1; actorA.rt.talkingUntil = lockUntil; actorA.rt.state = actState; actorA.rt.timer = 420; }
-    if (actorB.isHost) { pup.dir = xA >= xB ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 420); }
+    if (actorB.isHost) { pup.dir = xA >= xB ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(hostActMap[actState] || 'nuzzle', 420); }
     else { actorB.rt.dir = xA >= xB ? 1 : -1; actorB.rt.talkingUntil = lockUntil; actorB.rt.state = actState; actorB.rt.timer = 420; }
 
     if (actorA.isHost) {
@@ -31110,6 +31251,28 @@
       }
 
       if (rt.timer <= 0) {
+        // 防重叠检查：如果停下的位置和自家小狗或其他串门小狗太近（同行间距 < 54px），顺手再多走几步错开！
+        const isCrowdedAt = (cx, cy) => {
+          if (Math.abs((pup.y || defaultPupY()) - cy) < 44 && Math.abs(pup.x - cx) < 54) return true;
+          for (const [oid, ort] of guestRuntimes.entries()) {
+            if (oid === guest.id) continue;
+            const og = list.find(x => x.id === oid);
+            if (!og || og.onDesktop === false) continue;
+            if (Math.abs((ort.y || defaultPupY()) - cy) < 44 && Math.abs(ort.x - cx) < 54) return true;
+          }
+          return false;
+        };
+        if (!guest.pinned && isCrowdedAt(rt.x, rt.y || defaultPupY()) && !(rt.talkingUntil && now < rt.talkingUntil)) {
+          const leftClear = rt.x - 58 >= 8 && !isCrowdedAt(rt.x - 58, rt.y || defaultPupY());
+          const rightClear = rt.x + 58 <= maxX && !isCrowdedAt(rt.x + 58, rt.y || defaultPupY());
+          if (leftClear && !rightClear) rt.dir = -1;
+          else if (rightClear && !leftClear) rt.dir = 1;
+          else rt.dir = rt.x > maxX / 2 ? -1 : 1;
+          rt.state = 'walk';
+          rt.timer = randInt(55, 95);
+          drawSingleGuestScene(guest, rt);
+          return;
+        }
         const rxSave = Math.round(rt.x), rySave = Math.round(rt.y || defaultPupY());
         if (typeof guest.lastX !== 'number' || typeof guest.lastY !== 'number' || Math.hypot(rxSave - guest.lastX, rySave - guest.lastY) > 6) {
           guest.lastX = rxSave;
@@ -31121,22 +31284,25 @@
           drawSingleGuestScene(guest, rt);
           return;
         }
-        // 睡觉/趴下/坐着/站立/走路概率与自家小狗保持一致，温和自然不乱跑
+        // 趴着概率明显高于睡觉，避免串门小狗动不动就睡着
         const r = Math.random();
         if (!guest.pinned && r < 0.18) {
           if (Math.random() < 0.45) rt.dir *= -1;
-          rt.state = 'walk'; rt.timer = randInt(140, 260);
-        } else if (r < 0.48) {
-          rt.state = 'idle'; rt.timer = randInt(190, 340);
-        } else if (r < 0.78) {
-          rt.state = 'sit'; rt.timer = randInt(200, 360);
+          rt.state = 'walk'; rt.timer = randInt(120, 220);
+        } else if (r < 0.42) {
+          rt.state = 'idle'; rt.timer = randInt(180, 320);
+        } else if (r < 0.66) {
+          rt.state = 'sit'; rt.timer = randInt(190, 340);
         } else if (r < 0.86 && now >= (rt.nextLieAt || 0)) {
-          rt.nextLieAt = now + randInt(95000, 145000);
-          rt.state = 'lie'; rt.timer = randInt(900, 1500);
+          rt.nextLieAt = now + randInt(35000, 65000);
+          rt.state = 'lie'; rt.timer = randInt(380, 680);
         } else if (r < 0.94) {
-          rt.state = Math.random() < 0.5 ? 'spin' : 'bounce'; rt.timer = randInt(85, 115);
+          rt.state = Math.random() < 0.5 ? 'spin' : 'bounce'; rt.timer = randInt(80, 110);
+        } else if (now >= (rt.nextSleepAt || 0)) {
+          rt.nextSleepAt = now + randInt(180000, 300000);
+          rt.state = 'sleep'; rt.timer = randInt(550, 900);
         } else {
-          rt.state = 'sleep'; rt.timer = randInt(1400, 2200);
+          rt.state = 'lie'; rt.timer = randInt(340, 560);
         }
       }
       drawSingleGuestScene(guest, rt);
@@ -40176,15 +40342,20 @@
         config.puppyInventory.personality_potion = (config.puppyInventory.personality_potion || 0) + 1;
         return { tier: 'SSR', col: '#ffe066', iconType: 'potion', itemId: 'personality_potion', name: '性格重塑药水', sub: '珍稀魔药 x1 (设置中使用)', label: '[SSR] 性格重塑药水 x1' };
       }
-      const prize = pick(unownedSsr.length ? unownedSsr : ssrPool);
+      const ownedSsr = ssrPool.filter(p => !unownedSsr.includes(p));
+      // 优先出未拥有，但已有收藏时保留较低概率(18%)抽到重复并折算丰厚对应小狗币
+      const pickDupSsr = ownedSsr.length > 0 && (!unownedSsr.length || Math.random() < 0.18);
+      const prize = pick(pickDupSsr ? ownedSsr : (unownedSsr.length ? unownedSsr : ssrPool));
       const cleanName = prize.item.name.replace('[扭蛋] ', '');
       const isNew = grantGachaExclusive(prize);
       if (isNew) {
         const subTxt = prize.kind === 'recipe' ? '传说厨房秘方 · 已解锁制作!' : '传说限定 · 新获得!';
         return { tier: 'SSR', col: '#ffe066', iconType: prize.kind, itemId: prize.item.id, name: cleanName, sub: subTxt, label: `[SSR] ${cleanName} (新)` };
       }
-      config.puppyCoins = (config.puppyCoins || 0) + 15;
-      return { tier: 'SSR', col: '#ffe066', iconType: prize.kind, itemId: prize.item.id, name: cleanName, sub: '已有折算 +15 币', label: `[SSR] ${cleanName} 折15币` };
+      config.puppyCoins = (config.puppyCoins || 0) + 28;
+      config.puppyStats = config.puppyStats || {};
+      config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + 28;
+      return { tier: 'SSR', col: '#ffe066', iconType: prize.kind, itemId: prize.item.id, name: cleanName, sub: '重复限定 · 转化 +28 币', label: `[SSR] ${cleanName} 转化+28币` };
     }
 
     if (hitSr) {
@@ -40193,15 +40364,20 @@
         config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 2;
         return { tier: 'SR', col: '#c4a8ff', iconType: 'coins', itemId: 'gacha_ticket', name: '豪华扭蛋券 ×2', sub: '超低概率惊喜 · 已存入扭蛋机', label: '[SR] 扭蛋券×2' };
       }
-      const prize = pick(unownedSr.length ? unownedSr : srPool);
+      const ownedSr = srPool.filter(p => !unownedSr.includes(p));
+      // 优先出未拥有，已有收藏时保留较低概率(20%)抽到重复并折算对应小狗币
+      const pickDupSr = ownedSr.length > 0 && (!unownedSr.length || Math.random() < 0.20);
+      const prize = pick(pickDupSr ? ownedSr : (unownedSr.length ? unownedSr : srPool));
       const cleanName = prize.item.name.replace('[扭蛋] ', '');
       const isNew = grantGachaExclusive(prize);
       if (isNew) {
         const subTxt = prize.kind === 'recipe' ? '秘传厨房食谱 · 已解锁制作!' : '稀有限定 · 新获得!';
         return { tier: 'SR', col: '#c4a8ff', iconType: prize.kind, itemId: prize.item.id, name: cleanName, sub: subTxt, label: `[SR] ${cleanName} (新)` };
       }
-      config.puppyCoins = (config.puppyCoins || 0) + 6;
-      return { tier: 'SR', col: '#c4a8ff', iconType: prize.kind, itemId: prize.item.id, name: cleanName, sub: '已有折算 +6 币', label: `[SR] ${cleanName} 折6币` };
+      config.puppyCoins = (config.puppyCoins || 0) + 12;
+      config.puppyStats = config.puppyStats || {};
+      config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + 12;
+      return { tier: 'SR', col: '#c4a8ff', iconType: prize.kind, itemId: prize.item.id, name: cleanName, sub: '重复限定 · 转化 +12 币', label: `[SR] ${cleanName} 转化+12币` };
     }
 
     // R 奖池多元化：鲜花礼袋 / 厨艺心得 / 好感甜心 / 实用道具 / 扭蛋零食 / 返币（不再总是零食！）
