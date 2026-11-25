@@ -13067,6 +13067,28 @@
 
   const escapeHtmlSimple = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+  const deleteFloorAndBelowReliably = async (fromMesId) => {
+    const idx = Number(fromMesId);
+    const ctx = getContext();
+    if (!Number.isFinite(idx) || !Array.isArray(ctx?.chat) || idx < 0 || idx >= ctx.chat.length) return false;
+    try {
+      ctx.chat.splice(idx);
+      if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+      else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+      if (typeof ctx.reloadCurrentChat === 'function') {
+        await ctx.reloadCurrentChat();
+      } else {
+        doc.querySelectorAll('#chat .mes[mesid]').forEach(el => {
+          const mid = Number(el.getAttribute('mesid'));
+          if (Number.isFinite(mid) && mid >= idx) el.remove();
+        });
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const openFloorDeleteConfirmModal = (mesEl, onConfirmDel) => {
     if (!mesEl) return;
     const mesidAttr = mesEl.getAttribute('mesid');
@@ -13079,14 +13101,23 @@
     const belowChat = (Number.isFinite(mesNum) && Array.isArray(ctxChat)) ? Math.max(0, ctxChat.length - 1 - mesNum) : 0;
     const belowCnt = Math.max(belowDom, belowChat);
     const belowHtml = belowCnt > 0
-      ? `<span class="st-tb-confirm-warn">⚠️ 下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）</span>`
+      ? `<span class="st-tb-confirm-warn">下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）</span>`
+        + `<label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;font-weight:600;color:var(--tb-text);cursor:pointer;"><input type="checkbox" id="st-tb-del-below-chk" style="margin:0;" /><span>同时删除本层及以下全部 ${belowCnt + 1} 层</span></label>`
       : `<div>当前是最底部一层，下方没有其他内容。</div>`;
     const descHtml = `<div>当前楼层：第 #${escapeHtmlSimple(mesidAttr)} 层（${escapeHtmlSimple(speaker)}）</div>${belowHtml}`;
     const preview = getVisibleFloorPreview(mesEl, mesNum);
     openGuardConfirm(
       `确认删除第 #${mesidAttr} 层？`,
       '',
-      onConfirmDel,
+      async () => {
+        const chk = root.querySelector('#st-tb-del-below-chk');
+        if (chk && chk.checked && belowCnt > 0) {
+          const ok = await deleteFloorAndBelowReliably(mesNum);
+          showImmNotice(ok ? `已删除第 #${mesidAttr} 层及以下全部 ${belowCnt + 1} 层` : '批量删层失败，请重试');
+          return;
+        }
+        if (typeof onConfirmDel === 'function') onConfirmDel();
+      },
       '继续删除',
       false,
       null,
@@ -49340,19 +49371,48 @@
     const maxIdx = Math.max(0, chat.length - 1);
     const idx = clamp(Number(targetIdx) || 0, 0, maxIdx);
     const chatEl = doc.querySelector('#chat');
-    const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
-    if (chatEl && mesEl) {
-      const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 8;
-      chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
-      mesEl.style.transition = 'outline 0.2s ease';
-      mesEl.style.outline = '2px solid var(--tb-accent, #6b8cff)';
-      setTimeout(() => { mesEl.style.outline = ''; }, 1400);
-      showImmNotice(`已跳转到第 #${idx} 层`);
-    } else if (chatEl) {
-      if (idx === 0) chatEl.scrollTo({ top: 0, behavior: 'smooth' });
-      else chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
-      showImmNotice(idx === 0 ? '已滚动到聊天顶部' : '已滚动到聊天底部');
-    }
+    if (!chatEl) return;
+
+    // 自动展开被折叠的目标楼层及其附近楼层，防止 display:none 导致坐标算成 0 而停在底部
+    doc.querySelectorAll('#chat .mes.st-tb-folded-mes').forEach(el => {
+      const mid = Number(el.getAttribute('mesid'));
+      if (Number.isFinite(mid) && mid >= idx) el.classList.remove('st-tb-folded-mes');
+    });
+    const foldBar = doc.querySelector('#st-tb-fold-banner');
+    if (foldBar && idx === 0) foldBar.style.display = 'none';
+
+    const doScrollNow = () => {
+      if (idx === 0) {
+        chatEl.scrollTo({ top: 0, behavior: 'smooth' });
+        const firstEl = doc.querySelector('#chat .mes[mesid="0"]');
+        if (firstEl && firstEl.offsetParent !== null) {
+          firstEl.style.transition = 'outline 0.2s ease';
+          firstEl.style.outline = '2px solid var(--tb-accent, #6b8cff)';
+          setTimeout(() => { firstEl.style.outline = ''; }, 1400);
+        }
+        showImmNotice('已跳转到顶部第 #0 层');
+        return;
+      }
+      if (idx >= maxIdx) {
+        chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
+        showImmNotice(`已跳转到底部第 #${maxIdx} 层`);
+        return;
+      }
+      const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+      if (mesEl && mesEl.offsetParent !== null) {
+        const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 8;
+        chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: 'smooth' });
+        mesEl.style.transition = 'outline 0.2s ease';
+        mesEl.style.outline = '2px solid var(--tb-accent, #6b8cff)';
+        setTimeout(() => { mesEl.style.outline = ''; }, 1400);
+        showImmNotice(`已跳转到第 #${idx} 层`);
+      } else {
+        // 如果酒馆懒加载还没渲染该楼层，滚动到顶部方便加载
+        chatEl.scrollTo({ top: 0, behavior: 'smooth' });
+        showImmNotice(`第 #${idx} 层尚未被酒馆加载，已滚到顶部，点上方“显示更多消息”即可展开`);
+      }
+    };
+    setTimeout(doScrollNow, 40);
   };
 
   const closeJumpFloorModal = () => {
