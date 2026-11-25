@@ -27547,43 +27547,199 @@
     return received;
   };
 
-  const encodePupVisitCard = (msgText, gifts) => {
-    const payload = {
-      v: 1,
-      name: getPupName(),
-      pers: config.puppyPersonality || 'sleepyhead',
-      look: {
-        fur: config.puppyFur || '#fffdf7',
-        ear: config.puppyEar || '#e2ae74',
-        collar: config.puppyCollar || '#d66565',
-        outline: config.puppyOutline || '#3b2a22',
-        showCollar: config.puppyShowCollar !== false,
-        outfit: config.puppyOutfit || 'none',
-        accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, 2) : [],
-        comp: config.puppyCompanion || 'none',
-        onesieShowEars: Boolean(config.puppyOnesieShowEars),
-      },
-      msg: String(msgText || '').trim().slice(0, 40) || '带了点小礼物来找你玩~',
-      gifts: gifts.map(g => ({ kind: g.kind, id: g.id, qty: g.qty })),
-    };
-    const bytes = new TextEncoder().encode(JSON.stringify(payload));
+  const getVisitCatalogs = () => {
+    const uniq = (arr) => [...new Set(arr.filter(Boolean))];
+    const outfits = uniq([
+      'none',
+      ...(typeof FREE_PUP_OUTFITS !== 'undefined' ? FREE_PUP_OUTFITS.map(x => x.id) : []),
+      ...(typeof SHOP_PUP_OUTFITS !== 'undefined' ? SHOP_PUP_OUTFITS.map(x => x.id) : []),
+      ...(typeof TREASURE_OUTFITS !== 'undefined' ? TREASURE_OUTFITS.map(x => x.id) : []),
+      ...(typeof GACHA_OUTFITS !== 'undefined' ? GACHA_OUTFITS.map(x => x.id) : []),
+    ]);
+    const accs = uniq([
+      'none',
+      ...(typeof FREE_PUP_ACCS !== 'undefined' ? FREE_PUP_ACCS.map(x => x.id) : []),
+      ...(typeof SHOP_PUP_ACCS !== 'undefined' ? SHOP_PUP_ACCS.map(x => x.id) : []),
+      ...(typeof TREASURE_ACCS !== 'undefined' ? TREASURE_ACCS.map(x => x.id) : []),
+      ...(typeof GACHA_ACCS !== 'undefined' ? GACHA_ACCS.map(x => x.id) : []),
+    ]);
+    const comps = uniq([
+      'none',
+      ...(typeof SHOP_PUP_COMPANIONS !== 'undefined' ? SHOP_PUP_COMPANIONS.map(x => x.id) : []),
+      ...(typeof TREASURE_COMPANIONS !== 'undefined' ? TREASURE_COMPANIONS.map(x => x.id) : []),
+      ...(typeof GACHA_COMPANIONS !== 'undefined' ? GACHA_COMPANIONS.map(x => x.id) : []),
+    ]);
+    const gifts = [
+      ...SHOP_PUP_GOODS.map(x => ({ kind: x.cat === 'gear' ? 'gear' : 'snack', id: x.id })),
+      ...GACHA_SNACKS.map(x => ({ kind: 'snack', id: x.id })),
+      ...PUP_FLOWERS.map(x => ({ kind: 'flower', id: x.id })),
+      ...PUP_KITCHEN_RECIPES.map(x => ({ kind: 'dish', id: x.id })),
+      ...PUP_DARK_DISHES.map(x => ({ kind: 'dish', id: x.id })),
+    ];
+    return { outfits, accs, comps, gifts };
+  };
+
+  const hexToRgbBytes = (hex, fallback) => {
+    const s = String(hex || fallback || '#ffffff').replace('#', '').trim();
+    const full = s.length === 3 ? s.split('').map(c => c + c).join('') : s.padEnd(6, '0').slice(0, 6);
+    const n = parseInt(full, 16);
+    if (Number.isNaN(n)) return [255, 255, 255];
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  };
+
+  const rgbBytesToHex = (r, g, b) => '#' + [r, g, b].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+
+  const toB64Url = (u8) => {
     let bin = '';
-    bytes.forEach(b => { bin += String.fromCharCode(b); });
-    return 'GLCPUP:' + btoa(bin);
+    for (let i = 0; i < u8.length; i++) bin += String.fromCharCode(u8[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  };
+
+  const fromB64Any = (str) => {
+    let b64 = String(str || '').replace(/-/g, '+').replace(/_/g, '/');
+    while (b64.length % 4) b64 += '=';
+    const bin = atob(b64);
+    const u8 = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    return u8;
+  };
+
+  const encodePupVisitCard = (msgText, gifts) => {
+    const cat = getVisitCatalogs();
+    const persIds = PUP_PERSONALITIES.map(p => p.id);
+    const pIdx = Math.max(0, persIds.indexOf(config.puppyPersonality || 'sleepyhead'));
+    const flags = (pIdx & 0x0f) | (config.puppyShowCollar !== false ? 0x10 : 0) | (config.puppyOnesieShowEars ? 0x20 : 0);
+
+    const outIdx = Math.max(0, cat.outfits.indexOf(config.puppyOutfit || 'none'));
+    const accArr = Array.isArray(config.puppyAccs) ? config.puppyAccs : [];
+    const a1Idx = accArr[0] ? Math.max(0, cat.accs.indexOf(accArr[0])) : 0;
+    const a2Idx = accArr[1] ? Math.max(0, cat.accs.indexOf(accArr[1])) : 0;
+    const cIdx = Math.max(0, cat.comps.indexOf(config.puppyCompanion || 'none'));
+
+    const enc = new TextEncoder();
+    const nameBytes = enc.encode(String(getPupName() || '小狗').slice(0, 14)).slice(0, 48);
+    const cleanMsg = String(msgText || '').trim().slice(0, 40);
+    const msgBytes = (cleanMsg && cleanMsg !== '带了点小礼物来找你玩~') ? enc.encode(cleanMsg).slice(0, 120) : new Uint8Array(0);
+
+    const giftEntries = [];
+    (gifts || []).forEach(g => {
+      const gi = cat.gifts.findIndex(x => x.kind === g.kind && x.id === g.id);
+      if (gi >= 0) giftEntries.push({ gi, qty: Math.max(1, Math.min(255, Math.floor(g.qty || 1))) });
+    });
+
+    const buf = [];
+    const pushU16 = (v) => { buf.push((v >> 8) & 255, v & 255); };
+    buf.push(2, flags);
+    buf.push(...hexToRgbBytes(config.puppyFur, '#fffdf7'));
+    buf.push(...hexToRgbBytes(config.puppyEar, '#e2ae74'));
+    buf.push(...hexToRgbBytes(config.puppyCollar, '#d66565'));
+    buf.push(...hexToRgbBytes(config.puppyOutline, '#3b2a22'));
+    pushU16(outIdx);
+    pushU16(a1Idx);
+    pushU16(a2Idx);
+    pushU16(cIdx);
+    buf.push(nameBytes.length, ...nameBytes);
+    buf.push(msgBytes.length, ...msgBytes);
+    buf.push(giftEntries.length);
+    giftEntries.forEach(ge => { pushU16(ge.gi); buf.push(ge.qty); });
+
+    return 'GLC:' + toB64Url(new Uint8Array(buf));
   };
 
   const decodePupVisitCard = (raw) => {
-    const s = String(raw || '').trim();
-    if (!s.startsWith('GLCPUP:')) return null;
+    const cleaned = String(raw || '').replace(/[\s\u200B-\u200D\uFEFF]+/g, '');
+    const m = cleaned.match(/(GLCPUP|GLC):([A-Za-z0-9+/_=-]+)/i);
+    if (!m) return null;
+    const prefix = m[1].toUpperCase();
+    const body = m[2];
     try {
-      const bin = atob(s.slice(7).trim());
-      const bytes = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      const obj = JSON.parse(new TextDecoder().decode(bytes));
-      if (!obj || obj.v !== 1 || !obj.name) return null;
-      return obj;
+      if (prefix === 'GLCPUP') {
+        const u8 = fromB64Any(body);
+        const obj = JSON.parse(new TextDecoder().decode(u8));
+        if (!obj || obj.v !== 1 || !obj.name) return null;
+        return obj;
+      }
+      const u8 = fromB64Any(body);
+      if (u8.length < 25 || u8[0] !== 2) return null;
+      const cat = getVisitCatalogs();
+      const persIds = PUP_PERSONALITIES.map(p => p.id);
+      let pos = 1;
+      const flags = u8[pos++];
+      const pIdx = flags & 0x0f;
+      const showCollar = Boolean(flags & 0x10);
+      const onesieShowEars = Boolean(flags & 0x20);
+      const readHex = () => rgbBytesToHex(u8[pos++], u8[pos++], u8[pos++]);
+      const readU16 = () => { const v = (u8[pos] << 8) | u8[pos + 1]; pos += 2; return v; };
+
+      const fur = readHex();
+      const ear = readHex();
+      const collar = readHex();
+      const outline = readHex();
+      const outIdx = readU16();
+      const a1Idx = readU16();
+      const a2Idx = readU16();
+      const cIdx = readU16();
+
+      const dec = new TextDecoder();
+      const nLen = u8[pos++];
+      const name = dec.decode(u8.slice(pos, pos + nLen)) || '小伙伴';
+      pos += nLen;
+      const mLen = u8[pos++];
+      const msg = mLen > 0 ? dec.decode(u8.slice(pos, pos + mLen)) : '带了点小礼物来找你玩~';
+      pos += mLen;
+
+      const gCnt = u8[pos++] || 0;
+      const gifts = [];
+      for (let i = 0; i < gCnt && pos + 2 < u8.length; i++) {
+        const gi = readU16();
+        const qty = u8[pos++];
+        const meta = cat.gifts[gi];
+        if (meta && qty > 0) gifts.push({ kind: meta.kind, id: meta.id, qty });
+      }
+
+      const accs = [];
+      if (a1Idx > 0 && cat.accs[a1Idx] && cat.accs[a1Idx] !== 'none') accs.push(cat.accs[a1Idx]);
+      if (a2Idx > 0 && cat.accs[a2Idx] && cat.accs[a2Idx] !== 'none') accs.push(cat.accs[a2Idx]);
+
+      return {
+        v: 2,
+        name,
+        pers: persIds[pIdx] || 'sleepyhead',
+        look: {
+          fur, ear, collar, outline, showCollar,
+          outfit: cat.outfits[outIdx] || 'none',
+          accs,
+          comp: cat.comps[cIdx] || 'none',
+          onesieShowEars,
+        },
+        msg,
+        gifts,
+      };
     } catch (_) {
       return null;
+    }
+  };
+
+  let lastGeneratedVisitCode = '';
+  const copyVisitCodeReliable = (txt) => {
+    if (!txt) return false;
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(txt).catch(() => {});
+      }
+    } catch (_) {}
+    try {
+      const ta = doc.createElement('textarea');
+      ta.value = txt;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+      doc.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = doc.execCommand('copy');
+      ta.remove();
+      return ok;
+    } catch (_) {
+      return false;
     }
   };
 
@@ -27841,10 +27997,33 @@
     genBtn.className = 'st-px-btn care';
     genBtn.style.width = '100%';
     genBtn.textContent = totalPicked > 0 ? `打包 ${totalPicked} 件礼物并生成名片码` : '生成串门名片码';
-    const codeOut = doc.createElement('textarea');
+    const codeRow = doc.createElement('div');
+    codeRow.style.cssText = 'display:flex;gap:4px;margin-top:5px;align-items:center;';
+    const codeOut = doc.createElement('input');
+    codeOut.type = 'text';
     codeOut.readOnly = true;
-    codeOut.placeholder = '生成的名片码会显示在这里，发给朋友即可来串门~';
-    codeOut.style.cssText = 'width:100%;height:42px;margin-top:5px;font-size:9px;resize:none;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:3px;';
+    codeOut.value = lastGeneratedVisitCode || '';
+    codeOut.placeholder = '点上方按钮生成短名片码~';
+    codeOut.style.cssText = 'flex:1;min-width:0;height:24px;font-size:10px;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:2px 5px;background:#fff;';
+    codeOut.addEventListener('click', () => {
+      codeOut.select();
+      if (codeOut.value) {
+        copyVisitCodeReliable(codeOut.value);
+        cmNotify('已复制串门码！');
+      }
+    });
+    const copyBtn = doc.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'st-px-btn active';
+    copyBtn.style.cssText = 'height:24px;padding:0 8px;font-size:10px;flex-shrink:0;';
+    copyBtn.textContent = '一键复制';
+    copyBtn.addEventListener('click', () => {
+      if (!codeOut.value) { cmNotify('请先生成串门名片码'); return; }
+      copyVisitCodeReliable(codeOut.value);
+      cmNotify('已复制串门名片码！');
+    });
+    codeRow.append(codeOut, copyBtn);
+
     genBtn.addEventListener('click', () => {
       const gifts = [];
       const allMap = new Map(giftables.map(it => [`${it.kind}:${it.id}`, it]));
@@ -27862,25 +28041,21 @@
         }
       }
       const cardCode = encodePupVisitCard(msgInp.value, gifts);
+      lastGeneratedVisitCode = cardCode;
       guestDraftGifts = {};
       saveConfig();
-      codeOut.value = cardCode;
-      try { navigator.clipboard?.writeText(cardCode); } catch (_) {}
-      cmNotify(gifts.length ? '名片码已生成并复制，礼物已打包！' : '名片码已生成并复制！');
+      copyVisitCodeReliable(cardCode);
+      cmNotify(gifts.length ? '短名片码已生成并复制，礼物已打包！' : '短名片码已生成并复制！');
       renderPupVisitPanel();
-      setTimeout(() => {
-        const ta = advVisitView.querySelector('textarea[readonly]');
-        if (ta) ta.value = cardCode;
-      }, 20);
     });
-    outBox.append(msgInp, genBtn, codeOut);
+    outBox.append(msgInp, genBtn, codeRow);
     advVisitView.appendChild(outBox);
 
     const inBox = doc.createElement('div');
     inBox.className = 'st-px-adv-card';
     inBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">请朋友的小狗来串门</div>`;
     const inTa = doc.createElement('textarea');
-    inTa.placeholder = '粘贴朋友发来的 GLCPUP:... 名片码';
+    inTa.placeholder = '粘贴朋友发来的 GLC:... 短名片码';
     inTa.style.cssText = 'width:100%;height:42px;font-size:9px;resize:none;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:3px;margin-bottom:5px;';
     const inBtn = doc.createElement('button');
     inBtn.type = 'button';
