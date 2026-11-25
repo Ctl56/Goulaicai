@@ -7110,7 +7110,7 @@
       font-size: 10px;
     }
     .st-px-photo-viewer.open { display: flex; }
-    .st-px-photo-viewer canvas {
+    .st-px-photo-viewer > canvas {
       width: 180px;
       height: 120px;
       border: 2px solid #3b2a22;
@@ -27522,12 +27522,18 @@
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
         const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null }] : []);
+        const newHist = [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12);
+        const keepPinned = Boolean(prevRec?.pinnedCover);
+        const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
+        const coverShot = newHist[nextCoverIdx] || newHist[0];
         config.puppyAlbum[ph.id] = {
-          date: shotDate,
+          date: coverShot.date || shotDate,
           firstDate: prevRec?.firstDate || prevRec?.date || shotDate,
           count: (prevRec?.count || 0) + 1,
-          look: shotLook || prevRec?.look || null,
-          history: [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12),
+          look: coverShot.look || shotLook || prevRec?.look || null,
+          pinnedCover: keepPinned,
+          coverShotIdx: nextCoverIdx,
+          history: newHist,
         };
         coinGain = 1;
         summary = `糟糕! 追蝴蝶时把战利品颠丢了... 幸好带回${isNewPh ? '新' : '重复'}照片【${ph.title}】(+1币)`;
@@ -27598,12 +27604,18 @@
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
         const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null }] : []);
+        const newHist = [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12);
+        const keepPinned = Boolean(prevRec?.pinnedCover);
+        const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
+        const coverShot = newHist[nextCoverIdx] || newHist[0];
         config.puppyAlbum[gotPhoto.id] = {
-          date: shotDate,
+          date: coverShot.date || shotDate,
           firstDate: prevRec?.firstDate || prevRec?.date || shotDate,
           count: (prevRec?.count || 0) + 1,
-          look: shotLook || prevRec?.look || null,
-          history: [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12),
+          look: coverShot.look || shotLook || prevRec?.look || null,
+          pinnedCover: keepPinned,
+          coverShotIdx: nextCoverIdx,
+          history: newHist,
         };
       }
 
@@ -31595,25 +31607,62 @@
               metaBox.style.cssText = 'margin-top:5px;font-size:9.5px;color:#6b5446;text-align:center;line-height:1.45;';
               photoBigNoteEl.parentNode.insertBefore(metaBox, photoBigNoteEl.nextSibling);
             }
+            const getCoverIdx = () => {
+              const ci = typeof rec.coverShotIdx === 'number' ? rec.coverShotIdx : 0;
+              return clamp(ci, 0, Math.max(0, shots.length - 1));
+            };
+            shotIdx = getCoverIdx();
             const renderShot = () => {
               const cur = shots[shotIdx] || shots[0];
+              const coverIdx = getCoverIdx();
+              const isCover = shotIdx === coverIdx;
               drawAdvPhotoCanvas(photoBigCanvas, ph, false, { ...rec, look: cur.look, date: cur.date });
-              const cntTxt = (rec.count || 1) > 1 ? ` · 已拍到 ${rec.count} 次` : '';
+              const cntTxt = (rec.count || 1) > 1 ? ` · 共拍到 ${rec.count} 次` : '';
               photoBigTitleEl.textContent = `${ph.title} · ${dName} (${cur.date || rec.date || ''}${cntTxt})`;
               photoBigNoteEl.textContent = ph.note;
               const outfitLine = `当时穿搭：${describeShotLook(cur.look)}`;
-              if (shots.length > 1) {
-                metaBox.innerHTML = `<div style="margin-bottom:4px;">${outfitLine}</div>
-                  <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                    <button type="button" id="st-pv-shot-prev" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;"${shotIdx <= 0 ? ' disabled' : ''}>较新</button>
-                    <span>留念 ${shotIdx + 1}/${shots.length}</span>
-                    <button type="button" id="st-pv-shot-next" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;"${shotIdx >= shots.length - 1 ? ' disabled' : ''}>较早</button>
-                  </div>`;
-                metaBox.querySelector('#st-pv-shot-prev')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx > 0) { shotIdx--; renderShot(); } });
-                metaBox.querySelector('#st-pv-shot-next')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx < shots.length - 1) { shotIdx++; renderShot(); } });
-              } else {
-                metaBox.textContent = outfitLine;
-              }
+              metaBox.innerHTML = `<div style="margin-bottom:5px;">${outfitLine}</div>
+                <div id="st-pv-shot-thumbs" style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-bottom:5px;"></div>
+                <div style="display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;">
+                  <button type="button" id="st-pv-shot-prev" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;"${shotIdx <= 0 ? ' disabled' : ''}>较新</button>
+                  <span style="font-weight:700;">留念 ${shotIdx + 1}/${shots.length}</span>
+                  <button type="button" id="st-pv-shot-next" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;"${shotIdx >= shots.length - 1 ? ' disabled' : ''}>较早</button>
+                  <button type="button" id="st-pv-shot-cover" class="st-px-btn${isCover ? ' active' : ' care'}" style="height:20px;padding:0 7px;font-size:9px;"${isCover ? ' disabled' : ''}>${isCover ? '当前首图' : '设为首图'}</button>
+                </div>
+                ${shots.length <= 1 ? '<div style="margin-top:4px;font-size:8.5px;color:#8c7366;">下次再拍到此景会自动留存新旧穿搭，点缩略图即可切换并自选首图~</div>' : ''}`;
+              const thumbsWrap = metaBox.querySelector('#st-pv-shot-thumbs');
+              shots.forEach((sh, idx) => {
+                const tb = doc.createElement('button');
+                tb.type = 'button';
+                tb.style.cssText = `position:relative;padding:2px;background:#fff;border:2px solid ${idx === shotIdx ? '#c95b7a' : '#bfa4ae'};cursor:pointer;line-height:0;`;
+                const tcv = doc.createElement('canvas');
+                tcv.width = 54; tcv.height = 36;
+                tcv.style.cssText = 'width:42px;height:28px;display:block;image-rendering:pixelated;image-rendering:crisp-edges;';
+                drawAdvPhotoCanvas(tcv, ph, false, { ...rec, look: sh.look, date: sh.date });
+                tb.appendChild(tcv);
+                if (idx === coverIdx) {
+                  const badge = doc.createElement('span');
+                  badge.textContent = '首';
+                  badge.style.cssText = 'position:absolute;left:1px;top:1px;background:#c95b7a;color:#fff;font-size:8px;line-height:11px;padding:0 2px;font-weight:700;';
+                  tb.appendChild(badge);
+                }
+                tb.addEventListener('click', (ev) => { ev.stopPropagation(); shotIdx = idx; renderShot(); });
+                thumbsWrap.appendChild(tb);
+              });
+              metaBox.querySelector('#st-pv-shot-prev')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx > 0) { shotIdx--; renderShot(); } });
+              metaBox.querySelector('#st-pv-shot-next')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx < shots.length - 1) { shotIdx++; renderShot(); } });
+              metaBox.querySelector('#st-pv-shot-cover')?.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                rec.coverShotIdx = shotIdx;
+                rec.pinnedCover = true;
+                rec.look = cur.look || rec.look || null;
+                rec.date = cur.date || rec.date || '';
+                rec.history = shots;
+                saveConfig();
+                cmNotify('已将这张穿搭设为该场景首图！');
+                renderShot();
+                if (typeof renderPupAdventure === 'function') renderPupAdventure();
+              });
             };
             renderShot();
             photoViewerEl.classList.add('open');
