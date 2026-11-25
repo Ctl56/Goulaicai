@@ -2665,6 +2665,9 @@
     chatGroups: {},
     quickPhrases: [],
     quickPhraseBarOn: true,
+    textReplaceEnabled: false,
+    textReplaceRules: [],
+    guestPuppy: null,
     charDelWbPrompt: true,
     charRandomSkipRecent: true,
     personaCustomGroups: [
@@ -4961,6 +4964,85 @@
     #st-tb-puppy.hop #st-tb-pup-prop-sign { transform: translateY(-7px); }
     #st-tb-puppy.shake #st-tb-puppy-canvas { transform: translateX(2px); }
     #st-tb-puppy.flip.shake #st-tb-puppy-canvas { transform: scaleX(-1) translateX(2px); }
+
+    #st-tb-guest-puppy {
+      position: fixed;
+      left: 160px;
+      top: 0;
+      width: 72px;
+      height: 72px;
+      display: none;
+      pointer-events: auto;
+      cursor: grab;
+      touch-action: none;
+      z-index: 9996 !important;
+    }
+    #st-tb-guest-puppy.active { display: block; }
+    #st-tb-guest-puppy.dragging { cursor: grabbing; }
+    #st-tb-guest-puppy-canvas {
+      width: 72px;
+      height: 72px;
+      display: block;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      transform-origin: center bottom;
+    }
+    #st-tb-guest-puppy.flip #st-tb-guest-puppy-canvas { transform: scaleX(-1); }
+    #st-tb-guest-puppy.bob #st-tb-guest-puppy-canvas { transform: translateY(-2px); }
+    #st-tb-guest-puppy.flip.bob #st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-2px); }
+    #st-tb-guest-puppy.hop #st-tb-guest-puppy-canvas { transform: translateY(-7px); }
+    #st-tb-guest-puppy.flip.hop #st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-7px); }
+    #st-tb-guest-puppy-tag {
+      position: absolute;
+      left: 50%;
+      bottom: -14px;
+      transform: translateX(-50%);
+      padding: 1px 5px;
+      background: #fffdf7;
+      border: 1.5px solid #3b2a22;
+      color: #5a3e30;
+      font-size: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    #st-tb-guest-puppy-bubble {
+      position: absolute;
+      left: 50%;
+      bottom: 74px;
+      transform: translateX(-50%) translateY(4px);
+      padding: 4px 8px;
+      background: #fff8fb;
+      color: #4a2a38;
+      border: 2px solid #7a4658;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      width: max-content;
+      max-width: min(200px, 60vw);
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.45;
+      text-align: center;
+      box-sizing: border-box;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.16s ease, transform 0.18s ease;
+    }
+    #st-tb-guest-puppy-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #st-tb-guest-pop {
+      position: fixed;
+      width: 224px;
+      background: var(--px-bg, #fff9fb);
+      border: 3px solid var(--px-border, #bfa4ae);
+      box-shadow: 4px 4px 0 rgba(59,42,34,0.24);
+      padding: 8px;
+      color: var(--px-fg, #54444a);
+      z-index: 10022;
+      display: none;
+      pointer-events: auto;
+      font-size: 11px;
+    }
 
     /* 像素风气泡 */
     #st-tb-puppy-bubble {
@@ -7833,6 +7915,12 @@
       <canvas id="st-tb-puppy-canvas" width="24" height="24"></canvas>
       <canvas id="st-tb-pup-prop-sign" width="9" height="12"></canvas>
     </div>
+    <div id="st-tb-guest-puppy" title="朋友来串门的小狗 · 点我互动 / 按住拖动">
+      <div id="st-tb-guest-puppy-bubble"></div>
+      <canvas id="st-tb-guest-puppy-canvas" width="24" height="24"></canvas>
+      <div id="st-tb-guest-puppy-tag"></div>
+    </div>
+    <div id="st-tb-guest-pop"></div>
     <div id="st-tb-visitor" title="点我互动串门小伙伴!">
       <div id="st-tb-visitor-bubble"></div>
       <canvas id="st-tb-visitor-canvas" width="16" height="16"></canvas>
@@ -8227,12 +8315,14 @@
           <div class="st-px-grid-3" id="st-tb-shop-grid"></div>
         </div>
         <div class="st-px-pane" data-px-pane="adv">
-          <div class="st-px-subtabs" style="grid-template-columns:repeat(4,1fr);margin-bottom:6px;">
+          <div class="st-px-subtabs" style="grid-template-columns:repeat(5,1fr);margin-bottom:6px;">
             <button class="st-px-btn active" data-adv-tab="go" type="button">出发冒险</button>
             <button class="st-px-btn" data-adv-tab="job" type="button">兼职打工</button>
             <button class="st-px-btn" data-adv-tab="album" type="button">相册</button>
             <button class="st-px-btn" data-adv-tab="museum" type="button">收藏柜</button>
+            <button class="st-px-btn" data-adv-tab="visit" type="button">串门</button>
           </div>
+          <div id="st-px-adv-visit-view" style="display:none;"></div>
           <div id="st-px-adv-go-view">
             <div class="st-px-adv-card" id="st-px-adv-status-box"></div>
             <div class="st-px-subhead">
@@ -9101,6 +9191,26 @@
               </div>
               <textarea class="st-tb-textarea" id="st-tb-mask-words" placeholder="输入需要打码的词汇，用换行或逗号隔开"></textarea>
               <div class="st-tb-tip">仅遮挡页面显示，不改动原聊天记录。点击已打码的词可临时查看。</div>
+            </div>
+          </div>
+
+          <div class="st-tb-section">
+            <div class="st-tb-label">
+              <span>正文替词</span>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <button class="st-tb-mini-btn" id="st-tb-rep-toggle" type="button">开启替词</button>
+                <button class="st-tb-mini-btn" id="st-tb-rep-fold" type="button">展开</button>
+              </div>
+            </div>
+            <div id="st-tb-rep-body" style="display:none;margin-top:6px;">
+              <div class="st-tb-row" style="gap:4px;margin-bottom:6px;">
+                <input class="st-tb-input" id="st-tb-rep-from" type="text" placeholder="原词" style="flex:1;min-width:0;" />
+                <span style="font-size:11px;opacity:0.7;">→</span>
+                <input class="st-tb-input" id="st-tb-rep-to" type="text" placeholder="替换为" style="flex:1;min-width:0;" />
+                <button class="st-tb-mini-btn active" id="st-tb-rep-add" type="button">+ 添加</button>
+              </div>
+              <div id="st-tb-rep-list" style="display:flex;flex-direction:column;gap:4px;max-height:136px;overflow-y:auto;overscroll-behavior:contain;"></div>
+              <div class="st-tb-tip" style="margin-top:5px;">仅在前端页面替换显示，不改动聊天记录原文；关闭或删掉规则即恢复原词。</div>
             </div>
           </div>
 
@@ -10060,6 +10170,7 @@
   const advAlbumView = root.querySelector('#st-px-adv-album-view');
   const advMuseumView = root.querySelector('#st-px-adv-museum-view');
   const advJobView = root.querySelector('#st-px-adv-job-view');
+  const advVisitView = root.querySelector('#st-px-adv-visit-view');
   const advStatusBox = root.querySelector('#st-px-adv-status-box');
   const advDestDescEl = root.querySelector('#st-px-adv-dest-desc');
   const advDestsEl = root.querySelector('#st-px-adv-dests');
@@ -12266,6 +12377,162 @@
     });
   };
 
+  const repToggleBtn = root.querySelector('#st-tb-rep-toggle');
+  const repFoldBtn = root.querySelector('#st-tb-rep-fold');
+  const repBodyEl = root.querySelector('#st-tb-rep-body');
+  const repFromInp = root.querySelector('#st-tb-rep-from');
+  const repToInp = root.querySelector('#st-tb-rep-to');
+  const repAddBtn = root.querySelector('#st-tb-rep-add');
+  const repListEl = root.querySelector('#st-tb-rep-list');
+
+  const clearTextReplaces = () => {
+    const spans = doc.querySelectorAll('#chat .mes_text span.st-tb-rep');
+    if (!spans.length) return;
+    runWithoutObserve(() => {
+      spans.forEach(sp => {
+        const orig = sp.dataset.orig ?? sp.textContent;
+        const p = sp.parentNode;
+        if (p) {
+          p.replaceChild(doc.createTextNode(orig), sp);
+          p.normalize();
+        }
+      });
+    });
+  };
+
+  const applyTextReplaces = () => {
+    clearTextReplaces();
+    if (!config.textReplaceEnabled) return;
+    const rules = (Array.isArray(config.textReplaceRules) ? config.textReplaceRules : [])
+      .filter(r => r && r.on !== false && r.from && r.from.length > 0)
+      .sort((a, b) => b.from.length - a.from.length);
+    if (!rules.length) return;
+
+    const regex = new RegExp(rules.map(r => escapeRegExp(r.from)).join('|'), 'g');
+    const ruleMap = new Map();
+    rules.forEach(r => { if (!ruleMap.has(r.from)) ruleMap.set(r.from, r.to ?? ''); });
+    const containers = doc.querySelectorAll('#chat .mes_text');
+    runWithoutObserve(() => {
+      containers.forEach(container => {
+        const walker = doc.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+          acceptNode: (node) => {
+            if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+            const p = node.parentElement;
+            if (!p) return NodeFilter.FILTER_REJECT;
+            const tag = p.tagName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA' || tag === 'INPUT' || p.classList.contains('st-tb-mask') || p.classList.contains('st-tb-rep')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            return NodeFilter.FILTER_ACCEPT;
+          },
+        });
+        const targets = [];
+        let n;
+        while ((n = walker.nextNode())) {
+          regex.lastIndex = 0;
+          if (regex.test(n.nodeValue)) targets.push(n);
+        }
+        targets.forEach(textNode => {
+          const text = textNode.nodeValue;
+          regex.lastIndex = 0;
+          let lastIdx = 0;
+          let match;
+          const frag = doc.createDocumentFragment();
+          while ((match = regex.exec(text)) !== null) {
+            if (match.index > lastIdx) frag.appendChild(doc.createTextNode(text.slice(lastIdx, match.index)));
+            const origWord = match[0];
+            const repWord = ruleMap.has(origWord) ? ruleMap.get(origWord) : origWord;
+            const sp = doc.createElement('span');
+            sp.className = 'st-tb-rep';
+            sp.dataset.orig = origWord;
+            sp.textContent = repWord;
+            frag.appendChild(sp);
+            lastIdx = match.index + origWord.length;
+          }
+          if (lastIdx < text.length) frag.appendChild(doc.createTextNode(text.slice(lastIdx)));
+          textNode.parentNode?.replaceChild(frag, textNode);
+        });
+      });
+    });
+  };
+
+  const renderTextReplaceUI = () => {
+    if (repToggleBtn) {
+      const on = Boolean(config.textReplaceEnabled);
+      repToggleBtn.classList.toggle('active', on);
+      repToggleBtn.textContent = on ? '已开启' : '开启替词';
+    }
+    if (!repListEl) return;
+    const rules = Array.isArray(config.textReplaceRules) ? config.textReplaceRules : [];
+    repListEl.innerHTML = '';
+    if (!rules.length) {
+      repListEl.innerHTML = '<div class="st-tb-empty" style="padding:8px;">暂无替词规则</div>';
+      return;
+    }
+    rules.forEach(r => {
+      const row = doc.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:6px;background:var(--tb-surface);border:1px solid var(--tb-border);font-size:11px;';
+      const lbl = doc.createElement('div');
+      lbl.style.cssText = `flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${r.on === false ? 'opacity:0.45;text-decoration:line-through;' : ''}`;
+      lbl.textContent = `${r.from} → ${r.to || '(空)'}`;
+      const tg = doc.createElement('button');
+      tg.type = 'button';
+      tg.className = `st-tb-mini-btn${r.on !== false ? ' active' : ''}`;
+      tg.style.cssText = 'height:20px;min-height:20px;padding:0 5px;font-size:10px;';
+      tg.textContent = r.on !== false ? '开' : '关';
+      tg.addEventListener('click', () => {
+        r.on = r.on === false;
+        saveConfig();
+        renderTextReplaceUI();
+        applyTextReplaces();
+      });
+      const del = doc.createElement('button');
+      del.type = 'button';
+      del.className = 'st-tb-mini-btn';
+      del.style.cssText = 'height:20px;min-height:20px;padding:0 5px;font-size:10px;color:#d9534f;';
+      del.textContent = '×';
+      del.addEventListener('click', () => {
+        config.textReplaceRules = (config.textReplaceRules || []).filter(x => x.id !== r.id);
+        saveConfig();
+        renderTextReplaceUI();
+        applyTextReplaces();
+      });
+      row.append(lbl, tg, del);
+      repListEl.appendChild(row);
+    });
+  };
+  if (repToggleBtn) {
+    repToggleBtn.addEventListener('click', () => {
+      config.textReplaceEnabled = !config.textReplaceEnabled;
+      saveConfig();
+      renderTextReplaceUI();
+      applyTextReplaces();
+    });
+  }
+  if (repFoldBtn && repBodyEl) {
+    repFoldBtn.addEventListener('click', () => {
+      const open = repBodyEl.style.display === 'none';
+      repBodyEl.style.display = open ? 'block' : 'none';
+      repFoldBtn.textContent = open ? '收起' : '展开';
+      if (open) renderTextReplaceUI();
+    });
+  }
+  if (repAddBtn) {
+    repAddBtn.addEventListener('click', () => {
+      const from = String(repFromInp?.value || '').trim();
+      const to = String(repToInp?.value || '');
+      if (!from) { cmNotify('请输入原词'); return; }
+      if (!Array.isArray(config.textReplaceRules)) config.textReplaceRules = [];
+      config.textReplaceRules.push({ id: `tr_${Date.now()}`, from, to, on: true });
+      if (repFromInp) repFromInp.value = '';
+      if (repToInp) repToInp.value = '';
+      saveConfig();
+      renderTextReplaceUI();
+      applyTextReplaces();
+    });
+  }
+  renderTextReplaceUI();
+
   const applyMasks = () => {
     clearMasks();
     if (!config.maskEnabled) return;
@@ -12859,18 +13126,21 @@
 
   let maskDebounce = null;
   const scheduleMask = () => {
-    if (!config.maskEnabled) return;
+    if (!config.maskEnabled && !config.textReplaceEnabled) return;
     clearTimeout(maskDebounce);
     const sb = doc.getElementById('mes_stop');
     const streaming = sb && !sb.classList.contains('displayNone') && sb.style.display !== 'none';
-    maskDebounce = setTimeout(applyMasks, streaming ? 1100 : 320);
+    maskDebounce = setTimeout(() => {
+      if (config.maskEnabled) applyMasks();
+      if (config.textReplaceEnabled) applyTextReplaces();
+    }, streaming ? 1100 : 320);
   };
 
   const attachChatObserver = () => {
     const chatEl = doc.getElementById('chat');
     if (!chatEl || chatObserver) return;
     chatObserver = new MutationObserver((mutations) => {
-      if (!config.maskEnabled) return;
+      if (!config.maskEnabled && !config.textReplaceEnabled) return;
       const relevant = mutations.some(m =>
         m.addedNodes.length > 0 &&
         !(m.target && m.target.classList && m.target.classList.contains('st-tb-mask'))
@@ -24178,9 +24448,23 @@
     // 背包内全部 18 种互动，统一按当前 8 种性格输出多句生动台词！
     const PUP_ACT_BY_PERS = {
       sleepyhead: {
-        feed: ['吧唧吧唧... 吃饱了刚好可以再打个盹~', '温温热热的狗粮好香，吃完眼皮都软啦~', '慢吞吞嚼完啦，谢谢{owner}投喂~'],
+        feed: [
+        "吧唧吧唧… 吃饱了刚好可以顺势打个小盹~",
+        "温温热热的狗粮好香，吃完眼皮都跟着软下来啦~",
+        "慢吞吞嚼完啦，谢谢{owner}按时投喂~",
+        "刚吃进去两口就觉得胃里暖呼呼的，幸福感拉满。",
+        "嘴角好像粘了一粒小渣渣… 唔，舔掉继续睡~",
+        "吃得太舒服了，差点端着小碗直接睡过去~",
+      ],
         drink: ['咕噜咕噜... 喝完温水喉咙好舒服~', '小口抿着喝，水润润的好安心呀~', '吨吨两口，感觉又清醒了一点点~'],
-        eat: ['叼着大骨头慢慢啃，啃累了就枕着它睡~', '咔嚓咔嚓... 这根骨头香得像美梦一样~', '抱着骨头窝在角落慢慢享用，太幸福啦~'],
+        eat: [
+        "叼着大骨头慢慢啃，啃累了就顺便枕着它睡~",
+        "咔嚓咔嚓… 这根骨头香得让人想做个美梦~",
+        "抱着骨头窝在角落慢慢享用，今天也太惬意啦~",
+        "啃两口歇三秒，慢节奏干饭才最适合我嘛。",
+        "骨头好香，啃完连爪爪都想舔干净再午睡~",
+        "不用抢也不用急，细嚼慢咽最开心啦~",
+      ],
         ball: ['呼啊... 稍微追两步球球，滚太远就不追咯~', '轻轻用鼻子顶回去啦，{owner}别丢太远哦~', '跑了两步好困，我抱着球球歇一会儿~'],
         tease: ['呜哇，别趁我发呆的时候突然逗我嘛~', '眯着眼配合你笑一下，好痒哦~', '嘿嘿，被{owner}逗醒了一半，还想再贴贴~'],
         bath: ['温热的泡泡澡好舒服... 差点在浴盆里睡着啦~', '香喷喷的泡沫裹着毛毛，像躺在云朵里~', '洗完暖呼呼的，快拿小毛巾把我裹成卷吧~'],
@@ -24198,9 +24482,23 @@
         love_firework: ['漫天像素烟花亮起来啦，{owner}永远是我最安心的归宿~', '能一直懒洋洋窝在{owner}身边，就是最幸福的事~'],
       },
       clingy: {
-        feed: ['{owner}亲手喂的狗粮是全世界最好吃的!', '一边吃一边偷看{owner}，开心得尾巴直摇!', '全吃光光啦! 吃完更有力气粘着{owner}啦!'],
+        feed: [
+        "{owner}亲手喂的狗粮是全世界最好吃的!",
+        "一边吃一边偷看{owner}，开心得尾巴甩出残影!",
+        "全吃光光啦! 吃完更有力气一直粘着{owner}啦!",
+        "只要是{owner}递过来的，我连碗底都要舔得亮晶晶!",
+        "吃饱了! 快张开手接住一只满血复活的贴贴小狗!",
+        "嘴里嚼着香香的饭饭，眼睛却一秒都舍不得离开你!",
+      ],
         drink: ['咕噜咕噜喝完啦，{owner}也要记得多喝水哦!', '喝完水立刻蹭蹭{owner}的手心!', '甜甜的水，因为是{owner}倒的所以格外好喝!'],
-        eat: ['谢谢{owner}赏的大骨头! 要不要分你闻闻香不香?', '抱着{owner}给的骨头，幸福感瞬间爆棚!', '啃完骨头我还要继续贴贴{owner}哦!'],
+        eat: [
+        "谢谢{owner}赏的大骨头! 要不要凑近闻闻有多香?",
+        "抱着{owner}给的骨头，幸福感直接原地起飞!",
+        "啃完骨头我还要立刻扑进{owner}怀里贴贴哦!",
+        "这根骨头上面有{owner}的味道，啃起来特别甜!",
+        "咔嚓咔嚓! 边啃边蹭你的裤脚，双重快乐!",
+        "吃完这根超级大骨头，今天也要当{owner}的第一小跟班!",
+      ],
         ball: ['我一秒就能把球叼回来给{owner}，快夸我!', '你丢多远我都跑去捡回来，绝对不跑丢!', '和{owner}玩抛球游戏是我最开心的时刻!'],
         tease: ['嘿嘿嘿好痒呀，{owner}再多陪我玩一会儿嘛!', '被{owner}逗得尾巴摇成小风扇啦!', '只要{owner}看着我，怎么逗我都超开心!'],
         bath: ['洗香香啦! 快抱抱刚出炉的软糯香喷喷小狗!', '泡泡澡洗得干干净净，这样就能更放心地贴贴啦!', '甩干水珠扑进{owner}怀里，最喜欢你了!'],
@@ -24218,9 +24516,23 @@
         love_firework: ['为{owner}绽放满屏烟花! 谢谢你一直这么温柔地陪着我!', '不管过多久，我永远都是最粘你的那只小狗!'],
       },
       tsundere: {
-        feed: ['哼，勉强尝两口吧...其实味道还算不错啦!', '才不是饿了呢，只是不想辜负你盛狗粮的心意!', '算你有眼力见，知道按时给本汪进贡!'],
+        feed: [
+        "哼，勉强尝两口吧… 其实味道还算不错啦!",
+        "才不是饿了呢，只是不想浪费你盛饭的心意!",
+        "算你准时，知道按点给本汪上供，奖励你看我吃饭!",
+        "别一直盯着我吃啦，耳朵都要被你看红了!",
+        "也就一般般香吧… 咳，明天也可以继续做这个口味。",
+        "吃光了! 碗拿走吧，才没有意犹未尽呢!",
+      ],
         drink: ['咕噜... 水温还行，本汪就赏脸喝完吧!', '才不是渴得受不了呢，只是顺便润润嗓子!', '行吧，看在你这么殷勤的份上多喝两口!'],
-        eat: ['切，拿根骨头就想收买本汪?...好吧成交!', '咔嚓咔嚓! 才没有觉得超级好吃呢，哼!', '算你懂事，这根骨头本汪收下了!'],
+        eat: [
+        "切，拿根骨头就想收买本汪? …好吧这次勉强成交!",
+        "咔嚓咔嚓! 才没有觉得超级好吃呢，少得意了!",
+        "算你懂事，这根骨头品质还行，本汪收下了!",
+        "不许偷看我啃骨头的样子，很破坏高冷形象的喂!",
+        "咬起来嘎嘣脆… 咳，我是说硬度还凑合，勉强及格!",
+        "啃得这么香才不是因为你挑得好，纯粹是本汪牙口好!",
+      ],
         ball: ['看好了! 本汪接球的速度全桌面第一!', '丢这么远是想考验我吗? 小菜一碟哼!', '拿去! 才不是因为想和你玩才叼回来的!'],
         tease: ['喂!! 别老逗本汪啦，耳朵都要变红了!', '哼，这种幼稚把戏才逗不笑我...噗!', '手拿开啦! 再逗我真的要傲娇生气了哦!'],
         bath: ['别把泡泡弄进本汪眼睛里啦!...洗完确实挺清爽。', '哼，本汪本来就很干净，才不需要天天洗!', '毛洗得这么蓬松，待会儿不许随便揉乱哦!'],
@@ -24238,9 +24550,23 @@
         love_firework: ['笨蛋{owner}，这场漫天烟花可是本汪专程为你放的!', '听好了，不管嘴上怎么说，你永远是本汪最在意的人!'],
       },
       foodie: {
-        feed: ['啊呜啊呜! 吃到一半才发现自己原来这么饿啦~', '香喷喷的狗粮吃光光，小肚子暖呼呼的!', '谢谢{owner}提醒我吃饭，不然我又要忘啦~'],
+        feed: [
+        "啊呜啊呜! 吃到一半才发现自己原来这么饿啦~",
+        "香喷喷的狗粮光盘行动成功，小肚子圆滚滚的!",
+        "谢谢{owner}提醒我吃饭，不然我又要玩着玩着忘记啦!",
+        "哇这口也太香了，差点连自己的小舌头一起吞下去!",
+        "幸福到原地转圈圈! 世界上最快乐的事就是干饭!",
+        "吃完舔舔嘴唇，总觉得好像还可以再塞两颗小饼干?",
+      ],
         drink: ['咕噜咕噜喝完水，感觉小脑袋清醒多啦!', '水润润的好解渴，差点把鼻尖也沾湿了哈哈~', '喝饱水啦，元气慢慢涨回来咯!'],
-        eat: ['叼着大骨头差点忘了放哪啃，咔嚓咔嚓真香!', '抱着骨头开心摇尾巴，谢谢{owner}!', '慢慢啃着骨头，觉得自己是全世界最幸福的小迷糊!'],
+        eat: [
+        "叼着大骨头差点忘了放哪啃，咔嚓咔嚓真香呀!",
+        "抱着骨头开心摇尾巴，世界上怎么会有这么香的东西!",
+        "慢慢啃着骨头，觉得自己是全宇宙最幸福的小吃货!",
+        "咬一口满嘴肉香，连耳朵都在跟着节奏一抖一抖!",
+        "这根骨头简直是米其林五星级别，吃得我眼泪都要旺旺掉!",
+        "啃完骨头再检查一下地板，绝对不能漏掉哪怕一粒碎屑!",
+      ],
         ball: ['冲去追球! ……哎呀跑过头了，球在我身后呢哈哈!', '稳稳叼回球球给{owner}，这次没跑偏吧!', '追着球球跑来跑去，玩得超开心!'],
         tease: ['诶嘿嘿好痒呀，我还没反应过来就被你逗笑啦!', '哈哈停手停手，笑得我都忘了自己在干嘛!', '被{owner}逗得晕乎乎的，但超级开心!'],
         bath: ['泡泡飘到鼻尖上啦，呼——吹走一个大泡沫!', '洗完澡香喷喷毛茸茸的，像一团刚出炉的小云朵!', '干干净净真舒服，甩甩耳朵不沾水珠!'],
@@ -24258,9 +24584,23 @@
         love_firework: ['漫天烟花亮起来啦! 遇到{owner}是我这辈子最幸运的事!', '谢谢{owner}一直这么耐心地包容迷糊的我，最爱你啦!'],
       },
       explorer: {
-        feed: ['啊呜啊呜吃得超香! 吃饱饱浑身都是暖洋洋的力气!', '谢谢{owner}投喂! 元气瞬间补满百分百!', '热乎乎的狗粮真好吃，开心得尾巴摇成小风扇!'],
+        feed: [
+        "啊呜啊呜吃得超香! 吃饱浑身都是暖洋洋的力气!",
+        "谢谢{owner}投喂! 能量槽瞬间充到百分百!",
+        "热乎乎的狗粮真好吃，开心得尾巴摇成小螺旋桨!",
+        "大口干饭才有力气陪{owner}去探索好玩的新地方!",
+        "吃完这碗饭，感觉现在就能绕着屏幕跑三圈!",
+        "味道太棒啦! 今天又是元气满满的满分晴天!",
+      ],
         drink: ['咕噜咕噜喝完一大口! 整只狗清爽又精神!', '喝饱水啦，{owner}也要记得顺手喝一口水哦!', '水润润的好舒服，继续元气满满陪着你!'],
-        eat: ['咔嚓咔嚓! 啃大骨头简直是世上最快乐的小事之一!', '谢谢{owner}奖励的大骨头，超级满足!', '抱着骨头开心眯起眼，今天也是大晴天心情!'],
+        eat: [
+        "咔嚓咔嚓! 啃大骨头简直是世上最快乐的小事之一!",
+        "谢谢{owner}奖励的大骨头，超级满足超有嚼劲!",
+        "抱着骨头开心眯起眼，吃完又要精神百倍出发啦!",
+        "啃完这根能量大骨头，感觉爪子都更有劲儿了!",
+        "一边啃骨头一边计划下一次冒险，快乐翻倍!",
+        "香喷喷的战利品大骨头，一口一口啃得超开心!",
+      ],
         ball: ['嗖地冲出去接住啦! 再丢一次吧{owner}，我精神头超足!', '哈哈稳稳叼回来了，和{owner}玩球最开心!', '跑起来迎着风的感觉太爽啦，元气满满!'],
         tease: ['哈哈好痒呀! 被{owner}逗得笑出眼泪啦!', '嘿嘿笑一笑烦恼全消，再来逗我玩嘛!', '开心到原地蹦跶，最喜欢和{owner}一起哈哈大笑!'],
         bath: ['哗啦啦洗得干干净净，像刚晒过太阳的小云朵一样蓬松!', '泡泡澡香喷喷的，洗完感觉浑身都在发光!', '甩干毛毛精神抖擞，今天也要清爽开心!'],
@@ -24278,9 +24618,23 @@
         love_firework: ['漫天灿烂烟花为你绽放! 谢谢{owner}照亮了我的每一天!', '遇见{owner}是最温暖的奇迹，以后也要一直一直开心走下去!'],
       },
       fashionista: {
-        feed: ['嗯，味道不错，谢谢{owner}记得喂我。', '慢慢吃完了。被你照顾的感觉，其实挺好的。', '吃饱了，表面很淡定，心里其实挺满足的。'],
+        feed: [
+        "嗯，味道不错，谢谢{owner}记得喂我。",
+        "慢慢吃完了。被你这样记挂着照顾，其实挺好的。",
+        "吃饱了，表面很淡定，心里其实挺满足的。",
+        "摆盘和口感都在水准之上，今天心情加十分。",
+        "细嚼慢咽才优雅……好吧，最后两口确实吃得有点快。",
+        "吃得很舒服，谢谢{owner}，顺手帮我擦擦嘴角？",
+      ],
         drink: ['水温刚好，谢谢你特意帮我倒水。', '小口喝完了，嗓子舒服多了。', '嗯，你总是这么细心。'],
-        eat: ['这根骨头……挺香的，我就不客气收下了。', '安静啃完大骨头，其实开心得耳朵都在微动。', '谢谢{owner}，你对我一直这么好。'],
+        eat: [
+        "这根骨头……挺香的，我就不客气收下了。",
+        "安静啃完大骨头，其实开心得耳朵尖都在微微晃。",
+        "谢谢{owner}，你挑东西的品味和对我一样好。",
+        "本来想保持矜持的，结果这根骨头确实香得犯规。",
+        "优雅地啃完收工，毛毛一根都没弄乱。",
+        "被你偏爱着投喂大骨头，算是我每天最期待的小时刻。",
+      ],
         ball: ['接住了。咳，顺手叼回来而已，别夸太用力。', '陪你玩一会儿抛球也挺好的，再来一次吧。', '动作还算利落吧，没让你失望就好。'],
         tease: ['别闹了……咳，好吧，刚才确实有点想笑。', '也就只有你敢这样逗我，换别人我早不理了。', '别再挠了，我高冷的样子都要维持不住了。'],
         bath: ['洗干净了，毛毛软软的……你可以摸一下试试。', '温热的泡泡很舒服，谢谢你帮我洗澡。', '嗯，现在香喷喷的，不讨厌这种感觉。'],
@@ -24298,9 +24652,23 @@
         love_firework: ['漫天烟花为你亮起，{owner}，其实我比表现出来的更喜欢你。', '以后也请一直留在彼此身边吧，我认真的。'],
       },
       gamer: {
-        feed: ['大口吃光光! 吃饱喝足精力瞬间拉满!', '哇好香的狗粮，吃完更有劲儿陪你闹啦!', '吃饭速度一流，谢谢{owner}投喂!'],
+        feed: [
+        "大口吃光光! 吃饱喝足精力瞬间拉满!",
+        "哇好香的狗粮，吃完更有劲儿陪你闹腾啦!",
+        "干饭速度一流，谢谢{owner}火速投喂!",
+        "HP+100! 满血复活，随时准备陪{owner}开下一局!",
+        "这波投喂太及时了，差点就要饿到掉线啦!",
+        "光盘达成! 感觉现在反应速度提升了百分之五十!",
+      ],
         drink: ['吨吨吨喝完一大口，整只狗都清爽起来啦!', '补水完毕，嗓子润润的又能叽叽喳喳陪你聊天了!', '清凉好喝，元气满格!'],
-        eat: ['咔嚓咔嚓! 这根骨头啃起来太爽啦!', '抱着大骨头开心得转圈，谢谢{owner}!', '大满足! 啃完骨头感觉浑身都是使不完的活力!'],
+        eat: [
+        "咔嚓咔嚓! 这根骨头啃起来手感太爽啦!",
+        "抱着大骨头开心得原地转圈，谢谢{owner}!",
+        "大满足! 啃完骨头感觉浑身都是使不完的活力!",
+        "史诗级大骨头掉落! 咬下去嘎嘣一声超解压!",
+        "啃骨头连击达成! 快乐值直接爆表啦!",
+        "这根骨头比隐藏宝箱还让人开心，必须给{owner}点个赞!",
+      ],
         ball: ['嗖地一下冲出去精准接住! 这反应速度是不是超酷!', '哈哈丢得再远我也能一秒叼回来，再来再来!', '漂亮! 接球姿势满分利落!'],
         tease: ['哈哈好痒呀! 居然被你偷袭成功了，不服不服!', '别挠啦笑得我肚子疼，算你厉害!', '被你逗得乐开花啦，反手贴你一下!'],
         bath: ['哗啦啦洗得干干净净，甩干毛毛像颗蓬松小雪球!', '泡泡澡好舒服，洗完浑身轻飘飘的!', '香喷喷出浴啦，是不是又酷又可爱!'],
@@ -24318,9 +24686,23 @@
         love_firework: ['漫天像素烟花为你绽放! {owner}永远是我最好的伙伴!', '谢谢你一直陪着古灵精怪的我，最喜欢你啦!'],
       },
       philosopher: {
-        feed: ['饭点很准时，谢谢{owner}。吃饱了才好继续安静坐着。', '细嚼慢咽对胃好，今天这顿口粮挺扎实。', '收到投喂。胃里踏实了，整只狗也就稳了。'],
+        feed: [
+        "饭点很准时，谢谢{owner}。吃饱了才好继续安稳待着。",
+        "细嚼慢咽对胃好，今天这顿口粮挺扎实。",
+        "收到投喂。胃里踏实了，整只狗也就跟着踏实了。",
+        "热饭下肚的感觉很实在，比想东想西管用多了。",
+        "不紧不慢吃完这一碗，今天的小确幸已经到账。",
+        "味道很家常很舒服，谢谢你一直这么照顾我。",
+      ],
         drink: ['及时喝水是好习惯，谢谢。你也记得抿一口。', '水温刚好，喝完嗓子舒服多了。', '喝完水了，清爽不少。'],
-        eat: ['这根骨头硬度适中，够我安安静静啃上一整个下午，谢了{owner}。', '慢吞吞啃骨头，比发呆稍微充实一点。', '味道很扎实，谢谢。'],
+        eat: [
+        "这根骨头硬度刚好，够我安安静静啃上一整个下午，谢了{owner}。",
+        "慢吞吞啃骨头，比纯发呆稍微充实一点。",
+        "味道很扎实，越嚼越香，谢谢你的好意。",
+        "啃骨头这件事讲究耐心，刚好我很擅长。",
+        "抓着骨头一点点啃完，有种把小日子过踏实的感觉。",
+        "嗯，是让人嘴角忍不住往上翘的好味道。",
+      ],
         ball: ['球扔得挺准，我接得也稳。', '虽然它最后还是会停下来，不过既然你扔了，我去追一趟。', '一来一回活动开了，运动量刚好。'],
         tease: ['别闹，稍微有点痒。', '你逗狗的手法挺熟练，我尽量保持镇定。', '行，配合你笑一下。'],
         bath: ['水温很舒服，洗完轻快多了。', '泡沫冲干净了，毛也顺了，看着体面。', '洗完澡一身轻，谢谢{owner}。'],
@@ -24786,16 +25168,16 @@
               setPuppyState('sit', 220 + Math.floor(Math.random() * 180));
             } else if (pup.state === 'sit_draw') {
               markPupSpecialCooldown(22, 34);
-              pupNextDrawAt = Math.max(pupNextDrawAt, now + randInt(420000, 660000));
+              pupNextDrawAt = Math.max(pupNextDrawAt, now + randInt(1080000, 1800000));
               if (pupLastDrawnArt) showPuppyBubble(`画好啦！点我看看「${pupLastDrawnArt.title}」~`, 2600, true);
               setPuppyState('sit', 200 + Math.floor(Math.random() * 140));
             } else if (pup.state === 'ground_draw') {
               markPupSpecialCooldown(20, 32);
-              pupNextDrawAt = Math.max(pupNextDrawAt, now + randInt(360000, 580000));
+              pupNextDrawAt = Math.max(pupNextDrawAt, now + randInt(1080000, 1680000));
               showPuppyBubble('在桌面上悄悄画了一个小图案~', 2200, true);
               setPuppyState('sit', 180 + Math.floor(Math.random() * 120));
-            } else if ((pup.state === 'idle' || pup.state === 'sit') && now >= pupNextDrawAt && Math.random() < 0.16) {
-              pupNextDrawAt = now + randInt(380000, 620000);
+            } else if ((pup.state === 'idle' || pup.state === 'sit') && now >= pupNextDrawAt && Math.random() < 0.14) {
+              pupNextDrawAt = now + randInt(1080000, 1800000);
               if (Math.random() < 0.50) {
                 const doodleMap = { paw: '小爪印', heart: '小爱心', bone: '小骨头', star: '小涂鸦' };
                 pup.groundDoodle = pick(['paw', 'heart', 'bone', 'star']);
@@ -24967,6 +25349,7 @@
 
         pup.x = clamp(pup.x, 8, maxX);
         drawPuppyScene();
+        stepGuestPuppy();
       }
       puppyRaf = win.requestAnimationFrame(step);
     };
@@ -25772,122 +26155,602 @@
 
   const PUP_PIXEL_ARTS = {
     sleepyhead: [
-      { title: '软绵枕头云', line: '画了一朵能直接躺上去睡午觉的云朵枕头，呼…', pal: { b: '#c9d8f0', w: '#ffffff', y: '#ffe478', p: '#ffb8d0' }, grid: [
-        '................','................','....bbbbbbbb....','...bwwwwwwwwb...','..bwwwwwwwwwwb..','..bwwpwwwwpwwb..','..bwwwwwwwwwwb..','...bbbbbbbbbb...','................','..y........y....','................','.....bbbbbb.....','....bwwwwwwb....','.....bbbbbb.....','................','................'
+      { title: '软绵枕头云', line: '画了一朵能直接躺上去睡午觉的云朵枕头，呼…', pal: { o: '#52688f', b: '#bdd6f7', w: '#ffffff', y: '#ffe478', p: '#ff9eb8', k: '#333b52' }, grid: [
+        '..y.............',
+        '.yyy.......oo...',
+        '..y......oobbo..',
+        '....ooooobwwbbo.',
+        '..oobwwwwwwwwwbo',
+        '.obwwwwwwwwwwwbo',
+        '.owwwkwwwwwkwwwo',
+        '.owwpwwwwwwwpwwo',
+        '.obwwwwwwwwwwwbo',
+        '..obbbbbbbbbbbo.',
+        '...ooooooooooo..',
+        '.............y..',
+        '..oo........yyy.',
+        '.obbo........y..',
+        '..oo............',
+        '................'
       ]},
-      { title: '月亮摇篮曲', line: '晚安月亮画好啦，主人在月光下也早点休息呀~', pal: { n: '#2f3868', y: '#ffe478', w: '#fff9d6', s: '#9ed0ff' }, grid: [
-        'nnnnnnnnnnnnnnnn','nnnynnnnnnnnnsnn','nnyyynnnnnnnnnnn','nnyyynnnnnnwnnnn','nnyyynnnnnnnnnnn','nnnyyynnnnnnsnnn','nnnnyyyynnnnnnnn','nnnnnyyyyyynnnnn','nnnnnnyyyyynnnnn','nnwnnnnyyynnnnnn','nnnnnnnnnnnnnnnn','nsnnnnnnnnnnwnnn','nnnnnnnnnnnnnnnn','nnnnnnnnnnnnnnnn','nnnnnnnnnnnnnnnn','nnnnnnnnnnnnnnnn'
+      { title: '月亮摇篮曲', line: '晚安月亮画好啦，主人在月光下也早点休息呀~', pal: { n: '#242c54', d: '#364175', y: '#ffe26a', o: '#f2b830', w: '#fffbe6', s: '#8ec5ff' }, grid: [
+        'nnnnnnnnnnnnnnnn',
+        'nndnnnnnyynnnnns',
+        'nnnnnnyyyyonnnnn',
+        'nnwnnyyyoonnnnnn',
+        'nnnnyyyonnnnnndn',
+        'nnnyyyonnnnnsnnn',
+        'nnnyyyonnnnnnnnn',
+        'nnnyyyoonnnnnwnn',
+        'nnnnyyyooonnnnnn',
+        'nnnnnyyyyoooonnn',
+        'nndnnnyyyyyyyonn',
+        'nnnnnnnoooooonnn',
+        'nsnnnnnnnnnnndnn',
+        'nnnnwnnnnnnnnnnn',
+        'nnnnnnnnnnnnnnnn',
+        'nnnnnnnnnnnnnnnn'
       ]},
-      { title: '暖烘烘被窝', line: '这是本汪心中最幸福的格子小被窝，软乎乎的！', pal: { r: '#e87a8c', p: '#ffd1dc', w: '#fffdf7', b: '#7a4b2a' }, grid: [
-        '................','..bbbbbbbbbbbb..','..bwwwwwwwwwwb..','..bwwppppppwwb..','..brrrrrrrrrrb..','..brprprprprpb..','..brrrrrrrrrrb..','..brprprprprpb..','..brrrrrrrrrrb..','..brprprprprpb..','..brrrrrrrrrrb..','..bbbbbbbbbbbb..','................','................','................','................'
+      { title: '暖烘烘被窝', line: '这是本汪心中最幸福的格子小被窝，软乎乎的！', pal: { o: '#4d3026', w: '#fffdf7', s: '#e6d8cc', r: '#e86f86', p: '#ffb8c8', d: '#c94c66' }, grid: [
+        '................',
+        '.oooooooooooooo.',
+        '.owwwwwwwwwwwwo.',
+        '.owwsssssssswwo.',
+        '.owwsssssssswwo.',
+        '.oooooooooooooo.',
+        '.orprprprprprdo.',
+        '.oprprprprprpdo.',
+        '.orprprprprprdo.',
+        '.oprprprprprpdo.',
+        '.orprprprprprdo.',
+        '.oddddddddddddo.',
+        '.oooooooooooooo.',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '懒洋洋太阳', line: '太阳公公都在打盹呢，我们再赖五分钟床吧~', pal: { y: '#ffd24d', o: '#ff9642', w: '#ffffff', k: '#3b2a22' }, grid: [
-        '.......oo.......','..o....yy....o..','...o..yyyy..o...','....yyyyyyyy....','..oyyyyyyyyyyo..','..yyykwwwwkyyy..','ooyyyyyyyyyyyyoo','..yyyyyyyyyyyy..','..yyykkyyykkyy..','..oyyyyyyyyyyo..','....yyyyyyyy....','...o..yyyy..o...','..o....yy....o..','.......oo.......','................','................'
+      { title: '懒洋洋太阳', line: '太阳公公都在打盹呢，我们再赖五分钟床吧~', pal: { r: '#e06824', o: '#ff9642', y: '#ffd84d', h: '#fff3a8', p: '#ff8da8', k: '#3b2a22' }, grid: [
+        '.......oo.......',
+        '..r....yy....r..',
+        '...o..yyyy..o...',
+        '....ooyyyyoo....',
+        '..ooyyhhhhyyoo..',
+        '.oyyyhhhhhhyyyo.',
+        'royykkyyyykkyyor',
+        '.oyyyyyyyyyyyyo.',
+        '.oyypyyyyyypyyo.',
+        '.oyyyyyyyyyyyyo.',
+        '..ooyyyyyyyyoo..',
+        '...oooyyyyooo...',
+        '..r...yyyy...r..',
+        '.......oo.......',
+        '................',
+        '................'
       ]},
     ],
     clingy: [
-      { title: '比心小心意', line: '画了一个大大的爱心送给主人，每天都要贴贴！', pal: { r: '#ff5c8a', p: '#ffb3c8', w: '#ffffff' }, grid: [
-        '................','...rrr....rrr...','..rpppr..rpppr..','.rpwwwr..rpwwrr.','.rpwwrrrrrppprr.','.rppppppppppppr.','..rppppppppppr..','...rppppppppr...','....rppppppr....','.....rppppr.....','......rppr......','.......rr.......','................','................','................','................'
+      { title: '比心小心意', line: '画了一个大大的爱心送给主人，每天都要贴贴！', pal: { o: '#7a203e', r: '#e84874', p: '#ff8eb0', h: '#ffd9e6', w: '#ffffff' }, grid: [
+        '................',
+        '..oooo....oooo..',
+        '.orrppo..opprro.',
+        'orhhpppoopppprro',
+        'orhwhpppppppppro',
+        'orhhppppppppppro',
+        'orrpppppppppprro',
+        '.orrpppppppprro.',
+        '..orrpppppprro..',
+        '...orrpppprro...',
+        '....orrpprro....',
+        '.....orrrro.....',
+        '......orro......',
+        '.......oo.......',
+        '................',
+        '................'
       ]},
-      { title: '小情书信封', line: '里面折了满满一页“最喜欢你”哦，快收好！', pal: { c: '#fff6eb', b: '#d49a78', r: '#ff5c8a' }, grid: [
-        '................','................','..bbbbbbbbbbbb..','..bccccccccccb..','..bcbbccccbbcb..','..bcccbccbcbcb..','..bccccrrccccb..','..bcccrrrrcccb..','..bccccrrccccb..','..bccccccccccb..','..bbbbbbbbbbbb..','................','................','................','................','................'
+      { title: '小情书信封', line: '里面折了满满一页“最喜欢你”哦，快收好！', pal: { o: '#6b4228', c: '#fff8ee', s: '#ebd7be', r: '#e8486c', p: '#ff9eb8' }, grid: [
+        '................',
+        '.oooooooooooooo.',
+        '.occccccccccccso',
+        '.oocccccccccsoo.',
+        '.ococccccccsoso.',
+        '.ocdoccrrccsoco.',
+        '.occcorrrroccco.',
+        '.occcorprroccco.',
+        '.occccoooooccco.',
+        '.occcccccccccso.',
+        '.osssssssssssso.',
+        '.oooooooooooooo.',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '双人小晴伞', line: '不管下雨还是出太阳，我都想和主人撑同一把伞~', pal: { p: '#ff9eb5', w: '#fff5f8', b: '#8c5a3c', y: '#ffe066' }, grid: [
-        '.......bb.......','.....pppppp.....','...ppwwwwwwpp...','..ppwwwwwwwwpp..','.ppwwwwwwwwwwpp.','.pppppppppppppp.','.......bb.......','.......bb.......','.......bb.......','.......bb.......','.......bb..bb...','.......bbbbbb...','................','................','................','................'
+      { title: '双人小晴伞', line: '不管下雨还是出太阳，我都想和主人撑同一把伞~', pal: { o: '#5e3642', p: '#ff8fab', h: '#ffd6e2', w: '#fff7fa', b: '#9c6644', d: '#d95f80' }, grid: [
+        '.......oo.......',
+        '.....oppppo.....',
+        '...ophhwwhhpo...',
+        '..ophwwwwwwhpo..',
+        '.ophwwwwwwwwhpo.',
+        '.oppppppppppppo.',
+        '.odddoodddooddo.',
+        '.......ob.......',
+        '.......ob.......',
+        '.......ob.......',
+        '.......ob..ob...',
+        '.......obbbbo...',
+        '........oooo....',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '永远在一起', line: '左边的爪印是我的，右边是主人的，盖章生效！', pal: { p: '#ff85a1', b: '#d99b78', w: '#fffdf7' }, grid: [
-        '................','..pp........bb..','.pppp......bbbb.','..pp..pp....bb..','.....pppp.......','..pp..pp..bb....','.pppp....bbbb...','..pp..pp..bb....','.....pppp.......','....pppppp......','....pppppp......','.....pppp.......','................','................','................','................'
+      { title: '永远在一起', line: '左边的爪印是我的，右边是主人的，盖章生效！', pal: { o: '#5c343e', p: '#ff8aa8', h: '#ffc9d9', b: '#d4946e', l: '#f2c6a8' }, grid: [
+        '................',
+        '.oo..........oo.',
+        'oppo..oo....obbo',
+        'ohpo.oppo..olbbo',
+        '.oo..ohpo...oo..',
+        '.oo...oo...oo...',
+        'oppo.oooo.obbo..',
+        'ohpooppppoobbo..',
+        '.oo.ophhpo.oo...',
+        '....oppppo......',
+        '.....oooo.......',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
     tsundere: [
-      { title: '本汪的小皇冠', line: '哼，这顶皇冠也就本汪戴着最气派，给你看一眼吧！', pal: { y: '#ffd24d', o: '#d98a1e', r: '#ff5277', b: '#78c8ff' }, grid: [
-        '................','................','..y....yy....y..','..yy..yyyy..yy..','..yyy.yyyy.yyy..','..yyyyyyyyyyyy..','..yrryybyyyrry..','..yyyyyyyyyyyy..','..oooooooooooo..','................','................','................','................','................','................','................'
+      { title: '本汪的小皇冠', line: '哼，这顶皇冠也就本汪戴着最气派，给你看一眼吧！', pal: { o: '#6b4208', y: '#ffd24d', h: '#fff3a8', d: '#d98c1e', r: '#ff4d6d', b: '#52b8ff' }, grid: [
+        '................',
+        '.oo....oo....oo.',
+        '.oy....yy....yo.',
+        '.oyy..oyyo..yyo.',
+        '.oyyyoyhhhyyyyo.',
+        '.oyyyyyyyyyyyyo.',
+        '.oyrryybyyyrryo.',
+        '.oyyyyyyyyyyyyo.',
+        '.oddddddddddddo.',
+        '.oooooooooooooo.',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '酷炫黑墨镜', line: '才、才不是为了耍帅给你看才画的呢！', pal: { k: '#2d2930', g: '#5a5460', w: '#ffffff' }, grid: [
-        '................','................','................','..kkkkkkkkkkkk..','.kkggkkkkkkggkk.','.kggggkkkkggggk.','.kggwwkkkkggwwk.','.kggggkkkkggggk.','..kkkkkkkkkkkk..','................','................','................','................','................','................','................'
+      { title: '酷炫黑墨镜', line: '才、才不是为了耍帅给你看才画的呢！', pal: { o: '#1b181f', k: '#332e3b', g: '#5a5266', w: '#ffffff', b: '#94d0ff' }, grid: [
+        '................',
+        '................',
+        '................',
+        '.oooooooooooooo.',
+        'okkkkkkkkkkkkkko',
+        'okggbkkkkkkggbko',
+        'okgwwkkkkkkgwwko',
+        'okggggkkkkggggko',
+        '.okkkkkoookkkko.',
+        '..oooooooooooo..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '傲娇小闪电', line: '记住啦，以后不许惹本汪生气，不然电你一下！', pal: { y: '#ffe066', o: '#ff9e2c', w: '#ffffff' }, grid: [
-        '........yyyy....','.......yyyy.....','......yyyy......','.....yyyyy......','....yyyyyyyyy...','...yyyyyyyyy....','.......yyyy.....','......yyyy......','.....yyyy.......','....yyyy........','...yyy..........','..yy............','................','................','................','................'
+      { title: '傲娇小闪电', line: '记住啦，以后不许惹本汪生气，不然电你一下！', pal: { o: '#70440c', y: '#ffe047', h: '#fff7ad', d: '#f29e1d' }, grid: [
+        '.......oooooo...',
+        '......ohyyyyo...',
+        '.....ohyyyyo....',
+        '....ohyyyyo.....',
+        '...ohyyyyooooo..',
+        '..ohyyyyyyyyyo..',
+        '..ooooodyyyyo...',
+        '......odyyyo....',
+        '.....odyyyo.....',
+        '....odyyyo......',
+        '...odyyyo.......',
+        '..odyyoo........',
+        '..oooo..........',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '红色蝴蝶结', line: '勉强帮你挑了个蝴蝶结，戴上应该还算凑合吧！', pal: { r: '#e84a64', p: '#ff9eb5', k: '#8c2238' }, grid: [
-        '................','................','..rrr......rrr..','.rpppr....rpppr.','.rpppprkkrppppr.','.rppprkkkkpppr..','..rrr..kk..rrr..','......r..r......','.....rr..rr.....','....rr....rr....','................','................','................','................','................','................'
+      { title: '红色蝴蝶结', line: '勉强帮你挑了个蝴蝶结，戴上应该还算凑合吧！', pal: { o: '#6b182a', r: '#e84866', p: '#ff9eb5', h: '#ffd9e3', d: '#b02844' }, grid: [
+        '................',
+        '..oooo....oooo..',
+        '.orhhpo..ophhro.',
+        '.orppproorpppro.',
+        '.orppprddrpprpo.',
+        '.orddrrddrrddro.',
+        '..oooo.oo.oooo..',
+        '......or.ro.....',
+        '.....orroorro...',
+        '....orrd..drro..',
+        '....oooo..oooo..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
     foodie: [
-      { title: '香喷喷大鸡腿', line: '吸溜…画着画着肚子就咕噜咕噜叫起来了！', pal: { o: '#d97a38', y: '#f5b056', w: '#fffdf5' }, grid: [
-        '................','....oooo........','...oyyyyo.......','..oyyyyyyo......','..oyyyyyyo......','...oyyyyo.......','....ooooww......','........ww......','.........ww.....','..........www...','..........www...','................','................','................','................','................'
+      { title: '香喷喷大鸡腿', line: '吸溜…画着画着肚子就咕噜咕噜叫起来了！', pal: { k: '#593018', d: '#b85c24', o: '#e08238', y: '#f5be6c', w: '#fffdf5', s: '#e6d7c3' }, grid: [
+        '................',
+        '...kkkkkk.......',
+        '..koyyyyyk......',
+        '.koyyyyyyyk.....',
+        '.koyyyyyyddk....',
+        '.kooyyyydddk....',
+        '..kkoodddkkwkk..',
+        '....kkkkkwwsswk.',
+        '.........kwwswk.',
+        '..........kwwkk.',
+        '...........kkk..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '草莓奶油蛋糕', line: '顶上一定要放最大颗的红草莓才完美！', pal: { r: '#ff4d6d', g: '#5ec962', w: '#fffdf9', p: '#ffb8cc', c: '#f4c27a', b: '#9c6638' }, grid: [
-        '.......g........','......rrr.......','.....rrrrr......','....wwwwwww.....','...wwwwwwwww....','...ppppppppp....','...ccccccccc....','...ppppppppp....','...ccccccccc....','..bbbbbbbbbbb...','................','................','................','................','................','................'
+      { title: '草莓奶油蛋糕', line: '顶上一定要放最大颗的红草莓才完美！', pal: { o: '#5c3622', g: '#54bd5a', r: '#ff4264', h: '#ff9cb0', w: '#fffdf9', p: '#ffb3c6', c: '#f2bd72', d: '#c9853b' }, grid: [
+        '......oggo......',
+        '.....orrro......',
+        '....orhhrrro....',
+        '...owwwwwwwwo...',
+        '..owwwwwwwwwwo..',
+        '..owwwowwowwwo..',
+        '..oppppppppppo..',
+        '..occcccccccco..',
+        '..oppppppppppo..',
+        '..oddddddddddo..',
+        '..oooooooooooo..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '珍珠奶茶杯', line: '加满黑糖波波和厚奶盖，今天也要干杯！', pal: { t: '#d99e6b', w: '#fffdf8', k: '#3b2a22', p: '#ff9eb5' }, grid: [
-        '........pp......','........pp......','....wwwwwwww....','...wwwwwwwwww...','....tttttttt....','....tttttttt....','....tttttttt....','....tktkttkt....','....kttkttkt....','.....kkkkkk.....','................','................','................','................','................','................'
+      { title: '珍珠奶茶杯', line: '加满黑糖波波和厚奶盖，今天也要干杯！', pal: { o: '#4a3228', p: '#ff94b2', w: '#fffdf8', c: '#e0a972', d: '#c4834b', k: '#2d1e18' }, grid: [
+        '........opp.....',
+        '........opp.....',
+        '..oooooooooooo..',
+        '..owwwwwwwwwwo..',
+        '...owwwwwwwwo...',
+        '...occcccccco...',
+        '...occcccccco...',
+        '...occkcckcco...',
+        '...ockcckccko...',
+        '....okkkkkko....',
+        '....oooooooo....',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '焦糖铜锣烧', line: '刚出炉夹着满满红豆馅，分你一半要不要？', pal: { b: '#a85a2a', y: '#e08e45', r: '#782832' }, grid: [
-        '................','................','....bbbbbbbb....','...byyyyyyyyb...','..byyyyyyyyyyb..','..brrrrrrrrrrb..','..bbbbbbbbbbbb..','...byyyyyyyyb...','....bbbbbbbb....','................','................','................','................','................','................','................'
+      { title: '焦糖铜锣烧', line: '刚出炉夹着满满红豆馅，分你一半要不要？', pal: { o: '#522a14', b: '#a85a2a', y: '#e69a4c', h: '#f7c888', r: '#782230' }, grid: [
+        '................',
+        '....oooooooo....',
+        '..oobhhhhhhboo..',
+        '.obyyyyyyyyyybo.',
+        '.obbbbbbbbbbbbo.',
+        '.orrrrrrrrrrrro.',
+        '.obbbbbbbbbbbbo.',
+        '.obyyyyyyyyyybo.',
+        '..oobbbbbbbboo..',
+        '....oooooooo....',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
     explorer: [
-      { title: '神秘藏宝图', line: '我画了标记 X 的地方，下次一起去挖宝藏吧！', pal: { c: '#f5e2ba', b: '#8c5a32', r: '#e04258' }, grid: [
-        '................','..bbbbbbbbbbbb..','..bccccccccccb..','..bcbbcccccccb..','..bccccrrcrccb..','..bcccccrccccb..','..bccccrrcrccb..','..bccccccccccb..','..bccccccbbbcb..','..bbbbbbbbbbbb..','................','................','................','................','................','................'
+      { title: '神秘藏宝图', line: '我画了标记 X 的地方，下次一起去挖宝藏吧！', pal: { o: '#59361c', c: '#f5e4be', s: '#dec28e', r: '#e03c52', b: '#946238' }, grid: [
+        '................',
+        '.oooooooooooooo.',
+        '.occccccccccsso.',
+        '.ocbbcccccccsso.',
+        '.occccrrcrccsso.',
+        '.occcccrccccsso.',
+        '.occccrrcrccsso.',
+        '.occcccccbbbsso.',
+        '.osssssssssssso.',
+        '.oooooooooooooo.',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '彩虹热气球', line: '乘着风飞到云朵上面去冒险，想想就激动！', pal: { r: '#ff6b8b', y: '#ffe066', b: '#78c8ff', w: '#9c6638' }, grid: [
-        '.....rrrrrr.....','...rryyyyyyrr...','..rryybbbbyyrr..','..rryybbbbyyrr..','...rryyyyyyrr...','....rrrrrrrr....','.....r....r.....','......r..r......','......wwww......','......wwww......','................','................','................','................','................','................'
+      { title: '彩虹热气球', line: '乘着风飞到云朵上面去冒险，想想就激动！', pal: { o: '#4a3038', r: '#ff6688', y: '#ffe066', b: '#6bc4ff', g: '#72d488', w: '#9c6638' }, grid: [
+        '....oooooooo....',
+        '..oorrrrrrrroo..',
+        '.orryyyyyyyyrro.',
+        '.orrybbbbbbbrro.',
+        '.orrybgggggbrro.',
+        '..oorbbbbbbroo..',
+        '...oorrrrrroo...',
+        '.....o....o.....',
+        '.....owwwwo.....',
+        '.....owwwwo.....',
+        '.....oooooo.....',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '晴空小帆船', line: '扬帆起航咯！前面说不定有金银岛呢~', pal: { w: '#ffffff', r: '#ff6b78', b: '#9c6638', s: '#64b5f6' }, grid: [
-        '.......r........','.......ww.......','......wwww......','.....wwwwww.....','....wwwwwwww....','.......b........','..bbbbbbbbbbbb..','...bbbbbbbbbb...','ssssssssssssssss','..ssss....ssss..','................','................','................','................','................','................'
+      { title: '晴空小帆船', line: '扬帆起航咯！前面说不定有金银岛呢~', pal: { o: '#3b2a22', r: '#ff5c72', w: '#ffffff', s: '#dbeeff', b: '#9c6638', a: '#52a8f2', h: '#a8dcff' }, grid: [
+        '.......oo.......',
+        '......orro......',
+        '......owwo......',
+        '.....owwswo.....',
+        '....owwwsswo....',
+        '...owwwwssswo...',
+        '.......ob.......',
+        '.oooooooooooooo.',
+        '..obbbbbbbbbbo..',
+        'aaaaaaaaaaaaaaaa',
+        'aahaahaaaaahaaha',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '远方雪山峰', line: '山顶积着亮晶晶的雪，下次带我去爬山！', pal: { s: '#b8e0ff', w: '#ffffff', g: '#5ca882', b: '#78909c' }, grid: [
-        '................','.......ww.......','......wwww......','.....wwssww.....','....ssssssss....','...ssssbbssss...','..ssssbbbbssss..','.gggggggggggggg.','.gggggggggggggg.','................','................','................','................','................','................','................'
+      { title: '远方雪山峰', line: '山顶积着亮晶晶的雪，下次带我去爬山！', pal: { o: '#3a4a5e', w: '#ffffff', s: '#b8e0ff', b: '#6b859e', g: '#54a87c', d: '#3b825e' }, grid: [
+        '................',
+        '.......oo.......',
+        '......owwo......',
+        '.....owwswo.....',
+        '....owsssswo....',
+        '...ossbbbbssso..',
+        '..ossbbbbbbssso.',
+        '.ogggggggggggggo',
+        '.odddddddddddddo',
+        '.ooooooooooooooo',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
     fashionista: [
-      { title: '高定礼服裙', line: '今天给灵感本加了一套高定纱裙设计稿~', pal: { p: '#ff9ec4', w: '#fff5f9', y: '#ffd859' }, grid: [
-        '................','.....pp..pp.....','.....pppppp.....','......pppp......','......yyyy......','....pppppppp....','...ppwwwwwwpp...','..ppwwwwwwwwpp..','.ppwwwwwwwwwwpp.','.pppppppppppppp.','................','................','................','................','................','................'
+      { title: '高定礼服裙', line: '今天给灵感本加了一套高定纱裙设计稿~', pal: { o: '#6b384c', p: '#ff96c0', h: '#ffd6e7', w: '#fff5f9', y: '#ffd452' }, grid: [
+        '................',
+        '....ooo..ooo....',
+        '....oppppppo....',
+        '.....oppppo.....',
+        '.....oyyyyo.....',
+        '...ooppppppoo...',
+        '..opphwwwwhppo..',
+        '.opphwwwwwwhppo.',
+        '.oppppppppppppo.',
+        '.oooooooooooooo.',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '玫瑰香水瓶', line: '优雅的瓶身配一点点玫瑰清香，品味满分！', pal: { y: '#ffd859', p: '#ffc2d6', w: '#ffffff', r: '#e85a7a' }, grid: [
-        '......yyyy......','......yyyy......','.......yy.......','....pppppppp....','...pwwwwwwwwp...','...pwwrrrrwwp...','...pwwrrrrwwp...','...pwwwwwwwwp...','....pppppppp....','................','................','................','................','................','................','................'
+      { title: '玫瑰香水瓶', line: '优雅的瓶身配一点点玫瑰清香，品味满分！', pal: { o: '#593644', y: '#ffd452', p: '#ffbfd6', w: '#ffffff', r: '#e85276' }, grid: [
+        '.....oooooo.....',
+        '.....oyyyyo.....',
+        '......oooo......',
+        '...oooooooooo...',
+        '..opwwwwwwwwpo..',
+        '..opwwrrrrwwpo..',
+        '..opwwrrrrwwpo..',
+        '..opwwwwwwwwpo..',
+        '...oooooooooo...',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '璀璨蓝宝石', line: '折射着清透星光的蓝钻，和今天的穿搭很配呢~', pal: { b: '#52b2ff', l: '#a8e4ff', w: '#ffffff' }, grid: [
-        '................','....llllllll....','...lbbwwwwbbl...','..lbbbbwwbbbbl..','..llllllllllll..','...lbbbbbbbbl...','....lbbbbbbl....','.....lbbbbl.....','......lbbl......','.......ll.......','................','................','................','................','................','................'
+      { title: '璀璨蓝宝石', line: '折射着清透星光的蓝钻，和今天的穿搭很配呢~', pal: { o: '#264873', b: '#45a8ff', l: '#9ee0ff', w: '#ffffff' }, grid: [
+        '................',
+        '...oooooooooo...',
+        '..olllwwwwbblo..',
+        '.ollllwwwwbbbbo.',
+        '.olllllllllllbo.',
+        '..obbbbbbbbbbo..',
+        '...obbbbbbbbo...',
+        '....obbbbbbo....',
+        '.....obbbbo.....',
+        '......obbo......',
+        '.......oo.......',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '珍珠小提包', line: '精致女孩/男孩出门必备的迷你珍珠链条包！', pal: { w: '#fffdf9', p: '#ffadc6', y: '#ffd24d' }, grid: [
-        '......wwww......','.....w....w.....','....w......w....','...pppppppppp...','...ppppyypppp...','...pppppppppp...','...pppppppppp...','...pppppppppp...','....pppppppp....','................','................','................','................','................','................','................'
+      { title: '珍珠小提包', line: '精致女孩/男孩出门必备的迷你珍珠链条包！', pal: { o: '#6b384c', w: '#fffdf9', p: '#ffa8c4', d: '#e6759a', y: '#ffd24d' }, grid: [
+        '.....oooooo.....',
+        '....ow....wo....',
+        '...ow......wo...',
+        '..oooooooooooo..',
+        '..oppppppppppo..',
+        '..oppppyyppppo..',
+        '..oppppppppppo..',
+        '..oddddddddddo..',
+        '..oooooooooooo..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
     gamer: [
-      { title: '像素小掌机', line: '画了台复古掌机，等下要不要再来一局小游戏？', pal: { b: '#7890d8', s: '#9ee8c8', k: '#2d2930', r: '#ff5c7c' }, grid: [
-        '................','...bbbbbbbbbb...','...bssssssssb...','...bssssssssb...','...bbbbbbbbbb...','...bbkbbbbbbb...','...bkkkbbbrbb...','...bbkbbbrbbb...','...bbbbbbbbbb...','...bbbbbbbbbb...','................','................','................','................','................','................'
+      { title: '像素小掌机', line: '画了台复古掌机，等下要不要再来一局小游戏？', pal: { o: '#282436', b: '#738ce0', s: '#96ebc4', h: '#d4fff0', k: '#363242', r: '#ff5278' }, grid: [
+        '................',
+        '..oooooooooooo..',
+        '..obssssssssbo..',
+        '..obshhhhhhsbo..',
+        '..obbbbbbbbbbo..',
+        '..obkbbbbbbbbo..',
+        '..obkkkbbbrbbo..',
+        '..obkbbbbrbbbo..',
+        '..obbbbbbbbbbo..',
+        '..oooooooooooo..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '满血红药水', line: '干了这瓶像素红药水，HP 和心情瞬间回满！', pal: { k: '#9c6638', w: '#e8f4ff', r: '#ff4d6d', p: '#ff9eb5' }, grid: [
-        '......kkkk......','......kkkk......','.......ww.......','.....wwwwww.....','....wwrrrrww....','...wwrrpprrww...','...wwrrrrrrww...','...wwrrrrrrww...','....wwwwwwww....','.....wwwwww.....','................','................','................','................','................','................'
+      { title: '满血红药水', line: '干了这瓶像素红药水，HP 和心情瞬间回满！', pal: { o: '#3b2a22', k: '#9c6638', w: '#e8f4ff', r: '#ff4264', p: '#ffa8bc' }, grid: [
+        '.....oooooo.....',
+        '.....okkkko.....',
+        '......owwo......',
+        '....oowwwwoo....',
+        '...owwrrrrwwo...',
+        '..owwrrpprrwwo..',
+        '..owwrrrrrrwwo..',
+        '..owwrrrrrrwwo..',
+        '...owwwwwwwwo...',
+        '....oooooooo....',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '传说金宝箱', line: '开箱必出 SSR！我已经把欧气画进箱子里了！', pal: { b: '#a85a2a', y: '#ffd24d', k: '#3b2a22' }, grid: [
-        '................','...yyyyyyyyyy...','..ybbbbbbbbbby..','..ybbbbbbbbbby..','..yyyyykyyyyyy..','..ybbbkkkbbbby..','..ybbbbkbbbbby..','..ybbbbbbbbbby..','...yyyyyyyyyy...','................','................','................','................','................','................','................'
+      { title: '传说金宝箱', line: '开箱必出 SSR！我已经把欧气画进箱子里了！', pal: { o: '#4a2a14', b: '#a85a2a', y: '#ffd24d', h: '#fff3a8', k: '#3b2a22' }, grid: [
+        '................',
+        '..oooooooooooo..',
+        '.oyhhhhhhhhhhyo.',
+        '.oybbbbbbbbbbyo.',
+        '.oyyyyykyyyyyyo.',
+        '.oybbbkkkbbbbyo.',
+        '.oybbbbkbbbbbyo.',
+        '.oybbbbbbbbbbyo.',
+        '..oooooooooooo..',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '超级无敌星', line: '吃到这颗无敌星，今天做什么都会顺顺利利！', pal: { y: '#ffe066', o: '#ff9e2c', k: '#3b2a22' }, grid: [
-        '.......yy.......','......yyyy......','..yyyyyyyyyyyy..','...yyyykykyyy...','....yyykykyy....','....yyyyyyyy....','...yyyy..yyyy...','..yy........yy..','................','................','................','................','................','................','................','................'
+      { title: '超级无敌星', line: '吃到这颗无敌星，今天做什么都会顺顺利利！', pal: { o: '#6b4208', y: '#ffe047', h: '#fff7ad', d: '#f29e1d', k: '#2d1e18' }, grid: [
+        '.......oo.......',
+        '......oyyo......',
+        '.oooooyhhyooooo.',
+        '.oyhhyyyyyyyyydo',
+        '..oyyyyykykyydo.',
+        '...oyyyykykydo..',
+        '...oyyyyyyyydo..',
+        '..oyyyydodddydo.',
+        '.oyyyoo...ooodo.',
+        '.oooo.......ooo.',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
     philosopher: [
-      { title: '静谧夜灯塔', line: '哪怕在很暗的夜里，也会有一束光为你亮着~', pal: { w: '#fffdf7', r: '#e05a68', y: '#ffe478', b: '#4a6b9c' }, grid: [
-        '.......yy.......','......yyyy......','..yyyywwwwyyyy..','......wwww......','......rrrr......','......wwww......','.....rrrrrr.....','.....wwwwww.....','....rrrrrrrr....','bbbbbbbbbbbbbbbb','................','................','................','................','................','................'
+      { title: '静谧夜灯塔', line: '哪怕在很暗的夜里，也会有一束光为你亮着~', pal: { o: '#2d3b52', w: '#fffdf7', r: '#e05264', y: '#ffe478', b: '#4a6b9c' }, grid: [
+        '.......oo.......',
+        '......oyyo......',
+        '.yyyyowwwwoyyyy.',
+        '......owwo......',
+        '......orro......',
+        '.....owwwwo.....',
+        '.....orrrro.....',
+        '....owwwwwwo....',
+        '....orrrrrro....',
+        'bbbbbbbbbbbbbbbb',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '时光小沙漏', line: '沙子一粒粒落下，和你一起发呆的时光最珍贵。', pal: { b: '#8c5a32', g: '#e8f4ff', y: '#f5cb66' }, grid: [
-        '..bbbbbbbbbbbb..','...gggggggggg...','...ggyyyyyygg...','....ggyyyygg....','.....ggyygg.....','......gggg......','.....ggyygg.....','....ggyyyygg....','...ggyyyyyygg...','..bbbbbbbbbbbb..','................','................','................','................','................','................'
+      { title: '时光小沙漏', line: '沙子一粒粒落下，和你一起发呆的时光最珍贵。', pal: { o: '#4a301e', b: '#9c6638', g: '#e8f4ff', y: '#f5cb66' }, grid: [
+        '.oooooooooooooo.',
+        '..oggggggggggo..',
+        '..oggyyyyyyggo..',
+        '...oggyyyyggo...',
+        '....oggyyggo....',
+        '.....oggggo.....',
+        '....oggyyggo....',
+        '...oggyyyyggo...',
+        '..oggyyyyyyggo..',
+        '.oooooooooooooo.',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '星空下的树', line: '树叶沙沙响的时候，像在读一首很温柔的诗。', pal: { g: '#58a868', l: '#8ce08e', b: '#7a4b2a', y: '#ffe478' }, grid: [
-        '..y..........y..','.....gggggg.....','...ggllllllgg...','..gllllllllllg..','..gllllggllllg..','...gggggggggg...','.......bb.......','.......bb.......','......bbbb......','................','................','................','................','................','................','................'
+      { title: '星空下的树', line: '树叶沙沙响的时候，像在读一首很温柔的诗。', pal: { o: '#2d4d32', g: '#54a866', l: '#8ee694', b: '#7a4b2a', y: '#ffe478' }, grid: [
+        '.y............y.',
+        '....oooooooo....',
+        '..oogllllllgoo..',
+        '.ogllllllllllgo.',
+        '.ogllllggllllgo.',
+        '..ooggggggggoo..',
+        '......obbo......',
+        '......obbo......',
+        '.....obbbbo.....',
+        '.....oooooo.....',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
-      { title: '鹅毛手账本', line: '把今天的风声和故事都记进小本子里吧~', pal: { w: '#fffdf7', b: '#6b4e3d', p: '#a8d0ff', k: '#4a4a52' }, grid: [
-        '.............pp.','..bbbbbbbbb.pp..','..bwwwwwwwbpp...','..bwkkkkkwbp....','..bwwwwwwwb.....','..bwkkkkkwb.....','..bwwwwwwwb.....','..bwkkkkkwb.....','..bbbbbbbbb.....','................','................','................','................','................','................','................'
+      { title: '鹅毛手账本', line: '把今天的风声和故事都记进小本子里吧~', pal: { o: '#3b2a22', w: '#fffdf7', b: '#785642', p: '#a8d0ff', k: '#52525c' }, grid: [
+        '............oop.',
+        '.ooooooooooopp..',
+        '.obwwwwwwwbpo...',
+        '.obwkkkkkwbo....',
+        '.obwwwwwwwbo....',
+        '.obwkkkkkwbo....',
+        '.obwwwwwwwbo....',
+        '.obwkkkkkwbo....',
+        '.ooooooooooo....',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................',
+        '................'
       ]},
     ],
   };
 
   let pupLastDrawnArt = null;
   let pupLastDrawnAt = 0;
-  let pupNextDrawAt = Date.now() + 180000;
+  let pupNextDrawAt = Date.now() + 480000;
 
   const openPupDrawingModal = (art) => {
     if (!art) return;
@@ -26598,6 +27461,461 @@
     renderPupAdventure();
   };
 
+  // ==================== 小狗「名片串门」+ 双狗桌面互动系统 ====================
+  const guestPupEl = root.querySelector('#st-tb-guest-puppy');
+  const guestPupCanvas = root.querySelector('#st-tb-guest-puppy-canvas');
+  const guestPupCtx = guestPupCanvas ? guestPupCanvas.getContext('2d') : null;
+  const guestPupBubble = root.querySelector('#st-tb-guest-puppy-bubble');
+  const guestPupTag = root.querySelector('#st-tb-guest-puppy-tag');
+  const guestPopEl = root.querySelector('#st-tb-guest-pop');
+
+  const gPup = {
+    x: 160,
+    y: 0,
+    dir: -1,
+    state: 'idle',
+    timer: 100,
+    tick: 0,
+    nextSocialAt: Date.now() + 18000,
+    lastRenderKey: '',
+    bubbleTimer: null,
+  };
+  let guestDrag = null;
+  let guestDraftGifts = {};
+
+  const showGuestBubble = (txt, ms = 2600) => {
+    if (!guestPupBubble) return;
+    guestPupBubble.textContent = txt;
+    guestPupBubble.classList.add('show');
+    clearTimeout(gPup.bubbleTimer);
+    gPup.bubbleTimer = setTimeout(() => guestPupBubble.classList.remove('show'), ms);
+  };
+
+  const getAllGiftableItems = () => {
+    const inv = config.puppyInventory || {};
+    const flInv = config.puppyGarden?.unlocked || {};
+    const dishInv = config.puppyKitchen?.dishes || {};
+    const list = [];
+    SHOP_PUP_GOODS.forEach(x => {
+      const q = Math.floor(inv[x.id] || 0);
+      if (q > 0 && x.id !== 'personality_potion' && x.id !== 'gender_potion') {
+        list.push({ kind: x.cat === 'gear' ? 'gear' : 'snack', catLabel: x.cat === 'gear' ? '道具' : '零食', id: x.id, name: x.name, qty: q });
+      }
+    });
+    GACHA_SNACKS.forEach(x => {
+      const q = Math.floor(inv[x.id] || 0);
+      if (q > 0) list.push({ kind: 'snack', catLabel: '零食', id: x.id, name: x.name, qty: q });
+    });
+    PUP_FLOWERS.forEach(fl => {
+      const q = Math.floor(flInv[fl.id] || 0);
+      if (q > 0) list.push({ kind: 'flower', catLabel: '花朵', id: fl.id, name: fl.name, qty: q });
+    });
+    [...PUP_KITCHEN_RECIPES, ...PUP_DARK_DISHES].forEach(kd => {
+      const q = Math.floor(dishInv[kd.id] || 0);
+      if (q > 0) list.push({ kind: 'dish', catLabel: '料理', id: kd.id, name: kd.name, qty: q });
+    });
+    return list;
+  };
+
+  const grantGiftItems = (gifts) => {
+    const received = [];
+    if (!Array.isArray(gifts)) return received;
+    gifts.forEach(g => {
+      const qty = Math.max(1, Math.min(5, Math.floor(g.qty || 1)));
+      if (g.kind === 'gear' || g.kind === 'snack') {
+        const meta = [...SHOP_PUP_GOODS, ...GACHA_SNACKS].find(x => x.id === g.id);
+        if (!meta) return;
+        config.puppyInventory = config.puppyInventory || {};
+        config.puppyInventory[g.id] = Math.floor(config.puppyInventory[g.id] || 0) + qty;
+        received.push(`${meta.name} ×${qty}`);
+      } else if (g.kind === 'flower') {
+        const meta = PUP_FLOWERS.find(x => x.id === g.id);
+        if (!meta) return;
+        config.puppyGarden = config.puppyGarden || { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {} };
+        config.puppyGarden.unlocked = config.puppyGarden.unlocked || {};
+        config.puppyGarden.unlocked[g.id] = Math.floor(config.puppyGarden.unlocked[g.id] || 0) + qty;
+        received.push(`${meta.name} ×${qty}`);
+      } else if (g.kind === 'dish') {
+        const meta = [...PUP_KITCHEN_RECIPES, ...PUP_DARK_DISHES].find(x => x.id === g.id);
+        if (!meta) return;
+        config.puppyKitchen = config.puppyKitchen || { lv: 1, xp: 0, cooked: 0, failed: 0, darkFed: 0, dex: {}, dishes: {} };
+        config.puppyKitchen.dishes = config.puppyKitchen.dishes || {};
+        config.puppyKitchen.dishes[g.id] = Math.floor(config.puppyKitchen.dishes[g.id] || 0) + qty;
+        received.push(`${meta.name} ×${qty}`);
+      }
+    });
+    return received;
+  };
+
+  const encodePupVisitCard = (msgText, gifts) => {
+    const payload = {
+      v: 1,
+      name: getPupName(),
+      pers: config.puppyPersonality || 'sleepyhead',
+      look: {
+        fur: config.puppyFur || '#fffdf7',
+        ear: config.puppyEar || '#e2ae74',
+        collar: config.puppyCollar || '#d66565',
+        outline: config.puppyOutline || '#3b2a22',
+        showCollar: config.puppyShowCollar !== false,
+        outfit: config.puppyOutfit || 'none',
+        accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, 2) : [],
+        comp: config.puppyCompanion || 'none',
+        onesieShowEars: Boolean(config.puppyOnesieShowEars),
+      },
+      msg: String(msgText || '').trim().slice(0, 40) || '带了点小礼物来找你玩~',
+      gifts: gifts.map(g => ({ kind: g.kind, id: g.id, qty: g.qty })),
+    };
+    const bytes = new TextEncoder().encode(JSON.stringify(payload));
+    let bin = '';
+    bytes.forEach(b => { bin += String.fromCharCode(b); });
+    return 'GLCPUP:' + btoa(bin);
+  };
+
+  const decodePupVisitCard = (raw) => {
+    const s = String(raw || '').trim();
+    if (!s.startsWith('GLCPUP:')) return null;
+    try {
+      const bin = atob(s.slice(7).trim());
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const obj = JSON.parse(new TextDecoder().decode(bytes));
+      if (!obj || obj.v !== 1 || !obj.name) return null;
+      return obj;
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const drawGuestPuppyScene = () => {
+    const guest = config.guestPuppy;
+    if (!guestPupEl || !guestPupCtx || !guest || !config.puppyEnabled) {
+      if (guestPupEl) guestPupEl.classList.remove('active');
+      return;
+    }
+    guestPupEl.classList.add('active');
+    if (guestPupTag) guestPupTag.textContent = guest.name || '客人小狗';
+    guestPupEl.style.left = `${Math.round(gPup.x)}px`;
+    guestPupEl.style.top = `${Math.round(gPup.y || defaultPupY())}px`;
+    const hop = gPup.state === 'happy' && Math.floor(gPup.tick / 7) % 2 === 0;
+    const bob = (gPup.state === 'walk' && Math.floor(gPup.tick / 8) % 2 === 1);
+    guestPupEl.classList.toggle('flip', gPup.dir < 0);
+    guestPupEl.classList.toggle('bob', bob);
+    guestPupEl.classList.toggle('hop', hop);
+
+    let frame = 'idle1';
+    let isSitPose = false;
+    if (gPup.state === 'walk') frame = Math.floor(gPup.tick / 8) % 2 === 0 ? 'walk1' : 'walk2';
+    else if (gPup.state === 'sit') { frame = Math.floor(gPup.tick / 16) % 2 === 0 ? 'sit1' : 'sit2'; isSitPose = true; }
+    else if (gPup.state === 'happy') frame = Math.floor(gPup.tick / 8) % 2 === 0 ? 'happy' : 'idle2';
+    else frame = Math.floor(gPup.tick / 18) % 2 === 0 ? 'idle1' : 'idle2';
+
+    const rKey = `${frame}|${gPup.dir}|${guest.name}|${JSON.stringify(guest.look || {})}`;
+    if (gPup.lastRenderKey === rKey) return;
+    gPup.lastRenderKey = rKey;
+
+    const pal = getPupPalette(guest.look || {});
+    const ox = 4, oy = 10;
+    const hx = isSitPose ? ox + 9 : ox + 10;
+    const hy = oy + 2;
+    guestPupCtx.clearRect(0, 0, 24, 24);
+    const grid = PUP_SPRITES[frame] || PUP_SPRITES.idle1;
+    for (let y = 0; y < grid.length; y++) {
+      const row = grid[y];
+      for (let x = 0; x < row.length; x++) {
+        const col = pal[row[x]];
+        if (col) {
+          guestPupCtx.fillStyle = col;
+          guestPupCtx.fillRect(ox + x, oy + y, 1, 1);
+        }
+      }
+    }
+    const prevCtx = activePxCtx;
+    const prevShowEars = config.puppyOnesieShowEars;
+    try {
+      activePxCtx = guestPupCtx;
+      if (guest.look) {
+        drawPupOutfit(guest.look.outfit || 'none', ox, oy, hx, hy, false, false, isSitPose, false);
+        if (Array.isArray(guest.look.accs)) {
+          guest.look.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+        }
+        drawPupCompanion(guest.look.comp || 'none', ox, oy, false);
+      }
+    } finally {
+      activePxCtx = prevCtx;
+      config.puppyOnesieShowEars = prevShowEars;
+    }
+  };
+
+  const dismissGuestPuppy = () => {
+    if (!config.guestPuppy) return;
+    const gName = config.guestPuppy.name || '小伙伴';
+    showGuestBubble('那我先回家啦，谢谢招待~', 1800);
+    if (guestPopEl) guestPopEl.style.display = 'none';
+    setTimeout(() => {
+      config.guestPuppy = null;
+      saveConfig();
+      if (guestPupEl) guestPupEl.classList.remove('active');
+      if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+      showPuppyBubble(`把 ${gName} 礼貌送走啦~`, 2400);
+    }, 900);
+  };
+
+  const openGuestPop = () => {
+    const guest = config.guestPuppy;
+    if (!guest || !guestPopEl) return;
+    const pObj = PUP_PERSONALITIES.find(p => p.id === guest.pers) || PUP_PERSONALITIES[0];
+    guestPopEl.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <span style="font-weight:700;">${guest.name} · ${pObj.name}</span>
+        <button type="button" id="st-gp-close" class="st-px-btn" style="height:18px;padding:0 5px;font-size:10px;">×</button>
+      </div>
+      <div style="font-size:10px;background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:4px 6px;margin-bottom:6px;">「${guest.msg || '来找你们玩啦~'}」</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+        <button type="button" id="st-gp-pet" class="st-px-btn care">摸摸TA</button>
+        <button type="button" id="st-gp-feed" class="st-px-btn care">喂小点心</button>
+        <button type="button" id="st-gp-praise" class="st-px-btn">夸夸可爱</button>
+        <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
+      </div>`;
+    const left = clamp(Math.round(gPup.x) - 60, 8, Math.max(8, win.innerWidth - 234));
+    const top = clamp(Math.round((gPup.y || defaultPupY()) - 148), 10, Math.max(10, win.innerHeight - 160));
+    guestPopEl.style.left = `${left}px`;
+    guestPopEl.style.top = `${top}px`;
+    guestPopEl.style.display = 'block';
+    guestPopEl.querySelector('#st-gp-close')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; });
+    guestPopEl.querySelector('#st-gp-pet')?.addEventListener('click', () => {
+      gPup.state = 'happy'; gPup.timer = 90;
+      showGuestBubble(pick(['哇谢谢摸头，好舒服~', '蹭蹭你的手心！你们家真温暖~', '开心摇尾巴，下次还想来串门！']), 2400);
+    });
+    guestPopEl.querySelector('#st-gp-feed')?.addEventListener('click', () => {
+      gPup.state = 'happy'; gPup.timer = 100;
+      showGuestBubble(pick(['吧唧吧唧… 这小点心也太香了吧！', '谢谢招待！吃得好满足~', '回去要跟主人夸你手艺好！']), 2400);
+    });
+    guestPopEl.querySelector('#st-gp-praise')?.addEventListener('click', () => {
+      gPup.state = 'happy'; gPup.timer = 95;
+      showGuestBubble(pick(['嘿嘿被夸得尾巴都要翘上天啦！', `谢谢夸奖，${getPupName()}也很可爱哦~`, '开心到原地转圈圈！']), 2400);
+    });
+    guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', dismissGuestPuppy);
+  };
+
+  if (guestPupEl) {
+    guestPupEl.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      e.stopPropagation();
+      guestPupEl.setPointerCapture(e.pointerId);
+      guestDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: gPup.x, oy: gPup.y || defaultPupY(), moved: false };
+    });
+    guestPupEl.addEventListener('pointermove', (e) => {
+      if (!guestDrag || guestDrag.id !== e.pointerId) return;
+      const dx = e.clientX - guestDrag.sx;
+      const dy = e.clientY - guestDrag.sy;
+      if (Math.hypot(dx, dy) > 5) guestDrag.moved = true;
+      if (guestDrag.moved) {
+        guestPupEl.classList.add('dragging');
+        gPup.x = clamp(guestDrag.ox + dx, 8, Math.max(8, win.innerWidth - 80));
+        gPup.y = clamp(guestDrag.oy + dy, 40, Math.max(40, win.innerHeight - 80));
+        drawGuestPuppyScene();
+      }
+    });
+    const endGuestDrag = (e) => {
+      if (!guestDrag || guestDrag.id !== e.pointerId) return;
+      const moved = guestDrag.moved;
+      guestDrag = null;
+      guestPupEl.classList.remove('dragging');
+      if (!moved) openGuestPop();
+    };
+    guestPupEl.addEventListener('pointerup', endGuestDrag);
+    guestPupEl.addEventListener('pointercancel', endGuestDrag);
+  }
+
+  const stepGuestPuppy = () => {
+    const guest = config.guestPuppy;
+    if (!guest || !config.puppyEnabled || guestDrag) {
+      if (!guest && guestPupEl && guestPupEl.classList.contains('active')) guestPupEl.classList.remove('active');
+      return;
+    }
+    if (!gPup.y) gPup.y = defaultPupY();
+    gPup.tick += 1;
+    gPup.timer -= 1;
+    const now = Date.now();
+    const maxX = Math.max(8, win.innerWidth - 80);
+
+    if (now >= gPup.nextSocialAt && Math.abs(gPup.x - pup.x) < 280) {
+      gPup.nextSocialAt = now + randInt(24000, 38000);
+      gPup.x = clamp(pup.x + (pup.x > maxX / 2 ? -56 : 56), 8, maxX);
+      gPup.dir = pup.x >= gPup.x ? 1 : -1;
+      gPup.state = 'happy';
+      gPup.timer = 110;
+      const gName = guest.name || '小伙伴';
+      const hName = getPupName();
+      showPuppyBubble(pick([`哇 ${gName} 来找我玩啦，贴贴！`, `${gName} 你闻起来香香的，一起转圈圈吗？`, `欢迎 ${gName}，把我的玩具分你一半！`]), 2400, true);
+      setTimeout(() => {
+        if (config.guestPuppy) showGuestBubble(pick([`${hName}！你们家好舒服呀~`, `嘿嘿和 ${hName} 一起玩最开心啦！`, `${hName} 尾巴摇得比我还快哈哈！`]), 2500);
+      }, 1100);
+    } else if (gPup.state === 'walk') {
+      gPup.x += gPup.dir * 0.65;
+      if (gPup.x <= 8) { gPup.x = 8; gPup.dir = 1; }
+      if (gPup.x >= maxX) { gPup.x = maxX; gPup.dir = -1; }
+    }
+
+    if (gPup.timer <= 0) {
+      const r = Math.random();
+      if (r < 0.40) {
+        if (Math.random() < 0.45) gPup.dir *= -1;
+        gPup.state = 'walk';
+        gPup.timer = randInt(90, 170);
+      } else if (r < 0.75) {
+        gPup.state = 'sit';
+        gPup.timer = randInt(120, 220);
+      } else {
+        gPup.state = 'idle';
+        gPup.timer = randInt(110, 190);
+      }
+    }
+    drawGuestPuppyScene();
+  };
+
+  function renderPupVisitPanel() {
+    if (!advVisitView) return;
+    advVisitView.innerHTML = '';
+    const guest = config.guestPuppy;
+
+    if (guest) {
+      const pObj = PUP_PERSONALITIES.find(p => p.id === guest.pers) || PUP_PERSONALITIES[0];
+      const gCard = doc.createElement('div');
+      gCard.className = 'st-px-adv-card';
+      gCard.style.marginBottom = '6px';
+      gCard.innerHTML = `<div style="font-weight:700;margin-bottom:3px;">当前做客：${guest.name}（${pObj.name}）</div>
+        <div style="font-size:10px;color:#6b5446;margin-bottom:5px;">「${guest.msg || '来串门啦~'}」</div>
+        <div style="display:flex;gap:5px;">
+          <button type="button" id="st-pv-interact" class="st-px-btn care" style="flex:1;">互动客人</button>
+          <button type="button" id="st-pv-dismiss" class="st-px-btn" style="flex:1;color:#a94442;">礼貌送客</button>
+        </div>`;
+      advVisitView.appendChild(gCard);
+      gCard.querySelector('#st-pv-interact')?.addEventListener('click', openGuestPop);
+      gCard.querySelector('#st-pv-dismiss')?.addEventListener('click', dismissGuestPuppy);
+    }
+
+    const outBox = doc.createElement('div');
+    outBox.className = 'st-px-adv-card';
+    outBox.style.marginBottom = '6px';
+    const giftables = getAllGiftableItems();
+    const totalPicked = Object.values(guestDraftGifts).reduce((a, b) => a + b, 0);
+    outBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">寄出串门名片（可选带礼物：已选 ${totalPicked}/5）</div>`;
+
+    const gGrid = doc.createElement('div');
+    gGrid.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;max-height:84px;overflow-y:auto;margin-bottom:5px;';
+    if (!giftables.length) {
+      gGrid.innerHTML = '<div style="font-size:10px;color:#7a6258;">背包暂无道具/零食/花朵/料理可带，可直接空手去串门~</div>';
+    } else {
+      giftables.forEach(item => {
+        const key = `${item.kind}:${item.id}`;
+        const picked = guestDraftGifts[key] || 0;
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = `st-px-btn${picked > 0 ? ' active' : ''}`;
+        b.style.cssText = 'height:22px;padding:0 6px;font-size:10px;';
+        b.textContent = `${item.name}(${item.qty})${picked > 0 ? ` ×${picked}` : ''}`;
+        b.addEventListener('click', () => {
+          const curTotal = Object.values(guestDraftGifts).reduce((a, b) => a + b, 0);
+          if (picked > 0 && (picked >= item.qty || curTotal >= 5)) {
+            delete guestDraftGifts[key];
+          } else if (curTotal < 5 && picked < item.qty) {
+            guestDraftGifts[key] = picked + 1;
+          } else {
+            delete guestDraftGifts[key];
+          }
+          renderPupVisitPanel();
+        });
+        gGrid.appendChild(b);
+      });
+    }
+    outBox.appendChild(gGrid);
+
+    const msgInp = doc.createElement('input');
+    msgInp.type = 'text';
+    msgInp.className = 'st-tb-input';
+    msgInp.placeholder = '写句串门问候（默认：带了点小礼物来找你玩~）';
+    msgInp.style.cssText = 'width:100%;margin-bottom:5px;font-size:10px;padding:4px 6px;';
+    const genBtn = doc.createElement('button');
+    genBtn.type = 'button';
+    genBtn.className = 'st-px-btn care';
+    genBtn.style.width = '100%';
+    genBtn.textContent = totalPicked > 0 ? `打包 ${totalPicked} 件礼物并生成名片码` : '生成串门名片码';
+    const codeOut = doc.createElement('textarea');
+    codeOut.readOnly = true;
+    codeOut.placeholder = '生成的名片码会显示在这里，发给朋友即可来串门~';
+    codeOut.style.cssText = 'width:100%;height:42px;margin-top:5px;font-size:9px;resize:none;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:3px;';
+    genBtn.addEventListener('click', () => {
+      const gifts = [];
+      const allMap = new Map(giftables.map(it => [`${it.kind}:${it.id}`, it]));
+      for (const [k, qty] of Object.entries(guestDraftGifts)) {
+        const it = allMap.get(k);
+        if (!it || qty <= 0) continue;
+        const take = Math.min(qty, it.qty);
+        gifts.push({ kind: it.kind, id: it.id, qty: take });
+        if (it.kind === 'gear' || it.kind === 'snack') {
+          config.puppyInventory[it.id] = Math.max(0, Math.floor(config.puppyInventory[it.id] || 0) - take);
+        } else if (it.kind === 'flower') {
+          config.puppyGarden.unlocked[it.id] = Math.max(0, Math.floor(config.puppyGarden.unlocked[it.id] || 0) - take);
+        } else if (it.kind === 'dish') {
+          config.puppyKitchen.dishes[it.id] = Math.max(0, Math.floor(config.puppyKitchen.dishes[it.id] || 0) - take);
+        }
+      }
+      const cardCode = encodePupVisitCard(msgInp.value, gifts);
+      guestDraftGifts = {};
+      saveConfig();
+      codeOut.value = cardCode;
+      try { navigator.clipboard?.writeText(cardCode); } catch (_) {}
+      cmNotify(gifts.length ? '名片码已生成并复制，礼物已打包！' : '名片码已生成并复制！');
+      renderPupVisitPanel();
+      setTimeout(() => {
+        const ta = advVisitView.querySelector('textarea[readonly]');
+        if (ta) ta.value = cardCode;
+      }, 20);
+    });
+    outBox.append(msgInp, genBtn, codeOut);
+    advVisitView.appendChild(outBox);
+
+    const inBox = doc.createElement('div');
+    inBox.className = 'st-px-adv-card';
+    inBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">请朋友的小狗来串门</div>`;
+    const inTa = doc.createElement('textarea');
+    inTa.placeholder = '粘贴朋友发来的 GLCPUP:... 名片码';
+    inTa.style.cssText = 'width:100%;height:42px;font-size:9px;resize:none;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:3px;margin-bottom:5px;';
+    const inBtn = doc.createElement('button');
+    inBtn.type = 'button';
+    inBtn.className = 'st-px-btn active';
+    inBtn.style.width = '100%';
+    inBtn.textContent = '拆开礼物并请进来';
+    inBtn.addEventListener('click', () => {
+      const parsed = decodePupVisitCard(inTa.value);
+      if (!parsed) { cmNotify('名片码格式不正确'); return; }
+      const received = grantGiftItems(parsed.gifts);
+      config.guestPuppy = {
+        name: String(parsed.name).slice(0, 14),
+        pers: parsed.pers || 'sleepyhead',
+        look: parsed.look || {},
+        msg: parsed.msg || '来找你们玩啦~',
+      };
+      gPup.x = clamp(pup.x + 64, 16, Math.max(16, win.innerWidth - 90));
+      gPup.y = defaultPupY();
+      gPup.dir = -1;
+      gPup.state = 'happy';
+      gPup.timer = 110;
+      gPup.lastRenderKey = '';
+      saveConfig();
+      if (config.puppyEnabled) {
+        drawGuestPuppyScene();
+        showGuestBubble(`哈喽！我是 ${config.guestPuppy.name}，来串门啦~`, 2800);
+        showPuppyBubble(`哇！${config.guestPuppy.name} 来做客啦~`, 2600);
+      }
+      cmNotify(received.length ? `收到礼物：${received.join('、')}` : `${config.guestPuppy.name} 已来到桌面做客！`);
+      renderPupVisitPanel();
+    });
+    inBox.append(inTa, inBtn);
+    advVisitView.appendChild(inBox);
+  }
+
   const renderPupAdventure = () => {
     if (!advGoView) return;
     advSubTabBtns.forEach(b => b.classList.toggle('active', b.dataset.advTab === advSubTab));
@@ -26605,7 +27923,9 @@
     if (advJobView) advJobView.style.display = advSubTab === 'job' ? 'block' : 'none';
     advAlbumView.style.display = advSubTab === 'album' ? 'block' : 'none';
     advMuseumView.style.display = advSubTab === 'museum' ? 'block' : 'none';
+    if (advVisitView) advVisitView.style.display = advSubTab === 'visit' ? 'block' : 'none';
     if (advSubTab === 'job' && typeof renderJobPanel === 'function') renderJobPanel();
+    if (advSubTab === 'visit' && typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
 
     const albumCount = Object.keys(config.puppyAlbum || {}).length;
     const curioCount = Object.keys(config.puppyCurios || {}).length;
@@ -33621,7 +34941,7 @@
     }
   });
 
-  const fireReplyReadyAlert = (isTest = false) => {
+  const fireReplyReadyAlert = (isTest = false, statsInfo = null) => {
     const curBellP = config.puppyPersonality || 'sleepyhead';
     if (!isTest) {
       setPuppyState('happy', 110);
@@ -33636,8 +34956,14 @@
         gamer: ['叮咚! 新回复新鲜出炉啦，火速回来查收!', '摇铃呼叫{owner}! 剧情写完咯，快回来接着看!', '嘿! 回复已经生成好啦，别在外面逛太久快回来!', '铃铛响起来啦，新内容在屏幕里等你翻牌呢!', '搞定啦! 新回复热乎乎的，速度归位开看!'],
         philosopher: ['叮咚，回复写好了，{owner}可以过来看了。', '写完了，按时摇铃通知你一声。', '新回复到了，没出岔子，放心看。', '写好了{owner}，记得先喝口水再慢慢看。', '通知一声，回复已经就位，随时可以开读。'],
       };
-      const bellArr = BELL_BY_PERS[curBellP] || BELL_BY_PERS.sleepyhead;
-      showPuppyBubble(formatPupText(pick(bellArr)), 3400);
+      if (statsInfo && statsInfo.chars > 0) {
+        const sArr = REPLY_STATS_BY_PERS[curBellP] || REPLY_STATS_BY_PERS.sleepyhead;
+        const sLine = formatPupText(pick(sArr)).replace(/\{chars\}/g, String(statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
+        showPuppyBubble(sLine, 3800);
+      } else {
+        const bellArr = BELL_BY_PERS[curBellP] || BELL_BY_PERS.sleepyhead;
+        showPuppyBubble(formatPupText(pick(bellArr)), 3400);
+      }
       playSoftBellChime();
     }
 
@@ -33878,25 +35204,108 @@
     return false;
   };
 
-  const triggerAlertOnce = () => {
-    if (!config.puppyEnabled || config.puppyReplyBell === false) return;
+  const getLatestAiReplyCharCount = () => {
+    try {
+      const mesList = doc.querySelectorAll('#chat .mes[is_user="false"] .mes_text, #chat .mes:not([is_user="true"]) .mes_text');
+      const last = mesList.length ? mesList[mesList.length - 1] : null;
+      if (last) {
+        const t = String(last.textContent || '').replace(/\s+/g, '');
+        if (t.length > 0) return t.length;
+      }
+      const ctx = getContext();
+      const ch = Array.isArray(ctx?.chat) ? ctx.chat : [];
+      for (let i = ch.length - 1; i >= 0; i--) {
+        if (ch[i] && !ch[i].is_user && ch[i].mes) {
+          return String(ch[i].mes).replace(/\s+/g, '').length;
+        }
+      }
+    } catch (_) {}
+    return 0;
+  };
+
+  const REPLY_STATS_BY_PERS = {
+    sleepyhead: [
+      '呼啊… 这条回了 {chars} 字、等了 {sec} 秒，我都快打了个小盹啦~',
+      '慢悠悠读完啦，{sec} 秒写了 {chars} 字，{owner}快舒舒服服看吧~',
+      '刚数完哦，一共 {chars} 字、耗时 {sec} 秒，看完记得伸个懒腰~',
+      '{sec} 秒出炉的 {chars} 字新剧情，我眯着眼帮你盯着呢，快看~',
+    ],
+    clingy: [
+      '{owner}快看！等了 {sec} 秒写了整整 {chars} 字，我陪你一起读！',
+      '耶！{sec} 秒生成 {chars} 字，这下可以贴着{owner}看个够啦！',
+      '刚刚一直在旁边守着，{sec} 秒写出 {chars} 字呢，快回来摸摸我！',
+      '{chars} 字热乎乎送达！才用了 {sec} 秒，{owner}有没有想我呀？',
+    ],
+    tsundere: [
+      '等了 {sec} 秒才憋出 {chars} 字，勉强还算过得去吧，快看啦！',
+      '哼，我可没帮你数着时间… 也就 {sec} 秒、{chars} 字而已！',
+      '写完了！{chars} 字用了 {sec} 秒，还不快来看本汪替你盯着的内容！',
+      '耗时 {sec} 秒、{chars} 字，效率凑合吧，看完记得夸夸我！',
+    ],
+    foodie: [
+      '哇！{sec} 秒端上来 {chars} 字，分量好足像一顿大餐！',
+      '刚数完，一共 {chars} 字用了 {sec} 秒，我都快看馋啦~',
+      '{sec} 秒出锅 {chars} 字！热气腾腾的，{owner}快趁热看吧！',
+      '啃着小饼干等了 {sec} 秒，结果等来 {chars} 字超级大份剧情！',
+    ],
+    explorer: [
+      '报！耗时 {sec} 秒斩获 {chars} 字新剧情，快切回来查收！',
+      '太稳啦，{sec} 秒直接写出 {chars} 字，我们继续往下看！',
+      '热乎乎的 {chars} 字已送达，只用了 {sec} 秒，能量满满！',
+      '刚帮你统计好了：{chars} 字、{sec} 秒，故事越来越精彩咯！',
+    ],
+    fashionista: [
+      '嗯，用了 {sec} 秒写了 {chars} 字，节奏控制得还算不错。',
+      '刚写完，{chars} 字耗时 {sec} 秒，你慢慢看，我就在旁边。',
+      '{sec} 秒、{chars} 字，篇幅刚刚好，值得仔细看看。',
+      '已经帮你留着了，{sec} 秒出的 {chars} 字，应该合你口味。',
+    ],
+    gamer: [
+      '叮！耗时 {sec} 秒输出 {chars} 字，这波手速直接拉满！',
+      '结算播报：{chars} 字达成，用时 {sec} 秒，火速开读！',
+      '连招完毕！{sec} 秒打出 {chars} 字，剧情推进一大截！',
+      '刚加载完，{sec} 秒生成 {chars} 字，这局表现很稳！',
+    ],
+    philosopher: [
+      '写好了，一共 {chars} 字，前后用了 {sec} 秒，可以慢慢看。',
+      '记了一下时间，{sec} 秒出了 {chars} 字，篇幅挺扎实的。',
+      '{chars} 字、{sec} 秒，不快不慢正好，先喝口水再读吧。',
+      '新回复到了，{sec} 秒写成 {chars} 字，没出什么岔子。',
+    ],
+  };
+
+  let lastReplyStatsAt = 0;
+  const triggerAlertOnce = (durMs = 0) => {
+    if (!config.puppyEnabled) return;
     const now = Date.now();
     if (now - lastAlertFiredAt < 4000) return;
     lastAlertFiredAt = now;
-    fireReplyReadyAlert(false);
+    const chars = getLatestAiReplyCharCount();
+    const secStr = durMs >= 10000 ? String(Math.round(durMs / 1000)) : (Math.max(1000, durMs) / 1000).toFixed(1);
+    const statsInfo = chars > 0 ? { chars, sec: secStr } : null;
+    if (config.puppyReplyBell !== false) {
+      fireReplyReadyAlert(false, statsInfo);
+    } else if (statsInfo && now - lastReplyStatsAt > 3500) {
+      lastReplyStatsAt = now;
+      const curP = config.puppyPersonality || 'sleepyhead';
+      const arr = REPLY_STATS_BY_PERS[curP] || REPLY_STATS_BY_PERS.sleepyhead;
+      const line = formatPupText(pick(arr)).replace(/\{chars\}/g, String(statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
+      showPuppyBubble(line, 3600);
+    }
   };
 
   win.__stCheckReplyBg = () => {
     try {
-      if (!config.puppyEnabled || config.puppyReplyBell === false) return;
+      if (!config.puppyEnabled) return;
       const busy = isStopBtnVisible();
       if (busy) {
         beginReplyTrack();
       } else if (stWasGenerating) {
+        const durMs = stGenStartedAt ? Math.max(800, Date.now() - stGenStartedAt) : 1200;
         const shouldAlert = hasVerifiedNewReply();
         resetReplyTrack();
         applyChatFold();
-        if (shouldAlert) triggerAlertOnce();
+        if (shouldAlert) triggerAlertOnce(durMs);
       }
     } catch (_) {}
   };
@@ -34215,6 +35624,16 @@
       if (ctxEv.eventTypes.GENERATION_ENDED) {
         ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_ENDED, () => {
           restoreStRegexAfterStream(true);
+          setTimeout(() => {
+            try {
+              if (stWasGenerating) {
+                const durMs = stGenStartedAt ? Math.max(800, Date.now() - stGenStartedAt) : 1200;
+                const ok = hasVerifiedNewReply();
+                resetReplyTrack();
+                if (ok) triggerAlertOnce(durMs);
+              }
+            } catch (_) {}
+          }, 220);
         });
       }
       if (ctxEv.eventTypes.GENERATION_STOPPED) {
@@ -36801,52 +38220,60 @@
           }
           const ASK_PERS_REPLY_TPLS = {
             sleepyhead: [
-              '呼啊~ {ans}听起来也太舒服了，我先打个哈欠慢慢回味~',
-              '嗯嗯，听到你说{ans}，整只狗都软乎乎松弛下来啦~',
-              '真好呀，光是想想{ans}，感觉今晚都能睡个甜甜的好觉~',
-              '慢悠悠摇两下尾巴~ {ans}这种安排最合我心意啦~',
+              '呼啊… 听{owner}讲到{ans}，连尾巴尖都跟着松软下来了~',
+              '原来是{ans}呀，好有画面感，我边摇尾巴边慢慢回味一会儿~',
+              '光是想到{ans}，心情就像晒过太阳的棉被一样暖乎乎的！',
+              '嗯~ {ans}听起来就很安逸，今晚做梦说不定都会梦到这个！',
+              '被{owner}这么一选，连打哈欠都变成甜甜的味道啦~',
             ],
             clingy: [
-              '哇! 只要是和{owner}一起，{ans}什么的我能开心一整天!',
-              '尾巴都要摇成小风扇啦! {ans}听着就超幸福，贴贴!',
-              '耶! 谢谢{owner}这么认真回我，{ans}我要记在小本本第一页!',
-              '最喜欢{owner}啦! 听到{ans}我整颗心都甜丝丝的!',
+              '哇！{ans}也太戳我了吧，只要有{owner}在旁边我能开心一整天！',
+              '尾巴甩得停不下来啦！听到{ans}我整只狗都要融化在你手心里了！',
+              '谢谢{owner}认真回答我！{ans}我要用爪印盖章记在心坎上！',
+              '呜哇好幸福！原来我们连{ans}这种小事都这么合拍，贴贴！',
+              '不管选什么都好喜欢，尤其是{owner}选了{ans}，更甜了！',
             ],
             tsundere: [
-              '哦，原来你喜欢{ans}啊。眼光倒还算凑合，勉强算你过关吧。',
-              '切，居然会选{ans}，算你有点眼光啦，本汪才没偷偷开心呢!',
-              '行吧行吧，看在你这么认真说到{ans}的份上，本汪就大方收下啦!',
-              '才不是特意问你才想听{ans}的呢……哼，不过确实还不错啦!',
+              '哼，竟然选了{ans}… 行吧，刚好跟我心里想的差不多！',
+              '才、才没有特意期待你选{ans}呢！不过既然你说了，我就大方点头吧！',
+              '切，{ans}这种答案也太会戳人软肋了吧，本汪耳朵才没红！',
+              '算你还有点懂我，{ans}确实比另外几个顺耳多啦~',
+              '拿{ans}来哄我？哼，虽然有点幼稚… 但这次就勉强被你哄开心了！',
             ],
             foodie: [
-              '诶嘿嘿{ans}听起来超棒! 虽然过会儿可能忘了刚才问啥但记得超开心!',
-              '哇原来{owner}选了{ans}呀，小迷糊认真点头记在脑门上啦~',
-              '听完眼睛都亮晶晶的! {ans}这个主意也太可爱太温柔了吧!',
-              '嘿嘿虽然平时迷迷糊糊的，但听到{ans}我一下子就听懂你的心意啦!',
+              '哇塞！{ans}听得我两眼放光，简直像刚出炉的甜点一样让人开心！',
+              '诶嘿嘿，原来{owner}也喜欢{ans}，我用小肉垫给你点个大大的赞！',
+              '听到{ans}差点兴奋到原地蹦起来，感觉现在能多干一碗饭！',
+              '好耶！{ans}这个答案又可爱又暖心，小脑袋瓜立刻记住啦~',
+              '听完{ans}嘴角根本压不住，好像比吃到草莓蛋糕还快乐一点点！',
             ],
             explorer: [
-              '太赞啦! 听到{ans}我瞬间元气爆棚，今天一定是大晴天!',
-              '哈哈{ans}这个想法好棒呀! {owner}怎么总是这么会说话!',
-              '耶! 想到{ans}我就浑身充满干劲，烦恼通通飞走啦!',
-              '超喜欢{ans}! 奖励最温柔的{owner}一份满分晴天好运!',
+              '太棒了！听到{ans}我瞬间满电，恨不得马上摇着尾巴去庆祝！',
+              '哈哈{ans}超有意思！和{owner}聊天总是能发现新惊喜！',
+              '耶！把{ans}存进今日份快乐清单，今天一定是超级大晴天！',
+              '{owner}选{ans}也太酷了，感觉浑身上下都充满干劲啦！',
+              '收到这份超棒的{ans}！送给{owner}一个元气满满的击掌！',
             ],
             fashionista: [
-              '嗯……{ans}确实不错。别一直盯着我看，耳朵只是刚好有点热。',
-              '咳，选{ans}倒是挺合我心意的……谢谢你认真回答我。',
-              '表面很淡定，不过听到你说{ans}，心里还是挺高兴的。',
-              '我就知道{owner}会选{ans}……嗯，我们还挺有默契的。',
+              '嗯… {ans}确实很特别。别误会，我只是正好也偏爱这个。',
+              '咳，居然选了{ans}，你好像比我想象中还要懂我一点。',
+              '表面保持淡定，其实听到{ans}的时候尾巴尖已经悄悄晃了两下。',
+              '谢谢你这么认真挑了{ans}，这份心意我收得很开心。',
+              '我就猜到{owner}可能会选{ans}，这种默契的感觉挺不赖的。',
             ],
             gamer: [
-              '哈哈选{ans}太会挑了! 不愧是我的最佳搭档!',
-              '哇塞默契满分! 我就知道你会选{ans}，直觉从未失手!',
-              '耶! {ans}听完心情直接起飞，今天肯定好运连连!',
-              '这答案太对胃口啦! {ans}必须给{owner}打个满分!',
+              '漂亮！{ans}直接正中红心，这波默契绝对是隐藏SSR级别！',
+              '哈哈选{ans}太会玩了吧！不愧是我最铁的桌面拍档！',
+              '好耶！{ans}直接把今日快乐值拉满，必须给你发个满分奖章！',
+              '我就知道{owner}会挑{ans}，咱俩的脑电波简直无缝同步！',
+              '这答案太酷啦！听完{ans}我感觉自己又能再战三百回合！',
             ],
             philosopher: [
-              '原来你喜欢{ans}，我记下了，眼光挺稳。',
-              '嗯，{ans}确实是个不错的选择。',
-              '聊到{ans}，感觉咱俩的频道又对齐了一点。',
-              '你选的{ans}挺合我心意，听着就让人安心。',
+              '聊到{ans}，忽然觉得今天这阵风都变得温柔了一点。',
+              '原来你会选{ans}呀，听着就让人心里一静，很舒服。',
+              '这个{ans}挺真实的，跟我想象里的你很像。',
+              '嗯，能和你聊起{ans}这样的细节，比单纯打发时间有意思多了。',
+              '记下你的{ans}了，以后每次想起这件事大概都会觉得挺暖的。',
             ],
           };
           const activePers = config.puppyPersonality || curP;
@@ -39879,7 +41306,7 @@
   const onMessageChanged = () => {
     updateStats();
     checkChatFloorMilestones();
-    if (config.maskEnabled) scheduleMask();
+    if (config.maskEnabled || config.textReplaceEnabled) scheduleMask();
     if (config.puppyEnabled && CALM_PUP_STATES.has(pup.state) && Date.now() >= pup.nextAutoBubbleAt) {
       setPuppyState('happy', 65);
       markPupSpecialCooldown(12, 18);
@@ -39913,6 +41340,7 @@
     renderBookmarks();
     fetchCharacterChats();
     if (config.maskEnabled) setTimeout(applyMasks, 300);
+    if (config.textReplaceEnabled) setTimeout(applyTextReplaces, 340);
   };
 
   applyReadingStyle();
