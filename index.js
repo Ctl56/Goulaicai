@@ -4740,6 +4740,10 @@
       color: var(--tb-sub);
       line-height: 1.55;
       margin-bottom: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 4px;
       white-space: pre-line;
       word-break: break-word;
     }
@@ -8846,6 +8850,7 @@
       <button class="st-tb-mini-btn" id="st-se-act-copy" type="button">复制本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-multi" type="button">多选段落</button>
       <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">改本层正文</button>
+      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff);">重roll本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del" type="button">删本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del-floor" type="button" style="color:#d9534f;">删整层</button>
     </div>
@@ -12808,25 +12813,54 @@
   const getVisibleFloorPreview = (mesEl, mesNum = NaN) => {
     const txtEl = mesEl?.querySelector('.mes_text');
     let raw = '';
+    const extractCleanText = (rootNode) => {
+      const ps = Array.from(rootNode.querySelectorAll('p, blockquote, li, h1, h2, h3, h4'));
+      if (ps.length) {
+        return ps.map(el => String(el.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
+      }
+      return String(rootNode.textContent || '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    };
     if (txtEl) {
       const clone = txtEl.cloneNode(true);
       clone.querySelectorAll('script, style, details:not([open]), .mes_reasoning, .reasoning_content').forEach(n => n.remove());
-      raw = String(clone.textContent || '').replace(/\s+/g, ' ').trim();
+      raw = extractCleanText(clone);
       if (!raw) {
         const clone2 = txtEl.cloneNode(true);
         clone2.querySelectorAll('script, style, .mes_reasoning, .reasoning_content').forEach(n => n.remove());
-        raw = String(clone2.textContent || '').replace(/\s+/g, ' ').trim();
+        raw = extractCleanText(clone2);
       }
     }
     if (!raw && Number.isFinite(mesNum)) {
       const msgRaw = String(getContext()?.chat?.[mesNum]?.mes || '');
       if (msgRaw) {
         const vis = typeof splitVisibleAndHidden === 'function' ? splitVisibleAndHidden(msgRaw).visibleText : msgRaw;
-        raw = String(vis || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        raw = String(vis || '').replace(/<[^>]+>/g, ' ').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
       }
     }
-    if (!raw) return '（该层暂无可见正文）';
-    return raw.length > 110 ? raw.slice(0, 110) + '…' : raw;
+    return raw || '（该层暂无可见正文）';
+  };
+
+  const deleteFloorReliably = async (mesId) => {
+    const idx = Number(mesId);
+    const ctx = getContext();
+    if (!Number.isFinite(idx) || !Array.isArray(ctx?.chat) || !ctx.chat[idx]) return false;
+    try {
+      if (typeof ctx.deleteMessage === 'function') {
+        await ctx.deleteMessage(idx);
+        return true;
+      }
+      ctx.chat.splice(idx, 1);
+      if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+      else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+      if (typeof ctx.reloadCurrentChat === 'function') await ctx.reloadCurrentChat();
+      else {
+        const domEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+        if (domEl) domEl.remove();
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
   };
 
   const openFloorDeleteConfirmModal = (mesEl, onConfirmDel) => {
@@ -12876,7 +12910,103 @@
     return true;
   };
 
-  const maybePromptPartialReroll = (triggerFn) => {
+  const triggerFullFloorReroll = async (regenBtn) => {
+    guardBypassUntil = Date.now() + 1200;
+    const ctx = getContext();
+    try {
+      if (typeof ctx?.regenerate === 'function') { await ctx.regenerate(); return; }
+      if (typeof ctx?.executeSlashCommands === 'function') { await ctx.executeSlashCommands('/regenerate'); return; }
+    } catch (_) {}
+    if (regenBtn && typeof regenBtn.click === 'function') regenBtn.click();
+  };
+
+  const rerollSpecificParagraph = async (mesId, paraText) => {
+    const idx = Number(mesId);
+    const ctx = getContext();
+    const chat = Array.isArray(ctx?.chat) ? ctx.chat : null;
+    if (!chat || !chat[idx]) { cmNotify('未找到该楼层内容'); return false; }
+    const raw = String(chat[idx].mes || '');
+    const parsed = splitVisibleAndHidden(raw);
+    const vis = String(parsed.visibleText || '');
+    const targetTxt = String(paraText || '').trim();
+    if (!targetTxt) { cmNotify('未识别到选中段落'); return false; }
+
+    let pos = vis.indexOf(targetTxt);
+    let matchLen = targetTxt.length;
+    if (pos < 0) {
+      const paras = vis.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
+      const norm = (s) => s.replace(/\s+/g, '');
+      const hit = paras.find(p => norm(p) === norm(targetTxt) || norm(p).includes(norm(targetTxt).slice(0, 24)));
+      if (hit) { pos = vis.indexOf(hit); matchLen = hit.length; }
+    }
+    if (pos < 0) {
+      cmNotify('该段含特殊排版，已为你打开纯净编辑窗');
+      openCleanStoryEditor(idx, targetTxt);
+      return false;
+    }
+
+    const beforeText = vis.slice(0, pos).trim();
+    const afterText = vis.slice(pos + matchLen).trim();
+    const isLastFloor = idx === chat.length - 1 && !chat[idx].is_user;
+
+    // 情况1：恰好是最新 AI 楼层的最后一段 -> 直接用酒馆原生 Continue 续写，100% 走原流程！
+    if (isLastFloor && !afterText && beforeText) {
+      pushUndoSnapshot(idx, raw);
+      const nextRaw = reassembleVisibleAndHidden(beforeText, parsed);
+      await saveMessageRawText(idx, nextRaw);
+      const contBtn = doc.querySelector('#option_continue, #continue_button');
+      if (contBtn) {
+        guardBypassUntil = Date.now() + 900;
+        contBtn.click();
+        cmNotify('已保留前文，正在仅重roll最后一段~');
+        return true;
+      }
+      if (typeof ctx?.executeSlashCommands === 'function') {
+        await ctx.executeSlashCommands('/continue');
+        return true;
+      }
+    }
+
+    // 情况2：中间段落或上方楼层的某一段 -> 仅重写该段并替换，前后文与其他楼层原封不动！
+    const genRawFn = ctx?.generateRaw || win.generateRaw;
+    const genQuietFn = ctx?.generateQuietPrompt || win.generateQuietPrompt;
+    if (typeof genRawFn !== 'function' && typeof genQuietFn !== 'function') {
+      cmNotify('当前酒馆环境不支持局部段重写，请先手动编辑该段');
+      return false;
+    }
+    cmNotify('正在为你单独重roll这一段，请稍候…');
+    try {
+      const prevFloorSnippet = idx > 0 ? String(chat[idx - 1]?.mes || '').slice(-400) : '';
+      const prompt = [
+        '请仅重新撰写下面标记的【目标段落】，保持与前后文剧情、人称、语气及相近字数完全连贯一致。',
+        '严格要求：只输出重写后的这一段正文，不要输出解释、标题、引号或前后其他段落。',
+        prevFloorSnippet ? `【上一层摘要】\n${prevFloorSnippet}` : '',
+        beforeText ? `【本层前文】\n${beforeText.slice(-900)}` : '',
+        `【需要重写的目标段落】\n${vis.slice(pos, pos + matchLen)}`,
+        afterText ? `【本层后文（需自然衔接）】\n${afterText.slice(0, 600)}` : '',
+      ].filter(Boolean).join('\n\n');
+
+      let res = '';
+      if (typeof genRawFn === 'function') {
+        res = await genRawFn({ prompt });
+      } else {
+        res = await genQuietFn({ quietPrompt: prompt });
+      }
+      const cleanNew = String(res || '').trim();
+      if (!cleanNew) { cmNotify('局部重roll未返回内容，请稍后再试'); return false; }
+      pushUndoSnapshot(idx, raw);
+      const nextVis = (vis.slice(0, pos) + cleanNew + vis.slice(pos + matchLen)).replace(/\n{3,}/g, '\n\n').trim();
+      const nextRaw = reassembleVisibleAndHidden(nextVis, parsed);
+      await saveMessageRawText(idx, nextRaw);
+      cmNotify('该段已局部重roll完成！（点“改本层正文 -> 撤销还原”可撤回）');
+      return true;
+    } catch (err) {
+      cmNotify('局部重roll失败：' + (err?.message || '请稍后重试'));
+      return false;
+    }
+  };
+
+  const maybePromptPartialReroll = (regenBtn) => {
     if (config.partialRerollLastPara === false) return false;
     const ctx = getContext();
     const chat = ctx?.chat;
@@ -12890,13 +13020,13 @@
     if (paras.length < 2) return false;
     openGuardConfirm(
       '只重roll最后一段，还是整层重roll？',
-      `当前回复共有 ${paras.length} 段内容，直接重roll会覆盖整层。\n提示：可在「概览 → 局部重roll」或悬浮球「快捷功能 → 局部重roll」里随时关闭此提醒。`,
+      `当前回复共有 ${paras.length} 段内容，直接重roll会覆盖整层。\n提示：可在「概览 → 局部重roll」或悬浮球「快捷功能 → 局部重roll」里随时关闭此提醒，也可双击任意段落单独重roll该段。`,
       () => { triggerPartialLastParaReroll(lastIdx); },
       '仅重roll最后一段',
       false,
       {
         label: '整层重roll',
-        onAlt: () => { triggerFn(); },
+        onAlt: () => { triggerFullFloorReroll(regenBtn); },
       }
     );
     return true;
@@ -12925,7 +13055,7 @@
 
     const regenBtn = target.closest('#option_regenerate, .mes_regenerate, #regenerate_button');
     if (regenBtn && Date.now() >= guardBypassUntil) {
-      if (maybePromptPartialReroll(() => regenBtn.click())) {
+      if (maybePromptPartialReroll(regenBtn)) {
         e.preventDefault();
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -45850,7 +45980,7 @@
       saveConfig();
       syncUI();
       if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
-      showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：多段回复重roll时可保留前面段落' : '已关闭局部重roll提示');
+      showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一段就能单独重roll那一段' : '已关闭局部重roll');
     });
   }
 
@@ -50893,6 +51023,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const seActMulti = root.querySelector('#st-se-act-multi');
   const seActEdit = root.querySelector('#st-se-act-edit');
   const seActDel = root.querySelector('#st-se-act-del');
+  const seActReroll = root.querySelector('#st-se-act-reroll');
   const seActDelFloor = root.querySelector('#st-se-act-del-floor');
   const seMultiBar = root.querySelector('#st-se-multi-bar');
   const seMultiCount = root.querySelector('#st-se-multi-count');
@@ -51369,6 +51500,16 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       cmNotify('已删除该段（点“改本层正文 -> 撤销还原”可撤回）');
     });
   }
+  if (seActReroll) {
+    seActReroll.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const mid = seActiveMesId;
+      const txt = String(seActiveParaEl?.innerText || '').trim();
+      hideSeFloatBar();
+      if (mid < 0 || !txt) return;
+      rerollSpecificParagraph(mid, txt);
+    });
+  }
   if (seActDelFloor) {
     seActDelFloor.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -51377,23 +51518,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (mid < 0) return;
       const mesEl = doc.querySelector(`#chat .mes[mesid="${mid}"]`);
       if (!mesEl) return;
-      openFloorDeleteConfirmModal(mesEl, () => {
-        delGuardBypassUntil = Date.now() + 900;
-        let nativeDel = mesEl.querySelector('.mes_edit_delete, .mes_delete, .del_mes');
-        if (nativeDel) {
-          nativeDel.click();
-          return;
-        }
-        const editBtn = mesEl.querySelector('.mes_edit');
-        if (editBtn) {
-          editBtn.click();
-          setTimeout(() => {
-            delGuardBypassUntil = Date.now() + 900;
-            const d2 = mesEl.querySelector('.mes_edit_delete, .mes_delete, .del_mes');
-            if (d2) d2.click();
-            else cmNotify('未找到酒馆删层按钮，请点楼层编辑里的删除图标');
-          }, 80);
-        }
+      openFloorDeleteConfirmModal(mesEl, async () => {
+        const ok = await deleteFloorReliably(mid);
+        cmNotify(ok ? `已删除第 #${mid} 层` : '删层失败，请重试');
       });
     });
   }
@@ -54388,7 +54515,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
         saveConfig();
         syncUI();
-        showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：多段回复重roll时可仅重roll最后一段' : '已关闭局部重roll提示');
+        showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一段就能单独重roll那一段' : '已关闭局部重roll');
         syncQuickDockUI();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
