@@ -32065,7 +32065,7 @@
       if (rt.el) rt.el.remove();
       guestRuntimes.delete(guestId);
     }
-    config.puppyGuests = getGuestList().filter(g => g.id !== guestId);
+    config.guestPuppies = getGuestList().filter(g => g.id !== guestId);
     saveConfig();
     syncGuestDomNodes();
     if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
