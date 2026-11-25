@@ -3590,9 +3590,9 @@
       display: none;
       grid-template-columns: repeat(3, minmax(0, auto));
       align-items: center;
-      gap: 4px;
-      padding: 6px;
-      border-radius: 9px;
+      gap: 6px 8px;
+      padding: 9px 11px;
+      border-radius: 10px;
       background: var(--tb-bg);
       color: var(--tb-text);
       border: 1px solid var(--tb-border);
@@ -12705,6 +12705,7 @@
   // ==================== 防误触右滑新生成与重新生成（确认后才调用 API） ====================
   let guardBypassUntil = 0;
   let delGuardBypassUntil = 0;
+  let guardTouchSuppressUntil = 0;
   let pendingConfirmAction = null;
   let pendingAltAction = null;
   let guardTouchStart = null;
@@ -13022,8 +13023,8 @@
     if (paras.length < 2) return false;
     const curParaNum = paras.length;
     openGuardConfirm(
-      `仅roll当前所在段落（第 ${curParaNum} 段），还是roll整层？`,
-      `当前回复共有 ${paras.length} 段，当前所在段落为第 ${curParaNum} 段；直接roll整层会覆盖全部内容。\n提示：可在「概览 → 局部重roll」或悬浮球「快捷功能 → 局部重roll」中随时关闭，也可双击任意段落点「roll本段」。`,
+      `选择重roll方式（第 ${curParaNum}/${paras.length} 段）`,
+      `当前所在段落：第 ${curParaNum} / ${paras.length} 段\n\n• 仅roll第 ${curParaNum} 段：保留前面 ${paras.length - 1} 段，只重新生成最后这一段\n• roll整层：清空并重新生成整层回复\n\n关闭路径：「概览 → 局部重roll」或「快捷功能 → 局部重roll」`,
       () => { triggerPartialLastParaReroll(lastIdx); },
       `仅roll第 ${curParaNum} 段`,
       false,
@@ -13039,6 +13040,12 @@
     const target = e.target;
     if (!target || !target.closest) return;
     if (target.closest('#st-tb-root')) return;
+    if (Date.now() < guardTouchSuppressUntil || confirmMask.classList.contains('open')) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      return;
+    }
 
     // 删层前二次核对弹窗：显示楼层号、下方是否还有其他楼层、前端可见正文预览（不含草稿）
     const delBtn = target.closest('.mes_edit_delete, .mes_delete, .del_mes');
@@ -13141,14 +13148,24 @@
     // 手指向左滑动即向右翻页生成新回复
     if (dx < -45 && Math.abs(dx) > Math.abs(dy) * 1.25 && willSwipeRightGenerate(start.mes)) {
       const swipeBtn = start.mes.querySelector('.swipe_right');
+      guardTouchSuppressUntil = Date.now() + 450;
       e.preventDefault();
       e.stopImmediatePropagation();
       e.stopPropagation();
       openGuardConfirm(
         '确认滑动生成新回复？',
-        '检测到在最后一条消息上滑动刷新，点击确认后才调用 API 生成新内容。',
+        '当前已是最后一条分支，点击确认后才调用 API 生成新内容。',
         () => { if (swipeBtn) swipeBtn.click(); }
       );
+    }
+  };
+
+  const onGuardPointerSuppressCapture = (e) => {
+    if (e.target && e.target.closest && e.target.closest('#st-tb-root')) return;
+    if (Date.now() < guardTouchSuppressUntil || confirmMask.classList.contains('open')) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      e.stopPropagation();
     }
   };
 
@@ -13156,6 +13173,8 @@
   doc.addEventListener('keydown', onGuardKeyDownCapture, true);
   doc.addEventListener('touchstart', onGuardTouchStartCapture, { capture: true, passive: true });
   doc.addEventListener('touchend', onGuardTouchEndCapture, true);
+  doc.addEventListener('pointerup', onGuardPointerSuppressCapture, true);
+  doc.addEventListener('mouseup', onGuardPointerSuppressCapture, true);
 
   // ==================== 聊天词频与互动小统计 ====================
   const STOP_WORDS = new Set([
@@ -51510,7 +51529,22 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const txt = String(seActiveParaEl?.innerText || '').trim();
       hideSeFloatBar();
       if (mid < 0 || !txt) return;
-      rerollSpecificParagraph(mid, txt);
+      const raw = String(getContext()?.chat?.[mid]?.mes || '');
+      const vis = String(splitVisibleAndHidden(raw).visibleText || '');
+      let paras = vis.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
+      if (paras.length < 2) paras = vis.split(/\n+/).map(s => s.trim()).filter(Boolean);
+      const norm = (s) => s.replace(/\s+/g, '');
+      const targetNorm = norm(txt);
+      let hitIdx = paras.findIndex(p => p.includes(txt) || norm(p) === targetNorm || (targetNorm.length >= 8 && norm(p).includes(targetNorm.slice(0, 20))));
+      const curNum = hitIdx >= 0 ? (hitIdx + 1) : 1;
+      const totalNum = Math.max(curNum, paras.length || 1);
+      const snip = txt.length > 90 ? txt.slice(0, 90) + '…' : txt;
+      openGuardConfirm(
+        '确认roll本段？',
+        `当前楼层：第 #${mid} 层\n当前段落：第 ${curNum}/${totalNum} 段\n\n段落内容：${snip}`,
+        () => { rerollSpecificParagraph(mid, txt); },
+        '确认roll本段'
+      );
     });
   }
   if (seActDelFloor) {
