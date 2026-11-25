@@ -27501,8 +27501,8 @@
           config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
           extraEventTxt = ' · 奇遇: 帮迷路旅人指路获赠幸运扭蛋券x1';
         } else if (evPick === 8) {
-          adjustPupStats(10, 15, 16);
-          extraEventTxt = ' · 奇遇: 偶遇山间暖泉舒舒服服泡了个澡(全状态恢复)';
+          adjustPupStats(100, 100, 100);
+          extraEventTxt = ' · 奇遇: 偶遇山间暖泉舒舒服服泡了个澡(饱食/水分/心情全恢复至100%)';
         } else if (evPick === 9 && typeof ensureKitchen === 'function') {
           const k = ensureKitchen();
           k.xp += 25;
@@ -27515,18 +27515,18 @@
           config.puppyAdvCooldownUntil = Date.now() + 3600000;
           config.puppyStats = config.puppyStats || {};
           config.puppyStats.advRestCount = (config.puppyStats.advRestCount || 0) + 1;
-          extraEventTxt = loss > 0 ? ` · 倒霉奇遇: 踩进泥水坑花 ${loss} 币冲洗并需休整 1 小时` : ' · 倒霉奇遇: 踩进水坑溅了一身泥，回家洗澡休整 1 小时';
+          extraEventTxt = loss > 0 ? ` · 倒霉奇遇: 踩进泥水坑花 ${loss} 币冲洗并需休整 1 小时(心情-5)` : ' · 倒霉奇遇: 踩进水坑溅了一身泥，回家洗澡休整 1 小时(心情-5)';
         } else if (evPick === 11) {
           const loss = Math.min(4, Math.max(0, Math.floor(config.puppyCoins || 0)));
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
           adjustPupStats(12, 0, 8);
-          extraEventTxt = loss > 0 ? ` · 贪吃奇遇: 路过烤肠摊没忍住花 ${loss} 币买了一根(饱食+12)` : ' · 贪吃奇遇: 在烤肠摊前流口水被老板塞了一小块试吃';
+          extraEventTxt = loss > 0 ? ` · 贪吃奇遇: 路过烤肠摊没忍住花 ${loss} 币买了一根(饱食+12 心情+8)` : ' · 贪吃奇遇: 在烤肠摊前流口水被老板塞了一小块试吃(饱食+12 心情+8)';
         } else if (evPick === 12) {
           adjustPupStats(-8, 0, -4);
           config.puppyAdvCooldownUntil = Date.now() + 3600000;
           config.puppyStats = config.puppyStats || {};
           config.puppyStats.advRestCount = (config.puppyStats.advRestCount || 0) + 1;
-          extraEventTxt = ' · 倒霉奇遇: 被路过调皮麻雀追着啄跑半块干粮，吓得回窝休整 1 小时(饱食-8)';
+          extraEventTxt = ' · 倒霉奇遇: 被路过调皮麻雀追着啄跑半块干粮，吓得回窝休整 1 小时(饱食-8 心情-4)';
         } else if (evPick === 13) {
           const loss = Math.min(2, Math.max(0, Math.floor(config.puppyCoins || 0)));
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - loss);
@@ -27534,15 +27534,15 @@
         } else if (evPick === 14) {
           coinGain += 4;
           addPupAffinity(2, 'adv_event');
-          extraEventTxt = ' · 奇遇: 街头艺人请小狗客串合影分到 4 币出场费';
+          extraEventTxt = ' · 奇遇: 街头艺人请小狗客串合影分到 4 币出场费(好感+2)';
         } else if (evPick === 15) {
           adjustPupStats(0, -10, 6);
           coinGain += 2;
-          extraEventTxt = ' · 奇遇: 追松鼠跑了一大圈累得气喘吁吁，顺手捡到 2 币';
+          extraEventTxt = ' · 奇遇: 追松鼠跑了一大圈累得气喘吁吁，顺手捡到 2 币(水分-10 心情+6)';
         } else if (evPick === 2) {
           addPupAffinity(2, 'adv_event');
           adjustPupStats(0, 0, 12);
-          extraEventTxt = ' · 奇遇: 听流浪乐手弹琴跳了支舞(好感+2)';
+          extraEventTxt = ' · 奇遇: 听流浪乐手弹琴跳了支舞(好感+2 心情+12)';
         } else if (evPick === 3) {
           const bonusC = randInt(3, 6);
           coinGain += bonusC;
@@ -40750,9 +40750,9 @@
       if (facingLeft) {
         ctx.translate(px + 24, py);
         ctx.scale(-1, 1);
-        ctx.drawImage(puppyCanvas, 0, 0, 24, 24, 0, 0, 24, 24);
+        ctx.drawImage(puppyCanvas, 0, 0, puppyCanvas.width, puppyCanvas.height, 0, 0, 24, 24);
       } else {
-        ctx.drawImage(puppyCanvas, 0, 0, 24, 24, px, py, 24, 24);
+        ctx.drawImage(puppyCanvas, 0, 0, puppyCanvas.width, puppyCanvas.height, px, py, 24, 24);
       }
       ctx.restore();
     }
@@ -42088,7 +42088,7 @@
       ctx.fillRect(px, py, 34, 1); ctx.fillRect(px, py + 39, 34, 1);
       ctx.fillRect(px, py, 1, 40); ctx.fillRect(px + 33, py, 1, 40);
       ctx.fillStyle = photoBg[pId] || '#fff5f8'; ctx.fillRect(px + 3, py + 3, 28, 28);
-      if (puppyCanvas) ctx.drawImage(puppyCanvas, 0, 0, 24, 24, px + 5, py + 5, 24, 24);
+      if (puppyCanvas) ctx.drawImage(puppyCanvas, 0, 0, puppyCanvas.width, puppyCanvas.height, px + 5, py + 5, 24, 24);
       ctx.fillStyle = '#e89eb5';
       ctx.fillRect(px + 5, py + 34, 2, 2); ctx.fillRect(px + 8, py + 34, 2, 2); ctx.fillRect(px + 6, py + 35, 3, 2);
       ctx.fillStyle = '#c4b0b8'; ctx.fillRect(px + 13, py + 35, 16, 1);
@@ -42099,13 +42099,13 @@
       ctx.fillStyle = tc; ctx.fillRect(px, py, 34, 6);
       ctx.fillStyle = '#fffdf8'; ctx.fillRect(px, py + 6, 34, 30);
       ctx.fillStyle = '#d4c0c7'; ctx.fillRect(px, py + 35, 34, 1);
-      if (puppyCanvas) ctx.drawImage(puppyCanvas, 0, 0, 24, 24, px + 5, py + 8, 24, 24);
+      if (puppyCanvas) ctx.drawImage(puppyCanvas, 0, 0, puppyCanvas.width, puppyCanvas.height, px + 5, py + 8, 24, 24);
     } else {
       // 双层花边相框
       ctx.fillStyle = tc2; ctx.fillRect(px - 1, py - 1, 36, 36);
       ctx.fillStyle = '#ffffff'; ctx.fillRect(px + 1, py + 1, 32, 32);
       ctx.fillStyle = photoBg[pId] || '#fff5f8'; ctx.fillRect(px + 3, py + 3, 28, 28);
-      if (puppyCanvas) ctx.drawImage(puppyCanvas, 0, 0, 24, 24, px + 5, py + 5, 24, 24);
+      if (puppyCanvas) ctx.drawImage(puppyCanvas, 0, 0, puppyCanvas.width, puppyCanvas.height, px + 5, py + 5, 24, 24);
       ctx.fillStyle = tc; ctx.fillRect(px - 2, py - 2, 6, 4); ctx.fillRect(px + 30, py + 31, 6, 4);
     }
 
