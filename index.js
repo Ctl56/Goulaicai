@@ -12421,13 +12421,18 @@
     clearTextReplaces();
     if (!config.textReplaceEnabled) return;
     const rules = (Array.isArray(config.textReplaceRules) ? config.textReplaceRules : [])
-      .filter(r => r && r.on !== false && r.from && r.from.length > 0)
-      .sort((a, b) => b.from.length - a.from.length);
+      .filter(r => r && r.on !== false && r.from && r.from.length > 0);
     if (!rules.length) return;
 
-    const regex = new RegExp(rules.map(r => escapeRegExp(r.from)).join('|'), 'g');
     const ruleMap = new Map();
-    rules.forEach(r => { if (!ruleMap.has(r.from)) ruleMap.set(r.from, r.to ?? ''); });
+    rules.forEach(r => {
+      String(r.from).split(/[,，]/).map(s => s.trim()).filter(Boolean).forEach(w => {
+        if (!ruleMap.has(w)) ruleMap.set(w, r.to ?? '');
+      });
+    });
+    const keys = [...ruleMap.keys()].sort((a, b) => b.length - a.length);
+    if (!keys.length) return;
+    const regex = new RegExp(keys.map(escapeRegExp).join('|'), 'g');
     const containers = doc.querySelectorAll('#chat .mes_text');
     runWithoutObserve(() => {
       containers.forEach(container => {
@@ -12541,21 +12546,45 @@
     const rawToStr = String(rawTo ?? '');
     const toList = rawToStr === '' ? [''] : rawToStr.split(/[,，]/).map(s => s.trim());
     if (!Array.isArray(config.textReplaceRules)) config.textReplaceRules = [];
-    const baseTs = Date.now();
+
+    // 先按目标词分组：相同目标词合并在同一个条目里，不拆开
+    const grouped = new Map();
     fromList.forEach((f, idx) => {
       const targetTo = toList.length <= 1 ? (toList[0] ?? '') : (idx < toList.length ? toList[idx] : toList[toList.length - 1]);
-      const exist = config.textReplaceRules.find(r => r.from === f);
-      if (exist) {
-        exist.to = targetTo;
-        exist.on = true;
-      } else {
-        config.textReplaceRules.push({ id: `tr_${baseTs}_${idx}`, from: f, to: targetTo, on: true });
-      }
+      if (!grouped.has(targetTo)) grouped.set(targetTo, []);
+      const arr = grouped.get(targetTo);
+      if (!arr.includes(f)) arr.push(f);
     });
+
+    const baseTs = Date.now();
+    let idxCounter = 0;
+    let mergedCount = 0;
+    for (const [targetTo, words] of grouped.entries()) {
+      // 从其它目标词规则里移除重复原词，避免冲突
+      config.textReplaceRules.forEach(r => {
+        if ((r.to ?? '') !== targetTo && r.from) {
+          const kept = String(r.from).split(/[,，]/).map(s => s.trim()).filter(w => w && !words.includes(w));
+          r.from = kept.join('，');
+        }
+      });
+      config.textReplaceRules = config.textReplaceRules.filter(r => r.from && r.from.trim().length > 0);
+
+      const sameTarget = config.textReplaceRules.find(r => (r.to ?? '') === targetTo);
+      if (sameTarget) {
+        const curWords = String(sameTarget.from || '').split(/[,，]/).map(s => s.trim()).filter(Boolean);
+        words.forEach(w => { if (!curWords.includes(w)) curWords.push(w); });
+        sameTarget.from = curWords.join('，');
+        sameTarget.on = true;
+        mergedCount += 1;
+      } else {
+        config.textReplaceRules.push({ id: `tr_${baseTs}_${idxCounter++}`, from: words.join('，'), to: targetTo, on: true });
+      }
+    }
     saveConfig();
     renderTextReplaceUI();
     applyTextReplaces();
-    if (fromList.length > 1) cmNotify(`已批量添加 ${fromList.length} 条替词规则`);
+    if (mergedCount > 0) cmNotify('已自动合并到同目标替词条目');
+    else if (fromList.length > 1) cmNotify(`已添加 ${grouped.size} 条合并替词规则`);
     return true;
   };
   if (repAddBtn) {
@@ -25264,6 +25293,14 @@
           }
 
           if (pup.timer <= 0) {
+            if (pup.talkingUntil && Date.now() < pup.talkingUntil) {
+              pup.timer = 24;
+              pup.x = clamp(pup.x, 8, maxX);
+              drawPuppyScene();
+              stepGuestPuppy();
+              puppyRaf = win.requestAnimationFrame(step);
+              return;
+            }
             const holdP = config.puppyHoldPose || 'auto';
             if (holdP === 'sleep' || holdP === 'lie' || holdP === 'sit') {
               setPuppyState(holdP, 3600);
@@ -28255,10 +28292,13 @@
     const hName = getPupName();
     const hText = sc.hLine.replace(/\{g\}/g, gName).replace(/\{h\}/g, hName);
     const gText = sc.gLine.replace(/\{g\}/g, gName).replace(/\{h\}/g, hName);
+    const lockUntil = Date.now() + 4700;
+    gPup.talkingUntil = lockUntil;
+    pup.talkingUntil = lockUntil;
     gPup.state = sc.gState;
-    gPup.timer = 140;
-    setPuppyState(sc.hState, 140);
-    // 一前一后说话，绝不同时重叠：先由自家小狗说 2100ms，快消失时客人小狗再开口把前句顶上去
+    gPup.timer = 320;
+    setPuppyState(sc.hState, 320);
+    // 一前一后说话，对话完全结束前两只小狗都乖乖待在原地不走开
     syncBubbleNoOverlap('host');
     showPuppyBubble(hText, 2150, !manual);
     setTimeout(() => {
@@ -28329,84 +28369,188 @@
   const POLAROID_BGS = [
     { id: 'meadow', name: '晴空草地' },
     { id: 'sakura', name: '樱花树下' },
-    { id: 'night',  name: '星夜萤火' },
+    { id: 'night',  name: '夏夜萤火' },
     { id: 'sunset', name: '海边日落' },
     { id: 'cafe',   name: '暖灯咖啡' },
     { id: 'snow',   name: '雪地小屋' },
   ];
-  const POLAROID_POSES = [
-    { id: 'happy',  name: '开心贴贴', f1: 'happy',    f2: 'happy',    heart: true },
-    { id: 'sit',    name: '乖巧坐姿', f1: 'sit1',     f2: 'sit1',     heart: false },
-    { id: 'sleep',  name: '贴贴打盹', f1: 'sleep',    f2: 'sleep',    heart: false },
-    { id: 'belly',  name: '翻肚卖萌', f1: 'playdead', f2: 'happy',    heart: true },
-    { id: 'tilt',   name: '歪头比心', f1: 'idle_tilt',f2: 'idle_tilt',heart: true },
+  const POLAROID_DOG_POSES = [
+    { id: 'happy',    name: '开心', frame: 'happy' },
+    { id: 'sit',      name: '坐姿', frame: 'sit1' },
+    { id: 'tilt',     name: '歪头', frame: 'idle_tilt' },
+    { id: 'sleep',    name: '打盹', frame: 'sleep' },
+    { id: 'playdead', name: '装死', frame: 'playdead' },
+    { id: 'eat',      name: '干饭', frame: 'eat1' },
+    { id: 'walk',     name: '迈步', frame: 'walk1' },
+    { id: 'idle',     name: '站立', frame: 'idle1' },
+    { id: 'blink',    name: '眨眼', frame: 'blink' },
   ];
-  const POLAROID_FRAMES = [
-    { id: 'classic', name: '经典白边', bg: '#ffffff', bd: '#3b2a22', cap: '#5a4034', date: '#8c7366' },
-    { id: 'pink',    name: '樱粉波点', bg: '#fff0f5', bd: '#d97a9a', cap: '#782644', date: '#a85a76' },
-    { id: 'kraft',   name: '复古牛皮', bg: '#f2e2c8', bd: '#7a5234', cap: '#54351c', date: '#8a6646' },
-    { id: 'starry',  name: '星夜金边', bg: '#262e4f', bd: '#e0be6e', cap: '#fff3cc', date: '#b8c4e8' },
-    { id: 'grid',    name: '格子手账', bg: '#f5f9f2', bd: '#6e9e74', cap: '#2c5432', date: '#688c6e' },
+  const POLAROID_QUICK_COLORS = [
+    { name: '奶白', bg: '#fffdf9', bd: '#5c4338' },
+    { name: '樱粉', bg: '#fff0f6', bd: '#d97a9a' },
+    { name: '鹅黄', bg: '#fffbe6', bd: '#d4a24c' },
+    { name: '晴蓝', bg: '#eef7ff', bd: '#6ba0d4' },
+    { name: '香芋', bg: '#f5f0ff', bd: '#9a7ec9' },
+    { name: '牛皮', bg: '#f3e3c9', bd: '#7a5234' },
   ];
 
   const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr, opts = {}) => {
     const ctx = cv.getContext('2d');
-    const W = 64, H = 48;
+    const W = 96, H = 72;
     cv.width = W; cv.height = H;
     ctx.imageSmoothingEnabled = false;
     const bgId = opts.bgId || 'meadow';
-    const pose = POLAROID_POSES.find(p => p.id === (opts.poseId || 'happy')) || POLAROID_POSES[0];
+    const f1 = (POLAROID_DOG_POSES.find(p => p.id === (opts.pose1 || 'happy')) || POLAROID_DOG_POSES[0]).frame;
+    const f2 = (POLAROID_DOG_POSES.find(p => p.id === (opts.pose2 || 'happy')) || POLAROID_DOG_POSES[0]).frame;
+    const x1 = typeof opts.x1 === 'number' ? opts.x1 : 16;
+    const y1 = typeof opts.y1 === 'number' ? opts.y1 : 34;
+    const x2 = typeof opts.x2 === 'number' ? opts.x2 : 56;
+    const y2 = typeof opts.y2 === 'number' ? opts.y2 : 34;
+    const flip1 = Boolean(opts.flip1);
+    const flip2 = opts.flip2 !== false; // 默认右边小狗面向左
 
-    if (bgId === 'sakura') {
-      ctx.fillStyle = '#ffeef5'; ctx.fillRect(0, 0, W, 28);
-      ctx.fillStyle = '#ffdae8'; ctx.fillRect(0, 28, W, 20);
-      ctx.fillStyle = '#a86b54'; ctx.fillRect(0, 0, 5, 34); ctx.fillRect(5, 6, 12, 3);
-      ctx.fillStyle = '#ff9eb8'; ctx.fillRect(2, 0, 26, 9); ctx.fillRect(10, 8, 16, 4);
-      [[18,14],[30,8],[44,15],[54,10],[24,38],[48,40]].forEach(([x,y]) => { ctx.fillStyle = '#ff7fa6'; ctx.fillRect(x, y, 2, 2); });
-    } else if (bgId === 'night') {
-      ctx.fillStyle = '#1e2547'; ctx.fillRect(0, 0, W, 30);
-      ctx.fillStyle = '#28365c'; ctx.fillRect(0, 30, W, 18);
-      ctx.fillStyle = '#ffe878'; ctx.fillRect(50, 5, 6, 6);
-      ctx.fillStyle = '#1e2547'; ctx.fillRect(52, 5, 4, 4);
-      [[8,7],[20,4],[34,9],[14,16],[42,14],[56,22]].forEach(([x,y]) => { ctx.fillStyle = '#fff5b8'; ctx.fillRect(x, y, 1, 1); });
-      [[12,34],[28,40],[48,35],[55,42]].forEach(([x,y]) => { ctx.fillStyle = '#d4ff78'; ctx.fillRect(x, y, 2, 2); });
+    if (bgId === 'night') {
+      // 精修夏夜萤火：深靛渐变夜空 + 柔和月晕圆月 + 远山与夏夜树影 + 萤火微光草丛
+      const skyCols = ['#141a38', '#1a234a', '#212e5e', '#2a3a70', '#334882'];
+      skyCols.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
+      // 柔和月晕 + 精致圆月
+      ctx.fillStyle = 'rgba(255,244,186,0.16)'; ctx.fillRect(67, 5, 18, 18);
+      ctx.fillStyle = 'rgba(255,244,186,0.28)'; ctx.fillRect(69, 7, 14, 14);
+      ctx.fillStyle = '#fff6c2'; ctx.fillRect(72, 9, 8, 10); ctx.fillRect(71, 10, 10, 8);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(73, 10, 4, 4);
+      // 繁星
+      [[8,6],[19,11],[31,5],[44,13],[55,7],[62,16],[12,18],[38,20],[88,9],[91,20]].forEach(([sx,sy], i) => {
+        ctx.fillStyle = i % 3 === 0 ? '#fff9d6' : '#c8e0ff';
+        ctx.fillRect(sx, sy, 1, 1);
+      });
+      // 远山剪影
+      ctx.fillStyle = '#1b284d';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(6 + Math.sin(x * 0.08) * 4 + Math.cos(x * 0.17) * 2);
+        ctx.fillRect(x, 40 - mh, 1, mh + 6);
+      }
+      // 左侧夏夜树冠剪影
+      ctx.fillStyle = '#14213d';
+      ctx.fillRect(0, 18, 14, 24); ctx.fillRect(14, 22, 7, 16); ctx.fillRect(3, 40, 4, 12);
+      // 夜色草坡
+      ctx.fillStyle = '#203b4a'; ctx.fillRect(0, 44, W, 14);
+      ctx.fillStyle = '#19303d'; ctx.fillRect(0, 58, W, 14);
+      // 发光萤火虫（外圈柔光 + 暖黄亮芯）
+      [[14,34],[26,42],[44,30],[58,46],[76,38],[85,48],[34,54],[66,58],[11,56]].forEach(([fx,fy], i) => {
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(220,255,140,0.34)' : 'rgba(255,240,140,0.34)';
+        ctx.fillRect(fx - 1, fy - 1, 4, 4);
+        ctx.fillStyle = i % 2 === 0 ? '#e6ff8a' : '#fff08a';
+        ctx.fillRect(fx, fy, 2, 2);
+      });
     } else if (bgId === 'sunset') {
-      ctx.fillStyle = '#ff9e78'; ctx.fillRect(0, 0, W, 12);
-      ctx.fillStyle = '#ffc48c'; ctx.fillRect(0, 12, W, 12);
-      ctx.fillStyle = '#ffe6a8'; ctx.fillRect(26, 14, 12, 10);
-      ctx.fillStyle = '#68a8d8'; ctx.fillRect(0, 24, W, 10);
-      ctx.fillStyle = '#f5d8a8'; ctx.fillRect(0, 34, W, 14);
-      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 33, W, 1);
-    } else if (bgId === 'cafe') {
-      ctx.fillStyle = '#f5e4d0'; ctx.fillRect(0, 0, W, 30);
-      ctx.fillStyle = '#d4a678'; ctx.fillRect(0, 30, W, 18);
-      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(0, 29, W, 2);
-      ctx.fillStyle = '#ffe082'; ctx.fillRect(14, 4, 6, 4); ctx.fillRect(44, 4, 6, 4);
-      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(16, 0, 2, 4); ctx.fillRect(46, 0, 2, 4);
-    } else if (bgId === 'snow') {
-      ctx.fillStyle = '#cfe4f7'; ctx.fillRect(0, 0, W, 28);
-      ctx.fillStyle = '#f5fbff'; ctx.fillRect(0, 28, W, 20);
-      ctx.fillStyle = '#e0eef8'; ctx.fillRect(0, 38, W, 10);
-      [[8,6],[20,12],[36,5],[50,11],[14,20],[44,19],[58,7]].forEach(([x,y]) => { ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, 2, 2); });
-    } else {
-      ctx.fillStyle = '#dff2ff'; ctx.fillRect(0, 0, W, 18);
-      ctx.fillStyle = '#eef8ff'; ctx.fillRect(0, 18, W, 12);
+      // 精修海边日落：绯紫-珊瑚粉-蜜桃橘-暖金晚霞 + 海面暖阳与碎金倒影 + 轻柔白浪与贝壳沙滩
+      const bands = ['#8f6b9e', '#c97a96', '#eb9186', '#f7b282', '#ffd894', '#fff0b8'];
+      bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 6, W, 7); });
+      // 晚霞细云
+      ctx.fillStyle = 'rgba(255,244,224,0.55)';
+      ctx.fillRect(10, 10, 22, 2); ctx.fillRect(14, 8, 12, 2);
+      ctx.fillRect(64, 14, 20, 2); ctx.fillRect(68, 12, 11, 2);
+      // 海平线半轮暖阳 + 光晕
+      ctx.fillStyle = 'rgba(255,235,170,0.35)'; ctx.fillRect(37, 22, 22, 14);
+      ctx.fillStyle = '#ffe680'; ctx.fillRect(42, 25, 12, 11); ctx.fillRect(40, 27, 16, 9);
+      ctx.fillStyle = '#fff8cf'; ctx.fillRect(44, 27, 8, 7);
+      // 渐层大海
+      ctx.fillStyle = '#5a8ab8'; ctx.fillRect(0, 36, W, 8);
+      ctx.fillStyle = '#6da0c9'; ctx.fillRect(0, 44, W, 7);
+      ctx.fillStyle = '#85b8d9'; ctx.fillRect(0, 51, W, 4);
+      // 海面金色波光倒影
+      [[43,38,10],[41,41,14],[44,44,8],[42,47,12],[45,50,6]].forEach(([rx,ry,rw]) => {
+        ctx.fillStyle = '#ffe896'; ctx.fillRect(rx, ry, rw, 1);
+      });
+      // 白浪泡沫
       ctx.fillStyle = '#ffffff';
-      ctx.fillRect(6, 5, 12, 4); ctx.fillRect(8, 3, 8, 2);
-      ctx.fillRect(46, 7, 11, 4); ctx.fillRect(48, 5, 7, 2);
-      ctx.fillStyle = '#b8e8a8'; ctx.fillRect(0, 30, W, 18);
-      ctx.fillStyle = '#9cd98a'; ctx.fillRect(0, 38, W, 10);
-      [[5,35,'#ff9eb5'],[14,42,'#ffe066'],[54,36,'#ff9eb5'],[44,43,'#ffffff'],[31,41,'#ffd27d']].forEach(([fx,fy,fc]) => {
+      for (let x = 0; x < W; x += 6) {
+        const wy = 54 + (x % 12 === 0 ? 0 : 1);
+        ctx.fillRect(x, wy, 5, 2);
+      }
+      // 暖色细软沙滩 + 小海星/贝壳
+      ctx.fillStyle = '#f5d9ad'; ctx.fillRect(0, 56, W, 16);
+      ctx.fillStyle = '#e8c492'; ctx.fillRect(0, 65, W, 7);
+      ctx.fillStyle = '#ff9eb5'; ctx.fillRect(12, 62, 3, 2);
+      ctx.fillStyle = '#fffdf7'; ctx.fillRect(80, 60, 3, 2);
+    } else if (bgId === 'cafe') {
+      // 精修暖灯咖啡厅：奶油暖墙 + 木格拱窗外暮色 + 暖黄吊灯与光晕 + 盆栽绿植 + 木桌拿铁与草莓蛋糕
+      ctx.fillStyle = '#f7ead8'; ctx.fillRect(0, 0, W, 46);
+      // 柔和竖条壁纸纹
+      ctx.fillStyle = '#efe0cb';
+      for (let x = 0; x < W; x += 8) ctx.fillRect(x, 0, 2, 46);
+      // 中央大木框窗（窗外柔和晴蓝暮色）
+      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(28, 6, 40, 28);
+      ctx.fillStyle = '#c8dff2'; ctx.fillRect(31, 9, 34, 22);
+      ctx.fillStyle = '#fce3c2'; ctx.fillRect(31, 22, 34, 9);
+      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(47, 9, 2, 22); ctx.fillRect(31, 19, 34, 2);
+      // 左右暖黄吊灯 + 柔光晕
+      [14, 82].forEach(lx => {
+        ctx.fillStyle = '#6b4228'; ctx.fillRect(lx, 0, 2, 8);
+        ctx.fillStyle = 'rgba(255,224,130,0.26)'; ctx.fillRect(lx - 7, 8, 16, 12);
+        ctx.fillStyle = '#d98a48'; ctx.fillRect(lx - 4, 8, 10, 4);
+        ctx.fillStyle = '#fff2a8'; ctx.fillRect(lx - 2, 12, 6, 3);
+      });
+      // 窗边小绿植
+      ctx.fillStyle = '#c97854'; ctx.fillRect(8, 36, 7, 6);
+      ctx.fillStyle = '#5eb06e'; ctx.fillRect(7, 30, 9, 6); ctx.fillRect(9, 28, 5, 3);
+      // 木质护墙板与暖色地板/桌面
+      ctx.fillStyle = '#b57c52'; ctx.fillRect(0, 44, W, 3);
+      ctx.fillStyle = '#d9a97c'; ctx.fillRect(0, 47, W, 25);
+      ctx.fillStyle = '#c49164'; ctx.fillRect(0, 56, W, 2); ctx.fillRect(0, 65, W, 2);
+      // 桌角迷你拉花咖啡杯
+      ctx.fillStyle = '#fffdf7'; ctx.fillRect(82, 39, 6, 5); ctx.fillRect(88, 40, 2, 3);
+      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(83, 39, 4, 1);
+      ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.fillRect(84, 35, 1, 3); ctx.fillRect(86, 34, 1, 3);
+    } else if (bgId === 'sakura') {
+      // 精修樱花树下
+      ctx.fillStyle = '#fff2f7'; ctx.fillRect(0, 0, W, 24);
+      ctx.fillStyle = '#ffe3ee'; ctx.fillRect(0, 24, W, 22);
+      ctx.fillStyle = '#9c6652'; ctx.fillRect(0, 0, 8, 48); ctx.fillRect(8, 10, 22, 4); ctx.fillRect(78, 0, 18, 8);
+      ctx.fillStyle = '#ffadc6'; ctx.fillRect(2, 0, 44, 14); ctx.fillRect(14, 12, 24, 6); ctx.fillRect(60, 0, 36, 12);
+      ctx.fillStyle = '#ffd4e2'; ctx.fillRect(6, 2, 30, 8); ctx.fillRect(66, 2, 24, 6);
+      ctx.fillStyle = '#c4e8a8'; ctx.fillRect(0, 46, W, 26);
+      ctx.fillStyle = '#b0db92'; ctx.fillRect(0, 58, W, 14);
+      [[24,22],[44,16],[56,28],[70,20],[18,52],[48,60],[78,55],[34,64]].forEach(([px,py]) => {
+        ctx.fillStyle = '#ff8eb2'; ctx.fillRect(px, py, 2, 2);
+      });
+    } else if (bgId === 'snow') {
+      // 精修雪地小屋
+      ctx.fillStyle = '#b8d4f0'; ctx.fillRect(0, 0, W, 22);
+      ctx.fillStyle = '#d4e8fa'; ctx.fillRect(0, 22, W, 22);
+      // 远景小雪松与暖窗木屋
+      ctx.fillStyle = '#5c8a78'; ctx.fillRect(10, 26, 8, 18); ctx.fillRect(12, 20, 4, 6);
+      ctx.fillStyle = '#8c5a3c'; ctx.fillRect(72, 26, 18, 18);
+      ctx.fillStyle = '#fffdf9'; ctx.fillRect(70, 22, 22, 5); ctx.fillRect(74, 19, 14, 3);
+      ctx.fillStyle = '#ffe27a'; ctx.fillRect(78, 31, 6, 6);
+      ctx.fillStyle = '#f2f9ff'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#dfeefc'; ctx.fillRect(0, 58, W, 14);
+      [[8,8],[24,14],[42,6],[58,15],[84,8],[32,26],[64,24],[18,34]].forEach(([sx,sy]) => {
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(sx, sy, 2, 2);
+      });
+    } else {
+      // 精修晴空草地
+      ctx.fillStyle = '#bfe4ff'; ctx.fillRect(0, 0, W, 20);
+      ctx.fillStyle = '#dcf0ff'; ctx.fillRect(0, 20, W, 24);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(10, 7, 18, 5); ctx.fillRect(13, 4, 12, 3);
+      ctx.fillRect(66, 10, 18, 5); ctx.fillRect(69, 7, 12, 3);
+      ctx.fillStyle = '#b4e69e'; ctx.fillRect(0, 44, W, 14);
+      ctx.fillStyle = '#9ad484'; ctx.fillRect(0, 58, W, 14);
+      [[10,50,'#ff9eb5'],[24,62,'#ffe066'],[78,52,'#ff9eb5'],[64,63,'#ffffff'],[46,60,'#ffd27d'],[86,64,'#fff4a8']].forEach(([fx,fy,fc]) => {
         ctx.fillStyle = fc; ctx.fillRect(fx, fy, 2, 2);
       });
     }
-    if (pose.heart) {
-      ctx.fillStyle = '#ff6b94';
-      ctx.fillRect(29, 9, 2, 2); ctx.fillRect(33, 9, 2, 2);
-      ctx.fillRect(28, 10, 8, 2); ctx.fillRect(29, 12, 6, 2); ctx.fillRect(31, 14, 2, 1);
+
+    if (opts.showHeart !== false) {
+      const mx = Math.round((x1 + x2) / 2) + 10;
+      const my = Math.max(6, Math.min(y1, y2) - 9);
+      ctx.fillStyle = '#ff5c8a';
+      ctx.fillRect(mx - 2, my, 2, 2); ctx.fillRect(mx + 2, my, 2, 2);
+      ctx.fillRect(mx - 3, my + 1, 8, 2); ctx.fillRect(mx - 2, my + 3, 6, 2); ctx.fillRect(mx, my + 5, 2, 1);
     }
-    renderPupSpriteToCtx(ctx, hostLook, 6, 15, false, pose.f1);
-    renderPupSpriteToCtx(ctx, guestLook, 34, 15, true, pose.f2);
+    renderPupSpriteToCtx(ctx, hostLook, Math.round(x1), Math.round(y1), flip1, f1);
+    renderPupSpriteToCtx(ctx, guestLook, Math.round(x2), Math.round(y2), flip2, f2);
   };
 
   const openDualPhotoModal = (savedPhoto = null) => {
@@ -28424,9 +28568,22 @@
     const guestLook = savedPhoto ? savedPhoto.guestLook : (guest.look || {});
     const d = new Date();
     const dateStr = savedPhoto ? savedPhoto.date : `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-    let curBg = savedPhoto?.bgId || 'meadow';
-    let curPose = savedPhoto?.poseId || 'happy';
-    let curFrame = savedPhoto?.frameId || 'classic';
+
+    const st = {
+      bgId: savedPhoto?.bgId || 'meadow',
+      pose1: savedPhoto?.pose1 || 'happy',
+      pose2: savedPhoto?.pose2 || 'happy',
+      x1: typeof savedPhoto?.x1 === 'number' ? savedPhoto.x1 : 16,
+      y1: typeof savedPhoto?.y1 === 'number' ? savedPhoto.y1 : 34,
+      x2: typeof savedPhoto?.x2 === 'number' ? savedPhoto.x2 : 56,
+      y2: typeof savedPhoto?.y2 === 'number' ? savedPhoto.y2 : 34,
+      flip1: Boolean(savedPhoto?.flip1),
+      flip2: savedPhoto?.flip2 !== false,
+      showHeart: savedPhoto?.showHeart !== false,
+      paperCol: savedPhoto?.paperCol || '#fffdf9',
+      borderCol: savedPhoto?.borderCol || '#5c4338',
+      dots: savedPhoto?.dots !== false,
+    };
 
     let modal = root.querySelector('#st-tb-visit-photo-modal');
     if (!modal) {
@@ -28437,25 +28594,48 @@
       modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
     }
 
+    const getTextCol = (hex) => {
+      const [r, g, b] = hexToRgbBytes(hex, '#fffdf9');
+      return (r * 0.299 + g * 0.587 + b * 0.114) < 130 ? '#fff6e0' : '#4a342a';
+    };
+
     const renderModal = () => {
-      const fr = POLAROID_FRAMES.find(f => f.id === curFrame) || POLAROID_FRAMES[0];
-      modal.innerHTML = `<div style="width:274px;background:var(--px-bg,#fff9fb);border:3px solid #3b2a22;box-shadow:5px 5px 0 rgba(59,42,34,0.3);padding:10px;color:#3b2a22;font-family:inherit;max-height:88vh;overflow-y:auto;">
+      const txtCol = getTextCol(st.paperCol);
+      const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
+      const dotBg = st.dots
+        ? `background-image:radial-gradient(circle, ${st.borderCol}33 2.5px, transparent 2.8px);background-size:16px 16px;`
+        : '';
+      modal.innerHTML = `<div style="width:286px;background:var(--px-bg,#fff9fb);border:3px solid #3b2a22;box-shadow:5px 5px 0 rgba(59,42,34,0.3);padding:10px;color:#3b2a22;font-family:inherit;max-height:90vh;overflow-y:auto;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:11.5px;font-weight:700;">双狗像素拍立得</span>
+          <span style="font-size:11.5px;font-weight:700;">双狗拍立得${savedPhoto ? '' : '（画布上可拖动两只小狗）'}</span>
           <button type="button" id="st-vph-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
         </div>
-        <div id="st-vph-card" style="background:${fr.bg};border:2.5px solid ${fr.bd};padding:7px 7px 9px;margin-bottom:7px;">
-          <canvas id="st-vph-cv" width="64" height="48" style="width:100%;height:152px;display:block;image-rendering:pixelated;border:1.5px solid ${fr.bd};"></canvas>
-          <div style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;color:${fr.cap};">${hostName} & ${guestName}</div>
-          <div style="text-align:center;font-size:9.5px;color:${fr.date};">${dateStr}</div>
+        <div id="st-vph-card" style="background-color:${st.paperCol};${dotBg}border:3px solid ${st.borderCol};border-radius:8px;padding:8px 8px 10px;margin-bottom:7px;">
+          <canvas id="st-vph-cv" width="96" height="72" style="width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:2px solid ${st.borderCol};border-radius:4px;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
+          <div style="margin-top:6px;text-align:center;font-size:11.5px;font-weight:700;color:${txtCol};">${hostName} & ${guestName}</div>
+          <div style="text-align:center;font-size:9.5px;color:${subCol};">${dateStr}</div>
         </div>
         ${savedPhoto ? '' : `
           <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景</div>
           <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">小狗姿势</div>
-          <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">拍立得样式</div>
-          <div id="st-vph-frames" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:9.5px;font-weight:700;">${hostName} 姿势</span>
+            <button type="button" id="st-vph-flip1" class="st-px-btn" style="height:18px;padding:0 5px;font-size:9px;">翻转朝向</button>
+          </div>
+          <div id="st-vph-p1" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:9.5px;font-weight:700;">${guestName} 姿势</span>
+            <button type="button" id="st-vph-flip2" class="st-px-btn" style="height:18px;padding:0 5px;font-size:9px;">翻转朝向</button>
+          </div>
+          <div id="st-vph-p2" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">自定义相纸与边框</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
+            <label style="display:inline-flex;align-items:center;gap:3px;">相纸<input type="color" id="st-vph-paper" value="${st.paperCol}" style="width:22px;height:20px;border:none;padding:0;background:none;" /></label>
+            <label style="display:inline-flex;align-items:center;gap:3px;">边框<input type="color" id="st-vph-bd" value="${st.borderCol}" style="width:22px;height:20px;border:none;padding:0;background:none;" /></label>
+            <button type="button" id="st-vph-dots" class="st-px-btn${st.dots ? ' active' : ''}" style="height:20px;padding:0 6px;font-size:9.5px;">圆圆波点:${st.dots ? '开' : '关'}</button>
+            <button type="button" id="st-vph-heart" class="st-px-btn${st.showHeart ? ' active' : ''}" style="height:20px;padding:0 6px;font-size:9.5px;">爱心:${st.showHeart ? '开' : '关'}</button>
+          </div>
+          <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
         `}
         <div style="display:flex;gap:5px;">
           ${savedPhoto ? '' : '<button type="button" id="st-vph-save" class="st-px-btn care" style="flex:1;">存入相册</button>'}
@@ -28463,10 +28643,42 @@
         </div>
       </div>`;
       const cv = modal.querySelector('#st-vph-cv');
-      drawDualPolaroidCanvas(cv, hostName, hostLook, guestName, guestLook, dateStr, { bgId: curBg, poseId: curPose, frameId: curFrame });
+      const redrawCv = () => drawDualPolaroidCanvas(cv, hostName, hostLook, guestName, guestLook, dateStr, st);
+      redrawCv();
       modal.querySelector('#st-vph-close')?.addEventListener('click', () => { modal.style.display = 'none'; });
 
       if (!savedPhoto) {
+        // 在画布上自由拖动两只小狗位置！
+        let dragWho = 0;
+        let dragOffX = 0, dragOffY = 0;
+        const toCvCoord = (e) => {
+          const r = cv.getBoundingClientRect();
+          return { x: ((e.clientX - r.left) / r.width) * 96, y: ((e.clientY - r.top) / r.height) * 72 };
+        };
+        cv.addEventListener('pointerdown', (e) => {
+          const pt = toCvCoord(e);
+          const d1 = Math.hypot(pt.x - (st.x1 + 12), pt.y - (st.y1 + 14));
+          const d2 = Math.hypot(pt.x - (st.x2 + 12), pt.y - (st.y2 + 14));
+          if (Math.min(d1, d2) > 22) return;
+          dragWho = d1 <= d2 ? 1 : 2;
+          dragOffX = pt.x - (dragWho === 1 ? st.x1 : st.x2);
+          dragOffY = pt.y - (dragWho === 1 ? st.y1 : st.y2);
+          cv.setPointerCapture(e.pointerId);
+          cv.style.cursor = 'grabbing';
+        });
+        cv.addEventListener('pointermove', (e) => {
+          if (!dragWho) return;
+          const pt = toCvCoord(e);
+          const nx = clamp(Math.round(pt.x - dragOffX), -2, 74);
+          const ny = clamp(Math.round(pt.y - dragOffY), 4, 48);
+          if (dragWho === 1) { st.x1 = nx; st.y1 = ny; }
+          else { st.x2 = nx; st.y2 = ny; }
+          redrawCv();
+        });
+        const endCvDrag = () => { dragWho = 0; cv.style.cursor = 'grab'; };
+        cv.addEventListener('pointerup', endCvDrag);
+        cv.addEventListener('pointercancel', endCvDrag);
+
         const mkChips = (elId, arr, curVal, setter) => {
           const box = modal.querySelector(elId);
           arr.forEach(item => {
@@ -28479,14 +28691,32 @@
             box.appendChild(b);
           });
         };
-        mkChips('#st-vph-bgs', POLAROID_BGS, curBg, v => { curBg = v; });
-        mkChips('#st-vph-poses', POLAROID_POSES, curPose, v => { curPose = v; });
-        mkChips('#st-vph-frames', POLAROID_FRAMES, curFrame, v => { curFrame = v; });
+        mkChips('#st-vph-bgs', POLAROID_BGS, st.bgId, v => { st.bgId = v; });
+        mkChips('#st-vph-p1', POLAROID_DOG_POSES, st.pose1, v => { st.pose1 = v; });
+        mkChips('#st-vph-p2', POLAROID_DOG_POSES, st.pose2, v => { st.pose2 = v; });
+
+        const qBox = modal.querySelector('#st-vph-qcols');
+        POLAROID_QUICK_COLORS.forEach(qc => {
+          const b = doc.createElement('button');
+          b.type = 'button';
+          b.className = 'st-px-btn';
+          b.style.cssText = `height:20px;padding:0 6px;font-size:9.5px;background:${qc.bg};border-color:${qc.bd};color:${getTextCol(qc.bg)};`;
+          b.textContent = qc.name;
+          b.addEventListener('click', () => { st.paperCol = qc.bg; st.borderCol = qc.bd; renderModal(); });
+          qBox.appendChild(b);
+        });
+
+        modal.querySelector('#st-vph-flip1')?.addEventListener('click', () => { st.flip1 = !st.flip1; redrawCv(); });
+        modal.querySelector('#st-vph-flip2')?.addEventListener('click', () => { st.flip2 = !st.flip2; redrawCv(); });
+        modal.querySelector('#st-vph-paper')?.addEventListener('input', (e) => { st.paperCol = e.target.value; renderModal(); });
+        modal.querySelector('#st-vph-bd')?.addEventListener('input', (e) => { st.borderCol = e.target.value; renderModal(); });
+        modal.querySelector('#st-vph-dots')?.addEventListener('click', () => { st.dots = !st.dots; renderModal(); });
+        modal.querySelector('#st-vph-heart')?.addEventListener('click', () => { st.showHeart = !st.showHeart; renderModal(); });
 
         modal.querySelector('#st-vph-save')?.addEventListener('click', () => {
           if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
-          config.puppyVisitPhotos.unshift({ id: `vp_${Date.now()}`, hostName, hostLook, guestName, guestLook, date: dateStr, bgId: curBg, poseId: curPose, frameId: curFrame });
-          if (config.puppyVisitPhotos.length > 48) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 48);
+          config.puppyVisitPhotos.unshift({ id: `vp_${Date.now()}`, hostName, hostLook, guestName, guestLook, date: dateStr, ...st });
+          if (config.puppyVisitPhotos.length > 64) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 64);
           saveConfig();
           cmNotify('双狗合照已存入串门相册！');
           if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
@@ -28497,17 +28727,25 @@
       modal.querySelector('#st-vph-dl')?.addEventListener('click', () => {
         try {
           const exp = doc.createElement('canvas');
-          exp.width = 320; exp.height = 294;
+          exp.width = 360; exp.height = 330;
           const eg = exp.getContext('2d');
-          eg.fillStyle = fr.bg; eg.fillRect(0, 0, 320, 294);
-          eg.strokeStyle = fr.bd; eg.lineWidth = 5; eg.strokeRect(2.5, 2.5, 315, 289);
+          eg.fillStyle = st.paperCol; eg.fillRect(0, 0, 360, 330);
+          if (st.dots) {
+            eg.fillStyle = st.borderCol + '36';
+            for (let dy = 12; dy < 324; dy += 20) {
+              for (let dx = 12; dx < 354; dx += 20) {
+                eg.beginPath(); eg.arc(dx, dy, 3.2, 0, Math.PI * 2); eg.fill();
+              }
+            }
+          }
+          eg.strokeStyle = st.borderCol; eg.lineWidth = 6; eg.strokeRect(3, 3, 354, 324);
           eg.imageSmoothingEnabled = false;
-          eg.drawImage(cv, 16, 16, 288, 216);
-          eg.strokeStyle = fr.bd; eg.lineWidth = 2; eg.strokeRect(16, 16, 288, 216);
-          eg.fillStyle = fr.cap; eg.font = 'bold 16px sans-serif'; eg.textAlign = 'center';
-          eg.fillText(`${hostName} & ${guestName}`, 160, 258);
-          eg.fillStyle = fr.date; eg.font = '12px sans-serif';
-          eg.fillText(dateStr, 160, 278);
+          eg.drawImage(cv, 20, 20, 320, 240);
+          eg.strokeStyle = st.borderCol; eg.lineWidth = 3; eg.strokeRect(20, 20, 320, 240);
+          eg.fillStyle = txtCol; eg.font = 'bold 17px sans-serif'; eg.textAlign = 'center';
+          eg.fillText(`${hostName} & ${guestName}`, 180, 290);
+          eg.fillStyle = subCol; eg.font = '12.5px sans-serif';
+          eg.fillText(dateStr, 180, 312);
           const a = doc.createElement('a');
           a.href = exp.toDataURL('image/png');
           a.download = `puppy_photo_${Date.now()}.png`;
@@ -28541,33 +28779,46 @@
       root.appendChild(modal);
       modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
     }
-    const recipes = PUP_KITCHEN_RECIPES.filter(r => !r.gachaOnly && r.rarity !== 'legend');
-    modal.innerHTML = `<div style="width:266px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+    const gU = config.puppyGarden?.unlocked || {};
+    const ownedRecs = Array.isArray(config.puppyOwnedRecipes) ? config.puppyOwnedRecipes : [];
+    const curCoins = Math.floor(config.puppyCoins || 0);
+    const cookable = PUP_KITCHEN_RECIPES.filter(r => {
+      const isLocked = Boolean(r.gachaOnly && !ownedRecs.includes(r.id));
+      const hasFl = r.req.every(q => (gU[q.id] || 0) >= q.qty);
+      return !isLocked && hasFl && curCoins >= r.coins;
+    });
+
+    modal.innerHTML = `<div style="width:270px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <span style="font-size:11.5px;font-weight:700;">选一道和「${guest.name}」合作做的菜 (${3 - daily.cook}/3)</span>
+        <span style="font-size:11.5px;font-weight:700;">和「${guest.name}」一起下厨 (${3 - daily.cook}/3)</span>
         <button type="button" id="st-cc-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
-      <div id="st-cc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:210px;overflow-y:auto;"></div>
+      <div id="st-cc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;max-height:220px;overflow-y:auto;"></div>
     </div>`;
     modal.querySelector('#st-cc-x')?.addEventListener('click', () => { modal.style.display = 'none'; });
     const grid = modal.querySelector('#st-cc-grid');
-    recipes.forEach(dish => {
-      const btn = doc.createElement('button');
-      btn.type = 'button';
-      btn.className = 'st-px-btn';
-      btn.style.cssText = 'height:auto;padding:5px;display:flex;align-items:center;gap:5px;text-align:left;';
-      const ic = makeDishCanvas(dish, false, false);
-      ic.style.cssText = 'width:22px;height:22px;flex-shrink:0;image-rendering:pixelated;';
-      const sp = doc.createElement('span');
-      sp.style.cssText = 'font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-      sp.textContent = dish.name;
-      btn.append(ic, sp);
-      btn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        runDualCoopActivity('cook', dish);
+    if (!cookable.length) {
+      grid.style.display = 'block';
+      grid.innerHTML = '<div style="font-size:10.5px;color:#7a6258;padding:10px 4px;text-align:center;line-height:1.5;">厨房里暂时没有材料足够制作的菜谱哦~<br>先去花园种点花或攒点小狗币再来一起下厨吧！</div>';
+    } else {
+      cookable.forEach(dish => {
+        const btn = doc.createElement('button');
+        btn.type = 'button';
+        btn.className = 'st-px-btn';
+        btn.style.cssText = 'height:auto;padding:5px;display:flex;align-items:center;gap:5px;text-align:left;';
+        const ic = makeDishCanvas(dish, false, false);
+        ic.style.cssText = 'width:22px;height:22px;flex-shrink:0;image-rendering:pixelated;';
+        const txtWrap = doc.createElement('div');
+        txtWrap.style.cssText = 'min-width:0;flex:1;';
+        txtWrap.innerHTML = `<div style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${dish.name}</div><div style="font-size:8.5px;color:#8c5868;">耗 ${dish.coins}币</div>`;
+        btn.append(ic, txtWrap);
+        btn.addEventListener('click', () => {
+          modal.style.display = 'none';
+          runDualCoopActivity('cook', dish);
+        });
+        grid.appendChild(btn);
       });
-      grid.appendChild(btn);
-    });
+    }
     modal.style.display = 'flex';
   };
 
@@ -28580,8 +28831,10 @@
     if (mode === 'water') {
       if (daily.water >= 3) { showGuestBubble('今天已经一起浇过 3 次花啦，花盆喝得饱饱的~', 2500); return; }
       daily.water += 1;
-      gPup.state = 'bounce'; gPup.timer = 110;
-      setPuppyState('happy', 110);
+      const lockUntil = Date.now() + 4500;
+      gPup.talkingUntil = lockUntil; pup.talkingUntil = lockUntil;
+      gPup.state = 'bounce'; gPup.timer = 300;
+      setPuppyState('happy', 300);
       let bonusTxt = '';
       if (config.puppyGarden && config.puppyGarden.stage > 0 && config.puppyGarden.stage < 3) {
         config.puppyGarden.stage += 1;
@@ -28599,16 +28852,30 @@
     } else if (mode === 'cook') {
       if (!chosenDish) { openCoopCookPickerModal(); return; }
       if (daily.cook >= 3) { showGuestBubble('今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
+      const gU = config.puppyGarden?.unlocked || {};
+      const curCoins = Math.floor(config.puppyCoins || 0);
+      if (!chosenDish.req.every(q => (gU[q.id] || 0) >= q.qty) || curCoins < chosenDish.coins) {
+        cmNotify('材料或小狗币不足');
+        return;
+      }
+      chosenDish.req.forEach(q => { gU[q.id] = Math.max(0, (gU[q.id] || 0) - q.qty); });
+      config.puppyCoins = Math.max(0, curCoins - chosenDish.coins);
+      recordCoinsSpent(chosenDish.coins);
       daily.cook += 1;
-      gPup.state = 'spin'; gPup.timer = 115;
-      setPuppyState('happy', 115);
-      config.puppyKitchen = config.puppyKitchen || { lv: 1, xp: 0, cooked: 0, failed: 0, darkFed: 0, dex: {}, dishes: {} };
-      config.puppyKitchen.dishes = config.puppyKitchen.dishes || {};
-      config.puppyKitchen.dishes[chosenDish.id] = Math.floor(config.puppyKitchen.dishes[chosenDish.id] || 0) + 1;
-      config.puppyKitchen.coopLog = config.puppyKitchen.coopLog || [];
-      config.puppyKitchen.coopLog.unshift(`${chosenDish.name}（与 ${gName} 合作）`);
-      if (config.puppyKitchen.coopLog.length > 20) config.puppyKitchen.coopLog.length = 20;
+      const lockUntil = Date.now() + 4600;
+      gPup.talkingUntil = lockUntil; pup.talkingUntil = lockUntil;
+      gPup.state = 'spin'; gPup.timer = 300;
+      setPuppyState('happy', 300);
+      const k = ensureKitchen();
+      k.cooked += 1;
+      k.dex[chosenDish.id] = true;
+      k.dishes[chosenDish.id] = Math.floor(k.dishes[chosenDish.id] || 0) + 1;
+      k.coopLog = k.coopLog || [];
+      k.coopLog.unshift(`${chosenDish.name}（与 ${gName} 合作）`);
+      if (k.coopLog.length > 20) k.coopLog.length = 20;
       saveConfig();
+      updatePupStatBars();
+      checkPupAchievements();
       syncBubbleNoOverlap('host');
       showPuppyBubble(`和 ${gName} 联手做出了「${chosenDish.name}（双狗合作版）」！`, 2300);
       setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`哇好香！和 ${hName} 一起掌勺太好玩啦~`, 2400); } }, 2100);
@@ -28976,6 +29243,11 @@
     }
 
     if (gPup.timer <= 0) {
+      if (gPup.talkingUntil && now < gPup.talkingUntil) {
+        gPup.timer = 24;
+        drawGuestPuppyScene();
+        return;
+      }
       const r = Math.random();
       if (!guest.pinned && r < 0.38) {
         if (Math.random() < 0.45) gPup.dir *= -1;
@@ -29254,7 +29526,7 @@
       vbPager.append(mkP('首页', 1, curP <= 1), mkP('上页', curP - 1, curP <= 1), ind, mkP('下页', curP + 1, curP >= totalP), mkP('末页', totalP, curP >= totalP));
     };
 
-    const PAGE_SIZE = 4;
+    const PAGE_SIZE = 8;
     if (visitBookTab === 'stamps') {
       if (!logs.length) {
         vbBody.innerHTML = '<div style="font-size:10px;color:#8c7366;text-align:center;padding:8px;">还没有朋友来盖过串门印章哦~</div>';
@@ -29288,14 +29560,15 @@
         vbBody.style.display = 'grid';
         vbBody.style.gridTemplateColumns = '1fr 1fr';
         slice.forEach(ph => {
-          const fr = POLAROID_FRAMES.find(f => f.id === (ph.frameId || 'classic')) || POLAROID_FRAMES[0];
+          const pBg = ph.paperCol || '#fffdf9';
+          const pBd = ph.borderCol || '#5c4338';
           const card = doc.createElement('div');
-          card.style.cssText = `background:${fr.bg};border:1.5px solid ${fr.bd};padding:3px;cursor:pointer;text-align:center;`;
+          card.style.cssText = `background:${pBg};border:1.5px solid ${pBd};border-radius:4px;padding:3px;cursor:pointer;text-align:center;`;
           const cv = doc.createElement('canvas');
-          cv.style.cssText = `width:100%;height:56px;display:block;image-rendering:pixelated;border:1px solid ${fr.bd};`;
-          drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, { bgId: ph.bgId, poseId: ph.poseId, frameId: ph.frameId });
+          cv.style.cssText = `width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:1px solid ${pBd};`;
+          drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, ph);
           const cap = doc.createElement('div');
-          cap.style.cssText = `font-size:9px;font-weight:700;margin-top:2px;color:${fr.cap};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
+          cap.style.cssText = `font-size:9px;font-weight:700;margin-top:2px;color:${pBd};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
           cap.textContent = `${ph.hostName}&${ph.guestName}`;
           card.addEventListener('click', () => openDualPhotoModal(ph));
           card.append(cv, cap);
