@@ -14830,8 +14830,11 @@
   const drawPupAccessory = (acc, hx, hy, ox, oy, isFlatPose, isDead) => {
     if (!acc || acc === 'none' || isDead) return;
     const _accOff = config.puppyAccOffsets && config.puppyAccOffsets[acc];
-    const _dx = _accOff ? Math.round(Number(_accOff.dx) || 0) : 0;
-    const _dy = _accOff ? Math.round(Number(_accOff.dy) || 0) : 0;
+    const _tr = activePxCtx && typeof activePxCtx.getTransform === 'function' ? activePxCtx.getTransform() : null;
+    const _sx = Math.max(1, Math.round(Math.abs(_tr ? _tr.a : 1)));
+    const _sy = Math.max(1, Math.round(Math.abs(_tr ? _tr.d : 1)));
+    const _dx = _accOff ? Math.round((Number(_accOff.dx) || 0) * _sx) / _sx : 0;
+    const _dy = _accOff ? Math.round((Number(_accOff.dy) || 0) * _sy) / _sy : 0;
     const _hasSubPxOff = Boolean(_dx || _dy);
     if (_hasSubPxOff && activePxCtx) {
       activePxCtx.save();
@@ -19527,6 +19530,9 @@
     const oy = 10;
     const hx = ox + 10;
     const hy = oy + 2;
+    if (pupAvatarCanvas.width !== 240 || pupAvatarCanvas.height !== 240) { pupAvatarCanvas.width = 240; pupAvatarCanvas.height = 240; }
+    pupAvatarCtx.setTransform(10, 0, 0, 10, 0, 0);
+    pupAvatarCtx.imageSmoothingEnabled = false;
     pupAvatarCtx.clearRect(0, 0, 24, 24);
     const grid = PUP_SPRITES.idle1;
     for (let y = 0; y < grid.length; y++) {
@@ -20903,6 +20909,7 @@
         const applyLiveOffset = () => {
           config.puppyAccOffsets = config.puppyAccOffsets || {};
           config.puppyAccOffsets[editId] = { dx: Number(dx.toFixed(2)), dy: Number(dy.toFixed(2)) };
+          pup._lastRenderKey = '';
           if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
           if (config.puppyEnabled) drawPuppyScene();
         };
@@ -22904,6 +22911,9 @@
     }
     puppyEl.classList.toggle('shake', shake);
 
+    if (puppyCanvas.width !== 240 || puppyCanvas.height !== 240) { puppyCanvas.width = 240; puppyCanvas.height = 240; }
+    puppyCtx.setTransform(10, 0, 0, 10, 0, 0);
+    puppyCtx.imageSmoothingEnabled = false;
     puppyCtx.clearRect(0, 0, 24, 24);
 
     // 雨天像素小伞：先绘制偏后上方伞柄，确保完全不挡脸和眼睛
@@ -28093,6 +28103,8 @@
       ...(typeof SHOP_PUP_OUTFITS !== 'undefined' ? SHOP_PUP_OUTFITS.map(x => x.id) : []),
       ...(typeof TREASURE_OUTFITS !== 'undefined' ? TREASURE_OUTFITS.map(x => x.id) : []),
       ...(typeof GACHA_OUTFITS !== 'undefined' ? GACHA_OUTFITS.map(x => x.id) : []),
+      ...(typeof SPECIAL_EVENT_OUTFITS !== 'undefined' ? SPECIAL_EVENT_OUTFITS.map(x => x.id) : []),
+      ...(typeof GAME_OUTFITS !== 'undefined' ? GAME_OUTFITS.map(x => x.id) : []),
     ]);
     const accs = uniq([
       'none',
@@ -28100,12 +28112,14 @@
       ...(typeof SHOP_PUP_ACCS !== 'undefined' ? SHOP_PUP_ACCS.map(x => x.id) : []),
       ...(typeof TREASURE_ACCS !== 'undefined' ? TREASURE_ACCS.map(x => x.id) : []),
       ...(typeof GACHA_ACCS !== 'undefined' ? GACHA_ACCS.map(x => x.id) : []),
+      ...(typeof GAME_ACCS !== 'undefined' ? GAME_ACCS.map(x => x.id) : []),
     ]);
     const comps = uniq([
       'none',
       ...(typeof SHOP_PUP_COMPANIONS !== 'undefined' ? SHOP_PUP_COMPANIONS.map(x => x.id) : []),
       ...(typeof TREASURE_COMPANIONS !== 'undefined' ? TREASURE_COMPANIONS.map(x => x.id) : []),
       ...(typeof GACHA_COMPANIONS !== 'undefined' ? GACHA_COMPANIONS.map(x => x.id) : []),
+      ...(typeof GAME_COMPANIONS !== 'undefined' ? GAME_COMPANIONS.map(x => x.id) : []),
     ]);
     const trails = uniq([
       'trail_none',
@@ -28607,6 +28621,9 @@
     const ox = 4, oy = 10;
     const hx = isSitPose ? ox + 9 : (isFlatPose ? ox + 11 : ox + 10);
     const hy = isFlatPose ? oy + 6 : oy + 2;
+    if (rt.canvas.width !== 240 || rt.canvas.height !== 240) { rt.canvas.width = 240; rt.canvas.height = 240; }
+    rt.ctx.setTransform(10, 0, 0, 10, 0, 0);
+    rt.ctx.imageSmoothingEnabled = false;
     rt.ctx.clearRect(0, 0, 24, 24);
     const grid = PUP_SPRITES[frame] || PUP_SPRITES.idle1;
     for (let y = 0; y < grid.length; y++) {
@@ -29993,7 +30010,11 @@
     syncCardStyle();
     redrawCv();
 
-    winEl.querySelector('#st-vph-close')?.addEventListener('click', (e) => { e.stopPropagation(); winEl.remove(); });
+    winEl.querySelector('#st-vph-close')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      winEl.remove();
+      if (config.puppyEnabled && puppyEl) { puppyEl.classList.add('active'); pup._lastRenderKey = ''; drawPuppyScene(); }
+    });
 
     // 顶部拖动窗口
     const head = winEl.querySelector('#st-vph-head');
@@ -30198,6 +30219,7 @@
         cmNotify('合照已存入串门相册！');
         if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
         winEl.remove();
+        if (config.puppyEnabled && puppyEl) { puppyEl.classList.add('active'); pup._lastRenderKey = ''; drawPuppyScene(); }
       });
     }
 
@@ -51633,6 +51655,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   const floatOrder = [panel, pupBagEl, readerEl].filter(Boolean);
   const bringFloatFront = (el) => {
     if (!el) return;
+    // 清理已从 DOM 移除的旧弹窗，防止 zIndex 越涨越高把桌面小狗盖住！
+    for (let i = floatOrder.length - 1; i >= 0; i--) {
+      if (!floatOrder[i] || !floatOrder[i].isConnected) floatOrder.splice(i, 1);
+    }
     const idx = floatOrder.indexOf(el);
     if (idx !== -1) {
       floatOrder.splice(idx, 1);
@@ -51644,8 +51670,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         el.addEventListener('pointerdown', () => bringFloatFront(el), true);
       }
     }
+    const baseZ = Math.min(9984, 9995 - floatOrder.length + 1);
     floatOrder.forEach((node, i) => {
-      if (node) node.style.zIndex = String(9984 + i);
+      if (node) node.style.zIndex = String(Math.min(9995, baseZ + i));
     });
   };
   floatOrder.forEach(el => {
