@@ -12892,104 +12892,102 @@
     );
   };
 
-  const triggerPartialLastParaReroll = async (mesNum) => {
-    const ctx = getContext();
-    const msg = ctx?.chat?.[mesNum];
-    if (!msg) return false;
-    const raw = String(msg.mes || '');
-    const parsed = splitVisibleAndHidden(raw);
-    const paras = String(parsed.visibleText || '').split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
-    const singleParas = paras.length >= 2 ? paras : String(parsed.visibleText || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
-    if (singleParas.length < 2) return false;
-    pushUndoSnapshot(mesNum, raw);
-    const keptText = singleParas.slice(0, -1).join('\n\n');
-    const nextRaw = reassembleVisibleAndHidden(keptText, parsed);
-    await saveMessageRawText(mesNum, nextRaw);
-    const contBtn = doc.querySelector('#option_continue, #continue_button');
-    if (contBtn) {
-      guardBypassUntil = Date.now() + 900;
-      contBtn.click();
-      cmNotify('已保留前几条，正在仅roll最后一条~');
-      return true;
-    }
-    cmNotify('已帮你保留前几条并移除最后一条，请点酒馆「继续(Continue)」生成新内容');
-    return true;
+  const pinScrollToFloor = (mesId) => {
+    const keepAtFloor = () => {
+      try {
+        const chatEl = doc.querySelector('#chat');
+        const targetEl = doc.querySelector(`#chat .mes[mesid="${mesId}"]`);
+        if (!chatEl || !targetEl) return;
+        const ctxChat = getContext()?.chat;
+        if (Array.isArray(ctxChat) && Number(mesId) >= ctxChat.length - 1) {
+          chatEl.scrollTop = chatEl.scrollHeight;
+        } else {
+          targetEl.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+        }
+      } catch (_) {}
+    };
+    keepAtFloor();
+    setTimeout(keepAtFloor, 90);
+    setTimeout(keepAtFloor, 260);
+    setTimeout(keepAtFloor, 560);
   };
 
-  const triggerFullFloorReroll = async (regenBtn) => {
+  const getFloorSwipeInfo = (mesId) => {
+    const idx = Number(mesId);
+    const ctx = getContext();
+    const msg = Number.isFinite(idx) ? ctx?.chat?.[idx] : null;
+    if (msg && Array.isArray(msg.swipes) && msg.swipes.length) {
+      const total = msg.swipes.length;
+      const curIdx = clamp(Number.isFinite(Number(msg.swipe_id)) ? Number(msg.swipe_id) : 0, 0, total - 1);
+      return { curIdx, curNum: curIdx + 1, total };
+    }
+    const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+    const counter = mesEl?.querySelector('.swipes-counter');
+    if (counter) {
+      const m = String(counter.textContent || '').trim().match(/(\d+)\s*\/\s*(\d+)/);
+      if (m) {
+        const curNum = Math.max(1, Number(m[1]) || 1);
+        const total = Math.max(curNum, Number(m[2]) || 1);
+        return { curIdx: curNum - 1, curNum, total };
+      }
+    }
+    return { curIdx: 0, curNum: 1, total: 1 };
+  };
+
+  const triggerFullFloorReroll = async (regenBtn, stayMesId = null) => {
     guardBypassUntil = Date.now() + 1200;
     const ctx = getContext();
+    const targetMid = stayMesId !== null ? stayMesId : (Array.isArray(ctx?.chat) ? ctx.chat.length - 1 : null);
     try {
-      if (typeof ctx?.regenerate === 'function') { await ctx.regenerate(); return; }
-      if (typeof ctx?.executeSlashCommands === 'function') { await ctx.executeSlashCommands('/regenerate'); return; }
+      if (typeof ctx?.regenerate === 'function') {
+        await ctx.regenerate();
+        if (targetMid !== null) pinScrollToFloor(targetMid);
+        return;
+      }
+      if (typeof ctx?.executeSlashCommands === 'function') {
+        await ctx.executeSlashCommands('/regenerate');
+        if (targetMid !== null) pinScrollToFloor(targetMid);
+        return;
+      }
     } catch (_) {}
-    if (regenBtn && typeof regenBtn.click === 'function') regenBtn.click();
+    if (regenBtn && typeof regenBtn.click === 'function') {
+      regenBtn.click();
+      if (targetMid !== null) pinScrollToFloor(targetMid);
+    }
   };
 
-  const rerollSpecificParagraph = async (mesId, paraText) => {
+  const rerollFloorSwipeOnly = async (mesId, swipeIdx = null) => {
     const idx = Number(mesId);
     const ctx = getContext();
     const chat = Array.isArray(ctx?.chat) ? ctx.chat : null;
     if (!chat || !chat[idx]) { cmNotify('未找到该楼层内容'); return false; }
-    const raw = String(chat[idx].mes || '');
-    const parsed = splitVisibleAndHidden(raw);
-    const vis = String(parsed.visibleText || '');
-    const targetTxt = String(paraText || '').trim();
-    if (!targetTxt) { cmNotify('未识别到选中段落'); return false; }
+    const msg = chat[idx];
+    const swInfo = getFloorSwipeInfo(idx);
+    const targetSwipeIdx = (typeof swipeIdx === 'number' && swipeIdx >= 0) ? swipeIdx : swInfo.curIdx;
+    const rawCur = String(msg.mes || '');
 
-    let pos = vis.indexOf(targetTxt);
-    let matchLen = targetTxt.length;
-    if (pos < 0) {
-      const paras = vis.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
-      const norm = (s) => s.replace(/\s+/g, '');
-      const hit = paras.find(p => norm(p) === norm(targetTxt) || norm(p).includes(norm(targetTxt).slice(0, 24)));
-      if (hit) { pos = vis.indexOf(hit); matchLen = hit.length; }
-    }
-    if (pos < 0) {
-      cmNotify('该段含特殊排版，已为你打开纯净编辑窗');
-      openCleanStoryEditor(idx, targetTxt);
-      return false;
-    }
-
-    const beforeText = vis.slice(0, pos).trim();
-    const afterText = vis.slice(pos + matchLen).trim();
-    const isLastFloor = idx === chat.length - 1 && !chat[idx].is_user;
-
-    // 情况1：恰好是最新 AI 楼层的最后一段 -> 直接用酒馆原生 Continue 续写，100% 走原流程！
-    if (isLastFloor && !afterText && beforeText) {
-      pushUndoSnapshot(idx, raw);
-      const nextRaw = reassembleVisibleAndHidden(beforeText, parsed);
-      await saveMessageRawText(idx, nextRaw);
-      const contBtn = doc.querySelector('#option_continue, #continue_button');
-      if (contBtn) {
-        guardBypassUntil = Date.now() + 900;
-        contBtn.click();
-        cmNotify('已保留前文，正在仅roll最后一条~');
-        return true;
-      }
-      if (typeof ctx?.executeSlashCommands === 'function') {
-        await ctx.executeSlashCommands('/continue');
-        return true;
-      }
-    }
-
-    // 情况2：中间段落或上方楼层的某一段 -> 仅重写该段并替换，前后文与其他楼层原封不动！
     const genRawFn = ctx?.generateRaw || win.generateRaw;
     const genQuietFn = ctx?.generateQuietPrompt || win.generateQuietPrompt;
     if (typeof genRawFn !== 'function' && typeof genQuietFn !== 'function') {
-      cmNotify('当前酒馆环境不支持局部段重写，请先手动编辑该段');
+      cmNotify('当前酒馆环境不支持单独重roll本条分支');
       return false;
     }
-    cmNotify('正在为你单独roll这一条，请稍候…');
+
+    cmNotify(`正在单独roll第 ${targetSwipeIdx + 1}/${swInfo.total} 条，请稍候…`);
+    pinScrollToFloor(idx);
     try {
-      const prevFloorSnippet = idx > 0 ? String(chat[idx - 1]?.mes || '').slice(-400) : '';
+      const historyLines = chat.slice(Math.max(0, idx - 8), idx).map(m => {
+        const who = m.is_user ? (ctx.name1 || 'User') : (m.name || ctx.name2 || 'AI');
+        const vis = typeof splitVisibleAndHidden === 'function' ? splitVisibleAndHidden(String(m.mes || '')).visibleText : String(m.mes || '');
+        return `${who}: ${vis.trim().slice(-600)}`;
+      }).filter(Boolean).join('\n\n');
+
+      const charName = msg.name || ctx.name2 || 'AI';
       const prompt = [
-        '请仅重新撰写下面标记的【目标段落】，保持与前后文剧情、人称、语气及相近字数完全连贯一致。',
-        '严格要求：只输出重写后的这一段正文，不要输出解释、标题、引号或前后其他段落。',
-        prevFloorSnippet ? `【上一层摘要】\n${prevFloorSnippet}` : '',
-        beforeText ? `【本层前文】\n${beforeText.slice(-900)}` : '',
-        `【需要重写的目标段落】\n${vis.slice(pos, pos + matchLen)}`,
-        afterText ? `【本层后文（需自然衔接）】\n${afterText.slice(0, 600)}` : '',
+        `请以「${charName}」的身份，紧接下方对话上下文，重新生成一条全新的回复分支。`,
+        '要求：保持人设、语气和剧情连贯，不要重复刚才旧分支的措辞，直接输出回复正文，不要输出任何额外说明。',
+        historyLines ? `【前文对话】\n${historyLines}` : '',
+        rawCur ? `【需要替换的旧分支（请换一种写法，不要照抄）】\n${rawCur.slice(0, 500)}` : '',
       ].filter(Boolean).join('\n\n');
 
       let res = '';
@@ -12999,15 +12997,18 @@
         res = await genQuietFn({ quietPrompt: prompt });
       }
       const cleanNew = String(res || '').trim();
-      if (!cleanNew) { cmNotify('局部重roll未返回内容，请稍后再试'); return false; }
-      pushUndoSnapshot(idx, raw);
-      const nextVis = (vis.slice(0, pos) + cleanNew + vis.slice(pos + matchLen)).replace(/\n{3,}/g, '\n\n').trim();
-      const nextRaw = reassembleVisibleAndHidden(nextVis, parsed);
-      await saveMessageRawText(idx, nextRaw);
-      cmNotify('该条已局部重roll完成！（点“编辑本段 -> 撤销还原”可撤回）');
+      if (!cleanNew) { cmNotify('重roll本条未返回内容，请稍后再试'); return false; }
+
+      pushUndoSnapshot(idx, rawCur);
+      if (!Array.isArray(msg.swipes)) msg.swipes = [rawCur];
+      msg.swipe_id = clamp(targetSwipeIdx, 0, Math.max(0, msg.swipes.length - 1));
+      msg.swipes[msg.swipe_id] = cleanNew;
+      await saveMessageRawText(idx, cleanNew);
+      pinScrollToFloor(idx);
+      cmNotify(`第 ${msg.swipe_id + 1}/${msg.swipes.length} 条已单独roll完！（其余分支保留，点“编辑本段 -> 撤销还原”可撤回）`);
       return true;
     } catch (err) {
-      cmNotify('局部重roll失败：' + (err?.message || '请稍后重试'));
+      cmNotify('roll本条失败：' + (err?.message || '请稍后重试'));
       return false;
     }
   };
@@ -13020,20 +13021,17 @@
     const lastIdx = chat.length - 1;
     const lastMsg = chat[lastIdx];
     if (!lastMsg || lastMsg.is_user) return false;
-    const parsed = splitVisibleAndHidden(String(lastMsg.mes || ''));
-    let paras = String(parsed.visibleText || '').split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
-    if (paras.length < 2) paras = String(parsed.visibleText || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
-    if (paras.length < 2) return false;
-    const curItemNum = paras.length;
+    const sw = getFloorSwipeInfo(lastIdx);
+    if (sw.total < 2) return false;
     openGuardConfirm(
-      `选择重roll方式（第 ${curItemNum}/${paras.length} 条）`,
-      `当前所在条目：第 ${curItemNum} / ${paras.length} 条\n\n• 仅roll第 ${curItemNum} 条：保留前面 ${paras.length - 1} 条，只重新生成最后这一条\n• roll整层：清空并重新生成整层回复\n\n关闭路径：「概览 → 局部重roll」或「快捷功能 → 局部重roll」`,
-      () => { triggerPartialLastParaReroll(lastIdx); },
-      `仅roll第 ${curItemNum} 条`,
+      `选择重roll方式（第 ${sw.curNum}/${sw.total} 条）`,
+      `当前所在条目：第 ${sw.curNum} / ${sw.total} 条\n\n• 仅roll第 ${sw.curNum} 条：保留其余 ${sw.total - 1} 条分支，只重新生成当前这一条\n• roll整层：按酒馆默认方式重新生成整层\n\n关闭路径：「概览 → 局部重roll」或「快捷功能 → 局部重roll」`,
+      () => { rerollFloorSwipeOnly(lastIdx, sw.curIdx); },
+      `仅roll第 ${sw.curNum} 条`,
       false,
       {
         label: 'roll整层',
-        onAlt: () => { triggerFullFloorReroll(regenBtn); },
+        onAlt: () => { triggerFullFloorReroll(regenBtn, lastIdx); },
       }
     );
     return true;
@@ -13082,10 +13080,12 @@
       e.preventDefault();
       e.stopImmediatePropagation();
       e.stopPropagation();
+      const ctxChat = getContext()?.chat;
+      const lastMid = Array.isArray(ctxChat) && ctxChat.length ? ctxChat.length - 1 : null;
       openGuardConfirm(
         '确认重新生成回复？',
         '当前已开启防误触保护，点击确认后才会调用 API 重新生成。',
-        () => regenBtn.click()
+        () => triggerFullFloorReroll(regenBtn, lastMid)
       );
       return;
     }
@@ -51549,22 +51549,15 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     seActReroll.addEventListener('click', (e) => {
       e.stopPropagation();
       const mid = seActiveMesId;
-      const txt = String(seActiveParaEl?.innerText || '').trim();
       hideSeFloatBar();
-      if (mid < 0 || !txt) return;
-      const raw = String(getContext()?.chat?.[mid]?.mes || '');
-      const vis = String(splitVisibleAndHidden(raw).visibleText || '');
-      let paras = vis.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
-      if (paras.length < 2) paras = vis.split(/\n+/).map(s => s.trim()).filter(Boolean);
-      const norm = (s) => s.replace(/\s+/g, '');
-      const targetNorm = norm(txt);
-      let hitIdx = paras.findIndex(p => p.includes(txt) || norm(p) === targetNorm || (targetNorm.length >= 8 && norm(p).includes(targetNorm.slice(0, 20))));
-      const curNum = hitIdx >= 0 ? (hitIdx + 1) : 1;
-      const totalNum = Math.max(curNum, paras.length || 1);
+      if (mid < 0) return;
+      const mesEl = doc.querySelector(`#chat .mes[mesid="${mid}"]`);
+      const sw = getFloorSwipeInfo(mid);
+      const preview = getVisibleFloorPreview(mesEl, mid);
       openGuardConfirm(
         '确认roll本条？',
-        `当前楼层：第 #${mid} 层\n当前条目：第 ${curNum}/${totalNum} 条\n\n本条内容：\n${txt}`,
-        () => { rerollSpecificParagraph(mid, txt); },
+        `当前楼层：第 #${mid} 层\n当前条目：第 ${sw.curNum}/${sw.total} 条\n\n本条内容：\n${preview}`,
+        () => { rerollFloorSwipeOnly(mid, sw.curIdx); },
         '确认roll本条'
       );
     });
