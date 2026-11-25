@@ -9227,7 +9227,7 @@
 
           <div class="st-tb-section">
             <div class="st-tb-label">
-              <span>换美化</span>
+              <span>美化主题</span>
               <span id="st-tb-theme-status"></span>
             </div>
             <div class="st-tb-row">
@@ -55029,8 +55029,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     if (config.storyQuickBarEnabled === false) return;
     if (e.target && e.target.closest && e.target.closest('#st-tb-root')) return;
 
-    const para = e.target && e.target.closest ? e.target.closest('#chat .mes_text p, #chat .mes_text blockquote') : null;
-    if (!para) {
+    if (e.target && e.target.closest && e.target.closest('a, button, input, textarea, select, summary, .st-tb-masked, .mes_buttons, .extraMesButtons, .swipes-counter, .swipe_left, .swipe_right')) return;
+    let para = e.target && e.target.closest ? e.target.closest('#chat .mes_text p, #chat .mes_text blockquote, #chat .mes_text li, #chat .mes_reasoning, #chat .reasoning_content') : null;
+    if (!para && e.target && e.target.closest) {
+      const cand = e.target.closest('#chat .mes_text div, #chat .mes_text span, #chat .mes_text td, #chat .mes_text pre, #chat .mes_text h1, #chat .mes_text h2, #chat .mes_text h3, #chat .mes_text h4');
+      if (cand && String(cand.innerText || '').trim().length > 0) para = cand;
+    }
+    if (!para || !String(para.innerText || '').trim()) {
       lastSeParaTap = { para: null, time: 0 };
       if (!seMultiMode) hideSeFloatBar();
       return;
@@ -55039,7 +55044,6 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const isRapidSecondTap = !seMultiMode && lastSeParaTap.para === para && (nowSeTap - lastSeParaTap.time) < 460;
     const selTxt = String(win.getSelection?.()?.toString() || '').trim();
     if (selTxt && !isRapidSecondTap) return;
-    if (e.target.closest('a, button, input, textarea, select, details, summary, .st-tb-masked')) return;
 
     const mesNode = para.closest('.mes[mesid]');
     if (!mesNode) return;
@@ -55183,12 +55187,97 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     });
   }
   if (seActEdit) {
+    const openBlockTextEditorModal = (mesId, origText, isReasoningBlock = false) => {
+      let mask = root.querySelector('#st-se-block-edit-mask');
+      if (!mask) {
+        mask = doc.createElement('div');
+        mask.id = 'st-se-block-edit-mask';
+        mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9994;pointer-events:auto;box-sizing:border-box;';
+        root.appendChild(mask);
+      }
+      const hasRef = Boolean(win.__stStyleRefActive);
+      mask.innerHTML = `<div style="width:324px;max-width:calc(100vw - 24px);padding:14px 14px 12px;margin:0 auto;border-radius:10px;background:var(--tb-bg);color:var(--tb-text);border:1px solid var(--tb-border);box-sizing:border-box;">
+        <div class="st-tb-confirm-title">${isReasoningBlock ? '编辑思维链可见内容' : '编辑该区块可见文本'}</div>
+        <textarea id="st-seb-ta" class="st-tb-textarea" style="width:100%;min-height:110px;max-height:240px;margin:6px 0 8px 0;font-size:12px;box-sizing:border-box;">${escapeHtmlSimple(origText)}</textarea>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:8px;cursor:pointer;">
+          <input type="checkbox" id="st-seb-remember" style="margin:0;" />
+          <span>记住本次修改的文案/美化格式，后续生成按此参考</span>
+        </label>
+        <div class="st-tb-confirm-actions">
+          ${hasRef ? '<button class="st-tb-btn" id="st-seb-clear-ref" type="button" style="margin-right:auto;">清除参考</button>' : ''}
+          <button class="st-tb-btn" id="st-seb-cancel" type="button">取消</button>
+          <button class="st-tb-btn primary" id="st-seb-save" type="button">保存修改</button>
+        </div>
+      </div>`;
+      const closeB = () => { mask.style.display = 'none'; };
+      mask.onclick = (ev) => { if (ev.target === mask) closeB(); };
+      mask.querySelector('#st-seb-cancel')?.addEventListener('click', closeB);
+      mask.querySelector('#st-seb-clear-ref')?.addEventListener('click', () => {
+        try { getContext()?.setExtensionPrompt?.('goulaicai_edit_style_ref', '', 1, 0); } catch (_) {}
+        win.__stStyleRefActive = false;
+        showImmNotice('已清除后续生成格式参考');
+        closeB();
+      });
+      mask.querySelector('#st-seb-save')?.addEventListener('click', async () => {
+        const nextText = String(mask.querySelector('#st-seb-ta')?.value || '').trim();
+        const remember = Boolean(mask.querySelector('#st-seb-remember')?.checked);
+        const ctx = getContext();
+        const msg = ctx?.chat?.[mesId];
+        if (!msg) { closeB(); return; }
+        if (isReasoningBlock) {
+          msg.extra = msg.extra || {};
+          const oldR = String(msg.extra.reasoning || '');
+          if (oldR && oldR.includes(origText)) msg.extra.reasoning = oldR.replace(origText, nextText);
+          else msg.extra.reasoning = nextText;
+          try { if (typeof ctx.updateMessageBlock === 'function') ctx.updateMessageBlock(mesId, msg, { rerenderMessage: true }); } catch (_) {}
+          try { if (typeof ctx.saveChat === 'function') await ctx.saveChat(); } catch (_) {}
+        } else {
+          const raw = String(msg.mes || '');
+          if (origText && raw.includes(origText)) {
+            pushUndoSnapshot(mesId, raw);
+            await saveMessageRawText(mesId, raw.replace(origText, nextText));
+          } else {
+            closeB();
+            openCleanStoryEditor(mesId, origText);
+            showImmNotice('该段含复杂HTML标签，已为你打开纯净编辑窗');
+            return;
+          }
+        }
+        if (remember && nextText) {
+          try {
+            if (typeof ctx?.setExtensionPrompt === 'function') {
+              ctx.setExtensionPrompt(
+                'goulaicai_edit_style_ref',
+                `[输出格式与美化文案参考] 请在接下来的回复中，保持与以下用户修订后示例一致的美化文案与排版风格：
+${nextText.slice(0, 600)}`,
+                1,
+                1
+              );
+              win.__stStyleRefActive = true;
+            }
+          } catch (_) {}
+        }
+        closeB();
+        showImmNotice(remember ? '已保存修改，并记住为当前聊天的后续生成格式参考' : '已保存该区块文本修改');
+      });
+      if (typeof bringModalFront === 'function') bringModalFront(mask);
+      mask.style.display = 'flex';
+    };
+
     seActEdit.addEventListener('click', (e) => {
       e.stopPropagation();
       const mid = seActiveMesId;
-      const snip = String(seActiveParaEl?.innerText || '').trim();
+      const el = seActiveParaEl;
+      const snip = String(el?.innerText || '').trim();
       hideSeFloatBar();
-      if (mid >= 0) openCleanStoryEditor(mid, snip);
+      if (mid < 0) return;
+      const isReasoning = Boolean(el && el.closest && el.closest('.mes_reasoning, .reasoning_content'));
+      const isStdPara = Boolean(el && (el.tagName === 'P' || el.tagName === 'BLOCKQUOTE') && !isReasoning);
+      if (isStdPara) {
+        openCleanStoryEditor(mid, snip);
+      } else {
+        openBlockTextEditorModal(mid, snip, isReasoning);
+      }
     });
   }
   if (seActDel) {
@@ -57705,6 +57794,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'imgswap',   name: '换图工坊',   defLabel: '换图' },
     { id: 'readstyle', name: '正文调整',   defLabel: '正文' },
     { id: 'font',      name: '字体设置',   defLabel: '字体' },
+    { id: 'theme',     name: '美化主题',   defLabel: '美化' },
     { id: 'phrases',   name: '快捷短语',   defLabel: '短语' },
     { id: 'textreplace', name: '正文替词', defLabel: '替词' },
     { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
@@ -58598,6 +58688,152 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         syncQuickReadPop();
         pop.classList.add('open');
         if (typeof bringFloatFront === 'function') bringFloatFront(pop);
+      } else if (act === 'theme') {
+        toggleQuickDock(false);
+        let tpop = root.querySelector('#st-tb-quick-theme-pop');
+        if (!tpop) {
+          tpop = doc.createElement('div');
+          tpop.id = 'st-tb-quick-theme-pop';
+          tpop.className = 'st-tb-mini-pop';
+          tpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+              <span>美化主题</span>
+              <button class="st-tb-mini-btn" id="st-qt-close" type="button">关闭</button>
+            </div>
+            <div class="st-pr-search-wrap" style="width:100%;">
+              <input class="st-tb-input" id="st-qt-search" type="text" placeholder="搜索美化主题" style="width:100%;" />
+              <button class="st-pr-search-clear" id="st-qt-search-clear" type="button" title="清空搜索">×</button>
+            </div>
+            <div id="st-qt-search-res" style="display:none;flex-direction:column;gap:3px;max-height:96px;overflow-y:auto;padding:3px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);"></div>
+            <select class="st-tb-select" id="st-qt-select" style="width:100%;"></select>
+            <div id="st-qt-rename-box" style="display:none;gap:4px;">
+              <input class="st-tb-input" id="st-qt-rename-inp" type="text" placeholder="输入新美化名称" style="flex:1;min-width:0;" />
+              <button class="st-tb-mini-btn active" id="st-qt-rename-save" type="button">保存</button>
+            </div>
+            <div style="display:flex;gap:6px;justify-content:flex-end;">
+              <button class="st-tb-mini-btn" id="st-qt-rename" type="button">重命名</button>
+              <button class="st-tb-mini-btn" id="st-qt-del" type="button" style="color:#c94c5a;">删除</button>
+            </div>`;
+          root.appendChild(tpop);
+          const qtClose = tpop.querySelector('#st-qt-close');
+          const qtSearch = tpop.querySelector('#st-qt-search');
+          const qtClear = tpop.querySelector('#st-qt-search-clear');
+          const qtRes = tpop.querySelector('#st-qt-search-res');
+          const qtSel = tpop.querySelector('#st-qt-select');
+          const qtRenBox = tpop.querySelector('#st-qt-rename-box');
+          const qtRenInp = tpop.querySelector('#st-qt-rename-inp');
+          const qtRenSave = tpop.querySelector('#st-qt-rename-save');
+          const qtRenBtn = tpop.querySelector('#st-qt-rename');
+          const qtDelBtn = tpop.querySelector('#st-qt-del');
+
+          const syncQuickThemePop = () => {
+            const list = getStThemeNames();
+            const curVal = getNativeThemesSelect()?.value || '';
+            const q = String(qtSearch?.value || '').trim().toLowerCase();
+            if (qtClear) qtClear.classList.toggle('show', Boolean(qtSearch?.value));
+            const filtered = q ? list.filter(x => x.label.toLowerCase().includes(q) || x.val.toLowerCase().includes(q)) : list;
+            if (qtSel) {
+              qtSel.innerHTML = '';
+              if (!filtered.length) {
+                const o = doc.createElement('option'); o.value = ''; o.textContent = list.length ? '无匹配美化' : '未读取到酒馆美化'; qtSel.appendChild(o);
+              } else {
+                filtered.forEach(it => { const o = doc.createElement('option'); o.value = it.val; o.textContent = it.label; qtSel.appendChild(o); });
+                if (filtered.some(x => x.val === curVal)) qtSel.value = curVal;
+              }
+            }
+            if (qtRes) {
+              if (!q) { qtRes.style.display = 'none'; qtRes.innerHTML = ''; }
+              else {
+                qtRes.style.display = 'flex';
+                qtRes.innerHTML = '';
+                if (!filtered.length) {
+                  qtRes.innerHTML = '<div style="font-size:11px;opacity:0.65;padding:2px 4px;">没有匹配的美化主题</div>';
+                } else {
+                  filtered.forEach(it => {
+                    const b = doc.createElement('button');
+                    b.type = 'button';
+                    b.className = `st-tb-btn${it.val === curVal ? ' primary' : ''}`;
+                    b.style.cssText = 'width:100%;text-align:left;justify-content:flex-start;padding:4px 8px;font-size:11px;height:auto;';
+                    b.textContent = it.label;
+                    b.addEventListener('click', () => { applyStThemeByName(it.val); renderStThemeSelect(); syncQuickThemePop(); });
+                    qtRes.appendChild(b);
+                  });
+                }
+              }
+            }
+          };
+          tpop.__syncQuickThemePop = syncQuickThemePop;
+          qtClose?.addEventListener('click', () => tpop.classList.remove('open'));
+          qtSearch?.addEventListener('input', syncQuickThemePop);
+          qtClear?.addEventListener('click', () => { if (qtSearch) qtSearch.value = ''; syncQuickThemePop(); qtSearch?.focus(); });
+          qtSel?.addEventListener('change', () => { if (qtSel.value) { applyStThemeByName(qtSel.value); renderStThemeSelect(); syncQuickThemePop(); } });
+          qtRenBtn?.addEventListener('click', () => {
+            const cur = qtSel?.value || getNativeThemesSelect()?.value || '';
+            if (!cur) { showImmNotice('请先选择一套美化主题'); return; }
+            if (qtRenInp) qtRenInp.value = cur;
+            if (qtRenBox) qtRenBox.style.display = 'flex';
+            qtRenInp?.focus();
+          });
+          qtRenSave?.addEventListener('click', async () => {
+            const oldName = qtSel?.value || getNativeThemesSelect()?.value || '';
+            const newName = String(qtRenInp?.value || '').trim();
+            if (!oldName || !newName || oldName === newName) { if (qtRenBox) qtRenBox.style.display = 'none'; return; }
+            try {
+              const ctx = getContext();
+              const headers = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+              const setResp = await fetch('/api/settings/get', { method: 'POST', headers, body: JSON.stringify({}) });
+              const setData = setResp.ok ? await setResp.json().catch(() => null) : null;
+              const targetObj = (Array.isArray(setData?.themes) ? setData.themes : []).find(t => t && t.name === oldName);
+              if (!targetObj) { showImmNotice('未在酒馆主题库中找到该美化，无法重命名'); if (qtRenBox) qtRenBox.style.display = 'none'; return; }
+              const saveResp = await fetch('/api/themes/save', { method: 'POST', headers, body: JSON.stringify({ ...targetObj, name: newName }) });
+              if (!saveResp.ok) throw new Error('save fail');
+              await fetch('/api/themes/delete', { method: 'POST', headers, body: JSON.stringify({ name: oldName }) });
+              const nativeSel = getNativeThemesSelect();
+              if (nativeSel) {
+                const opt = Array.from(nativeSel.options).find(o => o.value === oldName);
+                if (opt) { opt.value = newName; opt.textContent = newName; }
+                nativeSel.value = newName;
+              }
+              if (qtRenBox) qtRenBox.style.display = 'none';
+              renderStThemeSelect();
+              syncQuickThemePop();
+              showImmNotice(`已将美化「${oldName}」重命名为「${newName}」`);
+            } catch (_) {
+              showImmNotice('重命名美化失败，请稍后重试');
+            }
+          });
+          qtDelBtn?.addEventListener('click', () => {
+            const targetName = qtSel?.value || getNativeThemesSelect()?.value || '';
+            if (!targetName) { showImmNotice('请先选择要删除的美化主题'); return; }
+            openGuardConfirm(
+              `确认删除美化「${targetName}」？`,
+              '删除后该酒馆美化主题将从主题列表中永久移除，无法恢复。',
+              async () => {
+                try {
+                  const ctx = getContext();
+                  const headers = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+                  const delResp = await fetch('/api/themes/delete', { method: 'POST', headers, body: JSON.stringify({ name: targetName }) });
+                  if (!delResp.ok) throw new Error('del fail');
+                  const nativeSel = getNativeThemesSelect();
+                  if (nativeSel) {
+                    const opt = Array.from(nativeSel.options).find(o => o.value === targetName);
+                    if (opt) opt.remove();
+                  }
+                  renderStThemeSelect();
+                  syncQuickThemePop();
+                  showImmNotice(`已删除美化「${targetName}」`);
+                } catch (_) {
+                  showImmNotice('删除美化失败，可能是内置默认主题不支持删除');
+                }
+              },
+              '确认删除'
+            );
+          });
+        }
+        root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
+        root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
+        if (typeof tpop.__syncQuickThemePop === 'function') tpop.__syncQuickThemePop();
+        tpop.classList.add('open');
+        if (typeof bringFloatFront === 'function') bringFloatFront(tpop);
       } else if (act === 'font') {
         toggleQuickDock(false);
         let fpop = root.querySelector('#st-tb-quick-font-pop');
