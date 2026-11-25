@@ -28776,7 +28776,7 @@
 
   const POLAROID_BGS = [
     { id: 'meadow',      name: '晴空草地' },
-    { id: 'sakura',      name: '樱花树下' },
+    { id: 'sakura',      name: '樱花林' },
     { id: 'night',       name: '夏夜萤火' },
     { id: 'sunset',      name: '海边日落' },
     { id: 'cafe',        name: '暖灯咖啡' },
@@ -28924,44 +28924,70 @@
       [[10,46],[22,48],[34,46],[48,47],[62,46],[84,48]].forEach(([x,y]) => drawSunflower(x, y, false));
       [[8,56],[24,61],[50,58],[74,60],[88,55]].forEach(([x,y]) => drawSunflower(x, y, true));
     } else if (bgId === 'autumn') {
-      // 精修非对称「秋日枫林」：暖金秋空 + 柔云 + 远山红林 + 右侧圆润枝干红枫云团 + 左侧秋溪与红叶倒影
-      const aSky = ['#f2ba90', '#f8cfa8', '#fde3c2', '#fff3dc'];
-      aSky.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 9, W, 10); });
-      pxBlob(20, 11, 7, 7, 'rgba(255,246,204,0.35)');
-      pxBlob(20, 11, 4, 4, '#fff8d4');
-      pxBlob(42, 13, 9, 2, 'rgba(255,250,240,0.65)');
-      // 远景暖红秋山
-      ctx.fillStyle = '#d98c68';
-      for (let x = 0; x < 68; x++) {
-        const mh = Math.round(6 + Math.sin(x * 0.075) * 4 + Math.cos(x * 0.16) * 2);
-        ctx.fillRect(x, 42 - mh, 1, mh + 4);
+      // 全新重构「秋日枫林」：暖金斜阳 + 叠嶂秋山 + 左侧山间红鸟居与暖光石灯笼 + 远景金银杏 + 蜿蜒石阶 + 右侧苍劲层叠红枫
+      const aSky = ['#e08e67', '#eead7e', '#f9cd9e', '#ffe6be'];
+      aSky.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 10, W, 11); });
+      pxBlob(22, 12, 8, 8, 'rgba(255,244,196,0.28)');
+      pxBlob(22, 12, 5, 5, '#fff6cc');
+      pxBlob(22, 12, 3, 3, '#ffffff');
+      pxBlob(46, 10, 10, 2, 'rgba(255,246,226,0.52)');
+      pxBlob(66, 13, 8, 2, 'rgba(255,238,210,0.45)');
+      // 远近双层秋山
+      ctx.fillStyle = '#b86858';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(10 + Math.sin(x * 0.055) * 5 + Math.cos(x * 0.13) * 2);
+        ctx.fillRect(x, 44 - mh, 1, mh + 2);
       }
-      // 远景两棵柔和银杏小树
-      [[10,33],[24,35]].forEach(([gx,gy]) => {
-        ctx.fillStyle = '#7a4b2a'; ctx.fillRect(gx, gy + 3, 2, 7);
-        pxBlob(gx + 1, gy, 5, 4, '#e6a82e'); pxBlob(gx, gy - 1, 3, 2, '#ffd859');
+      ctx.fillStyle = '#d4855c';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(6 + Math.sin(x * 0.08 + 1.5) * 3.5);
+        ctx.fillRect(x, 44 - mh, 1, mh + 2);
+      }
+      // 山坡远景金黄银杏小树
+      ctx.fillStyle = '#6e4228'; ctx.fillRect(39, 34, 2, 10);
+      pxBlob(40, 31, 6, 4, '#dfa024'); pxBlob(39, 29, 4, 3, '#ffd24d');
+      // 左侧山间朱红鸟居
+      ctx.fillStyle = '#b83224'; ctx.fillRect(11, 26, 3, 19); ctx.fillRect(26, 26, 3, 19);
+      ctx.fillStyle = '#e04836'; ctx.fillRect(12, 26, 1, 19); ctx.fillRect(27, 26, 1, 19);
+      ctx.fillStyle = '#4a2620'; ctx.fillRect(7, 24, 26, 2);
+      ctx.fillStyle = '#cc3828'; ctx.fillRect(8, 26, 24, 2);
+      ctx.fillStyle = '#b83224'; ctx.fillRect(10, 30, 20, 2);
+      ctx.fillStyle = '#4a2620'; ctx.fillRect(18, 27, 4, 4);
+      ctx.fillStyle = '#ffd466'; ctx.fillRect(19, 28, 2, 2);
+      // 石阶旁暖光石灯笼
+      ctx.fillStyle = '#a39a92'; ctx.fillRect(34, 41, 4, 7);
+      ctx.fillStyle = '#8c837c'; ctx.fillRect(32, 39, 8, 2);
+      ctx.fillStyle = '#a39a92'; ctx.fillRect(33, 37, 6, 2);
+      pxBlob(36, 41, 4, 3, 'rgba(255,220,120,0.34)');
+      pxDot(35, 41, '#ffe888', 2, 2);
+      // 暖褐秋坡与蜿蜒青石阶
+      ctx.fillStyle = '#c99455'; ctx.fillRect(0, 44, W, 14);
+      ctx.fillStyle = '#b37d44'; ctx.fillRect(0, 58, W, 14);
+      [[13,45,14],[15,49,15],[18,53,16],[22,57,17],[26,62,18],[31,67,19]].forEach(([sx,sy,sw]) => {
+        ctx.fillStyle = '#b8afa6'; ctx.fillRect(sx, sy, sw, 3);
+        ctx.fillStyle = '#d4ccc4'; ctx.fillRect(sx, sy, sw, 1);
+        ctx.fillStyle = '#8c8279'; ctx.fillRect(sx, sy + 2, sw, 1);
       });
-      // 右侧有机舒展红枫树（圆润树冠团簇，绝无方块感！）
-      ctx.fillStyle = '#5c3122';
-      ctx.fillRect(82, 22, 5, 28);
-      for (let i = 0; i < 20; i++) ctx.fillRect(82 - i, Math.round(24 - i * 0.4), 3, 2);
-      for (let i = 0; i < 12; i++) ctx.fillRect(84 - i, Math.round(18 - i * 0.5), 2, 2);
-      // 深红底团 -> 朱红中团 -> 暖橙亮团 -> 阳光金边
-      [[88,8,12,8],[72,9,13,8],[58,13,11,7],[82,17,11,6],[66,18,9,5]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#a6261e'));
-      [[86,7,10,7],[70,8,11,7],[56,12,9,6],[78,15,9,5]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#d9422b'));
-      [[84,6,8,5],[68,7,8,5],[54,11,6,4],[74,14,6,3]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#f27c30'));
-      [[66,6,5,3],[82,5,5,3],[53,10,4,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffc247'));
-      // 暖色秋坡 + 左侧优雅弯曲秋溪
-      ctx.fillStyle = '#e0bc80'; ctx.fillRect(0, 44, W, 28);
-      ctx.fillStyle = '#cfa266'; ctx.fillRect(0, 58, W, 14);
-      for (let y = 44; y < H; y++) {
-        const sx = Math.round(10 + Math.sin((y - 44) * 0.14) * 5 + (y - 44) * 0.2);
-        const sw = Math.round(20 + (y - 44) * 0.35);
-        ctx.fillStyle = '#8abfd6'; ctx.fillRect(sx, y, sw, 1);
-        if (y % 5 === 0) { ctx.fillStyle = '#f5cfa8'; ctx.fillRect(sx + 4, y, 7, 1); }
+      // 右侧苍劲微弯红枫树干 + 舒展横枝 + 层叠风吹枫叶簇（与樱花林彻底不同！）
+      for (let y = 22; y < 54; y++) {
+        const tx = Math.round(82 + Math.sin((y - 22) * 0.12) * 2.2);
+        ctx.fillStyle = '#4d271c'; ctx.fillRect(tx, y, 5, 1);
+        ctx.fillStyle = '#6e3a2b'; ctx.fillRect(tx + 1, y, 2, 1);
       }
-      // 飘落红枫与水面落叶
-      [[42,22,'#d9422b'],[50,28,'#f27c30'],[62,26,'#ffc247'],[18,54,'#d9422b'],[26,62,'#f27c30'],[58,52,'#d9422b'],[76,58,'#a6261e'],[86,64,'#f27c30']].forEach(([lx,ly,lc]) => {
+      for (let i = 0; i < 22; i++) { ctx.fillStyle = '#4d271c'; ctx.fillRect(82 - i, Math.round(30 - Math.sin(i * 0.11) * 5), 2, 2); }
+      for (let i = 0; i < 16; i++) { ctx.fillStyle = '#4d271c'; ctx.fillRect(83 - i, Math.round(22 - i * 0.35), 2, 2); }
+      const drawMapleBough = (tufts) => {
+        tufts.forEach(([x,y,rx,ry]) => pxBlob(x, y + 1, rx, ry, '#8a1b17'));
+        tufts.forEach(([x,y,rx,ry]) => pxBlob(x, y, Math.max(2, rx - 1), Math.max(1, ry - 1), '#cc3624'));
+        tufts.forEach(([x,y,rx,ry]) => pxBlob(x - 1, y - 1, Math.max(2, rx - 2), Math.max(1, ry - 1), '#ed6e2a'));
+        tufts.forEach(([x,y,rx,ry], i) => { if (i % 2 === 0) pxBlob(x - 1, y - 1, Math.max(1, rx - 3), 1, '#ffbd45'); });
+        tufts.forEach(([x,y,rx,ry]) => { pxDot(x - rx - 1, y, '#d94426', 2, 1); pxDot(x + rx, y + 1, '#8a1b17', 1, 1); });
+      };
+      drawMapleBough([[68,12,6,3],[76,10,7,3],[85,11,7,3],[92,13,5,3]]);
+      drawMapleBough([[58,20,6,3],[66,18,7,3],[75,19,6,3],[84,20,7,3],[91,22,5,3]]);
+      drawMapleBough([[52,28,5,2],[60,27,6,3],[69,28,6,3],[78,27,5,2]]);
+      // 飘落红金枫叶
+      [[48,34,'#d9422b'],[55,36,'#ff9c38'],[64,37,'#ffba42'],[44,44,'#c93624'],[6,50,'#c93624'],[10,56,'#ed6c28'],[8,64,'#ffba42'],[52,52,'#c93624'],[60,56,'#ed6c28'],[70,54,'#8c1d18'],[78,60,'#d9422b'],[86,56,'#ffba42'],[66,64,'#ed6c28'],[54,66,'#8c1d18'],[82,66,'#c93624'],[24,54,'#d9422b']].forEach(([lx,ly,lc]) => {
         pxDot(lx, ly, lc, 2, 2); pxDot(lx + 1, ly - 1, lc, 1, 1);
       });
     } else if (bgId === 'bamboo') {
@@ -29407,31 +29433,65 @@
       pxDot(78, 35, 'rgba(255,255,255,0.75)', 1, 3); pxDot(81, 34, 'rgba(255,255,255,0.75)', 1, 3);
       pxBlob(67, 42, 4, 2, '#d98c3e'); pxBlob(67, 41, 3, 1, '#f5c270');
     } else if (bgId === 'sakura') {
-      // 精修樱花树下：晴空粉蓝渐变 + 圆润层次垂枝樱花云团 + 远方花丘 + 木长椅与飘落花瓣
-      ctx.fillStyle = '#d9edff'; ctx.fillRect(0, 0, W, 14);
-      ctx.fillStyle = '#eef5ff'; ctx.fillRect(0, 14, W, 14);
-      ctx.fillStyle = '#ffeef6'; ctx.fillRect(0, 28, W, 16);
-      ctx.fillStyle = '#f5d2e2';
-      for (let x = 0; x < 62; x++) {
-        const mh = Math.round(5 + Math.sin(x * 0.08) * 3);
-        ctx.fillRect(x, 44 - mh, 1, mh + 2);
+      // 全新重构「樱花林」：晴蓝粉霞天 + 远景绵延花海 + 中景远近层叠樱花树林 + 晨曦斜光 + 落樱林荫小道
+      ctx.fillStyle = '#bfe3ff'; ctx.fillRect(0, 0, W, 14);
+      ctx.fillStyle = '#dff0ff'; ctx.fillRect(0, 14, W, 14);
+      ctx.fillStyle = '#fff2f8'; ctx.fillRect(0, 28, W, 17);
+      // 远景绵延淡粉樱花林海
+      ctx.fillStyle = '#f5c6da';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(10 + Math.sin(x * 0.09) * 3 + Math.cos(x * 0.21) * 2);
+        ctx.fillRect(x, 45 - mh, 1, mh + 2);
       }
-      // 右侧樱花树干与舒展斜枝
-      ctx.fillStyle = '#6e4238'; ctx.fillRect(81, 20, 6, 28);
-      for (let i = 0; i < 24; i++) ctx.fillRect(82 - i, Math.round(22 - i * 0.42), 3, 2);
-      // 有机圆润樱花云团（四层粉白渐变）
-      [[86,8,14,9],[68,9,14,8],[52,13,11,7],[78,18,12,6],[62,18,9,5]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#eb86a8'));
-      [[84,7,12,8],[66,8,12,7],[50,12,9,6],[75,16,10,5]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffb3cc'));
-      [[82,6,9,6],[64,7,9,5],[49,11,6,4],[72,15,7,4]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffdbe8'));
-      [[63,6,5,3],[80,5,5,3],[48,10,3,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffffff'));
-      // 左侧精致暖木长椅
-      ctx.fillStyle = '#9c6644'; ctx.fillRect(10, 38, 22, 2); ctx.fillRect(10, 41, 22, 2);
-      ctx.fillStyle = '#734428'; ctx.fillRect(12, 40, 2, 7); ctx.fillRect(28, 40, 2, 7);
-      // 嫩绿春草坡与漫天樱花瓣
-      ctx.fillStyle = '#b4e498'; ctx.fillRect(0, 45, W, 14);
-      ctx.fillStyle = '#9ad180'; ctx.fillRect(0, 59, W, 13);
-      [[26,18],[38,14],[46,26],[62,28],[16,52],[36,60],[58,54],[78,62],[88,50],[28,48]].forEach(([px,py], i) => {
-        pxDot(px, py, i % 2 === 0 ? '#ff94b8' : '#ffd9e8', 2, 2);
+      ctx.fillStyle = '#fbdbe8';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(6 + Math.sin(x * 0.14 + 1.2) * 2.5);
+        ctx.fillRect(x, 45 - mh, 1, mh + 1);
+      }
+      // 中景左右透视樱花小树（带柔和花冠）
+      ctx.fillStyle = '#9c6f78'; ctx.fillRect(29, 28, 2, 18); ctx.fillRect(66, 28, 2, 18);
+      [[29,24,9,6],[36,26,7,5],[67,24,9,6],[60,26,7,5]].forEach(([bx,by,rx,ry]) => {
+        pxBlob(bx, by, rx, ry, '#f2a4c2');
+        pxBlob(bx, by - 1, Math.max(3, rx - 2), Math.max(2, ry - 2), '#ffd2e4');
+      });
+      // 近景左右成林樱花树干与拱形枝干
+      [[6,1,4,16],[18,1,3,19],[77,-1,3,19],[89,-1,4,16]].forEach(([bx,lean,tw,topY]) => {
+        for (let y = topY; y < 49; y++) {
+          const ox = Math.round(bx + Math.sin((y - topY) * 0.09) * lean * 1.4);
+          ctx.fillStyle = '#6b403c'; ctx.fillRect(ox, y, tw, 1);
+          ctx.fillStyle = '#8c5954'; ctx.fillRect(ox + 1, y, 1, 1);
+        }
+      });
+      ctx.fillStyle = '#6b403c';
+      for (let i = 0; i < 14; i++) {
+        ctx.fillRect(9 + i, Math.round(20 - i * 0.5), 2, 2);
+        ctx.fillRect(86 - i, Math.round(20 - i * 0.5), 2, 2);
+      }
+      // 繁茂环抱式樱花林树冠（四色柔和渐变，中间留晴空呼吸感）
+      [[6,8,12,8],[22,7,13,8],[36,10,9,6],[13,16,11,6],[90,8,12,8],[74,7,13,8],[60,10,9,6],[83,16,11,6],[48,2,10,4]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#eb86ab'));
+      [[5,7,10,7],[21,6,11,7],[35,9,7,5],[12,15,9,5],[89,7,10,7],[73,6,11,7],[59,9,7,5],[82,15,9,5],[48,2,8,3]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffb5cf'));
+      [[4,6,7,5],[20,5,8,5],[34,8,5,3],[88,6,7,5],[72,5,8,5],[58,8,5,3],[48,1,5,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffdce8'));
+      [[19,4,4,2],[73,4,4,2],[6,5,3,2],[89,5,3,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#fff5f9'));
+      // 透过樱花林倾泻的温柔斜阳微光
+      for (let i = 0; i < 36; i++) {
+        ctx.fillStyle = 'rgba(255,252,240,0.18)'; ctx.fillRect(42 + Math.floor(i * 0.35), 9 + i, 5, 1);
+        ctx.fillStyle = 'rgba(255,252,240,0.13)'; ctx.fillRect(52 + Math.floor(i * 0.35), 11 + i, 3, 1);
+      }
+      // 嫩绿春草与中央透视落樱小径
+      ctx.fillStyle = '#b0e096'; ctx.fillRect(0, 45, W, 14);
+      ctx.fillStyle = '#97cc7e'; ctx.fillRect(0, 59, W, 13);
+      for (let y = 45; y < H; y++) {
+        const t = (y - 45) / (H - 45);
+        const halfW = Math.round(6 + t * 22);
+        const cx = Math.round(48 + Math.sin(t * 2.2) * 3);
+        ctx.fillStyle = '#ffd1e2'; ctx.fillRect(cx - halfW - 2, y, 2, 1); ctx.fillRect(cx + halfW, y, 2, 1);
+        ctx.fillStyle = '#f7ebe4'; ctx.fillRect(cx - halfW, y, halfW * 2, 1);
+        if (y % 6 === 0) { ctx.fillStyle = '#efe0d8'; ctx.fillRect(cx - halfW + 3, y, Math.max(3, halfW - 4), 1); }
+      }
+      // 飘落樱花瓣与草地花瓣点缀
+      [[38,18,'#ffb5cf'],[46,14,'#ffffff'],[55,20,'#ff94ba'],[42,27,'#ffdce8'],[51,31,'#ffb5cf'],[31,34,'#ffffff'],[63,34,'#ffb5cf'],[48,38,'#ff94ba'],[12,52,'#ffb5cf'],[22,60,'#ffdce8'],[16,65,'#ff94ba'],[80,53,'#ffb5cf'],[74,62,'#ffdce8'],[86,66,'#ff94ba'],[44,54,'#ffb5cf'],[54,62,'#ff94ba'],[49,49,'#ffdce8'],[36,64,'#ffffff']].forEach(([px,py,pc]) => {
+        pxDot(px, py, pc, 2, 1);
+        if ((px + py) % 3 === 0) pxDot(px + 1, py + 1, pc, 1, 1);
       });
     } else if (bgId === 'snow') {
       // 质感精修雪地小屋（保持原构图与低贴烟囱）：暮冬粉蓝晴空 + 积雪松林 + 暖窗雪屋 + 圆润红围巾小雪人
