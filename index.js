@@ -8854,7 +8854,7 @@
       <button class="st-tb-mini-btn" id="st-se-act-copy" type="button">复制本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-multi" type="button">多选段落</button>
       <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">编辑本段</button>
-      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff);">roll本段</button>
+      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff);">roll本条</button>
       <button class="st-tb-mini-btn" id="st-se-act-del" type="button">删本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del-floor" type="button" style="color:#d9534f;">删整层</button>
     </div>
@@ -8997,7 +8997,7 @@
               <button class="st-tb-btn" id="st-tb-guard-btn" type="button" title="拦截右滑新生成与重新生成，确认后再调用API">防手滑：关</button>
             </div>
             <div style="margin-top:6px;">
-              <button class="st-tb-btn" id="st-tb-partial-reroll-btn" type="button" style="width:100%;" title="当本层有多段内容时，点击重roll会提示选择仅重roll最后一段或整层重roll">局部重roll（保留前段）：开</button>
+              <button class="st-tb-btn" id="st-tb-partial-reroll-btn" type="button" style="width:100%;" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll（保留前条）：开</button>
             </div>
             <div class="st-tb-tip" id="st-tb-keepalive-tip" style="display:none;"></div>
           </div>
@@ -12909,10 +12909,10 @@
     if (contBtn) {
       guardBypassUntil = Date.now() + 900;
       contBtn.click();
-      cmNotify('已保留前几段，正在仅重roll最后一段~');
+      cmNotify('已保留前几条，正在仅roll最后一条~');
       return true;
     }
-    cmNotify('已帮你保留前几段并移除最后一段，请点酒馆「继续(Continue)」生成新段落');
+    cmNotify('已帮你保留前几条并移除最后一条，请点酒馆「继续(Continue)」生成新内容');
     return true;
   };
 
@@ -12964,7 +12964,7 @@
       if (contBtn) {
         guardBypassUntil = Date.now() + 900;
         contBtn.click();
-        cmNotify('已保留前文，正在仅重roll最后一段~');
+        cmNotify('已保留前文，正在仅roll最后一条~');
         return true;
       }
       if (typeof ctx?.executeSlashCommands === 'function') {
@@ -12980,7 +12980,7 @@
       cmNotify('当前酒馆环境不支持局部段重写，请先手动编辑该段');
       return false;
     }
-    cmNotify('正在为你单独重roll这一段，请稍候…');
+    cmNotify('正在为你单独roll这一条，请稍候…');
     try {
       const prevFloorSnippet = idx > 0 ? String(chat[idx - 1]?.mes || '').slice(-400) : '';
       const prompt = [
@@ -13004,7 +13004,7 @@
       const nextVis = (vis.slice(0, pos) + cleanNew + vis.slice(pos + matchLen)).replace(/\n{3,}/g, '\n\n').trim();
       const nextRaw = reassembleVisibleAndHidden(nextVis, parsed);
       await saveMessageRawText(idx, nextRaw);
-      cmNotify('该段已局部重roll完成！（点“编辑本段 -> 撤销还原”可撤回）');
+      cmNotify('该条已局部重roll完成！（点“编辑本段 -> 撤销还原”可撤回）');
       return true;
     } catch (err) {
       cmNotify('局部重roll失败：' + (err?.message || '请稍后重试'));
@@ -13024,12 +13024,12 @@
     let paras = String(parsed.visibleText || '').split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
     if (paras.length < 2) paras = String(parsed.visibleText || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
     if (paras.length < 2) return false;
-    const curParaNum = paras.length;
+    const curItemNum = paras.length;
     openGuardConfirm(
-      `选择重roll方式（第 ${curParaNum}/${paras.length} 段）`,
-      `当前所在段落：第 ${curParaNum} / ${paras.length} 段\n\n• 仅roll第 ${curParaNum} 段：保留前面 ${paras.length - 1} 段，只重新生成最后这一段\n• roll整层：清空并重新生成整层回复\n\n关闭路径：「概览 → 局部重roll」或「快捷功能 → 局部重roll」`,
+      `选择重roll方式（第 ${curItemNum}/${paras.length} 条）`,
+      `当前所在条目：第 ${curItemNum} / ${paras.length} 条\n\n• 仅roll第 ${curItemNum} 条：保留前面 ${paras.length - 1} 条，只重新生成最后这一条\n• roll整层：清空并重新生成整层回复\n\n关闭路径：「概览 → 局部重roll」或「快捷功能 → 局部重roll」`,
       () => { triggerPartialLastParaReroll(lastIdx); },
-      `仅roll第 ${curParaNum} 段`,
+      `仅roll第 ${curItemNum} 条`,
       false,
       {
         label: 'roll整层',
@@ -45897,7 +45897,7 @@
     guardBtn.classList.toggle('primary', Boolean(config.swipeGuard));
     if (partialRerollBtn) {
       const prOn = config.partialRerollLastPara !== false;
-      partialRerollBtn.textContent = prOn ? '局部重roll（保留前段）：开' : '局部重roll（保留前段）：关';
+      partialRerollBtn.textContent = prOn ? '局部重roll（保留前条）：开' : '局部重roll（保留前条）：关';
       partialRerollBtn.classList.toggle('primary', prOn);
     }
 
@@ -46025,7 +46025,7 @@
       saveConfig();
       syncUI();
       if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
-      showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一段就能单独重roll那一段' : '已关闭局部重roll');
+      showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一条就能单独roll那一条' : '已关闭局部重roll');
     });
   }
 
@@ -51562,10 +51562,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const curNum = hitIdx >= 0 ? (hitIdx + 1) : 1;
       const totalNum = Math.max(curNum, paras.length || 1);
       openGuardConfirm(
-        '确认roll本段？',
-        `当前楼层：第 #${mid} 层\n当前段落：第 ${curNum}/${totalNum} 段\n\n段落内容：\n${txt}`,
+        '确认roll本条？',
+        `当前楼层：第 #${mid} 层\n当前条目：第 ${curNum}/${totalNum} 条\n\n本条内容：\n${txt}`,
         () => { rerollSpecificParagraph(mid, txt); },
-        '确认roll本段'
+        '确认roll本条'
       );
     });
   }
@@ -54574,7 +54574,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
         saveConfig();
         syncUI();
-        showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一段就能单独重roll那一段' : '已关闭局部重roll');
+        showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一条就能单独roll那一条' : '已关闭局部重roll');
         syncQuickDockUI();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
