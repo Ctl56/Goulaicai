@@ -2677,6 +2677,8 @@
     textReplaceRules: [],
     guestPuppy: null,
     guestPuppies: [],
+    puppyUsedVisitCodes: [],
+    photoWinRect: null,
     puppyVisitLog: [],
     puppyVisitPhotos: [],
     puppyVisitCoopDaily: { date: '', water: 0, cook: 0 },
@@ -5053,8 +5055,9 @@
       box-shadow: 4px 4px 0 rgba(59,42,34,0.24);
       padding: 8px;
       color: var(--px-fg, #54444a);
-      z-index: 10022;
+      z-index: 9991;
       display: none;
+      overflow-y: auto;
       pointer-events: auto;
       font-size: 11px;
     }
@@ -5183,7 +5186,7 @@
     #st-tb-puppy-bubble.bub-gacha-milk-strawberryNone, .st-tb-guest-bubble.bub-gacha-milk-strawberryNone { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
     #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after, .st-tb-guest-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
 
-    #st-tb-puppy-bubble::after, .st-tb-guest-bubble::after {
+    #st-tb-puppy-bubble::after {
       content: "";
       position: absolute;
       left: 50%;
@@ -5194,6 +5197,19 @@
       background: #fffdf7;
       border-right: 2px solid #3b2a22;
       border-bottom: 2px solid #3b2a22;
+    }
+    .st-tb-guest-bubble::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -6px;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: inherit;
+      border-right: 2px solid;
+      border-bottom: 2px solid;
+      border-color: inherit;
     }
 
     #st-tb-puppy-bubble.show {
@@ -28397,6 +28413,7 @@
       lastBubbleSkin: '',
       bubbleTimer: null,
       drag: null,
+      fxParticles: [],
     };
     guestRuntimes.set(guest.id, rt);
 
@@ -28448,9 +28465,16 @@
     list.forEach((g, idx) => ensureGuestRuntime(g, idx));
   };
 
+  const spawnGuestFx = (rt, kind, x, y) => {
+    if (!rt) return;
+    if (!Array.isArray(rt.fxParticles)) rt.fxParticles = [];
+    if (rt.fxParticles.length > 10) rt.fxParticles.shift();
+    rt.fxParticles.push({ kind, x, y, vy: -0.22 - Math.random() * 0.14, vx: (Math.random() - 0.5) * 0.18, life: 24 + Math.floor(Math.random() * 14) });
+  };
+
   const drawSingleGuestScene = (guest, rt) => {
     if (!rt || !rt.el || !rt.ctx) return;
-    if (!config.puppyEnabled) {
+    if (!config.puppyEnabled || guest.onDesktop === false) {
       rt.el.classList.remove('active');
       return;
     }
@@ -28495,8 +28519,13 @@
     rt.el.classList.toggle('bob', bob);
     rt.el.classList.toggle('hop', hop);
 
+    const hasFx = Array.isArray(rt.fxParticles) && rt.fxParticles.length > 0;
+    const fxActiveState = rt.state === 'happy' || rt.state === 'nuzzle' || rt.state === 'spin' || rt.state === 'bounce';
+    if (fxActiveState && rt.tick % 14 === 0) {
+      spawnGuestFx(rt, pick(['heart', 'sparkle', 'flower_fx', 'note']), 12 + (Math.random() - 0.5) * 8, 5);
+    }
     const rKey = `${frame}|${rt.state}|${rt.dir}|${guest.name}|${guest.hideName ? 1 : 0}|${JSON.stringify(guest.look || {})}`;
-    if (rt.lastRenderKey === rKey) return;
+    if (!hasFx && !fxActiveState && rt.lastRenderKey === rKey) return;
     rt.lastRenderKey = rKey;
 
     const pal = getPupPalette(guest.look || {});
@@ -28523,6 +28552,34 @@
         drawPupOutfit(guest.look.outfit || 'none', ox, oy, hx, hy, isFlatPose, isDead, isSitPose, false);
         if (Array.isArray(guest.look.accs)) guest.look.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlatPose, isDead));
         drawPupCompanion(guest.look.comp || 'none', ox, oy, isDead);
+      }
+      // 绘制客人小狗头顶像素漂浮物（爱心 / 音符 / 小花 / 闪光）
+      if (Array.isArray(rt.fxParticles) && rt.fxParticles.length) {
+        for (let i = rt.fxParticles.length - 1; i >= 0; i--) {
+          const fp = rt.fxParticles[i];
+          fp.x += fp.vx;
+          fp.y += fp.vy;
+          fp.life -= 1;
+          if (fp.life <= 0) { rt.fxParticles.splice(i, 1); continue; }
+          const gx = Math.round(fp.x), gy = Math.round(fp.y);
+          if (fp.kind === 'heart') {
+            rt.ctx.fillStyle = '#ff6b94';
+            rt.ctx.fillRect(gx - 1, gy, 1, 1); rt.ctx.fillRect(gx + 1, gy, 1, 1);
+            rt.ctx.fillRect(gx - 1, gy + 1, 3, 1); rt.ctx.fillRect(gx, gy + 2, 1, 1);
+          } else if (fp.kind === 'note') {
+            rt.ctx.fillStyle = '#6ba8f2';
+            rt.ctx.fillRect(gx, gy, 1, 3); rt.ctx.fillRect(gx + 1, gy, 2, 1); rt.ctx.fillRect(gx - 1, gy + 2, 2, 1);
+          } else if (fp.kind === 'flower_fx') {
+            rt.ctx.fillStyle = '#ff9eb8';
+            rt.ctx.fillRect(gx - 1, gy, 1, 1); rt.ctx.fillRect(gx + 1, gy, 1, 1);
+            rt.ctx.fillRect(gx, gy - 1, 1, 1); rt.ctx.fillRect(gx, gy + 1, 1, 1);
+            rt.ctx.fillStyle = '#ffe066'; rt.ctx.fillRect(gx, gy, 1, 1);
+          } else {
+            rt.ctx.fillStyle = '#ffe066';
+            rt.ctx.fillRect(gx, gy, 2, 2);
+            rt.ctx.fillStyle = '#ffffff'; rt.ctx.fillRect(gx, gy, 1, 1);
+          }
+        }
       }
     } finally {
       activePxCtx = prevCtx;
@@ -28589,15 +28646,20 @@
 
     const txRef = actorB.isHost ? pup.x : actorB.rt.x;
     const tyRef = actorB.isHost ? (pup.y || defaultPupY()) : (actorB.rt.y || defaultPupY());
-    const dist = Math.hypot(rtA.x - txRef, (rtA.y || defaultPupY()) - tyRef);
+    const dxCur = rtA.x - txRef;
+    const dyCur = (rtA.y || defaultPupY()) - tyRef;
+    const dist = Math.hypot(dxCur, dyCur);
     const maxX = Math.max(8, win.innerWidth - 80);
+    const sideSign = dxCur === 0 ? (txRef > maxX / 2 ? -1 : 1) : (dxCur > 0 ? 1 : -1);
+    const idealX = clamp(txRef + sideSign * 62, 8, maxX);
 
-    if (dist <= 78 || guestA.pinned) {
+    // 若未重叠且距离合适（52~84px）直接互动；如果太近重叠（<52px）或太远（>84px）则先走位到舒适并排间距！
+    if (guestA.pinned || (Math.abs(dxCur) >= 52 && dist <= 86 && Math.abs(dyCur) <= 28)) {
       playPairDialogue({ isHost: false, guest: guestA, rt: rtA }, actorB, manual);
       return;
     }
     dualSocialBusyUntil = now + 9000;
-    rtA.targetX = clamp(txRef + (txRef > maxX / 2 ? -54 : 54), 8, maxX);
+    rtA.targetX = idealX;
     rtA.targetY = clamp(tyRef, 40, Math.max(40, win.innerHeight - 80));
     rtA.pendingSocial = { actorB, manual };
     rtA.state = 'approach';
@@ -28641,6 +28703,12 @@
     { id: 'cloudsea',    name: '梦幻云海' },
     { id: 'wisteria',    name: '紫藤花廊' },
     { id: 'festival',    name: '夜市灯笼' },
+    { id: 'bamboo',      name: '竹林清风' },
+    { id: 'beach_day',   name: '海岛晴湾' },
+    { id: 'lavender',    name: '薰衣草田' },
+    { id: 'star_train',  name: '星河火车' },
+    { id: 'bakery',      name: '甜品烘焙' },
+    { id: 'rainbow',     name: '雨后彩虹' },
   ];
   const POLAROID_DOG_POSES = [
     { id: 'happy',    name: '开心', frame: 'happy' },
@@ -28710,17 +28778,149 @@
         ctx.fillStyle = '#7a4b24'; ctx.fillRect(fx, fy, 2, 2);
       });
     } else if (bgId === 'autumn') {
-      ctx.fillStyle = '#ffe6cc'; ctx.fillRect(0, 0, W, 18);
-      ctx.fillStyle = '#fff2df'; ctx.fillRect(0, 18, W, 24);
-      ctx.fillStyle = '#8c4b30'; ctx.fillRect(8, 22, 5, 24); ctx.fillRect(82, 20, 5, 26);
-      ctx.fillStyle = '#e05a3c'; ctx.fillRect(0, 4, 28, 20); ctx.fillRect(68, 2, 28, 20);
-      ctx.fillStyle = '#f28c38'; ctx.fillRect(10, 8, 24, 14); ctx.fillRect(62, 8, 24, 14);
-      ctx.fillStyle = '#ffd066'; ctx.fillRect(18, 12, 12, 8); ctx.fillRect(66, 12, 12, 8);
-      ctx.fillStyle = '#e8c48e'; ctx.fillRect(0, 44, W, 28);
-      ctx.fillStyle = '#d9ae74'; ctx.fillRect(0, 58, W, 14);
-      [[34,26],[48,20],[56,30],[22,52],[42,60],[64,54],[78,63]].forEach(([lx,ly], i) => {
-        ctx.fillStyle = i % 2 === 0 ? '#e05238' : '#f59e38'; ctx.fillRect(lx, ly, 3, 2);
+      // 精修秋日枫林：暖橘柔光秋空 + 远山层林尽染 + 舒展红枫/银杏树 + 落叶石板小径
+      const aSky = ['#f7c8a0', '#fad8b4', '#fce7c8', '#fff3de'];
+      aSky.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 9, W, 10); });
+      // 秋日暖阳与薄云
+      ctx.fillStyle = 'rgba(255,248,214,0.6)'; ctx.fillRect(42, 7, 14, 14);
+      ctx.fillStyle = '#fff6cc'; ctx.fillRect(45, 10, 8, 8);
+      ctx.fillStyle = 'rgba(255,252,245,0.65)'; ctx.fillRect(14, 12, 18, 2); ctx.fillRect(66, 15, 18, 2);
+      // 远山红橙剪影
+      ctx.fillStyle = '#d98a6c';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(7 + Math.sin(x * 0.07) * 4 + Math.cos(x * 0.14) * 2);
+        ctx.fillRect(x, 42 - mh, 1, mh + 4);
+      }
+      // 左侧红枫树（深红/朱红/暖橙三层树冠+分叉树枝）
+      ctx.fillStyle = '#6e3d28'; ctx.fillRect(7, 22, 5, 25); ctx.fillRect(11, 20, 8, 2); ctx.fillRect(3, 18, 6, 2);
+      ctx.fillStyle = '#b83228'; ctx.fillRect(0, 4, 24, 14); ctx.fillRect(4, 16, 18, 6);
+      ctx.fillStyle = '#de4b32'; ctx.fillRect(2, 6, 22, 10); ctx.fillRect(12, 12, 14, 7);
+      ctx.fillStyle = '#f58438'; ctx.fillRect(6, 8, 16, 6); ctx.fillRect(16, 14, 8, 4);
+      // 右侧金黄银杏与红枫交错
+      ctx.fillStyle = '#6e3d28'; ctx.fillRect(83, 20, 5, 27); ctx.fillRect(76, 18, 8, 2);
+      ctx.fillStyle = '#d97a26'; ctx.fillRect(70, 2, 26, 16);
+      ctx.fillStyle = '#f5b838'; ctx.fillRect(72, 4, 24, 12); ctx.fillRect(66, 10, 14, 7);
+      ctx.fillStyle = '#ffe078'; ctx.fillRect(76, 6, 14, 6);
+      // 暖色草坡与中间石板小径
+      ctx.fillStyle = '#e0b87a'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#cfa062'; ctx.fillRect(0, 58, W, 14);
+      ctx.fillStyle = '#e6dfd5'; ctx.fillRect(34, 46, 28, 26);
+      ctx.fillStyle = '#d4cbc0'; ctx.fillRect(34, 54, 28, 2); ctx.fillRect(34, 63, 28, 2);
+      // 空中与地面飘落红枫与金叶
+      [[30,24,'#de4b32'],[46,28,'#f5b838'],[60,22,'#de4b32'],[22,50,'#c93828'],[38,52,'#f58438'],[56,59,'#f5b838'],[74,51,'#de4b32'],[14,62,'#f5b838'],[82,63,'#c93828']].forEach(([lx,ly,lc]) => {
+        ctx.fillStyle = lc; ctx.fillRect(lx, ly, 3, 2); ctx.fillRect(lx + 1, ly - 1, 1, 1);
       });
+    } else if (bgId === 'bamboo') {
+      // 竹林清风：雾白淡青天空 + 远山薄雾 + 错落翠绿竹竿与竹叶 + 青石小径
+      ctx.fillStyle = '#e6f5ee'; ctx.fillRect(0, 0, W, 24);
+      ctx.fillStyle = '#f2faf5'; ctx.fillRect(0, 24, W, 22);
+      ctx.fillStyle = '#b4d9c6';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(6 + Math.sin(x * 0.06) * 4);
+        ctx.fillRect(x, 42 - mh, 1, mh + 4);
+      }
+      // 翠绿竹竿与竹节
+      [8, 18, 76, 86].forEach((bx, i) => {
+        ctx.fillStyle = i % 2 === 0 ? '#4e9e68' : '#66b87e';
+        ctx.fillRect(bx, 0, 3, 48);
+        ctx.fillStyle = '#d4f0dc';
+        for (let y = 8; y < 46; y += 10) ctx.fillRect(bx, y, 3, 1);
+      });
+      // 竹叶剪影
+      [[4,6],[14,14],[22,8],[68,10],[78,16],[88,6]].forEach(([lx,ly]) => {
+        ctx.fillStyle = '#3b8254'; ctx.fillRect(lx, ly, 7, 2); ctx.fillRect(lx + 2, ly + 2, 5, 2);
+      });
+      ctx.fillStyle = '#a8d9a0'; ctx.fillRect(0, 45, W, 27);
+      ctx.fillStyle = '#d8e3dc'; ctx.fillRect(28, 48, 40, 24);
+      ctx.fillStyle = '#c2cfc7'; ctx.fillRect(28, 56, 40, 2); ctx.fillRect(28, 65, 40, 2);
+    } else if (bgId === 'beach_day') {
+      // 海岛晴湾：澄澈晴空 + 碧蓝果冻海 + 椰子树 + 金色沙滩
+      ctx.fillStyle = '#7ec8ff'; ctx.fillRect(0, 0, W, 16);
+      ctx.fillStyle = '#b5e2ff'; ctx.fillRect(0, 16, W, 18);
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(18, 6, 16, 4); ctx.fillRect(21, 4, 10, 2);
+      ctx.fillStyle = '#38b2d4'; ctx.fillRect(0, 34, W, 10);
+      ctx.fillStyle = '#5ed2e8'; ctx.fillRect(0, 44, W, 7);
+      ctx.fillStyle = '#ffffff';
+      for (let x = 0; x < W; x += 7) ctx.fillRect(x, 50 + (x % 14 === 0 ? 0 : 1), 6, 2);
+      ctx.fillStyle = '#fce3b0'; ctx.fillRect(0, 52, W, 20);
+      ctx.fillStyle = '#f2cf8d'; ctx.fillRect(0, 64, W, 8);
+      // 右侧椰子树
+      ctx.fillStyle = '#9c6638'; ctx.fillRect(83, 16, 4, 38);
+      ctx.fillStyle = '#48a858'; ctx.fillRect(70, 12, 16, 4); ctx.fillRect(84, 10, 12, 4); ctx.fillRect(74, 8, 12, 4);
+      ctx.fillStyle = '#ff9eb5'; ctx.fillRect(14, 60, 3, 2);
+    } else if (bgId === 'lavender') {
+      // 薰衣草田：温柔紫粉晚霞 + 白色小风车 + 一垄垄渐层薰衣草花海
+      ctx.fillStyle = '#d6c4f2'; ctx.fillRect(0, 0, W, 14);
+      ctx.fillStyle = '#f2d9f5'; ctx.fillRect(0, 14, W, 14);
+      ctx.fillStyle = '#ffe8ec'; ctx.fillRect(0, 28, W, 12);
+      // 远方白色小风车
+      ctx.fillStyle = '#fffdf9'; ctx.fillRect(74, 24, 8, 16);
+      ctx.fillStyle = '#d47a8c'; ctx.fillRect(73, 22, 10, 3);
+      ctx.fillStyle = '#8c6b58'; ctx.fillRect(77, 16, 2, 14); ctx.fillRect(71, 22, 14, 2);
+      // 薰衣草花垄
+      ctx.fillStyle = '#9a78d4'; ctx.fillRect(0, 40, W, 32);
+      for (let y = 42; y < 72; y += 5) {
+        ctx.fillStyle = y % 10 === 2 ? '#b898eb' : '#7f5ec2';
+        ctx.fillRect(0, y, W, 2);
+      }
+      [[10,46],[26,54],[46,48],[64,58],[82,52]].forEach(([x,y]) => {
+        ctx.fillStyle = '#e6d4ff'; ctx.fillRect(x, y, 3, 2);
+      });
+    } else if (bgId === 'star_train') {
+      // 星河火车：璀璨银河夜空 + 亮暖黄车窗的像素小火车 + 星光铁轨
+      ctx.fillStyle = '#121833'; ctx.fillRect(0, 0, W, 28);
+      ctx.fillStyle = '#1c264f'; ctx.fillRect(0, 28, W, 20);
+      // 斜向银河光带
+      for (let i = 0; i < 48; i++) {
+        ctx.fillStyle = i % 3 === 0 ? 'rgba(180,220,255,0.35)' : 'rgba(216,184,255,0.28)';
+        ctx.fillRect(i * 2, Math.max(0, 32 - Math.floor(i * 0.6)), 4, 6);
+      }
+      [[10,8],[24,14],[40,6],[58,12],[78,5],[88,16],[16,24],[66,22]].forEach(([sx,sy]) => {
+        ctx.fillStyle = '#fff9cc'; ctx.fillRect(sx, sy, 1, 1);
+      });
+      // 远景暖窗小火车
+      ctx.fillStyle = '#2d3b66'; ctx.fillRect(10, 32, 76, 10);
+      ctx.fillStyle = '#ffe078';
+      for (let x = 14; x < 82; x += 8) ctx.fillRect(x, 35, 5, 4);
+      // 星光铁轨与夜色草地
+      ctx.fillStyle = '#243054'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#9ec4f0'; ctx.fillRect(0, 43, W, 1); ctx.fillRect(0, 46, W, 1);
+    } else if (bgId === 'bakery') {
+      // 甜品烘焙屋：鹅黄格纹墙 + 玻璃甜品柜 + 草莓蛋糕与马卡龙 + 暖木柜台
+      ctx.fillStyle = '#fff8e6'; ctx.fillRect(0, 0, W, 44);
+      ctx.fillStyle = '#fae8c8';
+      for (let x = 0; x < W; x += 10) ctx.fillRect(x, 0, 2, 44);
+      for (let y = 0; y < 44; y += 10) ctx.fillRect(0, y, W, 2);
+      // 甜品展示架
+      ctx.fillStyle = '#c48a5c'; ctx.fillRect(14, 8, 68, 28);
+      ctx.fillStyle = '#eef8ff'; ctx.fillRect(17, 11, 62, 22);
+      ctx.fillStyle = '#c48a5c'; ctx.fillRect(17, 21, 62, 2);
+      // 架上小蛋糕与马卡龙
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(22, 15, 8, 6); ctx.fillStyle = '#ff5c7c'; ctx.fillRect(25, 13, 2, 2);
+      ctx.fillStyle = '#ffb8d0'; ctx.fillRect(38, 16, 6, 5); ctx.fillStyle = '#9ee6c8'; ctx.fillRect(48, 16, 6, 5);
+      ctx.fillStyle = '#ffe078'; ctx.fillRect(62, 15, 9, 6);
+      ctx.fillStyle = '#f2b880'; ctx.fillRect(26, 26, 10, 6); ctx.fillStyle = '#ff9eb5'; ctx.fillRect(54, 26, 10, 6);
+      // 暖木吧台与地板
+      ctx.fillStyle = '#d9a472'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#b87f4c'; ctx.fillRect(0, 44, W, 3);
+    } else if (bgId === 'rainbow') {
+      // 雨后彩虹：清透蓝天 + 柔美七彩拱形彩虹 + 白云 + 挂露草坡
+      ctx.fillStyle = '#a8dcff'; ctx.fillRect(0, 0, W, 22);
+      ctx.fillStyle = '#d4f0ff'; ctx.fillRect(0, 22, W, 22);
+      const rCols = ['#ff8fa8', '#ffb884', '#ffe278', '#92e096', '#84ccff', '#bfa4ff'];
+      rCols.forEach((rc, i) => {
+        ctx.strokeStyle = rc;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(48, 46, 38 - i * 2, Math.PI, 0);
+        ctx.stroke();
+      });
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(4, 34, 18, 8); ctx.fillRect(8, 31, 10, 4);
+      ctx.fillRect(74, 34, 18, 8); ctx.fillRect(78, 31, 10, 4);
+      ctx.fillStyle = '#9ee092'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#84cc7a'; ctx.fillRect(0, 58, W, 14);
+      [[18,52],[40,60],[68,54],[84,62]].forEach(([x,y]) => { ctx.fillStyle = '#e8f9ff'; ctx.fillRect(x, y, 2, 2); });
     } else if (bgId === 'cloudsea') {
       const bands = ['#c8c4f2', '#e4c8f0', '#f7d2e8', '#ffe2e8', '#fff0e6'];
       bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
@@ -28940,13 +29140,27 @@
         const renderPick = () => {
           selM.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <span style="font-size:11.5px;font-weight:700;">选择一起拍合照的小狗 (1~4只)</span>
+              <span style="font-size:11.5px;font-weight:700;">选择一起拍合照的小狗 (不限数量)</span>
               <button type="button" id="st-ppk-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+            </div>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+              <button type="button" id="st-ppk-all-desk" class="st-px-btn" style="flex:1;height:20px;font-size:9.5px;">全选桌面小狗</button>
+              <button type="button" id="st-ppk-all" class="st-px-btn" style="flex:1;height:20px;font-size:9.5px;">全部勾选</button>
             </div>
             <div id="st-ppk-list" style="display:flex;flex-wrap:wrap;gap:4px;max-height:140px;overflow-y:auto;margin-bottom:8px;"></div>
             <button type="button" id="st-ppk-go" class="st-px-btn care" style="width:100%;">开始拍合照 (${checkedIds.size}只)</button>
           </div>`;
           selM.querySelector('#st-ppk-x')?.addEventListener('click', () => { selM.style.display = 'none'; });
+          selM.querySelector('#st-ppk-all-desk')?.addEventListener('click', () => {
+            checkedIds.clear();
+            checkedIds.add('host');
+            guests.filter(g => g.onDesktop !== false).forEach(g => checkedIds.add(`g_${g.id}`));
+            renderPick();
+          });
+          selM.querySelector('#st-ppk-all')?.addEventListener('click', () => {
+            cands.forEach(c => checkedIds.add(c.id));
+            renderPick();
+          });
           const lEl = selM.querySelector('#st-ppk-list');
           cands.forEach(c => {
             const on = checkedIds.has(c.id);
@@ -28957,7 +29171,7 @@
             b.textContent = `${on ? '✓ ' : ''}${c.name}`;
             b.addEventListener('click', () => {
               if (on) { if (checkedIds.size > 1) checkedIds.delete(c.id); }
-              else if (checkedIds.size < 4) checkedIds.add(c.id);
+              else checkedIds.add(c.id);
               renderPick();
             });
             lEl.appendChild(b);
@@ -29007,9 +29221,15 @@
     if (winEl) winEl.remove();
     winEl = doc.createElement('div');
     winEl.id = 'st-tb-visit-photo-win';
-    // 层级设为 9994，确保桌面小狗（9996/9997）可以出现在拍立得面板上方！
-    winEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:296px;max-height:76vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:#3b2a22;font-family:inherit;z-index:9994;display:flex;flex-direction:column;pointer-events:auto;box-sizing:border-box;';
+    const pr = config.photoWinRect;
+    const pW = (pr && pr.width) ? clamp(pr.width, 240, 440) : 296;
+    const pH = (pr && pr.height) ? clamp(pr.height, 260, Math.round(win.innerHeight * 0.92)) : 0;
+    const posCss = (pr && typeof pr.left === 'number' && typeof pr.top === 'number')
+      ? `left:${clamp(pr.left, 4, Math.max(4, win.innerWidth - pW - 4))}px;top:${clamp(pr.top, 4, Math.max(4, win.innerHeight - 200))}px;`
+      : 'left:50%;top:50%;transform:translate(-50%,-50%);';
+    winEl.style.cssText = `position:fixed;${posCss}width:${pW}px;${pH ? `height:${pH}px;` : 'max-height:76vh;'}background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:#3b2a22;font-family:inherit;z-index:9991;display:flex;flex-direction:column;pointer-events:auto;box-sizing:border-box;`;
     root.appendChild(winEl);
+    if (typeof bringFloatFront === 'function') bringFloatFront(winEl);
 
     const getTextCol = (hex) => {
       const [r, g, b] = hexToRgbBytes(hex, '#ffffff');
@@ -29104,12 +29324,17 @@
         winEl.style.left = `${Math.round(clamp(ox + ev.clientX - sx, 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
         winEl.style.top = `${Math.round(clamp(oy + ev.clientY - sy, 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
       };
-      const onU = () => { head.removeEventListener('pointermove', onM); head.removeEventListener('pointerup', onU); };
+      const onU = () => {
+        head.removeEventListener('pointermove', onM); head.removeEventListener('pointerup', onU);
+        const r2 = winEl.getBoundingClientRect();
+        config.photoWinRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width), height: config.photoWinRect?.height || 0 };
+        saveConfig();
+      };
       head.addEventListener('pointermove', onM);
       head.addEventListener('pointerup', onU);
     });
 
-    // 右下角完全隐形缩放
+    // 右下角完全隐形缩放并永久记忆大小位置
     const rsz = winEl.querySelector('#st-vph-rsz');
     rsz?.addEventListener('pointerdown', (e) => {
       e.preventDefault(); e.stopPropagation();
@@ -29120,10 +29345,16 @@
       winEl.style.top = `${Math.round(rect.top)}px`;
       const sx = e.clientX, sy = e.clientY, ow = rect.width, oh = rect.height;
       const onM = (ev) => {
-        winEl.style.width = `${clamp(Math.round(ow + ev.clientX - sx), 240, 420)}px`;
-        winEl.style.maxHeight = `${clamp(Math.round(oh + ev.clientY - sy), 260, Math.round(win.innerHeight * 0.92))}px`;
+        winEl.style.width = `${clamp(Math.round(ow + ev.clientX - sx), 240, 440)}px`;
+        winEl.style.height = `${clamp(Math.round(oh + ev.clientY - sy), 260, Math.round(win.innerHeight * 0.92))}px`;
+        winEl.style.maxHeight = 'none';
       };
-      const onU = () => { rsz.removeEventListener('pointermove', onM); rsz.removeEventListener('pointerup', onU); };
+      const onU = () => {
+        rsz.removeEventListener('pointermove', onM); rsz.removeEventListener('pointerup', onU);
+        const r2 = winEl.getBoundingClientRect();
+        config.photoWinRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width), height: Math.round(r2.height) };
+        saveConfig();
+      };
       rsz.addEventListener('pointermove', onM);
       rsz.addEventListener('pointerup', onU);
     });
@@ -29589,6 +29820,7 @@
     else if (kind === 'feed') { rt.state = 'eat'; rt.timer = 170; }
     else if (kind === 'praise') { rt.state = 'spin'; rt.timer = 170; }
     else if (kind === 'play') { rt.state = pick(['bounce', 'playdead', 'spin']); rt.timer = 170; }
+    for (let k = 0; k < 3; k++) spawnGuestFx(rt, pick(['heart', 'flower_fx', 'note', 'sparkle']), 12 + (k - 1) * 4, 6);
     showGuestBubbleById(guestId, line, 2800);
   };
 
@@ -29624,7 +29856,12 @@
       <div id="st-gp-resize" class="st-gp-resize"></div>`;
 
     if (config.guestPopRect && config.guestPopRect.width) {
-      guestPopEl.style.width = `${clamp(config.guestPopRect.width, 210, 340)}px`;
+      guestPopEl.style.width = `${clamp(config.guestPopRect.width, 210, 360)}px`;
+    }
+    if (config.guestPopRect && config.guestPopRect.height) {
+      guestPopEl.style.height = `${clamp(config.guestPopRect.height, 180, Math.round(win.innerHeight * 0.85))}px`;
+    } else {
+      guestPopEl.style.height = '';
     }
     const left = (config.guestPopRect && typeof config.guestPopRect.left === 'number')
       ? clamp(config.guestPopRect.left, 8, Math.max(8, win.innerWidth - 230))
@@ -29635,6 +29872,7 @@
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
     guestPopEl.style.display = 'block';
+    if (typeof bringFloatFront === 'function') bringFloatFront(guestPopEl);
     showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
 
     const head = guestPopEl.querySelector('#st-gp-drag-head');
@@ -29653,7 +29891,7 @@
         head.removeEventListener('pointermove', onMove);
         head.removeEventListener('pointerup', onUp);
         const r2 = guestPopEl.getBoundingClientRect();
-        config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
+        config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width), height: config.guestPopRect?.height || 0 };
         saveConfig();
       };
       head.addEventListener('pointermove', onMove);
@@ -29663,13 +29901,17 @@
     rsz?.addEventListener('pointerdown', (e) => {
       e.preventDefault(); e.stopPropagation();
       rsz.setPointerCapture(e.pointerId);
-      const sx = e.clientX, ow = guestPopEl.getBoundingClientRect().width;
-      const onMove = (ev) => { guestPopEl.style.width = `${clamp(Math.round(ow + (ev.clientX - sx)), 210, 340)}px`; };
+      const rect0 = guestPopEl.getBoundingClientRect();
+      const sx = e.clientX, sy = e.clientY, ow = rect0.width, oh = rect0.height;
+      const onMove = (ev) => {
+        guestPopEl.style.width = `${clamp(Math.round(ow + (ev.clientX - sx)), 210, 360)}px`;
+        guestPopEl.style.height = `${clamp(Math.round(oh + (ev.clientY - sy)), 180, Math.round(win.innerHeight * 0.85))}px`;
+      };
       const onUp = () => {
         rsz.removeEventListener('pointermove', onMove);
         rsz.removeEventListener('pointerup', onUp);
         const r2 = guestPopEl.getBoundingClientRect();
-        config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
+        config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width), height: Math.round(r2.height) };
         saveConfig();
       };
       rsz.addEventListener('pointermove', onMove);
@@ -29720,6 +29962,7 @@
     // 全局调度一对双狗互动（自家↔客人 或 客人A↔客人B），确保绝不冲突
     if (config.puppyEnabled && now >= nextDualSocialAt && now >= dualSocialBusyUntil) {
       const idleGuests = list.filter(g => {
+        if (g.onDesktop === false) return false;
         const rt = guestRuntimes.get(g.id);
         return rt && !rt.drag && rt.state !== 'approach' && now >= (rt.talkingUntil || 0);
       });
@@ -29742,7 +29985,7 @@
     list.forEach(guest => {
       const rt = guestRuntimes.get(guest.id);
       if (!rt || rt.drag) return;
-      if (!config.puppyEnabled) { rt.el.classList.remove('active'); return; }
+      if (!config.puppyEnabled || guest.onDesktop === false) { rt.el.classList.remove('active'); return; }
       if (!rt.y) rt.y = (guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY();
       rt.tick += 1;
       rt.timer -= 1;
@@ -29819,21 +30062,41 @@
       const gWrap = doc.createElement('div');
       gWrap.className = 'st-px-adv-card';
       gWrap.style.marginBottom = '6px';
-      gWrap.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-        <span style="font-weight:700;">当前做客小狗 (${guests.length}/6)</span>
-        <button type="button" id="st-pv-photo-all" class="st-px-btn active" style="height:20px;padding:0 6px;font-size:9.5px;">拍合照</button>
+      const allOnDesk = guests.every(g => g.onDesktop !== false);
+      gWrap.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:4px;">
+        <span style="font-weight:700;">当前做客 (${guests.length}/10)</span>
+        <div style="display:flex;gap:3px;">
+          <button type="button" id="st-pv-desk-all" class="st-px-btn${allOnDesk ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9px;">${allOnDesk ? '全收起' : '全放桌面'}</button>
+          <button type="button" id="st-pv-photo-all" class="st-px-btn active" style="height:20px;padding:0 6px;font-size:9.5px;">拍合照</button>
+        </div>
       </div>`;
+      gWrap.querySelector('#st-pv-desk-all')?.addEventListener('click', () => {
+        const target = !allOnDesk;
+        guests.forEach(g => { g.onDesktop = target; });
+        saveConfig();
+        renderPupVisitPanel();
+      });
       gWrap.querySelector('#st-pv-photo-all')?.addEventListener('click', () => openDualPhotoModal());
       guests.forEach(guest => {
+        const onDesk = guest.onDesktop !== false;
         const row = doc.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;padding:4px 5px;background:#fff;border:1px solid var(--px-border,#bfa4ae);margin-top:4px;';
-        row.innerHTML = `<span style="font-weight:700;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${guest.name}</span>
+        row.innerHTML = `<span style="font-weight:700;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;${onDesk ? '' : 'opacity:0.5;'}">${guest.name}</span>
           <div style="display:flex;gap:3px;flex-shrink:0;">
+            <button type="button" class="st-px-btn${onDesk ? ' active' : ''} st-pv-desk" style="height:20px;padding:0 4px;font-size:9px;">${onDesk ? '桌面' : '已藏'}</button>
             <button type="button" class="st-px-btn care st-pv-i" style="height:20px;padding:0 5px;font-size:9.5px;">互动</button>
             <button type="button" class="st-px-btn${guest.pinned ? ' active' : ''} st-pv-p" style="height:20px;padding:0 5px;font-size:9.5px;">${guest.pinned ? '已固' : '固定'}</button>
             <button type="button" class="st-px-btn st-pv-d" style="height:20px;padding:0 5px;font-size:9.5px;color:#a94442;">送客</button>
           </div>`;
-        row.querySelector('.st-pv-i')?.addEventListener('click', () => openGuestPop(guest.id));
+        row.querySelector('.st-pv-desk')?.addEventListener('click', () => {
+          guest.onDesktop = guest.onDesktop === false;
+          saveConfig();
+          renderPupVisitPanel();
+        });
+        row.querySelector('.st-pv-i')?.addEventListener('click', () => {
+          if (guest.onDesktop === false) { guest.onDesktop = true; saveConfig(); }
+          openGuestPop(guest.id);
+        });
         row.querySelector('.st-pv-p')?.addEventListener('click', () => {
           guest.pinned = !guest.pinned;
           const rt = guestRuntimes.get(guest.id);
@@ -29969,18 +30232,37 @@
     inBtn.className = 'st-px-btn active';
     inBtn.style.width = '100%';
     inBtn.textContent = '拆开礼物 / 请小狗进桌面';
+    const hashVisitCode = (raw) => {
+      const norm = String(raw || '').replace(/[\s\u200B-\u200D\uFEFF]+/g, '');
+      let h = 2166136261;
+      for (let i = 0; i < norm.length; i++) {
+        h ^= norm.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return 'vc_' + (h >>> 0).toString(36) + '_' + norm.length;
+    };
     inBtn.addEventListener('click', () => {
       const parsed = decodePupVisitCard(inTa.value);
       if (!parsed) { cmNotify('名片码格式不正确'); return; }
-      const received = grantGiftItems(parsed.gifts);
-      const rp = Math.max(0, Math.floor(Number(parsed.redPacket) || 0));
-      if (rp > 0) {
-        config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
-        config.puppyStats = config.puppyStats || {};
-        config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
-        updatePupStatBars();
-      }
+      const hasLoot = (Array.isArray(parsed.gifts) && parsed.gifts.length > 0) || (Number(parsed.redPacket) || 0) > 0;
+      const codeHash = hashVisitCode(inTa.value);
+      if (!Array.isArray(config.puppyUsedVisitCodes)) config.puppyUsedVisitCodes = [];
+      const alreadyRedeemed = hasLoot && config.puppyUsedVisitCodes.includes(codeHash);
+
       if (parsed.isReturn) {
+        if (alreadyRedeemed) { cmNotify('这个返程码的回礼已经领取过啦，不能重复领取哦~'); return; }
+        const received = grantGiftItems(parsed.gifts);
+        const rp = Math.max(0, Math.floor(Number(parsed.redPacket) || 0));
+        if (rp > 0) {
+          config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
+          config.puppyStats = config.puppyStats || {};
+          config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
+          updatePupStatBars();
+        }
+        if (hasLoot) {
+          config.puppyUsedVisitCodes.unshift(codeHash);
+          if (config.puppyUsedVisitCodes.length > 300) config.puppyUsedVisitCodes.length = 300;
+        }
         saveConfig();
         checkPupAchievements();
         if (config.puppyEnabled) {
@@ -29991,6 +30273,20 @@
         renderPupVisitPanel();
         return;
       }
+
+      const received = alreadyRedeemed ? [] : grantGiftItems(parsed.gifts);
+      const rp = alreadyRedeemed ? 0 : Math.max(0, Math.floor(Number(parsed.redPacket) || 0));
+      if (rp > 0) {
+        config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
+        config.puppyStats = config.puppyStats || {};
+        config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
+        updatePupStatBars();
+      }
+      if (hasLoot && !alreadyRedeemed) {
+        config.puppyUsedVisitCodes.unshift(codeHash);
+        if (config.puppyUsedVisitCodes.length > 300) config.puppyUsedVisitCodes.length = 300;
+      }
+
       const cleanName = String(parsed.name).slice(0, 14);
       const curList = getGuestList();
       let gObj = curList.find(x => x.name === cleanName);
@@ -29998,10 +30294,11 @@
         gObj.pers = parsed.pers || 'sleepyhead';
         gObj.look = parsed.look || {};
         gObj.msg = parsed.msg || '来找你们玩啦~';
+        gObj.onDesktop = true;
         const rtOld = guestRuntimes.get(gObj.id);
         if (rtOld) { rtOld.lastRenderKey = ''; rtOld.lastBubbleSkin = ''; }
       } else {
-        if (curList.length >= 6) { cmNotify('桌面同时最多招待 6 位客人小狗哦，请先送客一位吧~'); return; }
+        if (curList.length >= 10) { cmNotify('桌面同时最多招待 10 位客人小狗哦，请先送客一位吧~'); return; }
         gObj = {
           id: `gp_${Date.now()}_${Math.floor(Math.random() * 999)}`,
           name: cleanName,
@@ -30046,7 +30343,7 @@
         showPuppyBubble(`哇！${cleanName} 来做客啦~`, 2100);
         setTimeout(() => { if (getGuestList().some(x => x.id === gObj.id)) showGuestBubbleById(gObj.id, `哈喽！我是 ${cleanName}，来串门啦~`, 2600); }, 1950);
       }
-      openVisitGiftModal(cleanName, gObj.msg, received, rp, false);
+      openVisitGiftModal(cleanName, alreadyRedeemed ? `${gObj.msg}（该名片码礼物之前已领过，这次小狗直接来做客啦~）` : gObj.msg, received, rp, false);
       renderPupVisitPanel();
     });
     inBox.append(inTa, inBtn);
@@ -50569,7 +50866,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }
     }
     floatOrder.forEach((node, i) => {
-      if (node) node.style.zIndex = String(9991 + i);
+      if (node) node.style.zIndex = String(9984 + i);
     });
   };
   floatOrder.forEach(el => {
