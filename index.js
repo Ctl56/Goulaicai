@@ -26319,8 +26319,15 @@
       e.stopPropagation();
     });
   });
+  const isAnyGuestDragging = () => {
+    if (typeof guestRuntimes === 'undefined') return false;
+    for (const rt of guestRuntimes.values()) {
+      if (rt && rt.drag && rt.drag.moved) return true;
+    }
+    return false;
+  };
   const onPupDragShield = (e) => {
-    if (Date.now() < pupDragSuppressUntil || (puppyDrag && puppyDrag.moved)) {
+    if (Date.now() < pupDragSuppressUntil || (puppyDrag && puppyDrag.moved) || isAnyGuestDragging()) {
       e.stopPropagation();
       if (e.type === 'click') e.preventDefault();
     }
@@ -27118,199 +27125,299 @@
       return;
     }
     const dest = PUP_ADV_DESTS.find(d => d.id === photo.dest) || PUP_ADV_DESTS[0];
-    // 分层明信片渐变天空、远山剪影与细腻地面光影（覆盖全部 36 张风景）
+    // 像素明信片绘图助手（与拍立得同款圆润干净像素质感）
+    const aDot = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(Math.round(x), Math.round(y), w, h); };
+    const aBlob = (cx, cy, rx, ry, col) => {
+      g.fillStyle = col;
+      for (let dy = -ry; dy <= ry; dy++) {
+        for (let dx = -rx; dx <= rx; dx++) {
+          if ((dx * dx) / (rx * rx + 0.3) + (dy * dy) / (ry * ry + 0.3) <= 1.0) {
+            g.fillRect(Math.round(cx + dx), Math.round(cy + dy), 1, 1);
+          }
+        }
+      }
+    };
     const isNightScene = photo.scene === 'sakura_night' || photo.scene === 'town_firework' || photo.scene === 'town_pagoda' || photo.scene === 'beach_pier';
     const isSunsetScene = photo.scene === 'cloud_sunset';
     const isRainScene = photo.scene === 'town_rain';
-    const skyGr = g.createLinearGradient(0, 0, 0, 23);
-    if (isSunsetScene) {
-      skyGr.addColorStop(0, '#ff8e7a'); skyGr.addColorStop(0.55, '#ffc288'); skyGr.addColorStop(1, '#ffe9b8');
-    } else if (isNightScene) {
-      skyGr.addColorStop(0, '#182042'); skyGr.addColorStop(0.6, '#2d3a6e'); skyGr.addColorStop(1, '#4b4c80');
-    } else if (isRainScene) {
-      skyGr.addColorStop(0, '#788ea6'); skyGr.addColorStop(1, '#c4d4e0');
-    } else if (photo.dest === 'sakura_park') {
-      skyGr.addColorStop(0, '#ffd4e6'); skyGr.addColorStop(0.6, '#ffeef5'); skyGr.addColorStop(1, '#fff8f0');
-    } else if (photo.dest === 'starry_beach') {
-      skyGr.addColorStop(0, '#15224a'); skyGr.addColorStop(0.6, '#28407a'); skyGr.addColorStop(1, '#4668a6');
-    } else if (photo.dest === 'ancient_town') {
-      skyGr.addColorStop(0, '#ffd2a8'); skyGr.addColorStop(0.6, '#ffebd4'); skyGr.addColorStop(1, '#fff7eb');
-    } else if (photo.dest === 'cloud_meadow') {
-      skyGr.addColorStop(0, '#7cc6ff'); skyGr.addColorStop(0.65, '#c2e8ff'); skyGr.addColorStop(1, '#eef9ff');
-    } else if (photo.dest === 'magic_forest') {
-      skyGr.addColorStop(0, '#162938'); skyGr.addColorStop(0.6, '#24454f'); skyGr.addColorStop(1, '#36635c');
-    } else {
-      skyGr.addColorStop(0, '#1c2c52'); skyGr.addColorStop(0.6, '#365082'); skyGr.addColorStop(1, '#6885b5');
-    }
-    g.fillStyle = skyGr; g.fillRect(0, 0, W, 23);
 
-    const gndGr = g.createLinearGradient(0, 22, 0, 36);
+    // 分层像素天空（告别糊感线性渐变！）
+    const paintSkyBands = (cols) => {
+      const bh = Math.ceil(23 / cols.length);
+      cols.forEach((c, i) => { g.fillStyle = c; g.fillRect(0, i * bh, W, bh + 1); });
+    };
+    if (isSunsetScene) paintSkyBands(['#e88078', '#f7aa82', '#ffd49c', '#ffefc4']);
+    else if (isNightScene) paintSkyBands(['#111838', '#1c2854', '#29396e', '#3c4d82']);
+    else if (isRainScene) paintSkyBands(['#7088a1', '#94abc2', '#bacbd9']);
+    else if (photo.dest === 'sakura_park') paintSkyBands(['#bfe3ff', '#dff0ff', '#fff0f7']);
+    else if (photo.dest === 'starry_beach') paintSkyBands(['#121d42', '#1f3369', '#325191', '#4a70b0']);
+    else if (photo.dest === 'ancient_town') paintSkyBands(['#f0b696', '#fad3b2', '#ffebd4']);
+    else if (photo.dest === 'cloud_meadow') paintSkyBands(['#6ec2ff', '#a8dcff', '#dff4ff']);
+    else if (photo.dest === 'magic_forest') paintSkyBands(['#122433', '#1d3b47', '#2d5754']);
+    else paintSkyBands(['#142145', '#233866', '#3d5a8c', '#6988b8']);
+
+    // 分层地面底色
     if (photo.dest === 'sakura_park') {
-      gndGr.addColorStop(0, isNightScene ? '#4d7864' : '#96dfaa'); gndGr.addColorStop(1, isNightScene ? '#335246' : '#74c48a');
+      aDot(0, 22, isNightScene ? '#446b5a' : '#a4de94', W, 7);
+      aDot(0, 29, isNightScene ? '#2f4d41' : '#89c97b', W, 7);
     } else if (photo.dest === 'starry_beach') {
-      gndGr.addColorStop(0, '#f7e0ad'); gndGr.addColorStop(1, '#dfb97e');
+      aDot(0, 23, '#f7dfb0', W, 7); aDot(0, 30, '#e3c088', W, 6);
     } else if (photo.dest === 'ancient_town') {
-      gndGr.addColorStop(0, '#cfc2b4'); gndGr.addColorStop(1, '#a89a8c');
+      aDot(0, 22, '#cfc2b4', W, 7); aDot(0, 29, '#b3a496', W, 7);
     } else if (photo.dest === 'cloud_meadow') {
-      gndGr.addColorStop(0, isSunsetScene ? '#f2c89c' : '#a8e8c0'); gndGr.addColorStop(1, isSunsetScene ? '#d9a47e' : '#7ecc9c');
+      aDot(0, 22, isSunsetScene ? '#f2c69b' : '#a2e3b4', W, 7);
+      aDot(0, 29, isSunsetScene ? '#d9a17b' : '#82cc98', W, 7);
     } else if (photo.dest === 'magic_forest') {
-      gndGr.addColorStop(0, '#3e7352'); gndGr.addColorStop(1, '#264d3a');
+      aDot(0, 22, '#346648', W, 7); aDot(0, 29, '#234a36', W, 7);
     } else {
-      gndGr.addColorStop(0, '#eef7ff'); gndGr.addColorStop(1, '#c8def2');
+      aDot(0, 22, '#eef7ff', W, 7); aDot(0, 29, '#d2e4f5', W, 7);
     }
-    g.fillStyle = gndGr; g.fillRect(0, 22, W, 14);
 
     if (photo.dest === 'sakura_park') {
-      g.fillStyle = isNightScene ? '#3b3f6b' : '#f2c4d6';
-      g.beginPath(); g.moveTo(0, 22); g.quadraticCurveTo(14, 13, 28, 22); g.quadraticCurveTo(41, 14, 54, 22); g.fill();
-      g.fillStyle = '#7a4b2c'; g.fillRect(5, 9, 4, 15); g.fillRect(4, 22, 6, 2);
-      g.fillStyle = '#ff96b2'; g.beginPath(); g.arc(8, 7, 7, 0, Math.PI * 2); g.arc(14, 9, 5, 0, Math.PI * 2); g.fill();
-      g.fillStyle = '#ffd4e4'; g.beginPath(); g.arc(7, 5, 4.5, 0, Math.PI * 2); g.arc(13, 8, 3, 0, Math.PI * 2); g.fill();
+      // 柔和远景粉樱丘陵
+      g.fillStyle = isNightScene ? '#2f3861' : '#f5c6da';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(5 + Math.sin(x * 0.14) * 2.5);
+        g.fillRect(x, 22 - mh, 1, mh + 1);
+      }
+      // 左侧自然樱花大树与四层柔和花团
+      aDot(5, 10, '#693d36', 4, 14); aDot(6, 10, '#87544c', 1, 14); aDot(4, 22, '#693d36', 6, 2);
+      aBlob(8, 7, 8, 5, '#eb86ab'); aBlob(15, 9, 6, 4, '#eb86ab');
+      aBlob(7, 6, 7, 4, '#ffb5cf'); aBlob(14, 8, 5, 3, '#ffb5cf');
+      aBlob(6, 5, 4, 2, '#ffe0ec'); aBlob(13, 7, 3, 2, '#ffe0ec');
       if (photo.scene === 'sakura_picnic') {
-        g.fillStyle = '#f26b8a'; g.fillRect(21, 26, 24, 7);
-        g.fillStyle = '#ffffff'; g.fillRect(24, 28, 4, 2); g.fillRect(32, 28, 4, 2); g.fillRect(40, 28, 3, 2);
+        // 格纹野餐垫 + 小野餐篮
+        aDot(20, 25, '#f26b8a', 26, 8);
+        for (let py = 26; py < 32; py += 2) {
+          for (let px = 21 + (py % 4 === 0 ? 0 : 2); px < 45; px += 4) aDot(px, py, '#fff4f7', 2, 2);
+        }
+        aDot(22, 24, '#c4834b', 5, 4); aDot(23, 22, '#8c562b', 3, 2);
       } else if (photo.scene === 'sakura_bridge') {
-        g.fillStyle = '#6eb4f2'; g.fillRect(0, 28, W, 8);
-        g.fillStyle = '#c8e8ff'; g.fillRect(4, 30, 12, 1); g.fillRect(36, 32, 14, 1);
-        g.fillStyle = '#c94c5c'; g.fillRect(14, 23, 26, 4); g.fillStyle = '#ff9eb5'; g.fillRect(14, 22, 26, 1);
+        aDot(0, 27, '#64b2ed', W, 9); aDot(4, 29, '#cceaff', 10, 1); aDot(36, 32, '#cceaff', 12, 1);
+        for (let x = 12; x < 42; x++) {
+          const dy = Math.round(((x - 27) * (x - 27)) * 0.015);
+          aDot(x, 22 + dy, '#c94c5c', 1, 5); aDot(x, 21 + dy, '#ff9eb5', 1, 1);
+        }
       } else if (photo.scene === 'sakura_night') {
-        g.fillStyle = '#fff5b8'; [[30,4],[42,3],[48,8],[22,6]].forEach(([x,y]) => g.fillRect(x, y, 1, 1));
-        g.fillStyle = '#ffe478';
-        [[15,10],[26,8],[37,10],[47,8]].forEach(([x,y]) => { g.fillRect(x, y, 3, 4); g.fillStyle = '#fff9d6'; g.fillRect(x + 1, y + 1, 1, 2); g.fillStyle = '#ffe478'; });
+        [[30,4],[42,3],[48,8],[22,6],[36,5]].forEach(([x,y]) => aDot(x, y, '#fff5b8', 1, 1));
+        [[18,10],[29,8],[40,10],[49,8]].forEach(([x,y]) => {
+          aBlob(x + 1, y + 2, 3, 3, 'rgba(255,228,120,0.32)');
+          aDot(x, y, '#ff9c54', 3, 4); aDot(x + 1, y + 1, '#fff8cc', 1, 2);
+        });
       } else if (photo.scene === 'sakura_train') {
-        g.fillStyle = '#7a6860'; g.fillRect(0, 26, W, 2);
-        g.fillStyle = '#ffd1e1'; g.fillRect(26, 16, 24, 10);
-        g.fillStyle = '#ff85a6'; g.fillRect(26, 22, 24, 3);
-        g.fillStyle = '#fff9d6'; g.fillRect(29, 18, 4, 3); g.fillRect(36, 18, 4, 3); g.fillRect(43, 18, 4, 3);
+        aDot(0, 26, '#7a6860', W, 2);
+        aDot(24, 15, '#ffd4e4', 26, 11); aDot(24, 22, '#ff82a6', 26, 3);
+        [27,34,41].forEach(wx => aDot(wx, 17, '#fff7cc', 5, 4));
       } else if (photo.scene === 'sakura_tea') {
-        g.fillStyle = '#d94858'; g.fillRect(28, 25, 22, 7);
-        g.fillStyle = '#825232'; g.fillRect(38, 13, 2, 14);
-        g.fillStyle = '#e85a72'; g.beginPath(); g.moveTo(29, 15); g.lineTo(39, 9); g.lineTo(49, 15); g.fill();
+        aDot(26, 25, '#d94858', 24, 8); aDot(27, 26, '#f06a78', 22, 1);
+        aDot(37, 13, '#7a4b2c', 2, 14);
+        for (let i = 0; i < 6; i++) aDot(29 + i, 14 - i, 18 - i * 2, 1, '#e85a72');
       } else {
-        g.fillStyle = '#825232'; g.fillRect(38, 6, 2, 18); g.fillRect(48, 6, 2, 18); g.fillRect(38, 6, 12, 2);
-        g.fillStyle = '#f5d278'; g.fillRect(41, 18, 6, 2);
+        aDot(36, 5, '#7a4b2c', 2, 19); aDot(47, 5, '#7a4b2c', 2, 19); aDot(35, 5, '#7a4b2c', 15, 2);
+        aDot(39, 7, '#a88468', 1, 11); aDot(45, 7, '#a88468', 1, 11);
+        aDot(38, 18, '#f5d278', 9, 2);
       }
-      g.fillStyle = '#ffbfd4';
-      [[19,6],[29,9],[38,5],[45,11],[14,14],[33,15]].forEach(([x,y]) => g.fillRect(x, y, 2, 1));
+      [[20,6],[30,9],[39,5],[46,11],[14,15],[34,15],[24,29]].forEach(([x,y]) => aDot(x, y, '#ffbfd4', 2, 1));
     } else if (photo.dest === 'starry_beach') {
-      const seaGr = g.createLinearGradient(0, 16, 0, 25);
-      seaGr.addColorStop(0, photo.scene === 'beach_glass' ? '#3cb8d4' : '#264482');
-      seaGr.addColorStop(1, photo.scene === 'beach_glass' ? '#92f0f5' : '#4a7cc2');
-      g.fillStyle = seaGr; g.fillRect(0, 16, W, 9);
-      g.fillStyle = '#b8f2ff'; g.fillRect(3, 19, 12, 1); g.fillRect(26, 21, 18, 1); g.fillRect(0, 24, W, 1);
-      g.fillStyle = '#fff5b8';
-      [[5,3],[14,6],[23,2],[32,7],[42,4],[49,9]].forEach(([x,y]) => g.fillRect(x, y, 1, 1));
+      // 分层星海 + 银白波光
+      aDot(0, 16, photo.scene === 'beach_glass' ? '#36b5d4' : '#213c75', W, 4);
+      aDot(0, 20, photo.scene === 'beach_glass' ? '#7be6f0' : '#3d6cb3', W, 4);
+      [[3,18,10],[26,20,14],[14,22,8],[0,23,W]].forEach(([wx,wy,ww], i) => aDot(wx, wy, i === 3 ? '#ffffff' : '#c2f4ff', ww, 1));
+      [[5,3],[14,6],[23,2],[32,7],[42,4],[49,9],[9,10],[38,11]].forEach(([x,y]) => aDot(x, y, '#fff7cc', 1, 1));
       if (photo.scene === 'beach_lighthouse') {
-        g.fillStyle = '#ffffff'; g.fillRect(41, 6, 5, 14);
-        g.fillStyle = '#e84858'; g.fillRect(41, 9, 5, 3); g.fillRect(41, 14, 5, 2);
-        g.fillStyle = 'rgba(255,232,120,0.45)'; g.beginPath(); g.moveTo(41, 5); g.lineTo(18, 1); g.lineTo(18, 10); g.fill();
-        g.fillStyle = '#ffe478'; g.fillRect(42, 4, 3, 2);
+        aBlob(43, 5, 5, 4, 'rgba(255,232,120,0.3)');
+        aDot(41, 6, '#ffffff', 5, 14); aDot(41, 9, '#e84858', 5, 3); aDot(41, 14, '#e84858', 5, 2);
+        aDot(42, 4, '#ffe478', 3, 2); aDot(22, 4, 'rgba(255,236,140,0.28)', 19, 4);
       } else if (photo.scene === 'beach_moon') {
-        g.fillStyle = '#ffe478'; g.beginPath(); g.arc(42, 7, 4.5, 0, Math.PI * 2); g.fill();
-        g.fillStyle = 'rgba(255,235,140,0.55)'; g.fillRect(38, 18, 8, 1); g.fillRect(39, 20, 6, 1); g.fillRect(40, 22, 4, 1);
+        aBlob(41, 7, 7, 7, 'rgba(255,238,160,0.22)'); aBlob(41, 7, 4, 4, '#ffe888'); aBlob(40, 6, 2, 2, '#ffffff');
+        [[37,18,9],[38,20,7],[39,22,5]].forEach(([rx,ry,rw]) => aDot(rx, ry, '#ffe896', rw, 1));
       } else if (photo.scene === 'beach_fire') {
-        g.fillStyle = '#825232'; g.fillRect(39, 28, 7, 2);
-        g.fillStyle = '#ff7b38'; g.fillRect(40, 24, 5, 4);
-        g.fillStyle = '#ffe478'; g.fillRect(41, 25, 3, 3);
+        aBlob(41, 27, 7, 5, 'rgba(255,168,78,0.28)');
+        aDot(38, 29, '#7a4b2c', 7, 2); aBlob(41, 26, 3, 3, '#ff7733'); aBlob(41, 27, 2, 2, '#ffe478');
+        aDot(40, 22, '#ffe066', 1, 1); aDot(43, 21, '#ff9c42', 1, 1);
       } else if (photo.scene === 'beach_pier') {
-        g.fillStyle = '#9c6e46'; g.fillRect(0, 24, W, 3);
-        g.fillStyle = '#734d2c'; [6,18,30,42].forEach(x => g.fillRect(x, 27, 2, 7));
-        g.fillStyle = '#ffe478'; [8,20,32,44].forEach(x => g.fillRect(x, 20, 2, 2));
+        aDot(0, 24, '#9c6e46', W, 3);
+        [6,18,30,42].forEach(x => { aDot(x, 27, '#734d2c', 2, 7); aBlob(x + 2, 21, 3, 2, 'rgba(255,228,120,0.28)'); aDot(x + 1, 20, '#ffe888', 2, 2); });
       } else {
-        g.fillStyle = '#ffbfd4'; g.fillRect(8, 28, 3, 2); g.fillRect(42, 29, 3, 2);
-        g.fillStyle = '#ff9c6e'; g.fillRect(36, 31, 3, 2);
+        aDot(8, 28, '#ff8ea8', 3, 2); aDot(9, 27, '#ff8ea8', 1, 4);
+        aDot(42, 29, '#ffbfd4', 3, 2); aDot(36, 31, '#ff9c6e', 3, 2);
       }
     } else if (photo.dest === 'ancient_town') {
-      g.fillStyle = isNightScene ? '#2d3654' : '#d4c0b0';
-      g.beginPath(); g.moveTo(0, 22); g.quadraticCurveTo(26, 10, 54, 22); g.fill();
-      g.fillStyle = '#4f5a6e'; g.fillRect(2, 9, 17, 4); g.fillRect(35, 10, 17, 4);
-      g.fillStyle = '#fff5e6'; g.fillRect(4, 13, 13, 9); g.fillRect(37, 14, 13, 8);
-      g.fillStyle = '#d93842'; g.fillRect(9, 14, 3, 4); g.fillRect(41, 15, 3, 4);
-      g.fillStyle = '#ffe066'; g.fillRect(10, 15, 1, 2); g.fillRect(42, 16, 1, 2);
       if (photo.scene === 'town_bridge') {
-        g.fillStyle = '#6db0ed'; g.fillRect(0, 28, W, 8);
-        g.fillStyle = '#d6c7b4'; g.fillRect(15, 24, 24, 4);
-      } else if (photo.scene === 'town_firework') {
-        ['#ff9eb5','#ffe066','#78d4ff','#c8a8ff'].forEach((c, i) => {
-          g.fillStyle = c;
-          const fx = 20 + (i % 2) * 14, fy = 5 + Math.floor(i / 2) * 6;
-          g.fillRect(fx, fy - 2, 1, 5); g.fillRect(fx - 2, fy, 5, 1);
+        // 全新精修「古桥画舫」：江南暮色晴空 + 垂柳 + 两岸白墙黛瓦马头墙与红灯笼 + 石拱桥 + 暖灯画舫小船与倒影！
+        aBlob(40, 7, 4, 4, 'rgba(255,248,210,0.4)'); aBlob(40, 7, 2, 2, '#fff9d6');
+        aBlob(14, 6, 6, 2, 'rgba(255,250,242,0.55)');
+        g.fillStyle = '#c9b4b0';
+        for (let x = 0; x < W; x++) { const mh = Math.round(4 + Math.sin(x * 0.11) * 2.5); g.fillRect(x, 22 - mh, 1, mh + 1); }
+        // 左岸 & 右岸江南白墙黛瓦民居
+        aDot(0, 13, '#fff6eb', 12, 11); aDot(0, 12, '#404b5e', 13, 2); aDot(0, 10, '#505e75', 8, 2);
+        aDot(5, 16, '#6e4736', 4, 4); aDot(6, 17, '#ffe082', 2, 2);
+        aDot(42, 12, '#fff6eb', 12, 12); aDot(41, 11, '#404b5e', 13, 2); aDot(46, 9, '#505e75', 8, 2);
+        aDot(45, 16, '#6e4736', 4, 4); aDot(46, 17, '#ffe082', 2, 2);
+        [[11,15],[42,14]].forEach(([lx,ly]) => {
+          aBlob(lx, ly + 1, 3, 3, 'rgba(255,150,90,0.3)');
+          aDot(lx - 1, ly, '#e04242', 3, 3); aDot(lx, ly + 1, '#ffe888', 1, 1);
         });
-      } else if (photo.scene === 'town_rain') {
-        g.fillStyle = 'rgba(235,248,255,0.65)';
-        [[8,4],[18,7],[28,3],[38,8],[48,5],[14,16],[34,15]].forEach(([x,y]) => g.fillRect(x, y, 1, 4));
-      } else if (photo.scene === 'town_pagoda') {
-        g.fillStyle = '#ffe478'; g.beginPath(); g.arc(10, 6, 3.5, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#5c3c32'; g.fillRect(23, 8, 8, 14);
-        g.fillStyle = '#3d465c'; g.fillRect(20, 8, 14, 2); g.fillRect(21, 13, 12, 2); g.fillRect(22, 18, 10, 2);
+        // 碧绿运河水面与灯火波光
+        aDot(0, 23, '#5ca8bf', W, 6); aDot(0, 29, '#4a91aa', W, 7);
+        [[3,25,6,'#9ee0ed'],[38,25,8,'#9ee0ed'],[10,33,9,'#86cfe0'],[36,34,8,'#ffd89e'],[8,28,4,'#ff9a7a'],[41,27,5,'#ff9a7a']].forEach(([rx,ry,rw,rc]) => aDot(rx, ry, rc, rw, 1));
+        // 真正的弧形石拱桥（带桥洞、栏杆、桥墩与石阶纹理）
+        for (let x = 10; x < 45; x++) {
+          const dx = x - 27;
+          const archTop = Math.round(19 + (dx * dx) * 0.014);
+          const archHole = Math.abs(dx) < 8.5 ? 26 - Math.round(Math.sqrt(Math.max(0, 72 - dx * dx)) * 0.72) : 26;
+          if (archHole > archTop) {
+            aDot(x, archTop, '#d6cab8', 1, archHole - archTop);
+            aDot(x, archTop, '#f0e7da', 1, 1);
+            aDot(x, archTop + 2, '#a89a88', 1, 1);
+            if (Math.abs(dx) < 8.5) aDot(x, archHole - 1, '#8c7f70', 1, 1);
+          }
+          if (Math.abs(dx) >= 8.5 && Math.abs(dx) <= 13) aDot(x, archTop + 2, '#bfb29f', 1, 25 - archTop);
+        }
+        [13,16,38,41].forEach(sx => aDot(sx, 21, '#9c8e7c', 1, 2));
+        // 河面悠然划过的暖灯画舫小船
+        aDot(19, 30, '#6e4229', 15, 2); aDot(17, 29, '#8c5838', 19, 1);
+        aDot(22, 26, '#404b5e', 9, 3); aDot(23, 25, '#526078', 7, 1);
+        aDot(24, 27, '#ffe694', 5, 2); aDot(18, 28, '#e04242', 2, 2);
+        aDot(20, 32, 'rgba(255,230,148,0.45)', 13, 1);
+        // 左上角轻拂垂柳丝
+        [[1,11],[4,14],[7,9],[10,7]].forEach(([wx,wlen]) => {
+          for (let dy = 0; dy < wlen; dy++) aDot(wx + Math.round(Math.sin(dy * 0.45)), dy, dy % 2 === 0 ? '#5ea868' : '#82c982', 1, 1);
+        });
+      } else {
+        g.fillStyle = isNightScene ? '#253052' : '#d6c0b2';
+        for (let x = 0; x < W; x++) { const mh = Math.round(5 + Math.sin(x * 0.09) * 3); g.fillRect(x, 22 - mh, 1, mh + 1); }
+        aDot(1, 9, '#465269', 17, 4); aDot(36, 10, '#465269', 17, 4);
+        aDot(3, 13, '#fff6eb', 13, 9); aDot(38, 14, '#fff6eb', 13, 8);
+        [[9,14],[42,15]].forEach(([lx,ly]) => {
+          aBlob(lx + 1, ly + 2, 3, 3, 'rgba(255,150,90,0.28)');
+          aDot(lx, ly, '#d93842', 3, 4); aDot(lx + 1, ly + 1, '#ffe478', 1, 2);
+        });
+        if (photo.scene === 'town_firework') {
+          [[22,6,'#ff9eb5'],[34,8,'#78d4ff'],[28,12,'#ffe066'],[14,5,'#c8a8ff']].forEach(([fx,fy,fc]) => {
+            aBlob(fx, fy, 3, 3, fc + '33');
+            aDot(fx, fy, '#ffffff', 1, 1);
+            aDot(fx - 2, fy, fc, 5, 1); aDot(fx, fy - 2, fc, 1, 5);
+            aDot(fx - 2, fy - 2, fc, 1, 1); aDot(fx + 2, fy + 2, fc, 1, 1);
+          });
+        } else if (photo.scene === 'town_rain') {
+          [[8,4],[18,7],[28,3],[38,8],[48,5],[14,16],[34,15],[23,12]].forEach(([x,y]) => aDot(x, y, 'rgba(235,248,255,0.68)', 1, 4));
+        } else if (photo.scene === 'town_pagoda') {
+          aBlob(10, 6, 4, 4, 'rgba(255,232,140,0.26)'); aBlob(10, 6, 3, 3, '#ffe888');
+          aDot(23, 8, '#5c3c32', 8, 14);
+          aDot(19, 8, '#3d465c', 16, 2); aDot(20, 13, '#3d465c', 14, 2); aDot(21, 18, '#3d465c', 12, 2);
+          aDot(26, 10, '#ffe078', 2, 2); aDot(26, 15, '#ffe078', 2, 2);
+        }
       }
     } else if (photo.dest === 'cloud_meadow') {
-      g.fillStyle = isSunsetScene ? '#fff0d6' : '#ffffff';
-      g.beginPath(); g.arc(8, 7, 4, 0, Math.PI * 2); g.arc(13, 7, 3.5, 0, Math.PI * 2); g.arc(41, 7, 4.5, 0, Math.PI * 2); g.arc(46, 8, 3.2, 0, Math.PI * 2); g.fill();
+      const cCol = isSunsetScene ? '#fff0d6' : '#ffffff';
+      aBlob(10, 7, 5, 3, cCol); aBlob(15, 8, 4, 2, cCol);
+      aBlob(42, 7, 5, 3, cCol); aBlob(47, 8, 4, 2, cCol);
       if (photo.scene === 'cloud_rainbow') {
-        ['#ff9eb5','#ffe066','#9de3cc','#7bb8f5','#c8b8ff'].forEach((rc, i) => {
-          g.strokeStyle = rc; g.lineWidth = 1.2;
-          g.beginPath(); g.arc(27, 24, 17 - i * 1.4, Math.PI, 0); g.stroke();
+        ['rgba(255,140,168,0.85)','rgba(255,196,120,0.85)','rgba(255,236,120,0.85)','rgba(144,226,158,0.85)','rgba(130,204,255,0.85)'].forEach((rc, i) => {
+          g.strokeStyle = rc; g.lineWidth = 1.4;
+          g.beginPath(); g.arc(27, 25, 17 - i * 1.4, Math.PI, 0); g.stroke();
         });
       } else if (photo.scene === 'cloud_windmill') {
-        g.fillStyle = '#ffffff'; g.fillRect(41, 11, 5, 12);
-        g.fillStyle = '#e04858'; g.fillRect(38, 10, 11, 2); g.fillRect(43, 6, 2, 10);
+        aDot(41, 11, '#ffffff', 5, 12); aDot(40, 10, '#e04858', 7, 2);
+        aDot(38, 10, '#e04858', 11, 2); aDot(43, 6, '#e04858', 2, 10);
       } else if (photo.scene === 'cloud_balloon') {
-        g.fillStyle = '#f26b8a'; g.beginPath(); g.arc(42, 7, 4.5, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#ffe066'; g.fillRect(41, 3, 2.5, 8);
-        g.fillStyle = '#825232'; g.fillRect(40.5, 13, 3, 2);
+        aBlob(42, 7, 5, 5, '#f26b8a'); aDot(41, 3, '#ffe066', 2, 8); aDot(40, 13, '#825232', 4, 2);
       } else if (photo.scene === 'cloud_sunset') {
-        g.fillStyle = '#ffe066'; g.beginPath(); g.arc(27, 17, 6, 0, Math.PI * 2); g.fill();
+        aBlob(27, 18, 8, 6, 'rgba(255,230,140,0.32)'); aBlob(27, 18, 5, 5, '#ffe478'); aBlob(27, 18, 3, 3, '#fff9d6');
       } else if (photo.scene === 'cloud_plane') {
-        g.fillStyle = '#ffffff';
-        g.beginPath(); g.moveTo(32, 9); g.lineTo(46, 5); g.lineTo(39, 13); g.closePath(); g.fill();
-        g.strokeStyle = 'rgba(255,255,255,0.65)'; g.lineWidth = 1;
-        g.beginPath(); g.moveTo(14, 13); g.quadraticCurveTo(23, 14, 31, 10); g.stroke();
+        aDot(34, 9, '#ffffff', 10, 2); aDot(38, 7, '#ffffff', 7, 2); aDot(41, 6, '#e8f4ff', 4, 1);
+        [[16,13],[21,13],[26,12],[30,11]].forEach(([x,y]) => aDot(x, y, 'rgba(255,255,255,0.75)', 2, 1));
       } else {
-        g.fillStyle = '#ffffff';
-        [[7,27],[13,25],[39,26],[45,28]].forEach(([x,y]) => g.fillRect(x, y, 2, 2));
+        [[7,27],[13,25],[39,26],[45,28],[28,15],[18,13]].forEach(([x,y]) => { aBlob(x, y, 2, 2, '#ffffff'); aDot(x, y + 2, '#6eb86e', 1, 3); });
       }
     } else if (photo.dest === 'magic_forest') {
-      g.fillStyle = '#1f3d30'; g.fillRect(3, 2, 6, 21); g.fillRect(44, 1, 7, 22);
-      g.fillStyle = '#2d5744'; g.fillRect(18, 4, 4, 19);
-      g.fillStyle = '#c89eff'; g.beginPath(); g.arc(13, 16, 4.5, Math.PI, 0); g.fill();
-      g.fillStyle = '#ffffff'; g.fillRect(11.5, 16, 3, 6);
+      aDot(2, 0, '#183328', 6, 23); aDot(45, 0, '#183328', 7, 23); aDot(18, 3, '#244a3a', 4, 20);
+      aBlob(6, 4, 8, 5, '#1d4032'); aBlob(46, 4, 9, 5, '#1d4032');
+      aBlob(12, 16, 5, 3, '#c89eff'); aDot(10, 15, '#efe3ff', 2, 1); aDot(13, 14, '#efe3ff', 1, 1); aDot(11, 17, '#ffffff', 3, 6);
       if (photo.scene === 'forest_spring') {
-        g.fillStyle = '#78e8ff'; g.beginPath(); g.ellipse(40, 29, 10, 4, 0, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#ffffff'; g.fillRect(37, 28, 6, 1);
+        aBlob(40, 29, 9, 4, '#64e0ff'); aBlob(40, 28, 6, 2, '#b8f7ff'); aDot(38, 28, '#ffffff', 4, 1);
       } else if (photo.scene === 'forest_deer') {
-        g.fillStyle = 'rgba(220,250,255,0.85)'; g.fillRect(36, 15, 6, 5); g.fillRect(40, 12, 3, 3); g.fillRect(37, 20, 1, 4); g.fillRect(41, 20, 1, 4);
+        aBlob(39, 17, 6, 5, 'rgba(200,248,255,0.22)');
+        aDot(36, 15, '#dcfaff', 6, 5); aDot(40, 12, '#ffffff', 3, 3); aDot(37, 20, '#dcfaff', 1, 4); aDot(41, 20, '#dcfaff', 1, 4);
       } else if (photo.scene === 'forest_vine') {
-        g.strokeStyle = '#7ef2a8'; g.lineWidth = 1.2;
-        [16,28,40].forEach(x => { g.beginPath(); g.moveTo(x, 0); g.quadraticCurveTo(x + 2, 7, x - 1, 14); g.stroke(); });
+        [15,28,41].forEach(x => {
+          for (let dy = 0; dy < 14; dy++) aDot(x + Math.round(Math.sin(dy * 0.4)), dy, '#7ef2a8', 1, 1);
+          aBlob(x, 14, 2, 2, '#fff5b8');
+        });
       }
-      g.fillStyle = '#e8ff78';
-      [[10,8],[24,6],[34,10],[38,16],[28,13],[46,9]].forEach(([x,y]) => g.fillRect(x, y, 2, 2));
+      [[10,8],[24,6],[34,10],[38,16],[28,13],[46,9]].forEach(([x,y]) => {
+        aBlob(x, y, 2, 2, 'rgba(232,255,120,0.3)'); aDot(x, y, '#e8ff78', 2, 2);
+      });
     } else {
-      // snow_village
-      const aurGr = g.createLinearGradient(4, 2, 48, 10);
-      aurGr.addColorStop(0, 'rgba(120,248,196,0.78)'); aurGr.addColorStop(0.5, 'rgba(138,216,255,0.72)'); aurGr.addColorStop(1, 'rgba(204,164,255,0.72)');
-      g.fillStyle = aurGr;
-      g.beginPath(); g.moveTo(2, 8); g.quadraticCurveTo(18, 1, 34, 7); g.quadraticCurveTo(44, 10, 52, 4); g.lineTo(52, 9); g.quadraticCurveTo(36, 14, 18, 7); g.lineTo(2, 12); g.fill();
-      g.fillStyle = '#9c6842'; g.fillRect(37, 13, 12, 9);
-      g.fillStyle = '#ffffff'; g.beginPath(); g.moveTo(35, 14); g.lineTo(43, 8); g.lineTo(51, 14); g.fill();
-      g.fillStyle = '#ffe478'; g.fillRect(41, 16, 4, 4);
-      if (photo.scene === 'snow_onsen') {
-        g.fillStyle = '#78d8ff'; g.beginPath(); g.ellipse(27, 30, 17, 4.5, 0, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#ffffff'; g.fillRect(14, 24, 2, 3); g.fillRect(38, 23, 2, 3);
-      } else if (photo.scene === 'snow_lake') {
-        g.fillStyle = '#8ce0f5'; g.fillRect(0, 26, W, 10);
-        g.fillStyle = 'rgba(140,245,196,0.45)'; g.fillRect(8, 28, 22, 2); g.fillRect(24, 31, 18, 2);
-      } else if (photo.scene === 'snow_train') {
-        g.fillStyle = '#c94858'; g.fillRect(6, 17, 22, 7);
-        g.fillStyle = '#ffe478'; g.fillRect(9, 19, 3, 2); g.fillRect(15, 19, 3, 2); g.fillRect(21, 19, 3, 2);
-        g.fillStyle = '#ffffff'; g.beginPath(); g.arc(24, 13, 2.5, 0, Math.PI * 2); g.arc(20, 10, 2, 0, Math.PI * 2); g.fill();
+      // snow_village: 像素极光带 + 圆润暖窗雪屋 + 场景特色
+      for (let x = 2; x < 52; x++) {
+        const y0 = Math.round(6 + Math.sin(x * 0.14) * 3);
+        aDot(x, y0 - 2, 'rgba(196,158,255,0.3)', 1, 3);
+        aDot(x, y0, 'rgba(116,245,196,0.42)', 1, 5);
+        aDot(x, y0 + 1, 'rgba(148,228,255,0.45)', 1, 2);
       }
-      g.fillStyle = '#ffffff';
-      [[6,6],[12,11],[24,4],[49,8],[31,15]].forEach(([x,y]) => g.fillRect(x, y, 1, 1));
+      aDot(37, 13, '#9c6842', 12, 9);
+      for (let i = 0; i < 6; i++) aDot(35 + i, 13 - i, 16 - i * 2, 1, '#ffffff');
+      aDot(41, 16, '#ffe478', 4, 4);
+      if (photo.scene === 'snow_onsen') {
+        aBlob(27, 29, 15, 4, '#6cd4fc'); aBlob(27, 29, 11, 2, '#a8ebff');
+        aDot(14, 23, 'rgba(255,255,255,0.75)', 2, 3); aDot(38, 22, 'rgba(255,255,255,0.75)', 2, 3);
+      } else if (photo.scene === 'snow_plaza') {
+        aBlob(11, 29, 4, 3, '#ffffff'); aBlob(11, 24, 3, 3, '#ffffff');
+        aDot(8, 26, '#e04858', 6, 1); aDot(10, 23, '#2d2428', 1, 1); aDot(12, 23, '#2d2428', 1, 1); aDot(11, 24, '#ff8c38', 2, 1);
+      } else if (photo.scene === 'snow_lake') {
+        aDot(0, 26, '#82d8f2', W, 10);
+        aDot(8, 28, 'rgba(130,245,196,0.48)', 22, 2); aDot(24, 31, 'rgba(196,164,255,0.42)', 18, 2);
+      } else if (photo.scene === 'snow_train') {
+        aDot(5, 17, '#c94858', 23, 7); [8,14,20].forEach(wx => aDot(wx, 19, '#ffe478', 3, 2));
+        aBlob(23, 13, 3, 2, 'rgba(255,255,255,0.85)'); aBlob(19, 10, 2, 2, 'rgba(255,255,255,0.72)');
+      }
+      [[6,6],[12,11],[24,4],[49,8],[31,15]].forEach(([x,y]) => aDot(x, y, '#ffffff', 1, 1));
     }
 
-    // 使用拍下这张照片时的永久装扮快照（毛色 + 衣服 + 全部头饰/颈饰/翅膀/光环/包包 + 小跟班），换装绝不影响旧照片！
+    // 每个场景专属的小狗站位、朝向与动作（告别永远站正中间呆站！）
+    const ADV_STAGING = {
+      sakura_picnic:    { ox: 25, oy: 19, flip: true,  frame: 'eat1' },
+      sakura_bridge:    { ox: 19, oy: 13, flip: false, frame: 'happy' },
+      sakura_swing:     { ox: 12, oy: 19, flip: false, frame: 'idle_tilt' },
+      sakura_night:     { ox: 24, oy: 19, flip: true,  frame: 'sit1' },
+      sakura_train:     { ox: 8,  oy: 20, flip: false, frame: 'happy' },
+      sakura_tea:       { ox: 11, oy: 19, flip: false, frame: 'sit2' },
+      beach_lighthouse: { ox: 11, oy: 19, flip: false, frame: 'idle_tilt' },
+      beach_shells:     { ox: 19, oy: 20, flip: false, frame: 'walk1' },
+      beach_moon:       { ox: 11, oy: 19, flip: false, frame: 'sit1' },
+      beach_fire:       { ox: 15, oy: 19, flip: false, frame: 'sit2' },
+      beach_glass:      { ox: 26, oy: 20, flip: true,  frame: 'happy' },
+      beach_pier:       { ox: 18, oy: 14, flip: false, frame: 'walk1' },
+      town_lantern:     { ox: 19, oy: 19, flip: false, frame: 'walk1' },
+      town_bridge:      { ox: 19, oy: 8,  flip: false, frame: 'idle_tilt' },
+      town_tea:         { ox: 24, oy: 19, flip: true,  frame: 'sit1' },
+      town_firework:    { ox: 13, oy: 19, flip: false, frame: 'happy' },
+      town_rain:        { ox: 25, oy: 19, flip: true,  frame: 'walk1' },
+      town_pagoda:      { ox: 11, oy: 19, flip: false, frame: 'sit2' },
+      cloud_rainbow:    { ox: 12, oy: 19, flip: false, frame: 'happy' },
+      cloud_windmill:   { ox: 10, oy: 19, flip: false, frame: 'walk1' },
+      cloud_dandelion:  { ox: 24, oy: 19, flip: true,  frame: 'idle_tilt' },
+      cloud_balloon:    { ox: 12, oy: 19, flip: false, frame: 'happy' },
+      cloud_sunset:     { ox: 25, oy: 19, flip: true,  frame: 'sit1' },
+      cloud_plane:      { ox: 9,  oy: 19, flip: false, frame: 'happy' },
+      forest_shroom:    { ox: 24, oy: 19, flip: true,  frame: 'idle_tilt' },
+      forest_firefly:   { ox: 13, oy: 19, flip: false, frame: 'happy' },
+      forest_tree:      { ox: 26, oy: 19, flip: true,  frame: 'sit1' },
+      forest_spring:    { ox: 12, oy: 19, flip: false, frame: 'sit2' },
+      forest_deer:      { ox: 11, oy: 19, flip: false, frame: 'idle_tilt' },
+      forest_vine:      { ox: 25, oy: 19, flip: true,  frame: 'happy' },
+      snow_aurora:      { ox: 12, oy: 19, flip: false, frame: 'sit1' },
+      snow_plaza:       { ox: 25, oy: 19, flip: true,  frame: 'happy' },
+      snow_cocoa:       { ox: 15, oy: 19, flip: false, frame: 'eat1' },
+      snow_onsen:       { ox: 18, oy: 19, flip: false, frame: 'sleep' },
+      snow_lake:        { ox: 26, oy: 19, flip: true,  frame: 'idle_tilt' },
+      snow_train:       { ox: 27, oy: 19, flip: true,  frame: 'happy' },
+    };
+    const stg = ADV_STAGING[photo.scene] || { ox: 18, oy: 19, flip: false, frame: 'happy' };
+
+    // 使用拍下这张照片时的装扮快照（包含最新配饰微调与耳朵设置）
     const snap = rec?.look || {
       fur: config.puppyFur || '#fffdf7',
       ear: config.puppyEar || '#e2ae74',
@@ -27318,35 +27425,49 @@
       showCollar: config.puppyShowCollar !== false,
       outfit: config.puppyOutfit || 'none',
       accs: Array.isArray(config.puppyAccs) ? config.puppyAccs : [],
+      accOffsets: config.puppyAccOffsets || {},
       companion: config.puppyCompanion || 'none',
+      onesieShowEars: Boolean(config.puppyOnesieShowEars),
     };
     const pal = getPupPalette(snap);
-    const ox = 18;
-    const oy = 19;
-    const hx = ox + 10;
-    const hy = oy + 2;
-    const grid = PUP_SPRITES.idle1;
+    const frameName = stg.frame || 'happy';
+    const grid = PUP_SPRITES[frameName] || PUP_SPRITES.idle1;
+    const isSit = frameName === 'sit1' || frameName === 'sit2';
+    const isFlat = frameName === 'sleep';
+    g.save();
+    let ox = stg.ox, oy = stg.oy;
+    if (stg.flip) {
+      g.translate(ox + 16, oy);
+      g.scale(-1, 1);
+      ox = 0; oy = 0;
+    }
+    const hx = isSit ? ox + 9 : (isFlat ? ox + 11 : ox + 10);
+    const hy = isFlat ? oy + 6 : oy + 2;
     for (let y = 0; y < grid.length; y++) {
       const row = grid[y];
       for (let x = 0; x < row.length; x++) {
         const col = pal[row[x]];
-        if (col) {
-          g.fillStyle = col;
-          g.fillRect(ox + x, oy + y, 1, 1);
-        }
+        if (col) { g.fillStyle = col; g.fillRect(ox + x, oy + y, 1, 1); }
       }
     }
     const prevCtx = activePxCtx;
+    const prevShowEars = config.puppyOnesieShowEars;
+    const prevOffsets = config.puppyAccOffsets;
     activePxCtx = g;
     try {
-      drawPupOutfit(snap.outfit, ox, oy, hx, hy, false, false, false);
+      config.puppyOnesieShowEars = Boolean(snap.onesieShowEars);
+      if (snap.accOffsets) config.puppyAccOffsets = snap.accOffsets;
+      drawPupOutfit(snap.outfit, ox, oy, hx, hy, isFlat, false, isSit);
       if (Array.isArray(snap.accs)) {
-        snap.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+        snap.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false));
       }
-      drawPupCompanion(snap.companion, ox, oy, false);
+      drawPupCompanion(snap.companion || snap.comp, ox, oy, false);
     } finally {
       activePxCtx = prevCtx;
+      config.puppyOnesieShowEars = prevShowEars;
+      config.puppyAccOffsets = prevOffsets;
     }
+    g.restore();
   };
 
   const rollAdventureCurio = (destId, isLong, gearId = '') => {
@@ -27398,10 +27519,15 @@
         const ph = pick(PUP_PHOTOS.filter(p => p.dest === dest.id));
         const isNewPh = !config.puppyAlbum[ph.id];
         const prevRec = config.puppyAlbum[ph.id];
+        const shotDate = getTodayStr();
+        const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
+        const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null }] : []);
         config.puppyAlbum[ph.id] = {
-          date: prevRec?.date || getTodayStr(),
+          date: shotDate,
+          firstDate: prevRec?.firstDate || prevRec?.date || shotDate,
           count: (prevRec?.count || 0) + 1,
-          look: prevRec?.look || adv.look || null,
+          look: shotLook || prevRec?.look || null,
+          history: [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12),
         };
         coinGain = 1;
         summary = `糟糕! 追蝴蝶时把战利品颠丢了... 幸好带回${isNewPh ? '新' : '重复'}照片【${ph.title}】(+1币)`;
@@ -27469,10 +27595,15 @@
         isNewPhoto = !config.puppyAlbum[gotPhoto.id];
         if (isNewPhoto) freshNewPhotos.add(gotPhoto.id);
         const prevRec = config.puppyAlbum[gotPhoto.id];
+        const shotDate = getTodayStr();
+        const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
+        const prevHist = Array.isArray(prevRec?.history) ? prevRec.history.slice(0, 11) : (prevRec ? [{ date: prevRec.date || '', look: prevRec.look || null }] : []);
         config.puppyAlbum[gotPhoto.id] = {
-          date: prevRec?.date || getTodayStr(),
+          date: shotDate,
+          firstDate: prevRec?.firstDate || prevRec?.date || shotDate,
           count: (prevRec?.count || 0) + 1,
-          look: prevRec?.look || adv.look || null,
+          look: shotLook || prevRec?.look || null,
+          history: [{ date: shotDate, look: shotLook || prevRec?.look || null }, ...prevHist].slice(0, 12),
         };
       }
 
@@ -28482,12 +28613,17 @@
       el.setPointerCapture(e.pointerId);
       rt.drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: rt.x, oy: rt.y || defaultPupY(), moved: false };
     });
+    ['mousedown', 'mouseup', 'touchstart', 'touchend', 'click'].forEach(evtName => {
+      el.addEventListener(evtName, (e) => { e.stopPropagation(); });
+    });
     el.addEventListener('pointermove', (e) => {
       if (!rt.drag || rt.drag.id !== e.pointerId) return;
       const dx = e.clientX - rt.drag.sx;
       const dy = e.clientY - rt.drag.sy;
       if (Math.hypot(dx, dy) > 5) rt.drag.moved = true;
       if (rt.drag.moved) {
+        e.preventDefault();
+        e.stopPropagation();
         el.classList.add('dragging');
         rt.x = clamp(rt.drag.ox + dx, 8, Math.max(8, win.innerWidth - 80));
         rt.y = clamp(rt.drag.oy + dy, 40, Math.max(40, win.innerHeight - 80));
@@ -28496,10 +28632,12 @@
     });
     const endDrag = (e) => {
       if (!rt.drag || rt.drag.id !== e.pointerId) return;
+      e.stopPropagation();
       const moved = rt.drag.moved;
       rt.drag = null;
       el.classList.remove('dragging');
       if (moved) {
+        pupDragSuppressUntil = Date.now() + 360;
         guest.lastX = Math.round(rt.x);
         guest.lastY = Math.round(rt.y);
         if (guest.pinned) {
@@ -31422,10 +31560,62 @@
         if (!locked) {
           card.addEventListener('click', () => {
             if (freshNewPhotos.delete(ph.id)) renderPupAdventure();
-            drawAdvPhotoCanvas(photoBigCanvas, ph, false, rec);
             const dName = PUP_ADV_DESTS.find(d => d.id === ph.dest)?.name || '';
-            photoBigTitleEl.textContent = `${ph.title} · ${dName} (${rec.date || ''})`;
-            photoBigNoteEl.textContent = ph.note;
+            const shots = (Array.isArray(rec.history) && rec.history.length)
+              ? rec.history
+              : [{ date: rec.date || '', look: rec.look || null }];
+            let shotIdx = 0;
+            const lookupName = (arrs, id) => {
+              if (!id || id === 'none') return '';
+              for (const arr of arrs) {
+                if (typeof arr !== 'undefined' && Array.isArray(arr)) {
+                  const f = arr.find(x => x.id === id);
+                  if (f) return f.name;
+                }
+              }
+              return '';
+            };
+            const describeShotLook = (lk) => {
+              if (!lk) return '日常原装小狗';
+              const parts = [];
+              const oName = lookupName([FREE_PUP_OUTFITS, SHOP_PUP_OUTFITS, TREASURE_OUTFITS, GACHA_OUTFITS, SPECIAL_EVENT_OUTFITS, GAME_OUTFITS], lk.outfit);
+              if (oName) parts.push(`服装:${oName}`);
+              if (Array.isArray(lk.accs) && lk.accs.length) {
+                const aNames = lk.accs.map(a => lookupName([FREE_PUP_ACCS, SHOP_PUP_ACCS, TREASURE_ACCS, GACHA_ACCS, GAME_ACCS], a)).filter(Boolean);
+                if (aNames.length) parts.push(`配饰:${aNames.join('+')}`);
+              }
+              const cName = lookupName([SHOP_PUP_COMPANIONS, TREASURE_COMPANIONS, GACHA_COMPANIONS, GAME_COMPANIONS], lk.companion || lk.comp);
+              if (cName) parts.push(`跟班:${cName}`);
+              return parts.length ? parts.join(' · ') : '日常原装小狗';
+            };
+            let metaBox = photoViewerEl.querySelector('#st-px-photo-meta-extra');
+            if (!metaBox) {
+              metaBox = doc.createElement('div');
+              metaBox.id = 'st-px-photo-meta-extra';
+              metaBox.style.cssText = 'margin-top:5px;font-size:9.5px;color:#6b5446;text-align:center;line-height:1.45;';
+              photoBigNoteEl.parentNode.insertBefore(metaBox, photoBigNoteEl.nextSibling);
+            }
+            const renderShot = () => {
+              const cur = shots[shotIdx] || shots[0];
+              drawAdvPhotoCanvas(photoBigCanvas, ph, false, { ...rec, look: cur.look, date: cur.date });
+              const cntTxt = (rec.count || 1) > 1 ? ` · 已拍到 ${rec.count} 次` : '';
+              photoBigTitleEl.textContent = `${ph.title} · ${dName} (${cur.date || rec.date || ''}${cntTxt})`;
+              photoBigNoteEl.textContent = ph.note;
+              const outfitLine = `当时穿搭：${describeShotLook(cur.look)}`;
+              if (shots.length > 1) {
+                metaBox.innerHTML = `<div style="margin-bottom:4px;">${outfitLine}</div>
+                  <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <button type="button" id="st-pv-shot-prev" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;"${shotIdx <= 0 ? ' disabled' : ''}>较新</button>
+                    <span>留念 ${shotIdx + 1}/${shots.length}</span>
+                    <button type="button" id="st-pv-shot-next" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;"${shotIdx >= shots.length - 1 ? ' disabled' : ''}>较早</button>
+                  </div>`;
+                metaBox.querySelector('#st-pv-shot-prev')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx > 0) { shotIdx--; renderShot(); } });
+                metaBox.querySelector('#st-pv-shot-next')?.addEventListener('click', (ev) => { ev.stopPropagation(); if (shotIdx < shots.length - 1) { shotIdx++; renderShot(); } });
+              } else {
+                metaBox.textContent = outfitLine;
+              }
+            };
+            renderShot();
             photoViewerEl.classList.add('open');
           });
         }
@@ -43602,7 +43792,7 @@
     if (_rMini && _rMini.contains(e.target)) return;
     if (gachaModalEl && gachaModalEl.contains(e.target)) return;
     if (confirmMask && confirmMask.contains(e.target)) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal')) return;
+    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal')) return;
     togglePupBag(false);
     if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
     if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
