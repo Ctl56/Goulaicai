@@ -5023,9 +5023,9 @@
       bottom: 74px;
       transform: translateX(-50%) translateY(4px);
       padding: 4px 8px;
-      background: #fff8fb;
-      color: #4a2a38;
-      border: 2px solid #7a4658;
+      background: #fffdf9;
+      color: #54444a;
+      border: 2px solid #bfa4ae;
       font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 11px;
       font-weight: 700;
@@ -5043,7 +5043,7 @@
     #st-tb-guest-puppy-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     #st-tb-guest-puppy-bubble.lifted, #st-tb-puppy-bubble.lifted { bottom: 112px !important; }
     #st-tb-guest-pop { min-width: 210px; max-width: 340px; box-sizing: border-box; }
-    .st-gp-resize { position: absolute; right: 2px; bottom: 2px; width: 12px; height: 12px; cursor: nwse-resize; opacity: 0.55; }
+    .st-gp-resize { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; background: transparent; }
     #st-tb-guest-pop {
       position: fixed;
       width: 224px;
@@ -6657,68 +6657,68 @@
     .st-px-bub-orn.tl { left: -7px; top: -8px; transform: rotate(-8deg); }
     .st-px-bub-orn.br { right: -7px; bottom: -7px; transform: rotate(-6deg); }
     .st-px-bub-orn.bl { left: -7px; bottom: -7px; transform: rotate(6deg); }
-    #st-tb-puppy-bubble.bub-cloud { background: #f4f9fd; border-color: #9bbcd4; color: #3a546b; box-shadow: 0 2px 7px rgba(155,188,212,0.28); }
-    #st-tb-puppy-bubble.bub-cloud::after { background: #f4f9fd; border-color: #9bbcd4; }
-    #st-tb-puppy-bubble.bub-mint { background: #f2faf7; border-color: #8fc4b2; color: #31594c; box-shadow: 0 2px 7px rgba(143,196,178,0.28); }
-    #st-tb-puppy-bubble.bub-mint::after { background: #f2faf7; border-color: #8fc4b2; }
-    #st-tb-puppy-bubble.bub-peach { background: linear-gradient(135deg,#fdf6f2,#faeae3); border-color: #d9aba0; color: #6b433b; box-shadow: 0 2px 7px rgba(217,171,160,0.28); }
-    #st-tb-puppy-bubble.bub-peach::after { background: #fbefe9; border-color: #d9aba0; }
-    #st-tb-puppy-bubble.bub-matcha { background: #f4f8f2; border-color: #9cb896; color: #3d5439; box-shadow: 0 2px 7px rgba(156,184,150,0.28); }
-    #st-tb-puppy-bubble.bub-matcha::after { background: #f4f8f2; border-color: #9cb896; }
-    #st-tb-puppy-bubble.bub-cocoa { background: #faf4ee; border-color: #bda38e; color: #594436; box-shadow: 0 2px 7px rgba(189,163,142,0.28); }
-    #st-tb-puppy-bubble.bub-cocoa::after { background: #faf4ee; border-color: #bda38e; }
-    #st-tb-puppy-bubble.bub-sakura { background: linear-gradient(135deg,#fdf6f8,#f7e8ee); border-color: #d4adb9; color: #63404c; box-shadow: 0 2px 7px rgba(212,173,185,0.28); }
-    #st-tb-puppy-bubble.bub-sakura::after { background: #faeff3; border-color: #d4adb9; }
-    #st-tb-puppy-bubble.bub-violet { background: linear-gradient(135deg,#f7f3fc,#ede6f7); border-color: #b4a3cf; color: #4c3c66; box-shadow: 0 2px 7px rgba(180,163,207,0.3); }
-    #st-tb-puppy-bubble.bub-violet::after { background: #f2ecfa; border-color: #b4a3cf; }
-    #st-tb-puppy-bubble.bub-snow { background: linear-gradient(135deg,#f5faff,#ebf4fc); border-color: #a6c0d6; color: #3c546b; box-shadow: 0 2px 7px rgba(166,192,214,0.3); }
-    #st-tb-puppy-bubble.bub-snow::after { background: #f0f7fd; border-color: #a6c0d6; }
-    #st-tb-puppy-bubble.bub-starry { background: linear-gradient(135deg,#333c5c,#464e73); border-color: #cfc08e; color: #faf3dc; box-shadow: 0 2px 9px rgba(51,60,92,0.4); }
-    #st-tb-puppy-bubble.bub-starry::after { background: #3c4566; border-color: #cfc08e; }
-    #st-tb-puppy-bubble.bub-pixelgold { background: linear-gradient(135deg,#fcfaf0,#f7eed7); border-color: #cfb986; color: #63512c; box-shadow: 0 2px 7px rgba(207,185,134,0.3); }
-    #st-tb-puppy-bubble.bub-pixelgold::after { background: #faf4e3; border-color: #cfb986; }
-    #st-tb-puppy-bubble.bub-scroll { background: #faf6ee; border-color: #c29c96; color: #5e413e; box-shadow: 0 2px 7px rgba(194,156,150,0.28); }
-    #st-tb-puppy-bubble.bub-scroll::after { background: #faf6ee; border-color: #c29c96; }
-    #st-tb-puppy-bubble.bub-candy { background: linear-gradient(125deg,#fdf2f6,#fcf8eb,#effaf4,#f0f6fc); border-color: #ccb0c4; color: #594354; box-shadow: 0 2px 8px rgba(204,176,196,0.3); }
-    #st-tb-puppy-bubble.bub-candy::after { background: #faf4f6; border-color: #ccb0c4; }
+    #st-tb-puppy-bubble.bub-cloud, #st-tb-guest-puppy-bubble.bub-cloud { background: #f4f9fd; border-color: #9bbcd4; color: #3a546b; box-shadow: 0 2px 7px rgba(155,188,212,0.28); }
+    #st-tb-puppy-bubble.bub-cloud::after, #st-tb-guest-puppy-bubble.bub-cloud::after { background: #f4f9fd; border-color: #9bbcd4; }
+    #st-tb-puppy-bubble.bub-mint, #st-tb-guest-puppy-bubble.bub-mint { background: #f2faf7; border-color: #8fc4b2; color: #31594c; box-shadow: 0 2px 7px rgba(143,196,178,0.28); }
+    #st-tb-puppy-bubble.bub-mint::after, #st-tb-guest-puppy-bubble.bub-mint::after { background: #f2faf7; border-color: #8fc4b2; }
+    #st-tb-puppy-bubble.bub-peach, #st-tb-guest-puppy-bubble.bub-peach { background: linear-gradient(135deg,#fdf6f2,#faeae3); border-color: #d9aba0; color: #6b433b; box-shadow: 0 2px 7px rgba(217,171,160,0.28); }
+    #st-tb-puppy-bubble.bub-peach::after, #st-tb-guest-puppy-bubble.bub-peach::after { background: #fbefe9; border-color: #d9aba0; }
+    #st-tb-puppy-bubble.bub-matcha, #st-tb-guest-puppy-bubble.bub-matcha { background: #f4f8f2; border-color: #9cb896; color: #3d5439; box-shadow: 0 2px 7px rgba(156,184,150,0.28); }
+    #st-tb-puppy-bubble.bub-matcha::after, #st-tb-guest-puppy-bubble.bub-matcha::after { background: #f4f8f2; border-color: #9cb896; }
+    #st-tb-puppy-bubble.bub-cocoa, #st-tb-guest-puppy-bubble.bub-cocoa { background: #faf4ee; border-color: #bda38e; color: #594436; box-shadow: 0 2px 7px rgba(189,163,142,0.28); }
+    #st-tb-puppy-bubble.bub-cocoa::after, #st-tb-guest-puppy-bubble.bub-cocoa::after { background: #faf4ee; border-color: #bda38e; }
+    #st-tb-puppy-bubble.bub-sakura, #st-tb-guest-puppy-bubble.bub-sakura { background: linear-gradient(135deg,#fdf6f8,#f7e8ee); border-color: #d4adb9; color: #63404c; box-shadow: 0 2px 7px rgba(212,173,185,0.28); }
+    #st-tb-puppy-bubble.bub-sakura::after, #st-tb-guest-puppy-bubble.bub-sakura::after { background: #faeff3; border-color: #d4adb9; }
+    #st-tb-puppy-bubble.bub-violet, #st-tb-guest-puppy-bubble.bub-violet { background: linear-gradient(135deg,#f7f3fc,#ede6f7); border-color: #b4a3cf; color: #4c3c66; box-shadow: 0 2px 7px rgba(180,163,207,0.3); }
+    #st-tb-puppy-bubble.bub-violet::after, #st-tb-guest-puppy-bubble.bub-violet::after { background: #f2ecfa; border-color: #b4a3cf; }
+    #st-tb-puppy-bubble.bub-snow, #st-tb-guest-puppy-bubble.bub-snow { background: linear-gradient(135deg,#f5faff,#ebf4fc); border-color: #a6c0d6; color: #3c546b; box-shadow: 0 2px 7px rgba(166,192,214,0.3); }
+    #st-tb-puppy-bubble.bub-snow::after, #st-tb-guest-puppy-bubble.bub-snow::after { background: #f0f7fd; border-color: #a6c0d6; }
+    #st-tb-puppy-bubble.bub-starry, #st-tb-guest-puppy-bubble.bub-starry { background: linear-gradient(135deg,#333c5c,#464e73); border-color: #cfc08e; color: #faf3dc; box-shadow: 0 2px 9px rgba(51,60,92,0.4); }
+    #st-tb-puppy-bubble.bub-starry::after, #st-tb-guest-puppy-bubble.bub-starry::after { background: #3c4566; border-color: #cfc08e; }
+    #st-tb-puppy-bubble.bub-pixelgold, #st-tb-guest-puppy-bubble.bub-pixelgold { background: linear-gradient(135deg,#fcfaf0,#f7eed7); border-color: #cfb986; color: #63512c; box-shadow: 0 2px 7px rgba(207,185,134,0.3); }
+    #st-tb-puppy-bubble.bub-pixelgold::after, #st-tb-guest-puppy-bubble.bub-pixelgold::after { background: #faf4e3; border-color: #cfb986; }
+    #st-tb-puppy-bubble.bub-scroll, #st-tb-guest-puppy-bubble.bub-scroll { background: #faf6ee; border-color: #c29c96; color: #5e413e; box-shadow: 0 2px 7px rgba(194,156,150,0.28); }
+    #st-tb-puppy-bubble.bub-scroll::after, #st-tb-guest-puppy-bubble.bub-scroll::after { background: #faf6ee; border-color: #c29c96; }
+    #st-tb-puppy-bubble.bub-candy, #st-tb-guest-puppy-bubble.bub-candy { background: linear-gradient(125deg,#fdf2f6,#fcf8eb,#effaf4,#f0f6fc); border-color: #ccb0c4; color: #594354; box-shadow: 0 2px 8px rgba(204,176,196,0.3); }
+    #st-tb-puppy-bubble.bub-candy::after, #st-tb-guest-puppy-bubble.bub-candy::after { background: #faf4f6; border-color: #ccb0c4; }
     /* 6 款柔和轻盈 9x9 角饰气泡 */
-    #st-tb-puppy-bubble.bub-dec-bow { background: #faf3f6; border-color: #cca5b2; color: #5c3e49; box-shadow: 0 2px 7px rgba(186,144,158,0.28); }
-    #st-tb-puppy-bubble.bub-dec-bow::after { background: #faf3f6; border-color: #cca5b2; }
-    #st-tb-puppy-bubble.bub-dec-paw { background: #faf5f0; border-color: #cbb09c; color: #5c4638; box-shadow: 0 2px 7px rgba(180,152,130,0.28); }
-    #st-tb-puppy-bubble.bub-dec-paw::after { background: #faf5f0; border-color: #cbb09c; }
-    #st-tb-puppy-bubble.bub-dec-sakura { background: #fdf6f8; border-color: #d6b0bc; color: #63404c; box-shadow: 0 2px 7px rgba(195,152,166,0.28); }
-    #st-tb-puppy-bubble.bub-dec-sakura::after { background: #fdf6f8; border-color: #d6b0bc; }
-    #st-tb-puppy-bubble.bub-dec-crown { background: #faf7ef; border-color: #cfb88a; color: #614e2a; box-shadow: 0 2px 7px rgba(190,165,112,0.3); }
-    #st-tb-puppy-bubble.bub-dec-crown::after { background: #faf7ef; border-color: #cfb88a; }
-    #st-tb-puppy-bubble.bub-dec-moon { background: #f5f3f9; border-color: #aba0bf; color: #473c5c; box-shadow: 0 2px 7px rgba(150,138,172,0.3); }
-    #st-tb-puppy-bubble.bub-dec-moon::after { background: #f5f3f9; border-color: #aba0bf; }
-    #st-tb-puppy-bubble.bub-dec-butterfly { background: #f7f3fa; border-color: #b8a3c9; color: #4e3b61; box-shadow: 0 2px 7px rgba(162,140,180,0.3); }
-    #st-tb-puppy-bubble.bub-dec-butterfly::after { background: #f7f3fa; border-color: #b8a3c9; }
+    #st-tb-puppy-bubble.bub-dec-bow, #st-tb-guest-puppy-bubble.bub-dec-bow { background: #faf3f6; border-color: #cca5b2; color: #5c3e49; box-shadow: 0 2px 7px rgba(186,144,158,0.28); }
+    #st-tb-puppy-bubble.bub-dec-bow::after, #st-tb-guest-puppy-bubble.bub-dec-bow::after { background: #faf3f6; border-color: #cca5b2; }
+    #st-tb-puppy-bubble.bub-dec-paw, #st-tb-guest-puppy-bubble.bub-dec-paw { background: #faf5f0; border-color: #cbb09c; color: #5c4638; box-shadow: 0 2px 7px rgba(180,152,130,0.28); }
+    #st-tb-puppy-bubble.bub-dec-paw::after, #st-tb-guest-puppy-bubble.bub-dec-paw::after { background: #faf5f0; border-color: #cbb09c; }
+    #st-tb-puppy-bubble.bub-dec-sakura, #st-tb-guest-puppy-bubble.bub-dec-sakura { background: #fdf6f8; border-color: #d6b0bc; color: #63404c; box-shadow: 0 2px 7px rgba(195,152,166,0.28); }
+    #st-tb-puppy-bubble.bub-dec-sakura::after, #st-tb-guest-puppy-bubble.bub-dec-sakura::after { background: #fdf6f8; border-color: #d6b0bc; }
+    #st-tb-puppy-bubble.bub-dec-crown, #st-tb-guest-puppy-bubble.bub-dec-crown { background: #faf7ef; border-color: #cfb88a; color: #614e2a; box-shadow: 0 2px 7px rgba(190,165,112,0.3); }
+    #st-tb-puppy-bubble.bub-dec-crown::after, #st-tb-guest-puppy-bubble.bub-dec-crown::after { background: #faf7ef; border-color: #cfb88a; }
+    #st-tb-puppy-bubble.bub-dec-moon, #st-tb-guest-puppy-bubble.bub-dec-moon { background: #f5f3f9; border-color: #aba0bf; color: #473c5c; box-shadow: 0 2px 7px rgba(150,138,172,0.3); }
+    #st-tb-puppy-bubble.bub-dec-moon::after, #st-tb-guest-puppy-bubble.bub-dec-moon::after { background: #f5f3f9; border-color: #aba0bf; }
+    #st-tb-puppy-bubble.bub-dec-butterfly, #st-tb-guest-puppy-bubble.bub-dec-butterfly { background: #f7f3fa; border-color: #b8a3c9; color: #4e3b61; box-shadow: 0 2px 7px rgba(162,140,180,0.3); }
+    #st-tb-puppy-bubble.bub-dec-butterfly::after, #st-tb-guest-puppy-bubble.bub-dec-butterfly::after { background: #f7f3fa; border-color: #b8a3c9; }
     /* 12 款全新动态像素气泡（丝滑柔和流动渐变 + 边缘像素粒子） */
-    #st-tb-puppy-bubble.bub-dyn-sakura { background: linear-gradient(125deg,#fff5f8,#f7e3eb,#fff9fb); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #d6a3b4; color: #633e4c; box-shadow: 0 2px 9px rgba(214,163,180,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-sakura::after { background: #fceef3; border-color: #d6a3b4; }
-    #st-tb-puppy-bubble.bub-dyn-bubble { background: linear-gradient(125deg,#f2f9ff,#fff4f9,#f0faf7); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #a6c4d9; color: #3c5468; box-shadow: 0 2px 9px rgba(166,196,217,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-bubble::after { background: #f2f8fd; border-color: #a6c4d9; }
-    #st-tb-puppy-bubble.bub-dyn-star { background: linear-gradient(125deg,#2e3654,#43496e,#2b324d); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #c9b57d; color: #faf2d8; box-shadow: 0 2px 10px rgba(70,80,120,0.45); }
-    #st-tb-puppy-bubble.bub-dyn-star::after { background: #384061; border-color: #c9b57d; }
-    #st-tb-puppy-bubble.bub-dyn-aurora { background: linear-gradient(125deg,#e9f7fa,#ecf7f1,#f2ecfa); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; border-color: #95b8c9; color: #35525e; box-shadow: 0 2px 10px rgba(149,184,201,0.42); }
-    #st-tb-puppy-bubble.bub-dyn-aurora::after { background: #edf6f8; border-color: #95b8c9; }
-    #st-tb-puppy-bubble.bub-dyn-hearts { background: linear-gradient(125deg,#fff3f6,#fae1e9,#fff8fa); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d9a0b3; color: #663d4c; box-shadow: 0 2px 9px rgba(217,160,179,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-hearts::after { background: #fcebf0; border-color: #d9a0b3; }
-    #st-tb-puppy-bubble.bub-dyn-rain { background: linear-gradient(125deg,#eef5fa,#e2edf5,#f5f9fc); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #9cb4c9; color: #3a5063; box-shadow: 0 2px 9px rgba(156,180,201,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-rain::after { background: #eaf2f8; border-color: #9cb4c9; }
-    #st-tb-puppy-bubble.bub-dyn-peach { background: linear-gradient(125deg,#fff5f0,#fce7dd,#fffaf5); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #deab95; color: #694436; box-shadow: 0 2px 9px rgba(222,171,149,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-peach::after { background: #fdf0ea; border-color: #deab95; }
-    #st-tb-puppy-bubble.bub-dyn-butterfly { background: linear-gradient(125deg,#f6f0fa,#fceef5,#efe8f8); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #b79ec9; color: #4d3b5e; box-shadow: 0 2px 9px rgba(183,158,201,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-butterfly::after { background: #f5eef9; border-color: #b79ec9; }
-    #st-tb-puppy-bubble.bub-dyn-clover { background: linear-gradient(125deg,#f1faf0,#e3f2e0,#f7fcf6); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #96ba92; color: #3b5738; box-shadow: 0 2px 9px rgba(150,186,146,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-clover::after { background: #ebf6e9; border-color: #96ba92; }
-    #st-tb-puppy-bubble.bub-dyn-ocean { background: linear-gradient(125deg,#ebf8fc,#e1f3f7,#f2fafc); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #8dbcc9; color: #32545e; box-shadow: 0 2px 9px rgba(141,188,201,0.42); }
-    #st-tb-puppy-bubble.bub-dyn-ocean::after { background: #e8f6fa; border-color: #8dbcc9; }
-    #st-tb-puppy-bubble.bub-dyn-lace { background: linear-gradient(125deg,#ffffff,#faf2f5,#ffffff); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d4b6c0; color: #5c444d; box-shadow: 0 2px 9px rgba(212,182,192,0.42); }
-    #st-tb-puppy-bubble.bub-dyn-lace::after { background: #fcf7f9; border-color: #d4b6c0; }
-    #st-tb-puppy-bubble.bub-dyn-rainbow { background: linear-gradient(135deg,#ffffff 0%,#fff5f9 30%,#f2f9ff 62%,#f7f3ff 88%,#ffffff 100%); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #9ec8f0; color: #473d5e; box-shadow: 0 2px 0 #ffd4e5, 0 4px 12px rgba(158,200,240,0.34), inset 0 0 0 1px rgba(255,255,255,0.96); }
-    #st-tb-puppy-bubble.bub-dyn-rainbow::after { background: #ffffff; border-color: #9ec8f0; }
+    #st-tb-puppy-bubble.bub-dyn-sakura, #st-tb-guest-puppy-bubble.bub-dyn-sakura { background: linear-gradient(125deg,#fff5f8,#f7e3eb,#fff9fb); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #d6a3b4; color: #633e4c; box-shadow: 0 2px 9px rgba(214,163,180,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-sakura::after, #st-tb-guest-puppy-bubble.bub-dyn-sakura::after { background: #fceef3; border-color: #d6a3b4; }
+    #st-tb-puppy-bubble.bub-dyn-bubble, #st-tb-guest-puppy-bubble.bub-dyn-bubble { background: linear-gradient(125deg,#f2f9ff,#fff4f9,#f0faf7); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #a6c4d9; color: #3c5468; box-shadow: 0 2px 9px rgba(166,196,217,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-bubble::after, #st-tb-guest-puppy-bubble.bub-dyn-bubble::after { background: #f2f8fd; border-color: #a6c4d9; }
+    #st-tb-puppy-bubble.bub-dyn-star, #st-tb-guest-puppy-bubble.bub-dyn-star { background: linear-gradient(125deg,#2e3654,#43496e,#2b324d); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #c9b57d; color: #faf2d8; box-shadow: 0 2px 10px rgba(70,80,120,0.45); }
+    #st-tb-puppy-bubble.bub-dyn-star::after, #st-tb-guest-puppy-bubble.bub-dyn-star::after { background: #384061; border-color: #c9b57d; }
+    #st-tb-puppy-bubble.bub-dyn-aurora, #st-tb-guest-puppy-bubble.bub-dyn-aurora { background: linear-gradient(125deg,#e9f7fa,#ecf7f1,#f2ecfa); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; border-color: #95b8c9; color: #35525e; box-shadow: 0 2px 10px rgba(149,184,201,0.42); }
+    #st-tb-puppy-bubble.bub-dyn-aurora::after, #st-tb-guest-puppy-bubble.bub-dyn-aurora::after { background: #edf6f8; border-color: #95b8c9; }
+    #st-tb-puppy-bubble.bub-dyn-hearts, #st-tb-guest-puppy-bubble.bub-dyn-hearts { background: linear-gradient(125deg,#fff3f6,#fae1e9,#fff8fa); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d9a0b3; color: #663d4c; box-shadow: 0 2px 9px rgba(217,160,179,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-hearts::after, #st-tb-guest-puppy-bubble.bub-dyn-hearts::after { background: #fcebf0; border-color: #d9a0b3; }
+    #st-tb-puppy-bubble.bub-dyn-rain, #st-tb-guest-puppy-bubble.bub-dyn-rain { background: linear-gradient(125deg,#eef5fa,#e2edf5,#f5f9fc); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #9cb4c9; color: #3a5063; box-shadow: 0 2px 9px rgba(156,180,201,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-rain::after, #st-tb-guest-puppy-bubble.bub-dyn-rain::after { background: #eaf2f8; border-color: #9cb4c9; }
+    #st-tb-puppy-bubble.bub-dyn-peach, #st-tb-guest-puppy-bubble.bub-dyn-peach { background: linear-gradient(125deg,#fff5f0,#fce7dd,#fffaf5); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #deab95; color: #694436; box-shadow: 0 2px 9px rgba(222,171,149,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-peach::after, #st-tb-guest-puppy-bubble.bub-dyn-peach::after { background: #fdf0ea; border-color: #deab95; }
+    #st-tb-puppy-bubble.bub-dyn-butterfly, #st-tb-guest-puppy-bubble.bub-dyn-butterfly { background: linear-gradient(125deg,#f6f0fa,#fceef5,#efe8f8); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #b79ec9; color: #4d3b5e; box-shadow: 0 2px 9px rgba(183,158,201,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-butterfly::after, #st-tb-guest-puppy-bubble.bub-dyn-butterfly::after { background: #f5eef9; border-color: #b79ec9; }
+    #st-tb-puppy-bubble.bub-dyn-clover, #st-tb-guest-puppy-bubble.bub-dyn-clover { background: linear-gradient(125deg,#f1faf0,#e3f2e0,#f7fcf6); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #96ba92; color: #3b5738; box-shadow: 0 2px 9px rgba(150,186,146,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-clover::after, #st-tb-guest-puppy-bubble.bub-dyn-clover::after { background: #ebf6e9; border-color: #96ba92; }
+    #st-tb-puppy-bubble.bub-dyn-ocean, #st-tb-guest-puppy-bubble.bub-dyn-ocean { background: linear-gradient(125deg,#ebf8fc,#e1f3f7,#f2fafc); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #8dbcc9; color: #32545e; box-shadow: 0 2px 9px rgba(141,188,201,0.42); }
+    #st-tb-puppy-bubble.bub-dyn-ocean::after, #st-tb-guest-puppy-bubble.bub-dyn-ocean::after { background: #e8f6fa; border-color: #8dbcc9; }
+    #st-tb-puppy-bubble.bub-dyn-lace, #st-tb-guest-puppy-bubble.bub-dyn-lace { background: linear-gradient(125deg,#ffffff,#faf2f5,#ffffff); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d4b6c0; color: #5c444d; box-shadow: 0 2px 9px rgba(212,182,192,0.42); }
+    #st-tb-puppy-bubble.bub-dyn-lace::after, #st-tb-guest-puppy-bubble.bub-dyn-lace::after { background: #fcf7f9; border-color: #d4b6c0; }
+    #st-tb-puppy-bubble.bub-dyn-rainbow, #st-tb-guest-puppy-bubble.bub-dyn-rainbow { background: linear-gradient(135deg,#ffffff 0%,#fff5f9 30%,#f2f9ff 62%,#f7f3ff 88%,#ffffff 100%); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #9ec8f0; color: #473d5e; box-shadow: 0 2px 0 #ffd4e5, 0 4px 12px rgba(158,200,240,0.34), inset 0 0 0 1px rgba(255,255,255,0.96); }
+    #st-tb-puppy-bubble.bub-dyn-rainbow::after, #st-tb-guest-puppy-bubble.bub-dyn-rainbow::after { background: #ffffff; border-color: #9ec8f0; }
     @keyframes stBubSheen {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -6728,54 +6728,54 @@
       0%, 100% { box-shadow: 0 2px 6px rgba(180,155,168,0.22), inset 0 0 0 1px rgba(255,255,255,0.85); }
       50% { box-shadow: 0 2px 13px rgba(195,165,182,0.52), inset 0 0 0 1px rgba(255,255,255,0.98); }
     }
-    #st-tb-puppy-bubble.bub-dyn-typewave { background: linear-gradient(120deg,#faf2f5 0%,#ffffff 45%,#f5e4ec 60%,#faf2f5 100%); background-size: 260% 260%; animation: stBubSheen 3.6s ease-in-out infinite; border-color: #cfaab7; color: #5c424c; box-shadow: 0 2px 9px rgba(207,170,183,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-typewave::after { background: #faf2f5; border-color: #cfaab7; }
-    #st-tb-puppy-bubble.bub-dyn-ticket { background: linear-gradient(125deg,#fdf9f0,#fffdf7,#f7edd8); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite, stBubBreathe 3.2s ease-in-out infinite; border-color: #d4bc8e; color: #5e4e2e; }
-    #st-tb-puppy-bubble.bub-dyn-ticket::after { background: #fcf6e8; border-color: #d4bc8e; }
-    #st-tb-puppy-bubble.bub-dyn-tape { background: linear-gradient(120deg,#effaf6 0%,#ffffff 48%,#dff2ec 62%,#effaf6 100%); background-size: 260% 260%; animation: stBubSheen 3.8s ease-in-out infinite; border-color: #9ac7b8; color: #34594d; box-shadow: 0 2px 9px rgba(154,199,184,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-tape::after { background: #effaf6; border-color: #9ac7b8; }
-    #st-tb-puppy-bubble.bub-dyn-letter { background: linear-gradient(125deg,#fdf2f6,#fae0ea,#fff7fa); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.0s ease-in-out infinite; border-color: #d9a5b6; color: #633d4b; }
-    #st-tb-puppy-bubble.bub-dyn-letter::after { background: #fceef3; border-color: #d9a5b6; }
-    #st-tb-puppy-bubble.bub-dyn-film { background: linear-gradient(120deg,#2e3652 0%,#424d73 48%,#2b334d 62%,#394366 100%); background-size: 260% 260%; animation: stBubSheen 4.4s ease-in-out infinite; border-color: #b8c2db; color: #f2f5fc; box-shadow: 0 2px 11px rgba(46,54,82,0.44), inset 0 0 0 1px rgba(255,255,255,0.18); }
-    #st-tb-puppy-bubble.bub-dyn-film::after { background: #343d5c; border-color: #b8c2db; }
-    #st-tb-puppy-bubble.bub-dyn-neon-soft { background: linear-gradient(125deg,#f5f0fc,#ebe2fa,#faf7ff); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.4s ease-in-out infinite; border-color: #b5a1d1; color: #4b3a63; }
-    #st-tb-puppy-bubble.bub-dyn-neon-soft::after { background: #f3ecfc; border-color: #b5a1d1; }
-    #st-tb-puppy-bubble.bub-dyn-cloud-tail { background: linear-gradient(120deg,#f2f8fd 0%,#ffffff 48%,#e3f0fa 64%,#f2f8fd 100%); background-size: 260% 260%; animation: stBubSheen 4.2s ease-in-out infinite; border-color: #a4c3db; color: #395369; box-shadow: 0 2px 9px rgba(164,195,219,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-cloud-tail::after { background: #f2f8fd; border-color: #a4c3db; }
-    #st-tb-puppy-bubble.bub-dyn-doodle { background: linear-gradient(120deg,#faf5ec 0%,#fffdf8 48%,#f2e6d5 64%,#faf5ec 100%); background-size: 260% 260%; animation: stBubSheen 4.0s ease-in-out infinite; border-color: #cbb59c; color: #5c4936; box-shadow: 0 2px 9px rgba(203,181,156,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-doodle::after { background: #faf5ec; border-color: #cbb59c; }
+    #st-tb-puppy-bubble.bub-dyn-typewave, #st-tb-guest-puppy-bubble.bub-dyn-typewave { background: linear-gradient(120deg,#faf2f5 0%,#ffffff 45%,#f5e4ec 60%,#faf2f5 100%); background-size: 260% 260%; animation: stBubSheen 3.6s ease-in-out infinite; border-color: #cfaab7; color: #5c424c; box-shadow: 0 2px 9px rgba(207,170,183,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-typewave::after, #st-tb-guest-puppy-bubble.bub-dyn-typewave::after { background: #faf2f5; border-color: #cfaab7; }
+    #st-tb-puppy-bubble.bub-dyn-ticket, #st-tb-guest-puppy-bubble.bub-dyn-ticket { background: linear-gradient(125deg,#fdf9f0,#fffdf7,#f7edd8); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite, stBubBreathe 3.2s ease-in-out infinite; border-color: #d4bc8e; color: #5e4e2e; }
+    #st-tb-puppy-bubble.bub-dyn-ticket::after, #st-tb-guest-puppy-bubble.bub-dyn-ticket::after { background: #fcf6e8; border-color: #d4bc8e; }
+    #st-tb-puppy-bubble.bub-dyn-tape, #st-tb-guest-puppy-bubble.bub-dyn-tape { background: linear-gradient(120deg,#effaf6 0%,#ffffff 48%,#dff2ec 62%,#effaf6 100%); background-size: 260% 260%; animation: stBubSheen 3.8s ease-in-out infinite; border-color: #9ac7b8; color: #34594d; box-shadow: 0 2px 9px rgba(154,199,184,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-tape::after, #st-tb-guest-puppy-bubble.bub-dyn-tape::after { background: #effaf6; border-color: #9ac7b8; }
+    #st-tb-puppy-bubble.bub-dyn-letter, #st-tb-guest-puppy-bubble.bub-dyn-letter { background: linear-gradient(125deg,#fdf2f6,#fae0ea,#fff7fa); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.0s ease-in-out infinite; border-color: #d9a5b6; color: #633d4b; }
+    #st-tb-puppy-bubble.bub-dyn-letter::after, #st-tb-guest-puppy-bubble.bub-dyn-letter::after { background: #fceef3; border-color: #d9a5b6; }
+    #st-tb-puppy-bubble.bub-dyn-film, #st-tb-guest-puppy-bubble.bub-dyn-film { background: linear-gradient(120deg,#2e3652 0%,#424d73 48%,#2b334d 62%,#394366 100%); background-size: 260% 260%; animation: stBubSheen 4.4s ease-in-out infinite; border-color: #b8c2db; color: #f2f5fc; box-shadow: 0 2px 11px rgba(46,54,82,0.44), inset 0 0 0 1px rgba(255,255,255,0.18); }
+    #st-tb-puppy-bubble.bub-dyn-film::after, #st-tb-guest-puppy-bubble.bub-dyn-film::after { background: #343d5c; border-color: #b8c2db; }
+    #st-tb-puppy-bubble.bub-dyn-neon-soft, #st-tb-guest-puppy-bubble.bub-dyn-neon-soft { background: linear-gradient(125deg,#f5f0fc,#ebe2fa,#faf7ff); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.4s ease-in-out infinite; border-color: #b5a1d1; color: #4b3a63; }
+    #st-tb-puppy-bubble.bub-dyn-neon-soft::after, #st-tb-guest-puppy-bubble.bub-dyn-neon-soft::after { background: #f3ecfc; border-color: #b5a1d1; }
+    #st-tb-puppy-bubble.bub-dyn-cloud-tail, #st-tb-guest-puppy-bubble.bub-dyn-cloud-tail { background: linear-gradient(120deg,#f2f8fd 0%,#ffffff 48%,#e3f0fa 64%,#f2f8fd 100%); background-size: 260% 260%; animation: stBubSheen 4.2s ease-in-out infinite; border-color: #a4c3db; color: #395369; box-shadow: 0 2px 9px rgba(164,195,219,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-cloud-tail::after, #st-tb-guest-puppy-bubble.bub-dyn-cloud-tail::after { background: #f2f8fd; border-color: #a4c3db; }
+    #st-tb-puppy-bubble.bub-dyn-doodle, #st-tb-guest-puppy-bubble.bub-dyn-doodle { background: linear-gradient(120deg,#faf5ec 0%,#fffdf8 48%,#f2e6d5 64%,#faf5ec 100%); background-size: 260% 260%; animation: stBubSheen 4.0s ease-in-out infinite; border-color: #cbb59c; color: #5c4936; box-shadow: 0 2px 9px rgba(203,181,156,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-doodle::after, #st-tb-guest-puppy-bubble.bub-dyn-doodle::after { background: #faf5ec; border-color: #cbb59c; }
     /* 秘境 / 扭蛋 / 生日 / 节日限定气泡（同样调柔和） */
-    #st-tb-puppy-bubble.bub-adv-cloudsea { background: linear-gradient(120deg,#eaf7ff,#ffffff,#f2ecff); border-color: #9abed9; color: #38556e; box-shadow: 0 2px 8px rgba(154,190,217,0.4); }
-    #st-tb-puppy-bubble.bub-adv-cloudsea::after { background: #f0f8ff; border-color: #9abed9; }
-    #st-tb-puppy-bubble.bub-adv-stardust { background: linear-gradient(120deg,#30395e,#484273,#30395e); border-color: #d6c382; color: #faf3d8; box-shadow: 0 2px 9px rgba(72,66,115,0.45); }
-    #st-tb-puppy-bubble.bub-adv-stardust::after { background: #3c3e69; border-color: #d6c382; }
-    #st-tb-puppy-bubble.bub-gacha-crystal { background: linear-gradient(125deg,#fdf2f8,#ecf7ff,#f5efff); border-color: #bfa3d9; color: #523b69; box-shadow: 0 2px 9px rgba(191,163,217,0.42); }
-    #st-tb-puppy-bubble.bub-gacha-crystal::after { background: #f4f3fc; border-color: #bfa3d9; }
-    #st-tb-puppy-bubble.bub-gacha-royal { background: linear-gradient(125deg,#302840,#473c5c,#302840); border-color: #d9be78; color: #faf2d6; box-shadow: 0 2px 10px rgba(71,60,92,0.45); }
-    #st-tb-puppy-bubble.bub-gacha-royal::after { background: #3b324d; border-color: #d9be78; }
-    #st-tb-puppy-bubble.bub-gacha-sakura-tea { background: linear-gradient(125deg,#fcf1f5,#fffdf7,#eef7f0); border-color: #cfa0b0; color: #61414d; box-shadow: 0 2px 8px rgba(207,160,176,0.38); }
-    #st-tb-puppy-bubble.bub-gacha-sakura-tea::after { background: #faf6f6; border-color: #cfa0b0; }
-    #st-tb-puppy-bubble.bub-gacha-moonlight { background: linear-gradient(125deg,#2a3354,#434f7a,#2d3659); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #c7d4f2; color: #f4f7ff; box-shadow: 0 2px 11px rgba(42,51,84,0.48), inset 0 0 0 1px rgba(255,255,255,0.22); }
-    #st-tb-puppy-bubble.bub-gacha-moonlight::after { background: #343f66; border-color: #c7d4f2; }
-    #st-tb-puppy-bubble.bub-gacha-starry-velvet { background: linear-gradient(125deg,#33294d,#4c3c73,#2b2242); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #d6c4f2; color: #f7f2ff; box-shadow: 0 2px 11px rgba(51,41,77,0.5), inset 0 0 0 1px rgba(255,255,255,0.2); }
-    #st-tb-puppy-bubble.bub-gacha-starry-velvet::after { background: #3d315c; border-color: #d6c4f2; }
-    #st-tb-puppy-bubble.bub-gacha-toast { background: linear-gradient(135deg,#fff7e3,#fae9c3); border-color: #c99455; color: #634320; box-shadow: 0 2px 8px rgba(201,148,85,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-toast::after { background: #fcf0d2; border-color: #c99455; }
-    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea { background: linear-gradient(130deg,#1c2b4a,#27426e,#1d3359); border-color: #82d4ff; color: #e8f7ff; box-shadow: 0 2px 10px rgba(42,96,158,0.42); }
-    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea::after { background: #233a61; border-color: #82d4ff; }
-    #st-tb-puppy-bubble.bub-gacha-peach-oolong { background: linear-gradient(130deg,#fff2f0,#ffe9e0,#f7f3e3); border-color: #f0a496; color: #6e352c; box-shadow: 0 2px 9px rgba(240,164,150,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-peach-oolong::after { background: #ffede6; border-color: #f0a496; }
-    #st-tb-puppy-bubble.bub-gacha-mint-milk { background: linear-gradient(135deg,#eefaf6,#dcf5ec); border-color: #88c2b0; color: #2e574a; box-shadow: 0 2px 8px rgba(136,194,176,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-mint-milk::after { background: #e5f7f1; border-color: #88c2b0; }
-    #st-tb-puppy-bubble.bub-bond-lv6 { background: linear-gradient(125deg,#fff0f5,#fce3ec,#fff8fa); background-size: 240% 240%; animation: stBubSheen 3.8s ease infinite; border-color: #d993ab; color: #633447; box-shadow: 0 2px 10px rgba(217,147,171,0.42); }
-    #st-tb-puppy-bubble.bub-bond-lv6::after { background: #fceaf0; border-color: #d993ab; }
-    #st-tb-puppy-bubble.bub-bday-cake { background: linear-gradient(125deg,#fff0f6,#fff8e8,#edf7ff); border-color: #f09bb8; color: #6e2d48; box-shadow: 0 2px 10px rgba(240,155,184,0.36); }
-    #st-tb-puppy-bubble.bub-bday-cake::after { background: #fff4f8; border-color: #f09bb8; }
-    #st-tb-puppy-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
-        #st-tb-puppy-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
-    #st-tb-puppy-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
+    #st-tb-puppy-bubble.bub-adv-cloudsea, #st-tb-guest-puppy-bubble.bub-adv-cloudsea { background: linear-gradient(120deg,#eaf7ff,#ffffff,#f2ecff); border-color: #9abed9; color: #38556e; box-shadow: 0 2px 8px rgba(154,190,217,0.4); }
+    #st-tb-puppy-bubble.bub-adv-cloudsea::after, #st-tb-guest-puppy-bubble.bub-adv-cloudsea::after { background: #f0f8ff; border-color: #9abed9; }
+    #st-tb-puppy-bubble.bub-adv-stardust, #st-tb-guest-puppy-bubble.bub-adv-stardust { background: linear-gradient(120deg,#30395e,#484273,#30395e); border-color: #d6c382; color: #faf3d8; box-shadow: 0 2px 9px rgba(72,66,115,0.45); }
+    #st-tb-puppy-bubble.bub-adv-stardust::after, #st-tb-guest-puppy-bubble.bub-adv-stardust::after { background: #3c3e69; border-color: #d6c382; }
+    #st-tb-puppy-bubble.bub-gacha-crystal, #st-tb-guest-puppy-bubble.bub-gacha-crystal { background: linear-gradient(125deg,#fdf2f8,#ecf7ff,#f5efff); border-color: #bfa3d9; color: #523b69; box-shadow: 0 2px 9px rgba(191,163,217,0.42); }
+    #st-tb-puppy-bubble.bub-gacha-crystal::after, #st-tb-guest-puppy-bubble.bub-gacha-crystal::after { background: #f4f3fc; border-color: #bfa3d9; }
+    #st-tb-puppy-bubble.bub-gacha-royal, #st-tb-guest-puppy-bubble.bub-gacha-royal { background: linear-gradient(125deg,#302840,#473c5c,#302840); border-color: #d9be78; color: #faf2d6; box-shadow: 0 2px 10px rgba(71,60,92,0.45); }
+    #st-tb-puppy-bubble.bub-gacha-royal::after, #st-tb-guest-puppy-bubble.bub-gacha-royal::after { background: #3b324d; border-color: #d9be78; }
+    #st-tb-puppy-bubble.bub-gacha-sakura-tea, #st-tb-guest-puppy-bubble.bub-gacha-sakura-tea { background: linear-gradient(125deg,#fcf1f5,#fffdf7,#eef7f0); border-color: #cfa0b0; color: #61414d; box-shadow: 0 2px 8px rgba(207,160,176,0.38); }
+    #st-tb-puppy-bubble.bub-gacha-sakura-tea::after, #st-tb-guest-puppy-bubble.bub-gacha-sakura-tea::after { background: #faf6f6; border-color: #cfa0b0; }
+    #st-tb-puppy-bubble.bub-gacha-moonlight, #st-tb-guest-puppy-bubble.bub-gacha-moonlight { background: linear-gradient(125deg,#2a3354,#434f7a,#2d3659); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #c7d4f2; color: #f4f7ff; box-shadow: 0 2px 11px rgba(42,51,84,0.48), inset 0 0 0 1px rgba(255,255,255,0.22); }
+    #st-tb-puppy-bubble.bub-gacha-moonlight::after, #st-tb-guest-puppy-bubble.bub-gacha-moonlight::after { background: #343f66; border-color: #c7d4f2; }
+    #st-tb-puppy-bubble.bub-gacha-starry-velvet, #st-tb-guest-puppy-bubble.bub-gacha-starry-velvet { background: linear-gradient(125deg,#33294d,#4c3c73,#2b2242); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #d6c4f2; color: #f7f2ff; box-shadow: 0 2px 11px rgba(51,41,77,0.5), inset 0 0 0 1px rgba(255,255,255,0.2); }
+    #st-tb-puppy-bubble.bub-gacha-starry-velvet::after, #st-tb-guest-puppy-bubble.bub-gacha-starry-velvet::after { background: #3d315c; border-color: #d6c4f2; }
+    #st-tb-puppy-bubble.bub-gacha-toast, #st-tb-guest-puppy-bubble.bub-gacha-toast { background: linear-gradient(135deg,#fff7e3,#fae9c3); border-color: #c99455; color: #634320; box-shadow: 0 2px 8px rgba(201,148,85,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-toast::after, #st-tb-guest-puppy-bubble.bub-gacha-toast::after { background: #fcf0d2; border-color: #c99455; }
+    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea, #st-tb-guest-puppy-bubble.bub-gacha-jellyfish-sea { background: linear-gradient(130deg,#1c2b4a,#27426e,#1d3359); border-color: #82d4ff; color: #e8f7ff; box-shadow: 0 2px 10px rgba(42,96,158,0.42); }
+    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea::after, #st-tb-guest-puppy-bubble.bub-gacha-jellyfish-sea::after { background: #233a61; border-color: #82d4ff; }
+    #st-tb-puppy-bubble.bub-gacha-peach-oolong, #st-tb-guest-puppy-bubble.bub-gacha-peach-oolong { background: linear-gradient(130deg,#fff2f0,#ffe9e0,#f7f3e3); border-color: #f0a496; color: #6e352c; box-shadow: 0 2px 9px rgba(240,164,150,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-peach-oolong::after, #st-tb-guest-puppy-bubble.bub-gacha-peach-oolong::after { background: #ffede6; border-color: #f0a496; }
+    #st-tb-puppy-bubble.bub-gacha-mint-milk, #st-tb-guest-puppy-bubble.bub-gacha-mint-milk { background: linear-gradient(135deg,#eefaf6,#dcf5ec); border-color: #88c2b0; color: #2e574a; box-shadow: 0 2px 8px rgba(136,194,176,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-mint-milk::after, #st-tb-guest-puppy-bubble.bub-gacha-mint-milk::after { background: #e5f7f1; border-color: #88c2b0; }
+    #st-tb-puppy-bubble.bub-bond-lv6, #st-tb-guest-puppy-bubble.bub-bond-lv6 { background: linear-gradient(125deg,#fff0f5,#fce3ec,#fff8fa); background-size: 240% 240%; animation: stBubSheen 3.8s ease infinite; border-color: #d993ab; color: #633447; box-shadow: 0 2px 10px rgba(217,147,171,0.42); }
+    #st-tb-puppy-bubble.bub-bond-lv6::after, #st-tb-guest-puppy-bubble.bub-bond-lv6::after { background: #fceaf0; border-color: #d993ab; }
+    #st-tb-puppy-bubble.bub-bday-cake, #st-tb-guest-puppy-bubble.bub-bday-cake { background: linear-gradient(125deg,#fff0f6,#fff8e8,#edf7ff); border-color: #f09bb8; color: #6e2d48; box-shadow: 0 2px 10px rgba(240,155,184,0.36); }
+    #st-tb-puppy-bubble.bub-bday-cake::after, #st-tb-guest-puppy-bubble.bub-bday-cake::after { background: #fff4f8; border-color: #f09bb8; }
+    #st-tb-puppy-bubble.bub-fest-lantern, #st-tb-guest-puppy-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
+        #st-tb-puppy-bubble.bub-ck-vintage-post, #st-tb-guest-puppy-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
+    #st-tb-puppy-bubble.bub-ck-vintage-post::after, #st-tb-guest-puppy-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
     .af-ck-amber-press { border-color: #d49642; background: linear-gradient(135deg,#fff8e6,#fae3b4,#f5cf84); box-shadow: 0 0 0 1px #fffdf5, 0 2px 10px rgba(212,150,66,0.46); }
-    #st-tb-puppy-bubble.bub-fest-lantern::after { background: #f8ece1; border-color: #c97e7e; }
+    #st-tb-puppy-bubble.bub-fest-lantern::after, #st-tb-guest-puppy-bubble.bub-fest-lantern::after { background: #f8ece1; border-color: #c97e7e; }
     .st-px-gacha-res-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin: 6px 0; text-align: left; }
     .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: #4f3a43; line-height: 1.3; }
     .st-px-gacha-chip.tier-R { background: #f4f7fc; border-color: #9bb4d4; color: #364e6b; }
@@ -6875,12 +6875,12 @@
       font-weight: 700;
       margin-left: 4px;
     }
-    #st-tb-puppy-bubble.bub-velvet { background: linear-gradient(135deg,#6e1e32,#8c2a42); border-color: #f4c842; color: #fff5db; }
-    #st-tb-puppy-bubble.bub-velvet::after { background: #7d243a; border-color: #f4c842; }
-    #st-tb-puppy-bubble.bub-snow { background: linear-gradient(135deg,#f2fbff,#dbf4ff); border-color: #78c4eb; color: #1d5273; box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(120,196,235,0.4); }
-    #st-tb-puppy-bubble.bub-snow::after { background: #e6f7ff; border-color: #78c4eb; }
-    #st-tb-puppy-bubble.bub-candy { background: linear-gradient(120deg,#ffe6f2,#e6f6ff,#fff8d6); border-color: #d98cc4; color: #662658; }
-    #st-tb-puppy-bubble.bub-candy::after { background: #f5ecff; border-color: #d98cc4; }
+    #st-tb-puppy-bubble.bub-velvet, #st-tb-guest-puppy-bubble.bub-velvet { background: linear-gradient(135deg,#6e1e32,#8c2a42); border-color: #f4c842; color: #fff5db; }
+    #st-tb-puppy-bubble.bub-velvet::after, #st-tb-guest-puppy-bubble.bub-velvet::after { background: #7d243a; border-color: #f4c842; }
+    #st-tb-puppy-bubble.bub-snow, #st-tb-guest-puppy-bubble.bub-snow { background: linear-gradient(135deg,#f2fbff,#dbf4ff); border-color: #78c4eb; color: #1d5273; box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(120,196,235,0.4); }
+    #st-tb-puppy-bubble.bub-snow::after, #st-tb-guest-puppy-bubble.bub-snow::after { background: #e6f7ff; border-color: #78c4eb; }
+    #st-tb-puppy-bubble.bub-candy, #st-tb-guest-puppy-bubble.bub-candy { background: linear-gradient(120deg,#ffe6f2,#e6f6ff,#fff8d6); border-color: #d98cc4; color: #662658; }
+    #st-tb-puppy-bubble.bub-candy::after, #st-tb-guest-puppy-bubble.bub-candy::after { background: #f5ecff; border-color: #d98cc4; }
 
     /* 走路特效像素脚印/地面轨迹（留在小狗身后原地缓慢淡出） */
     #st-tb-pup-signboard {
@@ -28366,13 +28366,43 @@
     ctx2d.restore();
   };
 
+  const showOneTimePanelTip = (statKey, title, bodyText) => {
+    config.puppyStats = config.puppyStats || {};
+    if (config.puppyStats[statKey]) return;
+    config.puppyStats[statKey] = true;
+    saveConfig();
+    let tipM = root.querySelector('#st-tb-onetime-tip-modal');
+    if (!tipM) {
+      tipM = doc.createElement('div');
+      tipM.id = 'st-tb-onetime-tip-modal';
+      tipM.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:none;align-items:center;justify-content:center;z-index:10035;pointer-events:auto;';
+      tipM.innerHTML = `<div style="width:236px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:4px 4px 0 rgba(59,42,34,0.26);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+        <div id="st-ot-title" style="font-size:12px;font-weight:700;margin-bottom:6px;"></div>
+        <div id="st-ot-body" style="font-size:10.5px;line-height:1.5;background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:6px 7px;margin-bottom:8px;"></div>
+        <button type="button" id="st-ot-ok" class="st-px-btn care" style="width:100%;">知道啦</button>
+      </div>`;
+      root.appendChild(tipM);
+      tipM.querySelector('#st-ot-ok')?.addEventListener('click', () => { tipM.style.display = 'none'; });
+      tipM.addEventListener('click', (e) => { if (e.target === tipM) tipM.style.display = 'none'; });
+    }
+    tipM.querySelector('#st-ot-title').textContent = title;
+    tipM.querySelector('#st-ot-body').textContent = bodyText;
+    tipM.style.display = 'flex';
+  };
+
   const POLAROID_BGS = [
-    { id: 'meadow', name: '晴空草地' },
-    { id: 'sakura', name: '樱花树下' },
-    { id: 'night',  name: '夏夜萤火' },
-    { id: 'sunset', name: '海边日落' },
-    { id: 'cafe',   name: '暖灯咖啡' },
-    { id: 'snow',   name: '雪地小屋' },
+    { id: 'meadow',      name: '晴空草地' },
+    { id: 'sakura',      name: '樱花树下' },
+    { id: 'night',       name: '夏夜萤火' },
+    { id: 'sunset',      name: '海边日落' },
+    { id: 'cafe',        name: '暖灯咖啡' },
+    { id: 'snow',        name: '雪地小屋' },
+    { id: 'aurora_snow', name: '极光雪原' },
+    { id: 'sunflower',   name: '向日葵田' },
+    { id: 'autumn',      name: '秋日枫林' },
+    { id: 'cloudsea',    name: '梦幻云海' },
+    { id: 'wisteria',    name: '紫藤花廊' },
+    { id: 'festival',    name: '夜市灯笼' },
   ];
   const POLAROID_DOG_POSES = [
     { id: 'happy',    name: '开心', frame: 'happy' },
@@ -28385,57 +28415,165 @@
     { id: 'idle',     name: '站立', frame: 'idle1' },
     { id: 'blink',    name: '眨眼', frame: 'blink' },
   ];
+  // 重新设计的高颜值低饱和奶油/莫兰迪相纸配色
   const POLAROID_QUICK_COLORS = [
-    { name: '奶白', bg: '#fffdf9', bd: '#5c4338' },
-    { name: '樱粉', bg: '#fff0f6', bd: '#d97a9a' },
-    { name: '鹅黄', bg: '#fffbe6', bd: '#d4a24c' },
-    { name: '晴蓝', bg: '#eef7ff', bd: '#6ba0d4' },
-    { name: '香芋', bg: '#f5f0ff', bd: '#9a7ec9' },
-    { name: '牛皮', bg: '#f3e3c9', bd: '#7a5234' },
+    { name: '纯白奶油', bg: '#ffffff', bd: '#d6ccc8' },
+    { name: '初樱奶霜', bg: '#fff5f8', bd: '#e8b4c4' },
+    { name: '海盐云雾', bg: '#f2f8fd', bd: '#a6c4de' },
+    { name: '薄荷苏打', bg: '#f2faf6', bd: '#9bcbb8' },
+    { name: '香芋奶昔', bg: '#f7f4fc', bd: '#bfb0dc' },
+    { name: '燕麦拿铁', bg: '#faf5ee', bd: '#cbb8a4' },
+    { name: '月光暮蓝', bg: '#2c3552', bd: '#d4be8d' },
   ];
 
-  const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr, opts = {}) => {
-    const ctx = cv.getContext('2d');
-    const W = 96, H = 72;
-    cv.width = W; cv.height = H;
-    ctx.imageSmoothingEnabled = false;
-    const bgId = opts.bgId || 'meadow';
-    const f1 = (POLAROID_DOG_POSES.find(p => p.id === (opts.pose1 || 'happy')) || POLAROID_DOG_POSES[0]).frame;
-    const f2 = (POLAROID_DOG_POSES.find(p => p.id === (opts.pose2 || 'happy')) || POLAROID_DOG_POSES[0]).frame;
-    const x1 = typeof opts.x1 === 'number' ? opts.x1 : 16;
-    const y1 = typeof opts.y1 === 'number' ? opts.y1 : 34;
-    const x2 = typeof opts.x2 === 'number' ? opts.x2 : 56;
-    const y2 = typeof opts.y2 === 'number' ? opts.y2 : 34;
-    const flip1 = Boolean(opts.flip1);
-    const flip2 = opts.flip2 !== false; // 默认右边小狗面向左
-
-    if (bgId === 'night') {
-      // 精修夏夜萤火：深靛渐变夜空 + 柔和月晕圆月 + 远山与夏夜树影 + 萤火微光草丛
+  const drawPolaroidBg = (ctx, bgId, W, H) => {
+    if (bgId === 'aurora_snow') {
+      // 极光雪原：极夜深蓝渐变 + 翠绿/冰蓝/浅紫流动极光丝带 + 皑皑雪山与雪地松树
+      const sky = ['#0f1730', '#142042', '#192b54', '#213a66', '#2a4a78'];
+      sky.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
+      // 流动极光幕帘
+      for (let x = 0; x < W; x++) {
+        const y0 = Math.round(10 + Math.sin(x * 0.07) * 5 + Math.cos(x * 0.13) * 2);
+        ctx.fillStyle = 'rgba(110,245,190,0.22)'; ctx.fillRect(x, y0 - 4, 1, 14);
+        ctx.fillStyle = 'rgba(130,230,255,0.34)'; ctx.fillRect(x, y0, 1, 7);
+        ctx.fillStyle = 'rgba(186,155,255,0.24)'; ctx.fillRect(x, y0 - 6, 1, 5);
+      }
+      // 繁星
+      [[10,5],[24,8],[41,4],[58,9],[76,6],[88,12],[16,18],[68,17]].forEach(([sx,sy]) => {
+        ctx.fillStyle = '#fffce0'; ctx.fillRect(sx, sy, 1, 1);
+      });
+      // 远景雪山
+      ctx.fillStyle = '#5c7ca3';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(10 + Math.abs(Math.sin(x * 0.055)) * 12);
+        ctx.fillRect(x, 44 - mh, 1, mh + 4);
+      }
+      ctx.fillStyle = '#e6f4ff';
+      for (let x = 0; x < W; x++) {
+        const mh = Math.round(10 + Math.abs(Math.sin(x * 0.055)) * 12);
+        if (mh > 16) ctx.fillRect(x, 44 - mh, 1, mh - 14);
+      }
+      // 雪地松树
+      [[8,36],[17,39],[82,37]].forEach(([tx,ty]) => {
+        ctx.fillStyle = '#2d5752'; ctx.fillRect(tx, ty, 6, 9); ctx.fillRect(tx + 1, ty - 4, 4, 4); ctx.fillRect(tx + 2, ty - 6, 2, 2);
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(tx + 1, ty - 4, 4, 1); ctx.fillRect(tx, ty, 6, 1);
+      });
+      // 洁白雪原
+      ctx.fillStyle = '#e8f5ff'; ctx.fillRect(0, 45, W, 14);
+      ctx.fillStyle = '#d4e8fa'; ctx.fillRect(0, 59, W, 13);
+    } else if (bgId === 'sunflower') {
+      // 向日葵田：晴朗蓝天 + 绵软白云 + 远方白木栅栏 + 金黄向日葵花海
+      ctx.fillStyle = '#9ed4ff'; ctx.fillRect(0, 0, W, 16);
+      ctx.fillStyle = '#c8e8ff'; ctx.fillRect(0, 16, W, 18);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(10, 6, 20, 5); ctx.fillRect(14, 3, 12, 3);
+      ctx.fillRect(62, 9, 18, 5); ctx.fillRect(66, 6, 10, 3);
+      // 远方青绿山坡与白木栅栏
+      ctx.fillStyle = '#8fd478'; ctx.fillRect(0, 34, W, 10);
+      ctx.fillStyle = '#fffdf7';
+      ctx.fillRect(0, 37, W, 1); ctx.fillRect(0, 40, W, 1);
+      for (let x = 4; x < W; x += 10) ctx.fillRect(x, 35, 2, 8);
+      // 绿叶田野
+      ctx.fillStyle = '#5eb054'; ctx.fillRect(0, 44, W, 14);
+      ctx.fillStyle = '#4c9944'; ctx.fillRect(0, 58, W, 14);
+      // 向日葵花朵
+      [[8,46],[20,50],[34,45],[50,49],[66,46],[80,48],[88,54],[14,60],[74,62]].forEach(([fx,fy]) => {
+        ctx.fillStyle = '#ffcf38'; ctx.fillRect(fx - 2, fy - 2, 6, 6);
+        ctx.fillStyle = '#ffe878'; ctx.fillRect(fx - 1, fy - 2, 4, 2);
+        ctx.fillStyle = '#7a4b24'; ctx.fillRect(fx, fy, 2, 2);
+      });
+    } else if (bgId === 'autumn') {
+      // 秋日枫林：暖杏晴空 + 层叠红橙金枫树 + 落叶小径
+      ctx.fillStyle = '#ffe6cc'; ctx.fillRect(0, 0, W, 18);
+      ctx.fillStyle = '#fff2df'; ctx.fillRect(0, 18, W, 24);
+      // 红橙枫树冠
+      ctx.fillStyle = '#8c4b30'; ctx.fillRect(8, 22, 5, 24); ctx.fillRect(82, 20, 5, 26);
+      ctx.fillStyle = '#e05a3c'; ctx.fillRect(0, 4, 28, 20); ctx.fillRect(68, 2, 28, 20);
+      ctx.fillStyle = '#f28c38'; ctx.fillRect(10, 8, 24, 14); ctx.fillRect(62, 8, 24, 14);
+      ctx.fillStyle = '#ffd066'; ctx.fillRect(18, 12, 12, 8); ctx.fillRect(66, 12, 12, 8);
+      // 秋日暖色地面 + 落叶小路
+      ctx.fillStyle = '#e8c48e'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#d9ae74'; ctx.fillRect(0, 58, W, 14);
+      [[34,26],[48,20],[56,30],[22,52],[42,60],[64,54],[78,63]].forEach(([lx,ly], i) => {
+        ctx.fillStyle = i % 2 === 0 ? '#e05238' : '#f59e38'; ctx.fillRect(lx, ly, 3, 2);
+      });
+    } else if (bgId === 'cloudsea') {
+      // 梦幻云海：粉紫-蜜桃-奶蓝天空 + 多层绵软蓬松云海
+      const bands = ['#c8c4f2', '#e4c8f0', '#f7d2e8', '#ffe2e8', '#fff0e6'];
+      bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
+      [[14,10],[32,6],[54,12],[76,8],[84,18]].forEach(([sx,sy]) => {
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(sx, sy, 2, 2);
+      });
+      // 蓬松多层云海
+      ctx.fillStyle = '#ffe8f2'; ctx.fillRect(0, 42, W, 30);
+      for (let x = -4; x < W + 6; x += 14) {
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(x, 38 + (x % 28 === 0 ? 0 : 2), 16, 8); ctx.fillRect(x + 3, 35, 10, 4);
+      }
+      ctx.fillStyle = '#fff7fb'; ctx.fillRect(0, 48, W, 24);
+      for (let x = 2; x < W + 6; x += 16) {
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(x, 54, 14, 7); ctx.fillRect(x + 3, 51, 8, 3);
+      }
+    } else if (bgId === 'wisteria') {
+      // 紫藤花廊：柔和浅蓝天 + 木质花架 + 垂落层层紫藤花穗 + 阳光石阶
+      ctx.fillStyle = '#e8f4ff'; ctx.fillRect(0, 0, W, 44);
+      ctx.fillStyle = '#9c6e4e'; ctx.fillRect(0, 0, W, 4); ctx.fillRect(4, 4, 4, 42); ctx.fillRect(88, 4, 4, 42);
+      // 绿叶顶棚
+      ctx.fillStyle = '#78bd7c'; ctx.fillRect(0, 2, W, 5);
+      // 垂落紫藤花穗
+      [12, 22, 34, 46, 58, 70, 80].forEach((wx, i) => {
+        const len = 14 + (i % 3) * 6;
+        ctx.fillStyle = '#b494e8'; ctx.fillRect(wx, 6, 4, len);
+        ctx.fillStyle = '#d4befa'; ctx.fillRect(wx + 1, 8, 2, len - 2);
+        ctx.fillStyle = '#efe6ff'; ctx.fillRect(wx + 1, 6 + len, 2, 3);
+      });
+      // 柔和石板地面 + 飘落紫花瓣
+      ctx.fillStyle = '#f2ede6'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#e3dad0'; ctx.fillRect(0, 56, W, 2); ctx.fillRect(0, 66, W, 2);
+      [[18,52],[40,60],[66,54],[78,63]].forEach(([px,py]) => { ctx.fillStyle = '#c8aef2'; ctx.fillRect(px, py, 2, 2); });
+    } else if (bgId === 'festival') {
+      // 夜市灯笼：青暮夜空 + 屋檐剪影 + 串串暖红鹅黄像素小灯笼 + 暖光石板街
+      ctx.fillStyle = '#232b4a'; ctx.fillRect(0, 0, W, 24);
+      ctx.fillStyle = '#303b61'; ctx.fillRect(0, 24, W, 20);
+      // 暖光屋檐剪影
+      ctx.fillStyle = '#1b2038'; ctx.fillRect(0, 26, 22, 20); ctx.fillRect(74, 24, 22, 22);
+      ctx.fillStyle = '#ffdb8a'; ctx.fillRect(5, 32, 8, 8); ctx.fillRect(82, 30, 8, 8);
+      // 串灯绳 + 暖色小灯笼
+      ctx.fillStyle = '#6b5446';
+      for (let x = 0; x < W; x++) {
+        const sy = Math.round(8 + Math.sin(x * Math.PI / W) * 6);
+        ctx.fillRect(x, sy, 1, 1);
+      }
+      [14, 30, 48, 66, 82].forEach((lx, i) => {
+        const ly = Math.round(9 + Math.sin(lx * Math.PI / W) * 6);
+        ctx.fillStyle = i % 2 === 0 ? 'rgba(255,130,110,0.3)' : 'rgba(255,220,110,0.3)';
+        ctx.fillRect(lx - 4, ly - 1, 10, 10);
+        ctx.fillStyle = i % 2 === 0 ? '#e85258' : '#ffbe48';
+        ctx.fillRect(lx - 2, ly + 1, 6, 6);
+        ctx.fillStyle = '#fff5cc'; ctx.fillRect(lx, ly + 2, 2, 4);
+      });
+      // 暖色石板街
+      ctx.fillStyle = '#4a465c'; ctx.fillRect(0, 44, W, 28);
+      ctx.fillStyle = '#3d394d'; ctx.fillRect(0, 56, W, 2); ctx.fillRect(0, 65, W, 2);
+    } else if (bgId === 'night') {
       const skyCols = ['#141a38', '#1a234a', '#212e5e', '#2a3a70', '#334882'];
       skyCols.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
-      // 柔和月晕 + 精致圆月
       ctx.fillStyle = 'rgba(255,244,186,0.16)'; ctx.fillRect(67, 5, 18, 18);
       ctx.fillStyle = 'rgba(255,244,186,0.28)'; ctx.fillRect(69, 7, 14, 14);
       ctx.fillStyle = '#fff6c2'; ctx.fillRect(72, 9, 8, 10); ctx.fillRect(71, 10, 10, 8);
       ctx.fillStyle = '#ffffff'; ctx.fillRect(73, 10, 4, 4);
-      // 繁星
       [[8,6],[19,11],[31,5],[44,13],[55,7],[62,16],[12,18],[38,20],[88,9],[91,20]].forEach(([sx,sy], i) => {
         ctx.fillStyle = i % 3 === 0 ? '#fff9d6' : '#c8e0ff';
         ctx.fillRect(sx, sy, 1, 1);
       });
-      // 远山剪影
       ctx.fillStyle = '#1b284d';
       for (let x = 0; x < W; x++) {
         const mh = Math.round(6 + Math.sin(x * 0.08) * 4 + Math.cos(x * 0.17) * 2);
         ctx.fillRect(x, 40 - mh, 1, mh + 6);
       }
-      // 左侧夏夜树冠剪影
       ctx.fillStyle = '#14213d';
       ctx.fillRect(0, 18, 14, 24); ctx.fillRect(14, 22, 7, 16); ctx.fillRect(3, 40, 4, 12);
-      // 夜色草坡
       ctx.fillStyle = '#203b4a'; ctx.fillRect(0, 44, W, 14);
       ctx.fillStyle = '#19303d'; ctx.fillRect(0, 58, W, 14);
-      // 发光萤火虫（外圈柔光 + 暖黄亮芯）
       [[14,34],[26,42],[44,30],[58,46],[76,38],[85,48],[34,54],[66,58],[11,56]].forEach(([fx,fy], i) => {
         ctx.fillStyle = i % 2 === 0 ? 'rgba(220,255,140,0.34)' : 'rgba(255,240,140,0.34)';
         ctx.fillRect(fx - 1, fy - 1, 4, 4);
@@ -28443,67 +28581,52 @@
         ctx.fillRect(fx, fy, 2, 2);
       });
     } else if (bgId === 'sunset') {
-      // 精修海边日落：绯紫-珊瑚粉-蜜桃橘-暖金晚霞 + 海面暖阳与碎金倒影 + 轻柔白浪与贝壳沙滩
       const bands = ['#8f6b9e', '#c97a96', '#eb9186', '#f7b282', '#ffd894', '#fff0b8'];
       bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 6, W, 7); });
-      // 晚霞细云
       ctx.fillStyle = 'rgba(255,244,224,0.55)';
       ctx.fillRect(10, 10, 22, 2); ctx.fillRect(14, 8, 12, 2);
       ctx.fillRect(64, 14, 20, 2); ctx.fillRect(68, 12, 11, 2);
-      // 海平线半轮暖阳 + 光晕
       ctx.fillStyle = 'rgba(255,235,170,0.35)'; ctx.fillRect(37, 22, 22, 14);
       ctx.fillStyle = '#ffe680'; ctx.fillRect(42, 25, 12, 11); ctx.fillRect(40, 27, 16, 9);
       ctx.fillStyle = '#fff8cf'; ctx.fillRect(44, 27, 8, 7);
-      // 渐层大海
       ctx.fillStyle = '#5a8ab8'; ctx.fillRect(0, 36, W, 8);
       ctx.fillStyle = '#6da0c9'; ctx.fillRect(0, 44, W, 7);
       ctx.fillStyle = '#85b8d9'; ctx.fillRect(0, 51, W, 4);
-      // 海面金色波光倒影
       [[43,38,10],[41,41,14],[44,44,8],[42,47,12],[45,50,6]].forEach(([rx,ry,rw]) => {
         ctx.fillStyle = '#ffe896'; ctx.fillRect(rx, ry, rw, 1);
       });
-      // 白浪泡沫
       ctx.fillStyle = '#ffffff';
       for (let x = 0; x < W; x += 6) {
         const wy = 54 + (x % 12 === 0 ? 0 : 1);
         ctx.fillRect(x, wy, 5, 2);
       }
-      // 暖色细软沙滩 + 小海星/贝壳
       ctx.fillStyle = '#f5d9ad'; ctx.fillRect(0, 56, W, 16);
       ctx.fillStyle = '#e8c492'; ctx.fillRect(0, 65, W, 7);
       ctx.fillStyle = '#ff9eb5'; ctx.fillRect(12, 62, 3, 2);
       ctx.fillStyle = '#fffdf7'; ctx.fillRect(80, 60, 3, 2);
     } else if (bgId === 'cafe') {
-      // 精修暖灯咖啡厅：奶油暖墙 + 木格拱窗外暮色 + 暖黄吊灯与光晕 + 盆栽绿植 + 木桌拿铁与草莓蛋糕
       ctx.fillStyle = '#f7ead8'; ctx.fillRect(0, 0, W, 46);
-      // 柔和竖条壁纸纹
       ctx.fillStyle = '#efe0cb';
       for (let x = 0; x < W; x += 8) ctx.fillRect(x, 0, 2, 46);
-      // 中央大木框窗（窗外柔和晴蓝暮色）
       ctx.fillStyle = '#8c5a3c'; ctx.fillRect(28, 6, 40, 28);
       ctx.fillStyle = '#c8dff2'; ctx.fillRect(31, 9, 34, 22);
       ctx.fillStyle = '#fce3c2'; ctx.fillRect(31, 22, 34, 9);
       ctx.fillStyle = '#8c5a3c'; ctx.fillRect(47, 9, 2, 22); ctx.fillRect(31, 19, 34, 2);
-      // 左右暖黄吊灯 + 柔光晕
       [14, 82].forEach(lx => {
         ctx.fillStyle = '#6b4228'; ctx.fillRect(lx, 0, 2, 8);
         ctx.fillStyle = 'rgba(255,224,130,0.26)'; ctx.fillRect(lx - 7, 8, 16, 12);
         ctx.fillStyle = '#d98a48'; ctx.fillRect(lx - 4, 8, 10, 4);
         ctx.fillStyle = '#fff2a8'; ctx.fillRect(lx - 2, 12, 6, 3);
       });
-      // 窗边小绿植
       ctx.fillStyle = '#c97854'; ctx.fillRect(8, 36, 7, 6);
       ctx.fillStyle = '#5eb06e'; ctx.fillRect(7, 30, 9, 6); ctx.fillRect(9, 28, 5, 3);
-      // 木质护墙板与暖色地板/桌面
       ctx.fillStyle = '#b57c52'; ctx.fillRect(0, 44, W, 3);
       ctx.fillStyle = '#d9a97c'; ctx.fillRect(0, 47, W, 25);
       ctx.fillStyle = '#c49164'; ctx.fillRect(0, 56, W, 2); ctx.fillRect(0, 65, W, 2);
-      // 桌角迷你拉花咖啡杯
       ctx.fillStyle = '#fffdf7'; ctx.fillRect(82, 39, 6, 5); ctx.fillRect(88, 40, 2, 3);
       ctx.fillStyle = '#8c5a3c'; ctx.fillRect(83, 39, 4, 1);
       ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.fillRect(84, 35, 1, 3); ctx.fillRect(86, 34, 1, 3);
     } else if (bgId === 'sakura') {
-      // 精修樱花树下
       ctx.fillStyle = '#fff2f7'; ctx.fillRect(0, 0, W, 24);
       ctx.fillStyle = '#ffe3ee'; ctx.fillRect(0, 24, W, 22);
       ctx.fillStyle = '#9c6652'; ctx.fillRect(0, 0, 8, 48); ctx.fillRect(8, 10, 22, 4); ctx.fillRect(78, 0, 18, 8);
@@ -28515,10 +28638,8 @@
         ctx.fillStyle = '#ff8eb2'; ctx.fillRect(px, py, 2, 2);
       });
     } else if (bgId === 'snow') {
-      // 精修雪地小屋
       ctx.fillStyle = '#b8d4f0'; ctx.fillRect(0, 0, W, 22);
       ctx.fillStyle = '#d4e8fa'; ctx.fillRect(0, 22, W, 22);
-      // 远景小雪松与暖窗木屋
       ctx.fillStyle = '#5c8a78'; ctx.fillRect(10, 26, 8, 18); ctx.fillRect(12, 20, 4, 6);
       ctx.fillStyle = '#8c5a3c'; ctx.fillRect(72, 26, 18, 18);
       ctx.fillStyle = '#fffdf9'; ctx.fillRect(70, 22, 22, 5); ctx.fillRect(74, 19, 14, 3);
@@ -28529,7 +28650,6 @@
         ctx.fillStyle = '#ffffff'; ctx.fillRect(sx, sy, 2, 2);
       });
     } else {
-      // 精修晴空草地
       ctx.fillStyle = '#bfe4ff'; ctx.fillRect(0, 0, W, 20);
       ctx.fillStyle = '#dcf0ff'; ctx.fillRect(0, 20, W, 24);
       ctx.fillStyle = '#ffffff';
@@ -28541,115 +28661,247 @@
         ctx.fillStyle = fc; ctx.fillRect(fx, fy, 2, 2);
       });
     }
-
-    if (opts.showHeart !== false) {
-      const mx = Math.round((x1 + x2) / 2) + 10;
-      const my = Math.max(6, Math.min(y1, y2) - 9);
-      ctx.fillStyle = '#ff5c8a';
-      ctx.fillRect(mx - 2, my, 2, 2); ctx.fillRect(mx + 2, my, 2, 2);
-      ctx.fillRect(mx - 3, my + 1, 8, 2); ctx.fillRect(mx - 2, my + 3, 6, 2); ctx.fillRect(mx, my + 5, 2, 1);
-    }
-    renderPupSpriteToCtx(ctx, hostLook, Math.round(x1), Math.round(y1), flip1, f1);
-    renderPupSpriteToCtx(ctx, guestLook, Math.round(x2), Math.round(y2), flip2, f2);
   };
 
-  const openDualPhotoModal = (savedPhoto = null) => {
+  const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr, opts = {}) => {
+    const ctx = cv.getContext('2d');
+    const W = 96, H = 72;
+    cv.width = W; cv.height = H;
+    ctx.imageSmoothingEnabled = false;
+    drawPolaroidBg(ctx, opts.bgId || 'meadow', W, H);
+
+    // 兼容新多狗数组 opts.dogs 与旧双狗字段
+    const dogs = Array.isArray(opts.dogs) && opts.dogs.length
+      ? opts.dogs
+      : [
+          { name: hostName, look: hostLook, pose: opts.pose1 || 'happy', x: typeof opts.x1 === 'number' ? opts.x1 : 16, y: typeof opts.y1 === 'number' ? opts.y1 : 34, flip: Boolean(opts.flip1) },
+          { name: guestName, look: guestLook, pose: opts.pose2 || 'happy', x: typeof opts.x2 === 'number' ? opts.x2 : 56, y: typeof opts.y2 === 'number' ? opts.y2 : 34, flip: opts.flip2 !== false },
+        ];
+
+    if (opts.showHeart !== false && dogs.length >= 2) {
+      const avgX = Math.round(dogs.reduce((a, d) => a + (d.x || 0), 0) / dogs.length) + 10;
+      const minY = Math.min(...dogs.map(d => d.y || 30));
+      const my = Math.max(4, minY - 6);
+      ctx.fillStyle = '#ff5c8a';
+      ctx.fillRect(avgX - 2, my, 2, 2); ctx.fillRect(avgX + 2, my, 2, 2);
+      ctx.fillRect(avgX - 3, my + 1, 8, 2); ctx.fillRect(avgX - 2, my + 3, 6, 2); ctx.fillRect(avgX, my + 5, 2, 1);
+    }
+
+    dogs.forEach(d => {
+      const fr = (POLAROID_DOG_POSES.find(p => p.id === (d.pose || 'happy')) || POLAROID_DOG_POSES[0]).frame;
+      renderPupSpriteToCtx(ctx, d.look || {}, Math.round(d.x || 0), Math.round(d.y || 0), Boolean(d.flip), fr);
+    });
+  };
+
+  const getHostLookSnap = () => ({
+    fur: config.puppyFur || '#fffdf7', ear: config.puppyEar || '#e2ae74',
+    collar: config.puppyCollar || '#d66565', outline: config.puppyOutline || '#3b2a22',
+    showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit || 'none',
+    accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, 2) : [],
+    comp: config.puppyCompanion || 'none', onesieShowEars: Boolean(config.puppyOnesieShowEars),
+  });
+
+  const openDualPhotoModal = (savedPhoto = null, preselectedDogs = null) => {
     const guest = config.guestPuppy;
-    if (!savedPhoto && !guest) return;
-    const hostLook = savedPhoto ? savedPhoto.hostLook : {
-      fur: config.puppyFur || '#fffdf7', ear: config.puppyEar || '#e2ae74',
-      collar: config.puppyCollar || '#d66565', outline: config.puppyOutline || '#3b2a22',
-      showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit || 'none',
-      accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, 2) : [],
-      comp: config.puppyCompanion || 'none', onesieShowEars: Boolean(config.puppyOnesieShowEars),
-    };
-    const hostName = savedPhoto ? savedPhoto.hostName : getPupName();
-    const guestName = savedPhoto ? savedPhoto.guestName : guest.name;
-    const guestLook = savedPhoto ? savedPhoto.guestLook : (guest.look || {});
+    if (!savedPhoto && !preselectedDogs) {
+      // 收集所有可选合照小狗：自家小狗 + 当前做客小狗 + 印章本里的朋友小狗
+      const cands = [{ id: 'host', name: getPupName(), look: getHostLookSnap(), defaultOn: true }];
+      if (guest) cands.push({ id: 'guest_now', name: guest.name, look: guest.look || {}, defaultOn: true });
+      const logs = Array.isArray(config.puppyVisitLog) ? config.puppyVisitLog : [];
+      logs.forEach((lg, idx) => {
+        if (!cands.some(c => c.name === lg.name)) {
+          cands.push({ id: `log_${idx}`, name: lg.name, look: lg.look || {}, defaultOn: false });
+        }
+      });
+      if (cands.length > 2) {
+        let selM = root.querySelector('#st-tb-photo-pick-modal');
+        if (!selM) {
+          selM = doc.createElement('div');
+          selM.id = 'st-tb-photo-pick-modal';
+          selM.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10029;pointer-events:auto;';
+          root.appendChild(selM);
+          selM.addEventListener('click', (e) => { if (e.target === selM) selM.style.display = 'none'; });
+        }
+        const checkedIds = new Set(cands.filter(c => c.defaultOn).map(c => c.id));
+        const renderPick = () => {
+          selM.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <span style="font-size:11.5px;font-weight:700;">选择一起拍合照的小狗 (1~4只)</span>
+              <button type="button" id="st-ppk-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+            </div>
+            <div id="st-ppk-list" style="display:flex;flex-wrap:wrap;gap:4px;max-height:140px;overflow-y:auto;margin-bottom:8px;"></div>
+            <button type="button" id="st-ppk-go" class="st-px-btn care" style="width:100%;">开始拍合照 (${checkedIds.size}只)</button>
+          </div>`;
+          selM.querySelector('#st-ppk-x')?.addEventListener('click', () => { selM.style.display = 'none'; });
+          const lEl = selM.querySelector('#st-ppk-list');
+          cands.forEach(c => {
+            const on = checkedIds.has(c.id);
+            const b = doc.createElement('button');
+            b.type = 'button';
+            b.className = `st-px-btn${on ? ' active' : ''}`;
+            b.style.cssText = 'height:24px;padding:0 7px;font-size:10px;';
+            b.textContent = `${on ? '✓ ' : ''}${c.name}`;
+            b.addEventListener('click', () => {
+              if (on) { if (checkedIds.size > 1) checkedIds.delete(c.id); }
+              else if (checkedIds.size < 4) checkedIds.add(c.id);
+              renderPick();
+            });
+            lEl.appendChild(b);
+          });
+          selM.querySelector('#st-ppk-go')?.addEventListener('click', () => {
+            const picked = cands.filter(c => checkedIds.has(c.id));
+            if (!picked.length) return;
+            selM.style.display = 'none';
+            openDualPhotoModal(null, picked);
+          });
+        };
+        renderPick();
+        selM.style.display = 'flex';
+        return;
+      }
+      preselectedDogs = cands;
+    }
+
     const d = new Date();
     const dateStr = savedPhoto ? savedPhoto.date : `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 
+    const initDogs = savedPhoto
+      ? (Array.isArray(savedPhoto.dogs) && savedPhoto.dogs.length
+          ? savedPhoto.dogs.map(x => ({ ...x }))
+          : [
+              { name: savedPhoto.hostName, look: savedPhoto.hostLook, pose: savedPhoto.pose1 || 'happy', x: savedPhoto.x1 ?? 16, y: savedPhoto.y1 ?? 34, flip: Boolean(savedPhoto.flip1) },
+              { name: savedPhoto.guestName, look: savedPhoto.guestLook, pose: savedPhoto.pose2 || 'happy', x: savedPhoto.x2 ?? 56, y: savedPhoto.y2 ?? 34, flip: savedPhoto.flip2 !== false },
+            ])
+      : preselectedDogs.map((c, idx) => {
+          const total = preselectedDogs.length;
+          const xPos = total === 1 ? 36 : Math.round(10 + idx * (56 / Math.max(1, total - 1)));
+          return { name: c.name, look: c.look, pose: 'happy', x: xPos, y: 34, flip: idx >= Math.ceil(total / 2) };
+        });
+
     const st = {
       bgId: savedPhoto?.bgId || 'meadow',
-      pose1: savedPhoto?.pose1 || 'happy',
-      pose2: savedPhoto?.pose2 || 'happy',
-      x1: typeof savedPhoto?.x1 === 'number' ? savedPhoto.x1 : 16,
-      y1: typeof savedPhoto?.y1 === 'number' ? savedPhoto.y1 : 34,
-      x2: typeof savedPhoto?.x2 === 'number' ? savedPhoto.x2 : 56,
-      y2: typeof savedPhoto?.y2 === 'number' ? savedPhoto.y2 : 34,
-      flip1: Boolean(savedPhoto?.flip1),
-      flip2: savedPhoto?.flip2 !== false,
+      dogs: initDogs,
       showHeart: savedPhoto?.showHeart !== false,
-      paperCol: savedPhoto?.paperCol || '#fffdf9',
-      borderCol: savedPhoto?.borderCol || '#5c4338',
+      paperCol: savedPhoto?.paperCol || '#ffffff',
+      borderCol: savedPhoto?.borderCol || '#d6ccc8',
       dots: savedPhoto?.dots !== false,
+      radius: typeof savedPhoto?.radius === 'number' ? savedPhoto.radius : 10,
     };
+    let activeDogIdx = 0;
 
-    let modal = root.querySelector('#st-tb-visit-photo-modal');
-    if (!modal) {
-      modal = doc.createElement('div');
-      modal.id = 'st-tb-visit-photo-modal';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:none;align-items:center;justify-content:center;z-index:10029;pointer-events:auto;';
-      root.appendChild(modal);
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    let winEl = root.querySelector('#st-tb-visit-photo-win');
+    if (!winEl) {
+      winEl = doc.createElement('div');
+      winEl.id = 'st-tb-visit-photo-win';
+      winEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:296px;max-height:78vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:#3b2a22;font-family:inherit;z-index:10029;display:none;flex-direction:column;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(winEl);
     }
 
     const getTextCol = (hex) => {
-      const [r, g, b] = hexToRgbBytes(hex, '#fffdf9');
+      const [r, g, b] = hexToRgbBytes(hex, '#ffffff');
       return (r * 0.299 + g * 0.587 + b * 0.114) < 130 ? '#fff6e0' : '#4a342a';
     };
 
-    const renderModal = () => {
+    const captionStr = st.dogs.map(x => x.name).join(' & ');
+
+    const renderWin = () => {
       const txtCol = getTextCol(st.paperCol);
       const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
       const dotBg = st.dots
-        ? `background-image:radial-gradient(circle, ${st.borderCol}33 2.5px, transparent 2.8px);background-size:16px 16px;`
+        ? `background-image:radial-gradient(circle, ${st.borderCol}44 2.5px, transparent 2.8px);background-size:16px 16px;`
         : '';
-      modal.innerHTML = `<div style="width:286px;background:var(--px-bg,#fff9fb);border:3px solid #3b2a22;box-shadow:5px 5px 0 rgba(59,42,34,0.3);padding:10px;color:#3b2a22;font-family:inherit;max-height:90vh;overflow-y:auto;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <span style="font-size:11.5px;font-weight:700;">双狗拍立得${savedPhoto ? '' : '（画布上可拖动两只小狗）'}</span>
+      const curDog = st.dogs[activeDogIdx] || st.dogs[0];
+      winEl.innerHTML = `<div id="st-vph-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;cursor:move;user-select:none;padding-bottom:3px;border-bottom:1px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
+          <span style="font-size:11.5px;font-weight:700;">像素拍立得${savedPhoto ? '' : '（画布内任意拖动小狗）'}</span>
           <button type="button" id="st-vph-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
         </div>
-        <div id="st-vph-card" style="background-color:${st.paperCol};${dotBg}border:3px solid ${st.borderCol};border-radius:8px;padding:8px 8px 10px;margin-bottom:7px;">
-          <canvas id="st-vph-cv" width="96" height="72" style="width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:2px solid ${st.borderCol};border-radius:4px;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
-          <div style="margin-top:6px;text-align:center;font-size:11.5px;font-weight:700;color:${txtCol};">${hostName} & ${guestName}</div>
-          <div style="text-align:center;font-size:9.5px;color:${subCol};">${dateStr}</div>
+        <div style="flex:1;overflow-y:auto;padding-right:2px;">
+          <div style="background-color:${st.paperCol};${dotBg}border:3px solid ${st.borderCol};border-radius:${st.radius}px;padding:8px 8px 10px;margin-bottom:7px;">
+            <canvas id="st-vph-cv" width="96" height="72" style="width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:2px solid ${st.borderCol};border-radius:${Math.max(0, st.radius - 4)}px;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
+            <div style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;color:${txtCol};">${captionStr}</div>
+            <div style="text-align:center;font-size:9.5px;color:${subCol};">${dateStr}</div>
+          </div>
+          ${savedPhoto ? '' : `
+            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景 (${POLAROID_BGS.length})</div>
+            <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+              <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+              <button type="button" id="st-vph-flip" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;flex-shrink:0;">翻转朝向</button>
+            </div>
+            <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">相纸、边框与圆角</div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
+              <label style="display:inline-flex;align-items:center;gap:2px;">相纸<input type="color" id="st-vph-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:2px;">边框<input type="color" id="st-vph-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-rad" min="0" max="22" value="${st.radius}" style="width:52px;" /><span>${st.radius}</span></label>
+              <button type="button" id="st-vph-dots" class="st-px-btn${st.dots ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9.5px;">圆点:${st.dots ? '开' : '关'}</button>
+              <button type="button" id="st-vph-heart" class="st-px-btn${st.showHeart ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9.5px;">爱心:${st.showHeart ? '开' : '关'}</button>
+            </div>
+            <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
+          `}
         </div>
-        ${savedPhoto ? '' : `
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景</div>
-          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-            <span style="font-size:9.5px;font-weight:700;">${hostName} 姿势</span>
-            <button type="button" id="st-vph-flip1" class="st-px-btn" style="height:18px;padding:0 5px;font-size:9px;">翻转朝向</button>
-          </div>
-          <div id="st-vph-p1" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-            <span style="font-size:9.5px;font-weight:700;">${guestName} 姿势</span>
-            <button type="button" id="st-vph-flip2" class="st-px-btn" style="height:18px;padding:0 5px;font-size:9px;">翻转朝向</button>
-          </div>
-          <div id="st-vph-p2" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">自定义相纸与边框</div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
-            <label style="display:inline-flex;align-items:center;gap:3px;">相纸<input type="color" id="st-vph-paper" value="${st.paperCol}" style="width:22px;height:20px;border:none;padding:0;background:none;" /></label>
-            <label style="display:inline-flex;align-items:center;gap:3px;">边框<input type="color" id="st-vph-bd" value="${st.borderCol}" style="width:22px;height:20px;border:none;padding:0;background:none;" /></label>
-            <button type="button" id="st-vph-dots" class="st-px-btn${st.dots ? ' active' : ''}" style="height:20px;padding:0 6px;font-size:9.5px;">圆圆波点:${st.dots ? '开' : '关'}</button>
-            <button type="button" id="st-vph-heart" class="st-px-btn${st.showHeart ? ' active' : ''}" style="height:20px;padding:0 6px;font-size:9.5px;">爱心:${st.showHeart ? '开' : '关'}</button>
-          </div>
-          <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
-        `}
-        <div style="display:flex;gap:5px;">
+        <div style="display:flex;gap:5px;padding-top:5px;flex-shrink:0;">
           ${savedPhoto ? '' : '<button type="button" id="st-vph-save" class="st-px-btn care" style="flex:1;">存入相册</button>'}
           <button type="button" id="st-vph-dl" class="st-px-btn active" style="flex:1;">下载图片</button>
         </div>
-      </div>`;
-      const cv = modal.querySelector('#st-vph-cv');
-      const redrawCv = () => drawDualPolaroidCanvas(cv, hostName, hostLook, guestName, guestLook, dateStr, st);
+        <div id="st-vph-rsz" class="st-gp-resize"></div>`;
+
+      const cv = winEl.querySelector('#st-vph-cv');
+      const redrawCv = () => drawDualPolaroidCanvas(cv, st.dogs[0]?.name || '', st.dogs[0]?.look || {}, st.dogs[1]?.name || '', st.dogs[1]?.look || {}, dateStr, st);
       redrawCv();
-      modal.querySelector('#st-vph-close')?.addEventListener('click', () => { modal.style.display = 'none'; });
+      winEl.querySelector('#st-vph-close')?.addEventListener('click', () => { winEl.style.display = 'none'; });
+
+      // 顶部拖动窗口
+      const head = winEl.querySelector('#st-vph-head');
+      if (head) {
+        head.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('button')) return;
+          e.preventDefault();
+          head.setPointerCapture(e.pointerId);
+          const rect = winEl.getBoundingClientRect();
+          winEl.style.transform = 'none';
+          winEl.style.left = `${Math.round(rect.left)}px`;
+          winEl.style.top = `${Math.round(rect.top)}px`;
+          const sx = e.clientX, sy = e.clientY, ox = rect.left, oy = rect.top;
+          const onM = (ev) => {
+            winEl.style.left = `${Math.round(clamp(ox + ev.clientX - sx, 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
+            winEl.style.top = `${Math.round(clamp(oy + ev.clientY - sy, 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
+          };
+          const onU = () => {
+            head.removeEventListener('pointermove', onM);
+            head.removeEventListener('pointerup', onU);
+          };
+          head.addEventListener('pointermove', onM);
+          head.addEventListener('pointerup', onU);
+        });
+      }
+      // 右下角完全隐形缩放手柄
+      const rsz = winEl.querySelector('#st-vph-rsz');
+      if (rsz) {
+        rsz.addEventListener('pointerdown', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          rsz.setPointerCapture(e.pointerId);
+          const rect = winEl.getBoundingClientRect();
+          winEl.style.transform = 'none';
+          winEl.style.left = `${Math.round(rect.left)}px`;
+          winEl.style.top = `${Math.round(rect.top)}px`;
+          const sx = e.clientX, sy = e.clientY, ow = rect.width, oh = rect.height;
+          const onM = (ev) => {
+            winEl.style.width = `${clamp(Math.round(ow + ev.clientX - sx), 240, 420)}px`;
+            winEl.style.maxHeight = `${clamp(Math.round(oh + ev.clientY - sy), 280, Math.round(win.innerHeight * 0.92))}px`;
+          };
+          const onU = () => {
+            rsz.removeEventListener('pointermove', onM);
+            rsz.removeEventListener('pointerup', onU);
+          };
+          rsz.addEventListener('pointermove', onM);
+          rsz.addEventListener('pointerup', onU);
+        });
+      }
 
       if (!savedPhoto) {
-        // 在画布上自由拖动两只小狗位置！
-        let dragWho = 0;
+        // 画布内无死角任意拖动每只小狗！
+        let dragIdx = -1;
         let dragOffX = 0, dragOffY = 0;
         const toCvCoord = (e) => {
           const r = cv.getBoundingClientRect();
@@ -28657,95 +28909,145 @@
         };
         cv.addEventListener('pointerdown', (e) => {
           const pt = toCvCoord(e);
-          const d1 = Math.hypot(pt.x - (st.x1 + 12), pt.y - (st.y1 + 14));
-          const d2 = Math.hypot(pt.x - (st.x2 + 12), pt.y - (st.y2 + 14));
-          if (Math.min(d1, d2) > 22) return;
-          dragWho = d1 <= d2 ? 1 : 2;
-          dragOffX = pt.x - (dragWho === 1 ? st.x1 : st.x2);
-          dragOffY = pt.y - (dragWho === 1 ? st.y1 : st.y2);
+          let bestIdx = -1, bestDist = 24;
+          st.dogs.forEach((dg, idx) => {
+            const dist = Math.hypot(pt.x - (dg.x + 12), pt.y - (dg.y + 15));
+            if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
+          });
+          if (bestIdx === -1) return;
+          dragIdx = bestIdx;
+          activeDogIdx = bestIdx;
+          dragOffX = pt.x - st.dogs[dragIdx].x;
+          dragOffY = pt.y - st.dogs[dragIdx].y;
           cv.setPointerCapture(e.pointerId);
           cv.style.cursor = 'grabbing';
         });
         cv.addEventListener('pointermove', (e) => {
-          if (!dragWho) return;
+          if (dragIdx < 0) return;
           const pt = toCvCoord(e);
-          const nx = clamp(Math.round(pt.x - dragOffX), -2, 74);
-          const ny = clamp(Math.round(pt.y - dragOffY), 4, 48);
-          if (dragWho === 1) { st.x1 = nx; st.y1 = ny; }
-          else { st.x2 = nx; st.y2 = ny; }
+          st.dogs[dragIdx].x = clamp(Math.round(pt.x - dragOffX), -8, 80);
+          st.dogs[dragIdx].y = clamp(Math.round(pt.y - dragOffY), -10, 56);
           redrawCv();
         });
-        const endCvDrag = () => { dragWho = 0; cv.style.cursor = 'grab'; };
+        const endCvDrag = () => {
+          if (dragIdx >= 0) { dragIdx = -1; cv.style.cursor = 'grab'; renderWin(); }
+        };
         cv.addEventListener('pointerup', endCvDrag);
         cv.addEventListener('pointercancel', endCvDrag);
 
-        const mkChips = (elId, arr, curVal, setter) => {
-          const box = modal.querySelector(elId);
-          arr.forEach(item => {
-            const b = doc.createElement('button');
-            b.type = 'button';
-            b.className = `st-px-btn${curVal === item.id ? ' active' : ''}`;
-            b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
-            b.textContent = item.name;
-            b.addEventListener('click', () => { setter(item.id); renderModal(); });
-            box.appendChild(b);
-          });
-        };
-        mkChips('#st-vph-bgs', POLAROID_BGS, st.bgId, v => { st.bgId = v; });
-        mkChips('#st-vph-p1', POLAROID_DOG_POSES, st.pose1, v => { st.pose1 = v; });
-        mkChips('#st-vph-p2', POLAROID_DOG_POSES, st.pose2, v => { st.pose2 = v; });
+        const bgBox = winEl.querySelector('#st-vph-bgs');
+        POLAROID_BGS.forEach(item => {
+          const b = doc.createElement('button');
+          b.type = 'button';
+          b.className = `st-px-btn${st.bgId === item.id ? ' active' : ''}`;
+          b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+          b.textContent = item.name;
+          b.addEventListener('click', () => { st.bgId = item.id; renderWin(); });
+          bgBox.appendChild(b);
+        });
 
-        const qBox = modal.querySelector('#st-vph-qcols');
+        const dtBox = winEl.querySelector('#st-vph-dog-tabs');
+        st.dogs.forEach((dg, idx) => {
+          const b = doc.createElement('button');
+          b.type = 'button';
+          b.className = `st-px-btn${activeDogIdx === idx ? ' active care' : ''}`;
+          b.style.cssText = 'height:20px;padding:0 6px;font-size:9.5px;';
+          b.textContent = dg.name;
+          b.addEventListener('click', () => { activeDogIdx = idx; renderWin(); });
+          dtBox.appendChild(b);
+        });
+
+        const pBox = winEl.querySelector('#st-vph-poses');
+        POLAROID_DOG_POSES.forEach(item => {
+          const b = doc.createElement('button');
+          b.type = 'button';
+          b.className = `st-px-btn${curDog && curDog.pose === item.id ? ' active' : ''}`;
+          b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+          b.textContent = item.name;
+          b.addEventListener('click', () => { if (curDog) curDog.pose = item.id; renderWin(); });
+          pBox.appendChild(b);
+        });
+
+        const qBox = winEl.querySelector('#st-vph-qcols');
         POLAROID_QUICK_COLORS.forEach(qc => {
           const b = doc.createElement('button');
           b.type = 'button';
           b.className = 'st-px-btn';
           b.style.cssText = `height:20px;padding:0 6px;font-size:9.5px;background:${qc.bg};border-color:${qc.bd};color:${getTextCol(qc.bg)};`;
           b.textContent = qc.name;
-          b.addEventListener('click', () => { st.paperCol = qc.bg; st.borderCol = qc.bd; renderModal(); });
+          b.addEventListener('click', () => { st.paperCol = qc.bg; st.borderCol = qc.bd; renderWin(); });
           qBox.appendChild(b);
         });
 
-        modal.querySelector('#st-vph-flip1')?.addEventListener('click', () => { st.flip1 = !st.flip1; redrawCv(); });
-        modal.querySelector('#st-vph-flip2')?.addEventListener('click', () => { st.flip2 = !st.flip2; redrawCv(); });
-        modal.querySelector('#st-vph-paper')?.addEventListener('input', (e) => { st.paperCol = e.target.value; renderModal(); });
-        modal.querySelector('#st-vph-bd')?.addEventListener('input', (e) => { st.borderCol = e.target.value; renderModal(); });
-        modal.querySelector('#st-vph-dots')?.addEventListener('click', () => { st.dots = !st.dots; renderModal(); });
-        modal.querySelector('#st-vph-heart')?.addEventListener('click', () => { st.showHeart = !st.showHeart; renderModal(); });
+        winEl.querySelector('#st-vph-flip')?.addEventListener('click', () => { if (curDog) { curDog.flip = !curDog.flip; redrawCv(); } });
+        winEl.querySelector('#st-vph-paper')?.addEventListener('input', (e) => { st.paperCol = e.target.value; renderWin(); });
+        winEl.querySelector('#st-vph-bd')?.addEventListener('input', (e) => { st.borderCol = e.target.value; renderWin(); });
+        winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; renderWin(); });
+        winEl.querySelector('#st-vph-dots')?.addEventListener('click', () => { st.dots = !st.dots; renderWin(); });
+        winEl.querySelector('#st-vph-heart')?.addEventListener('click', () => { st.showHeart = !st.showHeart; renderWin(); });
 
-        modal.querySelector('#st-vph-save')?.addEventListener('click', () => {
+        winEl.querySelector('#st-vph-save')?.addEventListener('click', () => {
           if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
-          config.puppyVisitPhotos.unshift({ id: `vp_${Date.now()}`, hostName, hostLook, guestName, guestLook, date: dateStr, ...st });
+          config.puppyVisitPhotos.unshift({
+            id: `vp_${Date.now()}`,
+            hostName: st.dogs[0]?.name || getPupName(),
+            hostLook: st.dogs[0]?.look || getHostLookSnap(),
+            guestName: st.dogs[1]?.name || '',
+            guestLook: st.dogs[1]?.look || {},
+            date: dateStr,
+            ...st,
+            dogs: st.dogs.map(x => ({ ...x })),
+          });
           if (config.puppyVisitPhotos.length > 64) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 64);
           saveConfig();
-          cmNotify('双狗合照已存入串门相册！');
+          cmNotify('合照已存入串门相册！');
           if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
-          modal.style.display = 'none';
+          winEl.style.display = 'none';
         });
       }
 
-      modal.querySelector('#st-vph-dl')?.addEventListener('click', () => {
+      winEl.querySelector('#st-vph-dl')?.addEventListener('click', () => {
         try {
           const exp = doc.createElement('canvas');
           exp.width = 360; exp.height = 330;
           const eg = exp.getContext('2d');
+          const rr = (x, y, w, h, r) => {
+            const rad = Math.max(0, Math.min(r, w / 2, h / 2));
+            eg.beginPath();
+            eg.moveTo(x + rad, y);
+            eg.arcTo(x + w, y, x + w, y + h, rad);
+            eg.arcTo(x + w, y + h, x, y + h, rad);
+            eg.arcTo(x, y + h, x, y, rad);
+            eg.arcTo(x, y, x + w, y, rad);
+            eg.closePath();
+          };
+          eg.save();
+          rr(3, 3, 354, 324, st.radius * 1.4);
+          eg.clip();
           eg.fillStyle = st.paperCol; eg.fillRect(0, 0, 360, 330);
           if (st.dots) {
-            eg.fillStyle = st.borderCol + '36';
+            eg.fillStyle = st.borderCol + '40';
             for (let dy = 12; dy < 324; dy += 20) {
               for (let dx = 12; dx < 354; dx += 20) {
                 eg.beginPath(); eg.arc(dx, dy, 3.2, 0, Math.PI * 2); eg.fill();
               }
             }
           }
-          eg.strokeStyle = st.borderCol; eg.lineWidth = 6; eg.strokeRect(3, 3, 354, 324);
           eg.imageSmoothingEnabled = false;
+          eg.save();
+          rr(20, 20, 320, 240, Math.max(0, (st.radius - 4) * 1.3));
+          eg.clip();
           eg.drawImage(cv, 20, 20, 320, 240);
-          eg.strokeStyle = st.borderCol; eg.lineWidth = 3; eg.strokeRect(20, 20, 320, 240);
-          eg.fillStyle = txtCol; eg.font = 'bold 17px sans-serif'; eg.textAlign = 'center';
-          eg.fillText(`${hostName} & ${guestName}`, 180, 290);
-          eg.fillStyle = subCol; eg.font = '12.5px sans-serif';
+          eg.restore();
+          rr(20, 20, 320, 240, Math.max(0, (st.radius - 4) * 1.3));
+          eg.strokeStyle = st.borderCol; eg.lineWidth = 3; eg.stroke();
+          eg.fillStyle = txtCol; eg.font = 'bold 16px sans-serif'; eg.textAlign = 'center';
+          eg.fillText(captionStr, 180, 290);
+          eg.fillStyle = subCol; eg.font = '12px sans-serif';
           eg.fillText(dateStr, 180, 312);
+          eg.restore();
+          rr(3, 3, 354, 324, st.radius * 1.4);
+          eg.strokeStyle = st.borderCol; eg.lineWidth = 5; eg.stroke();
           const a = doc.createElement('a');
           a.href = exp.toDataURL('image/png');
           a.download = `puppy_photo_${Date.now()}.png`;
@@ -28753,8 +29055,9 @@
         } catch (_) { cmNotify('导出失败，请长按截图保存'); }
       });
     };
-    renderModal();
-    modal.style.display = 'flex';
+    renderWin();
+    winEl.style.display = 'flex';
+    showOneTimePanelTip('seenPhotoPopTip', '拍立得小提示', '按住顶部标题栏可以移动拍立得面板，按住右下角边缘可以缩放大小；画布里的小狗也能直接按住拖到任意位置哦~');
   };
 
   const getCoopDaily = () => {
@@ -29051,7 +29354,7 @@
         <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
         <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
       </div>
-      <div id="st-gp-resize" class="st-gp-resize" title="拖动右下角缩放"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2 9L9 2M5 9L9 5M8 9L9 8" stroke="currentColor" stroke-width="1.3"/></svg></div>`;
+      <div id="st-gp-resize" class="st-gp-resize"></div>`;
 
     if (config.guestPopRect && config.guestPopRect.width) {
       guestPopEl.style.width = `${clamp(config.guestPopRect.width, 210, 340)}px`;
@@ -29065,6 +29368,9 @@
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
     guestPopEl.style.display = 'block';
+    if (typeof showOneTimePanelTip === 'function') {
+      showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
+    }
 
     // 拖动标题栏移动
     const head = guestPopEl.querySelector('#st-gp-drag-head');
@@ -29560,16 +29866,17 @@
         vbBody.style.display = 'grid';
         vbBody.style.gridTemplateColumns = '1fr 1fr';
         slice.forEach(ph => {
-          const pBg = ph.paperCol || '#fffdf9';
-          const pBd = ph.borderCol || '#5c4338';
+          const pBg = ph.paperCol || '#ffffff';
+          const pBd = ph.borderCol || '#d6ccc8';
+          const pRad = Math.min(10, Math.round((typeof ph.radius === 'number' ? ph.radius : 10) * 0.6));
           const card = doc.createElement('div');
-          card.style.cssText = `background:${pBg};border:1.5px solid ${pBd};border-radius:4px;padding:3px;cursor:pointer;text-align:center;`;
+          card.style.cssText = `background:${pBg};border:1.5px solid ${pBd};border-radius:${pRad}px;padding:3px;cursor:pointer;text-align:center;`;
           const cv = doc.createElement('canvas');
-          cv.style.cssText = `width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:1px solid ${pBd};`;
+          cv.style.cssText = `width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:1px solid ${pBd};border-radius:${Math.max(0, pRad - 2)}px;`;
           drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, ph);
           const cap = doc.createElement('div');
           cap.style.cssText = `font-size:9px;font-weight:700;margin-top:2px;color:${pBd};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
-          cap.textContent = `${ph.hostName}&${ph.guestName}`;
+          cap.textContent = Array.isArray(ph.dogs) && ph.dogs.length ? ph.dogs.map(x => x.name).join('&') : `${ph.hostName}&${ph.guestName}`;
           card.addEventListener('click', () => openDualPhotoModal(ph));
           card.append(cv, cap);
           vbBody.appendChild(card);
