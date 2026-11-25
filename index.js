@@ -13079,6 +13079,54 @@
     }
   };
 
+  let pendingSingleSwipeReroll = null;
+
+  const finalizePendingSingleSwipeReroll = async () => {
+    const pState = pendingSingleSwipeReroll;
+    if (!pState) return;
+    pendingSingleSwipeReroll = null;
+    try {
+      const ctx = getContext();
+      const chat = Array.isArray(ctx?.chat) ? ctx.chat : null;
+      const msg = chat ? chat[pState.mesId] : null;
+      if (!msg) return;
+
+      const curSwipes = Array.isArray(msg.swipes) ? msg.swipes : [];
+      const curSid = Number.isFinite(Number(msg.swipe_id)) ? Number(msg.swipe_id) : Math.max(0, curSwipes.length - 1);
+      const generatedText = String(curSwipes[curSid] ?? msg.mes ?? '').trim();
+      const newMeta = Array.isArray(msg.swipe_info) ? msg.swipe_info[curSid] : null;
+
+      if (generatedText && (curSwipes.length > pState.origSwipes.length || generatedText !== pState.origText)) {
+        pushUndoSnapshot(pState.mesId, pState.origText);
+        const restored = [...pState.origSwipes];
+        restored[pState.targetSwipeIdx] = generatedText;
+        msg.swipes = restored;
+        msg.swipe_id = pState.targetSwipeIdx;
+        msg.mes = generatedText;
+        if (pState.origSwipeInfo) {
+          const infoArr = [...pState.origSwipeInfo];
+          if (newMeta) infoArr[pState.targetSwipeIdx] = newMeta;
+          msg.swipe_info = infoArr;
+        }
+        await saveMessageRawText(pState.mesId, generatedText);
+        const mesEl = doc.querySelector(`#chat .mes[mesid="${pState.mesId}"]`);
+        const counterEl = mesEl?.querySelector('.swipes-counter');
+        if (counterEl) counterEl.textContent = `${pState.targetSwipeIdx + 1}/${restored.length}`;
+        showImmNotice(`第 ${pState.targetSwipeIdx + 1}/${restored.length} 条已单独roll完，其余分支已保留`);
+      } else {
+        msg.swipes = [...pState.origSwipes];
+        msg.swipe_id = pState.targetSwipeIdx;
+        msg.mes = pState.origText;
+        if (pState.origSwipeInfo) msg.swipe_info = [...pState.origSwipeInfo];
+        await saveMessageRawText(pState.mesId, pState.origText);
+        const mesEl = doc.querySelector(`#chat .mes[mesid="${pState.mesId}"]`);
+        const counterEl = mesEl?.querySelector('.swipes-counter');
+        if (counterEl) counterEl.textContent = `${pState.targetSwipeIdx + 1}/${pState.origSwipes.length}`;
+        showImmNotice('未生成新内容，已还原原分支');
+      }
+    } catch (_) {}
+  };
+
   const rerollFloorSwipeOnly = async (mesId, swipeIdx = null) => {
     const idx = Number(mesId);
     const ctx = getContext();
@@ -13089,9 +13137,47 @@
     const targetSwipeIdx = (typeof swipeIdx === 'number' && swipeIdx >= 0) ? swipeIdx : swInfo.curIdx;
     if (!Array.isArray(msg.swipes)) msg.swipes = [String(msg.mes || '')];
     const lockedSwipeIdx = clamp(targetSwipeIdx, 0, Math.max(0, msg.swipes.length - 1));
-    msg.swipe_id = lockedSwipeIdx;
-    const rawCur = String(msg.swipes[lockedSwipeIdx] ?? msg.mes ?? '');
+    const origSwipes = [...msg.swipes];
+    const origSwipeInfo = Array.isArray(msg.swipe_info) ? [...msg.swipe_info] : null;
+    const rawCur = String(origSwipes[lockedSwipeIdx] ?? msg.mes ?? '');
 
+    // 优先走酒馆原生流式生成流程（完整应用预设、世界书、角色卡与流式输出）
+    const isLastAiFloor = idx === chat.length - 1 && !msg.is_user;
+    if (isLastAiFloor) {
+      const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+      const swipeRightBtn = mesEl?.querySelector('.swipe_right');
+      if (swipeRightBtn || typeof ctx?.executeSlashCommands === 'function' || typeof win.Generate === 'function') {
+        pendingSingleSwipeReroll = {
+          mesId: idx,
+          targetSwipeIdx: lockedSwipeIdx,
+          origSwipes,
+          origSwipeInfo,
+          origText: rawCur,
+          startedAt: Date.now(),
+        };
+        msg.swipes = [...origSwipes];
+        msg.swipe_id = origSwipes.length - 1;
+        guardBypassUntil = Date.now() + 2000;
+        showImmNotice(`正在单独roll第 ${lockedSwipeIdx + 1}/${origSwipes.length} 条…`);
+        if (swipeRightBtn) {
+          swipeRightBtn.click();
+          return true;
+        }
+        try {
+          if (typeof win.Generate === 'function') {
+            win.Generate('swipe');
+            return true;
+          }
+          if (typeof ctx?.executeSlashCommands === 'function') {
+            ctx.executeSlashCommands('/swipe right');
+            return true;
+          }
+        } catch (_) {}
+        pendingSingleSwipeReroll = null;
+      }
+    }
+
+    // 非末尾楼层回退静默生成
     const genQuietFn = ctx?.generateQuietPrompt || win.generateQuietPrompt;
     const genRawFn = ctx?.generateRaw || win.generateRaw;
     if (typeof genQuietFn !== 'function' && typeof genRawFn !== 'function') {
@@ -13101,7 +13187,7 @@
 
     const chatEl = doc.querySelector('#chat');
     const prevScrollTop = chatEl ? chatEl.scrollTop : null;
-    showImmNotice(`正在单独roll第 ${lockedSwipeIdx + 1}/${msg.swipes.length} 条，请稍候…`);
+    showImmNotice(`正在单独roll第 ${lockedSwipeIdx + 1}/${origSwipes.length} 条，请稍候…`);
 
     try {
       const historyLines = chat.slice(Math.max(0, idx - 8), idx).map(m => {
@@ -13120,18 +13206,10 @@
 
       let res = '';
       if (typeof genQuietFn === 'function') {
-        try {
-          res = await genQuietFn({ quietPrompt: prompt, skipWIAN: false });
-        } catch (_) {
-          res = '';
-        }
+        try { res = await genQuietFn({ quietPrompt: prompt, skipWIAN: false }); } catch (_) { res = ''; }
       }
       if (!String(res || '').trim() && typeof genRawFn === 'function') {
-        try {
-          res = await genRawFn({ prompt });
-        } catch (_) {
-          try { res = await genRawFn(prompt); } catch (_e2) { res = ''; }
-        }
+        try { res = await genRawFn({ prompt }); } catch (_) { try { res = await genRawFn(prompt); } catch (_e2) { res = ''; } }
       }
       const cleanNew = String(res || '').trim();
       if (!cleanNew) {
@@ -40130,8 +40208,11 @@
         });
       }
       if (ctxEv.eventTypes.GENERATION_ENDED) {
-        ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_ENDED, () => {
+        ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_ENDED, async () => {
           restoreStRegexAfterStream(true);
+          if (typeof finalizePendingSingleSwipeReroll === 'function') {
+            await finalizePendingSingleSwipeReroll();
+          }
           if (typeof scrollToLastReplyTop === 'function') scrollToLastReplyTop();
           setTimeout(() => {
             try {
