@@ -9133,19 +9133,6 @@
           </div>
 
           <div class="st-tb-section">
-            <div class="st-tb-label"><span>楼层跳转</span></div>
-            <div class="st-tb-row">
-              <input class="st-tb-input" id="st-tb-jump-input" type="number" min="0" placeholder="输入楼层号 (mesid)" />
-              <button class="st-tb-btn" id="st-tb-jump-btn" type="button">跳转</button>
-            </div>
-            <div class="st-tb-grid-3">
-              <button class="st-tb-btn" id="st-tb-top-btn" type="button">回到顶部</button>
-              <button class="st-tb-btn" id="st-tb-last-user-btn" type="button">我上一句</button>
-              <button class="st-tb-btn" id="st-tb-bottom-btn" type="button">直达底部</button>
-            </div>
-          </div>
-
-          <div class="st-tb-section">
             <div class="st-tb-label">
               <span>聊天搜索</span>
               <span id="st-tb-search-status"></span>
@@ -13096,21 +13083,26 @@
     const idx = Number(mesId);
     const ctx = getContext();
     const chat = Array.isArray(ctx?.chat) ? ctx.chat : null;
-    if (!chat || !chat[idx]) { cmNotify('未找到该楼层内容'); return false; }
+    if (!chat || !chat[idx]) { showImmNotice('未找到该楼层内容'); return false; }
     const msg = chat[idx];
     const swInfo = getFloorSwipeInfo(idx);
     const targetSwipeIdx = (typeof swipeIdx === 'number' && swipeIdx >= 0) ? swipeIdx : swInfo.curIdx;
-    const rawCur = String(msg.mes || '');
+    if (!Array.isArray(msg.swipes)) msg.swipes = [String(msg.mes || '')];
+    const lockedSwipeIdx = clamp(targetSwipeIdx, 0, Math.max(0, msg.swipes.length - 1));
+    msg.swipe_id = lockedSwipeIdx;
+    const rawCur = String(msg.swipes[lockedSwipeIdx] ?? msg.mes ?? '');
 
-    const genRawFn = ctx?.generateRaw || win.generateRaw;
     const genQuietFn = ctx?.generateQuietPrompt || win.generateQuietPrompt;
-    if (typeof genRawFn !== 'function' && typeof genQuietFn !== 'function') {
-      cmNotify('当前酒馆环境不支持单独重roll本条分支');
+    const genRawFn = ctx?.generateRaw || win.generateRaw;
+    if (typeof genQuietFn !== 'function' && typeof genRawFn !== 'function') {
+      showImmNotice('当前酒馆环境不支持单独重roll本条分支');
       return false;
     }
 
-    cmNotify(`正在单独roll第 ${targetSwipeIdx + 1}/${swInfo.total} 条，请稍候…`);
-    pinScrollToFloor(idx);
+    const chatEl = doc.querySelector('#chat');
+    const prevScrollTop = chatEl ? chatEl.scrollTop : null;
+    showImmNotice(`正在单独roll第 ${lockedSwipeIdx + 1}/${msg.swipes.length} 条，请稍候…`);
+
     try {
       const historyLines = chat.slice(Math.max(0, idx - 8), idx).map(m => {
         const who = m.is_user ? (ctx.name1 || 'User') : (m.name || ctx.name2 || 'AI');
@@ -13127,24 +13119,42 @@
       ].filter(Boolean).join('\n\n');
 
       let res = '';
-      if (typeof genRawFn === 'function') {
-        res = await genRawFn({ prompt });
-      } else {
-        res = await genQuietFn({ quietPrompt: prompt });
+      if (typeof genQuietFn === 'function') {
+        try {
+          res = await genQuietFn({ quietPrompt: prompt, skipWIAN: false });
+        } catch (_) {
+          res = '';
+        }
+      }
+      if (!String(res || '').trim() && typeof genRawFn === 'function') {
+        try {
+          res = await genRawFn({ prompt });
+        } catch (_) {
+          try { res = await genRawFn(prompt); } catch (_e2) { res = ''; }
+        }
       }
       const cleanNew = String(res || '').trim();
-      if (!cleanNew) { cmNotify('重roll本条未返回内容，请稍后再试'); return false; }
+      if (!cleanNew) {
+        showImmNotice('单独roll未返回内容，请检查当前API连接后重试');
+        return false;
+      }
 
       pushUndoSnapshot(idx, rawCur);
-      if (!Array.isArray(msg.swipes)) msg.swipes = [rawCur];
-      msg.swipe_id = clamp(targetSwipeIdx, 0, Math.max(0, msg.swipes.length - 1));
-      msg.swipes[msg.swipe_id] = cleanNew;
+      msg.swipe_id = lockedSwipeIdx;
+      msg.swipes[lockedSwipeIdx] = cleanNew;
       await saveMessageRawText(idx, cleanNew);
-      pinScrollToFloor(idx);
-      cmNotify(`第 ${msg.swipe_id + 1}/${msg.swipes.length} 条已单独roll完！（其余分支保留，点“编辑本段 -> 撤销还原”可撤回）`);
+      const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"]`);
+      const counterEl = mesEl?.querySelector('.swipes-counter');
+      if (counterEl) counterEl.textContent = `${lockedSwipeIdx + 1}/${msg.swipes.length}`;
+      if (config.jumpToReplyTop) {
+        scrollToLastReplyTop();
+      } else if (chatEl && prevScrollTop !== null) {
+        setTimeout(() => { chatEl.scrollTop = prevScrollTop; }, 60);
+      }
+      showImmNotice(`第 ${lockedSwipeIdx + 1}/${msg.swipes.length} 条已单独roll完，其余分支已保留`);
       return true;
     } catch (err) {
-      cmNotify('roll本条失败：' + (err?.message || '请稍后重试'));
+      showImmNotice('roll本条失败：' + (err?.message || '请稍后重试'));
       return false;
     }
   };
@@ -46741,19 +46751,16 @@
     }
   };
 
-  jumpBtn.addEventListener('click', jumpToFloor);
-  jumpInput.addEventListener('keydown', (e) => {
+  if (jumpBtn) jumpBtn.addEventListener('click', jumpToFloor);
+  if (jumpInput) jumpInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') jumpToFloor();
   });
-
-  topBtn.addEventListener('click', () => {
+  if (topBtn) topBtn.addEventListener('click', () => {
     const chatEl = doc.getElementById('chat');
     if (chatEl) chatEl.scrollTo({ top: 0, behavior: 'smooth' });
   });
-
-  lastUserBtn.addEventListener('click', jumpToLastUserMsg);
-
-  bottomBtn.addEventListener('click', () => {
+  if (lastUserBtn) lastUserBtn.addEventListener('click', jumpToLastUserMsg);
+  if (bottomBtn) bottomBtn.addEventListener('click', () => {
     const chatEl = doc.getElementById('chat');
     if (chatEl) chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
   });
