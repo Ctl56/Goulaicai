@@ -3588,19 +3588,20 @@
       position: fixed;
       z-index: 10018;
       display: none;
+      grid-template-columns: repeat(3, minmax(0, auto));
       align-items: center;
       gap: 4px;
-      padding: 5px 6px;
-      border-radius: 8px;
+      padding: 6px;
+      border-radius: 9px;
       background: var(--tb-bg);
       color: var(--tb-text);
       border: 1px solid var(--tb-border);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.34);
       pointer-events: auto;
       max-width: calc(100vw - 16px);
-      flex-wrap: wrap;
     }
-    .st-se-float-bar.show { display: flex; }
+    .st-se-float-bar.show { display: grid; }
+    .st-se-float-bar .st-tb-mini-btn { text-align: center; justify-content: center; }
     .st-se-multi-bar {
       position: fixed;
       left: 50%;
@@ -4721,8 +4722,8 @@
     }
     #st-tb-confirm-mask.open { display: flex; }
     #st-tb-confirm-box {
-      width: 280px;
-      max-width: calc(100vw - 32px);
+      width: 320px;
+      max-width: calc(100vw - 24px);
       padding: 14px 14px 12px;
       border-radius: 10px;
       background: var(--tb-bg);
@@ -4740,7 +4741,7 @@
       color: var(--tb-sub);
       line-height: 1.55;
       margin-bottom: 12px;
-      max-height: 220px;
+      max-height: 280px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       padding-right: 4px;
@@ -8849,8 +8850,8 @@
         <div class="st-se-float-bar" id="st-se-float-bar">
       <button class="st-tb-mini-btn" id="st-se-act-copy" type="button">复制本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-multi" type="button">多选段落</button>
-      <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">改本层正文</button>
-      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff);">重roll本段</button>
+      <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">编辑本段</button>
+      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff);">roll本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del" type="button">删本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del-floor" type="button" style="color:#d9534f;">删整层</button>
     </div>
@@ -12711,7 +12712,7 @@
   const closeGuardConfirm = () => {
     pendingConfirmAction = null;
     pendingAltAction = null;
-    if (confirmAltBtn) confirmAltBtn.style.display = 'none';
+    if (confirmAltBtn) confirmAltBtn.style.setProperty('display', 'none', 'important');
     confirmMask.classList.remove('open');
     const sw = root.querySelector('#st-tb-confirm-skip-wrap');
     if (sw) sw.classList.remove('show');
@@ -12724,11 +12725,12 @@
     if (confirmAltBtn) {
       if (altOpts && typeof altOpts.onAlt === 'function') {
         pendingAltAction = altOpts.onAlt;
-        confirmAltBtn.textContent = altOpts.label || '整层重roll';
+        confirmAltBtn.textContent = altOpts.label || 'roll整层';
+        confirmAltBtn.style.removeProperty('display');
         confirmAltBtn.style.display = '';
       } else {
         pendingAltAction = null;
-        confirmAltBtn.style.display = 'none';
+        confirmAltBtn.style.setProperty('display', 'none', 'important');
       }
     }
     const box = root.querySelector('#st-tb-confirm-box');
@@ -13018,14 +13020,15 @@
     let paras = String(parsed.visibleText || '').split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean);
     if (paras.length < 2) paras = String(parsed.visibleText || '').split(/\n+/).map(s => s.trim()).filter(Boolean);
     if (paras.length < 2) return false;
+    const curParaNum = paras.length;
     openGuardConfirm(
-      '只重roll最后一段，还是整层重roll？',
-      `当前回复共有 ${paras.length} 段内容，直接重roll会覆盖整层。\n提示：可在「概览 → 局部重roll」或悬浮球「快捷功能 → 局部重roll」里随时关闭此提醒，也可双击任意段落单独重roll该段。`,
+      `仅roll当前所在段落（第 ${curParaNum} 段），还是roll整层？`,
+      `当前回复共有 ${paras.length} 段，当前所在段落为第 ${curParaNum} 段；直接roll整层会覆盖全部内容。\n提示：可在「概览 → 局部重roll」或悬浮球「快捷功能 → 局部重roll」中随时关闭，也可双击任意段落点「roll本段」。`,
       () => { triggerPartialLastParaReroll(lastIdx); },
-      '仅重roll最后一段',
+      `仅roll第 ${curParaNum} 段`,
       false,
       {
-        label: '整层重roll',
+        label: 'roll整层',
         onAlt: () => { triggerFullFloorReroll(regenBtn); },
       }
     );
