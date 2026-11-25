@@ -12994,15 +12994,23 @@
     );
   };
 
-  const scrollToLastReplyTop = () => {
+  let pendingJumpToReplyTopMesId = null;
+
+  const scrollToLastReplyTop = (forcedMesId = null) => {
     if (!config.jumpToReplyTop) return;
     try {
       const ctx = getContext();
       const chat = ctx?.chat;
       if (!Array.isArray(chat) || !chat.length) return;
-      const lastIdx = chat.length - 1;
+      const lastIdx = (typeof forcedMesId === 'number' && forcedMesId >= 0 && forcedMesId < chat.length)
+        ? forcedMesId
+        : (chat.length - 1);
       const lastMsg = chat[lastIdx];
       if (!lastMsg || lastMsg.is_user) return;
+      if (doc.hidden) {
+        pendingJumpToReplyTopMesId = lastIdx;
+        return;
+      }
       const doJump = (smooth) => {
         const chatEl = doc.querySelector('#chat');
         const mesEl = doc.querySelector(`#chat .mes[mesid="${lastIdx}"]`);
@@ -31619,6 +31627,9 @@
         <button type="button" id="st-gp-photo" class="st-px-btn active">拍合照</button>
         <button type="button" id="st-gp-name-tg" class="st-px-btn${hideName ? '' : ' active'}">${hideName ? '显示名字' : '隐藏名字'}</button>
       </div>
+      <div style="margin-bottom:4px;">
+        <button type="button" id="st-gp-update-look" class="st-px-btn" style="width:100%;">检测更新穿搭 / 气泡 / 足迹</button>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
         <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
         <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
@@ -31719,7 +31730,91 @@
       openGuestPop(guestId);
       if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
     });
+    guestPopEl.querySelector('#st-gp-update-look')?.addEventListener('click', () => {
+      guestPopEl.style.display = 'none';
+      openGuestLookUpdateModal(guestId);
+    });
     guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', () => dismissGuestPuppy(guestId));
+  };
+
+  const applyGuestLookFromParsed = (guest, parsed) => {
+    const oldL = guest.look || {};
+    const newL = parsed.look || {};
+    const changes = [];
+    if ((oldL.outfit || 'none') !== (newL.outfit || 'none')) changes.push('服装');
+    if (JSON.stringify(oldL.accs || []) !== JSON.stringify(newL.accs || []) || JSON.stringify(oldL.accOffsets || {}) !== JSON.stringify(newL.accOffsets || {})) changes.push('配饰');
+    if ((oldL.companion || 'none') !== (newL.companion || 'none')) changes.push('跟宠');
+    if ((oldL.bubbleSkin || 'bub_default') !== (newL.bubbleSkin || 'bub_default')) changes.push('气泡');
+    if ((oldL.walkTrail || 'trail_paw') !== (newL.walkTrail || 'trail_paw')) changes.push('足迹');
+    if ((oldL.fur || '') !== (newL.fur || '') || (oldL.ear || '') !== (newL.ear || '') || (oldL.collar || '') !== (newL.collar || '') || (oldL.outline || '') !== (newL.outline || '')) changes.push('毛色');
+    if (Boolean(oldL.showCollar !== false) !== Boolean(newL.showCollar !== false) || Boolean(oldL.onesieShowEars) !== Boolean(newL.onesieShowEars)) changes.push('细节');
+
+    guest.pers = parsed.pers || guest.pers || 'sleepyhead';
+    guest.look = newL;
+    if (parsed.msg) guest.msg = parsed.msg;
+    const rt = guestRuntimes.get(guest.id);
+    if (rt) {
+      rt.lastRenderKey = '';
+      rt.lastBubbleSkin = '';
+      drawSingleGuestScene(guest, rt);
+    }
+    saveConfig();
+    syncGuestDomNodes();
+    if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+    return changes;
+  };
+
+  const openGuestLookUpdateModal = async (guestId) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    if (!guest) return;
+    let clipText = '';
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+        const txt = await navigator.clipboard.readText();
+        if (txt && /GLC:/i.test(txt)) clipText = txt.trim();
+      }
+    } catch (_) {}
+
+    let mask = root.querySelector('#st-gp-upd-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-gp-upd-mask';
+      mask.style.cssText = 'position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,0.42);pointer-events:auto;z-index:9994;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    mask.innerHTML = `<div style="width:320px;max-width:calc(100vw - 24px);padding:14px 14px 12px;margin:0 auto;background:${pxBg};color:${pxFg};border:2px solid ${pxBd};box-shadow:0 6px 20px rgba(50,34,42,0.24);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="font-size:12.5px;font-weight:700;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">检测「${escapeHtmlSimple(guest.name)}」最新穿搭</div>
+      <div style="font-size:11px;line-height:1.5;margin-bottom:8px;opacity:0.9;">粘贴朋友发来的最新串门名片码（GLC:...），会自动检测服装、配饰、气泡和足迹是否有变化并立即换上：</div>
+      <textarea id="st-gp-upd-ta" class="st-px-ta" style="width:100%;height:72px;box-sizing:border-box;margin:0 0 10px 0;font-size:11px;" placeholder="粘贴最新 GLC:... 名片码">${escapeHtmlSimple(clipText)}</textarea>
+      <div style="display:flex;justify-content:flex-end;gap:6px;">
+        <button type="button" id="st-gp-upd-cancel" class="st-px-btn" style="height:24px;padding:0 12px;font-size:11px;">取消</button>
+        <button type="button" id="st-gp-upd-ok" class="st-px-btn active care" style="height:24px;padding:0 12px;font-size:11px;">检测并更新</button>
+      </div>
+    </div>`;
+    mask.style.display = 'flex';
+    const closeM = () => { mask.style.display = 'none'; };
+    mask.onclick = (e) => { if (e.target === mask) closeM(); };
+    mask.querySelector('#st-gp-upd-cancel')?.addEventListener('click', closeM);
+    mask.querySelector('#st-gp-upd-ok')?.addEventListener('click', () => {
+      const raw = String(mask.querySelector('#st-gp-upd-ta')?.value || '').trim();
+      const parsed = decodePupVisitCard(raw);
+      if (!parsed || parsed.isReturn) {
+        showImmNotice('名片码格式不正确，请粘贴朋友最新的 GLC 名片码');
+        return;
+      }
+      const changes = applyGuestLookFromParsed(guest, parsed);
+      closeM();
+      if (changes.length) {
+        showGuestBubbleById(guest.id, '换好新穿搭啦，是不是超好看~', 2600);
+        showImmNotice(`检测到「${guest.name}」变化：已更新 ${changes.join('、')}`);
+      } else {
+        showImmNotice(`「${guest.name}」的穿搭、气泡和足迹已是最新，没有检测到变化`);
+      }
+    });
   };
 
   const stepGuestPuppy = () => {
@@ -32124,7 +32219,7 @@
         gObj.msg = parsed.msg || '来找你们玩啦~';
         gObj.onDesktop = true;
         const rtOld = guestRuntimes.get(gObj.id);
-        if (rtOld) { rtOld.lastRenderKey = ''; rtOld.lastBubbleSkin = ''; }
+        if (rtOld) { rtOld.lastRenderKey = ''; rtOld.lastBubbleSkin = ''; drawSingleGuestScene(gObj, rtOld); }
       } else {
         if (curList.length >= 10) { cmNotify('桌面同时最多招待 10 位客人小狗哦，请先送客一位吧~'); return; }
         gObj = {
@@ -39517,6 +39612,14 @@
   doc.addEventListener('visibilitychange', () => {
     if (!doc.hidden) {
       stopTitleFlash();
+      if (pendingJumpToReplyTopMesId !== null) {
+        const jumpMid = pendingJumpToReplyTopMesId;
+        pendingJumpToReplyTopMesId = null;
+        if (typeof scrollToLastReplyTop === 'function') {
+          setTimeout(() => scrollToLastReplyTop(jumpMid), 140);
+          setTimeout(() => scrollToLastReplyTop(jumpMid), 560);
+        }
+      }
       if (pendingBgReturn && config.puppyEnabled) {
         pendingBgReturn = false;
         const curP = config.puppyPersonality || 'sleepyhead';
