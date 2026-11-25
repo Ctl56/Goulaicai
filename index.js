@@ -28433,6 +28433,9 @@
     guestLayerEl.appendChild(el);
     const canvas = el.querySelector('.st-tb-guest-puppy-canvas');
     const maxX = Math.max(16, win.innerWidth - 90);
+    const maxY = Math.max(40, win.innerHeight - 80);
+    const savedX = typeof guest.lastX === 'number' ? guest.lastX : (typeof guest.pinX === 'number' ? guest.pinX : null);
+    const savedY = typeof guest.lastY === 'number' ? guest.lastY : (typeof guest.pinY === 'number' ? guest.pinY : null);
     rt = {
       id: guest.id,
       el,
@@ -28442,8 +28445,8 @@
       bubbleTxt: el.querySelector('.st-tb-guest-bubble-txt'),
       bubFx: el.querySelector('.st-tb-guest-bub-fx'),
       tag: el.querySelector('.st-tb-guest-puppy-tag'),
-      x: (guest.pinned && typeof guest.pinX === 'number') ? guest.pinX : clamp(pup.x + 66 + idxHint * 58, 16, maxX),
-      y: (guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY(),
+      x: savedX !== null ? clamp(savedX, 8, maxX) : clamp(pup.x + 66 + idxHint * 58, 16, maxX),
+      y: savedY !== null ? clamp(savedY, 40, maxY) : defaultPupY(),
       dir: idxHint % 2 === 0 ? -1 : 1,
       state: 'idle',
       timer: randInt(90, 160),
@@ -28481,9 +28484,13 @@
       const moved = rt.drag.moved;
       rt.drag = null;
       el.classList.remove('dragging');
-      if (moved && guest.pinned) {
-        guest.pinX = Math.round(rt.x);
-        guest.pinY = Math.round(rt.y);
+      if (moved) {
+        guest.lastX = Math.round(rt.x);
+        guest.lastY = Math.round(rt.y);
+        if (guest.pinned) {
+          guest.pinX = guest.lastX;
+          guest.pinY = guest.lastY;
+        }
         saveConfig();
       }
       if (!moved) openGuestPop(guest.id);
@@ -28776,7 +28783,7 @@
 
   const POLAROID_BGS = [
     { id: 'meadow',      name: '晴空草地' },
-    { id: 'sakura',      name: '樱花林' },
+    { id: 'sakura',      name: '樱花林道' },
     { id: 'night',       name: '夏夜萤火' },
     { id: 'sunset',      name: '海边日落' },
     { id: 'cafe',        name: '暖灯咖啡' },
@@ -29433,63 +29440,88 @@
       pxDot(78, 35, 'rgba(255,255,255,0.75)', 1, 3); pxDot(81, 34, 'rgba(255,255,255,0.75)', 1, 3);
       pxBlob(67, 42, 4, 2, '#d98c3e'); pxBlob(67, 41, 3, 1, '#f5c270');
     } else if (bgId === 'sakura') {
-      // 全新重构「樱花林」：晴蓝粉霞天 + 远景绵延花海 + 中景远近层叠樱花树林 + 晨曦斜光 + 落樱林荫小道
+      // 精修「樱花林道」：晴蓝粉霞天 + 远景花海 + 中景柔化林木 + 树根入草的自然前景樱树 + 木长椅与复古路灯 + 繁花草丛小道
       ctx.fillStyle = '#bfe3ff'; ctx.fillRect(0, 0, W, 14);
       ctx.fillStyle = '#dff0ff'; ctx.fillRect(0, 14, W, 14);
       ctx.fillStyle = '#fff2f8'; ctx.fillRect(0, 28, W, 17);
       // 远景绵延淡粉樱花林海
-      ctx.fillStyle = '#f5c6da';
+      ctx.fillStyle = '#f5c4d8';
       for (let x = 0; x < W; x++) {
-        const mh = Math.round(10 + Math.sin(x * 0.09) * 3 + Math.cos(x * 0.21) * 2);
+        const mh = Math.round(12 + Math.sin(x * 0.085) * 4 + Math.cos(x * 0.19) * 2);
         ctx.fillRect(x, 45 - mh, 1, mh + 2);
       }
       ctx.fillStyle = '#fbdbe8';
       for (let x = 0; x < W; x++) {
-        const mh = Math.round(6 + Math.sin(x * 0.14 + 1.2) * 2.5);
+        const mh = Math.round(8 + Math.sin(x * 0.13 + 1.1) * 3);
         ctx.fillRect(x, 45 - mh, 1, mh + 1);
       }
-      // 中景左右透视樱花小树（带柔和花冠）
-      ctx.fillStyle = '#9c6f78'; ctx.fillRect(29, 28, 2, 18); ctx.fillRect(66, 28, 2, 18);
-      [[29,24,9,6],[36,26,7,5],[67,24,9,6],[60,26,7,5]].forEach(([bx,by,rx,ry]) => {
+      // 中景左右透视樱花小树（自然融入远景花林）
+      ctx.fillStyle = '#966b72';
+      ctx.fillRect(25, 29, 2, 17); ctx.fillRect(24, 44, 4, 2);
+      ctx.fillRect(70, 29, 2, 17); ctx.fillRect(69, 44, 4, 2);
+      [[24,25,11,6],[33,28,8,5],[72,25,11,6],[63,28,8,5]].forEach(([bx,by,rx,ry]) => {
         pxBlob(bx, by, rx, ry, '#f2a4c2');
-        pxBlob(bx, by - 1, Math.max(3, rx - 2), Math.max(2, ry - 2), '#ffd2e4');
+        pxBlob(bx, by - 1, Math.max(3, rx - 2), Math.max(2, ry - 2), '#ffd4e6');
       });
-      // 近景左右成林樱花树干与拱形枝干
-      [[6,1,4,16],[18,1,3,19],[77,-1,3,19],[89,-1,4,16]].forEach(([bx,lean,tw,topY]) => {
-        for (let y = topY; y < 49; y++) {
-          const ox = Math.round(bx + Math.sin((y - topY) * 0.09) * lean * 1.4);
-          ctx.fillStyle = '#6b403c'; ctx.fillRect(ox, y, tw, 1);
-          ctx.fillStyle = '#8c5954'; ctx.fillRect(ox + 1, y, 1, 1);
-        }
-      });
-      ctx.fillStyle = '#6b403c';
-      for (let i = 0; i < 14; i++) {
-        ctx.fillRect(9 + i, Math.round(20 - i * 0.5), 2, 2);
-        ctx.fillRect(86 - i, Math.round(20 - i * 0.5), 2, 2);
+      // 嫩绿春草与中央透视落樱小径（先画草地，再让前景树根自然扎进草坪与树影里！）
+      ctx.fillStyle = '#b0e096'; ctx.fillRect(0, 45, W, 14);
+      ctx.fillStyle = '#97cc7e'; ctx.fillRect(0, 59, W, 13);
+      pxBlob(10, 49, 10, 3, 'rgba(110,165,92,0.45)');
+      pxBlob(86, 49, 10, 3, 'rgba(110,165,92,0.45)');
+      for (let y = 45; y < H; y++) {
+        const t = (y - 45) / (H - 45);
+        const halfW = Math.round(6 + t * 21);
+        const cx = Math.round(48 + Math.sin(t * 2.2) * 3);
+        ctx.fillStyle = '#ffc9dd'; ctx.fillRect(cx - halfW - 2, y, 2, 1); ctx.fillRect(cx + halfW, y, 2, 1);
+        ctx.fillStyle = '#f7ebe4'; ctx.fillRect(cx - halfW, y, halfW * 2, 1);
+        if (y % 6 === 0) { ctx.fillStyle = '#efe0d8'; ctx.fillRect(cx - halfW + 3, y, Math.max(3, halfW - 4), 1); }
       }
-      // 繁茂环抱式樱花林树冠（四色柔和渐变，中间留晴空呼吸感）
-      [[6,8,12,8],[22,7,13,8],[36,10,9,6],[13,16,11,6],[90,8,12,8],[74,7,13,8],[60,10,9,6],[83,16,11,6],[48,2,10,4]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#eb86ab'));
-      [[5,7,10,7],[21,6,11,7],[35,9,7,5],[12,15,9,5],[89,7,10,7],[73,6,11,7],[59,9,7,5],[82,15,9,5],[48,2,8,3]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffb5cf'));
-      [[4,6,7,5],[20,5,8,5],[34,8,5,3],[88,6,7,5],[72,5,8,5],[58,8,5,3],[48,1,5,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffdce8'));
+      // 自然曲线微倾、底部树根微展的前景左右大樱树 + Y形分枝
+      const drawSakuraTrunk = (baseX, leanDir, topY, botY) => {
+        for (let y = topY; y < botY; y++) {
+          const t = (y - topY) / Math.max(1, botY - topY);
+          const ox = Math.round(baseX + Math.sin(t * 2.2) * leanDir * 2.2);
+          const w = t > 0.85 ? 5 : (t > 0.35 ? 4 : 3);
+          ctx.fillStyle = '#613834'; ctx.fillRect(ox, y, w, 1);
+          ctx.fillStyle = '#85534e'; ctx.fillRect(ox + 1, y, 1, 1);
+        }
+        ctx.fillStyle = '#613834'; ctx.fillRect(baseX - 1, botY - 2, 7, 2);
+        for (let i = 0; i < 16; i++) {
+          const bx = baseX + (leanDir > 0 ? 2 + i : 1 - i);
+          ctx.fillRect(bx, Math.round(topY + 5 - i * 0.45), 2, 2);
+        }
+        for (let i = 0; i < 10; i++) {
+          const bx = baseX + (leanDir > 0 ? 1 + i : 2 - i);
+          ctx.fillRect(bx, Math.round(topY + 10 - i * 0.25), 2, 1);
+        }
+      };
+      drawSakuraTrunk(7, 1, 15, 50);
+      drawSakuraTrunk(84, -1, 15, 50);
+      // 繁茂环抱式樱花林树冠（四色柔和渐变）
+      [[6,8,13,8],[22,7,14,8],[36,10,9,6],[14,17,11,6],[26,15,9,5],[90,8,13,8],[74,7,14,8],[60,10,9,6],[82,17,11,6],[70,15,9,5],[48,2,10,4]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#eb86ab'));
+      [[5,7,11,7],[21,6,12,7],[35,9,7,5],[13,16,9,5],[25,14,7,4],[89,7,11,7],[73,6,12,7],[59,9,7,5],[81,16,9,5],[69,14,7,4],[48,2,8,3]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffb5cf'));
+      [[4,6,8,5],[20,5,9,5],[34,8,5,3],[12,15,6,3],[88,6,8,5],[72,5,9,5],[58,8,5,3],[80,15,6,3],[48,1,5,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffdce8'));
       [[19,4,4,2],[73,4,4,2],[6,5,3,2],[89,5,3,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#fff5f9'));
-      // 透过樱花林倾泻的温柔斜阳微光
+      // 温柔晨曦斜光
       for (let i = 0; i < 36; i++) {
         ctx.fillStyle = 'rgba(255,252,240,0.18)'; ctx.fillRect(42 + Math.floor(i * 0.35), 9 + i, 5, 1);
         ctx.fillStyle = 'rgba(255,252,240,0.13)'; ctx.fillRect(52 + Math.floor(i * 0.35), 11 + i, 3, 1);
       }
-      // 嫩绿春草与中央透视落樱小径
-      ctx.fillStyle = '#b0e096'; ctx.fillRect(0, 45, W, 14);
-      ctx.fillStyle = '#97cc7e'; ctx.fillRect(0, 59, W, 13);
-      for (let y = 45; y < H; y++) {
-        const t = (y - 45) / (H - 45);
-        const halfW = Math.round(6 + t * 22);
-        const cx = Math.round(48 + Math.sin(t * 2.2) * 3);
-        ctx.fillStyle = '#ffd1e2'; ctx.fillRect(cx - halfW - 2, y, 2, 1); ctx.fillRect(cx + halfW, y, 2, 1);
-        ctx.fillStyle = '#f7ebe4'; ctx.fillRect(cx - halfW, y, halfW * 2, 1);
-        if (y % 6 === 0) { ctx.fillStyle = '#efe0d8'; ctx.fillRect(cx - halfW + 3, y, Math.max(3, halfW - 4), 1); }
-      }
-      // 飘落樱花瓣与草地花瓣点缀
-      [[38,18,'#ffb5cf'],[46,14,'#ffffff'],[55,20,'#ff94ba'],[42,27,'#ffdce8'],[51,31,'#ffb5cf'],[31,34,'#ffffff'],[63,34,'#ffb5cf'],[48,38,'#ff94ba'],[12,52,'#ffb5cf'],[22,60,'#ffdce8'],[16,65,'#ff94ba'],[80,53,'#ffb5cf'],[74,62,'#ffdce8'],[86,66,'#ff94ba'],[44,54,'#ffb5cf'],[54,62,'#ff94ba'],[49,49,'#ffdce8'],[36,64,'#ffffff']].forEach(([px,py,pc]) => {
+      // 丰富前景：左侧落樱木长椅 + 右侧复古暖光公园路灯 + 底部四角鲜花灌木丛
+      ctx.fillStyle = '#9e6846'; ctx.fillRect(14, 52, 16, 2);
+      ctx.fillStyle = '#b57b56'; ctx.fillRect(14, 55, 16, 2);
+      ctx.fillStyle = '#6e4229'; ctx.fillRect(15, 54, 2, 6); ctx.fillRect(27, 54, 2, 6);
+      pxDot(16, 52, '#ffb5cf', 3, 1);
+      ctx.fillStyle = '#695c61'; ctx.fillRect(76, 36, 2, 22);
+      ctx.fillStyle = '#54484d'; ctx.fillRect(75, 56, 4, 2); ctx.fillRect(74, 32, 6, 1);
+      pxBlob(77, 35, 4, 4, 'rgba(255,244,186,0.35)');
+      ctx.fillStyle = '#fff6c8'; ctx.fillRect(75, 33, 4, 4);
+      [[3,64,9,6],[12,68,8,5],[93,64,9,6],[84,68,8,5]].forEach(([bx,by,rx,ry]) => {
+        pxBlob(bx, by, rx, ry, '#72b868');
+        pxBlob(bx, by - 1, Math.max(3, rx - 2), Math.max(2, ry - 2), '#8fd482');
+      });
+      // 前景小雏菊与满地飘落樱花瓣
+      [[5,62,'#ffb5cf'],[10,66,'#ffffff'],[18,65,'#ffe885'],[24,62,'#ffb5cf'],[89,61,'#ffb5cf'],[83,66,'#ffffff'],[75,64,'#ffe885'],[70,60,'#ffdce8'],[11,57,'#ffdce8'],[80,55,'#ffb5cf'],[34,63,'#ffb5cf'],[62,65,'#ffdce8'],[44,54,'#ffb5cf'],[53,61,'#ff94ba'],[49,49,'#ffdce8'],[41,66,'#ffffff'],[38,18,'#ffb5cf'],[46,14,'#ffffff'],[55,20,'#ff94ba'],[42,27,'#ffdce8'],[51,31,'#ffb5cf'],[34,36,'#ffffff'],[62,35,'#ffb5cf'],[48,38,'#ff94ba']].forEach(([px,py,pc]) => {
         pxDot(px, py, pc, 2, 1);
         if ((px + py) % 3 === 0) pxDot(px + 1, py + 1, pc, 1, 1);
       });
@@ -30647,7 +30679,7 @@
       const rt = guestRuntimes.get(guest.id);
       if (!rt || rt.drag) return;
       if (!config.puppyEnabled || guest.onDesktop === false) { rt.el.classList.remove('active'); return; }
-      if (!rt.y) rt.y = (guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY();
+      if (!rt.y) rt.y = typeof guest.lastY === 'number' ? clamp(guest.lastY, 40, Math.max(40, win.innerHeight - 80)) : ((guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY());
       rt.tick += 1;
       rt.timer -= 1;
 
@@ -30690,6 +30722,12 @@
       }
 
       if (rt.timer <= 0) {
+        const rxSave = Math.round(rt.x), rySave = Math.round(rt.y || defaultPupY());
+        if (typeof guest.lastX !== 'number' || typeof guest.lastY !== 'number' || Math.hypot(rxSave - guest.lastX, rySave - guest.lastY) > 6) {
+          guest.lastX = rxSave;
+          guest.lastY = rySave;
+          saveConfig();
+        }
         if (rt.talkingUntil && now < rt.talkingUntil) {
           rt.timer = 24;
           drawSingleGuestScene(guest, rt);
