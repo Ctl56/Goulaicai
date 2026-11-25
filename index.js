@@ -21837,6 +21837,11 @@
     accs: Array.isArray(config.puppyAccs) ? [...config.puppyAccs] : [],
     comp: config.puppyCompanion || 'none',
     accOffsets: config.puppyAccOffsets ? JSON.parse(JSON.stringify(config.puppyAccOffsets)) : {},
+    fur: config.puppyFur || '#fffdf7',
+    ear: config.puppyEar || '#e2ae74',
+    collar: config.puppyCollar || '#d66565',
+    outline: config.puppyOutline || '#3b2a22',
+    showCollar: config.puppyShowCollar !== false,
   });
   const ensureWardDraft = () => {
     if (!wardDraft) wardDraft = getWardrobeCurrentLook();
@@ -21849,7 +21854,12 @@
     return wardDraft.outfit !== cur.outfit
       || wardDraft.comp !== cur.comp
       || JSON.stringify(wardDraft.accs) !== JSON.stringify(cur.accs)
-      || JSON.stringify(wardDraft.accOffsets || {}) !== JSON.stringify(cur.accOffsets || {});
+      || JSON.stringify(wardDraft.accOffsets || {}) !== JSON.stringify(cur.accOffsets || {})
+      || (wardDraft.fur && wardDraft.fur !== cur.fur)
+      || (wardDraft.ear && wardDraft.ear !== cur.ear)
+      || (wardDraft.collar && wardDraft.collar !== cur.collar)
+      || (wardDraft.outline && wardDraft.outline !== cur.outline)
+      || (typeof wardDraft.showCollar === 'boolean' && wardDraft.showCollar !== cur.showCollar);
   };
   const applyWardDraftToPuppy = () => {
     if (!wardDraft) return;
@@ -21857,6 +21867,11 @@
     config.puppyAccs = Array.isArray(wardDraft.accs) ? wardDraft.accs.slice(0, 3) : [];
     config.puppyCompanion = wardDraft.comp || 'none';
     config.puppyAccOffsets = wardDraft.accOffsets ? JSON.parse(JSON.stringify(wardDraft.accOffsets)) : {};
+    if (wardDraft.fur) config.puppyFur = wardDraft.fur;
+    if (wardDraft.ear) config.puppyEar = wardDraft.ear;
+    if (wardDraft.collar) config.puppyCollar = wardDraft.collar;
+    if (wardDraft.outline) config.puppyOutline = wardDraft.outline;
+    if (typeof wardDraft.showCollar === 'boolean') config.puppyShowCollar = wardDraft.showCollar;
     wardDraft = null;
     pup._lastRenderKey = '';
     saveConfig();
@@ -21888,7 +21903,7 @@
       pCtx.setTransform(10, 0, 0, 10, 0, 0);
       pCtx.imageSmoothingEnabled = false;
       pCtx.clearRect(0, 0, 24, 24);
-      const pal = getPupPalette({ fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline, showCollar: config.puppyShowCollar !== false });
+      const pal = getPupPalette({ fur: wd.fur || config.puppyFur, ear: wd.ear || config.puppyEar, collar: wd.collar || config.puppyCollar, outline: wd.outline || config.puppyOutline, showCollar: typeof wd.showCollar === 'boolean' ? wd.showCollar : (config.puppyShowCollar !== false) });
       const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
       const grid = PUP_SPRITES.idle1;
       for (let y = 0; y < grid.length; y++) {
@@ -22260,9 +22275,17 @@
           delB.textContent = '×';
           delB.title = '删除此配方';
           delB.addEventListener('click', () => {
-            config.puppyOutfitPresets.splice(i, 1);
-            saveConfig();
-            renderPupWardrobe();
+            openGuardConfirm(
+              `删除配方「${saved?.name || `配方${i + 1}`}」？`,
+              '确认删除这套已保存的装扮配方吗？',
+              () => {
+                config.puppyOutfitPresets.splice(i, 1);
+                saveConfig();
+                renderPupWardrobe();
+              },
+              '确认删除',
+              true
+            );
           });
           topR.appendChild(delB);
         }
@@ -22274,21 +22297,22 @@
         saveB.className = 'st-px-btn';
         saveB.textContent = '存';
         saveB.addEventListener('click', () => {
+          const dNow = ensureWardDraft();
           config.puppyOutfitPresets[i] = {
             name: saved?.name || `配方${i + 1}`,
-            outfit: config.puppyOutfit,
-            accs: [...(config.puppyAccs || [])],
-            comp: config.puppyCompanion || 'none',
-            fur: config.puppyFur,
-            ear: config.puppyEar,
-            collar: config.puppyCollar,
-            outline: config.puppyOutline || '#3b2a22',
-            showCollar: config.puppyShowCollar !== false,
+            outfit: dNow.outfit || 'none',
+            accs: [...(dNow.accs || [])],
+            comp: dNow.comp || 'none',
+            fur: dNow.fur || config.puppyFur,
+            ear: dNow.ear || config.puppyEar,
+            collar: dNow.collar || config.puppyCollar,
+            outline: dNow.outline || config.puppyOutline || '#3b2a22',
+            showCollar: typeof dNow.showCollar === 'boolean' ? dNow.showCollar : (config.puppyShowCollar !== false),
           };
           saveConfig();
           renderPupWardrobe();
           checkPupAchievements();
-          showPuppyBubble(`已存入【${config.puppyOutfitPresets[i].name}】!`, 1500);
+          showPuppyBubble(`已把当前预览存入【${config.puppyOutfitPresets[i].name}】!`, 1500);
         });
         const wearB = doc.createElement('button');
         wearB.type = 'button';
@@ -22297,18 +22321,16 @@
         wearB.disabled = !saved;
         wearB.addEventListener('click', () => {
           if (!saved) return;
-          config.puppyOutfit = saved.outfit || 'none';
-          config.puppyAccs = Array.isArray(saved.accs) ? saved.accs.slice(0, 3) : [];
-          config.puppyCompanion = saved.comp || 'none';
-          if (saved.fur) config.puppyFur = saved.fur;
-          if (saved.ear) config.puppyEar = saved.ear;
-          if (saved.collar) config.puppyCollar = saved.collar;
-          if (saved.outline) config.puppyOutline = saved.outline;
-          config.puppyShowCollar = saved.showCollar !== false;
-          saveConfig();
-          syncPuppyBagUI();
-          drawPuppyScene();
-          showPuppyBubble(`一键换上【${saved.name || `配方${i + 1}`}】!`, 1600);
+          const d = ensureWardDraft();
+          d.outfit = saved.outfit || 'none';
+          d.accs = Array.isArray(saved.accs) ? saved.accs.slice(0, 3) : [];
+          d.comp = saved.comp || 'none';
+          d.fur = saved.fur || config.puppyFur;
+          d.ear = saved.ear || config.puppyEar;
+          d.collar = saved.collar || config.puppyCollar;
+          d.outline = saved.outline || config.puppyOutline || '#3b2a22';
+          d.showCollar = saved.showCollar !== false;
+          renderPupWardrobe();
         });
         const nameB = doc.createElement('button');
         nameB.type = 'button';
