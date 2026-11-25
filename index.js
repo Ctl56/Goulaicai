@@ -2854,6 +2854,7 @@
     keepAlive: false,
     swipeGuard: false,
     partialRerollLastPara: true,
+    jumpToReplyTop: false,
     keepAliveMode: 'strong', // 'strong' | 'light'
     fontSize: '',
     lineHeight: '',
@@ -4722,35 +4723,81 @@
     }
     #st-tb-confirm-mask.open { display: flex; }
     #st-tb-confirm-box {
-      width: 320px;
+      width: 324px;
       max-width: calc(100vw - 24px);
-      padding: 14px 14px 12px;
+      padding: 14px 14px 12px !important;
+      margin: 0 auto !important;
       border-radius: 10px;
       background: var(--tb-bg);
       color: var(--tb-text);
       border: 1px solid var(--tb-border);
-      box-sizing: border-box;
+      box-sizing: border-box !important;
     }
     .st-tb-confirm-title {
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 6px;
+      margin: 0 0 6px 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
     }
     .st-tb-confirm-desc {
+      font-size: 11.5px;
+      color: var(--tb-sub);
+      line-height: 1.55;
+      margin: 0 0 10px 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      white-space: pre-line;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      box-sizing: border-box !important;
+    }
+    .st-tb-confirm-warn {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e05252;
+      line-height: 1.45;
+    }
+    .st-tb-confirm-preview-wrap {
+      display: none;
+      width: 100% !important;
+      margin: 12px 0 10px 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .st-tb-confirm-preview-wrap.show {
+      display: block;
+    }
+    .st-tb-confirm-preview-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--tb-text);
+      margin: 0 0 6px 0 !important;
+      padding: 0 !important;
+    }
+    .st-tb-confirm-preview {
+      width: 100% !important;
+      max-height: 200px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 9px 10px !important;
+      margin: 0 !important;
+      border-radius: 7px;
+      border: 1px solid var(--tb-border);
+      background: var(--tb-surface);
       font-size: 11px;
       color: var(--tb-sub);
       line-height: 1.55;
-      margin: 0 0 12px 0;
-      padding: 0;
-      max-height: 280px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
       white-space: pre-line;
       word-break: break-word;
-      box-sizing: border-box;
+      overflow-wrap: anywhere;
+      box-sizing: border-box !important;
     }
-    .st-tb-confirm-desc::-webkit-scrollbar { width: 3px; }
-    .st-tb-confirm-desc::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.32); border-radius: 3px; }
+    .st-tb-confirm-preview::-webkit-scrollbar { width: 0; height: 0; display: none; }
     .st-tb-confirm-actions {
       display: flex;
       justify-content: flex-end;
@@ -7954,6 +8001,10 @@
       <div id="st-tb-confirm-box">
         <div class="st-tb-confirm-title" id="st-tb-confirm-title">确认重新生成？</div>
         <div class="st-tb-confirm-desc" id="st-tb-confirm-desc">此操作将调用 API 生成新的回复内容。</div>
+        <div class="st-tb-confirm-preview-wrap" id="st-tb-confirm-preview-wrap">
+          <div class="st-tb-confirm-preview-label" id="st-tb-confirm-preview-label">可见内容预览：</div>
+          <div class="st-tb-confirm-preview" id="st-tb-confirm-preview"></div>
+        </div>
         <div id="st-tb-confirm-skip-wrap">
           <label class="st-tb-check"><input type="checkbox" id="st-tb-confirm-skip-chk" /><span>下次不再提醒</span></label>
           <div id="st-tb-confirm-skip-note">勾选后将不再弹出此提醒，之后可在「外观」页的字号设置里重新开启。</div>
@@ -8996,8 +9047,9 @@
               <button class="st-tb-btn" id="st-tb-keepalive-btn" type="button" title="切后台五六分钟以上也持续保活，切回自动同步">后台保活：关</button>
               <button class="st-tb-btn" id="st-tb-guard-btn" type="button" title="拦截右滑新生成与重新生成，确认后再调用API">防手滑：关</button>
             </div>
-            <div style="margin-top:6px;">
-              <button class="st-tb-btn" id="st-tb-partial-reroll-btn" type="button" style="width:100%;" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll（保留前条）：开</button>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;">
+              <button class="st-tb-btn" id="st-tb-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
+              <button class="st-tb-btn" id="st-tb-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
             </div>
             <div class="st-tb-tip" id="st-tb-keepalive-tip" style="display:none;"></div>
           </div>
@@ -9157,6 +9209,13 @@
 
         <!-- 聊天管理（含聊天文件与一键打码） -->
         <div class="st-tb-pane" data-pane="chats">
+          <div class="st-tb-section">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+              <button class="st-tb-btn" id="st-tb-chat-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
+              <button class="st-tb-btn" id="st-tb-chat-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
+            </div>
+          </div>
+
           <div class="st-tb-section">
             <div class="st-tb-label">
               <span>正文快捷编辑与复制</span>
@@ -9745,10 +9804,16 @@
   const confirmMask = root.querySelector('#st-tb-confirm-mask');
   const confirmTitleEl = root.querySelector('#st-tb-confirm-title');
   const confirmDescEl = root.querySelector('#st-tb-confirm-desc');
+  const confirmPreviewWrap = root.querySelector('#st-tb-confirm-preview-wrap');
+  const confirmPreviewLabel = root.querySelector('#st-tb-confirm-preview-label');
+  const confirmPreviewEl = root.querySelector('#st-tb-confirm-preview');
   const confirmCancelBtn = root.querySelector('#st-tb-confirm-cancel');
   const confirmAltBtn = root.querySelector('#st-tb-confirm-alt');
   const confirmOkBtn = root.querySelector('#st-tb-confirm-ok');
   const partialRerollBtn = root.querySelector('#st-tb-partial-reroll-btn');
+  const jumpTopBtn = root.querySelector('#st-tb-jumptop-btn');
+  const chatPartialRerollBtn = root.querySelector('#st-tb-chat-partial-reroll-btn');
+  const chatJumpTopBtn = root.querySelector('#st-tb-chat-jumptop-btn');
   const reportBtn = root.querySelector('#st-tb-report-btn');
   const reportBox = root.querySelector('#st-tb-report-box');
   const openReaderBtn = root.querySelector('#st-tb-open-reader-btn');
@@ -12717,14 +12782,31 @@
     pendingConfirmAction = null;
     pendingAltAction = null;
     if (confirmAltBtn) confirmAltBtn.style.setProperty('display', 'none', 'important');
+    if (confirmPreviewWrap) confirmPreviewWrap.classList.remove('show');
+    if (confirmPreviewEl) confirmPreviewEl.textContent = '';
     confirmMask.classList.remove('open');
     const sw = root.querySelector('#st-tb-confirm-skip-wrap');
     if (sw) sw.classList.remove('show');
   };
 
-  const openGuardConfirm = (title, desc, onConfirm, okLabel = '确认生成', isPixelBag = false, altOpts = null) => {
+  const openGuardConfirm = (title, desc, onConfirm, okLabel = '确认生成', isPixelBag = false, altOpts = null, previewOpts = null) => {
     confirmTitleEl.textContent = title;
-    confirmDescEl.textContent = desc;
+    if (previewOpts && previewOpts.descHtml) {
+      confirmDescEl.innerHTML = previewOpts.descHtml;
+    } else {
+      confirmDescEl.textContent = desc;
+    }
+    if (confirmPreviewWrap && confirmPreviewEl && confirmPreviewLabel) {
+      if (previewOpts && typeof previewOpts.previewText === 'string') {
+        confirmPreviewLabel.textContent = previewOpts.previewLabel || '可见内容预览：';
+        confirmPreviewEl.textContent = previewOpts.previewText;
+        confirmPreviewEl.scrollTop = 0;
+        confirmPreviewWrap.classList.add('show');
+      } else {
+        confirmPreviewEl.textContent = '';
+        confirmPreviewWrap.classList.remove('show');
+      }
+    }
     if (confirmOkBtn) confirmOkBtn.textContent = okLabel || (isPixelBag ? '确认' : '确认生成');
     if (confirmAltBtn) {
       if (altOpts && typeof altOpts.onAlt === 'function') {
@@ -12869,6 +12951,8 @@
     }
   };
 
+  const escapeHtmlSimple = (s) => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
   const openFloorDeleteConfirmModal = (mesEl, onConfirmDel) => {
     if (!mesEl) return;
     const mesidAttr = mesEl.getAttribute('mesid');
@@ -12880,16 +12964,45 @@
     const ctxChat = getContext()?.chat;
     const belowChat = (Number.isFinite(mesNum) && Array.isArray(ctxChat)) ? Math.max(0, ctxChat.length - 1 - mesNum) : 0;
     const belowCnt = Math.max(belowDom, belowChat);
-    const belowLine = belowCnt > 0
-      ? `⚠️ 下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）`
-      : '当前是最底部一层，下方没有其他内容。';
+    const belowHtml = belowCnt > 0
+      ? `<span class="st-tb-confirm-warn">⚠️ 下方还有 ${belowCnt} 层内容（非最底部楼层，请确认是否误删）</span>`
+      : `<div>当前是最底部一层，下方没有其他内容。</div>`;
+    const descHtml = `<div>当前楼层：第 #${escapeHtmlSimple(mesidAttr)} 层（${escapeHtmlSimple(speaker)}）</div>${belowHtml}`;
     const preview = getVisibleFloorPreview(mesEl, mesNum);
     openGuardConfirm(
       `确认删除第 #${mesidAttr} 层？`,
-      `当前楼层：第 #${mesidAttr} 层（${speaker}）\n${belowLine}\n可见内容预览：${preview}`,
+      '',
       onConfirmDel,
-      '继续删除'
+      '继续删除',
+      false,
+      null,
+      {
+        descHtml,
+        previewLabel: '可见内容预览：',
+        previewText: preview,
+      }
     );
+  };
+
+  const scrollToLastReplyTop = () => {
+    if (!config.jumpToReplyTop) return;
+    try {
+      const ctx = getContext();
+      const chat = ctx?.chat;
+      if (!Array.isArray(chat) || !chat.length) return;
+      const lastIdx = chat.length - 1;
+      const lastMsg = chat[lastIdx];
+      if (!lastMsg || lastMsg.is_user) return;
+      const doJump = (smooth) => {
+        const chatEl = doc.querySelector('#chat');
+        const mesEl = doc.querySelector(`#chat .mes[mesid="${lastIdx}"]`);
+        if (!chatEl || !mesEl) return;
+        const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 6;
+        chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: smooth ? 'smooth' : 'auto' });
+      };
+      setTimeout(() => doJump(true), 220);
+      setTimeout(() => doJump(false), 620);
+    } catch (_) {}
   };
 
   const pinScrollToFloor = (mesId) => {
@@ -39986,6 +40099,7 @@
       if (ctxEv.eventTypes.GENERATION_ENDED) {
         ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_ENDED, () => {
           restoreStRegexAfterStream(true);
+          if (typeof scrollToLastReplyTop === 'function') scrollToLastReplyTop();
           setTimeout(() => {
             try {
               if (stWasGenerating) {
@@ -45895,10 +46009,23 @@
     updateKeepAliveUI();
     guardBtn.textContent = config.swipeGuard ? '防手滑：开' : '防手滑：关';
     guardBtn.classList.toggle('primary', Boolean(config.swipeGuard));
+    const prOn = config.partialRerollLastPara !== false;
+    const jtOn = Boolean(config.jumpToReplyTop);
     if (partialRerollBtn) {
-      const prOn = config.partialRerollLastPara !== false;
-      partialRerollBtn.textContent = prOn ? '局部重roll（保留前条）：开' : '局部重roll（保留前条）：关';
+      partialRerollBtn.textContent = '局部重roll';
       partialRerollBtn.classList.toggle('primary', prOn);
+    }
+    if (chatPartialRerollBtn) {
+      chatPartialRerollBtn.textContent = '局部重roll';
+      chatPartialRerollBtn.classList.toggle('primary', prOn);
+    }
+    if (jumpTopBtn) {
+      jumpTopBtn.textContent = '生成完回开头';
+      jumpTopBtn.classList.toggle('primary', jtOn);
+    }
+    if (chatJumpTopBtn) {
+      chatJumpTopBtn.textContent = '生成完回开头';
+      chatJumpTopBtn.classList.toggle('primary', jtOn);
     }
 
     maskStyleBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.maskStyle === config.maskStyle));
@@ -46019,15 +46146,24 @@
     if (config.keepAlive) startKeepAlive();
     else stopKeepAlive();
   });
-  if (partialRerollBtn) {
-    partialRerollBtn.addEventListener('click', () => {
-      config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
-      saveConfig();
-      syncUI();
-      if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
-      showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一条就能单独roll那一条' : '已关闭局部重roll');
-    });
-  }
+  const togglePartialRerollSetting = () => {
+    config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
+    saveConfig();
+    syncUI();
+    if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+    showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一条就能单独roll那一条' : '已关闭局部重roll');
+  };
+  const toggleJumpReplyTopSetting = () => {
+    config.jumpToReplyTop = !Boolean(config.jumpToReplyTop);
+    saveConfig();
+    syncUI();
+    if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+    showImmNotice(config.jumpToReplyTop ? '已开启：生成回复完自动跳转到本层开头' : '已关闭：生成回复完不再自动跳转开头');
+  };
+  if (partialRerollBtn) partialRerollBtn.addEventListener('click', togglePartialRerollSetting);
+  if (chatPartialRerollBtn) chatPartialRerollBtn.addEventListener('click', togglePartialRerollSetting);
+  if (jumpTopBtn) jumpTopBtn.addEventListener('click', toggleJumpReplyTopSetting);
+  if (chatJumpTopBtn) chatJumpTopBtn.addEventListener('click', toggleJumpReplyTopSetting);
 
   guardBtn.addEventListener('click', () => {
     config.swipeGuard = !config.swipeGuard;
@@ -51556,9 +51692,15 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const preview = getVisibleFloorPreview(mesEl, mid);
       openGuardConfirm(
         '确认roll本条？',
-        `当前楼层：第 #${mid} 层\n当前条目：第 ${sw.curNum}/${sw.total} 条\n\n本条内容：\n${preview}`,
+        `当前楼层：第 #${mid} 层\n当前条目：第 ${sw.curNum}/${sw.total} 条`,
         () => { rerollFloorSwipeOnly(mid, sw.curIdx); },
-        '确认roll本条'
+        '确认roll本条',
+        false,
+        null,
+        {
+          previewLabel: '本条内容：',
+          previewText: preview,
+        }
       );
     });
   }
@@ -54019,6 +54161,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'keepalive', name: '后台保活',   defLabel: '保活' },
     { id: 'guard',     name: '防手滑保护', defLabel: '防手滑' },
     { id: 'partialreroll', name: '局部重roll', defLabel: '局部重roll' },
+    { id: 'jumptop', name: '生成完回开头', defLabel: '回开头' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
     { id: 'fold',      name: '折叠楼层',   defLabel: '折楼' },
@@ -54082,6 +54225,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       keepalive: Boolean(config.keepAlive),
       guard: Boolean(config.swipeGuard),
       partialreroll: config.partialRerollLastPara !== false,
+      jumptop: Boolean(config.jumpToReplyTop),
       ambient: Boolean(config.effect && config.effect !== 'none'),
       storyedit: config.storyQuickBarEnabled !== false,
       fold: Boolean(config.perfFoldEnabled),
@@ -54568,6 +54712,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         saveConfig();
         syncUI();
         showImmNotice(config.partialRerollLastPara !== false ? '已开启局部重roll：停在哪一条就能单独roll那一条' : '已关闭局部重roll');
+        syncQuickDockUI();
+      } else if (act === 'jumptop') {
+        config.jumpToReplyTop = !Boolean(config.jumpToReplyTop);
+        saveConfig();
+        syncUI();
+        showImmNotice(config.jumpToReplyTop ? '已开启：生成回复完自动跳转到本层开头' : '已关闭：生成回复完不再自动跳转开头');
         syncQuickDockUI();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
