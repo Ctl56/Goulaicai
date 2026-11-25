@@ -14830,8 +14830,8 @@
   const drawPupAccessory = (acc, hx, hy, ox, oy, isFlatPose, isDead) => {
     if (!acc || acc === 'none' || isDead) return;
     const _accOff = config.puppyAccOffsets && config.puppyAccOffsets[acc];
-    const _dx = _accOff ? (Number(_accOff.dx) || 0) : 0;
-    const _dy = _accOff ? (Number(_accOff.dy) || 0) : 0;
+    const _dx = _accOff ? Math.round(Number(_accOff.dx) || 0) : 0;
+    const _dy = _accOff ? Math.round(Number(_accOff.dy) || 0) : 0;
     const _hasSubPxOff = Boolean(_dx || _dy);
     if (_hasSubPxOff && activePxCtx) {
       activePxCtx.save();
@@ -17361,9 +17361,9 @@
   const getTalkFreqGapMs = () => {
     const f = config.puppyTalkFreq || 'normal';
     if (f === 'quiet') return 999999999;
-    if (f === 'low') return randInt(150000, 240000);
-    if (f === 'chatty') return randInt(18000, 32000);
-    return randInt(85000, 145000); // normal: 适中不吵
+    if (f === 'low') return randInt(300000, 480000); // 较少: 5~8分钟才偶尔冒泡
+    if (f === 'chatty') return randInt(55000, 95000); // 话多: 约1~1.5分钟
+    return randInt(150000, 240000); // normal: 2.5~4分钟
   };
 
   let puppyBubbleQueueTimer = null;
@@ -17580,7 +17580,8 @@
         + Math.max(3800, Math.min(5600, chunks[chunks.length - 1].length * 105 + 1800))
       : Math.max(duration, cleanText.length > 20 ? Math.min(5400, cleanText.length * 100 + 1200) : duration);
 
-    pup.nextAutoBubbleAt = now + totalDur + (isAuto ? getTalkFreqGapMs() : randInt(12000, 20000));
+    // 只要冒了任何气泡（自言自语、屏幕氛围、交互等），统一计入说话冷却
+    pup.nextAutoBubbleAt = Math.max(pup.nextAutoBubbleAt || 0, now + totalDur + getTalkFreqGapMs());
     if (pup.state !== 'lie') pup.nextLieAt = Math.max(pup.nextLieAt || 0, now + 36000);
     showChunk(0);
   };
@@ -27728,7 +27729,7 @@
   const showGuestBubbleById = (guestId, txt, ms = 3000) => {
     const guest = getGuestList().find(g => g.id === guestId);
     const rt = guestRuntimes.get(guestId);
-    if (!guest || !rt || !rt.bubble) return;
+    if (!guest || guest.onDesktop === false || !config.puppyEnabled || !rt || !rt.bubble) return;
     applyGuestBubbleSkinEl(rt, guest.look?.bubble || '');
     if (rt.bubbleTxt) rt.bubbleTxt.textContent = txt;
     liftNearbyBubbles(guestId, rt.x, rt.y || defaultPupY());
@@ -28665,7 +28666,14 @@
 
   // 支持「自家小狗 ↔ 客人」以及「客人A ↔ 客人B」互相互动，全局锁防止多组冲突
   const playPairDialogue = (actorA, actorB, manual = false) => {
+    if (!actorA.isHost && actorA.guest?.onDesktop === false) return;
+    if (!actorB.isHost && actorB.guest?.onDesktop === false) return;
     const now = Date.now();
+    if (!manual) {
+      if ((config.puppyTalkFreq || 'normal') === 'quiet') return;
+      if (now < (pup.nextAutoBubbleAt || 0)) return;
+      pup.nextAutoBubbleAt = Math.max(pup.nextAutoBubbleAt || 0, now + 6300 + getTalkFreqGapMs());
+    }
     // 第一句展示 2850ms，第 2700ms 第二句接棒并稳稳展示 3300ms，总锁 6300ms + 1500ms 缓冲
     const lockUntil = now + 6300;
     dualSocialBusyUntil = now + 7800;
@@ -28710,13 +28718,13 @@
     const list = getGuestList();
     const guestA = list.find(g => g.id === guestId);
     const rtA = guestRuntimes.get(guestId);
-    if (!guestA || !rtA || !config.puppyEnabled) return;
+    if (!guestA || guestA.onDesktop === false || !rtA || !config.puppyEnabled) return;
 
     let actorB;
     if (partnerGuestId && partnerGuestId !== guestId) {
       const gB = list.find(g => g.id === partnerGuestId);
       const rtB = guestRuntimes.get(partnerGuestId);
-      if (gB && rtB) actorB = { isHost: false, guest: gB, rt: rtB };
+      if (gB && gB.onDesktop !== false && rtB) actorB = { isHost: false, guest: gB, rt: rtB };
     }
     if (!actorB) actorB = { isHost: true };
 
@@ -29440,7 +29448,7 @@
       pxDot(78, 35, 'rgba(255,255,255,0.75)', 1, 3); pxDot(81, 34, 'rgba(255,255,255,0.75)', 1, 3);
       pxBlob(67, 42, 4, 2, '#d98c3e'); pxBlob(67, 41, 3, 1, '#f5c270');
     } else if (bgId === 'sakura') {
-      // 精修「樱花林道」：晴蓝粉霞天 + 远景花海 + 中景柔化林木 + 树根入草的自然前景樱树 + 木长椅与复古路灯 + 繁花草丛小道
+      // 精修「樱花林道」：通透晴空拱廊（无顶部突兀椭圆）+ 远景花海 + 中景林木 + 右侧双层错落前景樱树 + 木长椅与路灯
       ctx.fillStyle = '#bfe3ff'; ctx.fillRect(0, 0, W, 14);
       ctx.fillStyle = '#dff0ff'; ctx.fillRect(0, 14, W, 14);
       ctx.fillStyle = '#fff2f8'; ctx.fillRect(0, 28, W, 17);
@@ -29455,19 +29463,20 @@
         const mh = Math.round(8 + Math.sin(x * 0.13 + 1.1) * 3);
         ctx.fillRect(x, 45 - mh, 1, mh + 1);
       }
-      // 中景左右透视樱花小树（自然融入远景花林）
+      // 中景左右透视樱花小树
       ctx.fillStyle = '#966b72';
       ctx.fillRect(25, 29, 2, 17); ctx.fillRect(24, 44, 4, 2);
-      ctx.fillRect(70, 29, 2, 17); ctx.fillRect(69, 44, 4, 2);
-      [[24,25,11,6],[33,28,8,5],[72,25,11,6],[63,28,8,5]].forEach(([bx,by,rx,ry]) => {
+      ctx.fillRect(68, 29, 2, 17); ctx.fillRect(67, 44, 4, 2);
+      [[24,25,11,6],[33,28,8,5],[70,25,11,6],[61,28,8,5]].forEach(([bx,by,rx,ry]) => {
         pxBlob(bx, by, rx, ry, '#f2a4c2');
         pxBlob(bx, by - 1, Math.max(3, rx - 2), Math.max(2, ry - 2), '#ffd4e6');
       });
-      // 嫩绿春草与中央透视落樱小径（先画草地，再让前景树根自然扎进草坪与树影里！）
+      // 嫩绿春草与中央透视落樱小径
       ctx.fillStyle = '#b0e096'; ctx.fillRect(0, 45, W, 14);
       ctx.fillStyle = '#97cc7e'; ctx.fillRect(0, 59, W, 13);
       pxBlob(10, 49, 10, 3, 'rgba(110,165,92,0.45)');
-      pxBlob(86, 49, 10, 3, 'rgba(110,165,92,0.45)');
+      pxBlob(81, 49, 9, 3, 'rgba(110,165,92,0.42)');
+      pxBlob(91, 58, 9, 3, 'rgba(98,150,82,0.48)');
       for (let y = 45; y < H; y++) {
         const t = (y - 45) / (H - 45);
         const halfW = Math.round(6 + t * 21);
@@ -29476,32 +29485,29 @@
         ctx.fillStyle = '#f7ebe4'; ctx.fillRect(cx - halfW, y, halfW * 2, 1);
         if (y % 6 === 0) { ctx.fillStyle = '#efe0d8'; ctx.fillRect(cx - halfW + 3, y, Math.max(3, halfW - 4), 1); }
       }
-      // 自然曲线微倾、底部树根微展的前景左右大樱树 + Y形分枝
-      const drawSakuraTrunk = (baseX, leanDir, topY, botY) => {
+      // 自然曲线微倾前景樱树（左侧一棵 + 右侧中前与最前双层错落两棵，纵深感十足！）
+      const drawSakuraTrunk = (baseX, leanDir, topY, botY, thick) => {
         for (let y = topY; y < botY; y++) {
           const t = (y - topY) / Math.max(1, botY - topY);
-          const ox = Math.round(baseX + Math.sin(t * 2.2) * leanDir * 2.2);
-          const w = t > 0.85 ? 5 : (t > 0.35 ? 4 : 3);
+          const ox = Math.round(baseX + Math.sin(t * 2.2) * leanDir * 2.0);
+          const w = thick ? (t > 0.85 ? 6 : (t > 0.35 ? 5 : 4)) : (t > 0.85 ? 5 : (t > 0.35 ? 4 : 3));
           ctx.fillStyle = '#613834'; ctx.fillRect(ox, y, w, 1);
           ctx.fillStyle = '#85534e'; ctx.fillRect(ox + 1, y, 1, 1);
         }
-        ctx.fillStyle = '#613834'; ctx.fillRect(baseX - 1, botY - 2, 7, 2);
-        for (let i = 0; i < 16; i++) {
+        ctx.fillStyle = '#613834'; ctx.fillRect(baseX - 1, botY - 2, thick ? 8 : 7, 2);
+        for (let i = 0; i < 15; i++) {
           const bx = baseX + (leanDir > 0 ? 2 + i : 1 - i);
           ctx.fillRect(bx, Math.round(topY + 5 - i * 0.45), 2, 2);
         }
-        for (let i = 0; i < 10; i++) {
-          const bx = baseX + (leanDir > 0 ? 1 + i : 2 - i);
-          ctx.fillRect(bx, Math.round(topY + 10 - i * 0.25), 2, 1);
-        }
       };
-      drawSakuraTrunk(7, 1, 15, 50);
-      drawSakuraTrunk(84, -1, 15, 50);
-      // 繁茂环抱式樱花林树冠（四色柔和渐变）
-      [[6,8,13,8],[22,7,14,8],[36,10,9,6],[14,17,11,6],[26,15,9,5],[90,8,13,8],[74,7,14,8],[60,10,9,6],[82,17,11,6],[70,15,9,5],[48,2,10,4]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#eb86ab'));
-      [[5,7,11,7],[21,6,12,7],[35,9,7,5],[13,16,9,5],[25,14,7,4],[89,7,11,7],[73,6,12,7],[59,9,7,5],[81,16,9,5],[69,14,7,4],[48,2,8,3]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffb5cf'));
-      [[4,6,8,5],[20,5,9,5],[34,8,5,3],[12,15,6,3],[88,6,8,5],[72,5,9,5],[58,8,5,3],[80,15,6,3],[48,1,5,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffdce8'));
-      [[19,4,4,2],[73,4,4,2],[6,5,3,2],[89,5,3,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#fff5f9'));
+      drawSakuraTrunk(7, 1, 15, 50, false);
+      drawSakuraTrunk(79, -1, 16, 49, false);
+      drawSakuraTrunk(90, -1, 12, 59, true);
+      // 繁茂环抱式樱花林树冠（彻底去掉顶部孤立椭圆，留出自然通透蓝天！）
+      [[6,8,13,8],[22,7,14,8],[36,9,9,6],[14,17,11,6],[26,15,9,5],[91,7,14,9],[75,7,14,8],[61,9,9,6],[86,18,12,7],[73,16,10,5],[94,25,8,5]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#eb86ab'));
+      [[5,7,11,7],[21,6,12,7],[35,8,7,5],[13,16,9,5],[25,14,7,4],[90,6,12,8],[74,6,12,7],[60,8,7,5],[85,17,10,6],[72,15,8,4],[93,24,6,4]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffb5cf'));
+      [[4,6,8,5],[20,5,9,5],[34,7,5,3],[12,15,6,3],[89,5,9,6],[73,5,9,5],[59,7,5,3],[84,16,7,4],[71,14,5,3]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#ffdce8'));
+      [[19,4,4,2],[74,4,4,2],[6,5,3,2],[89,4,4,2]].forEach(([x,y,rx,ry]) => pxBlob(x, y, rx, ry, '#fff5f9'));
       // 温柔晨曦斜光
       for (let i = 0; i < 36; i++) {
         ctx.fillStyle = 'rgba(255,252,240,0.18)'; ctx.fillRect(42 + Math.floor(i * 0.35), 9 + i, 5, 1);
@@ -29512,16 +29518,16 @@
       ctx.fillStyle = '#b57b56'; ctx.fillRect(14, 55, 16, 2);
       ctx.fillStyle = '#6e4229'; ctx.fillRect(15, 54, 2, 6); ctx.fillRect(27, 54, 2, 6);
       pxDot(16, 52, '#ffb5cf', 3, 1);
-      ctx.fillStyle = '#695c61'; ctx.fillRect(76, 36, 2, 22);
-      ctx.fillStyle = '#54484d'; ctx.fillRect(75, 56, 4, 2); ctx.fillRect(74, 32, 6, 1);
-      pxBlob(77, 35, 4, 4, 'rgba(255,244,186,0.35)');
-      ctx.fillStyle = '#fff6c8'; ctx.fillRect(75, 33, 4, 4);
-      [[3,64,9,6],[12,68,8,5],[93,64,9,6],[84,68,8,5]].forEach(([bx,by,rx,ry]) => {
+      ctx.fillStyle = '#695c61'; ctx.fillRect(72, 37, 2, 21);
+      ctx.fillStyle = '#54484d'; ctx.fillRect(71, 56, 4, 2); ctx.fillRect(70, 33, 6, 1);
+      pxBlob(73, 36, 4, 4, 'rgba(255,244,186,0.35)');
+      ctx.fillStyle = '#fff6c8'; ctx.fillRect(71, 34, 4, 4);
+      [[3,64,9,6],[12,68,8,5],[93,65,9,6],[84,68,8,5]].forEach(([bx,by,rx,ry]) => {
         pxBlob(bx, by, rx, ry, '#72b868');
         pxBlob(bx, by - 1, Math.max(3, rx - 2), Math.max(2, ry - 2), '#8fd482');
       });
       // 前景小雏菊与满地飘落樱花瓣
-      [[5,62,'#ffb5cf'],[10,66,'#ffffff'],[18,65,'#ffe885'],[24,62,'#ffb5cf'],[89,61,'#ffb5cf'],[83,66,'#ffffff'],[75,64,'#ffe885'],[70,60,'#ffdce8'],[11,57,'#ffdce8'],[80,55,'#ffb5cf'],[34,63,'#ffb5cf'],[62,65,'#ffdce8'],[44,54,'#ffb5cf'],[53,61,'#ff94ba'],[49,49,'#ffdce8'],[41,66,'#ffffff'],[38,18,'#ffb5cf'],[46,14,'#ffffff'],[55,20,'#ff94ba'],[42,27,'#ffdce8'],[51,31,'#ffb5cf'],[34,36,'#ffffff'],[62,35,'#ffb5cf'],[48,38,'#ff94ba']].forEach(([px,py,pc]) => {
+      [[5,62,'#ffb5cf'],[10,66,'#ffffff'],[18,65,'#ffe885'],[24,62,'#ffb5cf'],[89,62,'#ffb5cf'],[83,66,'#ffffff'],[75,64,'#ffe885'],[70,60,'#ffdce8'],[11,57,'#ffdce8'],[78,56,'#ffb5cf'],[34,63,'#ffb5cf'],[62,65,'#ffdce8'],[44,54,'#ffb5cf'],[53,61,'#ff94ba'],[49,49,'#ffdce8'],[41,66,'#ffffff'],[38,18,'#ffb5cf'],[46,14,'#ffffff'],[55,20,'#ff94ba'],[42,27,'#ffdce8'],[51,31,'#ffb5cf'],[34,36,'#ffffff'],[62,35,'#ffb5cf'],[48,38,'#ff94ba']].forEach(([px,py,pc]) => {
         pxDot(px, py, pc, 2, 1);
         if ((px + py) % 3 === 0) pxDot(px + 1, py + 1, pc, 1, 1);
       });
@@ -29807,12 +29813,6 @@
     if (!savedPhoto && !preselectedDogs) {
       const cands = [{ id: 'host', name: getPupName(), look: getHostLookSnap(), defaultOn: true }];
       guests.forEach((g, i) => cands.push({ id: `g_${g.id}`, name: g.name, look: g.look || {}, defaultOn: i === 0 }));
-      const logs = Array.isArray(config.puppyVisitLog) ? config.puppyVisitLog : [];
-      logs.forEach((lg, idx) => {
-        if (!cands.some(c => c.name === lg.name)) {
-          cands.push({ id: `log_${idx}`, name: lg.name, look: lg.look || {}, defaultOn: false });
-        }
-      });
       if (cands.length > 2) {
         let selM = root.querySelector('#st-tb-photo-pick-modal');
         if (!selM) {
@@ -30080,17 +30080,25 @@
       const pBox = winEl.querySelector('#st-vph-poses');
       const syncDogAndPoseBtns = () => {
         const curDog = st.dogs[activeDogIdx] || st.dogs[0];
-        dogBtns.forEach((x, idx) => { x.classList.toggle('active', idx === activeDogIdx); x.classList.toggle('care', idx === activeDogIdx); });
+        dogBtns.forEach(item => {
+          const isAct = item.dg === curDog;
+          item.b.classList.toggle('active', isAct);
+          item.b.classList.toggle('care', isAct);
+        });
         poseBtns.forEach(x => x.b.classList.toggle('active', curDog && curDog.pose === x.id));
       };
-      st.dogs.forEach((dg, idx) => {
+      st.dogs.forEach((dg) => {
         const b = doc.createElement('button');
         b.type = 'button';
         b.className = 'st-px-btn';
         b.style.cssText = 'height:20px;padding:0 6px;font-size:9.5px;';
         b.textContent = dg.name;
-        b.addEventListener('click', () => { activeDogIdx = idx; syncDogAndPoseBtns(); });
-        dogBtns.push(b);
+        b.addEventListener('click', () => {
+          const curIdx = st.dogs.indexOf(dg);
+          if (curIdx >= 0) activeDogIdx = curIdx;
+          syncDogAndPoseBtns();
+        });
+        dogBtns.push({ dg, b });
         dtBox.appendChild(b);
       });
       POLAROID_DOG_POSES.forEach(item => {
@@ -30143,17 +30151,24 @@
       cv.addEventListener('pointerdown', (e) => {
         const pt = toCvCoord(e);
         let bestIdx = -1, bestDist = 24;
-        st.dogs.forEach((dg, idx) => {
+        // 优先命中当前在最上层的小狗
+        for (let idx = st.dogs.length - 1; idx >= 0; idx--) {
+          const dg = st.dogs[idx];
           const dist = Math.hypot(pt.x - (dg.x + 12), pt.y - (dg.y + 15));
           if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
-        });
+        }
         if (bestIdx === -1) return;
-        dragIdx = bestIdx; activeDogIdx = bestIdx;
-        dragOffX = pt.x - st.dogs[dragIdx].x;
-        dragOffY = pt.y - st.dogs[dragIdx].y;
+        // 拖动谁就把谁提到最顶层渲染！
+        const [pickedDog] = st.dogs.splice(bestIdx, 1);
+        st.dogs.push(pickedDog);
+        dragIdx = st.dogs.length - 1;
+        activeDogIdx = dragIdx;
+        dragOffX = pt.x - pickedDog.x;
+        dragOffY = pt.y - pickedDog.y;
         cv.setPointerCapture(e.pointerId);
         cv.style.cursor = 'grabbing';
         syncDogAndPoseBtns();
+        redrawCv();
       });
       cv.addEventListener('pointermove', (e) => {
         if (dragIdx < 0) return;
@@ -30678,7 +30693,12 @@
     list.forEach(guest => {
       const rt = guestRuntimes.get(guest.id);
       if (!rt || rt.drag) return;
-      if (!config.puppyEnabled || guest.onDesktop === false) { rt.el.classList.remove('active'); return; }
+      if (!config.puppyEnabled || guest.onDesktop === false) {
+        if (rt._active !== false) { rt.el.classList.remove('active'); rt._active = false; }
+        if (rt.bubble) { clearTimeout(rt.bubbleTimer); rt.bubble.classList.remove('show', 'lifted'); }
+        rt.pendingSocial = null;
+        return;
+      }
       if (!rt.y) rt.y = typeof guest.lastY === 'number' ? clamp(guest.lastY, 40, Math.max(40, win.innerHeight - 80)) : ((guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY());
       rt.tick += 1;
       rt.timer -= 1;
@@ -30758,6 +30778,7 @@
   let visitBookTab = 'stamps';
   let visitStampPage = 1;
   let visitPhotoPage = 1;
+  let visitPhotoFilter = 'all';
   function renderPupVisitPanel() {
     if (!advVisitView) return;
     advVisitView.innerHTML = '';
@@ -30777,7 +30798,15 @@
       </div>`;
       gWrap.querySelector('#st-pv-desk-all')?.addEventListener('click', () => {
         const target = !allOnDesk;
-        guests.forEach(g => { g.onDesktop = target; });
+        guests.forEach(g => {
+          g.onDesktop = target;
+          const rt = guestRuntimes.get(g.id);
+          if (rt) {
+            rt._active = null;
+            if (!target && rt.bubble) { clearTimeout(rt.bubbleTimer); rt.bubble.classList.remove('show', 'lifted'); rt.pendingSocial = null; }
+            drawSingleGuestScene(g, rt);
+          }
+        });
         saveConfig();
         renderPupVisitPanel();
       });
@@ -30795,6 +30824,12 @@
           </div>`;
         row.querySelector('.st-pv-desk')?.addEventListener('click', () => {
           guest.onDesktop = guest.onDesktop === false;
+          const rt = guestRuntimes.get(guest.id);
+          if (rt) {
+            rt._active = null;
+            if (guest.onDesktop === false && rt.bubble) { clearTimeout(rt.bubbleTimer); rt.bubble.classList.remove('show', 'lifted'); rt.pendingSocial = null; }
+            drawSingleGuestScene(guest, rt);
+          }
           saveConfig();
           renderPupVisitPanel();
         });
@@ -31113,12 +31148,40 @@
         renderPager(visitStampPage, totalP, (np) => { visitStampPage = np; renderPupVisitPanel(); });
       }
     } else {
-      if (!photos.length) {
-        vbBody.innerHTML = '<div style="font-size:10px;color:#8c7366;text-align:center;padding:8px;">客人来的时候点「拍合照」就能存进这里哦~</div>';
+      const getPhCount = (ph) => (Array.isArray(ph.dogs) && ph.dogs.length) ? ph.dogs.length : (ph.guestName ? 2 : 1);
+      const cntSingle = photos.filter(p => getPhCount(p) === 1).length;
+      const cntDouble = photos.filter(p => getPhCount(p) === 2).length;
+      const cntMulti = photos.filter(p => getPhCount(p) >= 3).length;
+      const filtBar = doc.createElement('div');
+      filtBar.style.cssText = 'display:flex;gap:3px;flex-wrap:wrap;margin-bottom:5px;';
+      [
+        ['all', `全部(${photos.length})`],
+        ['single', `单人(${cntSingle})`],
+        ['double', `双人(${cntDouble})`],
+        ['multi', `多人(${cntMulti})`],
+      ].forEach(([fk, flabel]) => {
+        const fb = doc.createElement('button');
+        fb.type = 'button';
+        fb.className = `st-px-btn${visitPhotoFilter === fk ? ' active' : ''}`;
+        fb.style.cssText = 'height:19px;padding:0 5px;font-size:9px;';
+        fb.textContent = flabel;
+        fb.addEventListener('click', () => { visitPhotoFilter = fk; visitPhotoPage = 1; renderPupVisitPanel(); });
+        filtBar.appendChild(fb);
+      });
+      bookBox.insertBefore(filtBar, vbBody);
+      const filteredPhotos = photos.filter(p => {
+        const c = getPhCount(p);
+        if (visitPhotoFilter === 'single') return c === 1;
+        if (visitPhotoFilter === 'double') return c === 2;
+        if (visitPhotoFilter === 'multi') return c >= 3;
+        return true;
+      });
+      if (!filteredPhotos.length) {
+        vbBody.innerHTML = `<div style="font-size:10px;color:#8c7366;text-align:center;padding:8px;">${photos.length ? '这个分类里还没有拍立得哦~' : '客人来的时候点「拍合照」就能存进这里哦~'}</div>`;
       } else {
-        const totalP = Math.max(1, Math.ceil(photos.length / PAGE_SIZE));
+        const totalP = Math.max(1, Math.ceil(filteredPhotos.length / PAGE_SIZE));
         visitPhotoPage = clamp(visitPhotoPage, 1, totalP);
-        const slice = photos.slice((visitPhotoPage - 1) * PAGE_SIZE, visitPhotoPage * PAGE_SIZE);
+        const slice = filteredPhotos.slice((visitPhotoPage - 1) * PAGE_SIZE, visitPhotoPage * PAGE_SIZE);
         vbBody.style.display = 'grid';
         vbBody.style.gridTemplateColumns = '1fr 1fr';
         slice.forEach(ph => {
@@ -32856,7 +32919,7 @@
     }
     const theme = getTodayFashionTheme();
     fashionBestEl.textContent = config.puppyFashionDaily.best ? `今日最高: ${config.puppyFashionDaily.best}` : '今日未评分';
-    fashionCardEl.innerHTML = `<div style="font-weight:700;color:#5c2878;">今日主题：【${theme.name}】</div><div style="margin-top:3px;color:#6b5446;">${theme.desc}</div><div style="margin-top:4px;font-size:9.5px;line-height:1.45;color:#7a685b;">评分规则：基础50分 + 服装契合24分 + 配饰每件契合10分（上限20分）+ 跟班契合16分；扭蛋与秘境限定装扮同样计分，全套契合触发 SSS</div>`;
+    fashionCardEl.innerHTML = `<div style="font-weight:700;color:#5c2878;">今日主题：【${theme.name}】</div><div style="margin-top:3px;color:#6b5446;">${theme.desc}</div>`;
   };
 
   fashionEvalBtn.addEventListener('click', () => {
@@ -38254,7 +38317,7 @@
       if (statsInfo && statsInfo.chars > 0) {
         const sArr = REPLY_STATS_BY_PERS[curBellP] || REPLY_STATS_BY_PERS.sleepyhead;
         const sLine = formatPupText(pick(sArr)).replace(/\{chars\}/g, String(statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
-        showPuppyBubble(sLine, 3800);
+        showPuppyBubble(sLine, 8500);
       } else {
         const bellArr = BELL_BY_PERS[curBellP] || BELL_BY_PERS.sleepyhead;
         showPuppyBubble(formatPupText(pick(bellArr)), 3400);
@@ -38585,7 +38648,7 @@
       const curP = config.puppyPersonality || 'sleepyhead';
       const arr = REPLY_STATS_BY_PERS[curP] || REPLY_STATS_BY_PERS.sleepyhead;
       const line = formatPupText(pick(arr)).replace(/\{chars\}/g, String(statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
-      showPuppyBubble(line, 3600);
+      showPuppyBubble(line, 8500);
     }
   };
 
@@ -44018,6 +44081,10 @@
   const triggerAmbientPupReaction = (effKey, fromClick = true) => {
     if (!config.puppyEnabled) return;
     if (effKey !== 'auroraveil' && effKey !== 'softclouds') return;
+    if (!fromClick) {
+      if ((config.puppyTalkFreq || 'normal') === 'quiet') return;
+      if (Date.now() < (pup.nextAutoBubbleAt || 0)) return;
+    }
     const curP = config.puppyPersonality || 'sleepyhead';
     const bank = AMBIENT_PUP_TALK[effKey][curP] || AMBIENT_PUP_TALK[effKey].sleepyhead;
     const line = pick(bank);
@@ -44028,14 +44095,16 @@
       setPuppyState('happy', 135);
       for (let i = 0; i < 3; i++) spawnPupFx('heart', 8 + i * 4, 4);
     }
-    showPuppyBubble(formatPupText(line), 4400);
+    showPuppyBubble(formatPupText(line), 4400, !fromClick);
   };
 
   setInterval(() => {
     if (doc.hidden || !config.puppyEnabled) return;
+    if ((config.puppyTalkFreq || 'normal') === 'quiet') return;
+    if (Date.now() < (pup.nextAutoBubbleAt || 0)) return;
     if (config.effect !== 'auroraveil' && config.effect !== 'softclouds') return;
     if (puppyBubble && puppyBubble.classList.contains('show')) return;
-    if (Math.random() < 0.28) triggerAmbientPupReaction(config.effect, false);
+    if (Math.random() < 0.22) triggerAmbientPupReaction(config.effect, false);
   }, 46000);
 
   effectBtns.forEach(btn => {
