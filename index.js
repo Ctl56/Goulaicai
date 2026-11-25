@@ -986,6 +986,12 @@
     { id: 'hidden_job_wrecker', title: '无敌破坏王', desc: '打工累计搞砸触发 1 小时停工反省满 5 次', reward: 18, tier: 4, frame: 'bolts', hidden: true, bg: 'linear-gradient(115deg,#ffe6e6,#fff0d6,#f2e8ff)', bd: '#db6c6c', fg: '#731d1d', icon: 'bolt' },
     { id: 'hidden_adv_rest_3', title: '旅途倒霉蛋', desc: '出门冒险遭遇波折被迫休整 1 小时累计 3 次', reward: 15, tier: 3, frame: 'clouds', hidden: true, bg: 'linear-gradient(120deg,#eaf2ff,#f0ebff,#fff2f6)', bd: '#849ee0', fg: '#263a70', icon: 'cloud_ach' },
     { id: 'hidden_adv_rest_8', title: '历险大冤种', desc: '出门冒险累计触发 1 小时倒霉休整满 8 次', reward: 22, tier: 4, frame: 'prism', hidden: true, bg: 'linear-gradient(115deg,#e8eaff,#ffeaf5,#fff6dc)', bd: '#9882e0', fg: '#392273', icon: 'compass_ach' },
+    { id: 'spend_520', title: '心动小金库', desc: '累计消费满 520 枚小狗币，宠狗从不手软', reward: 18, tier: 3, frame: 'spend520_bespoke', bg: 'linear-gradient(120deg,#fff2ec,#ffe8f0,#fff7df)', bd: '#e08a78', fg: '#732e22', icon: 'boutique_bag' },
+    { id: 'spend_5000', title: '豪掷千金汪', desc: '累计消费满 5000 枚小狗币，赠全新「黑胶咖啡馆泡」动态气泡', reward: 38, tier: 4, frame: 'spend5000_bespoke', bonus: { bubble: 'bub_spend_5k_vinyl' }, bg: 'linear-gradient(115deg,#fff6eb,#f7e5d2,#ffefe0)', bd: '#a86b42', fg: '#542e16', icon: 'boba_cup_ico' },
+    { id: 'spend_10000', title: '万币宠爱家', desc: '累计消费满 10000 枚小狗币，赠全新「旋转音乐盒框」动态头像框', reward: 66, tier: 4, frame: 'spend10000_bespoke', bonus: { avatarframe: 'af_spend_10k_carousel' }, bg: 'linear-gradient(115deg,#ffeaf0,#fff4d9,#f5e8ff)', bd: '#d46282', fg: '#6b1c36', icon: 'crown' },
+    { id: 'hidden_visit_host_5', title: '人气待客王', desc: '累计接待至少 5 位不同名字的朋友小狗来桌面做客', reward: 15, tier: 3, hidden: true, frame: 'paws', bg: 'linear-gradient(120deg,#ffedf4,#eef8ff,#fff6de)', bd: '#e08ca8', fg: '#752242', icon: 'paw' },
+    { id: 'hidden_visit_generous', title: '满载伴手礼', desc: '累计寄出带满 5 件礼物的串门名片达到 3 次', reward: 15, tier: 3, hidden: true, frame: 'ribbons', bg: 'linear-gradient(120deg,#fff3e6,#ffeaf5,#eefbf2)', bd: '#de9262', fg: '#6e3412', icon: 'boutique_bag' },
+    { id: 'hidden_visit_bestie', title: '串门好搭子', desc: '与来串门的朋友小狗累计互动达到 30 次', reward: 22, tier: 4, hidden: true, frame: 'hearts', bg: 'linear-gradient(115deg,#ffeaf2,#e8f4ff,#fff6d9)', bd: '#d97a9e', fg: '#6e1e3e', icon: 'hearts' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -2602,6 +2608,7 @@
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
     { id: 'bub_ck_vintage_post', name: '[签到] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
     { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
+    { id: 'bub_spend_5k_vinyl', name: '[成就] 黑胶咖啡馆泡', dyn: 'spend_vinyl_cafe', charms: [], desc: '消费满 5000 币成就专属动态限定：暖咖手冲拿铁蒸汽配旋转复古黑胶唱片气泡' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
     { id: 'af_adv_cloud', name: '[秘境] 云端小翅膀', dyn: 'gadyn_feather_drift', charms: [], desc: '冒险极低概率偶遇的云端仙羽动态头像框：双侧柔羽轻扇配上升云雾光环' },
@@ -2613,6 +2620,7 @@
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
+    { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
   ];
   const SECRET_ADV_TRAILS = [
     { id: 'trail_adv_meteor', name: '[秘境] 流星碎光', cols: ['#ffe478', '#9ee8ff', '#ffffff'], desc: '冒险极低概率偶遇的流星碎光足迹' },
@@ -5163,6 +5171,8 @@
     #st-tb-puppy-bubble.bub-dyn-dandelion::after { background: #f3f9ee; border-color: #96bf8e; }
     #st-tb-puppy-bubble.bub-dyn-honeybee { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
     #st-tb-puppy-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
+    #st-tb-puppy-bubble.bub-spend-5k-vinyl, #st-tb-guest-puppy-bubble.bub-spend-5k-vinyl { background: linear-gradient(135deg,#fff8ef,#f7e8d8,#fdf1e4); border-color: #8c5a3c; color: #4a2c1c; box-shadow: 0 2px 10px rgba(140,90,60,0.34); }
+    #st-tb-puppy-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
     #st-tb-puppy-bubble.bub-gacha-milk-strawberry { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
     #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
 
@@ -5488,6 +5498,7 @@
     .st-px-avatar-wrap.af-dyn-lighthouse { border-color: #5d749c; background: linear-gradient(135deg,#2e3b5c,#42557d); box-shadow: 0 0 0 2px rgba(255,240,196,0.38) inset, 0 2px 9px rgba(93,116,156,0.4); }
     .st-px-avatar-wrap.af-dyn-windmill-hill { border-color: #7ab882; background: linear-gradient(135deg,#eaf7ff,#eefbe8); box-shadow: 0 0 0 2px #ffffff inset, 0 2px 8px rgba(122,184,130,0.34); }
     .st-px-avatar-wrap.af-dyn-aquarium-bowl { border-color: #6ec4e0; background: linear-gradient(135deg,#e8f9ff,#dcf4fc); box-shadow: 0 0 0 2px rgba(255,255,255,0.85) inset, 0 2px 9px rgba(110,196,224,0.36); }
+    .st-px-avatar-wrap.af-spend-10k-carousel { border-color: #c95c78; background: linear-gradient(135deg,#fff7eb,#ffedf2,#fff3da); box-shadow: 0 0 0 2px rgba(245,204,110,0.68) inset, 0 2px 10px rgba(201,92,120,0.38); }
     .st-px-avatar-wrap.af-gacha-cloud-swing { border-color: #96bfe8; background: linear-gradient(135deg,#eef7ff,#fff0f7); box-shadow: 0 0 0 2px #ffffff inset, 0 2px 9px rgba(150,191,232,0.38); }
     .st-px-avatar-wrap.af-dyn-rainbow-cloud { border-color: #a8c4e0; background: linear-gradient(125deg,#eef7ff,#f8f0ff,#fff4f8,#eefaf4); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 11px rgba(168,196,224,0.52); }
     /* 扭蛋 / 秘境 / 生日 / 节日限定款 */
@@ -9111,26 +9122,6 @@
           </div>
 
           <div class="st-tb-section">
-            <div class="st-tb-chat-meta">
-              <span id="st-tb-chat-char-info">正在读取...</span>
-              <button class="st-tb-mini-btn" id="st-tb-chat-refresh" type="button">刷新</button>
-            </div>
-            <div class="st-tb-row">
-              <input class="st-tb-input" id="st-tb-chat-filter" type="text" placeholder="筛选聊天名称" />
-              <button class="st-tb-btn" id="st-tb-chat-cat-add" type="button">+分类</button>
-            </div>
-            <div id="st-tb-chat-cat-add-box" style="display:none;margin-bottom:6px;">
-              <div class="st-tb-row">
-                <input class="st-tb-input" id="st-tb-chat-cat-input" type="text" placeholder="输入新聊天分类名称" />
-                <button class="st-tb-btn primary" id="st-tb-chat-cat-save" type="button">添加</button>
-                <button class="st-tb-btn" id="st-tb-chat-cat-cancel" type="button">取消</button>
-              </div>
-            </div>
-            <div id="st-tb-chat-cats" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;"></div>
-            <div class="st-tb-chat-list" id="st-tb-chat-list"></div>
-          </div>
-
-          <div class="st-tb-section">
             <div class="st-tb-label">
               <span>快捷短语收藏</span>
               <div style="display:flex;gap:4px;">
@@ -9212,6 +9203,26 @@
               <div id="st-tb-rep-list" style="display:flex;flex-direction:column;gap:4px;max-height:136px;overflow-y:auto;overscroll-behavior:contain;"></div>
               <div class="st-tb-tip" style="margin-top:5px;">仅在前端页面替换显示，不改动聊天记录原文；关闭或删掉规则即恢复原词。</div>
             </div>
+          </div>
+
+          <div class="st-tb-section">
+            <div class="st-tb-chat-meta">
+              <span id="st-tb-chat-char-info">正在读取...</span>
+              <button class="st-tb-mini-btn" id="st-tb-chat-refresh" type="button">刷新</button>
+            </div>
+            <div class="st-tb-row">
+              <input class="st-tb-input" id="st-tb-chat-filter" type="text" placeholder="筛选聊天名称" />
+              <button class="st-tb-btn" id="st-tb-chat-cat-add" type="button">+分类</button>
+            </div>
+            <div id="st-tb-chat-cat-add-box" style="display:none;margin-bottom:6px;">
+              <div class="st-tb-row">
+                <input class="st-tb-input" id="st-tb-chat-cat-input" type="text" placeholder="输入新聊天分类名称" />
+                <button class="st-tb-btn primary" id="st-tb-chat-cat-save" type="button">添加</button>
+                <button class="st-tb-btn" id="st-tb-chat-cat-cancel" type="button">取消</button>
+              </div>
+            </div>
+            <div id="st-tb-chat-cats" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;"></div>
+            <div class="st-tb-chat-list" id="st-tb-chat-list"></div>
           </div>
 
           <div class="st-tb-section">
@@ -12457,6 +12468,7 @@
   };
 
   const renderTextReplaceUI = () => {
+    if (typeof win.__stSyncQuickRepPop === 'function') setTimeout(() => win.__stSyncQuickRepPop(), 0);
     if (repToggleBtn) {
       const on = Boolean(config.textReplaceEnabled);
       repToggleBtn.classList.toggle('active', on);
@@ -18180,6 +18192,71 @@
   // 20 款 100% 单独手绘的专属铭牌设计（每款独立构图与独立像素画，绝不复用模板）
   const BESPOKE_BADGE_DESIGNS = {
     // 百层同行者 (原创构图)：顶边紫金流苏花边 + 左下摊开手账本 + 右顶羽笔墨水瓶 + 底偏右翻页书签帧动画
+    spend_520: {
+      cls: 'bespoke-lux bespoke-glow',
+      pieces: [
+        { pos: 'left:-10px;bottom:-5px;', w: 12, h: 12, anim: 'b-tilt', pal: { r: '#e06e7c', p: '#ffb8c4', y: '#f5cc58', w: '#fffdf7' },
+          grid: [
+            '..yyyy..',
+            '.y....y.',
+            'rrrrrrrr',
+            'rppwwppr',
+            'rppppppR'.replace('R','r'),
+            'rrrrrrrr',
+          ] },
+        { pos: 'right:-9px;top:-6px;', w: 10, h: 9, anim: 'b-bob', pal: { y: '#f5cc58', o: '#d99028', w: '#fffbe6' },
+          grid: [
+            '.oooo.',
+            'oywwyo',
+            'oyyyyo',
+            '.oooo.',
+          ] },
+      ],
+    },
+    spend_5000: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['top'],
+      pieces: [
+        { pos: 'left:-12px;bottom:-6px;', w: 13, h: 13, anim: 'b-tilt', pal: { k: '#2d2428', g: '#54464e', y: '#f0b84c', w: '#fff8ec' },
+          grid: [
+            '..kkkk..',
+            '.kggggk.',
+            'kgkyykgk',
+            'kgkyykgk',
+            '.kggggk.',
+            '..kkkk..',
+          ] },
+        { pos: 'right:-11px;top:-7px;', w: 12, h: 11, anim: 'b-bob', pal: { w: '#fffdf7', b: '#8c5a3c', s: '#e6d2bc' },
+          grid: [
+            '..s..s..',
+            '.wwwwww.',
+            '.wbbbbw.',
+            '.wwwwwws',
+            '..ssss..',
+          ] },
+      ],
+    },
+    spend_10000: {
+      cls: 'bespoke-lux bespoke-sheen',
+      ult: ['left', 'top'],
+      pieces: [
+        { pos: 'left:-12px;bottom:-6px;', w: 14, h: 13, anim: 'b-bob', pal: { r: '#d95b7a', w: '#fff7eb', y: '#f2c864', o: '#b87a24' },
+          grid: [
+            '...yy...',
+            '.rrwwrr.',
+            'rrwwwwrr',
+            '.y.yy.y.',
+            '.oooooo.',
+          ] },
+        { pos: 'right:-11px;bottom:-5px;', w: 12, h: 10, anim: 'b-tilt', pal: { y: '#f2c864', o: '#b87a24', r: '#d95b7a' },
+          grid: [
+            '.yy....',
+            'y..yyyy',
+            '.yy..r.',
+            '....rr.',
+          ] },
+      ],
+    },
     chat_floor_99: {
       cls: 'bespoke-lux bespoke-glow',
       ult: ['top'],
@@ -19469,6 +19546,13 @@
     drawPupAvatarPhoto();
   };
 
+  const recordCoinsSpent = (amount) => {
+    const n = Math.max(0, Math.floor(Number(amount) || 0));
+    if (!n) return;
+    config.puppyStats = config.puppyStats || {};
+    config.puppyStats.coinsSpent = (config.puppyStats.coinsSpent || 0) + n;
+  };
+
   const checkPupAchievements = () => {
     const st = config.puppyStats || { pets: 0, cares: 0, games: 0, coinsEarned: 0 };
     const ownedTotal = (config.puppyOwnedOutfits?.length || 0) + (config.puppyOwnedAccs?.length || 0) + (config.puppyOwnedCompanions?.length || 0);
@@ -19531,6 +19615,12 @@
       fun_chat_bestie: Boolean((config.puppySelfName || '').trim() && (config.puppyOwnerTitle || '').trim()),
       chat_floor_99: (st.maxChatFloor || 0) >= 99,
       chat_floor_1000: (st.maxChatFloor || 0) >= 1000,
+      spend_520: (st.coinsSpent || 0) >= 520,
+      spend_5000: (st.coinsSpent || 0) >= 5000,
+      spend_10000: (st.coinsSpent || 0) >= 10000,
+      hidden_visit_host_5: Array.isArray(st.visitGuestNames) && st.visitGuestNames.length >= 5,
+      hidden_visit_generous: (st.visitFullGiftSent || 0) >= 3,
+      hidden_visit_bestie: (st.visitInteracts || 0) >= 30,
       hidden_dress_master: Boolean(
         config.puppyOutfit && config.puppyOutfit !== 'none' &&
         Array.isArray(config.puppyAccs) && config.puppyAccs.length >= 3 &&
@@ -20107,7 +20197,7 @@
                 () => {
                   const nowC = Math.max(0, Math.floor(config.puppyCoins || 0));
                   if (nowC < c.cost) return;
-                  config.puppyCoins = nowC - c.cost;
+                  config.puppyCoins = nowC - c.cost; recordCoinsSpent(c.cost);
                   config.puppyAchClues = config.puppyAchClues || {};
                   config.puppyAchClues[ach.id] = c.lv;
                   saveConfig();
@@ -21232,7 +21322,7 @@
         showPuppyBubble(getPersTalk('noCoins', lack), 1900);
         return;
       }
-      config.puppyCoins = curCoins - item.price;
+      config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
       config[ownKey].push(item.id);
       config[actKey] = item.id;
       saveConfig();
@@ -21266,7 +21356,7 @@
         showPuppyBubble(getPersTalk('noCoins', lack), 1900);
         return;
       }
-      config.puppyCoins = curCoins - item.price;
+      config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
       config.puppyOwnedBadges.push(item.id);
       config.puppyActiveShopBadge = item.id;
       saveConfig();
@@ -21297,7 +21387,7 @@
         showPuppyBubble(getPersTalk('noCoins', lack), 1900);
         return;
       }
-      config.puppyCoins = curCoins - item.price;
+      config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
       if (!config.puppyInventory || typeof config.puppyInventory !== 'object') config.puppyInventory = {};
       config.puppyInventory[item.id] = (config.puppyInventory[item.id] || 0) + 1;
       if (isAffSnack) config.puppySnackBuyDaily.items[item.id] = (config.puppySnackBuyDaily.items[item.id] || 0) + 1;
@@ -21341,7 +21431,7 @@
       return;
     }
 
-    config.puppyCoins = curCoins - item.price;
+    config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
     if (kind === 'outfit') {
       if (!config.puppyOwnedOutfits.includes(item.id)) config.puppyOwnedOutfits.push(item.id);
       config.puppyOutfit = item.id;
@@ -21560,7 +21650,7 @@
       if (curC < 8) { setShopNotice(`小狗币不足，还差 ${8 - curC} 币`); return; }
       openGuardConfirm('确认购买神秘商人扭蛋券？', `花费 8 枚小狗币购买 1 张扭蛋券（余额 ${curC} 币）。`, () => {
         if ((m.ticketsLeft || 0) <= 0) return;
-        config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - 8;
+        config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - 8; recordCoinsSpent(8);
         config.puppyInventory = config.puppyInventory || {};
         config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
         m.ticketsLeft -= 1;
@@ -21591,7 +21681,7 @@
         if (curC < it.salePrice) { setShopNotice(`小狗币不足，还差 ${it.salePrice - curC} 币`); return; }
         openGuardConfirm('确认购买神秘商人特惠？', `花费 ${it.salePrice} 枚小狗币购入【${it.name}】（原价 ${it.origPrice} 币，余额 ${curC} 币）。`, () => {
           if (it.sold) return;
-          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - it.salePrice;
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - it.salePrice; recordCoinsSpent(it.salePrice);
           if (it.kind === 'outfit') { config.puppyOwnedOutfits = config.puppyOwnedOutfits || []; if (!config.puppyOwnedOutfits.includes(it.id)) config.puppyOwnedOutfits.push(it.id); }
           else if (it.kind === 'acc') { config.puppyOwnedAccs = config.puppyOwnedAccs || []; if (!config.puppyOwnedAccs.includes(it.id)) config.puppyOwnedAccs.push(it.id); }
           else if (it.kind === 'comp') { config.puppyOwnedCompanions = config.puppyOwnedCompanions || []; if (!config.puppyOwnedCompanions.includes(it.id)) config.puppyOwnedCompanions.push(it.id); }
@@ -27478,17 +27568,128 @@
     tick: 0,
     nextSocialAt: Date.now() + 18000,
     lastRenderKey: '',
+    lastBubbleSkin: '',
     bubbleTimer: null,
   };
   let guestDrag = null;
   let guestDraftGifts = {};
+  let lastGeneratedVisitCode = '';
 
-  const showGuestBubble = (txt, ms = 2600) => {
+  const GUEST_BUB_THEME_MAP = {
+    bub_cloud: ['#edf7ff', '#8fbce6', '#264b73'],
+    bub_mint: ['#ebfaf4', '#7cc4a8', '#1f5440'],
+    bub_peach: ['#fff4ec', '#e6a888', '#6b3b24'],
+    bub_matcha: ['#f2f8ec', '#98b882', '#334d24'],
+    bub_cocoa: ['#f9f1e8', '#b89476', '#543824'],
+    bub_sakura: ['#fff0f5', '#e6a0b8', '#732b44'],
+    bub_violet: ['#f4f0ff', '#b29ee0', '#402c6e'],
+    bub_snow: ['#f0f8ff', '#a0c4e0', '#2b4a66'],
+    bub_starry: ['#2c365e', '#d9bc7a', '#fff5d6'],
+    bub_pixelgold: ['#fffaf0', '#d9ba78', '#5e4418'],
+    bub_scroll: ['#faf4e8', '#c49a84', '#543426'],
+    bub_candy: ['#fff2f8', '#e6a2cc', '#6b2854'],
+    bub_spend_5k_vinyl: ['#fff6eb', '#8c5a3c', '#4a2c1c'],
+  };
+
+  const applyGuestBubbleSkin = (bubId) => {
     if (!guestPupBubble) return;
+    if (gPup.lastBubbleSkin === (bubId || '')) return;
+    gPup.lastBubbleSkin = bubId || '';
+    const allBubs = [...SHOP_PUP_BUBBLES, ...SECRET_ADV_BUBBLES, ...GACHA_BUBBLES, ...SPECIAL_EVENT_BUBBLES];
+    allBubs.forEach(b => guestPupBubble.classList.remove(b.id.replace(/_/g, '-')));
+    guestPupBubble.style.background = '';
+    guestPupBubble.style.borderColor = '';
+    guestPupBubble.style.color = '';
+    if (bubId && bubId !== 'bub_default') {
+      guestPupBubble.classList.add(bubId.replace(/_/g, '-'));
+      const preset = GUEST_BUB_THEME_MAP[bubId];
+      if (preset) {
+        guestPupBubble.style.background = preset[0];
+        guestPupBubble.style.borderColor = preset[1];
+        guestPupBubble.style.color = preset[2];
+      } else {
+        // 动态/限定气泡根据色系自动匹配温柔边框与底色
+        if (bubId.includes('star') || bubId.includes('galaxy') || bubId.includes('wish')) {
+          guestPupBubble.style.background = '#2b345c'; guestPupBubble.style.borderColor = '#d4b878'; guestPupBubble.style.color = '#fff6dc';
+        } else if (bubId.includes('mint') || bubId.includes('clover') || bubId.includes('matcha') || bubId.includes('dandelion')) {
+          guestPupBubble.style.background = '#eefaf2'; guestPupBubble.style.borderColor = '#78bd94'; guestPupBubble.style.color = '#205236';
+        } else if (bubId.includes('ocean') || bubId.includes('bubble') || bubId.includes('rain') || bubId.includes('snow') || bubId.includes('aurora') || bubId.includes('sky')) {
+          guestPupBubble.style.background = '#eef7ff'; guestPupBubble.style.borderColor = '#7cb2e0'; guestPupBubble.style.color = '#1e466e';
+        } else if (bubId.includes('honey') || bubId.includes('lemon') || bubId.includes('lantern') || bubId.includes('maple') || bubId.includes('firefly')) {
+          guestPupBubble.style.background = '#fff8ea'; guestPupBubble.style.borderColor = '#dfa24c'; guestPupBubble.style.color = '#633c0c';
+        } else {
+          guestPupBubble.style.background = '#fff2f7'; guestPupBubble.style.borderColor = '#df8ca8'; guestPupBubble.style.color = '#6e2440';
+        }
+      }
+    }
+  };
+
+  const showGuestBubble = (txt, ms = 2800) => {
+    if (!guestPupBubble) return;
+    applyGuestBubbleSkin(config.guestPuppy?.look?.bubble || '');
     guestPupBubble.textContent = txt;
     guestPupBubble.classList.add('show');
     clearTimeout(gPup.bubbleTimer);
     gPup.bubbleTimer = setTimeout(() => guestPupBubble.classList.remove('show'), ms);
+  };
+
+  const GUEST_INTERACT_LINES = {
+    sleepyhead: {
+      pet: ['呼啊… 你的手心暖呼呼的，差点在别人家当场睡着啦~', '轻轻眯起眼睛蹭两下，这顺毛力道也太催眠了~', '慢悠悠摇两下尾巴，感觉做客好安逸呀~'],
+      nuzzle: ['软乎乎把脑袋靠在你指尖上，像借了一个临时小枕头~', '蹭蹭你！你们家空气闻起来都软绵绵的好舒服~', '贴一会儿充个电，回去能多睡两小时香甜午觉~'],
+      feed: ['吧唧吧唧… 这小点心甜而不腻，吃完眼皮都软下来啦~', '谢谢招待！慢吞吞嚼完，胃里暖呼呼的~', '竟然有这么好吃的零食，我可以窝在这里多待一会儿吗~'],
+      praise: ['嘿嘿… 被夸得晕乎乎的，尾巴尖悄悄晃起来啦~', '真的吗？那我多摆两秒乖巧坐姿给你看~', '谢谢你夸我！回去我要在梦里回味三遍~'],
+      play: ['扑通倒下装睡… 咳，其实是顺理成章偷懒五秒钟~', '勉强陪你转一个小圈圈，转完我要趴下歇会儿咯~', '嘿咻蹦一小下！今天的运动量圆满达标啦~'],
+    },
+    clingy: {
+      pet: ['哇！你也太温柔了吧，被摸得尾巴甩成小风扇啦！', '再多摸两下嘛！虽然是来串门的但已经超级喜欢你了！', '蹭蹭你的手心，你们家简直像第二个温暖小窝！'],
+      nuzzle: ['用力贴贴！感觉跟你一见如故，完全不想回家了怎么办！', '把毛茸茸的脸蛋贴过来蹭呀蹭，好开心好开心！', '贴贴完还要顺便拉上{host}一起贴贴，双倍快乐！'],
+      feed: ['啊呜全吃光！你亲手喂的小点心甜到心里去了！', '一边吃一边偷看你，谢谢你这么宠来串门的小狗！', '太好吃啦！吃饱了更有力气围着你们转圈圈！'],
+      praise: ['哇真的吗！被你夸得耳朵都要高兴到起飞啦！', '嘿嘿你眼光真好，{host}肯定天天都被你哄得超开心！', '再夸一句嘛，我能原地给你表演三个连环蹦跶！'],
+      play: ['看我翻肚皮卖萌！是不是一秒钟就戳中你啦！', '转圈圈成功！快给我一个热情的击掌吧！', '和你们一起玩太快乐了，下次还要天天来串门！'],
+    },
+    tsundere: {
+      pet: ['喂、别随随便便摸别家小狗的头啦… 咳，手法倒还凑合。', '哼，看在你是主人的份上，就准你顺三下毛吧！', '耳朵才没有变红呢，只是你们这儿有点暖和罢了！'],
+      nuzzle: ['就、就贴一秒钟哦！别误会，这是串门的基本礼貌！', '哼，看你这么期待的样子，本汪就勉强凑近蹭一下吧！', '不许笑啦！贴完赶紧松手，回去我可不承认干过这事！'],
+      feed: ['切，以为拿小点心就能收买本汪吗？…唔，还挺香的。', '咔嚓咔嚓！勉强给你打个九十九分吧，少得意了！', '看在你这么殷勤招待的份上，我就大方吃光光好了！'],
+      praise: ['那当然！本汪走到哪儿都是全桌面最精致的小狗！', '哼，算你会说话，这句夸奖本汪就收下了！', '别用那种闪亮亮的眼神夸我啦，怪不好意思的！'],
+      play: ['瞪大眼睛看好了！本汪的转圈姿势是不是帅呆了！', '倒下装死中… 才不是在等你拿零食哄我起来呢！', '小菜一碟！这种互动根本难不倒本汪哼！'],
+    },
+    foodie: {
+      pet: ['嘿嘿摸头好舒服！摸完感觉肚子好像又腾出一点空位了~', '尾巴自己晃起来啦！顺毛手感一百分！', '被摸得迷迷糊糊的，差点以为自己是刚出炉的小面包~'],
+      nuzzle: ['闻到你身上有好吃的香气！贴近再多闻两下~', '软乎乎蹭蹭你，感觉你就像一块温暖的大曲奇！', '贴贴！顺便悄悄问一句，厨房里还有存货吗？'],
+      feed: ['哇塞！这也太香了吧，我差点连自己的爪子一起舔干净！', '啊呜啊呜光盘成功！你们家的点心简直是米其林级别！', '幸福到原地转三圈！为了这口点心我下次还要再来！'],
+      praise: ['诶嘿嘿谢谢夸奖！夸完能再奖励一颗小脆饼干吗？', '被夸得嘴角压不住啦，连耳朵都在跟着节奏抖呢！', '哈哈你嘴真甜，比草莓奶油蛋糕还甜一点点！'],
+      play: ['砰！装死倒地！提示：只有小零食的香味能唤醒我~', '开心蹦跶两下消化消化，等下还能再吃半块布丁！', '转个圆滚滚的小圈圈送给你，快乐翻倍！'],
+    },
+    explorer: {
+      pet: ['哈哈谢谢摸头！来你们家串门真是一趟超棒的新探险！', '能量瞬间加满！被摸得浑身都是阳光味儿~', '你的掌心暖洋洋的，送你一份今日份晴天好运！'],
+      nuzzle: ['贴贴打卡！这下我也算在你们桌面留下友好印记啦！', '暖呼呼凑过来蹭蹭，把一路收集的好心情分给你！', '碰碰手背！和你们待在一起感觉整天都是大晴天！'],
+      feed: ['咔嚓咔嚓！超赞的补给点心，吃饱又能跑三圈！', '味道满分！你们家简直是旅途中最棒的补给站！', '大口吃完元气回满，谢谢超热情的款待！'],
+      praise: ['耶！收到满分好评一枚，我回去要得意一整周！', '哈哈谢谢夸奖！你们家{host}也超级酷超级可爱！', '被你一夸我斗志更足了，恨不得绕屏幕跑两圈庆祝！'],
+      play: ['看我的招牌帅气转圈！是不是活力爆棚！', '啊我倒下啦！哈哈演得逼不逼真，把你逗笑没？', '原地起跳击掌！来串门玩得太尽兴啦！'],
+    },
+    fashionista: {
+      pet: ['嗯，你的手很暖，顺毛也很轻柔，谢谢。', '表面淡定，其实被你摸头的时候耳朵尖都在微动。', '难得在别人家这么放松，可以再顺两下。'],
+      nuzzle: ['轻轻蹭一下你的指尖……别看我，这是表达喜欢的方式。', '嗯，你身上的氛围很舒服，多贴两秒也没关系。', '也就看在和{host}关系好的份上，才这么主动贴贴。'],
+      feed: ['卖相和口感都在水准之上，谢谢你的细心招待。', '慢慢吃完了，味道很合心意，你挑点心很有品味。', '本来想保持矜持的，结果确实香得让人停不下来。'],
+      praise: ['谢谢，今天出门前特意整理了很久的毛毛，没白费。', '咳，听到你这么夸，心里其实挺高兴的。', '你也一样很温柔，难怪{host}一直这么粘着你。'],
+      play: ['优雅地转一个小圈给你看，毛毛一根都没乱。', '倒下配合你演一出戏……好吧，看你笑了就算值了。', '轻盈跳一下收尾，今天的串门时光很愉快。'],
+    },
+    gamer: {
+      pet: ['好感度+10！这波摸头暴击直接把我摸服气了！', '嘿嘿手感超赞，感觉浑身挂上了开心Buff！', '被大佬顺毛，今天出门串门绝对是欧皇开局！'],
+      nuzzle: ['贴贴连击达成！咱们这默契绝对是隐藏SSR级！', '凑过来用力蹭一下，把我的欧气全部分享给你！', '贴贴充电完毕，随时准备和{host}双排开玩！'],
+      feed: ['HP+100！这小点心回血速度也太猛了吧！', '哇塞史诗级美味掉落，一口气直接炫完！', '谢谢投喂！这波补给简直及时雨，必须点个大赞！'],
+      praise: ['哈哈谢啦！不愧是全桌面最会夸狗的金牌搭档！', '收到满分评价，快乐值直接拉爆表啦！', '那是，我今天可是带着最佳状态来串门的！'],
+      play: ['看我360度华丽转圈，这操作丝不丝滑！', '装死触发！需要你再点一下才能复活读档哈哈！', '原地蹦跶连跳，来你们家玩得超痛快！'],
+    },
+    philosopher: {
+      pet: ['嗯，手温刚好，顺着毛摸让人很踏实，谢谢。', '在别人家也能这么安心地被摸头，挺难得的。', '尾巴已经自己慢慢晃起来了，看来我很喜欢这里。'],
+      nuzzle: ['轻轻靠过来蹭一下，是我表达信任的方式。', '你们家安安静静的氛围很舒服，让我多贴两秒。', '跟{host}待在一起久了，感觉这里风都很温柔。'],
+      feed: ['味道很扎实很家常，吃饱了整只狗都踏实下来。', '细嚼慢咽吃完了，谢谢你这么周到的招待。', '这口点心甜度刚好，是很让人放松的好味道。'],
+      praise: ['谢谢你的肯定，听着心里暖暖的。', '被这么认真地夸了一句，感觉今天走这一趟很值。', '嗯，你也很照顾人，{host}能跟着你挺幸运的。'],
+      play: ['配合你转个圈，活动一下筋骨也挺不错。', '躺平装死中。先说明，只是配合演出，没真睡着。', '轻跳一下表示开心，今天做客非常愉快。'],
+    },
   };
 
   const getAllGiftableItems = () => {
@@ -27547,6 +27748,51 @@
     return received;
   };
 
+  const openVisitGiftModal = (guestName, guestMsg, receivedList) => {
+    let modal = root.querySelector('#st-tb-visit-gift-modal');
+    if (!modal) {
+      modal = doc.createElement('div');
+      modal.id = 'st-tb-visit-gift-modal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10028;pointer-events:auto;';
+      modal.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:11px;color:var(--px-fg,#54444a);font-family:inherit;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+          <span id="st-vg-title" style="font-size:12px;font-weight:700;"></span>
+          <button type="button" id="st-vg-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+        </div>
+        <div id="st-vg-msg" style="font-size:10.5px;line-height:1.45;background:#ffffff;border:1.5px solid var(--px-border,#bfa4ae);padding:6px 7px;margin-bottom:7px;"></div>
+        <div id="st-vg-gifts" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px;"></div>
+        <button type="button" id="st-vg-ok" class="st-px-btn care" style="width:100%;">开心收下，欢迎来做客</button>
+      </div>`;
+      root.appendChild(modal);
+      const hide = () => { modal.style.display = 'none'; };
+      modal.querySelector('#st-vg-close')?.addEventListener('click', hide);
+      modal.querySelector('#st-vg-ok')?.addEventListener('click', hide);
+      modal.addEventListener('click', (e) => { if (e.target === modal) hide(); });
+    }
+    const tEl = modal.querySelector('#st-vg-title');
+    const mEl = modal.querySelector('#st-vg-msg');
+    const gEl = modal.querySelector('#st-vg-gifts');
+    if (tEl) tEl.textContent = receivedList.length ? `${guestName} 带着礼物来串门啦` : `${guestName} 来桌面做客啦`;
+    if (mEl) mEl.textContent = `「${guestMsg || '来找你们玩啦~'}」`;
+    if (gEl) {
+      gEl.innerHTML = '';
+      if (receivedList.length) {
+        receivedList.forEach(itemTxt => {
+          const tag = doc.createElement('span');
+          tag.style.cssText = 'display:inline-block;padding:2px 6px;font-size:10px;font-weight:700;background:#fff4d9;border:1.5px solid #d9a048;color:#6b3f08;';
+          tag.textContent = itemTxt;
+          gEl.appendChild(tag);
+        });
+      } else {
+        const empty = doc.createElement('div');
+        empty.style.cssText = 'font-size:10px;color:#7a6258;';
+        empty.textContent = '空手轻装来串门，已经蹦蹦跳跳落座在桌面啦~';
+        gEl.appendChild(empty);
+      }
+    }
+    modal.style.display = 'flex';
+  };
+
   const getVisitCatalogs = () => {
     const uniq = (arr) => [...new Set(arr.filter(Boolean))];
     const outfits = uniq([
@@ -27569,6 +27815,19 @@
       ...(typeof TREASURE_COMPANIONS !== 'undefined' ? TREASURE_COMPANIONS.map(x => x.id) : []),
       ...(typeof GACHA_COMPANIONS !== 'undefined' ? GACHA_COMPANIONS.map(x => x.id) : []),
     ]);
+    const trails = uniq([
+      'trail_none',
+      ...(typeof SHOP_PUP_TRAILS !== 'undefined' ? SHOP_PUP_TRAILS.map(x => x.id) : []),
+      ...(typeof SECRET_ADV_TRAILS !== 'undefined' ? SECRET_ADV_TRAILS.map(x => x.id) : []),
+      ...(typeof GACHA_TRAILS !== 'undefined' ? GACHA_TRAILS.map(x => x.id) : []),
+    ]);
+    const bubbles = uniq([
+      'bub_default',
+      ...(typeof SHOP_PUP_BUBBLES !== 'undefined' ? SHOP_PUP_BUBBLES.map(x => x.id) : []),
+      ...(typeof SECRET_ADV_BUBBLES !== 'undefined' ? SECRET_ADV_BUBBLES.map(x => x.id) : []),
+      ...(typeof GACHA_BUBBLES !== 'undefined' ? GACHA_BUBBLES.map(x => x.id) : []),
+      ...(typeof SPECIAL_EVENT_BUBBLES !== 'undefined' ? SPECIAL_EVENT_BUBBLES.map(x => x.id) : []),
+    ]);
     const gifts = [
       ...SHOP_PUP_GOODS.map(x => ({ kind: x.cat === 'gear' ? 'gear' : 'snack', id: x.id })),
       ...GACHA_SNACKS.map(x => ({ kind: 'snack', id: x.id })),
@@ -27576,7 +27835,7 @@
       ...PUP_KITCHEN_RECIPES.map(x => ({ kind: 'dish', id: x.id })),
       ...PUP_DARK_DISHES.map(x => ({ kind: 'dish', id: x.id })),
     ];
-    return { outfits, accs, comps, gifts };
+    return { outfits, accs, comps, trails, bubbles, gifts };
   };
 
   const hexToRgbBytes = (hex, fallback) => {
@@ -27615,6 +27874,8 @@
     const a1Idx = accArr[0] ? Math.max(0, cat.accs.indexOf(accArr[0])) : 0;
     const a2Idx = accArr[1] ? Math.max(0, cat.accs.indexOf(accArr[1])) : 0;
     const cIdx = Math.max(0, cat.comps.indexOf(config.puppyCompanion || 'none'));
+    const trIdx = Math.max(0, cat.trails.indexOf(config.puppyWalkTrail || 'trail_paw'));
+    const bubIdx = Math.max(0, cat.bubbles.indexOf(config.puppyBubbleSkin || 'bub_default'));
 
     const enc = new TextEncoder();
     const nameBytes = enc.encode(String(getPupName() || '小狗').slice(0, 14)).slice(0, 48);
@@ -27629,7 +27890,7 @@
 
     const buf = [];
     const pushU16 = (v) => { buf.push((v >> 8) & 255, v & 255); };
-    buf.push(2, flags);
+    buf.push(3, flags);
     buf.push(...hexToRgbBytes(config.puppyFur, '#fffdf7'));
     buf.push(...hexToRgbBytes(config.puppyEar, '#e2ae74'));
     buf.push(...hexToRgbBytes(config.puppyCollar, '#d66565'));
@@ -27638,6 +27899,8 @@
     pushU16(a1Idx);
     pushU16(a2Idx);
     pushU16(cIdx);
+    pushU16(trIdx);
+    pushU16(bubIdx);
     buf.push(nameBytes.length, ...nameBytes);
     buf.push(msgBytes.length, ...msgBytes);
     buf.push(giftEntries.length);
@@ -27660,7 +27923,8 @@
         return obj;
       }
       const u8 = fromB64Any(body);
-      if (u8.length < 25 || u8[0] !== 2) return null;
+      const ver = u8[0];
+      if (u8.length < 25 || (ver !== 2 && ver !== 3)) return null;
       const cat = getVisitCatalogs();
       const persIds = PUP_PERSONALITIES.map(p => p.id);
       let pos = 1;
@@ -27679,6 +27943,8 @@
       const a1Idx = readU16();
       const a2Idx = readU16();
       const cIdx = readU16();
+      const trIdx = ver >= 3 ? readU16() : 1;
+      const bubIdx = ver >= 3 ? readU16() : 0;
 
       const dec = new TextDecoder();
       const nLen = u8[pos++];
@@ -27702,7 +27968,7 @@
       if (a2Idx > 0 && cat.accs[a2Idx] && cat.accs[a2Idx] !== 'none') accs.push(cat.accs[a2Idx]);
 
       return {
-        v: 2,
+        v: ver,
         name,
         pers: persIds[pIdx] || 'sleepyhead',
         look: {
@@ -27710,6 +27976,8 @@
           outfit: cat.outfits[outIdx] || 'none',
           accs,
           comp: cat.comps[cIdx] || 'none',
+          trail: cat.trails[trIdx] || 'trail_paw',
+          bubble: cat.bubbles[bubIdx] || 'bub_default',
           onesieShowEars,
         },
         msg,
@@ -27720,7 +27988,6 @@
     }
   };
 
-  let lastGeneratedVisitCode = '';
   const copyVisitCodeReliable = (txt) => {
     if (!txt) return false;
     try {
@@ -27750,30 +28017,62 @@
       return;
     }
     guestPupEl.classList.add('active');
-    if (guestPupTag) guestPupTag.textContent = guest.name || '客人小狗';
+    if (guestPupTag) guestPupTag.textContent = guest.name || '小伙伴';
     guestPupEl.style.left = `${Math.round(gPup.x)}px`;
     guestPupEl.style.top = `${Math.round(gPup.y || defaultPupY())}px`;
-    const hop = gPup.state === 'happy' && Math.floor(gPup.tick / 7) % 2 === 0;
-    const bob = (gPup.state === 'walk' && Math.floor(gPup.tick / 8) % 2 === 1);
+
+    let frame = 'idle1';
+    let isSitPose = false;
+    let isFlatPose = false;
+    let isDead = false;
+    let hop = false;
+    let bob = false;
+
+    if (gPup.state === 'walk') {
+      const f = Math.floor(gPup.tick / 8) % 2;
+      frame = f === 0 ? 'walk1' : 'walk2';
+      bob = f === 1;
+    } else if (gPup.state === 'sit') {
+      frame = Math.floor(gPup.tick / 16) % 2 === 0 ? 'sit1' : 'sit2';
+      isSitPose = true;
+    } else if (gPup.state === 'sleep') {
+      frame = 'sleep';
+      isFlatPose = true;
+    } else if (gPup.state === 'playdead') {
+      frame = 'playdead';
+      isDead = true;
+    } else if (gPup.state === 'eat') {
+      frame = Math.floor(gPup.tick / 8) % 2 === 0 ? 'eat1' : 'eat2';
+    } else if (gPup.state === 'spin') {
+      const f = Math.floor(gPup.tick / 5) % 2;
+      frame = f === 0 ? 'walk1' : 'happy';
+      hop = f === 1;
+      if (gPup.tick % 10 === 0) gPup.dir *= -1;
+    } else if (gPup.state === 'bounce') {
+      const f = Math.floor(gPup.tick / 6) % 2;
+      frame = f === 0 ? 'happy' : 'idle2';
+      hop = f === 0;
+    } else if (gPup.state === 'nuzzle' || gPup.state === 'happy') {
+      const f = Math.floor(gPup.tick / 8) % 2;
+      frame = f === 0 ? 'happy' : 'idle2';
+      hop = gPup.state === 'happy' && f === 0;
+      bob = gPup.state === 'nuzzle' && f === 0;
+    } else {
+      frame = Math.floor(gPup.tick / 18) % 2 === 0 ? 'idle1' : 'idle2';
+    }
+
     guestPupEl.classList.toggle('flip', gPup.dir < 0);
     guestPupEl.classList.toggle('bob', bob);
     guestPupEl.classList.toggle('hop', hop);
 
-    let frame = 'idle1';
-    let isSitPose = false;
-    if (gPup.state === 'walk') frame = Math.floor(gPup.tick / 8) % 2 === 0 ? 'walk1' : 'walk2';
-    else if (gPup.state === 'sit') { frame = Math.floor(gPup.tick / 16) % 2 === 0 ? 'sit1' : 'sit2'; isSitPose = true; }
-    else if (gPup.state === 'happy') frame = Math.floor(gPup.tick / 8) % 2 === 0 ? 'happy' : 'idle2';
-    else frame = Math.floor(gPup.tick / 18) % 2 === 0 ? 'idle1' : 'idle2';
-
-    const rKey = `${frame}|${gPup.dir}|${guest.name}|${JSON.stringify(guest.look || {})}`;
+    const rKey = `${frame}|${gPup.state}|${gPup.dir}|${guest.name}|${JSON.stringify(guest.look || {})}`;
     if (gPup.lastRenderKey === rKey) return;
     gPup.lastRenderKey = rKey;
 
     const pal = getPupPalette(guest.look || {});
     const ox = 4, oy = 10;
-    const hx = isSitPose ? ox + 9 : ox + 10;
-    const hy = oy + 2;
+    const hx = isSitPose ? ox + 9 : (isFlatPose ? ox + 11 : ox + 10);
+    const hy = isFlatPose ? oy + 6 : oy + 2;
     guestPupCtx.clearRect(0, 0, 24, 24);
     const grid = PUP_SPRITES[frame] || PUP_SPRITES.idle1;
     for (let y = 0; y < grid.length; y++) {
@@ -27791,11 +28090,12 @@
     try {
       activePxCtx = guestPupCtx;
       if (guest.look) {
-        drawPupOutfit(guest.look.outfit || 'none', ox, oy, hx, hy, false, false, isSitPose, false);
+        config.puppyOnesieShowEars = Boolean(guest.look.onesieShowEars);
+        drawPupOutfit(guest.look.outfit || 'none', ox, oy, hx, hy, isFlatPose, isDead, isSitPose, false);
         if (Array.isArray(guest.look.accs)) {
-          guest.look.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+          guest.look.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlatPose, isDead));
         }
-        drawPupCompanion(guest.look.comp || 'none', ox, oy, false);
+        drawPupCompanion(guest.look.comp || 'none', ox, oy, isDead);
       }
     } finally {
       activePxCtx = prevCtx;
@@ -27803,10 +28103,54 @@
     }
   };
 
+  const triggerDualPuppySocial = (manual = false) => {
+    const guest = config.guestPuppy;
+    if (!guest || !config.puppyEnabled) return;
+    const maxX = Math.max(8, win.innerWidth - 80);
+    if (!guest.pinned) {
+      gPup.x = clamp(pup.x + (pup.x > maxX / 2 ? -54 : 54), 8, maxX);
+      gPup.y = pup.y || defaultPupY();
+    }
+    gPup.dir = pup.x >= gPup.x ? 1 : -1;
+    pup.dir = gPup.x >= pup.x ? 1 : -1;
+    const gName = guest.name || '小伙伴';
+    const hName = getPupName();
+    const scenes = [
+      {
+        gState: 'nuzzle', hState: 'nuzzle',
+        hLine: `贴贴 ${gName}！你的毛毛也太软乎啦~`,
+        gLine: `蹭蹭 ${hName}！你们家好暖和呀~`,
+      },
+      {
+        gState: 'spin', hState: 'spin',
+        hLine: `来呀 ${gName}，我们比比谁转圈圈更圆！`,
+        gLine: `哈哈 ${hName} 看我的旋转小旋风！`,
+      },
+      {
+        gState: 'bounce', hState: 'happy',
+        hLine: `${gName} 把我的小零食分你一半，一起吃！`,
+        gLine: `哇谢谢 ${hName}！你真是全桌面最好客的小狗！`,
+      },
+      {
+        gState: 'happy', hState: 'happy',
+        hLine: `碰碰鼻头打招呼！欢迎 ${gName} 常来玩呀~`,
+        gLine: `蹭蹭鼻尖！和 ${hName} 玩得太开心啦~`,
+      },
+    ];
+    const sc = pick(scenes);
+    gPup.state = sc.gState;
+    gPup.timer = 115;
+    setPuppyState(sc.hState, 115);
+    showPuppyBubble(sc.hLine, 2600, !manual);
+    setTimeout(() => {
+      if (config.guestPuppy) showGuestBubble(sc.gLine, 2600);
+    }, 950);
+  };
+
   const dismissGuestPuppy = () => {
     if (!config.guestPuppy) return;
     const gName = config.guestPuppy.name || '小伙伴';
-    showGuestBubble('那我先回家啦，谢谢招待~', 1800);
+    showGuestBubble('那我先回家啦，下次再来找你们玩~', 1800);
     if (guestPopEl) guestPopEl.style.display = 'none';
     setTimeout(() => {
       config.guestPuppy = null;
@@ -27817,38 +28161,77 @@
     }, 900);
   };
 
+  const interactWithGuest = (kind) => {
+    const guest = config.guestPuppy;
+    if (!guest) return;
+    config.puppyStats = config.puppyStats || {};
+    config.puppyStats.visitInteracts = (config.puppyStats.visitInteracts || 0) + 1;
+    saveConfig();
+    checkPupAchievements();
+
+    if (kind === 'dual') {
+      triggerDualPuppySocial(true);
+      if (guestPopEl) guestPopEl.style.display = 'none';
+      return;
+    }
+    const pers = guest.pers || 'sleepyhead';
+    const pool = (GUEST_INTERACT_LINES[pers] && GUEST_INTERACT_LINES[pers][kind]) || GUEST_INTERACT_LINES.sleepyhead.pet;
+    const line = pick(pool).replace(/\{host\}/g, getPupName());
+    if (kind === 'pet') { gPup.state = 'happy'; gPup.timer = 95; }
+    else if (kind === 'nuzzle') { gPup.state = 'nuzzle'; gPup.timer = 105; }
+    else if (kind === 'feed') { gPup.state = 'eat'; gPup.timer = 105; }
+    else if (kind === 'praise') { gPup.state = 'spin'; gPup.timer = 95; }
+    else if (kind === 'play') { gPup.state = pick(['bounce', 'playdead', 'spin']); gPup.timer = 110; }
+    showGuestBubble(line, 2900);
+  };
+
   const openGuestPop = () => {
     const guest = config.guestPuppy;
     if (!guest || !guestPopEl) return;
-    const pObj = PUP_PERSONALITIES.find(p => p.id === guest.pers) || PUP_PERSONALITIES[0];
+    const isPinned = Boolean(guest.pinned);
     guestPopEl.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-        <span style="font-weight:700;">${guest.name} · ${pObj.name}</span>
+        <span style="font-weight:700;">${guest.name}</span>
         <button type="button" id="st-gp-close" class="st-px-btn" style="height:18px;padding:0 5px;font-size:10px;">×</button>
       </div>
       <div style="font-size:10px;background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:4px 6px;margin-bottom:6px;">「${guest.msg || '来找你们玩啦~'}」</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-        <button type="button" id="st-gp-pet" class="st-px-btn care">摸摸TA</button>
-        <button type="button" id="st-gp-feed" class="st-px-btn care">喂小点心</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px;">
+        <button type="button" id="st-gp-pet" class="st-px-btn care">摸摸头</button>
+        <button type="button" id="st-gp-nuzzle" class="st-px-btn care">贴贴蹭蹭</button>
+        <button type="button" id="st-gp-feed" class="st-px-btn">喂小点心</button>
         <button type="button" id="st-gp-praise" class="st-px-btn">夸夸可爱</button>
+        <button type="button" id="st-gp-play" class="st-px-btn">逗TA玩</button>
+        <button type="button" id="st-gp-dual" class="st-px-btn">双狗贴贴</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+        <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
         <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
       </div>`;
     const left = clamp(Math.round(gPup.x) - 60, 8, Math.max(8, win.innerWidth - 234));
-    const top = clamp(Math.round((gPup.y || defaultPupY()) - 148), 10, Math.max(10, win.innerHeight - 160));
+    const top = clamp(Math.round((gPup.y || defaultPupY()) - 188), 10, Math.max(10, win.innerHeight - 200));
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
     guestPopEl.style.display = 'block';
     guestPopEl.querySelector('#st-gp-close')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; });
-    guestPopEl.querySelector('#st-gp-pet')?.addEventListener('click', () => {
-      gPup.state = 'happy'; gPup.timer = 90;
-      showGuestBubble(pick(['哇谢谢摸头，好舒服~', '蹭蹭你的手心！你们家真温暖~', '开心摇尾巴，下次还想来串门！']), 2400);
-    });
-    guestPopEl.querySelector('#st-gp-feed')?.addEventListener('click', () => {
-      gPup.state = 'happy'; gPup.timer = 100;
-      showGuestBubble(pick(['吧唧吧唧… 这小点心也太香了吧！', '谢谢招待！吃得好满足~', '回去要跟主人夸你手艺好！']), 2400);
-    });
-    guestPopEl.querySelector('#st-gp-praise')?.addEventListener('click', () => {
-      gPup.state = 'happy'; gPup.timer = 95;
-      showGuestBubble(pick(['嘿嘿被夸得尾巴都要翘上天啦！', `谢谢夸奖，${getPupName()}也很可爱哦~`, '开心到原地转圈圈！']), 2400);
+    guestPopEl.querySelector('#st-gp-pet')?.addEventListener('click', () => interactWithGuest('pet'));
+    guestPopEl.querySelector('#st-gp-nuzzle')?.addEventListener('click', () => interactWithGuest('nuzzle'));
+    guestPopEl.querySelector('#st-gp-feed')?.addEventListener('click', () => interactWithGuest('feed'));
+    guestPopEl.querySelector('#st-gp-praise')?.addEventListener('click', () => interactWithGuest('praise'));
+    guestPopEl.querySelector('#st-gp-play')?.addEventListener('click', () => interactWithGuest('play'));
+    guestPopEl.querySelector('#st-gp-dual')?.addEventListener('click', () => interactWithGuest('dual'));
+    guestPopEl.querySelector('#st-gp-pin')?.addEventListener('click', () => {
+      guest.pinned = !guest.pinned;
+      if (guest.pinned) {
+        guest.pinX = Math.round(gPup.x);
+        guest.pinY = Math.round(gPup.y || defaultPupY());
+        gPup.state = 'sit';
+        gPup.timer = 180;
+        showGuestBubble('好哒，我就乖乖坐在这里不乱跑啦~', 2200);
+      } else {
+        showGuestBubble('又能自由溜达逛逛啦~', 2000);
+      }
+      saveConfig();
+      openGuestPop();
+      if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
     });
     guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', dismissGuestPuppy);
   };
@@ -27877,6 +28260,11 @@
       const moved = guestDrag.moved;
       guestDrag = null;
       guestPupEl.classList.remove('dragging');
+      if (moved && config.guestPuppy?.pinned) {
+        config.guestPuppy.pinX = Math.round(gPup.x);
+        config.guestPuppy.pinY = Math.round(gPup.y);
+        saveConfig();
+      }
       if (!moved) openGuestPop();
     };
     guestPupEl.addEventListener('pointerup', endGuestDrag);
@@ -27889,39 +28277,38 @@
       if (!guest && guestPupEl && guestPupEl.classList.contains('active')) guestPupEl.classList.remove('active');
       return;
     }
-    if (!gPup.y) gPup.y = defaultPupY();
+    if (!gPup.y) gPup.y = (guest.pinned && guest.pinY) ? guest.pinY : defaultPupY();
+    if (guest.pinned && typeof guest.pinX === 'number' && gPup.tick === 0) gPup.x = guest.pinX;
     gPup.tick += 1;
     gPup.timer -= 1;
     const now = Date.now();
     const maxX = Math.max(8, win.innerWidth - 80);
 
     if (now >= gPup.nextSocialAt && Math.abs(gPup.x - pup.x) < 280) {
-      gPup.nextSocialAt = now + randInt(24000, 38000);
-      gPup.x = clamp(pup.x + (pup.x > maxX / 2 ? -56 : 56), 8, maxX);
-      gPup.dir = pup.x >= gPup.x ? 1 : -1;
-      gPup.state = 'happy';
-      gPup.timer = 110;
-      const gName = guest.name || '小伙伴';
-      const hName = getPupName();
-      showPuppyBubble(pick([`哇 ${gName} 来找我玩啦，贴贴！`, `${gName} 你闻起来香香的，一起转圈圈吗？`, `欢迎 ${gName}，把我的玩具分你一半！`]), 2400, true);
-      setTimeout(() => {
-        if (config.guestPuppy) showGuestBubble(pick([`${hName}！你们家好舒服呀~`, `嘿嘿和 ${hName} 一起玩最开心啦！`, `${hName} 尾巴摇得比我还快哈哈！`]), 2500);
-      }, 1100);
-    } else if (gPup.state === 'walk') {
+      gPup.nextSocialAt = now + randInt(26000, 42000);
+      triggerDualPuppySocial(false);
+    } else if (gPup.state === 'walk' && !guest.pinned) {
       gPup.x += gPup.dir * 0.65;
       if (gPup.x <= 8) { gPup.x = 8; gPup.dir = 1; }
       if (gPup.x >= maxX) { gPup.x = maxX; gPup.dir = -1; }
+      const gTrail = guest.look?.trail;
+      if (gTrail && gTrail !== 'trail_none' && gPup.tick % 24 === 0) {
+        spawnWalkTrailDot(gTrail, 0, { x: gPup.x, y: gPup.y, dir: gPup.dir });
+      }
     }
 
     if (gPup.timer <= 0) {
       const r = Math.random();
-      if (r < 0.40) {
+      if (!guest.pinned && r < 0.38) {
         if (Math.random() < 0.45) gPup.dir *= -1;
         gPup.state = 'walk';
         gPup.timer = randInt(90, 170);
-      } else if (r < 0.75) {
+      } else if (r < 0.72) {
         gPup.state = 'sit';
         gPup.timer = randInt(120, 220);
+      } else if (r < 0.84) {
+        gPup.state = 'sleep';
+        gPup.timer = randInt(150, 260);
       } else {
         gPup.state = 'idle';
         gPup.timer = randInt(110, 190);
@@ -27936,18 +28323,24 @@
     const guest = config.guestPuppy;
 
     if (guest) {
-      const pObj = PUP_PERSONALITIES.find(p => p.id === guest.pers) || PUP_PERSONALITIES[0];
       const gCard = doc.createElement('div');
       gCard.className = 'st-px-adv-card';
       gCard.style.marginBottom = '6px';
-      gCard.innerHTML = `<div style="font-weight:700;margin-bottom:3px;">当前做客：${guest.name}（${pObj.name}）</div>
+      gCard.innerHTML = `<div style="font-weight:700;margin-bottom:3px;">当前做客：${guest.name}</div>
         <div style="font-size:10px;color:#6b5446;margin-bottom:5px;">「${guest.msg || '来串门啦~'}」</div>
-        <div style="display:flex;gap:5px;">
+        <div style="display:flex;gap:4px;">
           <button type="button" id="st-pv-interact" class="st-px-btn care" style="flex:1;">互动客人</button>
+          <button type="button" id="st-pv-pin" class="st-px-btn${guest.pinned ? ' active' : ''}" style="flex:1;">${guest.pinned ? '已固定' : '固定位置'}</button>
           <button type="button" id="st-pv-dismiss" class="st-px-btn" style="flex:1;color:#a94442;">礼貌送客</button>
         </div>`;
       advVisitView.appendChild(gCard);
       gCard.querySelector('#st-pv-interact')?.addEventListener('click', openGuestPop);
+      gCard.querySelector('#st-pv-pin')?.addEventListener('click', () => {
+        guest.pinned = !guest.pinned;
+        if (guest.pinned) { guest.pinX = Math.round(gPup.x); guest.pinY = Math.round(gPup.y || defaultPupY()); gPup.state = 'sit'; }
+        saveConfig();
+        renderPupVisitPanel();
+      });
       gCard.querySelector('#st-pv-dismiss')?.addEventListener('click', dismissGuestPuppy);
     }
 
@@ -27996,7 +28389,8 @@
     genBtn.type = 'button';
     genBtn.className = 'st-px-btn care';
     genBtn.style.width = '100%';
-    genBtn.textContent = totalPicked > 0 ? `打包 ${totalPicked} 件礼物并生成名片码` : '生成串门名片码';
+    genBtn.textContent = totalPicked > 0 ? `打包 ${totalPicked} 件礼物并生成短名片码` : '生成串门短名片码';
+
     const codeRow = doc.createElement('div');
     codeRow.style.cssText = 'display:flex;gap:4px;margin-top:5px;align-items:center;';
     const codeOut = doc.createElement('input');
@@ -28026,11 +28420,13 @@
 
     genBtn.addEventListener('click', () => {
       const gifts = [];
+      let totalQty = 0;
       const allMap = new Map(giftables.map(it => [`${it.kind}:${it.id}`, it]));
       for (const [k, qty] of Object.entries(guestDraftGifts)) {
         const it = allMap.get(k);
         if (!it || qty <= 0) continue;
         const take = Math.min(qty, it.qty);
+        totalQty += take;
         gifts.push({ kind: it.kind, id: it.id, qty: take });
         if (it.kind === 'gear' || it.kind === 'snack') {
           config.puppyInventory[it.id] = Math.max(0, Math.floor(config.puppyInventory[it.id] || 0) - take);
@@ -28040,10 +28436,15 @@
           config.puppyKitchen.dishes[it.id] = Math.max(0, Math.floor(config.puppyKitchen.dishes[it.id] || 0) - take);
         }
       }
+      if (totalQty >= 5) {
+        config.puppyStats = config.puppyStats || {};
+        config.puppyStats.visitFullGiftSent = (config.puppyStats.visitFullGiftSent || 0) + 1;
+      }
       const cardCode = encodePupVisitCard(msgInp.value, gifts);
       lastGeneratedVisitCode = cardCode;
       guestDraftGifts = {};
       saveConfig();
+      checkPupAchievements();
       copyVisitCodeReliable(cardCode);
       cmNotify(gifts.length ? '短名片码已生成并复制，礼物已打包！' : '短名片码已生成并复制！');
       renderPupVisitPanel();
@@ -28066,25 +28467,33 @@
       const parsed = decodePupVisitCard(inTa.value);
       if (!parsed) { cmNotify('名片码格式不正确'); return; }
       const received = grantGiftItems(parsed.gifts);
+      const cleanName = String(parsed.name).slice(0, 14);
       config.guestPuppy = {
-        name: String(parsed.name).slice(0, 14),
+        name: cleanName,
         pers: parsed.pers || 'sleepyhead',
         look: parsed.look || {},
         msg: parsed.msg || '来找你们玩啦~',
+        pinned: false,
       };
+      config.puppyStats = config.puppyStats || {};
+      if (!Array.isArray(config.puppyStats.visitGuestNames)) config.puppyStats.visitGuestNames = [];
+      if (!config.puppyStats.visitGuestNames.includes(cleanName)) config.puppyStats.visitGuestNames.push(cleanName);
+
       gPup.x = clamp(pup.x + 64, 16, Math.max(16, win.innerWidth - 90));
       gPup.y = defaultPupY();
       gPup.dir = -1;
       gPup.state = 'happy';
       gPup.timer = 110;
       gPup.lastRenderKey = '';
+      gPup.lastBubbleSkin = '';
       saveConfig();
+      checkPupAchievements();
       if (config.puppyEnabled) {
         drawGuestPuppyScene();
-        showGuestBubble(`哈喽！我是 ${config.guestPuppy.name}，来串门啦~`, 2800);
-        showPuppyBubble(`哇！${config.guestPuppy.name} 来做客啦~`, 2600);
+        showGuestBubble(`哈喽！我是 ${cleanName}，来串门啦~`, 2800);
+        showPuppyBubble(`哇！${cleanName} 来做客啦~`, 2600);
       }
-      cmNotify(received.length ? `收到礼物：${received.join('、')}` : `${config.guestPuppy.name} 已来到桌面做客！`);
+      openVisitGiftModal(cleanName, config.guestPuppy.msg, received);
       renderPupVisitPanel();
     });
     inBox.append(inTa, inBtn);
@@ -31606,7 +32015,7 @@
           if (!r.req.every(q => (gU[q.id] || 0) >= q.qty)) return;
           if (Math.floor(config.puppyCoins || 0) < r.coins) return;
           r.req.forEach(q => { gU[q.id] = Math.max(0, (gU[q.id] || 0) - q.qty); });
-          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - r.coins);
+          config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0) - r.coins); recordCoinsSpent(r.coins);
           k.cooked += 1;
           const ok = Math.random() * 100 < getKitchenSuccessRate(r.diff);
           const xpGain = ok ? (14 + r.diff * 4) : 6;
@@ -32757,6 +33166,25 @@
         const cy0 = 2 + Math.floor(k * 0.6);
         px(cx0, cy0, k === 0 ? '#ffffff' : (k < 3 ? '#96e4ff' : '#ffb8e0'), k === 0 ? 2 : 1, k === 0 ? 2 : 1);
       }
+    } else if (m === 'spend_vinyl_cafe') {
+      // [成就] 黑胶咖啡馆泡：左下旋转复古黑胶唱片+唱针，右上暖咖拿铁杯+袅袅热气与飘动小音符
+      const vx = 3, vy = H - 10;
+      px(vx + 1, vy, '#2b2428', 6, 8); px(vx, vy + 1, '#2b2428', 8, 6);
+      px(vx + 2, vy + 2, '#4a3d44', 4, 4);
+      px(vx + 3, vy + 3, '#e8a848', 2, 2);
+      if ((t % 4) < 2) { px(vx + 1, vy + 2, '#6b5a63', 1, 1); px(vx + 6, vy + 5, '#6b5a63', 1, 1); }
+      else { px(vx + 2, vy + 1, '#6b5a63', 1, 1); px(vx + 5, vy + 6, '#6b5a63', 1, 1); }
+      px(vx + 7, vy + 1, '#d9b478', 1, 4); px(vx + 6, vy + 4, '#f5d698', 1, 1);
+      const cx = W - 11, cy = 4;
+      px(cx + 1, cy + 3, '#fffdf7', 6, 4); px(cx + 2, cy + 7, '#e6d3be', 4, 1);
+      px(cx + 7, cy + 4, '#d9c2a8', 1, 2);
+      px(cx + 2, cy + 3, '#8c5a3c', 4, 1);
+      const stY = (t % 6) < 3 ? 0 : -1;
+      px(cx + 2 + ((t % 4) < 2 ? 0 : 1), cy + 1 + stY, '#e8d4c0', 1, 2);
+      px(cx + 5 - ((t % 4) < 2 ? 0 : 1), cy + stY, '#f2e4d6', 1, 2);
+      const nx = 14 + ((t * 2) % Math.max(10, W - 28));
+      const ny = 2 + (Math.floor(t / 3) % 2);
+      px(nx, ny, '#a8643e', 1, 3); px(nx + 1, ny, '#a8643e', 2, 1); px(nx - 1, ny + 2, '#c97e52', 2, 1);
     } else if (m === 'gdyn_bday_celebrate') {
       // [生日] 蜡烛礼赞框：左上双层草莓奶油生日小蛋糕带摇曳烛火 + 右下飘动马卡龙气球束 + 柔彩纸屑
       const cx = 2, cy = 3 + bob1;
@@ -33610,6 +34038,29 @@
         const dr = 2 + Math.floor((Math.sin(t * 0.18 + x) + 1) * 1.5);
         g.fillStyle = '#ffffff'; g.fillRect(x, 8, 4, dr);
       }
+    } else if (m === 'spend_musicbox_carousel') {
+      // [成就] 旋转音乐盒框：顶边绯白复古华盖轻摆 + 左右金铜发条钥匙转动 + 底边旋转乐筒与飘动音符
+      for (let i = 0; i < 6; i++) {
+        const sx = 6 + i * 9;
+        const col = i % 2 === 0 ? '#d95b7a' : '#fff7eb';
+        g.fillStyle = col; g.fillRect(sx, 2, 9, 5);
+        g.fillStyle = '#f2c864'; g.fillRect(sx + 3, 7, 3, 2);
+      }
+      const keyRot = Math.floor(t / 5) % 2;
+      g.fillStyle = '#e6b44c';
+      g.fillRect(2, 27, 4, 3);
+      g.fillRect(1, keyRot === 0 ? 24 : 26, 2, keyRot === 0 ? 9 : 5);
+      g.fillRect(58, 27, 4, 3);
+      g.fillRect(61, keyRot === 0 ? 26 : 24, 2, keyRot === 0 ? 5 : 9);
+      g.fillStyle = '#d49a38'; g.fillRect(16, 56, 32, 4);
+      g.fillStyle = '#fff3c4'; g.fillRect(18, 57, 28, 2);
+      for (let k = 0; k < 4; k++) {
+        const pinX = 19 + ((k * 7 + t) % 25);
+        g.fillStyle = '#8c4e1c'; g.fillRect(pinX, 57, 2, 2);
+      }
+      const noteX = 12 + ((t * 2) % 38);
+      const noteY = 50 - (Math.floor(t / 4) % 4);
+      g.fillStyle = '#d95b7a'; g.fillRect(noteX, noteY, 2, 4); g.fillRect(noteX + 2, noteY, 2, 1); g.fillRect(noteX - 1, noteY + 3, 2, 2);
     } else if (m === 'gadyn_prism_orbit') {
       // 晶钻小皇冠：幻彩晶钻折光绕框巡游 + 顶边冠冕光带起伏
       const cols = ['#ff9ed2', '#8ce6ff', '#ffe68c', '#c8a8ff', '#92f0cc'];
@@ -34544,7 +34995,7 @@
   };
 
   let trailStepAlt = 0;
-  const spawnWalkTrailDot = (overrideTrailId = null, demoOffset = 0) => {
+  const spawnWalkTrailDot = (overrideTrailId = null, demoOffset = 0, customPos = null) => {
     const trId = overrideTrailId || config.puppyWalkTrail;
     if (!trId || trId === 'trail_none' || !config.puppyEnabled) return;
     const tr = [...SHOP_PUP_TRAILS, ...SECRET_ADV_TRAILS, ...GACHA_TRAILS].find(t => t.id === trId);
@@ -34573,8 +35024,11 @@
       }
     }
     // 精准落在小狗屁股/后爪踩过的位置，左右脚交替微微错开，留在地面上慢慢淡出！
-    const backX = pup.dir > 0 ? (pup.x + 8 - demoOffset) : (pup.x + 52 + demoOffset);
-    const footY = pup.y + 56 + (trailStepAlt === 0 ? 0 : 4);
+    const srcX = customPos ? customPos.x : pup.x;
+    const srcY = customPos ? customPos.y : pup.y;
+    const srcDir = customPos ? customPos.dir : pup.dir;
+    const backX = srcDir > 0 ? (srcX + 8 - demoOffset) : (srcX + 52 + demoOffset);
+    const footY = srcY + 56 + (trailStepAlt === 0 ? 0 : 4);
     cv.style.left = `${Math.round(backX)}px`;
     cv.style.top = `${Math.round(footY)}px`;
     cv.style.opacity = '1';
@@ -34775,7 +35229,7 @@
         if (config.puppyEnabled) showPuppyBubble(`升级${nextPot.name}还差 ${nextPot.price - curCoins} 币`, 1800);
         return;
       }
-      config.puppyCoins = curCoins - nextPot.price;
+      config.puppyCoins = curCoins - nextPot.price; recordCoinsSpent(nextPot.price);
       config.puppyGarden.potLv = nextPot.lv;
       saveConfig();
       updatePupStatBars();
@@ -36580,7 +37034,7 @@
       config.puppyInventory = config.puppyInventory || {};
       config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0) - useTickets);
     }
-    config.puppyCoins = curCoins - coinCost;
+    config.puppyCoins = curCoins - coinCost; recordCoinsSpent(coinCost);
     saveConfig();
     updatePupStatBars();
     if (gachaPullBtn) gachaPullBtn.disabled = true;
@@ -38370,7 +38824,7 @@
           askEl.style.display = 'none';
           return;
         }
-        if (opt.coinCost) config.puppyCoins = Math.max(0, (config.puppyCoins || 0) - opt.coinCost);
+        if (opt.coinCost) { config.puppyCoins = Math.max(0, (config.puppyCoins || 0) - opt.coinCost); recordCoinsSpent(opt.coinCost); }
         config.puppyStats = config.puppyStats || {};
         config.puppyStats.askAnswered = (config.puppyStats.askAnswered || 0) + 1;
 
@@ -40053,7 +40507,7 @@
         pxGameMsgEl.textContent = '小狗币不足 1 枚';
         return;
       }
-      config.puppyCoins = curCoins - 1;
+      config.puppyCoins = curCoins - 1; recordCoinsSpent(1);
     }
     plays[activeGameId] = used + 1;
     saveConfig();
@@ -48521,6 +48975,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'readstyle', name: '正文调整',   defLabel: '正文' },
     { id: 'font',      name: '字体设置',   defLabel: '字体' },
     { id: 'phrases',   name: '快捷短语',   defLabel: '短语' },
+    { id: 'textreplace', name: '正文替词', defLabel: '替词' },
     { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
   ];
   const QUICK_DOCK_DEFAULT = [
@@ -49227,8 +49682,112 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
         if (typeof win.__stSyncQuickPhrasePop === 'function') win.__stSyncQuickPhrasePop();
         if (typeof win.__stSyncQpBarToggle === 'function') win.__stSyncQpBarToggle();
+        root.querySelector('#st-tb-quick-rep-pop')?.classList.remove('open');
         ppop.classList.add('open');
         if (typeof bringFloatFront === 'function') bringFloatFront(ppop);
+      } else if (act === 'textreplace') {
+        toggleQuickDock(false);
+        let rpop = root.querySelector('#st-tb-quick-rep-pop');
+        if (!rpop) {
+          rpop = doc.createElement('div');
+          rpop.id = 'st-tb-quick-rep-pop';
+          rpop.className = 'st-tb-mini-pop';
+          rpop.style.width = '268px';
+          rpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+              <span>正文替词</span>
+              <div style="display:flex;gap:4px;">
+                <button class="st-tb-mini-btn" id="st-qrp-toggle" type="button">开启替词</button>
+                <button class="st-tb-mini-btn" id="st-qrp-close" type="button">关闭</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <input class="st-tb-input" id="st-qrp-from" type="text" placeholder="原词" style="flex:1;min-width:0;" />
+              <span style="font-size:11px;opacity:0.7;">→</span>
+              <input class="st-tb-input" id="st-qrp-to" type="text" placeholder="替换为" style="flex:1;min-width:0;" />
+              <button class="st-tb-mini-btn active" id="st-qrp-add" type="button">+加</button>
+            </div>
+            <div id="st-qrp-list" style="display:flex;flex-direction:column;gap:4px;max-height:175px;overflow-y:auto;"></div>`;
+          root.appendChild(rpop);
+          const qTog = rpop.querySelector('#st-qrp-toggle');
+          const qFrom = rpop.querySelector('#st-qrp-from');
+          const qTo = rpop.querySelector('#st-qrp-to');
+          const qList = rpop.querySelector('#st-qrp-list');
+          const syncQRep = () => {
+            if (qTog) {
+              const on = Boolean(config.textReplaceEnabled);
+              qTog.classList.toggle('active', on);
+              qTog.textContent = on ? '已开启' : '开启替词';
+            }
+            if (!qList) return;
+            qList.innerHTML = '';
+            const rules = Array.isArray(config.textReplaceRules) ? config.textReplaceRules : [];
+            if (!rules.length) {
+              qList.innerHTML = '<div style="font-size:11px;opacity:0.68;text-align:center;padding:8px;">暂无替词规则</div>';
+              return;
+            }
+            rules.forEach(r => {
+              const row = doc.createElement('div');
+              row.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 6px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);font-size:11px;';
+              const lbl = doc.createElement('span');
+              lbl.style.cssText = `flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;${r.on === false ? 'opacity:0.45;text-decoration:line-through;' : ''}`;
+              lbl.textContent = `${r.from} → ${r.to || '(空)'}`;
+              const tg = doc.createElement('button');
+              tg.type = 'button';
+              tg.className = `st-tb-mini-btn${r.on !== false ? ' active' : ''}`;
+              tg.style.cssText = 'height:20px;min-height:20px;padding:0 5px;font-size:10px;';
+              tg.textContent = r.on !== false ? '开' : '关';
+              tg.addEventListener('click', () => {
+                r.on = r.on === false;
+                saveConfig();
+                renderTextReplaceUI();
+                applyTextReplaces();
+                syncQRep();
+              });
+              const del = doc.createElement('button');
+              del.type = 'button';
+              del.className = 'st-tb-mini-btn';
+              del.style.cssText = 'height:20px;min-height:20px;padding:0 5px;font-size:10px;color:#d9534f;';
+              del.textContent = '×';
+              del.addEventListener('click', () => {
+                config.textReplaceRules = (config.textReplaceRules || []).filter(x => x.id !== r.id);
+                saveConfig();
+                renderTextReplaceUI();
+                applyTextReplaces();
+                syncQRep();
+              });
+              row.append(lbl, tg, del);
+              qList.appendChild(row);
+            });
+          };
+          win.__stSyncQuickRepPop = syncQRep;
+          rpop.querySelector('#st-qrp-close')?.addEventListener('click', () => rpop.classList.remove('open'));
+          qTog?.addEventListener('click', () => {
+            config.textReplaceEnabled = !config.textReplaceEnabled;
+            saveConfig();
+            renderTextReplaceUI();
+            applyTextReplaces();
+            syncQRep();
+          });
+          rpop.querySelector('#st-qrp-add')?.addEventListener('click', () => {
+            const from = String(qFrom?.value || '').trim();
+            const to = String(qTo?.value || '');
+            if (!from) { cmNotify('请输入原词'); return; }
+            if (!Array.isArray(config.textReplaceRules)) config.textReplaceRules = [];
+            config.textReplaceRules.push({ id: `tr_${Date.now()}`, from, to, on: true });
+            if (qFrom) qFrom.value = '';
+            if (qTo) qTo.value = '';
+            saveConfig();
+            renderTextReplaceUI();
+            applyTextReplaces();
+            syncQRep();
+          });
+        }
+        root.querySelector('#st-tb-quick-read-pop')?.classList.remove('open');
+        root.querySelector('#st-tb-quick-font-pop')?.classList.remove('open');
+        root.querySelector('#st-tb-quick-phrase-pop')?.classList.remove('open');
+        if (typeof win.__stSyncQuickRepPop === 'function') win.__stSyncQuickRepPop();
+        rpop.classList.add('open');
+        if (typeof bringFloatFront === 'function') bringFloatFront(rpop);
       } else if (act === 'readstyle') {
         toggleQuickDock(false);
         let pop = root.querySelector('#st-tb-quick-read-pop');
