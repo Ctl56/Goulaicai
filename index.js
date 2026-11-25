@@ -5892,7 +5892,7 @@
     #st-tb-pup-bag.custom-h .st-px-body {
       max-height: none;
     }
-    .st-px-in, .st-px-ta {
+    #st-tb-root input.st-px-in, #st-tb-root textarea.st-px-ta, #st-tb-root .st-px-in, #st-tb-root .st-px-ta {
       background: var(--px-card, #ffffff) !important;
       color: var(--px-fg, #54444a) !important;
       border: 2px solid var(--px-border, #bfa4ae) !important;
@@ -21862,30 +21862,33 @@
       || (typeof wardDraft.showCollar === 'boolean' && wardDraft.showCollar !== cur.showCollar);
   };
   const applyWardDraftToPuppy = () => {
-    if (!wardDraft) return;
-    config.puppyOutfit = wardDraft.outfit || 'none';
-    config.puppyAccs = Array.isArray(wardDraft.accs) ? wardDraft.accs.slice(0, 3) : [];
-    config.puppyCompanion = wardDraft.comp || 'none';
-    config.puppyAccOffsets = wardDraft.accOffsets ? JSON.parse(JSON.stringify(wardDraft.accOffsets)) : {};
-    if (wardDraft.fur) config.puppyFur = wardDraft.fur;
-    if (wardDraft.ear) config.puppyEar = wardDraft.ear;
-    if (wardDraft.collar) config.puppyCollar = wardDraft.collar;
-    if (wardDraft.outline) config.puppyOutline = wardDraft.outline;
-    if (typeof wardDraft.showCollar === 'boolean') config.puppyShowCollar = wardDraft.showCollar;
+    const d = ensureWardDraft();
+    config.puppyOutfit = d.outfit || 'none';
+    config.puppyAccs = Array.isArray(d.accs) ? d.accs.slice(0, 3) : [];
+    config.puppyAcc = config.puppyAccs[0] || 'none';
+    config.puppyCompanion = d.comp || 'none';
+    config.puppyAccOffsets = d.accOffsets ? JSON.parse(JSON.stringify(d.accOffsets)) : {};
+    if (d.fur) config.puppyFur = d.fur;
+    if (d.ear) config.puppyEar = d.ear;
+    if (d.collar) config.puppyCollar = d.collar;
+    if (d.outline) config.puppyOutline = d.outline;
+    if (typeof d.showCollar === 'boolean') config.puppyShowCollar = d.showCollar;
     wardDraft = null;
-    pup._lastRenderKey = '';
-    saveConfig();
-    if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
-    if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
-    renderPupWardrobe();
-    renderPupShop();
-    updatePupStatBars();
-    checkPupAchievements();
-    if (config.puppyEnabled) {
-      drawPuppyScene();
-      showPuppyBubble('换好新穿搭啦，是不是超好看~', 2200);
-      if (typeof progressPupWish === 'function') progressPupWish('dress', 1);
-    }
+    if (typeof pup !== 'undefined' && pup) pup._lastRenderKey = '';
+    try { saveConfig(); } catch (_) {}
+    try { if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true); } catch (_) {}
+    try { if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto(); } catch (_) {}
+    try { if (typeof renderPupWardrobe === 'function') renderPupWardrobe(); } catch (_) {}
+    try { if (typeof renderPupShop === 'function') renderPupShop(); } catch (_) {}
+    try { if (typeof updatePupStatBars === 'function') updatePupStatBars(); } catch (_) {}
+    try { if (typeof checkPupAchievements === 'function') checkPupAchievements(); } catch (_) {}
+    try {
+      if (config.puppyEnabled) {
+        drawPuppyScene();
+        showPuppyBubble('换好新穿搭啦，是不是超好看~', 2200);
+        if (typeof progressPupWish === 'function') progressPupWish('dress', 1);
+      }
+    } catch (_) {}
   };
   const redrawWardStickyPreview = () => {
     const host = root.querySelector('#st-px-ward-sticky-preview');
@@ -32132,7 +32135,7 @@
     guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:5px;cursor:move;user-select:none;touch-action:none;padding:2px 0 5px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;">
           <span style="font-weight:700;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(guest.name)}</span>
-          ${_gpFr ? `<button type="button" id="st-gp-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;gap:2px;height:18px;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">${PX_ICO_HEART}<span>Lv.${_gpBondLv}</span></button>` : ''}
+          ${_gpFr ? `<button type="button" id="st-gp-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">${PX_ICO_HEART}<span style="line-height:1;display:inline-block;">Lv.${_gpBondLv}</span></button>` : ''}
         </div>
         <button type="button" id="st-gp-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;flex-shrink:0;">×</button>
       </div>
@@ -32314,7 +32317,7 @@
     maskEl.style.zIndex = String(modalStackZ);
   };
 
-  const PX_ICO_HEART = `<svg width="10" height="10" viewBox="0 0 10 10" style="display:block;flex-shrink:0;margin:0;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="1" y="2" width="3" height="2" fill="#e05884"/><rect x="6" y="2" width="3" height="2" fill="#e05884"/><rect x="1" y="4" width="8" height="2" fill="#e05884"/><rect x="2" y="6" width="6" height="1" fill="#e05884"/><rect x="3" y="7" width="4" height="1" fill="#e05884"/><rect x="4" y="8" width="2" height="1" fill="#e05884"/><rect x="2" y="3" width="1" height="1" fill="#ffc4d6"/></svg>`;
+  const PX_ICO_HEART = `<svg width="10" height="9" viewBox="0 0 10 9" style="display:block;flex-shrink:0;margin:0;transform:translateY(-1px);image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="1" y="1" width="3" height="2" fill="#e05884"/><rect x="6" y="1" width="3" height="2" fill="#e05884"/><rect x="1" y="3" width="8" height="2" fill="#e05884"/><rect x="2" y="5" width="6" height="1" fill="#e05884"/><rect x="3" y="6" width="4" height="1" fill="#e05884"/><rect x="4" y="7" width="2" height="1" fill="#e05884"/><rect x="2" y="2" width="1" height="1" fill="#ffc4d6"/></svg>`;
   const PX_ICO_LOCK = `<svg width="10" height="10" viewBox="0 0 10 10" style="display:inline-block;vertical-align:-1px;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="3" y="1" width="4" height="1" fill="#7a6872"/><rect x="2" y="2" width="1" height="3" fill="#7a6872"/><rect x="7" y="2" width="1" height="3" fill="#7a6872"/><rect x="1" y="5" width="8" height="4" fill="#9c8a94"/><rect x="4" y="6" width="2" height="2" fill="#fff"/></svg>`;
   const PX_ICO_STAR = `<svg width="10" height="10" viewBox="0 0 10 10" style="display:inline-block;vertical-align:-1px;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="4" y="1" width="2" height="2" fill="#e6a838"/><rect x="1" y="3" width="8" height="2" fill="#f5c84c"/><rect x="2" y="5" width="6" height="2" fill="#f5c84c"/><rect x="2" y="7" width="2" height="2" fill="#e6a838"/><rect x="6" y="7" width="2" height="2" fill="#e6a838"/><rect x="4" y="4" width="2" height="1" fill="#fff9d6"/></svg>`;
 
@@ -32329,7 +32332,7 @@
     return `${Math.floor(hrs / 24)}天前`;
   };
 
-  const openPixelPupNoticeModal = (title, msgText, okLabel = '知道了', subBoxText = '') => {
+  const openPixelPupNoticeModal = (title, msgText, okLabel = '知道了', subBoxText = '', strictClose = false) => {
     let mask = root.querySelector('#st-tb-px-notice-mask');
     if (!mask) {
       mask = doc.createElement('div');
@@ -32344,14 +32347,14 @@
     mask.innerHTML = `<div style="width:286px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
         <span style="font-size:12px;font-weight:700;">${escapeHtmlSimple(title)}</span>
-        <button type="button" id="st-pxn-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+        ${strictClose ? '' : '<button type="button" id="st-pxn-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>'}
       </div>
       <div style="font-size:11px;line-height:1.55;margin-bottom:${subBoxText ? '7px' : '10px'};word-break:break-word;">${escapeHtmlSimple(msgText)}</div>
       ${subBoxText ? `<div style="font-size:10.5px;line-height:1.5;background:#ffffff;border:1.5px solid ${pxBd};padding:6px 8px;margin-bottom:10px;word-break:break-word;">${escapeHtmlSimple(subBoxText)}</div>` : ''}
       <button type="button" id="st-pxn-ok" class="st-px-btn care" style="width:100%;">${escapeHtmlSimple(okLabel)}</button>
     </div>`;
     const closeN = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeN(); };
+    mask.onclick = (e) => { e.stopPropagation(); if (!strictClose && e.target === mask) closeN(); };
     mask.querySelector('#st-pxn-close')?.addEventListener('click', closeN);
     mask.querySelector('#st-pxn-ok')?.addEventListener('click', closeN);
     bringModalFront(mask);
@@ -32676,32 +32679,38 @@
             continue;
           }
 
-          // 收到好友组队双狗探险邀请：同步赠送双人明信片与双倍币
+          // 收到好友组队双狗探险邀请：双方同步进入同一场 10 分钟探险（期间互不重复邀请），倒计时结束才结算弹窗！
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__coadv__') {
-            const ph = PUP_DUAL_PHOTOS.find(x => x.id === g.gifts[0].id) || pick(PUP_DUAL_PHOTOS);
+            const meta = g.gifts[0];
+            const ph = PUP_DUAL_PHOTOS.find(x => x.id === meta.id) || pick(PUP_DUAL_PHOTOS);
             const frMatch = getFriendList().find(x => x.cloudId === g.fromId);
-            const bonusCoins = randInt(16, 26);
-            config.puppyCoins = Math.floor(config.puppyCoins || 0) + bonusCoins;
-            config.puppyStats = config.puppyStats || {};
-            config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + bonusCoins;
-            config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
-            saveDualAlbumShot(ph, g.fromName || '好友', frMatch?.look || {}, null, g.gifts[0].variant || null);
-            const lootPool2 = [...SHOP_PUP_GOODS.filter(x => x.type === 'snack'), ...GACHA_SNACKS];
-            const randSnack2 = lootPool2.length ? pick(lootPool2) : null;
-            if (randSnack2) {
-              config.puppyInventory = config.puppyInventory || {};
-              config.puppyInventory[randSnack2.id] = Math.floor(config.puppyInventory[randSnack2.id] || 0) + 1;
+            const advMap = getCoopAdvMap();
+            const stAt = Number(meta.startAt) || g.ts || Date.now();
+            const edAt = Number(meta.endAt) || (stAt + 10 * 60 * 1000);
+            if (!advMap[g.fromId]) {
+              advMap[g.fromId] = {
+                friendCloudId: g.fromId,
+                friendName: g.fromName || frMatch?.name || '好友',
+                friendLook: frMatch?.look ? JSON.parse(JSON.stringify(frMatch.look)) : {},
+                photoId: ph.id,
+                variant: meta.variant || null,
+                startAt: stAt,
+                endAt: edAt,
+              };
+              saveConfig();
+              if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+              if (edAt > Date.now() && !doc.hidden) {
+                const remM = Math.max(1, Math.ceil((edAt - Date.now()) / 60000));
+                openPixelPupNoticeModal(
+                  `「${g.fromName || '好友'}」约你出发双狗探险啦！`,
+                  `两只小狗已经结伴出发啦，约 ${remM} 分钟后回来就会弹出收获与双人明信片~`,
+                  '知道了',
+                  '',
+                  true
+                );
+              }
             }
-            addFriendBondExp(g.fromId, 25, true);
-            saveConfig();
-            updatePupStatBars();
-            if (typeof renderPupShop === 'function') renderPupShop();
-            checkPupAchievements();
-            openPixelPupNoticeModal(
-              `「${g.fromName || '好友'}」约你组队探险啦！`,
-              `两只小狗一起打卡了【${ph.title}】，你收获了 +${bonusCoins} 小狗币${randSnack2 ? ` 与「${randSnack2.name} ×1」` : ''}，同一张双人明信片已存入「相册 → 双人」！`,
-              '开心收下'
-            );
+            if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
             continue;
           }
 
@@ -33517,7 +33526,6 @@
     mask.innerHTML = `<div style="width:296px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
         <span style="font-size:12.5px;font-weight:700;">收到新的好友申请</span>
-        <button type="button" id="st-freq-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
       <div style="font-size:11px;line-height:1.55;margin-bottom:8px;">「<b>${escapeHtmlSimple(fromName)}</b>」想加你为云端好友！</div>
       <div style="font-size:10.5px;background:#fff;border:1.5px solid ${pxBd};padding:6px 8px;margin-bottom:10px;">「${escapeHtmlSimple(reqItem.msg || '想和你成为云端好友一起串门玩耍~')}」</div>
@@ -33529,8 +33537,7 @@
     const baseUrl = getCloudBaseUrl();
     const myId = ensureMyCloudId();
     const closeM = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeM(); };
-    mask.querySelector('#st-freq-close')?.addEventListener('click', closeM);
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-freq-no')?.addEventListener('click', () => {
       closeM();
       fetch(`${baseUrl}/ack`, {
@@ -33560,7 +33567,7 @@
         openPixelPupNoticeModal('成为好友啦！', `你和「${fr.name}」已经成为云端好友，现在可以去「串门 → 好友列表」星标或请TA来桌面啦~`, '太棒了');
       } finally { accBusy = false; }
     });
-    bringModalFront(mask);
+    mask.style.zIndex = '9995';
     mask.style.display = 'flex';
   };
 
@@ -33592,11 +33599,6 @@
         return false;
       }
       const targetName = String(parsed.name || '小伙伴').slice(0, 14);
-      const list = getFriendList();
-      if (list.some(x => x.cloudId === fid)) {
-        openPixelPupNoticeModal('已经是好友啦', `「${targetName}」已经在你的云端好友列表里咯~`);
-        return false;
-      }
       const reqResp = await fetch(`${baseUrl}/gift`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -33657,15 +33659,26 @@
     } finally { cloudPokeBusy = false; }
   };
 
+  if (!config._cleanedLegacyGuestsV54) {
+    config._cleanedLegacyGuestsV54 = true;
+    config.guestPuppy = null;
+    if (Array.isArray(config.guestPuppies)) {
+      config.guestPuppies = config.guestPuppies.filter(g => g && g.cloudId);
+    }
+    saveConfig();
+    syncGuestDomNodes();
+  }
   setTimeout(() => {
     pushMyCloudPupNow();
     syncCloudGuestLooks(true);
     pollCloudInbox();
     syncDesktopNoteboard();
+    if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
   }, 3500);
   setInterval(() => {
     if (doc.hidden) return;
     pollCloudInbox();
+    if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
   }, 8000);
   setInterval(() => {
     if (doc.hidden) return;
@@ -34379,7 +34392,7 @@
           fromId: ensureMyCloudId(),
           fromName: getPupName(),
           toId: fr.cloudId,
-          gifts: [{ kind: '__coadv__', id: ph.id, qty: 1, variant: sharedVariant }],
+          gifts: [{ kind: '__coadv__', id: ph.id, qty: 1, variant: sharedVariant, startAt: advMap[fr.cloudId].startAt, endAt: advMap[fr.cloudId].endAt }],
           redPacket: 0,
           msg: `约你的小狗一起去了【${ph.title}】探险~`,
         }),
@@ -34423,8 +34436,19 @@
     openPixelPupNoticeModal(
       '双狗探险满载而归！',
       `你和「${ca.friendName}」从【${ph.title}】回来啦！你收获了 +${coins} 小狗币${randSnack ? ` 与「${randSnack.name} ×1」` : ''}，同一张双人明信片已存入「冒险 → 相册 → 双人」！`,
-      '好哒'
+      '知道了',
+      '',
+      true
     );
+  };
+
+  const checkFinishedCoopAdventures = () => {
+    if (doc.hidden) return;
+    const advMap = getCoopAdvMap();
+    const ready = Object.values(advMap).find(ca => ca && ca.endAt <= Date.now());
+    if (ready) {
+      claimCoopCloudAdventure(ready.friendCloudId);
+    }
   };
 
   const openFriendBondModal = (cloudId) => {
@@ -34543,7 +34567,7 @@
     info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;">
           <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
-          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;gap:2px;height:18px;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">${PX_ICO_HEART}<span>Lv.${getFriendBondInfo(fr).lv}</span></button>
+          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">${PX_ICO_HEART}<span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <span style="font-size:9px;opacity:0.65;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
@@ -34622,7 +34646,7 @@
         <button type="button" id="st-flm-copy" class="st-px-btn active" style="height:22px;padding:0 8px;font-size:10px;flex-shrink:0;">复制</button>
       </div>
       <div style="display:flex;align-items:stretch;gap:5px;margin-bottom:8px;">
-        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:28px;line-height:28px;padding:0 7px;font-size:10.5px;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
+        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:28px;line-height:28px;padding:0 7px;font-size:10.5px;background:var(--px-card,#ffffff) !important;color:var(--px-fg,#54444a) !important;border:2px solid var(--px-border,#bfa4ae) !important;border-radius:0 !important;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
         <button type="button" id="st-flm-add" class="st-px-btn care" style="height:28px;padding:0 10px;font-size:10.5px;flex-shrink:0;box-sizing:border-box;margin:0;">加好友</button>
       </div>
       <div id="st-flm-list" style="display:flex;flex-direction:column;gap:6px;max-height:228px;overflow-y:auto;margin-bottom:9px;box-sizing:border-box;"></div>
@@ -42252,6 +42276,7 @@
       if (typeof syncCloudGuestLooks === 'function') setTimeout(() => syncCloudGuestLooks(true), 600);
       if (typeof pollCloudInbox === 'function') setTimeout(() => pollCloudInbox(), 900);
       if (typeof flushPendingRemotePokes === 'function') setTimeout(() => flushPendingRemotePokes(), 750);
+      if (typeof checkFinishedCoopAdventures === 'function') setTimeout(() => checkFinishedCoopAdventures(), 1000);
       if (pendingJumpToReplyTopMesId !== null) {
         const jumpMid = pendingJumpToReplyTopMesId;
         pendingJumpToReplyTopMesId = null;
@@ -47490,6 +47515,17 @@
       if (manual) showPuppyBubble('当前可选范围里没有服装配饰哦，点「可选范围」勾选几件吧~', 2400);
       return;
     }
+    if (manual && typeof ensureWardDraft === 'function') {
+      const d = ensureWardDraft();
+      if (ownedO.length) d.outfit = pick(ownedO);
+      if (ownedA.length) {
+        const shuffled = [...ownedA].sort(() => Math.random() - 0.5);
+        d.accs = shuffled.slice(0, Math.min(2, shuffled.length));
+      }
+      if (ownedC.length) d.comp = Math.random() < 0.8 ? pick(ownedC) : 'none';
+      if (typeof renderPupWardrobe === 'function') renderPupWardrobe();
+      return;
+    }
     if (ownedO.length) config.puppyOutfit = pick(ownedO);
     if (ownedA.length) {
       const shuffled = [...ownedA].sort(() => Math.random() - 0.5);
@@ -47497,7 +47533,10 @@
       config.puppyAcc = config.puppyAccs[0] || 'none';
     }
     if (ownedC.length) config.puppyCompanion = Math.random() < 0.8 ? pick(ownedC) : 'none';
+    if (typeof hasUnsavedWardDraft === 'function' && !hasUnsavedWardDraft()) wardDraft = null;
+    if (typeof pup !== 'undefined' && pup) pup._lastRenderKey = '';
     saveConfig();
+    if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
     if (typeof renderPupWardrobe === 'function') renderPupWardrobe();
     if (typeof drawPuppyScene === 'function') drawPuppyScene();
     if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
