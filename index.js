@@ -2630,7 +2630,7 @@
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
     { id: 'bub_ck_vintage_post', name: '[签到] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
-    { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '传统与浪漫佳节限定：绯红鎏金花灯纪念气泡框' },
+    { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [], desc: '佳节限定动态气泡：暖杏绯金丝绸底色配细金内框与缓缓升起的暖光花灯' },
     { id: 'bub_spend_5k_vinyl', name: '[成就] 黑胶咖啡馆泡', dyn: 'spend_vinyl_cafe', charms: [], desc: '消费满 5000 币成就专属动态限定：暖咖手冲拿铁蒸汽配旋转复古黑胶唱片气泡' },
     { id: 'bub_cloud_memo', name: '[成就] 手账纸条泡', dyn: 'poststamp', charms: [{ pos: 'tr', key: 'dot_heart' }], desc: '软木板笔友成就专属动态限定：奶油手账便签框配樱红小图钉与飘动邮戳' },
     { id: 'bub_cloud_compass', name: '[成就] 双星罗盘泡', dyn: 'gdyn_cloudsea_roll', charms: [{ pos: 'tl', key: 'bow' }], desc: '传说双子旅人成就专属动态限定：蓝金星航罗盘配云海流光气泡框' },
@@ -2644,7 +2644,7 @@
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
-    { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [{ pos: 'tr', key: 'dot_heart' }, { pos: 'bl', key: 'bow' }], desc: '佳节专属动态限定：绯红鎏金萤火花灯头像框' },
+    { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [], desc: '佳节限定动态头像框：绯红鎏金双线边框配暖杏流光与细碎星火' },
     { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
     { id: 'af_cloud_twinstar', name: '[成就] 双子星讯框', dyn: 'gadyn_orbital_ring', charms: [{ pos: 'tl', key: 'heart' }], desc: '跨屏挚友成就专属动态限定：蓝粉双子星轨环绕流光纪念头像框' },
     { id: 'af_cloud_gallery', name: '[成就] 双子纪念馆框', dyn: 'gadyn_prism_orbit', charms: [{ pos: 'tr', key: 'crown' }, { pos: 'bl', key: 'heart' }], desc: '全图鉴双子星成就专属动态限定：七彩棱镜光轨双人纪念馆头像框' },
@@ -5681,7 +5681,7 @@
     .st-px-avatar-wrap.af-gacha-music-box { border-color: #d9a84e; background: linear-gradient(125deg,#33273d,#4d3859,#33273d); background-size: 220% 220%; animation: stAfFlow 3.6s ease infinite; box-shadow: 0 0 0 1px #fff4cc, 0 0 10px rgba(217,168,78,0.45); }
     .st-px-avatar-wrap.af-gacha-peach-soda { border-color: #f29ca2; background: linear-gradient(125deg,#fff0f0,#ffe6e8,#fff8eb); background-size: 220% 220%; animation: stAfFlow 3.4s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 9px rgba(242,156,162,0.42); }
     .st-px-avatar-wrap.af-bday-candle { border-color: #f29ab8; background: linear-gradient(125deg,#ffeaf3,#fff6de,#e8f6ff,#ffeaf3); background-size: 240% 240%; animation: stAfFlow 3.4s ease infinite; box-shadow: 0 0 0 1px #ffffff, 0 0 10px rgba(242,154,184,0.48); }
-    .st-px-avatar-wrap.af-fest-lantern { border-color: #c97272; background: linear-gradient(125deg,#faf0ec,#f7e5cf,#faf0ec); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; box-shadow: 0 0 0 1px #ffe6cf, 0 0 10px rgba(201,114,114,0.46); }
+    .st-px-avatar-wrap.af-fest-lantern { border-color: #d94c5a !important; background: linear-gradient(135deg,#fff5f2,#ffe8d4,#fff8e8,#ffe6eb) !important; background-size: 260% 260% !important; animation: stAfFlow 3.6s ease infinite !important; box-shadow: inset 0 0 0 1.5px #f5cc6c, 0 0 0 1px #ffd6b0, 0 0 11px rgba(217,76,90,0.42) !important; }
     .st-px-af-custom-bar { grid-column: 1 / -1; padding: 6px 7px; border: 1.5px dashed var(--px-bd, #bfa4ae); background: #ffffff; margin-bottom: 2px; font-size: 10px; }
     .st-px-af-custom-row { display: flex; align-items: center; justify-content: space-between; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
     .st-px-af-custom-bar input[type="color"] {
@@ -6944,11 +6944,11 @@
     #st-tb-puppy-bubble.bub-bond-lv6::after, .st-tb-guest-bubble.bub-bond-lv6::after { background: #fceaf0; border-color: #d993ab; }
     #st-tb-puppy-bubble.bub-bday-cake, .st-tb-guest-bubble.bub-bday-cake { background: linear-gradient(125deg,#fff0f6,#fff8e8,#edf7ff); border-color: #f09bb8; color: #6e2d48; box-shadow: 0 2px 10px rgba(240,155,184,0.36); }
     #st-tb-puppy-bubble.bub-bday-cake::after, .st-tb-guest-bubble.bub-bday-cake::after { background: #fff4f8; border-color: #f09bb8; }
-    #st-tb-puppy-bubble.bub-fest-lantern, .st-tb-guest-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
+    #st-tb-puppy-bubble.bub-fest-lantern, .st-tb-guest-bubble.bub-fest-lantern { background: linear-gradient(135deg,#fff6f2,#ffebd8,#fff9ec,#ffeaee); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d95462; color: #6e242c; box-shadow: inset 0 0 0 1px #f7d47c, 0 2px 10px rgba(217,84,98,0.34); }
         #st-tb-puppy-bubble.bub-ck-vintage-post, .st-tb-guest-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
     #st-tb-puppy-bubble.bub-ck-vintage-post::after, .st-tb-guest-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
     .af-ck-amber-press { border-color: #d49642; background: linear-gradient(135deg,#fff8e6,#fae3b4,#f5cf84); box-shadow: 0 0 0 1px #fffdf5, 0 2px 10px rgba(212,150,66,0.46); }
-    #st-tb-puppy-bubble.bub-fest-lantern::after, .st-tb-guest-bubble.bub-fest-lantern::after { background: #f8ece1; border-color: #c97e7e; }
+    #st-tb-puppy-bubble.bub-fest-lantern::after, .st-tb-guest-bubble.bub-fest-lantern::after { background: #fff1e4; border-color: #d95462; }
     .st-px-gacha-res-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin: 6px 0; text-align: left; }
     .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: #4f3a43; line-height: 1.3; }
     .st-px-gacha-chip.tier-R { background: #f4f7fc; border-color: #9bb4d4; color: #364e6b; }
@@ -32151,7 +32151,7 @@
     guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:5px;cursor:move;user-select:none;touch-action:none;padding:2px 0 5px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;">
           <span style="font-weight:700;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(guest.name)}</span>
-          ${_gpFr ? `<button type="button" id="st-gp-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">${PX_ICO_HEART}<span style="line-height:1;display:inline-block;">Lv.${_gpBondLv}</span></button>` : ''}
+          ${_gpFr ? `<button type="button" id="st-gp-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(-1px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${_gpBondLv}</span></button>` : ''}
         </div>
         <button type="button" id="st-gp-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;flex-shrink:0;">×</button>
       </div>
@@ -32333,7 +32333,7 @@
     maskEl.style.zIndex = String(modalStackZ);
   };
 
-  const PX_ICO_HEART = `<svg width="10" height="9" viewBox="0 0 10 9" style="display:block;flex-shrink:0;margin:0;transform:translateY(-1px);image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="1" y="1" width="3" height="2" fill="#e05884"/><rect x="6" y="1" width="3" height="2" fill="#e05884"/><rect x="1" y="3" width="8" height="2" fill="#e05884"/><rect x="2" y="5" width="6" height="1" fill="#e05884"/><rect x="3" y="6" width="4" height="1" fill="#e05884"/><rect x="4" y="7" width="2" height="1" fill="#e05884"/><rect x="2" y="2" width="1" height="1" fill="#ffc4d6"/></svg>`;
+  const PX_ICO_HEART = `<svg width="10" height="9" viewBox="0 0 10 9" style="display:block;flex-shrink:0;margin:0;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="1" y="1" width="3" height="2" fill="#e05884"/><rect x="6" y="1" width="3" height="2" fill="#e05884"/><rect x="1" y="3" width="8" height="2" fill="#e05884"/><rect x="2" y="5" width="6" height="1" fill="#e05884"/><rect x="3" y="6" width="4" height="1" fill="#e05884"/><rect x="4" y="7" width="2" height="1" fill="#e05884"/><rect x="2" y="2" width="1" height="1" fill="#ffc4d6"/></svg>`;
   const PX_ICO_LOCK = `<svg width="10" height="10" viewBox="0 0 10 10" style="display:inline-block;vertical-align:-1px;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="3" y="1" width="4" height="1" fill="#7a6872"/><rect x="2" y="2" width="1" height="3" fill="#7a6872"/><rect x="7" y="2" width="1" height="3" fill="#7a6872"/><rect x="1" y="5" width="8" height="4" fill="#9c8a94"/><rect x="4" y="6" width="2" height="2" fill="#fff"/></svg>`;
   const PX_ICO_STAR = `<svg width="10" height="10" viewBox="0 0 10 10" style="display:inline-block;vertical-align:-1px;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="4" y="1" width="2" height="2" fill="#e6a838"/><rect x="1" y="3" width="8" height="2" fill="#f5c84c"/><rect x="2" y="5" width="6" height="2" fill="#f5c84c"/><rect x="2" y="7" width="2" height="2" fill="#e6a838"/><rect x="6" y="7" width="2" height="2" fill="#e6a838"/><rect x="4" y="4" width="2" height="1" fill="#fff9d6"/></svg>`;
 
@@ -33083,12 +33083,15 @@
     return config.puppyFriends;
   };
 
-  const makeFriendAvatarCanvas = (look) => {
+  const makeFriendAvatarCanvas = (look, showFrame = true) => {
     const wrap = doc.createElement('div');
     wrap.className = 'st-px-avatar-wrap';
-    wrap.style.cssText = 'position:relative;width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:1px;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;';
-    const afId = look?.avatarFrame || 'af_custom';
-    if (afId && afId !== 'af_custom' && afId !== 'af_none') {
+    const afId = showFrame ? (look?.avatarFrame || 'af_custom') : 'af_none';
+    const hasCustomClass = Boolean(showFrame && afId && afId !== 'af_custom' && afId !== 'af_none');
+    wrap.style.cssText = hasCustomClass
+      ? 'position:relative;width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;border-width:2px;border-style:solid;box-sizing:border-box;overflow:visible;'
+      : 'position:relative;width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;';
+    if (hasCustomClass) {
       wrap.classList.add(afId.replace(/_/g, '-'));
       const allAf = [...SHOP_PUP_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...GACHA_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES];
       const afObj = allAf.find(a => a.id === afId);
@@ -34570,7 +34573,9 @@
       fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
       showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit, accs: config.puppyAccs,
       accOffsets: config.puppyAccOffsets, comp: config.puppyCompanion, onesieShowEars: config.puppyOnesieShowEars,
+      avatarFrame: config.puppyAvatarFrame || 'af_custom',
     };
+    const showBondAf = config.bondShowAvatarFrame !== false;
 
     const badges = [
       { lv: 2, name: '初识脚印' },
@@ -34585,9 +34590,12 @@
     }).join('');
 
     mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
-        <span style="font-size:12.5px;font-weight:700;">汪汪羁绊 · ${escapeHtmlSimple(fr.name)}</span>
-        <button type="button" id="st-bm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">汪汪羁绊 · ${escapeHtmlSimple(fr.name)}</span>
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+          <button type="button" id="st-bm-af-tg" class="st-px-btn${showBondAf ? ' active' : ''}" style="height:20px;padding:0 6px;font-size:9.5px;">${showBondAf ? '头像框:开' : '头像框:关'}</button>
+          <button type="button" id="st-bm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+        </div>
       </div>
       <div id="st-bm-avatars" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:8px;"></div>
       <div style="padding:7px 8px;background:${pxCard};border:1.5px solid ${pxBd};margin-bottom:8px;">
@@ -34617,13 +34625,18 @@
 
     const avWrap = mask.querySelector('#st-bm-avatars');
     if (avWrap) {
-      avWrap.appendChild(makeFriendAvatarCanvas(myLookObj));
+      avWrap.appendChild(makeFriendAvatarCanvas(myLookObj, showBondAf));
       const ht = doc.createElement('span');
       ht.style.cssText = 'display:inline-flex;align-items:center;transform:scale(1.6);';
       ht.innerHTML = PX_ICO_HEART;
       avWrap.appendChild(ht);
-      avWrap.appendChild(makeFriendAvatarCanvas(fr.look));
+      avWrap.appendChild(makeFriendAvatarCanvas(fr.look, showBondAf));
     }
+    mask.querySelector('#st-bm-af-tg')?.addEventListener('click', () => {
+      config.bondShowAvatarFrame = !(config.bondShowAvatarFrame !== false);
+      saveConfig();
+      openFriendBondModal(cloudId);
+    });
 
     const closeBm = () => { mask.style.display = 'none'; };
     mask.onclick = (e) => { if (e.target === mask) closeBm(); };
@@ -34665,7 +34678,7 @@
     info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;">
           <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
-          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;">${PX_ICO_HEART}<span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
+          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(1px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <span style="font-size:9px;opacity:0.65;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
@@ -49002,22 +49015,43 @@
 
   restoreGameView();
 
-  const onOutsidePupBagClick = (e) => {
+  let outsideTapStart = null;
+  const isOutsideCloseBlocked = (target) => {
+    if (!target) return true;
+    if (typeof target.closest === 'function' && target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask')) return true;
+    if (gachaModalEl && gachaModalEl.contains(target)) return true;
+    if (confirmMask && confirmMask.contains(target)) return true;
+    if (readerEl && readerEl.contains(target)) return true;
+    const _rMini = doc.getElementById('st-tb-reader-mini-pill');
+    if (_rMini && _rMini.contains(target)) return true;
+    return false;
+  };
+  doc.addEventListener('pointerdown', (e) => {
     const bagVis = Boolean(pupBagOpen);
     const gpVis = Boolean(guestPopEl && guestPopEl.style.display !== 'none');
-    if (!bagVis && !gpVis) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask')) return;
-    if (gachaModalEl && gachaModalEl.contains(e.target)) return;
-    if (confirmMask && confirmMask.contains(e.target)) return;
-    if (readerEl && readerEl.contains(e.target)) return;
-    const _rMini = doc.getElementById('st-tb-reader-mini-pill');
-    if (_rMini && _rMini.contains(e.target)) return;
-
+    if (!bagVis && !gpVis) { outsideTapStart = null; return; }
+    if (isOutsideCloseBlocked(e.target)) { outsideTapStart = null; return; }
     const inBag = Boolean(bagVis && (pupBagEl.contains(e.target) || puppyEl.contains(e.target)));
     const inGp = Boolean(gpVis && (guestPopEl.contains(e.target) || (e.target.closest && e.target.closest('.st-tb-guest-puppy'))));
-    if (inBag || inGp) return;
-
-    // 两个都在打开状态时，点击空白只关闭最上层那一个，保留底下的！
+    if (inBag || inGp) { outsideTapStart = null; return; }
+    // 边缘手势（如左/右/底部切屏滑动）不视为点击空白关闭
+    if (e.clientX < 18 || e.clientX > win.innerWidth - 18 || e.clientY > win.innerHeight - 28) {
+      outsideTapStart = null;
+      return;
+    }
+    outsideTapStart = { id: e.pointerId, x: e.clientX, y: e.clientY, t: Date.now() };
+  });
+  doc.addEventListener('pointercancel', () => { outsideTapStart = null; });
+  doc.addEventListener('pointerup', (e) => {
+    if (!outsideTapStart || outsideTapStart.id !== e.pointerId) return;
+    const st = outsideTapStart;
+    outsideTapStart = null;
+    if (doc.hidden) return;
+    // 只有原地轻点（位移 < 10px 且时间 < 380ms）才关闭，滑动/切屏绝不误关！
+    if (Math.hypot(e.clientX - st.x, e.clientY - st.y) >= 10 || Date.now() - st.t > 380) return;
+    if (isOutsideCloseBlocked(e.target)) return;
+    const bagVis = Boolean(pupBagOpen);
+    const gpVis = Boolean(guestPopEl && guestPopEl.style.display !== 'none');
     if (bagVis && gpVis) {
       const zBag = Number(pupBagEl.style.zIndex || 0);
       const zGp = Number(guestPopEl.style.zIndex || 0);
@@ -49030,17 +49064,13 @@
       }
       return;
     }
-    if (gpVis) {
-      guestPopEl.style.display = 'none';
-      return;
-    }
+    if (gpVis) { guestPopEl.style.display = 'none'; return; }
     if (bagVis) {
       togglePupBag(false);
       if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
       if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
     }
-  };
-  doc.addEventListener('pointerdown', onOutsidePupBagClick);
+  });
 
   // ==================== UI 同步与事件 ====================
   const syncUI = () => {
