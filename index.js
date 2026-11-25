@@ -5893,7 +5893,8 @@
       max-height: none;
     }
     #st-tb-root input.st-px-in, #st-tb-root textarea.st-px-ta, #st-tb-root .st-px-in, #st-tb-root .st-px-ta {
-      background: var(--px-card, #ffffff) !important;
+      background: #ffffff !important;
+      background-color: #ffffff !important;
       color: var(--px-fg, #54444a) !important;
       border: 2px solid var(--px-border, #bfa4ae) !important;
       border-radius: 0 !important;
@@ -29543,7 +29544,7 @@
         <div id="st-vg-msg" style="font-size:10.5px;line-height:1.45;background:#ffffff;border:1.5px solid var(--px-border,#bfa4ae);padding:6px 7px;margin-bottom:7px;box-sizing:border-box;"></div>
         <div id="st-vg-gifts" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px;"></div>
         <div id="st-vg-thank-wrap" style="display:none;margin-bottom:8px;">
-          <input type="text" id="st-vg-thank-input" class="st-px-in" style="width:100%;box-sizing:border-box;font-size:10.5px;margin-bottom:5px;" placeholder="写一句感谢的话给对方（可选）" />
+          <input type="text" id="st-vg-thank-input" class="st-px-in" style="width:100%;height:26px;background:#ffffff !important;background-color:#ffffff !important;color:#54444a !important;border:2px solid var(--px-border,#bfa4ae) !important;border-radius:0 !important;box-sizing:border-box;font-size:10.5px;margin-bottom:5px;" placeholder="写一句感谢的话给对方（可选）" />
           <div style="display:flex;flex-wrap:wrap;gap:4px;">
             <button type="button" class="st-px-btn st-vg-qthank" style="height:20px;padding:0 6px;font-size:9.5px;">谢谢你超喜欢！</button>
             <button type="button" class="st-px-btn st-vg-qthank" style="height:20px;padding:0 6px;font-size:9.5px;">收到啦超开心~</button>
@@ -32981,8 +32982,8 @@
       <div style="font-size:11px;margin-bottom:5px;">选择要送出的物品（点击选中，再点取消）：</div>
       <div id="st-csg-list" style="display:flex;flex-wrap:wrap;gap:5px;max-height:145px;overflow-y:auto;padding:6px;border:1px solid ${pxBd};background:#fff;margin-bottom:8px;box-sizing:border-box;"></div>
       <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:6px;margin-bottom:9px;">
-        <input type="number" id="st-csg-rp" class="st-px-in" min="0" max="${Math.floor(config.puppyCoins || 0)}" placeholder="小狗币(余${Math.floor(config.puppyCoins || 0)})" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
-        <input type="text" id="st-csg-msg" class="st-px-in" placeholder="附言（可选）" style="width:100%;box-sizing:border-box;font-size:10.5px;" />
+        <input type="number" id="st-csg-rp" class="st-px-in" min="0" max="${Math.floor(config.puppyCoins || 0)}" placeholder="小狗币(余${Math.floor(config.puppyCoins || 0)})" style="width:100%;height:26px;background:#ffffff !important;background-color:#ffffff !important;color:${pxFg} !important;border:2px solid ${pxBd} !important;border-radius:0 !important;box-sizing:border-box;font-size:10.5px;" />
+        <input type="text" id="st-csg-msg" class="st-px-in" placeholder="附言（可选）" style="width:100%;height:26px;background:#ffffff !important;background-color:#ffffff !important;color:${pxFg} !important;border:2px solid ${pxBd} !important;border-radius:0 !important;box-sizing:border-box;font-size:10.5px;" />
       </div>
       <div style="display:flex;justify-content:flex-end;gap:6px;">
         <button type="button" id="st-csg-cancel" class="st-px-btn" style="height:24px;padding:0 12px;font-size:11px;">取消</button>
@@ -33345,7 +33346,7 @@
         <span style="font-size:12px;font-weight:700;">给「${escapeHtmlSimple(toName)}」贴小纸条</span>
         <button type="button" id="st-wn-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
-      <textarea id="st-wn-ta" class="st-px-ta" maxlength="75" style="width:100%;height:72px;box-sizing:border-box;margin:0 0 9px 0;font-size:11px;" placeholder="写点想对好友说的话（最多75字）"></textarea>
+      <textarea id="st-wn-ta" class="st-px-ta" maxlength="75" style="width:100%;height:72px;background:#ffffff !important;background-color:#ffffff !important;color:${pxFg} !important;border:2px solid ${pxBd} !important;border-radius:0 !important;padding:6px 8px !important;box-sizing:border-box;margin:0 0 9px 0;font-size:11px;resize:none;" placeholder="写点想对好友说的话（最多75字）"></textarea>
       <div style="display:flex;justify-content:flex-end;gap:6px;">
         <button type="button" id="st-wn-cancel" class="st-px-btn" style="height:24px;padding:0 12px;font-size:11px;">取消</button>
         <button type="button" id="st-wn-send" class="st-px-btn active care" style="height:24px;padding:0 12px;font-size:11px;">贴上留言板</button>
@@ -34646,7 +34647,7 @@
         <button type="button" id="st-flm-copy" class="st-px-btn active" style="height:22px;padding:0 8px;font-size:10px;flex-shrink:0;">复制</button>
       </div>
       <div style="display:flex;align-items:stretch;gap:5px;margin-bottom:8px;">
-        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:28px;line-height:28px;padding:0 7px;font-size:10.5px;background:var(--px-card,#ffffff) !important;color:var(--px-fg,#54444a) !important;border:2px solid var(--px-border,#bfa4ae) !important;border-radius:0 !important;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
+        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:28px;line-height:28px;padding:0 7px;font-size:10.5px;background:#ffffff !important;background-color:#ffffff !important;color:${pxFg} !important;border:2px solid ${pxBd} !important;border-radius:0 !important;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
         <button type="button" id="st-flm-add" class="st-px-btn care" style="height:28px;padding:0 10px;font-size:10.5px;flex-shrink:0;box-sizing:border-box;margin:0;">加好友</button>
       </div>
       <div id="st-flm-list" style="display:flex;flex-direction:column;gap:6px;max-height:228px;overflow-y:auto;margin-bottom:9px;box-sizing:border-box;"></div>
