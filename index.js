@@ -2644,7 +2644,7 @@
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
-    { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'starfall', charms: [], desc: '佳节限定动态头像框：绯红鎏金双线边框配暖杏流光与细碎星火' },
+    { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'fest_lantern_new', charms: [], desc: '佳节限定动态头像框：绯红鎏金双线边框配轻晃迷你小花灯与金穗光点' },
     { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
     { id: 'af_cloud_twinstar', name: '[成就] 双子星讯框', dyn: 'gadyn_orbital_ring', charms: [{ pos: 'tl', key: 'heart' }], desc: '跨屏挚友成就专属动态限定：蓝粉双子星轨环绕流光纪念头像框' },
     { id: 'af_cloud_gallery', name: '[成就] 双子纪念馆框', dyn: 'gadyn_prism_orbit', charms: [{ pos: 'tr', key: 'crown' }, { pos: 'bl', key: 'heart' }], desc: '全图鉴双子星成就专属动态限定：七彩棱镜光轨双人纪念馆头像框' },
@@ -6949,6 +6949,22 @@
     #st-tb-puppy-bubble.bub-ck-vintage-post::after, .st-tb-guest-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
     .af-ck-amber-press { border-color: #d49642; background: linear-gradient(135deg,#fff8e6,#fae3b4,#f5cf84); box-shadow: 0 0 0 1px #fffdf5, 0 2px 10px rgba(212,150,66,0.46); }
     #st-tb-puppy-bubble.bub-fest-lantern::after, .st-tb-guest-bubble.bub-fest-lantern::after { background: #fff1e4; border-color: #d95462; }
+    #st-tb-puppy-bubble.bub-fest-lantern::before, .st-tb-guest-bubble.bub-fest-lantern::before {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: -6px;
+      width: 10px;
+      height: 12px;
+      background:
+        linear-gradient(#f7c852, #f7c852) 3px 0 / 4px 2px no-repeat,
+        linear-gradient(#e04858, #e04858) 1px 2px / 8px 6px no-repeat,
+        linear-gradient(#fff3b8, #fff3b8) 4px 3px / 2px 4px no-repeat,
+        linear-gradient(#f7c852, #f7c852) 3px 8px / 4px 2px no-repeat,
+        linear-gradient(#f5b838, #f5b838) 4px 10px / 2px 2px no-repeat;
+      pointer-events: none;
+      image-rendering: pixelated;
+    }
     .st-px-gacha-res-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin: 6px 0; text-align: left; }
     .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: #4f3a43; line-height: 1.3; }
     .st-px-gacha-chip.tier-R { background: #f4f7fc; border-color: #9bb4d4; color: #364e6b; }
@@ -33089,13 +33105,25 @@
     const afId = showFrame ? (look?.avatarFrame || 'af_custom') : 'af_none';
     const hasCustomClass = Boolean(showFrame && afId && afId !== 'af_custom' && afId !== 'af_none');
     wrap.style.cssText = hasCustomClass
-      ? 'position:relative;width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;border-width:2px;border-style:solid;box-sizing:border-box;overflow:visible;'
-      : 'position:relative;width:42px;height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;';
+      ? 'position:relative;width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;margin:4px;border-width:2px;border-style:solid;box-sizing:border-box;overflow:visible;'
+      : 'position:relative;width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;margin:4px;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;';
     if (hasCustomClass) {
       wrap.classList.add(afId.replace(/_/g, '-'));
       const allAf = [...SHOP_PUP_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...GACHA_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES];
       const afObj = allAf.find(a => a.id === afId);
-      if (afObj && afObj.dyn) wrap.classList.add('is-dyn');
+      if (afObj && afObj.dyn) {
+        wrap.classList.add('is-dyn');
+        const fxCvs = doc.createElement('canvas');
+        fxCvs.className = 'st-px-af-fx st-fr-af-fx';
+        fxCvs.dataset.afDyn = afObj.dyn;
+        fxCvs.width = 64;
+        fxCvs.height = 64;
+        fxCvs.style.cssText = 'position:absolute;left:-11px;top:-11px;width:64px;height:64px;pointer-events:none;image-rendering:pixelated;z-index:4;';
+        wrap.appendChild(fxCvs);
+        if (typeof drawAfDynFxToCanvas === 'function') {
+          try { drawAfDynFxToCanvas(fxCvs, afObj.dyn, afFxTick || 0); } catch (_) {}
+        }
+      }
       if (afObj && Array.isArray(afObj.charms) && typeof makeAfCharm9 === 'function') {
         afObj.charms.forEach(ch => { try { wrap.appendChild(makeAfCharm9(ch.key, ch.pos)); } catch (_) {} });
       }
@@ -34552,7 +34580,8 @@
     }
   };
 
-  const openFriendBondModal = (cloudId) => {
+  const openFriendBondModal = (cloudId, skipSync = false) => {
+    if (!skipSync && typeof syncCloudGuestLooks === 'function') syncCloudGuestLooks(true).then(() => { const m = root.querySelector('#st-tb-bond-mask'); if (m && m.style.display === 'flex') openFriendBondModal(cloudId, true); }).catch(() => {});
     const fr = getFriendList().find(x => x && x.cloudId === cloudId);
     if (!fr) return;
     const info = getFriendBondInfo(fr);
@@ -34733,7 +34762,8 @@
   };
 
   let addFriendBusy = false;
-  const openFriendsListModal = () => {
+  const openFriendsListModal = (skipSync = false) => {
+    if (!skipSync && typeof syncCloudGuestLooks === 'function') syncCloudGuestLooks(true).then(() => { const m = root.querySelector('#st-tb-friends-mask'); if (m && m.style.display === 'flex') openFriendsListModal(true); }).catch(() => {});
     let mask = root.querySelector('#st-tb-friends-mask');
     if (!mask) {
       mask = doc.createElement('div');
@@ -40090,14 +40120,11 @@
 
   let activeAfDynMode = '';
   let afFxTick = 0;
-  setInterval(() => {
-    if (doc.hidden || !activeAfDynMode || !pupBagEl || !pupBagEl.classList.contains('open')) return;
-    const fxCvs = root.querySelector('#st-px-af-fx');
-    if (!fxCvs) return;
+  const drawAfDynFxToCanvas = (fxCvs, m, t) => {
+    if (!fxCvs || !m) return;
     const g = fxCvs.getContext('2d');
+    if (!g) return;
     g.clearRect(0, 0, 64, 64);
-    afFxTick = (afFxTick + 1) % 240;
-    const t = afFxTick;
 
     // 46px 外框精确居中于 64x64 画布的 [9..54] 区间（四边留白完全对称 9px！）
     const perimPt = (p) => {
@@ -40107,8 +40134,6 @@
       if (n < 135) return [54 - (n - 90), 54];
       return [9, 54 - (n - 135)];
     };
-
-    const m = activeAfDynMode;
     const drawGridAt = (gx, gy, grid, pal) => {
       for (let r = 0; r < grid.length; r++) {
         for (let c = 0; c < grid[r].length; c++) {
@@ -41075,12 +41100,59 @@
         g.fillStyle = i % 2 === 0 ? '#ffc4d4' : '#ffffff';
         g.fillRect(bx, by, 2, 2);
       }
+    } else if (m === 'fest_lantern_new') {
+      // 精致迷你绯金像素小花灯 + 轻晃金穗 + 细碎暖金光点
+      const sway = Math.round(Math.sin(t * 0.16));
+      // 右上角迷你像素小红灯笼
+      drawGridAt(51 + sway, 2, [
+        '..yy..',
+        '.rrrr.',
+        'rryyrr',
+        'rrwwrr',
+        '.rrrr.',
+        '..yy..',
+        '..y...',
+      ], { r: '#e04858', y: '#f7c852', w: '#fff5c8' });
+      // 左下角精致小祥云金结
+      drawGridAt(2, 52 - sway, [
+        '..yy..',
+        '.yrry.',
+        '..yy..',
+        '.y..y.',
+      ], { r: '#e04858', y: '#f7c852' });
+      // 沿外框缓缓飘升的暖金小光点
+      for (let i = 0; i < 4; i++) {
+        const [px, py] = perimPt(t * 2 + i * 45);
+        g.fillStyle = i % 2 === 0 ? '#ffe078' : '#ff94a8';
+        g.fillRect(px - 1, py - 1, 2, 2);
+      }
     }
-    const shopFx = root.querySelector('#st-px-shop-af-fx');
-    if (shopFx) {
-      const sg = shopFx.getContext('2d');
-      sg.clearRect(0, 0, 64, 64);
-      sg.drawImage(fxCvs, 0, 0);
+  };
+
+  setInterval(() => {
+    if (doc.hidden) return;
+    afFxTick = (afFxTick + 1) % 240;
+    const t = afFxTick;
+    if (activeAfDynMode && pupBagEl && pupBagEl.classList.contains('open')) {
+      const fxCvs = root.querySelector('#st-px-af-fx');
+      if (fxCvs) {
+        drawAfDynFxToCanvas(fxCvs, activeAfDynMode, t);
+        const shopFx = root.querySelector('#st-px-shop-af-fx');
+        if (shopFx) {
+          const sg = shopFx.getContext('2d');
+          sg.clearRect(0, 0, 64, 64);
+          sg.drawImage(fxCvs, 0, 0);
+        }
+      }
+    }
+    // 同步渲染好友列表、星标好友和汪汪羁绊弹窗里的所有动态头像框贴图与特效！
+    const frFxList = root.querySelectorAll('.st-fr-af-fx[data-af-dyn]');
+    if (frFxList.length) {
+      frFxList.forEach(cvs => {
+        if (cvs.offsetParent !== null) {
+          drawAfDynFxToCanvas(cvs, cvs.dataset.afDyn, t);
+        }
+      });
     }
   }, 140);
 
