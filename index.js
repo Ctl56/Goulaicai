@@ -2676,6 +2676,7 @@
     textReplaceEnabled: false,
     textReplaceRules: [],
     guestPuppy: null,
+    guestPuppies: [],
     puppyVisitLog: [],
     puppyVisitPhotos: [],
     puppyVisitCoopDaily: { date: '', water: 0, cook: 0 },
@@ -4976,7 +4977,7 @@
     #st-tb-puppy.shake #st-tb-puppy-canvas { transform: translateX(2px); }
     #st-tb-puppy.flip.shake #st-tb-puppy-canvas { transform: scaleX(-1) translateX(2px); }
 
-    #st-tb-guest-puppy {
+    .st-tb-guest-puppy {
       position: fixed;
       left: 160px;
       top: 0;
@@ -4988,9 +4989,9 @@
       touch-action: none;
       z-index: 9996 !important;
     }
-    #st-tb-guest-puppy.active { display: block; }
-    #st-tb-guest-puppy.dragging { cursor: grabbing; }
-    #st-tb-guest-puppy-canvas {
+    .st-tb-guest-puppy.active { display: block; }
+    .st-tb-guest-puppy.dragging { cursor: grabbing; }
+    .st-tb-guest-puppy-canvas {
       width: 72px;
       height: 72px;
       display: block;
@@ -4998,12 +4999,12 @@
       image-rendering: crisp-edges;
       transform-origin: center bottom;
     }
-    #st-tb-guest-puppy.flip #st-tb-guest-puppy-canvas { transform: scaleX(-1); }
-    #st-tb-guest-puppy.bob #st-tb-guest-puppy-canvas { transform: translateY(-2px); }
-    #st-tb-guest-puppy.flip.bob #st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-2px); }
-    #st-tb-guest-puppy.hop #st-tb-guest-puppy-canvas { transform: translateY(-7px); }
-    #st-tb-guest-puppy.flip.hop #st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-7px); }
-    #st-tb-guest-puppy-tag {
+    .st-tb-guest-puppy.flip .st-tb-guest-puppy-canvas { transform: scaleX(-1); }
+    .st-tb-guest-puppy.bob .st-tb-guest-puppy-canvas { transform: translateY(-2px); }
+    .st-tb-guest-puppy.flip.bob .st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-2px); }
+    .st-tb-guest-puppy.hop .st-tb-guest-puppy-canvas { transform: translateY(-7px); }
+    .st-tb-guest-puppy.flip.hop .st-tb-guest-puppy-canvas { transform: scaleX(-1) translateY(-7px); }
+    .st-tb-guest-puppy-tag {
       position: absolute;
       left: 50%;
       bottom: -14px;
@@ -5017,7 +5018,7 @@
       white-space: nowrap;
       pointer-events: none;
     }
-    #st-tb-guest-puppy-bubble {
+    .st-tb-guest-bubble {
       position: absolute;
       left: 50%;
       bottom: 74px;
@@ -5040,8 +5041,8 @@
       pointer-events: none;
       transition: opacity 0.16s ease, transform 0.18s ease;
     }
-    #st-tb-guest-puppy-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    #st-tb-guest-puppy-bubble.lifted, #st-tb-puppy-bubble.lifted { bottom: 112px !important; }
+    .st-tb-guest-bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .st-tb-guest-bubble.lifted, #st-tb-puppy-bubble.lifted { bottom: 112px !important; }
     #st-tb-guest-pop { min-width: 210px; max-width: 340px; box-sizing: border-box; }
     .st-gp-resize { position: absolute; right: 0; bottom: 0; width: 18px; height: 18px; cursor: nwse-resize; background: transparent; }
     #st-tb-guest-pop {
@@ -5135,54 +5136,54 @@
       0% { opacity: 0.98; transform: translateY(10px) scale(0.98); }
       100% { opacity: 0.92; transform: translateY(0) scale(1); }
     }
-    #st-tb-puppy-bubble.bub-gacha-soda-popNone, #st-tb-guest-puppy-bubble.bub-gacha-soda-popNone { background: linear-gradient(135deg,#ebf8ff,#dff5ff,#f5fbff); border-color: #6ab8e8; color: #224d6e; box-shadow: 0 2px 8px rgba(106,184,232,0.36); }
-    #st-tb-puppy-bubble.bub-gacha-soda-pop::after, #st-tb-guest-puppy-bubble.bub-gacha-soda-pop::after { background: #e6f6ff; border-color: #6ab8e8; }
-    #st-tb-puppy-bubble.bub-gacha-aurora-glassNone, #st-tb-guest-puppy-bubble.bub-gacha-aurora-glassNone { background: linear-gradient(120deg,#e4fff5,#e8f3ff,#f4eaff,#e4fff5); background-size: 260% 260%; animation: stBubSheen 3.8s ease infinite; border-color: #7cc9c4; color: #234c54; box-shadow: 0 2px 11px rgba(124,201,196,0.44), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-gacha-aurora-glass::after, #st-tb-guest-puppy-bubble.bub-gacha-aurora-glass::after { background: #eaf9f6; border-color: #7cc9c4; }
-    #st-tb-puppy-bubble.bub-dyn-strawberryNone, #st-tb-guest-puppy-bubble.bub-dyn-strawberryNone { background: linear-gradient(125deg,#fff5f8,#ffe6ef,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #e08fa8; color: #633042; box-shadow: 0 2px 9px rgba(224,143,168,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-strawberry::after, #st-tb-guest-puppy-bubble.bub-dyn-strawberry::after { background: #ffeff5; border-color: #e08fa8; }
-    #st-tb-puppy-bubble.bub-dyn-koipondNone, #st-tb-guest-puppy-bubble.bub-dyn-koipondNone { background: linear-gradient(125deg,#eefaf8,#e0f4f2,#f5fcfb); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #78b8b2; color: #225450; box-shadow: 0 2px 9px rgba(120,184,178,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-koipond::after, #st-tb-guest-puppy-bubble.bub-dyn-koipond::after { background: #e8f7f5; border-color: #78b8b2; }
-    #st-tb-puppy-bubble.bub-dyn-lemon-teaNone, #st-tb-guest-puppy-bubble.bub-dyn-lemon-teaNone { background: linear-gradient(125deg,#fffdf0,#fdf6cc,#fffef5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d9bd59; color: #5c4a14; box-shadow: 0 2px 9px rgba(217,189,89,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-lemon-tea::after, #st-tb-guest-puppy-bubble.bub-dyn-lemon-tea::after { background: #fef9dd; border-color: #d9bd59; }
-    #st-tb-puppy-bubble.bub-dyn-cat-pawNone, #st-tb-guest-puppy-bubble.bub-dyn-cat-pawNone { background: linear-gradient(125deg,#fff6f8,#fce8ee,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d99ab0; color: #633446; box-shadow: 0 2px 9px rgba(217,154,176,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-cat-paw::after, #st-tb-guest-puppy-bubble.bub-dyn-cat-paw::after { background: #fdf0f4; border-color: #d99ab0; }
-    #st-tb-puppy-bubble.bub-dyn-paper-planeNone, #st-tb-guest-puppy-bubble.bub-dyn-paper-planeNone { background: linear-gradient(125deg,#f5faff,#eef5fc,#fffdf7); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #8cb2d9; color: #2b4c6e; box-shadow: 0 2px 9px rgba(140,178,217,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-paper-plane::after, #st-tb-guest-puppy-bubble.bub-dyn-paper-plane::after { background: #f2f7fd; border-color: #8cb2d9; }
-    #st-tb-puppy-bubble.bub-dyn-train-ticketNone, #st-tb-guest-puppy-bubble.bub-dyn-train-ticketNone { background: linear-gradient(135deg,#fffaf0,#f7ecd6); border-color: #c29a6b; color: #5c4022; box-shadow: 0 2px 8px rgba(194,154,107,0.3); }
-    #st-tb-puppy-bubble.bub-dyn-train-ticket::after, #st-tb-guest-puppy-bubble.bub-dyn-train-ticket::after { background: #fbf3e3; border-color: #c29a6b; }
-    #st-tb-puppy-bubble.bub-dyn-washi-noteNone, #st-tb-guest-puppy-bubble.bub-dyn-washi-noteNone { background: linear-gradient(135deg,#fffdf8,#fcf5eb); border-color: #d4a6b4; color: #593b44; box-shadow: 0 2px 8px rgba(212,166,180,0.3); }
-    #st-tb-puppy-bubble.bub-dyn-washi-note::after, #st-tb-guest-puppy-bubble.bub-dyn-washi-note::after { background: #fdf8f0; border-color: #d4a6b4; }
-    #st-tb-puppy-bubble.bub-dyn-rain-windowNone, #st-tb-guest-puppy-bubble.bub-dyn-rain-windowNone { background: linear-gradient(135deg,#eef6fc,#e0eef8); border-color: #8ab0cc; color: #2d4c66; box-shadow: 0 2px 8px rgba(138,176,204,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-rain-window::after, #st-tb-guest-puppy-bubble.bub-dyn-rain-window::after { background: #e8f2fa; border-color: #8ab0cc; }
-    #st-tb-puppy-bubble.bub-dyn-cassetteNone, #st-tb-guest-puppy-bubble.bub-dyn-cassetteNone { background: linear-gradient(135deg,#fff5f0,#fae4dc); border-color: #cf8474; color: #5e3128; box-shadow: 0 2px 8px rgba(207,132,116,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-cassette::after, #st-tb-guest-puppy-bubble.bub-dyn-cassette::after { background: #fcede6; border-color: #cf8474; }
-    #st-tb-puppy-bubble.bub-dyn-snowfallNone, #st-tb-guest-puppy-bubble.bub-dyn-snowfallNone { background: linear-gradient(135deg,#eef7ff,#e2f0fc,#f7fbff); border-color: #8cbce0; color: #264a6b; box-shadow: 0 2px 9px rgba(140,188,224,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-snowfall::after, #st-tb-guest-puppy-bubble.bub-dyn-snowfall::after { background: #eaf4fd; border-color: #8cbce0; }
-    #st-tb-puppy-bubble.bub-dyn-matcha-whirlNone, #st-tb-guest-puppy-bubble.bub-dyn-matcha-whirlNone { background: linear-gradient(135deg,#f2faf0,#e3f2e0,#f7fcf6); border-color: #7eb07a; color: #2b5428; box-shadow: 0 2px 9px rgba(126,176,122,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-matcha-whirl::after, #st-tb-guest-puppy-bubble.bub-dyn-matcha-whirl::after { background: #ebf6e8; border-color: #7eb07a; }
-    #st-tb-puppy-bubble.bub-dyn-ocean-tideNone, #st-tb-guest-puppy-bubble.bub-dyn-ocean-tideNone { background: linear-gradient(135deg,#ebf8fc,#daf1fa,#f2fbff); border-color: #74b4d4; color: #204d66; box-shadow: 0 2px 9px rgba(116,180,212,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-ocean-tide::after, #st-tb-guest-puppy-bubble.bub-dyn-ocean-tide::after { background: #e4f5fc; border-color: #74b4d4; }
-    #st-tb-puppy-bubble.bub-dyn-lantern-glowNone, #st-tb-guest-puppy-bubble.bub-dyn-lantern-glowNone { background: linear-gradient(135deg,#383452,#4f4566,#3d3654); border-color: #e0b36e; color: #fff5de; box-shadow: 0 2px 10px rgba(224,179,110,0.36); }
-    #st-tb-puppy-bubble.bub-dyn-lantern-glow::after, #st-tb-guest-puppy-bubble.bub-dyn-lantern-glow::after { background: #433c5c; border-color: #e0b36e; }
-    #st-tb-puppy-bubble.bub-dyn-peach-sodaNone, #st-tb-guest-puppy-bubble.bub-dyn-peach-sodaNone { background: linear-gradient(135deg,#fff5f0,#ffe3d6,#fffaf5); border-color: #e39a84; color: #663526; box-shadow: 0 2px 9px rgba(227,154,132,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-peach-soda::after, #st-tb-guest-puppy-bubble.bub-dyn-peach-soda::after { background: #ffece3; border-color: #e39a84; }
-    #st-tb-puppy-bubble.bub-dyn-sakura-teaNone, #st-tb-guest-puppy-bubble.bub-dyn-sakura-teaNone { background: linear-gradient(135deg,#fff5f8,#fbe4ec,#fffaf5); border-color: #db9ab0; color: #633344; box-shadow: 0 2px 9px rgba(219,154,176,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-sakura-tea::after, #st-tb-guest-puppy-bubble.bub-dyn-sakura-tea::after { background: #fdeef3; border-color: #db9ab0; }
-    #st-tb-puppy-bubble.bub-dyn-maple-windNone, #st-tb-guest-puppy-bubble.bub-dyn-maple-windNone { background: linear-gradient(135deg,#fff8ef,#fae8d2,#fffdf7); border-color: #cf8a58; color: #5e3618; box-shadow: 0 2px 9px rgba(207,138,88,0.34); }
-    #st-tb-puppy-bubble.bub-dyn-maple-wind::after, #st-tb-guest-puppy-bubble.bub-dyn-maple-wind::after { background: #fcf0e0; border-color: #cf8a58; }
-    #st-tb-puppy-bubble.bub-dyn-wish-jarNone, #st-tb-guest-puppy-bubble.bub-dyn-wish-jarNone { background: linear-gradient(135deg,#2e3959,#424e75,#303b5c); border-color: #9ec4e8; color: #f2f7ff; box-shadow: 0 2px 10px rgba(158,196,232,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-wish-jar::after, #st-tb-guest-puppy-bubble.bub-dyn-wish-jar::after { background: #384469; border-color: #9ec4e8; }
-    #st-tb-puppy-bubble.bub-dyn-dandelionNone, #st-tb-guest-puppy-bubble.bub-dyn-dandelionNone { background: linear-gradient(135deg,#f7fbf2,#eef7eb,#fbfdf8); border-color: #96bf8e; color: #365232; box-shadow: 0 2px 9px rgba(150,191,142,0.3); }
-    #st-tb-puppy-bubble.bub-dyn-dandelion::after, #st-tb-guest-puppy-bubble.bub-dyn-dandelion::after { background: #f3f9ee; border-color: #96bf8e; }
-    #st-tb-puppy-bubble.bub-dyn-honeybeeNone, #st-tb-guest-puppy-bubble.bub-dyn-honeybeeNone { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
-    #st-tb-puppy-bubble.bub-dyn-honeybee::after, #st-tb-guest-puppy-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
-    #st-tb-puppy-bubble.bub-spend-5k-vinyl, #st-tb-guest-puppy-bubble.bub-spend-5k-vinyl { background: linear-gradient(135deg,#fff8ef,#f7e8d8,#fdf1e4); border-color: #8c5a3c; color: #4a2c1c; box-shadow: 0 2px 10px rgba(140,90,60,0.34); }
-    #st-tb-puppy-bubble.bub-spend-5k-vinyl::after, #st-tb-guest-puppy-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
-    #st-tb-puppy-bubble.bub-gacha-milk-strawberryNone, #st-tb-guest-puppy-bubble.bub-gacha-milk-strawberryNone { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after, #st-tb-guest-puppy-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
+    #st-tb-puppy-bubble.bub-gacha-soda-popNone, .st-tb-guest-bubble.bub-gacha-soda-popNone { background: linear-gradient(135deg,#ebf8ff,#dff5ff,#f5fbff); border-color: #6ab8e8; color: #224d6e; box-shadow: 0 2px 8px rgba(106,184,232,0.36); }
+    #st-tb-puppy-bubble.bub-gacha-soda-pop::after, .st-tb-guest-bubble.bub-gacha-soda-pop::after { background: #e6f6ff; border-color: #6ab8e8; }
+    #st-tb-puppy-bubble.bub-gacha-aurora-glassNone, .st-tb-guest-bubble.bub-gacha-aurora-glassNone { background: linear-gradient(120deg,#e4fff5,#e8f3ff,#f4eaff,#e4fff5); background-size: 260% 260%; animation: stBubSheen 3.8s ease infinite; border-color: #7cc9c4; color: #234c54; box-shadow: 0 2px 11px rgba(124,201,196,0.44), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-gacha-aurora-glass::after, .st-tb-guest-bubble.bub-gacha-aurora-glass::after { background: #eaf9f6; border-color: #7cc9c4; }
+    #st-tb-puppy-bubble.bub-dyn-strawberryNone, .st-tb-guest-bubble.bub-dyn-strawberryNone { background: linear-gradient(125deg,#fff5f8,#ffe6ef,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #e08fa8; color: #633042; box-shadow: 0 2px 9px rgba(224,143,168,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-strawberry::after, .st-tb-guest-bubble.bub-dyn-strawberry::after { background: #ffeff5; border-color: #e08fa8; }
+    #st-tb-puppy-bubble.bub-dyn-koipondNone, .st-tb-guest-bubble.bub-dyn-koipondNone { background: linear-gradient(125deg,#eefaf8,#e0f4f2,#f5fcfb); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #78b8b2; color: #225450; box-shadow: 0 2px 9px rgba(120,184,178,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-koipond::after, .st-tb-guest-bubble.bub-dyn-koipond::after { background: #e8f7f5; border-color: #78b8b2; }
+    #st-tb-puppy-bubble.bub-dyn-lemon-teaNone, .st-tb-guest-bubble.bub-dyn-lemon-teaNone { background: linear-gradient(125deg,#fffdf0,#fdf6cc,#fffef5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d9bd59; color: #5c4a14; box-shadow: 0 2px 9px rgba(217,189,89,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-lemon-tea::after, .st-tb-guest-bubble.bub-dyn-lemon-tea::after { background: #fef9dd; border-color: #d9bd59; }
+    #st-tb-puppy-bubble.bub-dyn-cat-pawNone, .st-tb-guest-bubble.bub-dyn-cat-pawNone { background: linear-gradient(125deg,#fff6f8,#fce8ee,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d99ab0; color: #633446; box-shadow: 0 2px 9px rgba(217,154,176,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-cat-paw::after, .st-tb-guest-bubble.bub-dyn-cat-paw::after { background: #fdf0f4; border-color: #d99ab0; }
+    #st-tb-puppy-bubble.bub-dyn-paper-planeNone, .st-tb-guest-bubble.bub-dyn-paper-planeNone { background: linear-gradient(125deg,#f5faff,#eef5fc,#fffdf7); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #8cb2d9; color: #2b4c6e; box-shadow: 0 2px 9px rgba(140,178,217,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-paper-plane::after, .st-tb-guest-bubble.bub-dyn-paper-plane::after { background: #f2f7fd; border-color: #8cb2d9; }
+    #st-tb-puppy-bubble.bub-dyn-train-ticketNone, .st-tb-guest-bubble.bub-dyn-train-ticketNone { background: linear-gradient(135deg,#fffaf0,#f7ecd6); border-color: #c29a6b; color: #5c4022; box-shadow: 0 2px 8px rgba(194,154,107,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-train-ticket::after, .st-tb-guest-bubble.bub-dyn-train-ticket::after { background: #fbf3e3; border-color: #c29a6b; }
+    #st-tb-puppy-bubble.bub-dyn-washi-noteNone, .st-tb-guest-bubble.bub-dyn-washi-noteNone { background: linear-gradient(135deg,#fffdf8,#fcf5eb); border-color: #d4a6b4; color: #593b44; box-shadow: 0 2px 8px rgba(212,166,180,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-washi-note::after, .st-tb-guest-bubble.bub-dyn-washi-note::after { background: #fdf8f0; border-color: #d4a6b4; }
+    #st-tb-puppy-bubble.bub-dyn-rain-windowNone, .st-tb-guest-bubble.bub-dyn-rain-windowNone { background: linear-gradient(135deg,#eef6fc,#e0eef8); border-color: #8ab0cc; color: #2d4c66; box-shadow: 0 2px 8px rgba(138,176,204,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-rain-window::after, .st-tb-guest-bubble.bub-dyn-rain-window::after { background: #e8f2fa; border-color: #8ab0cc; }
+    #st-tb-puppy-bubble.bub-dyn-cassetteNone, .st-tb-guest-bubble.bub-dyn-cassetteNone { background: linear-gradient(135deg,#fff5f0,#fae4dc); border-color: #cf8474; color: #5e3128; box-shadow: 0 2px 8px rgba(207,132,116,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-cassette::after, .st-tb-guest-bubble.bub-dyn-cassette::after { background: #fcede6; border-color: #cf8474; }
+    #st-tb-puppy-bubble.bub-dyn-snowfallNone, .st-tb-guest-bubble.bub-dyn-snowfallNone { background: linear-gradient(135deg,#eef7ff,#e2f0fc,#f7fbff); border-color: #8cbce0; color: #264a6b; box-shadow: 0 2px 9px rgba(140,188,224,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-snowfall::after, .st-tb-guest-bubble.bub-dyn-snowfall::after { background: #eaf4fd; border-color: #8cbce0; }
+    #st-tb-puppy-bubble.bub-dyn-matcha-whirlNone, .st-tb-guest-bubble.bub-dyn-matcha-whirlNone { background: linear-gradient(135deg,#f2faf0,#e3f2e0,#f7fcf6); border-color: #7eb07a; color: #2b5428; box-shadow: 0 2px 9px rgba(126,176,122,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-matcha-whirl::after, .st-tb-guest-bubble.bub-dyn-matcha-whirl::after { background: #ebf6e8; border-color: #7eb07a; }
+    #st-tb-puppy-bubble.bub-dyn-ocean-tideNone, .st-tb-guest-bubble.bub-dyn-ocean-tideNone { background: linear-gradient(135deg,#ebf8fc,#daf1fa,#f2fbff); border-color: #74b4d4; color: #204d66; box-shadow: 0 2px 9px rgba(116,180,212,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-ocean-tide::after, .st-tb-guest-bubble.bub-dyn-ocean-tide::after { background: #e4f5fc; border-color: #74b4d4; }
+    #st-tb-puppy-bubble.bub-dyn-lantern-glowNone, .st-tb-guest-bubble.bub-dyn-lantern-glowNone { background: linear-gradient(135deg,#383452,#4f4566,#3d3654); border-color: #e0b36e; color: #fff5de; box-shadow: 0 2px 10px rgba(224,179,110,0.36); }
+    #st-tb-puppy-bubble.bub-dyn-lantern-glow::after, .st-tb-guest-bubble.bub-dyn-lantern-glow::after { background: #433c5c; border-color: #e0b36e; }
+    #st-tb-puppy-bubble.bub-dyn-peach-sodaNone, .st-tb-guest-bubble.bub-dyn-peach-sodaNone { background: linear-gradient(135deg,#fff5f0,#ffe3d6,#fffaf5); border-color: #e39a84; color: #663526; box-shadow: 0 2px 9px rgba(227,154,132,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-peach-soda::after, .st-tb-guest-bubble.bub-dyn-peach-soda::after { background: #ffece3; border-color: #e39a84; }
+    #st-tb-puppy-bubble.bub-dyn-sakura-teaNone, .st-tb-guest-bubble.bub-dyn-sakura-teaNone { background: linear-gradient(135deg,#fff5f8,#fbe4ec,#fffaf5); border-color: #db9ab0; color: #633344; box-shadow: 0 2px 9px rgba(219,154,176,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-sakura-tea::after, .st-tb-guest-bubble.bub-dyn-sakura-tea::after { background: #fdeef3; border-color: #db9ab0; }
+    #st-tb-puppy-bubble.bub-dyn-maple-windNone, .st-tb-guest-bubble.bub-dyn-maple-windNone { background: linear-gradient(135deg,#fff8ef,#fae8d2,#fffdf7); border-color: #cf8a58; color: #5e3618; box-shadow: 0 2px 9px rgba(207,138,88,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-maple-wind::after, .st-tb-guest-bubble.bub-dyn-maple-wind::after { background: #fcf0e0; border-color: #cf8a58; }
+    #st-tb-puppy-bubble.bub-dyn-wish-jarNone, .st-tb-guest-bubble.bub-dyn-wish-jarNone { background: linear-gradient(135deg,#2e3959,#424e75,#303b5c); border-color: #9ec4e8; color: #f2f7ff; box-shadow: 0 2px 10px rgba(158,196,232,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-wish-jar::after, .st-tb-guest-bubble.bub-dyn-wish-jar::after { background: #384469; border-color: #9ec4e8; }
+    #st-tb-puppy-bubble.bub-dyn-dandelionNone, .st-tb-guest-bubble.bub-dyn-dandelionNone { background: linear-gradient(135deg,#f7fbf2,#eef7eb,#fbfdf8); border-color: #96bf8e; color: #365232; box-shadow: 0 2px 9px rgba(150,191,142,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-dandelion::after, .st-tb-guest-bubble.bub-dyn-dandelion::after { background: #f3f9ee; border-color: #96bf8e; }
+    #st-tb-puppy-bubble.bub-dyn-honeybeeNone, .st-tb-guest-bubble.bub-dyn-honeybeeNone { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-honeybee::after, .st-tb-guest-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
+    #st-tb-puppy-bubble.bub-spend-5k-vinyl, .st-tb-guest-bubble.bub-spend-5k-vinyl { background: linear-gradient(135deg,#fff8ef,#f7e8d8,#fdf1e4); border-color: #8c5a3c; color: #4a2c1c; box-shadow: 0 2px 10px rgba(140,90,60,0.34); }
+    #st-tb-puppy-bubble.bub-spend-5k-vinyl::after, .st-tb-guest-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
+    #st-tb-puppy-bubble.bub-gacha-milk-strawberryNone, .st-tb-guest-bubble.bub-gacha-milk-strawberryNone { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after, .st-tb-guest-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
 
-    #st-tb-puppy-bubble::after {
+    #st-tb-puppy-bubble::after, .st-tb-guest-bubble::after {
       content: "";
       position: absolute;
       left: 50%;
@@ -6633,7 +6634,7 @@
       margin-top: 0;
       margin-bottom: 0;
     }
-    #st-tb-bub-fx, #st-tb-guest-bub-fx {
+    #st-tb-bub-fx, .st-tb-guest-bub-fx {
       position: absolute;
       inset: -10px;
       width: calc(100% + 20px);
@@ -6657,68 +6658,68 @@
     .st-px-bub-orn.tl { left: -7px; top: -8px; transform: rotate(-8deg); }
     .st-px-bub-orn.br { right: -7px; bottom: -7px; transform: rotate(-6deg); }
     .st-px-bub-orn.bl { left: -7px; bottom: -7px; transform: rotate(6deg); }
-    #st-tb-puppy-bubble.bub-cloud, #st-tb-guest-puppy-bubble.bub-cloud { background: #f4f9fd; border-color: #9bbcd4; color: #3a546b; box-shadow: 0 2px 7px rgba(155,188,212,0.28); }
-    #st-tb-puppy-bubble.bub-cloud::after, #st-tb-guest-puppy-bubble.bub-cloud::after { background: #f4f9fd; border-color: #9bbcd4; }
-    #st-tb-puppy-bubble.bub-mint, #st-tb-guest-puppy-bubble.bub-mint { background: #f2faf7; border-color: #8fc4b2; color: #31594c; box-shadow: 0 2px 7px rgba(143,196,178,0.28); }
-    #st-tb-puppy-bubble.bub-mint::after, #st-tb-guest-puppy-bubble.bub-mint::after { background: #f2faf7; border-color: #8fc4b2; }
-    #st-tb-puppy-bubble.bub-peach, #st-tb-guest-puppy-bubble.bub-peach { background: linear-gradient(135deg,#fdf6f2,#faeae3); border-color: #d9aba0; color: #6b433b; box-shadow: 0 2px 7px rgba(217,171,160,0.28); }
-    #st-tb-puppy-bubble.bub-peach::after, #st-tb-guest-puppy-bubble.bub-peach::after { background: #fbefe9; border-color: #d9aba0; }
-    #st-tb-puppy-bubble.bub-matcha, #st-tb-guest-puppy-bubble.bub-matcha { background: #f4f8f2; border-color: #9cb896; color: #3d5439; box-shadow: 0 2px 7px rgba(156,184,150,0.28); }
-    #st-tb-puppy-bubble.bub-matcha::after, #st-tb-guest-puppy-bubble.bub-matcha::after { background: #f4f8f2; border-color: #9cb896; }
-    #st-tb-puppy-bubble.bub-cocoa, #st-tb-guest-puppy-bubble.bub-cocoa { background: #faf4ee; border-color: #bda38e; color: #594436; box-shadow: 0 2px 7px rgba(189,163,142,0.28); }
-    #st-tb-puppy-bubble.bub-cocoa::after, #st-tb-guest-puppy-bubble.bub-cocoa::after { background: #faf4ee; border-color: #bda38e; }
-    #st-tb-puppy-bubble.bub-sakura, #st-tb-guest-puppy-bubble.bub-sakura { background: linear-gradient(135deg,#fdf6f8,#f7e8ee); border-color: #d4adb9; color: #63404c; box-shadow: 0 2px 7px rgba(212,173,185,0.28); }
-    #st-tb-puppy-bubble.bub-sakura::after, #st-tb-guest-puppy-bubble.bub-sakura::after { background: #faeff3; border-color: #d4adb9; }
-    #st-tb-puppy-bubble.bub-violet, #st-tb-guest-puppy-bubble.bub-violet { background: linear-gradient(135deg,#f7f3fc,#ede6f7); border-color: #b4a3cf; color: #4c3c66; box-shadow: 0 2px 7px rgba(180,163,207,0.3); }
-    #st-tb-puppy-bubble.bub-violet::after, #st-tb-guest-puppy-bubble.bub-violet::after { background: #f2ecfa; border-color: #b4a3cf; }
-    #st-tb-puppy-bubble.bub-snow, #st-tb-guest-puppy-bubble.bub-snow { background: linear-gradient(135deg,#f5faff,#ebf4fc); border-color: #a6c0d6; color: #3c546b; box-shadow: 0 2px 7px rgba(166,192,214,0.3); }
-    #st-tb-puppy-bubble.bub-snow::after, #st-tb-guest-puppy-bubble.bub-snow::after { background: #f0f7fd; border-color: #a6c0d6; }
-    #st-tb-puppy-bubble.bub-starry, #st-tb-guest-puppy-bubble.bub-starry { background: linear-gradient(135deg,#333c5c,#464e73); border-color: #cfc08e; color: #faf3dc; box-shadow: 0 2px 9px rgba(51,60,92,0.4); }
-    #st-tb-puppy-bubble.bub-starry::after, #st-tb-guest-puppy-bubble.bub-starry::after { background: #3c4566; border-color: #cfc08e; }
-    #st-tb-puppy-bubble.bub-pixelgold, #st-tb-guest-puppy-bubble.bub-pixelgold { background: linear-gradient(135deg,#fcfaf0,#f7eed7); border-color: #cfb986; color: #63512c; box-shadow: 0 2px 7px rgba(207,185,134,0.3); }
-    #st-tb-puppy-bubble.bub-pixelgold::after, #st-tb-guest-puppy-bubble.bub-pixelgold::after { background: #faf4e3; border-color: #cfb986; }
-    #st-tb-puppy-bubble.bub-scroll, #st-tb-guest-puppy-bubble.bub-scroll { background: #faf6ee; border-color: #c29c96; color: #5e413e; box-shadow: 0 2px 7px rgba(194,156,150,0.28); }
-    #st-tb-puppy-bubble.bub-scroll::after, #st-tb-guest-puppy-bubble.bub-scroll::after { background: #faf6ee; border-color: #c29c96; }
-    #st-tb-puppy-bubble.bub-candy, #st-tb-guest-puppy-bubble.bub-candy { background: linear-gradient(125deg,#fdf2f6,#fcf8eb,#effaf4,#f0f6fc); border-color: #ccb0c4; color: #594354; box-shadow: 0 2px 8px rgba(204,176,196,0.3); }
-    #st-tb-puppy-bubble.bub-candy::after, #st-tb-guest-puppy-bubble.bub-candy::after { background: #faf4f6; border-color: #ccb0c4; }
+    #st-tb-puppy-bubble.bub-cloud, .st-tb-guest-bubble.bub-cloud { background: #f4f9fd; border-color: #9bbcd4; color: #3a546b; box-shadow: 0 2px 7px rgba(155,188,212,0.28); }
+    #st-tb-puppy-bubble.bub-cloud::after, .st-tb-guest-bubble.bub-cloud::after { background: #f4f9fd; border-color: #9bbcd4; }
+    #st-tb-puppy-bubble.bub-mint, .st-tb-guest-bubble.bub-mint { background: #f2faf7; border-color: #8fc4b2; color: #31594c; box-shadow: 0 2px 7px rgba(143,196,178,0.28); }
+    #st-tb-puppy-bubble.bub-mint::after, .st-tb-guest-bubble.bub-mint::after { background: #f2faf7; border-color: #8fc4b2; }
+    #st-tb-puppy-bubble.bub-peach, .st-tb-guest-bubble.bub-peach { background: linear-gradient(135deg,#fdf6f2,#faeae3); border-color: #d9aba0; color: #6b433b; box-shadow: 0 2px 7px rgba(217,171,160,0.28); }
+    #st-tb-puppy-bubble.bub-peach::after, .st-tb-guest-bubble.bub-peach::after { background: #fbefe9; border-color: #d9aba0; }
+    #st-tb-puppy-bubble.bub-matcha, .st-tb-guest-bubble.bub-matcha { background: #f4f8f2; border-color: #9cb896; color: #3d5439; box-shadow: 0 2px 7px rgba(156,184,150,0.28); }
+    #st-tb-puppy-bubble.bub-matcha::after, .st-tb-guest-bubble.bub-matcha::after { background: #f4f8f2; border-color: #9cb896; }
+    #st-tb-puppy-bubble.bub-cocoa, .st-tb-guest-bubble.bub-cocoa { background: #faf4ee; border-color: #bda38e; color: #594436; box-shadow: 0 2px 7px rgba(189,163,142,0.28); }
+    #st-tb-puppy-bubble.bub-cocoa::after, .st-tb-guest-bubble.bub-cocoa::after { background: #faf4ee; border-color: #bda38e; }
+    #st-tb-puppy-bubble.bub-sakura, .st-tb-guest-bubble.bub-sakura { background: linear-gradient(135deg,#fdf6f8,#f7e8ee); border-color: #d4adb9; color: #63404c; box-shadow: 0 2px 7px rgba(212,173,185,0.28); }
+    #st-tb-puppy-bubble.bub-sakura::after, .st-tb-guest-bubble.bub-sakura::after { background: #faeff3; border-color: #d4adb9; }
+    #st-tb-puppy-bubble.bub-violet, .st-tb-guest-bubble.bub-violet { background: linear-gradient(135deg,#f7f3fc,#ede6f7); border-color: #b4a3cf; color: #4c3c66; box-shadow: 0 2px 7px rgba(180,163,207,0.3); }
+    #st-tb-puppy-bubble.bub-violet::after, .st-tb-guest-bubble.bub-violet::after { background: #f2ecfa; border-color: #b4a3cf; }
+    #st-tb-puppy-bubble.bub-snow, .st-tb-guest-bubble.bub-snow { background: linear-gradient(135deg,#f5faff,#ebf4fc); border-color: #a6c0d6; color: #3c546b; box-shadow: 0 2px 7px rgba(166,192,214,0.3); }
+    #st-tb-puppy-bubble.bub-snow::after, .st-tb-guest-bubble.bub-snow::after { background: #f0f7fd; border-color: #a6c0d6; }
+    #st-tb-puppy-bubble.bub-starry, .st-tb-guest-bubble.bub-starry { background: linear-gradient(135deg,#333c5c,#464e73); border-color: #cfc08e; color: #faf3dc; box-shadow: 0 2px 9px rgba(51,60,92,0.4); }
+    #st-tb-puppy-bubble.bub-starry::after, .st-tb-guest-bubble.bub-starry::after { background: #3c4566; border-color: #cfc08e; }
+    #st-tb-puppy-bubble.bub-pixelgold, .st-tb-guest-bubble.bub-pixelgold { background: linear-gradient(135deg,#fcfaf0,#f7eed7); border-color: #cfb986; color: #63512c; box-shadow: 0 2px 7px rgba(207,185,134,0.3); }
+    #st-tb-puppy-bubble.bub-pixelgold::after, .st-tb-guest-bubble.bub-pixelgold::after { background: #faf4e3; border-color: #cfb986; }
+    #st-tb-puppy-bubble.bub-scroll, .st-tb-guest-bubble.bub-scroll { background: #faf6ee; border-color: #c29c96; color: #5e413e; box-shadow: 0 2px 7px rgba(194,156,150,0.28); }
+    #st-tb-puppy-bubble.bub-scroll::after, .st-tb-guest-bubble.bub-scroll::after { background: #faf6ee; border-color: #c29c96; }
+    #st-tb-puppy-bubble.bub-candy, .st-tb-guest-bubble.bub-candy { background: linear-gradient(125deg,#fdf2f6,#fcf8eb,#effaf4,#f0f6fc); border-color: #ccb0c4; color: #594354; box-shadow: 0 2px 8px rgba(204,176,196,0.3); }
+    #st-tb-puppy-bubble.bub-candy::after, .st-tb-guest-bubble.bub-candy::after { background: #faf4f6; border-color: #ccb0c4; }
     /* 6 款柔和轻盈 9x9 角饰气泡 */
-    #st-tb-puppy-bubble.bub-dec-bow, #st-tb-guest-puppy-bubble.bub-dec-bow { background: #faf3f6; border-color: #cca5b2; color: #5c3e49; box-shadow: 0 2px 7px rgba(186,144,158,0.28); }
-    #st-tb-puppy-bubble.bub-dec-bow::after, #st-tb-guest-puppy-bubble.bub-dec-bow::after { background: #faf3f6; border-color: #cca5b2; }
-    #st-tb-puppy-bubble.bub-dec-paw, #st-tb-guest-puppy-bubble.bub-dec-paw { background: #faf5f0; border-color: #cbb09c; color: #5c4638; box-shadow: 0 2px 7px rgba(180,152,130,0.28); }
-    #st-tb-puppy-bubble.bub-dec-paw::after, #st-tb-guest-puppy-bubble.bub-dec-paw::after { background: #faf5f0; border-color: #cbb09c; }
-    #st-tb-puppy-bubble.bub-dec-sakura, #st-tb-guest-puppy-bubble.bub-dec-sakura { background: #fdf6f8; border-color: #d6b0bc; color: #63404c; box-shadow: 0 2px 7px rgba(195,152,166,0.28); }
-    #st-tb-puppy-bubble.bub-dec-sakura::after, #st-tb-guest-puppy-bubble.bub-dec-sakura::after { background: #fdf6f8; border-color: #d6b0bc; }
-    #st-tb-puppy-bubble.bub-dec-crown, #st-tb-guest-puppy-bubble.bub-dec-crown { background: #faf7ef; border-color: #cfb88a; color: #614e2a; box-shadow: 0 2px 7px rgba(190,165,112,0.3); }
-    #st-tb-puppy-bubble.bub-dec-crown::after, #st-tb-guest-puppy-bubble.bub-dec-crown::after { background: #faf7ef; border-color: #cfb88a; }
-    #st-tb-puppy-bubble.bub-dec-moon, #st-tb-guest-puppy-bubble.bub-dec-moon { background: #f5f3f9; border-color: #aba0bf; color: #473c5c; box-shadow: 0 2px 7px rgba(150,138,172,0.3); }
-    #st-tb-puppy-bubble.bub-dec-moon::after, #st-tb-guest-puppy-bubble.bub-dec-moon::after { background: #f5f3f9; border-color: #aba0bf; }
-    #st-tb-puppy-bubble.bub-dec-butterfly, #st-tb-guest-puppy-bubble.bub-dec-butterfly { background: #f7f3fa; border-color: #b8a3c9; color: #4e3b61; box-shadow: 0 2px 7px rgba(162,140,180,0.3); }
-    #st-tb-puppy-bubble.bub-dec-butterfly::after, #st-tb-guest-puppy-bubble.bub-dec-butterfly::after { background: #f7f3fa; border-color: #b8a3c9; }
+    #st-tb-puppy-bubble.bub-dec-bow, .st-tb-guest-bubble.bub-dec-bow { background: #faf3f6; border-color: #cca5b2; color: #5c3e49; box-shadow: 0 2px 7px rgba(186,144,158,0.28); }
+    #st-tb-puppy-bubble.bub-dec-bow::after, .st-tb-guest-bubble.bub-dec-bow::after { background: #faf3f6; border-color: #cca5b2; }
+    #st-tb-puppy-bubble.bub-dec-paw, .st-tb-guest-bubble.bub-dec-paw { background: #faf5f0; border-color: #cbb09c; color: #5c4638; box-shadow: 0 2px 7px rgba(180,152,130,0.28); }
+    #st-tb-puppy-bubble.bub-dec-paw::after, .st-tb-guest-bubble.bub-dec-paw::after { background: #faf5f0; border-color: #cbb09c; }
+    #st-tb-puppy-bubble.bub-dec-sakura, .st-tb-guest-bubble.bub-dec-sakura { background: #fdf6f8; border-color: #d6b0bc; color: #63404c; box-shadow: 0 2px 7px rgba(195,152,166,0.28); }
+    #st-tb-puppy-bubble.bub-dec-sakura::after, .st-tb-guest-bubble.bub-dec-sakura::after { background: #fdf6f8; border-color: #d6b0bc; }
+    #st-tb-puppy-bubble.bub-dec-crown, .st-tb-guest-bubble.bub-dec-crown { background: #faf7ef; border-color: #cfb88a; color: #614e2a; box-shadow: 0 2px 7px rgba(190,165,112,0.3); }
+    #st-tb-puppy-bubble.bub-dec-crown::after, .st-tb-guest-bubble.bub-dec-crown::after { background: #faf7ef; border-color: #cfb88a; }
+    #st-tb-puppy-bubble.bub-dec-moon, .st-tb-guest-bubble.bub-dec-moon { background: #f5f3f9; border-color: #aba0bf; color: #473c5c; box-shadow: 0 2px 7px rgba(150,138,172,0.3); }
+    #st-tb-puppy-bubble.bub-dec-moon::after, .st-tb-guest-bubble.bub-dec-moon::after { background: #f5f3f9; border-color: #aba0bf; }
+    #st-tb-puppy-bubble.bub-dec-butterfly, .st-tb-guest-bubble.bub-dec-butterfly { background: #f7f3fa; border-color: #b8a3c9; color: #4e3b61; box-shadow: 0 2px 7px rgba(162,140,180,0.3); }
+    #st-tb-puppy-bubble.bub-dec-butterfly::after, .st-tb-guest-bubble.bub-dec-butterfly::after { background: #f7f3fa; border-color: #b8a3c9; }
     /* 12 款全新动态像素气泡（丝滑柔和流动渐变 + 边缘像素粒子） */
-    #st-tb-puppy-bubble.bub-dyn-sakura, #st-tb-guest-puppy-bubble.bub-dyn-sakura { background: linear-gradient(125deg,#fff5f8,#f7e3eb,#fff9fb); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #d6a3b4; color: #633e4c; box-shadow: 0 2px 9px rgba(214,163,180,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-sakura::after, #st-tb-guest-puppy-bubble.bub-dyn-sakura::after { background: #fceef3; border-color: #d6a3b4; }
-    #st-tb-puppy-bubble.bub-dyn-bubble, #st-tb-guest-puppy-bubble.bub-dyn-bubble { background: linear-gradient(125deg,#f2f9ff,#fff4f9,#f0faf7); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #a6c4d9; color: #3c5468; box-shadow: 0 2px 9px rgba(166,196,217,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-bubble::after, #st-tb-guest-puppy-bubble.bub-dyn-bubble::after { background: #f2f8fd; border-color: #a6c4d9; }
-    #st-tb-puppy-bubble.bub-dyn-star, #st-tb-guest-puppy-bubble.bub-dyn-star { background: linear-gradient(125deg,#2e3654,#43496e,#2b324d); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #c9b57d; color: #faf2d8; box-shadow: 0 2px 10px rgba(70,80,120,0.45); }
-    #st-tb-puppy-bubble.bub-dyn-star::after, #st-tb-guest-puppy-bubble.bub-dyn-star::after { background: #384061; border-color: #c9b57d; }
-    #st-tb-puppy-bubble.bub-dyn-aurora, #st-tb-guest-puppy-bubble.bub-dyn-aurora { background: linear-gradient(125deg,#e9f7fa,#ecf7f1,#f2ecfa); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; border-color: #95b8c9; color: #35525e; box-shadow: 0 2px 10px rgba(149,184,201,0.42); }
-    #st-tb-puppy-bubble.bub-dyn-aurora::after, #st-tb-guest-puppy-bubble.bub-dyn-aurora::after { background: #edf6f8; border-color: #95b8c9; }
-    #st-tb-puppy-bubble.bub-dyn-hearts, #st-tb-guest-puppy-bubble.bub-dyn-hearts { background: linear-gradient(125deg,#fff3f6,#fae1e9,#fff8fa); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d9a0b3; color: #663d4c; box-shadow: 0 2px 9px rgba(217,160,179,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-hearts::after, #st-tb-guest-puppy-bubble.bub-dyn-hearts::after { background: #fcebf0; border-color: #d9a0b3; }
-    #st-tb-puppy-bubble.bub-dyn-rain, #st-tb-guest-puppy-bubble.bub-dyn-rain { background: linear-gradient(125deg,#eef5fa,#e2edf5,#f5f9fc); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #9cb4c9; color: #3a5063; box-shadow: 0 2px 9px rgba(156,180,201,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-rain::after, #st-tb-guest-puppy-bubble.bub-dyn-rain::after { background: #eaf2f8; border-color: #9cb4c9; }
-    #st-tb-puppy-bubble.bub-dyn-peach, #st-tb-guest-puppy-bubble.bub-dyn-peach { background: linear-gradient(125deg,#fff5f0,#fce7dd,#fffaf5); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #deab95; color: #694436; box-shadow: 0 2px 9px rgba(222,171,149,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-peach::after, #st-tb-guest-puppy-bubble.bub-dyn-peach::after { background: #fdf0ea; border-color: #deab95; }
-    #st-tb-puppy-bubble.bub-dyn-butterfly, #st-tb-guest-puppy-bubble.bub-dyn-butterfly { background: linear-gradient(125deg,#f6f0fa,#fceef5,#efe8f8); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #b79ec9; color: #4d3b5e; box-shadow: 0 2px 9px rgba(183,158,201,0.4); }
-    #st-tb-puppy-bubble.bub-dyn-butterfly::after, #st-tb-guest-puppy-bubble.bub-dyn-butterfly::after { background: #f5eef9; border-color: #b79ec9; }
-    #st-tb-puppy-bubble.bub-dyn-clover, #st-tb-guest-puppy-bubble.bub-dyn-clover { background: linear-gradient(125deg,#f1faf0,#e3f2e0,#f7fcf6); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #96ba92; color: #3b5738; box-shadow: 0 2px 9px rgba(150,186,146,0.38); }
-    #st-tb-puppy-bubble.bub-dyn-clover::after, #st-tb-guest-puppy-bubble.bub-dyn-clover::after { background: #ebf6e9; border-color: #96ba92; }
-    #st-tb-puppy-bubble.bub-dyn-ocean, #st-tb-guest-puppy-bubble.bub-dyn-ocean { background: linear-gradient(125deg,#ebf8fc,#e1f3f7,#f2fafc); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #8dbcc9; color: #32545e; box-shadow: 0 2px 9px rgba(141,188,201,0.42); }
-    #st-tb-puppy-bubble.bub-dyn-ocean::after, #st-tb-guest-puppy-bubble.bub-dyn-ocean::after { background: #e8f6fa; border-color: #8dbcc9; }
-    #st-tb-puppy-bubble.bub-dyn-lace, #st-tb-guest-puppy-bubble.bub-dyn-lace { background: linear-gradient(125deg,#ffffff,#faf2f5,#ffffff); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d4b6c0; color: #5c444d; box-shadow: 0 2px 9px rgba(212,182,192,0.42); }
-    #st-tb-puppy-bubble.bub-dyn-lace::after, #st-tb-guest-puppy-bubble.bub-dyn-lace::after { background: #fcf7f9; border-color: #d4b6c0; }
-    #st-tb-puppy-bubble.bub-dyn-rainbow, #st-tb-guest-puppy-bubble.bub-dyn-rainbow { background: linear-gradient(135deg,#ffffff 0%,#fff5f9 30%,#f2f9ff 62%,#f7f3ff 88%,#ffffff 100%); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #9ec8f0; color: #473d5e; box-shadow: 0 2px 0 #ffd4e5, 0 4px 12px rgba(158,200,240,0.34), inset 0 0 0 1px rgba(255,255,255,0.96); }
-    #st-tb-puppy-bubble.bub-dyn-rainbow::after, #st-tb-guest-puppy-bubble.bub-dyn-rainbow::after { background: #ffffff; border-color: #9ec8f0; }
+    #st-tb-puppy-bubble.bub-dyn-sakura, .st-tb-guest-bubble.bub-dyn-sakura { background: linear-gradient(125deg,#fff5f8,#f7e3eb,#fff9fb); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #d6a3b4; color: #633e4c; box-shadow: 0 2px 9px rgba(214,163,180,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-sakura::after, .st-tb-guest-bubble.bub-dyn-sakura::after { background: #fceef3; border-color: #d6a3b4; }
+    #st-tb-puppy-bubble.bub-dyn-bubble, .st-tb-guest-bubble.bub-dyn-bubble { background: linear-gradient(125deg,#f2f9ff,#fff4f9,#f0faf7); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #a6c4d9; color: #3c5468; box-shadow: 0 2px 9px rgba(166,196,217,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-bubble::after, .st-tb-guest-bubble.bub-dyn-bubble::after { background: #f2f8fd; border-color: #a6c4d9; }
+    #st-tb-puppy-bubble.bub-dyn-star, .st-tb-guest-bubble.bub-dyn-star { background: linear-gradient(125deg,#2e3654,#43496e,#2b324d); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #c9b57d; color: #faf2d8; box-shadow: 0 2px 10px rgba(70,80,120,0.45); }
+    #st-tb-puppy-bubble.bub-dyn-star::after, .st-tb-guest-bubble.bub-dyn-star::after { background: #384061; border-color: #c9b57d; }
+    #st-tb-puppy-bubble.bub-dyn-aurora, .st-tb-guest-bubble.bub-dyn-aurora { background: linear-gradient(125deg,#e9f7fa,#ecf7f1,#f2ecfa); background-size: 260% 260%; animation: stAfFlow 3.6s ease infinite; border-color: #95b8c9; color: #35525e; box-shadow: 0 2px 10px rgba(149,184,201,0.42); }
+    #st-tb-puppy-bubble.bub-dyn-aurora::after, .st-tb-guest-bubble.bub-dyn-aurora::after { background: #edf6f8; border-color: #95b8c9; }
+    #st-tb-puppy-bubble.bub-dyn-hearts, .st-tb-guest-bubble.bub-dyn-hearts { background: linear-gradient(125deg,#fff3f6,#fae1e9,#fff8fa); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d9a0b3; color: #663d4c; box-shadow: 0 2px 9px rgba(217,160,179,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-hearts::after, .st-tb-guest-bubble.bub-dyn-hearts::after { background: #fcebf0; border-color: #d9a0b3; }
+    #st-tb-puppy-bubble.bub-dyn-rain, .st-tb-guest-bubble.bub-dyn-rain { background: linear-gradient(125deg,#eef5fa,#e2edf5,#f5f9fc); background-size: 240% 240%; animation: stAfFlow 4.6s ease infinite; border-color: #9cb4c9; color: #3a5063; box-shadow: 0 2px 9px rgba(156,180,201,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-rain::after, .st-tb-guest-bubble.bub-dyn-rain::after { background: #eaf2f8; border-color: #9cb4c9; }
+    #st-tb-puppy-bubble.bub-dyn-peach, .st-tb-guest-bubble.bub-dyn-peach { background: linear-gradient(125deg,#fff5f0,#fce7dd,#fffaf5); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #deab95; color: #694436; box-shadow: 0 2px 9px rgba(222,171,149,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-peach::after, .st-tb-guest-bubble.bub-dyn-peach::after { background: #fdf0ea; border-color: #deab95; }
+    #st-tb-puppy-bubble.bub-dyn-butterfly, .st-tb-guest-bubble.bub-dyn-butterfly { background: linear-gradient(125deg,#f6f0fa,#fceef5,#efe8f8); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #b79ec9; color: #4d3b5e; box-shadow: 0 2px 9px rgba(183,158,201,0.4); }
+    #st-tb-puppy-bubble.bub-dyn-butterfly::after, .st-tb-guest-bubble.bub-dyn-butterfly::after { background: #f5eef9; border-color: #b79ec9; }
+    #st-tb-puppy-bubble.bub-dyn-clover, .st-tb-guest-bubble.bub-dyn-clover { background: linear-gradient(125deg,#f1faf0,#e3f2e0,#f7fcf6); background-size: 240% 240%; animation: stAfFlow 4.2s ease infinite; border-color: #96ba92; color: #3b5738; box-shadow: 0 2px 9px rgba(150,186,146,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-clover::after, .st-tb-guest-bubble.bub-dyn-clover::after { background: #ebf6e9; border-color: #96ba92; }
+    #st-tb-puppy-bubble.bub-dyn-ocean, .st-tb-guest-bubble.bub-dyn-ocean { background: linear-gradient(125deg,#ebf8fc,#e1f3f7,#f2fafc); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #8dbcc9; color: #32545e; box-shadow: 0 2px 9px rgba(141,188,201,0.42); }
+    #st-tb-puppy-bubble.bub-dyn-ocean::after, .st-tb-guest-bubble.bub-dyn-ocean::after { background: #e8f6fa; border-color: #8dbcc9; }
+    #st-tb-puppy-bubble.bub-dyn-lace, .st-tb-guest-bubble.bub-dyn-lace { background: linear-gradient(125deg,#ffffff,#faf2f5,#ffffff); background-size: 240% 240%; animation: stAfFlow 4.0s ease infinite; border-color: #d4b6c0; color: #5c444d; box-shadow: 0 2px 9px rgba(212,182,192,0.42); }
+    #st-tb-puppy-bubble.bub-dyn-lace::after, .st-tb-guest-bubble.bub-dyn-lace::after { background: #fcf7f9; border-color: #d4b6c0; }
+    #st-tb-puppy-bubble.bub-dyn-rainbow, .st-tb-guest-bubble.bub-dyn-rainbow { background: linear-gradient(135deg,#ffffff 0%,#fff5f9 30%,#f2f9ff 62%,#f7f3ff 88%,#ffffff 100%); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #9ec8f0; color: #473d5e; box-shadow: 0 2px 0 #ffd4e5, 0 4px 12px rgba(158,200,240,0.34), inset 0 0 0 1px rgba(255,255,255,0.96); }
+    #st-tb-puppy-bubble.bub-dyn-rainbow::after, .st-tb-guest-bubble.bub-dyn-rainbow::after { background: #ffffff; border-color: #9ec8f0; }
     @keyframes stBubSheen {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -6728,54 +6729,54 @@
       0%, 100% { box-shadow: 0 2px 6px rgba(180,155,168,0.22), inset 0 0 0 1px rgba(255,255,255,0.85); }
       50% { box-shadow: 0 2px 13px rgba(195,165,182,0.52), inset 0 0 0 1px rgba(255,255,255,0.98); }
     }
-    #st-tb-puppy-bubble.bub-dyn-typewave, #st-tb-guest-puppy-bubble.bub-dyn-typewave { background: linear-gradient(120deg,#faf2f5 0%,#ffffff 45%,#f5e4ec 60%,#faf2f5 100%); background-size: 260% 260%; animation: stBubSheen 3.6s ease-in-out infinite; border-color: #cfaab7; color: #5c424c; box-shadow: 0 2px 9px rgba(207,170,183,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-typewave::after, #st-tb-guest-puppy-bubble.bub-dyn-typewave::after { background: #faf2f5; border-color: #cfaab7; }
-    #st-tb-puppy-bubble.bub-dyn-ticket, #st-tb-guest-puppy-bubble.bub-dyn-ticket { background: linear-gradient(125deg,#fdf9f0,#fffdf7,#f7edd8); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite, stBubBreathe 3.2s ease-in-out infinite; border-color: #d4bc8e; color: #5e4e2e; }
-    #st-tb-puppy-bubble.bub-dyn-ticket::after, #st-tb-guest-puppy-bubble.bub-dyn-ticket::after { background: #fcf6e8; border-color: #d4bc8e; }
-    #st-tb-puppy-bubble.bub-dyn-tape, #st-tb-guest-puppy-bubble.bub-dyn-tape { background: linear-gradient(120deg,#effaf6 0%,#ffffff 48%,#dff2ec 62%,#effaf6 100%); background-size: 260% 260%; animation: stBubSheen 3.8s ease-in-out infinite; border-color: #9ac7b8; color: #34594d; box-shadow: 0 2px 9px rgba(154,199,184,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-tape::after, #st-tb-guest-puppy-bubble.bub-dyn-tape::after { background: #effaf6; border-color: #9ac7b8; }
-    #st-tb-puppy-bubble.bub-dyn-letter, #st-tb-guest-puppy-bubble.bub-dyn-letter { background: linear-gradient(125deg,#fdf2f6,#fae0ea,#fff7fa); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.0s ease-in-out infinite; border-color: #d9a5b6; color: #633d4b; }
-    #st-tb-puppy-bubble.bub-dyn-letter::after, #st-tb-guest-puppy-bubble.bub-dyn-letter::after { background: #fceef3; border-color: #d9a5b6; }
-    #st-tb-puppy-bubble.bub-dyn-film, #st-tb-guest-puppy-bubble.bub-dyn-film { background: linear-gradient(120deg,#2e3652 0%,#424d73 48%,#2b334d 62%,#394366 100%); background-size: 260% 260%; animation: stBubSheen 4.4s ease-in-out infinite; border-color: #b8c2db; color: #f2f5fc; box-shadow: 0 2px 11px rgba(46,54,82,0.44), inset 0 0 0 1px rgba(255,255,255,0.18); }
-    #st-tb-puppy-bubble.bub-dyn-film::after, #st-tb-guest-puppy-bubble.bub-dyn-film::after { background: #343d5c; border-color: #b8c2db; }
-    #st-tb-puppy-bubble.bub-dyn-neon-soft, #st-tb-guest-puppy-bubble.bub-dyn-neon-soft { background: linear-gradient(125deg,#f5f0fc,#ebe2fa,#faf7ff); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.4s ease-in-out infinite; border-color: #b5a1d1; color: #4b3a63; }
-    #st-tb-puppy-bubble.bub-dyn-neon-soft::after, #st-tb-guest-puppy-bubble.bub-dyn-neon-soft::after { background: #f3ecfc; border-color: #b5a1d1; }
-    #st-tb-puppy-bubble.bub-dyn-cloud-tail, #st-tb-guest-puppy-bubble.bub-dyn-cloud-tail { background: linear-gradient(120deg,#f2f8fd 0%,#ffffff 48%,#e3f0fa 64%,#f2f8fd 100%); background-size: 260% 260%; animation: stBubSheen 4.2s ease-in-out infinite; border-color: #a4c3db; color: #395369; box-shadow: 0 2px 9px rgba(164,195,219,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-cloud-tail::after, #st-tb-guest-puppy-bubble.bub-dyn-cloud-tail::after { background: #f2f8fd; border-color: #a4c3db; }
-    #st-tb-puppy-bubble.bub-dyn-doodle, #st-tb-guest-puppy-bubble.bub-dyn-doodle { background: linear-gradient(120deg,#faf5ec 0%,#fffdf8 48%,#f2e6d5 64%,#faf5ec 100%); background-size: 260% 260%; animation: stBubSheen 4.0s ease-in-out infinite; border-color: #cbb59c; color: #5c4936; box-shadow: 0 2px 9px rgba(203,181,156,0.34), inset 0 0 0 1px #ffffff; }
-    #st-tb-puppy-bubble.bub-dyn-doodle::after, #st-tb-guest-puppy-bubble.bub-dyn-doodle::after { background: #faf5ec; border-color: #cbb59c; }
+    #st-tb-puppy-bubble.bub-dyn-typewave, .st-tb-guest-bubble.bub-dyn-typewave { background: linear-gradient(120deg,#faf2f5 0%,#ffffff 45%,#f5e4ec 60%,#faf2f5 100%); background-size: 260% 260%; animation: stBubSheen 3.6s ease-in-out infinite; border-color: #cfaab7; color: #5c424c; box-shadow: 0 2px 9px rgba(207,170,183,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-typewave::after, .st-tb-guest-bubble.bub-dyn-typewave::after { background: #faf2f5; border-color: #cfaab7; }
+    #st-tb-puppy-bubble.bub-dyn-ticket, .st-tb-guest-bubble.bub-dyn-ticket { background: linear-gradient(125deg,#fdf9f0,#fffdf7,#f7edd8); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite, stBubBreathe 3.2s ease-in-out infinite; border-color: #d4bc8e; color: #5e4e2e; }
+    #st-tb-puppy-bubble.bub-dyn-ticket::after, .st-tb-guest-bubble.bub-dyn-ticket::after { background: #fcf6e8; border-color: #d4bc8e; }
+    #st-tb-puppy-bubble.bub-dyn-tape, .st-tb-guest-bubble.bub-dyn-tape { background: linear-gradient(120deg,#effaf6 0%,#ffffff 48%,#dff2ec 62%,#effaf6 100%); background-size: 260% 260%; animation: stBubSheen 3.8s ease-in-out infinite; border-color: #9ac7b8; color: #34594d; box-shadow: 0 2px 9px rgba(154,199,184,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-tape::after, .st-tb-guest-bubble.bub-dyn-tape::after { background: #effaf6; border-color: #9ac7b8; }
+    #st-tb-puppy-bubble.bub-dyn-letter, .st-tb-guest-bubble.bub-dyn-letter { background: linear-gradient(125deg,#fdf2f6,#fae0ea,#fff7fa); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.0s ease-in-out infinite; border-color: #d9a5b6; color: #633d4b; }
+    #st-tb-puppy-bubble.bub-dyn-letter::after, .st-tb-guest-bubble.bub-dyn-letter::after { background: #fceef3; border-color: #d9a5b6; }
+    #st-tb-puppy-bubble.bub-dyn-film, .st-tb-guest-bubble.bub-dyn-film { background: linear-gradient(120deg,#2e3652 0%,#424d73 48%,#2b334d 62%,#394366 100%); background-size: 260% 260%; animation: stBubSheen 4.4s ease-in-out infinite; border-color: #b8c2db; color: #f2f5fc; box-shadow: 0 2px 11px rgba(46,54,82,0.44), inset 0 0 0 1px rgba(255,255,255,0.18); }
+    #st-tb-puppy-bubble.bub-dyn-film::after, .st-tb-guest-bubble.bub-dyn-film::after { background: #343d5c; border-color: #b8c2db; }
+    #st-tb-puppy-bubble.bub-dyn-neon-soft, .st-tb-guest-bubble.bub-dyn-neon-soft { background: linear-gradient(125deg,#f5f0fc,#ebe2fa,#faf7ff); background-size: 240% 240%; animation: stBubSheen 4.0s ease infinite, stBubBreathe 3.4s ease-in-out infinite; border-color: #b5a1d1; color: #4b3a63; }
+    #st-tb-puppy-bubble.bub-dyn-neon-soft::after, .st-tb-guest-bubble.bub-dyn-neon-soft::after { background: #f3ecfc; border-color: #b5a1d1; }
+    #st-tb-puppy-bubble.bub-dyn-cloud-tail, .st-tb-guest-bubble.bub-dyn-cloud-tail { background: linear-gradient(120deg,#f2f8fd 0%,#ffffff 48%,#e3f0fa 64%,#f2f8fd 100%); background-size: 260% 260%; animation: stBubSheen 4.2s ease-in-out infinite; border-color: #a4c3db; color: #395369; box-shadow: 0 2px 9px rgba(164,195,219,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-cloud-tail::after, .st-tb-guest-bubble.bub-dyn-cloud-tail::after { background: #f2f8fd; border-color: #a4c3db; }
+    #st-tb-puppy-bubble.bub-dyn-doodle, .st-tb-guest-bubble.bub-dyn-doodle { background: linear-gradient(120deg,#faf5ec 0%,#fffdf8 48%,#f2e6d5 64%,#faf5ec 100%); background-size: 260% 260%; animation: stBubSheen 4.0s ease-in-out infinite; border-color: #cbb59c; color: #5c4936; box-shadow: 0 2px 9px rgba(203,181,156,0.34), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-dyn-doodle::after, .st-tb-guest-bubble.bub-dyn-doodle::after { background: #faf5ec; border-color: #cbb59c; }
     /* 秘境 / 扭蛋 / 生日 / 节日限定气泡（同样调柔和） */
-    #st-tb-puppy-bubble.bub-adv-cloudsea, #st-tb-guest-puppy-bubble.bub-adv-cloudsea { background: linear-gradient(120deg,#eaf7ff,#ffffff,#f2ecff); border-color: #9abed9; color: #38556e; box-shadow: 0 2px 8px rgba(154,190,217,0.4); }
-    #st-tb-puppy-bubble.bub-adv-cloudsea::after, #st-tb-guest-puppy-bubble.bub-adv-cloudsea::after { background: #f0f8ff; border-color: #9abed9; }
-    #st-tb-puppy-bubble.bub-adv-stardust, #st-tb-guest-puppy-bubble.bub-adv-stardust { background: linear-gradient(120deg,#30395e,#484273,#30395e); border-color: #d6c382; color: #faf3d8; box-shadow: 0 2px 9px rgba(72,66,115,0.45); }
-    #st-tb-puppy-bubble.bub-adv-stardust::after, #st-tb-guest-puppy-bubble.bub-adv-stardust::after { background: #3c3e69; border-color: #d6c382; }
-    #st-tb-puppy-bubble.bub-gacha-crystal, #st-tb-guest-puppy-bubble.bub-gacha-crystal { background: linear-gradient(125deg,#fdf2f8,#ecf7ff,#f5efff); border-color: #bfa3d9; color: #523b69; box-shadow: 0 2px 9px rgba(191,163,217,0.42); }
-    #st-tb-puppy-bubble.bub-gacha-crystal::after, #st-tb-guest-puppy-bubble.bub-gacha-crystal::after { background: #f4f3fc; border-color: #bfa3d9; }
-    #st-tb-puppy-bubble.bub-gacha-royal, #st-tb-guest-puppy-bubble.bub-gacha-royal { background: linear-gradient(125deg,#302840,#473c5c,#302840); border-color: #d9be78; color: #faf2d6; box-shadow: 0 2px 10px rgba(71,60,92,0.45); }
-    #st-tb-puppy-bubble.bub-gacha-royal::after, #st-tb-guest-puppy-bubble.bub-gacha-royal::after { background: #3b324d; border-color: #d9be78; }
-    #st-tb-puppy-bubble.bub-gacha-sakura-tea, #st-tb-guest-puppy-bubble.bub-gacha-sakura-tea { background: linear-gradient(125deg,#fcf1f5,#fffdf7,#eef7f0); border-color: #cfa0b0; color: #61414d; box-shadow: 0 2px 8px rgba(207,160,176,0.38); }
-    #st-tb-puppy-bubble.bub-gacha-sakura-tea::after, #st-tb-guest-puppy-bubble.bub-gacha-sakura-tea::after { background: #faf6f6; border-color: #cfa0b0; }
-    #st-tb-puppy-bubble.bub-gacha-moonlight, #st-tb-guest-puppy-bubble.bub-gacha-moonlight { background: linear-gradient(125deg,#2a3354,#434f7a,#2d3659); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #c7d4f2; color: #f4f7ff; box-shadow: 0 2px 11px rgba(42,51,84,0.48), inset 0 0 0 1px rgba(255,255,255,0.22); }
-    #st-tb-puppy-bubble.bub-gacha-moonlight::after, #st-tb-guest-puppy-bubble.bub-gacha-moonlight::after { background: #343f66; border-color: #c7d4f2; }
-    #st-tb-puppy-bubble.bub-gacha-starry-velvet, #st-tb-guest-puppy-bubble.bub-gacha-starry-velvet { background: linear-gradient(125deg,#33294d,#4c3c73,#2b2242); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #d6c4f2; color: #f7f2ff; box-shadow: 0 2px 11px rgba(51,41,77,0.5), inset 0 0 0 1px rgba(255,255,255,0.2); }
-    #st-tb-puppy-bubble.bub-gacha-starry-velvet::after, #st-tb-guest-puppy-bubble.bub-gacha-starry-velvet::after { background: #3d315c; border-color: #d6c4f2; }
-    #st-tb-puppy-bubble.bub-gacha-toast, #st-tb-guest-puppy-bubble.bub-gacha-toast { background: linear-gradient(135deg,#fff7e3,#fae9c3); border-color: #c99455; color: #634320; box-shadow: 0 2px 8px rgba(201,148,85,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-toast::after, #st-tb-guest-puppy-bubble.bub-gacha-toast::after { background: #fcf0d2; border-color: #c99455; }
-    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea, #st-tb-guest-puppy-bubble.bub-gacha-jellyfish-sea { background: linear-gradient(130deg,#1c2b4a,#27426e,#1d3359); border-color: #82d4ff; color: #e8f7ff; box-shadow: 0 2px 10px rgba(42,96,158,0.42); }
-    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea::after, #st-tb-guest-puppy-bubble.bub-gacha-jellyfish-sea::after { background: #233a61; border-color: #82d4ff; }
-    #st-tb-puppy-bubble.bub-gacha-peach-oolong, #st-tb-guest-puppy-bubble.bub-gacha-peach-oolong { background: linear-gradient(130deg,#fff2f0,#ffe9e0,#f7f3e3); border-color: #f0a496; color: #6e352c; box-shadow: 0 2px 9px rgba(240,164,150,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-peach-oolong::after, #st-tb-guest-puppy-bubble.bub-gacha-peach-oolong::after { background: #ffede6; border-color: #f0a496; }
-    #st-tb-puppy-bubble.bub-gacha-mint-milk, #st-tb-guest-puppy-bubble.bub-gacha-mint-milk { background: linear-gradient(135deg,#eefaf6,#dcf5ec); border-color: #88c2b0; color: #2e574a; box-shadow: 0 2px 8px rgba(136,194,176,0.34); }
-    #st-tb-puppy-bubble.bub-gacha-mint-milk::after, #st-tb-guest-puppy-bubble.bub-gacha-mint-milk::after { background: #e5f7f1; border-color: #88c2b0; }
-    #st-tb-puppy-bubble.bub-bond-lv6, #st-tb-guest-puppy-bubble.bub-bond-lv6 { background: linear-gradient(125deg,#fff0f5,#fce3ec,#fff8fa); background-size: 240% 240%; animation: stBubSheen 3.8s ease infinite; border-color: #d993ab; color: #633447; box-shadow: 0 2px 10px rgba(217,147,171,0.42); }
-    #st-tb-puppy-bubble.bub-bond-lv6::after, #st-tb-guest-puppy-bubble.bub-bond-lv6::after { background: #fceaf0; border-color: #d993ab; }
-    #st-tb-puppy-bubble.bub-bday-cake, #st-tb-guest-puppy-bubble.bub-bday-cake { background: linear-gradient(125deg,#fff0f6,#fff8e8,#edf7ff); border-color: #f09bb8; color: #6e2d48; box-shadow: 0 2px 10px rgba(240,155,184,0.36); }
-    #st-tb-puppy-bubble.bub-bday-cake::after, #st-tb-guest-puppy-bubble.bub-bday-cake::after { background: #fff4f8; border-color: #f09bb8; }
-    #st-tb-puppy-bubble.bub-fest-lantern, #st-tb-guest-puppy-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
-        #st-tb-puppy-bubble.bub-ck-vintage-post, #st-tb-guest-puppy-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
-    #st-tb-puppy-bubble.bub-ck-vintage-post::after, #st-tb-guest-puppy-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
+    #st-tb-puppy-bubble.bub-adv-cloudsea, .st-tb-guest-bubble.bub-adv-cloudsea { background: linear-gradient(120deg,#eaf7ff,#ffffff,#f2ecff); border-color: #9abed9; color: #38556e; box-shadow: 0 2px 8px rgba(154,190,217,0.4); }
+    #st-tb-puppy-bubble.bub-adv-cloudsea::after, .st-tb-guest-bubble.bub-adv-cloudsea::after { background: #f0f8ff; border-color: #9abed9; }
+    #st-tb-puppy-bubble.bub-adv-stardust, .st-tb-guest-bubble.bub-adv-stardust { background: linear-gradient(120deg,#30395e,#484273,#30395e); border-color: #d6c382; color: #faf3d8; box-shadow: 0 2px 9px rgba(72,66,115,0.45); }
+    #st-tb-puppy-bubble.bub-adv-stardust::after, .st-tb-guest-bubble.bub-adv-stardust::after { background: #3c3e69; border-color: #d6c382; }
+    #st-tb-puppy-bubble.bub-gacha-crystal, .st-tb-guest-bubble.bub-gacha-crystal { background: linear-gradient(125deg,#fdf2f8,#ecf7ff,#f5efff); border-color: #bfa3d9; color: #523b69; box-shadow: 0 2px 9px rgba(191,163,217,0.42); }
+    #st-tb-puppy-bubble.bub-gacha-crystal::after, .st-tb-guest-bubble.bub-gacha-crystal::after { background: #f4f3fc; border-color: #bfa3d9; }
+    #st-tb-puppy-bubble.bub-gacha-royal, .st-tb-guest-bubble.bub-gacha-royal { background: linear-gradient(125deg,#302840,#473c5c,#302840); border-color: #d9be78; color: #faf2d6; box-shadow: 0 2px 10px rgba(71,60,92,0.45); }
+    #st-tb-puppy-bubble.bub-gacha-royal::after, .st-tb-guest-bubble.bub-gacha-royal::after { background: #3b324d; border-color: #d9be78; }
+    #st-tb-puppy-bubble.bub-gacha-sakura-tea, .st-tb-guest-bubble.bub-gacha-sakura-tea { background: linear-gradient(125deg,#fcf1f5,#fffdf7,#eef7f0); border-color: #cfa0b0; color: #61414d; box-shadow: 0 2px 8px rgba(207,160,176,0.38); }
+    #st-tb-puppy-bubble.bub-gacha-sakura-tea::after, .st-tb-guest-bubble.bub-gacha-sakura-tea::after { background: #faf6f6; border-color: #cfa0b0; }
+    #st-tb-puppy-bubble.bub-gacha-moonlight, .st-tb-guest-bubble.bub-gacha-moonlight { background: linear-gradient(125deg,#2a3354,#434f7a,#2d3659); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #c7d4f2; color: #f4f7ff; box-shadow: 0 2px 11px rgba(42,51,84,0.48), inset 0 0 0 1px rgba(255,255,255,0.22); }
+    #st-tb-puppy-bubble.bub-gacha-moonlight::after, .st-tb-guest-bubble.bub-gacha-moonlight::after { background: #343f66; border-color: #c7d4f2; }
+    #st-tb-puppy-bubble.bub-gacha-starry-velvet, .st-tb-guest-bubble.bub-gacha-starry-velvet { background: linear-gradient(125deg,#33294d,#4c3c73,#2b2242); background-size: 260% 260%; animation: stBubSheen 4.0s ease infinite; border-color: #d6c4f2; color: #f7f2ff; box-shadow: 0 2px 11px rgba(51,41,77,0.5), inset 0 0 0 1px rgba(255,255,255,0.2); }
+    #st-tb-puppy-bubble.bub-gacha-starry-velvet::after, .st-tb-guest-bubble.bub-gacha-starry-velvet::after { background: #3d315c; border-color: #d6c4f2; }
+    #st-tb-puppy-bubble.bub-gacha-toast, .st-tb-guest-bubble.bub-gacha-toast { background: linear-gradient(135deg,#fff7e3,#fae9c3); border-color: #c99455; color: #634320; box-shadow: 0 2px 8px rgba(201,148,85,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-toast::after, .st-tb-guest-bubble.bub-gacha-toast::after { background: #fcf0d2; border-color: #c99455; }
+    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea, .st-tb-guest-bubble.bub-gacha-jellyfish-sea { background: linear-gradient(130deg,#1c2b4a,#27426e,#1d3359); border-color: #82d4ff; color: #e8f7ff; box-shadow: 0 2px 10px rgba(42,96,158,0.42); }
+    #st-tb-puppy-bubble.bub-gacha-jellyfish-sea::after, .st-tb-guest-bubble.bub-gacha-jellyfish-sea::after { background: #233a61; border-color: #82d4ff; }
+    #st-tb-puppy-bubble.bub-gacha-peach-oolong, .st-tb-guest-bubble.bub-gacha-peach-oolong { background: linear-gradient(130deg,#fff2f0,#ffe9e0,#f7f3e3); border-color: #f0a496; color: #6e352c; box-shadow: 0 2px 9px rgba(240,164,150,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-peach-oolong::after, .st-tb-guest-bubble.bub-gacha-peach-oolong::after { background: #ffede6; border-color: #f0a496; }
+    #st-tb-puppy-bubble.bub-gacha-mint-milk, .st-tb-guest-bubble.bub-gacha-mint-milk { background: linear-gradient(135deg,#eefaf6,#dcf5ec); border-color: #88c2b0; color: #2e574a; box-shadow: 0 2px 8px rgba(136,194,176,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-mint-milk::after, .st-tb-guest-bubble.bub-gacha-mint-milk::after { background: #e5f7f1; border-color: #88c2b0; }
+    #st-tb-puppy-bubble.bub-bond-lv6, .st-tb-guest-bubble.bub-bond-lv6 { background: linear-gradient(125deg,#fff0f5,#fce3ec,#fff8fa); background-size: 240% 240%; animation: stBubSheen 3.8s ease infinite; border-color: #d993ab; color: #633447; box-shadow: 0 2px 10px rgba(217,147,171,0.42); }
+    #st-tb-puppy-bubble.bub-bond-lv6::after, .st-tb-guest-bubble.bub-bond-lv6::after { background: #fceaf0; border-color: #d993ab; }
+    #st-tb-puppy-bubble.bub-bday-cake, .st-tb-guest-bubble.bub-bday-cake { background: linear-gradient(125deg,#fff0f6,#fff8e8,#edf7ff); border-color: #f09bb8; color: #6e2d48; box-shadow: 0 2px 10px rgba(240,155,184,0.36); }
+    #st-tb-puppy-bubble.bub-bday-cake::after, .st-tb-guest-bubble.bub-bday-cake::after { background: #fff4f8; border-color: #f09bb8; }
+    #st-tb-puppy-bubble.bub-fest-lantern, .st-tb-guest-bubble.bub-fest-lantern { background: linear-gradient(125deg,#faf0ec,#f7e8d6,#faf0ec); border-color: #c97e7e; color: #693436; box-shadow: 0 2px 9px rgba(201,126,126,0.38); }
+        #st-tb-puppy-bubble.bub-ck-vintage-post, .st-tb-guest-bubble.bub-ck-vintage-post { background: linear-gradient(135deg,#fffcf5,#f7efe0); border-color: #c97a63 !important; color: #4a3328 !important; box-shadow: 0 0 0 1px #ffffff inset, 0 2px 8px rgba(180,110,90,0.28); }
+    #st-tb-puppy-bubble.bub-ck-vintage-post::after, .st-tb-guest-bubble.bub-ck-vintage-post::after { background: #fbf4e6; border-color: #c97a63; }
     .af-ck-amber-press { border-color: #d49642; background: linear-gradient(135deg,#fff8e6,#fae3b4,#f5cf84); box-shadow: 0 0 0 1px #fffdf5, 0 2px 10px rgba(212,150,66,0.46); }
-    #st-tb-puppy-bubble.bub-fest-lantern::after, #st-tb-guest-puppy-bubble.bub-fest-lantern::after { background: #f8ece1; border-color: #c97e7e; }
+    #st-tb-puppy-bubble.bub-fest-lantern::after, .st-tb-guest-bubble.bub-fest-lantern::after { background: #f8ece1; border-color: #c97e7e; }
     .st-px-gacha-res-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin: 6px 0; text-align: left; }
     .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: #4f3a43; line-height: 1.3; }
     .st-px-gacha-chip.tier-R { background: #f4f7fc; border-color: #9bb4d4; color: #364e6b; }
@@ -6875,12 +6876,12 @@
       font-weight: 700;
       margin-left: 4px;
     }
-    #st-tb-puppy-bubble.bub-velvet, #st-tb-guest-puppy-bubble.bub-velvet { background: linear-gradient(135deg,#6e1e32,#8c2a42); border-color: #f4c842; color: #fff5db; }
-    #st-tb-puppy-bubble.bub-velvet::after, #st-tb-guest-puppy-bubble.bub-velvet::after { background: #7d243a; border-color: #f4c842; }
-    #st-tb-puppy-bubble.bub-snow, #st-tb-guest-puppy-bubble.bub-snow { background: linear-gradient(135deg,#f2fbff,#dbf4ff); border-color: #78c4eb; color: #1d5273; box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(120,196,235,0.4); }
-    #st-tb-puppy-bubble.bub-snow::after, #st-tb-guest-puppy-bubble.bub-snow::after { background: #e6f7ff; border-color: #78c4eb; }
-    #st-tb-puppy-bubble.bub-candy, #st-tb-guest-puppy-bubble.bub-candy { background: linear-gradient(120deg,#ffe6f2,#e6f6ff,#fff8d6); border-color: #d98cc4; color: #662658; }
-    #st-tb-puppy-bubble.bub-candy::after, #st-tb-guest-puppy-bubble.bub-candy::after { background: #f5ecff; border-color: #d98cc4; }
+    #st-tb-puppy-bubble.bub-velvet, .st-tb-guest-bubble.bub-velvet { background: linear-gradient(135deg,#6e1e32,#8c2a42); border-color: #f4c842; color: #fff5db; }
+    #st-tb-puppy-bubble.bub-velvet::after, .st-tb-guest-bubble.bub-velvet::after { background: #7d243a; border-color: #f4c842; }
+    #st-tb-puppy-bubble.bub-snow, .st-tb-guest-bubble.bub-snow { background: linear-gradient(135deg,#f2fbff,#dbf4ff); border-color: #78c4eb; color: #1d5273; box-shadow: 0 0 0 2px #ffffff, 0 2px 6px rgba(120,196,235,0.4); }
+    #st-tb-puppy-bubble.bub-snow::after, .st-tb-guest-bubble.bub-snow::after { background: #e6f7ff; border-color: #78c4eb; }
+    #st-tb-puppy-bubble.bub-candy, .st-tb-guest-bubble.bub-candy { background: linear-gradient(120deg,#ffe6f2,#e6f6ff,#fff8d6); border-color: #d98cc4; color: #662658; }
+    #st-tb-puppy-bubble.bub-candy::after, .st-tb-guest-bubble.bub-candy::after { background: #f5ecff; border-color: #d98cc4; }
 
     /* 走路特效像素脚印/地面轨迹（留在小狗身后原地缓慢淡出） */
     #st-tb-pup-signboard {
@@ -7932,11 +7933,7 @@
       <canvas id="st-tb-puppy-canvas" width="24" height="24"></canvas>
       <canvas id="st-tb-pup-prop-sign" width="9" height="12"></canvas>
     </div>
-    <div id="st-tb-guest-puppy" title="朋友来串门的小狗 · 点我互动 / 按住拖动">
-      <div id="st-tb-guest-puppy-bubble"><span id="st-tb-guest-puppy-bubble-txt"></span><canvas id="st-tb-guest-bub-fx" width="160" height="44"></canvas></div>
-      <canvas id="st-tb-guest-puppy-canvas" width="24" height="24"></canvas>
-      <div id="st-tb-guest-puppy-tag"></div>
-    </div>
+    <div id="st-tb-guest-layer"></div>
     <div id="st-tb-guest-pop"></div>
     <div id="st-tb-visitor" title="点我互动串门小伙伴!">
       <div id="st-tb-visitor-bubble"></div>
@@ -27611,149 +27608,274 @@
     renderPupAdventure();
   };
 
-  // ==================== 小狗「名片串门」+ 双狗桌面互动系统 ====================
-  const guestPupEl = root.querySelector('#st-tb-guest-puppy');
-  const guestPupCanvas = root.querySelector('#st-tb-guest-puppy-canvas');
-  const guestPupCtx = guestPupCanvas ? guestPupCanvas.getContext('2d') : null;
-  const guestPupBubble = root.querySelector('#st-tb-guest-puppy-bubble');
-  const guestPupTag = root.querySelector('#st-tb-guest-puppy-tag');
+  // ==================== 小狗「名片串门」+ 多狗同屏共存与互动系统 ====================
+  const guestLayerEl = root.querySelector('#st-tb-guest-layer');
   const guestPopEl = root.querySelector('#st-tb-guest-pop');
 
-  const gPup = {
-    x: 160,
-    y: 0,
-    dir: -1,
-    state: 'idle',
-    timer: 100,
-    tick: 0,
-    nextSocialAt: Date.now() + 18000,
-    lastRenderKey: '',
-    lastBubbleSkin: '',
-    bubbleTimer: null,
+  // 兼容迁移旧版单只 guestPuppy -> guestPuppies 数组
+  const getGuestList = () => {
+    if (!Array.isArray(config.guestPuppies)) config.guestPuppies = [];
+    if (config.guestPuppy && config.guestPuppy.name) {
+      if (!config.guestPuppies.some(g => g.name === config.guestPuppy.name)) {
+        config.guestPuppies.push({ id: `gp_${Date.now()}`, ...config.guestPuppy });
+      }
+      config.guestPuppy = null;
+    }
+    return config.guestPuppies;
   };
-  let guestDrag = null;
+
+  const guestRuntimes = new Map(); // id -> { el, canvas, ctx, bubble, bubbleTxt, bubFx, tag, x, y, dir, state, timer, tick, talkingUntil, targetX, targetY, pendingSocial, lastRenderKey, lastBubbleSkin, bubbleTimer, drag }
+  let dualSocialBusyUntil = 0;
+  let nextDualSocialAt = Date.now() + 18000;
   let guestDraftGifts = {};
   let lastGeneratedVisitCode = '';
 
-  const guestPupBubbleTxt = root.querySelector('#st-tb-guest-puppy-bubble-txt');
-  const applyGuestBubbleSkin = (bubId) => {
-    if (!guestPupBubble) return;
-    if (gPup.lastBubbleSkin === (bubId || '')) return;
-    gPup.lastBubbleSkin = bubId || '';
+  const applyGuestBubbleSkinEl = (rt, bubId) => {
+    if (!rt || !rt.bubble) return;
+    if (rt.lastBubbleSkin === (bubId || '')) return;
+    rt.lastBubbleSkin = bubId || '';
     const allBubs = [...SHOP_PUP_BUBBLES, ...SECRET_ADV_BUBBLES, ...GACHA_BUBBLES, ...SPECIAL_EVENT_BUBBLES];
-    allBubs.forEach(b => guestPupBubble.classList.remove(b.id.replace(/_/g, '-')));
-    guestPupBubble.querySelectorAll('.st-px-bub-orn').forEach(n => n.remove());
-    guestPupBubble.style.background = '';
-    guestPupBubble.style.borderColor = '';
-    guestPupBubble.style.color = '';
+    allBubs.forEach(b => rt.bubble.classList.remove(b.id.replace(/_/g, '-')));
+    rt.bubble.querySelectorAll('.st-px-bub-orn').forEach(n => n.remove());
+    rt.bubble.style.background = '';
+    rt.bubble.style.borderColor = '';
+    rt.bubble.style.color = '';
     let nextDyn = '';
     if (bubId && bubId !== 'bub_default') {
-      guestPupBubble.classList.add(bubId.replace(/_/g, '-'));
+      rt.bubble.classList.add(bubId.replace(/_/g, '-'));
       const bObj = allBubs.find(b => b.id === bubId);
       if (bObj && bObj.dyn) nextDyn = bObj.dyn;
       if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
         bObj.charms.forEach(ch => {
           const c = makeAfCharm9(ch.key, ch.pos);
           c.className = `st-px-bub-orn ${ch.pos}`;
-          guestPupBubble.appendChild(c);
+          rt.bubble.appendChild(c);
         });
       }
     }
-    guestBubDynMode = nextDyn;
-    if (!guestBubDynMode) {
-      const gbf = root.querySelector('#st-tb-guest-bub-fx');
-      if (gbf) gbf.getContext('2d').clearRect(0, 0, gbf.width, gbf.height);
+    rt.bubble.dataset.bubDyn = nextDyn;
+    if (!nextDyn && rt.bubFx) {
+      rt.bubFx.getContext('2d').clearRect(0, 0, rt.bubFx.width, rt.bubFx.height);
     }
   };
 
-  const syncBubbleNoOverlap = (speaker) => {
-    if (!puppyBubble || !guestPupBubble) return;
-    const close = Math.abs(pup.x - gPup.x) < 175 && Math.abs((pup.y || 0) - (gPup.y || 0)) < 95;
-    if (!close) {
-      puppyBubble.classList.remove('lifted');
-      guestPupBubble.classList.remove('lifted');
-      return;
+  const liftNearbyBubbles = (speakerKey, sx, sy) => {
+    if (speakerKey !== 'host' && puppyBubble && puppyBubble.classList.contains('show')) {
+      if (Math.abs(pup.x - sx) < 175 && Math.abs((pup.y || 0) - sy) < 95) puppyBubble.classList.add('lifted');
     }
-    if (speaker === 'guest' && puppyBubble.classList.contains('show')) {
-      puppyBubble.classList.add('lifted');
-      guestPupBubble.classList.remove('lifted');
-    } else if (speaker === 'host' && guestPupBubble.classList.contains('show')) {
-      guestPupBubble.classList.add('lifted');
-      puppyBubble.classList.remove('lifted');
-    }
+    guestRuntimes.forEach((rt, id) => {
+      if (id !== speakerKey && rt.bubble && rt.bubble.classList.contains('show')) {
+        if (Math.abs(rt.x - sx) < 175 && Math.abs((rt.y || 0) - sy) < 95) rt.bubble.classList.add('lifted');
+      }
+    });
   };
 
-  const showGuestBubble = (txt, ms = 2600) => {
-    if (!guestPupBubble) return;
-    applyGuestBubbleSkin(config.guestPuppy?.look?.bubble || '');
-    if (guestPupBubbleTxt) guestPupBubbleTxt.textContent = txt;
-    else guestPupBubble.textContent = txt;
-    syncBubbleNoOverlap('guest');
-    guestPupBubble.classList.add('show');
-    clearTimeout(gPup.bubbleTimer);
-    gPup.bubbleTimer = setTimeout(() => {
-      guestPupBubble.classList.remove('show');
-      guestPupBubble.classList.remove('lifted');
+  const showGuestBubbleById = (guestId, txt, ms = 2600) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    const rt = guestRuntimes.get(guestId);
+    if (!guest || !rt || !rt.bubble) return;
+    applyGuestBubbleSkinEl(rt, guest.look?.bubble || '');
+    if (rt.bubbleTxt) rt.bubbleTxt.textContent = txt;
+    liftNearbyBubbles(guestId, rt.x, rt.y || defaultPupY());
+    rt.bubble.classList.remove('lifted');
+    rt.bubble.classList.add('show');
+    clearTimeout(rt.bubbleTimer);
+    rt.bubbleTimer = setTimeout(() => {
+      rt.bubble.classList.remove('show');
+      rt.bubble.classList.remove('lifted');
       if (puppyBubble) puppyBubble.classList.remove('lifted');
     }, ms);
   };
 
+  // 8 种性格 × 5 种互动 × 5 句丰富无套路台词
   const GUEST_INTERACT_LINES = {
     sleepyhead: {
-      pet: ['呼啊… 你的手心暖呼呼的，差点在别人家当场睡着啦~', '轻轻眯起眼睛蹭两下，这顺毛力道也太催眠了~', '慢悠悠摇两下尾巴，感觉做客好安逸呀~'],
-      nuzzle: ['软乎乎把脑袋靠在你指尖上，像借了一个临时小枕头~', '蹭蹭你！你们家空气闻起来都软绵绵的好舒服~', '贴一会儿充个电，回去能多睡两小时香甜午觉~'],
-      feed: ['吧唧吧唧… 这小点心甜而不腻，吃完眼皮都软下来啦~', '谢谢招待！慢吞吞嚼完，胃里暖呼呼的~', '竟然有这么好吃的零食，我可以窝在这里多待一会儿吗~'],
-      praise: ['嘿嘿… 被夸得晕乎乎的，尾巴尖悄悄晃起来啦~', '真的吗？那我多摆两秒乖巧坐姿给你看~', '谢谢你夸我！回去我要在梦里回味三遍~'],
-      play: ['扑通倒下装睡… 咳，其实是顺理成章偷懒五秒钟~', '勉强陪你转一个小圈圈，转完我要趴下歇会儿咯~', '嘿咻蹦一小下！今天的运动量圆满达标啦~'],
+      pet: ['呼啊… 你的手心暖呼呼的，差点在别人家当场睡着啦~', '轻轻眯起眼睛蹭两下，这顺毛力道也太催眠了~', '慢悠悠摇两下尾巴，感觉做客好安逸呀~', '被摸得软成一小团云朵了，再顺一下耳朵尖好不好~', '好舒服呀，连刚才走路的那点小困意都变成甜的啦~'],
+      nuzzle: ['软乎乎把脑袋靠在你指尖上，像借了一个临时小枕头~', '蹭蹭你！你们家空气闻起来都软绵绵的好舒服~', '贴一会儿充个电，回去能多睡两小时香甜午觉~', '脸颊贴贴！你身上暖暖的，像刚晒过太阳的棉被~', '靠着你发三秒钟呆，是我今天最喜欢的放松时刻~'],
+      feed: ['吧唧吧唧… 这小点心甜而不腻，吃完眼皮都软下来啦~', '谢谢招待！慢吞吞嚼完，胃里暖呼呼的~', '竟然有这么好吃的零食，我可以窝在这里多待一会儿吗~', '咬一口松松软软的，幸福得尾巴尖都在轻轻打拍子~', '吃饱喝足啦，感觉现在特别适合窝在角落打个小盹~'],
+      praise: ['嘿嘿… 被夸得晕乎乎的，尾巴尖悄悄晃起来啦~', '真的吗？那我多摆两秒乖巧坐姿给你看~', '谢谢你夸我！回去我要在梦里回味三遍~', '哇被你这么一说，我觉得自己连打哈欠都变可爱了~', '谢谢夸奖呀，你们家说话都这么温柔好听~'],
+      play: ['扑通倒下装睡… 咳，其实是顺理成章偷懒五秒钟~', '勉强陪你转一个小圈圈，转完我要趴下歇会儿咯~', '嘿咻蹦一小下！今天的运动量圆满达标啦~', '翻个软乎乎的肚皮给你看，别戳太痒哦~', '慢动作摇尾巴配合你玩，是不是很有氛围感~'],
     },
     clingy: {
-      pet: ['哇！你也太温柔了吧，被摸得尾巴甩成小风扇啦！', '再多摸两下嘛！虽然是来串门的但已经超级喜欢你了！', '蹭蹭你的手心，你们家简直像第二个温暖小窝！'],
-      nuzzle: ['用力贴贴！感觉跟你一见如故，完全不想回家了怎么办！', '把毛茸茸的脸蛋贴过来蹭呀蹭，好开心好开心！', '贴贴完还要顺便拉上{host}一起贴贴，双倍快乐！'],
-      feed: ['啊呜全吃光！你亲手喂的小点心甜到心里去了！', '一边吃一边偷看你，谢谢你这么宠来串门的小狗！', '太好吃啦！吃饱了更有力气围着你们转圈圈！'],
-      praise: ['哇真的吗！被你夸得耳朵都要高兴到起飞啦！', '嘿嘿你眼光真好，{host}肯定天天都被你哄得超开心！', '再夸一句嘛，我能原地给你表演三个连环蹦跶！'],
-      play: ['看我翻肚皮卖萌！是不是一秒钟就戳中你啦！', '转圈圈成功！快给我一个热情的击掌吧！', '和你们一起玩太快乐了，下次还要天天来串门！'],
+      pet: ['哇！你也太温柔了吧，被摸得尾巴甩成小风扇啦！', '再多摸两下嘛！虽然是来串门的但已经超级喜欢你了！', '蹭蹭你的手心，你们家简直像第二个温暖小窝！', '被摸头的感觉太幸福啦，我整只狗都要融化了！', '好喜欢你呀！以后我能不能每周都来串门求摸摸！'],
+      nuzzle: ['用力贴贴！感觉跟你一见如故，完全不想回家了怎么办！', '把毛茸茸的脸蛋贴过来蹭呀蹭，好开心好开心！', '贴贴完还要顺便拉上{host}一起贴贴，双倍快乐！', '贴近一点再贴近一点，谢谢你这么欢迎我来做客！', '蹭蹭你的手背，心里甜丝丝的像吃了蜜糖！'],
+      feed: ['啊呜全吃光！你亲手喂的小点心甜到心里去了！', '一边吃一边偷看你，谢谢你这么宠来串门的小狗！', '太好吃啦！吃饱了更有力气围着你们转圈圈！', '连掉下来的小碎屑我都要吃干净，一点不浪费你的心意！', '吃完立刻蹭蹭你表示感谢，你真是全宇宙最好客的主人！'],
+      praise: ['哇真的吗！被你夸得耳朵都要高兴到起飞啦！', '嘿嘿你眼光真好，{host}肯定天天都被你哄得超开心！', '再夸一句嘛，我能原地给你表演三个连环蹦跶！', '听到你夸我，我回去能跟自己主人炫耀一整晚！', '嘿嘿谢谢夸奖，我也觉得你们俩都超级可爱！'],
+      play: ['看我翻肚皮卖萌！是不是一秒钟就戳中你啦！', '转圈圈成功！快给我一个热情的击掌吧！', '和你们一起玩太快乐了，下次还要天天来串门！', '蹦跶蹦跶！只要你陪我玩，我能开心一整天！', '扑通装死！要你夸我最可爱我才肯爬起来哦~'],
     },
     tsundere: {
-      pet: ['喂、别随随便便摸别家小狗的头啦… 咳，手法倒还凑合。', '哼，看在你是主人的份上，就准你顺三下毛吧！', '耳朵才没有变红呢，只是你们这儿有点暖和罢了！'],
-      nuzzle: ['就、就贴一秒钟哦！别误会，这是串门的基本礼貌！', '哼，看你这么期待的样子，本汪就勉强凑近蹭一下吧！', '不许笑啦！贴完赶紧松手，回去我可不承认干过这事！'],
-      feed: ['切，以为拿小点心就能收买本汪吗？…唔，还挺香的。', '咔嚓咔嚓！勉强给你打个九十九分吧，少得意了！', '看在你这么殷勤招待的份上，我就大方吃光光好了！'],
-      praise: ['那当然！本汪走到哪儿都是全桌面最精致的小狗！', '哼，算你会说话，这句夸奖本汪就收下了！', '别用那种闪亮亮的眼神夸我啦，怪不好意思的！'],
-      play: ['瞪大眼睛看好了！本汪的转圈姿势是不是帅呆了！', '倒下装死中… 才不是在等你拿零食哄我起来呢！', '小菜一碟！这种互动根本难不倒本汪哼！'],
+      pet: ['喂、别随随便便摸别家小狗的头啦… 咳，手法倒还凑合。', '哼，看在你是主人的份上，就准你顺三下毛吧！', '耳朵才没有变红呢，只是你们这儿有点暖和罢了！', '行吧行吧，既然你这么想摸，我就勉强配合两秒！', '手别弄乱我出门前梳好的毛哦… 嗯，力道还行。'],
+      nuzzle: ['就、就贴一秒钟哦！别误会，这是串门的基本礼貌！', '哼，看你这么期待的样子，本汪就勉强凑近蹭一下吧！', '不许笑啦！贴完赶紧松手，回去我可不承认干过这事！', '才不是因为喜欢你们家才主动靠过来的呢，哼！', '蹭一下就够了喂！再盯着我看我真的要害羞了！'],
+      feed: ['切，以为拿小点心就能收买本汪吗？…唔，还挺香的。', '咔嚓咔嚓！勉强给你打个九十九分吧，少得意了！', '看在你这么殷勤招待的份上，我就大方吃光光好了！', '也就比我家常吃的稍微香那么一点点吧… 咳，谢谢。', '拿走吧碗舔干净了，才没有还想再来一块呢！'],
+      praise: ['那当然！本汪走到哪儿都是全桌面最精致的小狗！', '哼，算你会说话，这句夸奖本汪就收下了！', '别用那种闪亮亮的眼神夸我啦，怪不好意思的！', '咳，也就一般般可爱吧… 不过你夸得挺诚恳的！', '知道本汪厉害就好，下次来串门记得继续夸！'],
+      play: ['瞪大眼睛看好了！本汪的转圈姿势是不是帅呆了！', '倒下装死中… 才不是在等你拿零食哄我起来呢！', '小菜一碟！这种互动根本难不倒本汪哼！', '蹦得这么高才不是因为玩嗨了，是在展示体能！', '看在你这么热情的份上，就勉强再陪你玩一轮吧！'],
     },
     foodie: {
-      pet: ['嘿嘿摸头好舒服！摸完感觉肚子好像又腾出一点空位了~', '尾巴自己晃起来啦！顺毛手感一百分！', '被摸得迷迷糊糊的，差点以为自己是刚出炉的小面包~'],
-      nuzzle: ['闻到你身上有好吃的香气！贴近再多闻两下~', '软乎乎蹭蹭你，感觉你就像一块温暖的大曲奇！', '贴贴！顺便悄悄问一句，厨房里还有存货吗？'],
-      feed: ['哇塞！这也太香了吧，我差点连自己的爪子一起舔干净！', '啊呜啊呜光盘成功！你们家的点心简直是米其林级别！', '幸福到原地转三圈！为了这口点心我下次还要再来！'],
-      praise: ['诶嘿嘿谢谢夸奖！夸完能再奖励一颗小脆饼干吗？', '被夸得嘴角压不住啦，连耳朵都在跟着节奏抖呢！', '哈哈你嘴真甜，比草莓奶油蛋糕还甜一点点！'],
-      play: ['砰！装死倒地！提示：只有小零食的香味能唤醒我~', '开心蹦跶两下消化消化，等下还能再吃半块布丁！', '转个圆滚滚的小圈圈送给你，快乐翻倍！'],
+      pet: ['嘿嘿摸头好舒服！摸完感觉肚子好像又腾出一点空位了~', '尾巴自己晃起来啦！顺毛手感一百分！', '被摸得迷迷糊糊的，差点以为自己是刚出炉的小面包~', '摸摸头充电完毕，我现在又精神又嘴馋啦！', '哇你的手暖暖的，摸得我忍不住哼起小曲儿了~'],
+      nuzzle: ['闻到你身上有好吃的香气！贴近再多闻两下~', '软乎乎蹭蹭你，感觉你就像一块温暖的大曲奇！', '贴贴！顺便悄悄问一句，厨房里还有存货吗？', '蹭蹭你的手心，总觉得你手里随时能变出小蛋糕！', '贴在一起好开心，比拆开一整盒马卡龙还快乐！'],
+      feed: ['哇塞！这也太香了吧，我差点连自己的爪子一起舔干净！', '啊呜啊呜光盘成功！你们家的点心简直是米其林级别！', '幸福到原地转三圈！为了这口点心我下次还要再来！', '外酥里嫩香喷喷，吃得我眼睛都在发光啦！', '吸溜~ 这是什么神仙小点心，回去我要疯狂安利！'],
+      praise: ['诶嘿嘿谢谢夸奖！夸完能再奖励一颗小脆饼干吗？', '被夸得嘴角压不住啦，连耳朵都在跟着节奏抖呢！', '哈哈你嘴真甜，比草莓奶油蛋糕还甜一点点！', '真的吗！看来多吃点好东西果然会长得更可爱！', '嘻嘻谢谢你，你们家的氛围也香喷喷的超棒！'],
+      play: ['砰！装死倒地！提示：只有小零食的香味能唤醒我~', '开心蹦跶两下消化消化，等下还能再吃半块布丁！', '转个圆滚滚的小圈圈送给你，快乐翻倍！', '哈哈玩得肚子咕噜响了一声，假装没听到！', '跳高高接住空气小饼干，完美落地！'],
     },
     explorer: {
-      pet: ['哈哈谢谢摸头！来你们家串门真是一趟超棒的新探险！', '能量瞬间加满！被摸得浑身都是阳光味儿~', '你的掌心暖洋洋的，送你一份今日份晴天好运！'],
-      nuzzle: ['贴贴打卡！这下我也算在你们桌面留下友好印记啦！', '暖呼呼凑过来蹭蹭，把一路收集的好心情分给你！', '碰碰手背！和你们待在一起感觉整天都是大晴天！'],
-      feed: ['咔嚓咔嚓！超赞的补给点心，吃饱又能跑三圈！', '味道满分！你们家简直是旅途中最棒的补给站！', '大口吃完元气回满，谢谢超热情的款待！'],
-      praise: ['耶！收到满分好评一枚，我回去要得意一整周！', '哈哈谢谢夸奖！你们家{host}也超级酷超级可爱！', '被你一夸我斗志更足了，恨不得绕屏幕跑两圈庆祝！'],
-      play: ['看我的招牌帅气转圈！是不是活力爆棚！', '啊我倒下啦！哈哈演得逼不逼真，把你逗笑没？', '原地起跳击掌！来串门玩得太尽兴啦！'],
+      pet: ['哈哈谢谢摸头！来你们家串门真是一趟超棒的新探险！', '能量瞬间加满！被摸得浑身都是阳光味儿~', '你的掌心暖洋洋的，送你一份今日份晴天好运！', '摸完感觉精神百倍，恨不得绕桌面跑两圈庆祝！', '谢谢你的热情款待，这一趟串门满分值回票价！'],
+      nuzzle: ['贴贴打卡！这下我也算在你们桌面留下友好印记啦！', '暖呼呼凑过来蹭蹭，把一路收集的好心情分给你！', '碰碰手背！和你们待在一起感觉整天都是大晴天！', '贴贴充电完成，继续元气满满陪你们聊天！', '靠近蹭一下，友谊值直接原地翻倍啦！'],
+      feed: ['咔嚓咔嚓！超赞的补给点心，吃饱又能跑三圈！', '味道满分！你们家简直是旅途中最棒的补给站！', '大口吃完元气回满，谢谢超热情的款待！', '这口点心能量满满，吃得我尾巴摇成小螺旋桨！', '干饭完毕！感觉今天运气都要跟着变好了！'],
+      praise: ['耶！收到满分好评一枚，我回去要得意一整周！', '哈哈谢谢夸奖！你们家{host}也超级酷超级可爱！', '被你一夸我斗志更足了，开心到原地起飞！', '谢谢你的暖心夸夸，愿你今天也一路顺风顺水！', '收到这份阳光好评，我用小肉垫给你点个大赞！'],
+      play: ['看我的招牌帅气转圈！是不是活力爆棚！', '啊我倒下啦！哈哈演得逼不逼真，把你逗笑没？', '原地起跳击掌！来串门玩得太尽兴啦！', '嗖地转一圈稳稳停住，冒险家的平衡感一流吧！', '和你们玩游戏太解压了，烦恼通通飞走啦！'],
     },
     fashionista: {
-      pet: ['嗯，你的手很暖，顺毛也很轻柔，谢谢。', '表面淡定，其实被你摸头的时候耳朵尖都在微动。', '难得在别人家这么放松，可以再顺两下。'],
-      nuzzle: ['轻轻蹭一下你的指尖……别看我，这是表达喜欢的方式。', '嗯，你身上的氛围很舒服，多贴两秒也没关系。', '也就看在和{host}关系好的份上，才这么主动贴贴。'],
-      feed: ['卖相和口感都在水准之上，谢谢你的细心招待。', '慢慢吃完了，味道很合心意，你挑点心很有品味。', '本来想保持矜持的，结果确实香得让人停不下来。'],
-      praise: ['谢谢，今天出门前特意整理了很久的毛毛，没白费。', '咳，听到你这么夸，心里其实挺高兴的。', '你也一样很温柔，难怪{host}一直这么粘着你。'],
-      play: ['优雅地转一个小圈给你看，毛毛一根都没乱。', '倒下配合你演一出戏……好吧，看你笑了就算值了。', '轻盈跳一下收尾，今天的串门时光很愉快。'],
+      pet: ['嗯，你的手很暖，顺毛也很轻柔，谢谢。', '表面淡定，其实被你摸头的时候耳朵尖都在微动。', '难得在别人家这么放松，可以再顺两下。', '你的手法很细心，一点都没弄乱我刚理好的毛毛。', '谢谢，被这样温柔对待的感觉挺让人安心的。'],
+      nuzzle: ['轻轻蹭一下你的指尖……别看我，这是表达喜欢的方式。', '嗯，你身上的氛围很舒服，多贴两秒也没关系。', '也就看在和{host}关系好的份上，才这么主动贴贴。', '靠过来贴一下，希望没把你衣服蹭皱。', '难得在外面这么粘人，说明你们家真的很合我心意。'],
+      feed: ['卖相和口感都在水准之上，谢谢你的细心招待。', '慢慢吃完了，味道很合心意，你挑点心很有品味。', '本来想保持矜持的，结果确实香得让人停不下来。', '甜度克制得刚刚好，吃得很舒服，谢谢。', '优雅光盘收工，今天串门的下午茶打满分。'],
+      praise: ['谢谢，今天出门前特意整理了很久的毛毛，没白费。', '咳，听到你这么夸，心里其实挺高兴的。', '你也一样很温柔，难怪{host}一直这么粘着你。', '能被审美这么好的人夸奖，确实挺有成就感的。', '谢谢你注意到我的穿搭细节，很开心。'],
+      play: ['优雅地转一个小圈给你看，毛毛一根都没乱。', '倒下配合你演一出戏……好吧，看你笑了就算值了。', '轻盈跳一下收尾，今天的串门时光很愉快。', '难得这么放开玩一会儿，感觉心情轻快了不少。', '配合你摆个俏皮姿势，记得夸我敬业哦。'],
     },
     gamer: {
-      pet: ['好感度+10！这波摸头暴击直接把我摸服气了！', '嘿嘿手感超赞，感觉浑身挂上了开心Buff！', '被大佬顺毛，今天出门串门绝对是欧皇开局！'],
-      nuzzle: ['贴贴连击达成！咱们这默契绝对是隐藏SSR级！', '凑过来用力蹭一下，把我的欧气全部分享给你！', '贴贴充电完毕，随时准备和{host}双排开玩！'],
-      feed: ['HP+100！这小点心回血速度也太猛了吧！', '哇塞史诗级美味掉落，一口气直接炫完！', '谢谢投喂！这波补给简直及时雨，必须点个大赞！'],
-      praise: ['哈哈谢啦！不愧是全桌面最会夸狗的金牌搭档！', '收到满分评价，快乐值直接拉爆表啦！', '那是，我今天可是带着最佳状态来串门的！'],
-      play: ['看我360度华丽转圈，这操作丝不丝滑！', '装死触发！需要你再点一下才能复活读档哈哈！', '原地蹦跶连跳，来你们家玩得超痛快！'],
+      pet: ['好感度+10！这波摸头暴击直接把我摸服气了！', '嘿嘿手感超赞，感觉浑身挂上了开心Buff！', '被大佬顺毛，今天出门串门绝对是欧皇开局！', '摸头连击达成！我的快乐槽直接顶满啦！', '哇好舒服，差点让我当场挂机躺平了！'],
+      nuzzle: ['贴贴连击达成！咱们这默契绝对是隐藏SSR级！', '凑过来用力蹭一下，把我的欧气全部分享给你！', '贴贴充电完毕，随时准备和{host}双排开玩！', '近距离贴贴打卡，友情羁绊直接升级！', '蹭蹭你！今天来你们家串门绝对选对副本了！'],
+      feed: ['HP+100！这小点心回血速度也太猛了吧！', '哇塞史诗级美味掉落，一口气直接炫完！', '谢谢投喂！这波补给简直及时雨，必须点个大赞！', '吃下这口传说级小点心，感觉反应速度翻倍了！', '光盘成就达成！你们家的零食库也太豪华了吧！'],
+      praise: ['哈哈谢啦！不愧是全桌面最会夸狗的金牌搭档！', '收到满分评价，快乐值直接拉爆表啦！', '那是，我今天可是带着最佳状态来串门的！', '这波夸奖直接给我加了全属性光环，太酷啦！', '嘿嘿互夸环节：你们家{host}也是全服第一可爱！'],
+      play: ['看我360度华丽转圈，这操作丝不丝滑！', '装死触发！需要你再点一下才能复活读档哈哈！', '原地蹦跶连跳，来你们家玩得超痛快！', '完美走位加空中转身，这波必须给个MVP！', '哈哈玩嗨了，感觉还能在这里再玩三百回合！'],
     },
     philosopher: {
-      pet: ['嗯，手温刚好，顺着毛摸让人很踏实，谢谢。', '在别人家也能这么安心地被摸头，挺难得的。', '尾巴已经自己慢慢晃起来了，看来我很喜欢这里。'],
-      nuzzle: ['轻轻靠过来蹭一下，是我表达信任的方式。', '你们家安安静静的氛围很舒服，让我多贴两秒。', '跟{host}待在一起久了，感觉这里风都很温柔。'],
-      feed: ['味道很扎实很家常，吃饱了整只狗都踏实下来。', '细嚼慢咽吃完了，谢谢你这么周到的招待。', '这口点心甜度刚好，是很让人放松的好味道。'],
-      praise: ['谢谢你的肯定，听着心里暖暖的。', '被这么认真地夸了一句，感觉今天走这一趟很值。', '嗯，你也很照顾人，{host}能跟着你挺幸运的。'],
-      play: ['配合你转个圈，活动一下筋骨也挺不错。', '躺平装死中。先说明，只是配合演出，没真睡着。', '轻跳一下表示开心，今天做客非常愉快。'],
+      pet: ['嗯，手温刚好，顺着毛摸让人很踏实，谢谢。', '在别人家也能这么安心地被摸头，挺难得的。', '尾巴已经自己慢慢晃起来了，看来我很喜欢这里。', '不急不缓的摸头节奏，让人一下子就静下来了。', '谢谢你这么耐心地照顾来串门的客人。'],
+      nuzzle: ['轻轻靠过来蹭一下，是我表达信任的方式。', '你们家安安静静的氛围很舒服，让我多贴两秒。', '跟{host}待在一起久了，感觉这里风都很温柔。', '不用说太多话，这样静静贴一会儿就挺好。', '靠近蹭蹭你，谢谢你留出这一小块温暖的角落。'],
+      feed: ['味道很扎实很家常，吃饱了整只狗都踏实下来。', '细嚼慢咽吃完了，谢谢你这么周到的招待。', '这口点心甜度刚好，是很让人放松的好味道。', '胃里暖暖的，感觉这一趟串门格外圆满了。', '谢谢投喂，能坐下来慢慢吃点东西真是件幸福的小事。'],
+      praise: ['谢谢你的肯定，听着心里暖暖的。', '被这么认真地夸了一句，感觉今天走这一趟很值。', '嗯，你也很照顾人，{host}能跟着你挺幸运的。', '简单真诚的夸奖最让人开心，谢谢你。', '听你这么说，我也觉得今天的自己挺体面的。'],
+      play: ['配合你转个圈，活动一下筋骨也挺不错。', '躺平装死中。先说明，只是配合演出，没真睡着。', '轻跳一下表示开心，今天做客非常愉快。', '偶尔跟着闹腾两下，比一直发呆有趣多了。', '看你笑了，这波卖萌就算圆满完成任务了。'],
+    },
+  };
+
+  // 双狗互动按性格定制开场白与回应句（8性格 × 5开场 + 5回应）
+  const DUAL_SOCIAL_BY_PERS = {
+    sleepyhead: {
+      open: [
+        '呼啊… {other}，要不要靠在一起打个小盹呀~',
+        '{other}，你走慢一点嘛，我们一起懒洋洋晒太阳~',
+        '蹭蹭 {other}，你身上的毛毛软得像小枕头一样~',
+        '碰碰鼻头~ {other} 今天是不是也想一起躺平歇会儿？',
+        '{other}，我分你一半小饼干，我们慢吞吞啃吧~',
+      ],
+      reply: [
+        '呼啊… {other} 说得太对啦，靠着你好舒服~',
+        '嗯嗯，我慢悠悠摇着尾巴答应你啦 {other}~',
+        '被 {other} 这么一蹭，感觉眼皮都幸福得软下来了~',
+        '好呀好呀，和 {other} 待在一起连发呆都是甜的~',
+        '嘻嘻谢谢 {other}，我们就在这里安安静静贴一会儿吧~',
+      ],
+    },
+    clingy: {
+      open: [
+        '哇 {other}！快过来让我用力贴贴蹭蹭！',
+        '{other} 终于抓到你啦，我们一起转圈圈玩嘛！',
+        '蹭蹭 {other} 的小耳朵！有小伙伴陪着太幸福啦！',
+        '{other} 你今天超可爱！快和我碰碰鼻头打招呼！',
+        '贴贴 {other}！我把最喜欢的零食都想分你一半！',
+      ],
+      reply: [
+        '哇我也最喜欢和 {other} 贴贴啦，尾巴甩不停！',
+        '耶！{other} 真是全世界最贴心的小伙伴！',
+        '嘿嘿被 {other} 夸得我都要原地起飞啦，再贴一下！',
+        '太开心啦！以后天天都要和 {other} 一起玩！',
+        '蹭回去！和 {other} 待在一起每一秒都甜滋滋的！',
+      ],
+    },
+    tsundere: {
+      open: [
+        '喂 {other}，本汪看你一个人待着无聊，才过来陪你的！',
+        '哼 {other}，今天这身打扮勉强还算过得去吧！',
+        '就、就跟你贴一秒钟哦 {other}，不许笑！',
+        '{other}，敢不敢跟本汪比比谁转圈圈更帅气！',
+        '拿去 {other}，多余的小饼干分你一块，才不是特意留的！',
+      ],
+      reply: [
+        '切，{other} 突然凑这么近干嘛啦… 咳，谢谢。',
+        '哼，算你 {other} 有眼光，本汪就大方陪你玩一会儿！',
+        '才没有被 {other} 哄开心呢，耳朵热是因为刚刚跑太快！',
+        '行吧 {other}，看在你这么热情的份上，贴一下也无妨！',
+        '笨蛋 {other}，不过能在这里遇见你还挺不赖的啦！',
+      ],
+    },
+    foodie: {
+      open: [
+        '{other}！你身上闻起来香喷喷的，刚才是不是偷吃零食了！',
+        '来来来 {other}，我刚藏了块小曲奇，我们分着吃！',
+        '蹭蹭 {other}，一起蹦跶两下消消食再去干饭吧！',
+        '{other} 你知道吗，我刚才路过厨房闻到超级香的味道！',
+        '贴贴 {other}！有你在旁边连发呆都像下午茶一样开心！',
+      ],
+      reply: [
+        '哇真的吗 {other}！一听到好吃的我两眼都在放光！',
+        '吸溜~ {other} 你也太好了吧，咱们真是干饭好搭子！',
+        '嘿嘿谢谢 {other}，吃完这口我就满血复活陪你玩！',
+        '哈哈和 {other} 聊天越聊越饿，但超级开心！',
+        '蹭蹭 {other}，下次有好吃的我第一个喊你！',
+      ],
+    },
+    explorer: {
+      open: [
+        '哈喽 {other}！快来看看我刚才在屏幕那边发现了什么！',
+        '{other}，咱们一起原地蹦高高，看谁跳得更高！',
+        '击掌 {other}！有你一起巡逻桌面，今天肯定大晴天！',
+        '贴贴 {other}！把今天收集到的好心情分你一半！',
+        '{other}，要不要一起绕着桌面来一场小探险？',
+      ],
+      reply: [
+        '太棒啦 {other}！我随时满电待命，出发！',
+        '哈哈 {other} 主意真不错，跟你一起玩浑身都是劲！',
+        '接住 {other} 的击掌！咱俩配合简直满分默契！',
+        '耶！有 {other} 当探险搭档，什么都变得超有趣！',
+        '收到 {other} 的好心情啦，我也回赠你一个超级蹦跶！',
+      ],
+    },
+    fashionista: {
+      open: [
+        '{other}，你今天的配色和配饰搭得很精致呢。',
+        '轻轻蹭一下 {other}，难得碰到这么合拍的小伙伴。',
+        '{other}，要不要一起优雅地转个小圈展示一下穿搭？',
+        '靠过来歇一会儿吧 {other}，这里的氛围很舒服。',
+        '{other}，我挑了一块卖相很好的点心，分你一半。',
+      ],
+      reply: [
+        '谢谢 {other}，你的品味也一直很在线呢。',
+        '嗯，和 {other} 这样安静贴一会儿挺放松的。',
+        '咳，被 {other} 这么夸奖，心里还是挺高兴的。',
+        '好呀 {other}，能和你一起玩确实很愉快。',
+        '谢谢你的细心 {other}，我也回蹭你一下。',
+      ],
+    },
+    gamer: {
+      open: [
+        '哟 {other}！双排队友上线，来波默契贴贴！',
+        '{other}，比比看咱俩谁的360度转圈操作更丝滑！',
+        '碰碰鼻头 {other}，把我的SSR欧气传你一点！',
+        '{other} 快看我装死演技，是不是能拿全场MVP！',
+        '补给空投！{other} 接好我分享给你的小零食！',
+      ],
+      reply: [
+        '漂亮 {other}！这波双狗联动直接把快乐值拉满！',
+        '哈哈 {other} 太会玩了，跟你组队绝对稳赢！',
+        '收到 {other} 的欧气Buff，感觉今天运气要起飞！',
+        '给 {other} 点个满星好评，这波互动满分丝滑！',
+        '冲冲冲！和 {other} 一起玩比打通隐藏关还爽！',
+      ],
+    },
+    philosopher: {
+      open: [
+        '{other}，走累了就停下来一起吹吹屏幕里的微风吧。',
+        '轻轻碰碰鼻头 {other}，在这儿遇见你挺有缘的。',
+        '{other}，跟你悄悄分享一个刚才想到的桌面小观察。',
+        '分你半块点心 {other}，慢悠悠吃着聊聊天挺好。',
+        '靠过来一点吧 {other}，两只小狗一起发呆比一只暖和。',
+      ],
+      reply: [
+        '嗯，听 {other} 这么一说，心情一下子就舒坦了。',
+        '谢谢 {other}，跟你待在一起特别踏实自在。',
+        '是啊 {other}，能这样安稳地碰个头聊两句就挺幸福的。',
+        '我也喜欢这样，不急不躁地陪 {other} 坐一会儿。',
+        '蹭回去一下 {other}，今天能一起玩很开心。',
+      ],
     },
   };
 
@@ -27977,6 +28099,7 @@
     return u8;
   };
 
+  // 短码 v5：同步包含配饰微调偏移 (accOffsets, 0.01 精度)
   const encodePupVisitCard = (msgText, gifts, redPacket = 0) => {
     const cat = getVisitCatalogs();
     const persIds = PUP_PERSONALITIES.map(p => p.id);
@@ -27985,11 +28108,21 @@
 
     const outIdx = Math.max(0, cat.outfits.indexOf(config.puppyOutfit || 'none'));
     const accArr = Array.isArray(config.puppyAccs) ? config.puppyAccs : [];
-    const a1Idx = accArr[0] ? Math.max(0, cat.accs.indexOf(accArr[0])) : 0;
-    const a2Idx = accArr[1] ? Math.max(0, cat.accs.indexOf(accArr[1])) : 0;
+    const a1Id = accArr[0] || '';
+    const a2Id = accArr[1] || '';
+    const a1Idx = a1Id ? Math.max(0, cat.accs.indexOf(a1Id)) : 0;
+    const a2Idx = a2Id ? Math.max(0, cat.accs.indexOf(a2Id)) : 0;
     const cIdx = Math.max(0, cat.comps.indexOf(config.puppyCompanion || 'none'));
     const trIdx = Math.max(0, cat.trails.indexOf(config.puppyWalkTrail || 'trail_paw'));
     const bubIdx = Math.max(0, cat.bubbles.indexOf(config.puppyBubbleSkin || 'bub_default'));
+
+    const offMap = config.puppyAccOffsets || {};
+    const o1 = (a1Id && offMap[a1Id]) ? offMap[a1Id] : { dx: 0, dy: 0 };
+    const o2 = (a2Id && offMap[a2Id]) ? offMap[a2Id] : { dx: 0, dy: 0 };
+    const packI16 = (v) => {
+      const iv = Math.max(-32000, Math.min(32000, Math.round((Number(v) || 0) * 100)));
+      return iv < 0 ? (iv + 65536) : iv;
+    };
 
     const enc = new TextEncoder();
     const nameBytes = enc.encode(String(getPupName() || '小狗').slice(0, 14)).slice(0, 48);
@@ -28005,7 +28138,7 @@
 
     const buf = [];
     const pushU16 = (v) => { buf.push((v >> 8) & 255, v & 255); };
-    buf.push(4, flags);
+    buf.push(5, flags);
     buf.push(...hexToRgbBytes(config.puppyFur, '#fffdf7'));
     buf.push(...hexToRgbBytes(config.puppyEar, '#e2ae74'));
     buf.push(...hexToRgbBytes(config.puppyCollar, '#d66565'));
@@ -28017,6 +28150,8 @@
     pushU16(trIdx);
     pushU16(bubIdx);
     pushU16(rp);
+    pushU16(packI16(o1.dx)); pushU16(packI16(o1.dy));
+    pushU16(packI16(o2.dx)); pushU16(packI16(o2.dy));
     buf.push(nameBytes.length, ...nameBytes);
     buf.push(msgBytes.length, ...msgBytes);
     buf.push(giftEntries.length);
@@ -28086,7 +28221,7 @@
       }
       const u8 = fromB64Any(body);
       const ver = u8[0];
-      if (u8.length < 25 || (ver !== 2 && ver !== 3 && ver !== 4)) return null;
+      if (u8.length < 25 || (ver < 2 || ver > 5)) return null;
       const cat = getVisitCatalogs();
       const persIds = PUP_PERSONALITIES.map(p => p.id);
       let pos = 1;
@@ -28096,6 +28231,7 @@
       const onesieShowEars = Boolean(flags & 0x20);
       const readHex = () => rgbBytesToHex(u8[pos++], u8[pos++], u8[pos++]);
       const readU16 = () => { const v = (u8[pos] << 8) | u8[pos + 1]; pos += 2; return v; };
+      const readI16Float = () => { const v = readU16(); return (v >= 32768 ? v - 65536 : v) / 100; };
 
       const fur = readHex();
       const ear = readHex();
@@ -28108,6 +28244,10 @@
       const trIdx = ver >= 3 ? readU16() : 1;
       const bubIdx = ver >= 3 ? readU16() : 0;
       const redPacket = ver >= 4 ? readU16() : 0;
+      const o1dx = ver >= 5 ? readI16Float() : 0;
+      const o1dy = ver >= 5 ? readI16Float() : 0;
+      const o2dx = ver >= 5 ? readI16Float() : 0;
+      const o2dy = ver >= 5 ? readI16Float() : 0;
 
       const dec = new TextDecoder();
       const nLen = u8[pos++];
@@ -28127,8 +28267,15 @@
       }
 
       const accs = [];
-      if (a1Idx > 0 && cat.accs[a1Idx] && cat.accs[a1Idx] !== 'none') accs.push(cat.accs[a1Idx]);
-      if (a2Idx > 0 && cat.accs[a2Idx] && cat.accs[a2Idx] !== 'none') accs.push(cat.accs[a2Idx]);
+      const accOffsets = {};
+      if (a1Idx > 0 && cat.accs[a1Idx] && cat.accs[a1Idx] !== 'none') {
+        accs.push(cat.accs[a1Idx]);
+        if (o1dx || o1dy) accOffsets[cat.accs[a1Idx]] = { dx: o1dx, dy: o1dy };
+      }
+      if (a2Idx > 0 && cat.accs[a2Idx] && cat.accs[a2Idx] !== 'none') {
+        accs.push(cat.accs[a2Idx]);
+        if (o2dx || o2dy) accOffsets[cat.accs[a2Idx]] = { dx: o2dx, dy: o2dy };
+      }
 
       return {
         v: ver,
@@ -28138,6 +28285,7 @@
           fur, ear, collar, outline, showCollar,
           outfit: cat.outfits[outIdx] || 'none',
           accs,
+          accOffsets,
           comp: cat.comps[cIdx] || 'none',
           trail: cat.trails[trIdx] || 'trail_paw',
           bubble: cat.bubbles[bubIdx] || 'bub_default',
@@ -28174,159 +28322,6 @@
     }
   };
 
-  const drawGuestPuppyScene = () => {
-    const guest = config.guestPuppy;
-    if (!guestPupEl || !guestPupCtx || !guest || !config.puppyEnabled) {
-      if (guestPupEl) guestPupEl.classList.remove('active');
-      return;
-    }
-    guestPupEl.classList.add('active');
-    if (guestPupTag) {
-      guestPupTag.textContent = guest.name || '小伙伴';
-      guestPupTag.style.display = guest.hideName ? 'none' : 'block';
-    }
-    guestPupEl.style.left = `${Math.round(gPup.x)}px`;
-    guestPupEl.style.top = `${Math.round(gPup.y || defaultPupY())}px`;
-
-    let frame = 'idle1';
-    let isSitPose = false;
-    let isFlatPose = false;
-    let isDead = false;
-    let hop = false;
-    let bob = false;
-
-    if (gPup.state === 'walk' || gPup.state === 'approach') {
-      const f = Math.floor(gPup.tick / 8) % 2;
-      frame = f === 0 ? 'walk1' : 'walk2';
-      bob = f === 1;
-    } else if (gPup.state === 'sit') {
-      frame = Math.floor(gPup.tick / 16) % 2 === 0 ? 'sit1' : 'sit2';
-      isSitPose = true;
-    } else if (gPup.state === 'sleep') {
-      frame = 'sleep';
-      isFlatPose = true;
-    } else if (gPup.state === 'playdead') {
-      frame = 'playdead';
-      isDead = true;
-    } else if (gPup.state === 'eat') {
-      frame = Math.floor(gPup.tick / 8) % 2 === 0 ? 'eat1' : 'eat2';
-    } else if (gPup.state === 'spin') {
-      const f = Math.floor(gPup.tick / 5) % 2;
-      frame = f === 0 ? 'walk1' : 'happy';
-      hop = f === 1;
-      if (gPup.tick % 10 === 0) gPup.dir *= -1;
-    } else if (gPup.state === 'bounce') {
-      const f = Math.floor(gPup.tick / 6) % 2;
-      frame = f === 0 ? 'happy' : 'idle2';
-      hop = f === 0;
-    } else if (gPup.state === 'nuzzle' || gPup.state === 'happy') {
-      const f = Math.floor(gPup.tick / 8) % 2;
-      frame = f === 0 ? 'happy' : 'idle2';
-      hop = gPup.state === 'happy' && f === 0;
-      bob = gPup.state === 'nuzzle' && f === 0;
-    } else {
-      frame = Math.floor(gPup.tick / 18) % 2 === 0 ? 'idle1' : 'idle2';
-    }
-
-    guestPupEl.classList.toggle('flip', gPup.dir < 0);
-    guestPupEl.classList.toggle('bob', bob);
-    guestPupEl.classList.toggle('hop', hop);
-
-    const rKey = `${frame}|${gPup.state}|${gPup.dir}|${guest.name}|${JSON.stringify(guest.look || {})}`;
-    if (gPup.lastRenderKey === rKey) return;
-    gPup.lastRenderKey = rKey;
-
-    const pal = getPupPalette(guest.look || {});
-    const ox = 4, oy = 10;
-    const hx = isSitPose ? ox + 9 : (isFlatPose ? ox + 11 : ox + 10);
-    const hy = isFlatPose ? oy + 6 : oy + 2;
-    guestPupCtx.clearRect(0, 0, 24, 24);
-    const grid = PUP_SPRITES[frame] || PUP_SPRITES.idle1;
-    for (let y = 0; y < grid.length; y++) {
-      const row = grid[y];
-      for (let x = 0; x < row.length; x++) {
-        const col = pal[row[x]];
-        if (col) {
-          guestPupCtx.fillStyle = col;
-          guestPupCtx.fillRect(ox + x, oy + y, 1, 1);
-        }
-      }
-    }
-    const prevCtx = activePxCtx;
-    const prevShowEars = config.puppyOnesieShowEars;
-    try {
-      activePxCtx = guestPupCtx;
-      if (guest.look) {
-        config.puppyOnesieShowEars = Boolean(guest.look.onesieShowEars);
-        drawPupOutfit(guest.look.outfit || 'none', ox, oy, hx, hy, isFlatPose, isDead, isSitPose, false);
-        if (Array.isArray(guest.look.accs)) {
-          guest.look.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlatPose, isDead));
-        }
-        drawPupCompanion(guest.look.comp || 'none', ox, oy, isDead);
-      }
-    } finally {
-      activePxCtx = prevCtx;
-      config.puppyOnesieShowEars = prevShowEars;
-    }
-  };
-
-  const DUAL_SOCIAL_SCENES = [
-    { gState: 'nuzzle', hState: 'nuzzle', hLine: '贴贴 {g}！你的毛毛也太软乎啦~', gLine: '蹭蹭 {h}！你们家好暖和呀~' },
-    { gState: 'nuzzle', hState: 'happy', hLine: '凑近蹭蹭 {g} 的小耳朵，香喷喷的！', gLine: '嘿嘿好痒呀 {h}，我也回蹭一下！' },
-    { gState: 'spin', hState: 'spin', hLine: '来呀 {g}，比比看谁转圈圈更圆！', gLine: '哈哈 {h} 看我的旋转小旋风！' },
-    { gState: 'bounce', hState: 'bounce', hLine: '{g} 一起原地蹦高高，看谁跳得高！', gLine: '嘿咻！{h} 别落下我，我也起飞啦！' },
-    { gState: 'happy', hState: 'happy', hLine: '碰碰鼻头打招呼！欢迎 {g} 常来玩呀~', gLine: '蹭蹭鼻尖！和 {h} 玩得太开心啦~' },
-    { gState: 'eat', hState: 'happy', hLine: '{g} 把我藏的小饼干分你一半，一起吃！', gLine: '哇谢谢 {h}！你真是全桌面最好客的小狗！' },
-    { gState: 'sleep', hState: 'sit', hLine: '{g} 累了就靠着我眯一会儿吧，我帮你站岗~', gLine: '呼啊… 靠着 {h} 晒太阳好舒服呀~' },
-    { gState: 'playdead', hState: 'happy', hLine: '哈哈 {g} 别装死啦，我拿小零食哄你起来！', gLine: '偷偷睁一只眼，{h} 真的有零食吗？' },
-    { gState: 'nuzzle', hState: 'nuzzle', hLine: '悄悄跟 {g} 咬耳朵说个桌面小秘密~', gLine: '哇真的吗 {h}！我保证替你保密！' },
-    { gState: 'happy', hState: 'spin', hLine: '{g} 今天这身打扮超好看，转个圈让我瞧瞧！', gLine: '嘿嘿谢谢 {h} 夸我，你也超精致！' },
-  ];
-
-  const playDualSocialDialogue = (sc, manual = false) => {
-    const guest = config.guestPuppy;
-    if (!guest || !config.puppyEnabled) return;
-    gPup.dir = pup.x >= gPup.x ? 1 : -1;
-    pup.dir = gPup.x >= pup.x ? 1 : -1;
-    const gName = guest.name || '小伙伴';
-    const hName = getPupName();
-    const hText = sc.hLine.replace(/\{g\}/g, gName).replace(/\{h\}/g, hName);
-    const gText = sc.gLine.replace(/\{g\}/g, gName).replace(/\{h\}/g, hName);
-    const lockUntil = Date.now() + 4700;
-    gPup.talkingUntil = lockUntil;
-    pup.talkingUntil = lockUntil;
-    gPup.state = sc.gState;
-    gPup.timer = 320;
-    setPuppyState(sc.hState, 320);
-    // 一前一后说话，对话完全结束前两只小狗都乖乖待在原地不走开
-    syncBubbleNoOverlap('host');
-    showPuppyBubble(hText, 2150, !manual);
-    setTimeout(() => {
-      if (config.guestPuppy) {
-        if (puppyBubble) puppyBubble.classList.add('lifted');
-        showGuestBubble(gText, 2500);
-      }
-    }, 1950);
-  };
-
-  const triggerDualPuppySocial = (manual = false) => {
-    const guest = config.guestPuppy;
-    if (!guest || !config.puppyEnabled) return;
-    const maxX = Math.max(8, win.innerWidth - 80);
-    const sc = pick(DUAL_SOCIAL_SCENES);
-    const dist = Math.hypot(gPup.x - pup.x, (gPup.y || defaultPupY()) - (pup.y || defaultPupY()));
-    if (dist <= 74 || guest.pinned) {
-      playDualSocialDialogue(sc, manual);
-      return;
-    }
-    // 走路过去找自家小狗互动（绝不瞬移！）
-    gPup.targetX = clamp(pup.x + (pup.x > maxX / 2 ? -54 : 54), 8, maxX);
-    gPup.targetY = clamp(pup.y || defaultPupY(), 40, Math.max(40, win.innerHeight - 80));
-    gPup.pendingSocial = { sc, manual };
-    gPup.state = 'approach';
-    gPup.timer = 480;
-  };
-
   const renderPupSpriteToCtx = (ctx2d, look, ox, oy, flipX = false, frameName = 'happy') => {
     const pal = getPupPalette(look || {});
     const grid = PUP_SPRITES[frameName] || PUP_SPRITES.idle1;
@@ -28351,10 +28346,12 @@
     }
     const prevCtx = activePxCtx;
     const prevShowEars = config.puppyOnesieShowEars;
+    const prevOffsets = config.puppyAccOffsets;
     try {
       activePxCtx = ctx2d;
       if (look) {
         config.puppyOnesieShowEars = Boolean(look.onesieShowEars);
+        if (look.accOffsets) config.puppyAccOffsets = look.accOffsets;
         drawPupOutfit(look.outfit || 'none', baseOx, baseOy, hx, hy, isFlat, isDead, isSit, false);
         if (Array.isArray(look.accs)) look.accs.forEach(a => drawPupAccessory(a, hx, hy, baseOx, baseOy, isFlat, isDead));
         drawPupCompanion(look.comp || 'none', baseOx, baseOy, isDead);
@@ -28362,8 +28359,249 @@
     } finally {
       activePxCtx = prevCtx;
       config.puppyOnesieShowEars = prevShowEars;
+      config.puppyAccOffsets = prevOffsets;
     }
     ctx2d.restore();
+  };
+
+  const ensureGuestRuntime = (guest, idxHint = 0) => {
+    let rt = guestRuntimes.get(guest.id);
+    if (rt) return rt;
+    if (!guestLayerEl) return null;
+    const el = doc.createElement('div');
+    el.className = 'st-tb-guest-puppy';
+    el.title = `${guest.name} · 点我互动 / 按住拖动`;
+    el.innerHTML = `<div class="st-tb-guest-bubble"><span class="st-tb-guest-bubble-txt"></span><canvas class="st-tb-guest-bub-fx" width="160" height="44"></canvas></div>
+      <canvas class="st-tb-guest-puppy-canvas" width="24" height="24"></canvas>
+      <div class="st-tb-guest-puppy-tag"></div>`;
+    guestLayerEl.appendChild(el);
+    const canvas = el.querySelector('.st-tb-guest-puppy-canvas');
+    const maxX = Math.max(16, win.innerWidth - 90);
+    rt = {
+      id: guest.id,
+      el,
+      canvas,
+      ctx: canvas.getContext('2d'),
+      bubble: el.querySelector('.st-tb-guest-bubble'),
+      bubbleTxt: el.querySelector('.st-tb-guest-bubble-txt'),
+      bubFx: el.querySelector('.st-tb-guest-bub-fx'),
+      tag: el.querySelector('.st-tb-guest-puppy-tag'),
+      x: (guest.pinned && typeof guest.pinX === 'number') ? guest.pinX : clamp(pup.x + 66 + idxHint * 58, 16, maxX),
+      y: (guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY(),
+      dir: idxHint % 2 === 0 ? -1 : 1,
+      state: 'idle',
+      timer: randInt(90, 160),
+      tick: 0,
+      talkingUntil: 0,
+      lastRenderKey: '',
+      lastBubbleSkin: '',
+      bubbleTimer: null,
+      drag: null,
+    };
+    guestRuntimes.set(guest.id, rt);
+
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+      e.stopPropagation();
+      el.setPointerCapture(e.pointerId);
+      rt.drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: rt.x, oy: rt.y || defaultPupY(), moved: false };
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (!rt.drag || rt.drag.id !== e.pointerId) return;
+      const dx = e.clientX - rt.drag.sx;
+      const dy = e.clientY - rt.drag.sy;
+      if (Math.hypot(dx, dy) > 5) rt.drag.moved = true;
+      if (rt.drag.moved) {
+        el.classList.add('dragging');
+        rt.x = clamp(rt.drag.ox + dx, 8, Math.max(8, win.innerWidth - 80));
+        rt.y = clamp(rt.drag.oy + dy, 40, Math.max(40, win.innerHeight - 80));
+        drawSingleGuestScene(guest, rt);
+      }
+    });
+    const endDrag = (e) => {
+      if (!rt.drag || rt.drag.id !== e.pointerId) return;
+      const moved = rt.drag.moved;
+      rt.drag = null;
+      el.classList.remove('dragging');
+      if (moved && guest.pinned) {
+        guest.pinX = Math.round(rt.x);
+        guest.pinY = Math.round(rt.y);
+        saveConfig();
+      }
+      if (!moved) openGuestPop(guest.id);
+    };
+    el.addEventListener('pointerup', endDrag);
+    el.addEventListener('pointercancel', endDrag);
+    return rt;
+  };
+
+  const syncGuestDomNodes = () => {
+    const list = getGuestList();
+    const keepIds = new Set(list.map(g => g.id));
+    for (const [id, rt] of guestRuntimes.entries()) {
+      if (!keepIds.has(id)) {
+        clearTimeout(rt.bubbleTimer);
+        rt.el.remove();
+        guestRuntimes.delete(id);
+      }
+    }
+    list.forEach((g, idx) => ensureGuestRuntime(g, idx));
+  };
+
+  const drawSingleGuestScene = (guest, rt) => {
+    if (!rt || !rt.el || !rt.ctx) return;
+    if (!config.puppyEnabled) {
+      rt.el.classList.remove('active');
+      return;
+    }
+    rt.el.classList.add('active');
+    if (rt.tag) {
+      rt.tag.textContent = guest.name || '小伙伴';
+      rt.tag.style.display = guest.hideName ? 'none' : 'block';
+    }
+    rt.el.style.left = `${Math.round(rt.x)}px`;
+    rt.el.style.top = `${Math.round(rt.y || defaultPupY())}px`;
+
+    let frame = 'idle1';
+    let isSitPose = false, isFlatPose = false, isDead = false, hop = false, bob = false;
+    if (rt.state === 'walk' || rt.state === 'approach') {
+      const f = Math.floor(rt.tick / 8) % 2;
+      frame = f === 0 ? 'walk1' : 'walk2'; bob = f === 1;
+    } else if (rt.state === 'sit') {
+      frame = Math.floor(rt.tick / 16) % 2 === 0 ? 'sit1' : 'sit2'; isSitPose = true;
+    } else if (rt.state === 'sleep') {
+      frame = 'sleep'; isFlatPose = true;
+    } else if (rt.state === 'playdead') {
+      frame = 'playdead'; isDead = true;
+    } else if (rt.state === 'eat') {
+      frame = Math.floor(rt.tick / 8) % 2 === 0 ? 'eat1' : 'eat2';
+    } else if (rt.state === 'spin') {
+      const f = Math.floor(rt.tick / 5) % 2;
+      frame = f === 0 ? 'walk1' : 'happy'; hop = f === 1;
+      if (rt.tick % 10 === 0) rt.dir *= -1;
+    } else if (rt.state === 'bounce') {
+      const f = Math.floor(rt.tick / 6) % 2;
+      frame = f === 0 ? 'happy' : 'idle2'; hop = f === 0;
+    } else if (rt.state === 'nuzzle' || rt.state === 'happy') {
+      const f = Math.floor(rt.tick / 8) % 2;
+      frame = f === 0 ? 'happy' : 'idle2';
+      hop = rt.state === 'happy' && f === 0;
+      bob = rt.state === 'nuzzle' && f === 0;
+    } else {
+      frame = Math.floor(rt.tick / 18) % 2 === 0 ? 'idle1' : 'idle2';
+    }
+
+    rt.el.classList.toggle('flip', rt.dir < 0);
+    rt.el.classList.toggle('bob', bob);
+    rt.el.classList.toggle('hop', hop);
+
+    const rKey = `${frame}|${rt.state}|${rt.dir}|${guest.name}|${guest.hideName ? 1 : 0}|${JSON.stringify(guest.look || {})}`;
+    if (rt.lastRenderKey === rKey) return;
+    rt.lastRenderKey = rKey;
+
+    const pal = getPupPalette(guest.look || {});
+    const ox = 4, oy = 10;
+    const hx = isSitPose ? ox + 9 : (isFlatPose ? ox + 11 : ox + 10);
+    const hy = isFlatPose ? oy + 6 : oy + 2;
+    rt.ctx.clearRect(0, 0, 24, 24);
+    const grid = PUP_SPRITES[frame] || PUP_SPRITES.idle1;
+    for (let y = 0; y < grid.length; y++) {
+      const row = grid[y];
+      for (let x = 0; x < row.length; x++) {
+        const col = pal[row[x]];
+        if (col) { rt.ctx.fillStyle = col; rt.ctx.fillRect(ox + x, oy + y, 1, 1); }
+      }
+    }
+    const prevCtx = activePxCtx;
+    const prevShowEars = config.puppyOnesieShowEars;
+    const prevOffsets = config.puppyAccOffsets;
+    try {
+      activePxCtx = rt.ctx;
+      if (guest.look) {
+        config.puppyOnesieShowEars = Boolean(guest.look.onesieShowEars);
+        if (guest.look.accOffsets) config.puppyAccOffsets = guest.look.accOffsets;
+        drawPupOutfit(guest.look.outfit || 'none', ox, oy, hx, hy, isFlatPose, isDead, isSitPose, false);
+        if (Array.isArray(guest.look.accs)) guest.look.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlatPose, isDead));
+        drawPupCompanion(guest.look.comp || 'none', ox, oy, isDead);
+      }
+    } finally {
+      activePxCtx = prevCtx;
+      config.puppyOnesieShowEars = prevShowEars;
+      config.puppyAccOffsets = prevOffsets;
+    }
+  };
+
+  // 支持「自家小狗 ↔ 客人」以及「客人A ↔ 客人B」互相互动，全局锁防止多组冲突
+  const playPairDialogue = (actorA, actorB, manual = false) => {
+    const now = Date.now();
+    const lockUntil = now + 4800;
+    dualSocialBusyUntil = lockUntil;
+    const persA = actorA.isHost ? (config.puppyPersonality || 'sleepyhead') : (actorA.guest.pers || 'sleepyhead');
+    const persB = actorB.isHost ? (config.puppyPersonality || 'sleepyhead') : (actorB.guest.pers || 'sleepyhead');
+    const nameA = actorA.isHost ? getPupName() : actorA.guest.name;
+    const nameB = actorB.isHost ? getPupName() : actorB.guest.name;
+
+    const lineA = pick((DUAL_SOCIAL_BY_PERS[persA] || DUAL_SOCIAL_BY_PERS.sleepyhead).open).replace(/\{other\}/g, nameB);
+    const lineB = pick((DUAL_SOCIAL_BY_PERS[persB] || DUAL_SOCIAL_BY_PERS.sleepyhead).reply).replace(/\{other\}/g, nameA);
+    const actState = pick(['nuzzle', 'happy', 'spin', 'bounce']);
+
+    const xA = actorA.isHost ? pup.x : actorA.rt.x;
+    const xB = actorB.isHost ? pup.x : actorB.rt.x;
+    if (actorA.isHost) { pup.dir = xB >= xA ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 320); }
+    else { actorA.rt.dir = xB >= xA ? 1 : -1; actorA.rt.talkingUntil = lockUntil; actorA.rt.state = actState; actorA.rt.timer = 320; }
+    if (actorB.isHost) { pup.dir = xA >= xB ? 1 : -1; pup.talkingUntil = lockUntil; setPuppyState(actState, 320); }
+    else { actorB.rt.dir = xA >= xB ? 1 : -1; actorB.rt.talkingUntil = lockUntil; actorB.rt.state = actState; actorB.rt.timer = 320; }
+
+    if (actorA.isHost) {
+      liftNearbyBubbles('host', pup.x, pup.y || defaultPupY());
+      if (puppyBubble) puppyBubble.classList.remove('lifted');
+      showPuppyBubble(lineA, 2200, !manual);
+    } else {
+      showGuestBubbleById(actorA.guest.id, lineA, 2200);
+    }
+
+    setTimeout(() => {
+      if (actorB.isHost) {
+        liftNearbyBubbles('host', pup.x, pup.y || defaultPupY());
+        if (puppyBubble) puppyBubble.classList.remove('lifted');
+        showPuppyBubble(lineB, 2500, !manual);
+      } else if (getGuestList().some(g => g.id === actorB.guest.id)) {
+        showGuestBubbleById(actorB.guest.id, lineB, 2500);
+      }
+    }, 2000);
+  };
+
+  const triggerPairSocial = (guestId, manual = false, partnerGuestId = null) => {
+    const now = Date.now();
+    if (!manual && now < dualSocialBusyUntil) return;
+    const list = getGuestList();
+    const guestA = list.find(g => g.id === guestId);
+    const rtA = guestRuntimes.get(guestId);
+    if (!guestA || !rtA || !config.puppyEnabled) return;
+
+    let actorB;
+    if (partnerGuestId && partnerGuestId !== guestId) {
+      const gB = list.find(g => g.id === partnerGuestId);
+      const rtB = guestRuntimes.get(partnerGuestId);
+      if (gB && rtB) actorB = { isHost: false, guest: gB, rt: rtB };
+    }
+    if (!actorB) actorB = { isHost: true };
+
+    const txRef = actorB.isHost ? pup.x : actorB.rt.x;
+    const tyRef = actorB.isHost ? (pup.y || defaultPupY()) : (actorB.rt.y || defaultPupY());
+    const dist = Math.hypot(rtA.x - txRef, (rtA.y || defaultPupY()) - tyRef);
+    const maxX = Math.max(8, win.innerWidth - 80);
+
+    if (dist <= 78 || guestA.pinned) {
+      playPairDialogue({ isHost: false, guest: guestA, rt: rtA }, actorB, manual);
+      return;
+    }
+    dualSocialBusyUntil = now + 9000;
+    rtA.targetX = clamp(txRef + (txRef > maxX / 2 ? -54 : 54), 8, maxX);
+    rtA.targetY = clamp(tyRef, 40, Math.max(40, win.innerHeight - 80));
+    rtA.pendingSocial = { actorB, manual };
+    rtA.state = 'approach';
+    rtA.timer = 480;
   };
 
   const showOneTimePanelTip = (statKey, title, bodyText) => {
@@ -28415,34 +28653,29 @@
     { id: 'idle',     name: '站立', frame: 'idle1' },
     { id: 'blink',    name: '眨眼', frame: 'blink' },
   ];
-  // 重新设计的高颜值低饱和奶油/莫兰迪相纸配色
   const POLAROID_QUICK_COLORS = [
-    { name: '纯白奶油', bg: '#ffffff', bd: '#d6ccc8' },
-    { name: '初樱奶霜', bg: '#fff5f8', bd: '#e8b4c4' },
-    { name: '海盐云雾', bg: '#f2f8fd', bd: '#a6c4de' },
-    { name: '薄荷苏打', bg: '#f2faf6', bd: '#9bcbb8' },
-    { name: '香芋奶昔', bg: '#f7f4fc', bd: '#bfb0dc' },
-    { name: '燕麦拿铁', bg: '#faf5ee', bd: '#cbb8a4' },
-    { name: '月光暮蓝', bg: '#2c3552', bd: '#d4be8d' },
+    { name: '纯白', bg: '#ffffff', bd: '#d6ccc8' },
+    { name: '浅粉', bg: '#fff5f8', bd: '#e8b4c4' },
+    { name: '淡蓝', bg: '#f2f8fd', bd: '#a6c4de' },
+    { name: '薄荷绿', bg: '#f2faf6', bd: '#9bcbb8' },
+    { name: '浅紫', bg: '#f7f4fc', bd: '#bfb0dc' },
+    { name: '米色', bg: '#faf5ee', bd: '#cbb8a4' },
+    { name: '深蓝', bg: '#2c3552', bd: '#d4be8d' },
   ];
 
   const drawPolaroidBg = (ctx, bgId, W, H) => {
     if (bgId === 'aurora_snow') {
-      // 极光雪原：极夜深蓝渐变 + 翠绿/冰蓝/浅紫流动极光丝带 + 皑皑雪山与雪地松树
       const sky = ['#0f1730', '#142042', '#192b54', '#213a66', '#2a4a78'];
       sky.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
-      // 流动极光幕帘
       for (let x = 0; x < W; x++) {
         const y0 = Math.round(10 + Math.sin(x * 0.07) * 5 + Math.cos(x * 0.13) * 2);
         ctx.fillStyle = 'rgba(110,245,190,0.22)'; ctx.fillRect(x, y0 - 4, 1, 14);
         ctx.fillStyle = 'rgba(130,230,255,0.34)'; ctx.fillRect(x, y0, 1, 7);
         ctx.fillStyle = 'rgba(186,155,255,0.24)'; ctx.fillRect(x, y0 - 6, 1, 5);
       }
-      // 繁星
       [[10,5],[24,8],[41,4],[58,9],[76,6],[88,12],[16,18],[68,17]].forEach(([sx,sy]) => {
         ctx.fillStyle = '#fffce0'; ctx.fillRect(sx, sy, 1, 1);
       });
-      // 远景雪山
       ctx.fillStyle = '#5c7ca3';
       for (let x = 0; x < W; x++) {
         const mh = Math.round(10 + Math.abs(Math.sin(x * 0.055)) * 12);
@@ -28453,58 +28686,47 @@
         const mh = Math.round(10 + Math.abs(Math.sin(x * 0.055)) * 12);
         if (mh > 16) ctx.fillRect(x, 44 - mh, 1, mh - 14);
       }
-      // 雪地松树
       [[8,36],[17,39],[82,37]].forEach(([tx,ty]) => {
         ctx.fillStyle = '#2d5752'; ctx.fillRect(tx, ty, 6, 9); ctx.fillRect(tx + 1, ty - 4, 4, 4); ctx.fillRect(tx + 2, ty - 6, 2, 2);
         ctx.fillStyle = '#ffffff'; ctx.fillRect(tx + 1, ty - 4, 4, 1); ctx.fillRect(tx, ty, 6, 1);
       });
-      // 洁白雪原
       ctx.fillStyle = '#e8f5ff'; ctx.fillRect(0, 45, W, 14);
       ctx.fillStyle = '#d4e8fa'; ctx.fillRect(0, 59, W, 13);
     } else if (bgId === 'sunflower') {
-      // 向日葵田：晴朗蓝天 + 绵软白云 + 远方白木栅栏 + 金黄向日葵花海
       ctx.fillStyle = '#9ed4ff'; ctx.fillRect(0, 0, W, 16);
       ctx.fillStyle = '#c8e8ff'; ctx.fillRect(0, 16, W, 18);
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(10, 6, 20, 5); ctx.fillRect(14, 3, 12, 3);
       ctx.fillRect(62, 9, 18, 5); ctx.fillRect(66, 6, 10, 3);
-      // 远方青绿山坡与白木栅栏
       ctx.fillStyle = '#8fd478'; ctx.fillRect(0, 34, W, 10);
       ctx.fillStyle = '#fffdf7';
       ctx.fillRect(0, 37, W, 1); ctx.fillRect(0, 40, W, 1);
       for (let x = 4; x < W; x += 10) ctx.fillRect(x, 35, 2, 8);
-      // 绿叶田野
       ctx.fillStyle = '#5eb054'; ctx.fillRect(0, 44, W, 14);
       ctx.fillStyle = '#4c9944'; ctx.fillRect(0, 58, W, 14);
-      // 向日葵花朵
       [[8,46],[20,50],[34,45],[50,49],[66,46],[80,48],[88,54],[14,60],[74,62]].forEach(([fx,fy]) => {
         ctx.fillStyle = '#ffcf38'; ctx.fillRect(fx - 2, fy - 2, 6, 6);
         ctx.fillStyle = '#ffe878'; ctx.fillRect(fx - 1, fy - 2, 4, 2);
         ctx.fillStyle = '#7a4b24'; ctx.fillRect(fx, fy, 2, 2);
       });
     } else if (bgId === 'autumn') {
-      // 秋日枫林：暖杏晴空 + 层叠红橙金枫树 + 落叶小径
       ctx.fillStyle = '#ffe6cc'; ctx.fillRect(0, 0, W, 18);
       ctx.fillStyle = '#fff2df'; ctx.fillRect(0, 18, W, 24);
-      // 红橙枫树冠
       ctx.fillStyle = '#8c4b30'; ctx.fillRect(8, 22, 5, 24); ctx.fillRect(82, 20, 5, 26);
       ctx.fillStyle = '#e05a3c'; ctx.fillRect(0, 4, 28, 20); ctx.fillRect(68, 2, 28, 20);
       ctx.fillStyle = '#f28c38'; ctx.fillRect(10, 8, 24, 14); ctx.fillRect(62, 8, 24, 14);
       ctx.fillStyle = '#ffd066'; ctx.fillRect(18, 12, 12, 8); ctx.fillRect(66, 12, 12, 8);
-      // 秋日暖色地面 + 落叶小路
       ctx.fillStyle = '#e8c48e'; ctx.fillRect(0, 44, W, 28);
       ctx.fillStyle = '#d9ae74'; ctx.fillRect(0, 58, W, 14);
       [[34,26],[48,20],[56,30],[22,52],[42,60],[64,54],[78,63]].forEach(([lx,ly], i) => {
         ctx.fillStyle = i % 2 === 0 ? '#e05238' : '#f59e38'; ctx.fillRect(lx, ly, 3, 2);
       });
     } else if (bgId === 'cloudsea') {
-      // 梦幻云海：粉紫-蜜桃-奶蓝天空 + 多层绵软蓬松云海
       const bands = ['#c8c4f2', '#e4c8f0', '#f7d2e8', '#ffe2e8', '#fff0e6'];
       bands.forEach((c, i) => { ctx.fillStyle = c; ctx.fillRect(0, i * 8, W, 9); });
       [[14,10],[32,6],[54,12],[76,8],[84,18]].forEach(([sx,sy]) => {
         ctx.fillStyle = '#ffffff'; ctx.fillRect(sx, sy, 2, 2);
       });
-      // 蓬松多层云海
       ctx.fillStyle = '#ffe8f2'; ctx.fillRect(0, 42, W, 30);
       for (let x = -4; x < W + 6; x += 14) {
         ctx.fillStyle = '#ffffff'; ctx.fillRect(x, 38 + (x % 28 === 0 ? 0 : 2), 16, 8); ctx.fillRect(x + 3, 35, 10, 4);
@@ -28514,30 +28736,23 @@
         ctx.fillStyle = '#ffffff'; ctx.fillRect(x, 54, 14, 7); ctx.fillRect(x + 3, 51, 8, 3);
       }
     } else if (bgId === 'wisteria') {
-      // 紫藤花廊：柔和浅蓝天 + 木质花架 + 垂落层层紫藤花穗 + 阳光石阶
       ctx.fillStyle = '#e8f4ff'; ctx.fillRect(0, 0, W, 44);
       ctx.fillStyle = '#9c6e4e'; ctx.fillRect(0, 0, W, 4); ctx.fillRect(4, 4, 4, 42); ctx.fillRect(88, 4, 4, 42);
-      // 绿叶顶棚
       ctx.fillStyle = '#78bd7c'; ctx.fillRect(0, 2, W, 5);
-      // 垂落紫藤花穗
       [12, 22, 34, 46, 58, 70, 80].forEach((wx, i) => {
         const len = 14 + (i % 3) * 6;
         ctx.fillStyle = '#b494e8'; ctx.fillRect(wx, 6, 4, len);
         ctx.fillStyle = '#d4befa'; ctx.fillRect(wx + 1, 8, 2, len - 2);
         ctx.fillStyle = '#efe6ff'; ctx.fillRect(wx + 1, 6 + len, 2, 3);
       });
-      // 柔和石板地面 + 飘落紫花瓣
       ctx.fillStyle = '#f2ede6'; ctx.fillRect(0, 44, W, 28);
       ctx.fillStyle = '#e3dad0'; ctx.fillRect(0, 56, W, 2); ctx.fillRect(0, 66, W, 2);
       [[18,52],[40,60],[66,54],[78,63]].forEach(([px,py]) => { ctx.fillStyle = '#c8aef2'; ctx.fillRect(px, py, 2, 2); });
     } else if (bgId === 'festival') {
-      // 夜市灯笼：青暮夜空 + 屋檐剪影 + 串串暖红鹅黄像素小灯笼 + 暖光石板街
       ctx.fillStyle = '#232b4a'; ctx.fillRect(0, 0, W, 24);
       ctx.fillStyle = '#303b61'; ctx.fillRect(0, 24, W, 20);
-      // 暖光屋檐剪影
       ctx.fillStyle = '#1b2038'; ctx.fillRect(0, 26, 22, 20); ctx.fillRect(74, 24, 22, 22);
       ctx.fillStyle = '#ffdb8a'; ctx.fillRect(5, 32, 8, 8); ctx.fillRect(82, 30, 8, 8);
-      // 串灯绳 + 暖色小灯笼
       ctx.fillStyle = '#6b5446';
       for (let x = 0; x < W; x++) {
         const sy = Math.round(8 + Math.sin(x * Math.PI / W) * 6);
@@ -28551,7 +28766,6 @@
         ctx.fillRect(lx - 2, ly + 1, 6, 6);
         ctx.fillStyle = '#fff5cc'; ctx.fillRect(lx, ly + 2, 2, 4);
       });
-      // 暖色石板街
       ctx.fillStyle = '#4a465c'; ctx.fillRect(0, 44, W, 28);
       ctx.fillStyle = '#3d394d'; ctx.fillRect(0, 56, W, 2); ctx.fillRect(0, 65, W, 2);
     } else if (bgId === 'night') {
@@ -28670,7 +28884,6 @@
     ctx.imageSmoothingEnabled = false;
     drawPolaroidBg(ctx, opts.bgId || 'meadow', W, H);
 
-    // 兼容新多狗数组 opts.dogs 与旧双狗字段
     const dogs = Array.isArray(opts.dogs) && opts.dogs.length
       ? opts.dogs
       : [
@@ -28698,15 +28911,16 @@
     collar: config.puppyCollar || '#d66565', outline: config.puppyOutline || '#3b2a22',
     showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit || 'none',
     accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, 2) : [],
+    accOffsets: config.puppyAccOffsets ? JSON.parse(JSON.stringify(config.puppyAccOffsets)) : {},
     comp: config.puppyCompanion || 'none', onesieShowEars: Boolean(config.puppyOnesieShowEars),
   });
 
+  // 拍立得编辑器：DOM 只建一次、绝不重建 innerHTML（选色器绝不自动关闭、滚动条绝不跳回顶部！）
   const openDualPhotoModal = (savedPhoto = null, preselectedDogs = null) => {
-    const guest = config.guestPuppy;
+    const guests = getGuestList();
     if (!savedPhoto && !preselectedDogs) {
-      // 收集所有可选合照小狗：自家小狗 + 当前做客小狗 + 印章本里的朋友小狗
       const cands = [{ id: 'host', name: getPupName(), look: getHostLookSnap(), defaultOn: true }];
-      if (guest) cands.push({ id: 'guest_now', name: guest.name, look: guest.look || {}, defaultOn: true });
+      guests.forEach((g, i) => cands.push({ id: `g_${g.id}`, name: g.name, look: g.look || {}, defaultOn: i === 0 }));
       const logs = Array.isArray(config.puppyVisitLog) ? config.puppyVisitLog : [];
       logs.forEach((lg, idx) => {
         if (!cands.some(c => c.name === lg.name)) {
@@ -28718,7 +28932,7 @@
         if (!selM) {
           selM = doc.createElement('div');
           selM.id = 'st-tb-photo-pick-modal';
-          selM.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10029;pointer-events:auto;';
+          selM.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:none;align-items:center;justify-content:center;z-index:10025;pointer-events:auto;';
           root.appendChild(selM);
           selM.addEventListener('click', (e) => { if (e.target === selM) selM.style.display = 'none'; });
         }
@@ -28764,7 +28978,6 @@
 
     const d = new Date();
     const dateStr = savedPhoto ? savedPhoto.date : `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-
     const initDogs = savedPhoto
       ? (Array.isArray(savedPhoto.dogs) && savedPhoto.dogs.length
           ? savedPhoto.dogs.map(x => ({ ...x }))
@@ -28781,6 +28994,7 @@
     const st = {
       bgId: savedPhoto?.bgId || 'meadow',
       dogs: initDogs,
+      title: savedPhoto?.title || initDogs.map(x => x.name).join(' & '),
       showHeart: savedPhoto?.showHeart !== false,
       paperCol: savedPhoto?.paperCol || '#ffffff',
       borderCol: savedPhoto?.borderCol || '#d6ccc8',
@@ -28790,273 +29004,319 @@
     let activeDogIdx = 0;
 
     let winEl = root.querySelector('#st-tb-visit-photo-win');
-    if (!winEl) {
-      winEl = doc.createElement('div');
-      winEl.id = 'st-tb-visit-photo-win';
-      winEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:296px;max-height:78vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:#3b2a22;font-family:inherit;z-index:10029;display:none;flex-direction:column;pointer-events:auto;box-sizing:border-box;';
-      root.appendChild(winEl);
-    }
+    if (winEl) winEl.remove();
+    winEl = doc.createElement('div');
+    winEl.id = 'st-tb-visit-photo-win';
+    // 层级设为 9994，确保桌面小狗（9996/9997）可以出现在拍立得面板上方！
+    winEl.style.cssText = 'position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:296px;max-height:76vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:#3b2a22;font-family:inherit;z-index:9994;display:flex;flex-direction:column;pointer-events:auto;box-sizing:border-box;';
+    root.appendChild(winEl);
 
     const getTextCol = (hex) => {
       const [r, g, b] = hexToRgbBytes(hex, '#ffffff');
       return (r * 0.299 + g * 0.587 + b * 0.114) < 130 ? '#fff6e0' : '#4a342a';
     };
 
-    const captionStr = st.dogs.map(x => x.name).join(' & ');
+    winEl.innerHTML = `<div id="st-vph-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;cursor:move;user-select:none;padding-bottom:3px;border-bottom:1px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
+        <span style="font-size:11.5px;font-weight:700;">像素拍立得${savedPhoto ? '' : '（画布内任意拖动小狗）'}</span>
+        <button type="button" id="st-vph-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div id="st-vph-scroll" style="flex:1;overflow-y:auto;padding-right:2px;">
+        <div id="st-vph-card" style="padding:8px 8px 10px;margin-bottom:7px;">
+          <canvas id="st-vph-cv" width="96" height="72" style="width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
+          <div id="st-vph-cap" style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;"></div>
+          <div id="st-vph-date" style="text-align:center;font-size:9.5px;">${dateStr}</div>
+        </div>
+        ${savedPhoto ? '' : `
+          <div style="margin-bottom:6px;">
+            <input type="text" id="st-vph-title-inp" class="st-tb-input" value="${st.title.replace(/"/g, '&quot;')}" placeholder="给这张合照取个名字~" style="width:100%;font-size:10px;padding:4px 6px;box-sizing:border-box;" />
+          </div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景 (${POLAROID_BGS.length})</div>
+          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+            <button type="button" id="st-vph-flip" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;flex-shrink:0;">翻转朝向</button>
+          </div>
+          <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">相纸、边框与圆角</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
+            <label style="display:inline-flex;align-items:center;gap:2px;">相纸<input type="color" id="st-vph-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+            <label style="display:inline-flex;align-items:center;gap:2px;">边框<input type="color" id="st-vph-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+            <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-rad" min="0" max="22" value="${st.radius}" style="width:52px;" /><span id="st-vph-rad-v">${st.radius}</span></label>
+            <button type="button" id="st-vph-dots" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
+            <button type="button" id="st-vph-heart" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
+          </div>
+          <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
+        `}
+      </div>
+      <div style="display:flex;gap:5px;padding-top:5px;flex-shrink:0;">
+        ${savedPhoto
+          ? '<button type="button" id="st-vph-del" class="st-px-btn" style="flex:1;color:#a94442;">删除合照</button>'
+          : '<button type="button" id="st-vph-save" class="st-px-btn care" style="flex:1;">存入相册</button>'}
+        <button type="button" id="st-vph-dl" class="st-px-btn active" style="flex:1;">下载图片</button>
+      </div>
+      <div id="st-vph-rsz" class="st-gp-resize"></div>`;
 
-    const renderWin = () => {
+    const cardEl = winEl.querySelector('#st-vph-card');
+    const cv = winEl.querySelector('#st-vph-cv');
+    const capEl = winEl.querySelector('#st-vph-cap');
+    const dateEl = winEl.querySelector('#st-vph-date');
+    const dotsBtn = winEl.querySelector('#st-vph-dots');
+    const heartBtn = winEl.querySelector('#st-vph-heart');
+    const radValEl = winEl.querySelector('#st-vph-rad-v');
+    const paperInp = winEl.querySelector('#st-vph-paper');
+    const bdInp = winEl.querySelector('#st-vph-bd');
+
+    const syncCardStyle = () => {
       const txtCol = getTextCol(st.paperCol);
       const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
-      const dotBg = st.dots
-        ? `background-image:radial-gradient(circle, ${st.borderCol}44 2.5px, transparent 2.8px);background-size:16px 16px;`
-        : '';
-      const curDog = st.dogs[activeDogIdx] || st.dogs[0];
-      winEl.innerHTML = `<div id="st-vph-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;cursor:move;user-select:none;padding-bottom:3px;border-bottom:1px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
-          <span style="font-size:11.5px;font-weight:700;">像素拍立得${savedPhoto ? '' : '（画布内任意拖动小狗）'}</span>
-          <button type="button" id="st-vph-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
-        </div>
-        <div style="flex:1;overflow-y:auto;padding-right:2px;">
-          <div style="background-color:${st.paperCol};${dotBg}border:3px solid ${st.borderCol};border-radius:${st.radius}px;padding:8px 8px 10px;margin-bottom:7px;">
-            <canvas id="st-vph-cv" width="96" height="72" style="width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:2px solid ${st.borderCol};border-radius:${Math.max(0, st.radius - 4)}px;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
-            <div style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;color:${txtCol};">${captionStr}</div>
-            <div style="text-align:center;font-size:9.5px;color:${subCol};">${dateStr}</div>
-          </div>
-          ${savedPhoto ? '' : `
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景 (${POLAROID_BGS.length})</div>
-            <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-              <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
-              <button type="button" id="st-vph-flip" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;flex-shrink:0;">翻转朝向</button>
-            </div>
-            <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">相纸、边框与圆角</div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
-              <label style="display:inline-flex;align-items:center;gap:2px;">相纸<input type="color" id="st-vph-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:2px;">边框<input type="color" id="st-vph-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-rad" min="0" max="22" value="${st.radius}" style="width:52px;" /><span>${st.radius}</span></label>
-              <button type="button" id="st-vph-dots" class="st-px-btn${st.dots ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9.5px;">圆点:${st.dots ? '开' : '关'}</button>
-              <button type="button" id="st-vph-heart" class="st-px-btn${st.showHeart ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9.5px;">爱心:${st.showHeart ? '开' : '关'}</button>
-            </div>
-            <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
-          `}
-        </div>
-        <div style="display:flex;gap:5px;padding-top:5px;flex-shrink:0;">
-          ${savedPhoto ? '' : '<button type="button" id="st-vph-save" class="st-px-btn care" style="flex:1;">存入相册</button>'}
-          <button type="button" id="st-vph-dl" class="st-px-btn active" style="flex:1;">下载图片</button>
-        </div>
-        <div id="st-vph-rsz" class="st-gp-resize"></div>`;
+      cardEl.style.backgroundColor = st.paperCol;
+      cardEl.style.backgroundImage = st.dots ? `radial-gradient(circle, ${st.borderCol}44 2.5px, transparent 2.8px)` : 'none';
+      cardEl.style.backgroundSize = '16px 16px';
+      cardEl.style.border = `3px solid ${st.borderCol}`;
+      cardEl.style.borderRadius = `${st.radius}px`;
+      cv.style.border = `2px solid ${st.borderCol}`;
+      cv.style.borderRadius = `${Math.max(0, st.radius - 4)}px`;
+      capEl.style.color = txtCol;
+      capEl.textContent = st.title || st.dogs.map(x => x.name).join(' & ');
+      dateEl.style.color = subCol;
+      if (radValEl) radValEl.textContent = String(st.radius);
+      if (dotsBtn) { dotsBtn.classList.toggle('active', st.dots); dotsBtn.textContent = `圆点:${st.dots ? '开' : '关'}`; }
+      if (heartBtn) { heartBtn.classList.toggle('active', st.showHeart); heartBtn.textContent = `爱心:${st.showHeart ? '开' : '关'}`; }
+    };
+    const redrawCv = () => drawDualPolaroidCanvas(cv, st.dogs[0]?.name || '', st.dogs[0]?.look || {}, st.dogs[1]?.name || '', st.dogs[1]?.look || {}, dateStr, st);
+    syncCardStyle();
+    redrawCv();
 
-      const cv = winEl.querySelector('#st-vph-cv');
-      const redrawCv = () => drawDualPolaroidCanvas(cv, st.dogs[0]?.name || '', st.dogs[0]?.look || {}, st.dogs[1]?.name || '', st.dogs[1]?.look || {}, dateStr, st);
-      redrawCv();
-      winEl.querySelector('#st-vph-close')?.addEventListener('click', () => { winEl.style.display = 'none'; });
+    winEl.querySelector('#st-vph-close')?.addEventListener('click', () => { winEl.remove(); });
 
-      // 顶部拖动窗口
-      const head = winEl.querySelector('#st-vph-head');
-      if (head) {
-        head.addEventListener('pointerdown', (e) => {
-          if (e.target.closest('button')) return;
-          e.preventDefault();
-          head.setPointerCapture(e.pointerId);
-          const rect = winEl.getBoundingClientRect();
-          winEl.style.transform = 'none';
-          winEl.style.left = `${Math.round(rect.left)}px`;
-          winEl.style.top = `${Math.round(rect.top)}px`;
-          const sx = e.clientX, sy = e.clientY, ox = rect.left, oy = rect.top;
-          const onM = (ev) => {
-            winEl.style.left = `${Math.round(clamp(ox + ev.clientX - sx, 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
-            winEl.style.top = `${Math.round(clamp(oy + ev.clientY - sy, 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
-          };
-          const onU = () => {
-            head.removeEventListener('pointermove', onM);
-            head.removeEventListener('pointerup', onU);
-          };
-          head.addEventListener('pointermove', onM);
-          head.addEventListener('pointerup', onU);
-        });
-      }
-      // 右下角完全隐形缩放手柄
-      const rsz = winEl.querySelector('#st-vph-rsz');
-      if (rsz) {
-        rsz.addEventListener('pointerdown', (e) => {
-          e.preventDefault(); e.stopPropagation();
-          rsz.setPointerCapture(e.pointerId);
-          const rect = winEl.getBoundingClientRect();
-          winEl.style.transform = 'none';
-          winEl.style.left = `${Math.round(rect.left)}px`;
-          winEl.style.top = `${Math.round(rect.top)}px`;
-          const sx = e.clientX, sy = e.clientY, ow = rect.width, oh = rect.height;
-          const onM = (ev) => {
-            winEl.style.width = `${clamp(Math.round(ow + ev.clientX - sx), 240, 420)}px`;
-            winEl.style.maxHeight = `${clamp(Math.round(oh + ev.clientY - sy), 280, Math.round(win.innerHeight * 0.92))}px`;
-          };
-          const onU = () => {
-            rsz.removeEventListener('pointermove', onM);
-            rsz.removeEventListener('pointerup', onU);
-          };
-          rsz.addEventListener('pointermove', onM);
-          rsz.addEventListener('pointerup', onU);
-        });
-      }
+    // 顶部拖动窗口
+    const head = winEl.querySelector('#st-vph-head');
+    head?.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      e.preventDefault();
+      head.setPointerCapture(e.pointerId);
+      const rect = winEl.getBoundingClientRect();
+      winEl.style.transform = 'none';
+      winEl.style.left = `${Math.round(rect.left)}px`;
+      winEl.style.top = `${Math.round(rect.top)}px`;
+      const sx = e.clientX, sy = e.clientY, ox = rect.left, oy = rect.top;
+      const onM = (ev) => {
+        winEl.style.left = `${Math.round(clamp(ox + ev.clientX - sx, 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
+        winEl.style.top = `${Math.round(clamp(oy + ev.clientY - sy, 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
+      };
+      const onU = () => { head.removeEventListener('pointermove', onM); head.removeEventListener('pointerup', onU); };
+      head.addEventListener('pointermove', onM);
+      head.addEventListener('pointerup', onU);
+    });
 
-      if (!savedPhoto) {
-        // 画布内无死角任意拖动每只小狗！
-        let dragIdx = -1;
-        let dragOffX = 0, dragOffY = 0;
-        const toCvCoord = (e) => {
-          const r = cv.getBoundingClientRect();
-          return { x: ((e.clientX - r.left) / r.width) * 96, y: ((e.clientY - r.top) / r.height) * 72 };
-        };
-        cv.addEventListener('pointerdown', (e) => {
-          const pt = toCvCoord(e);
-          let bestIdx = -1, bestDist = 24;
-          st.dogs.forEach((dg, idx) => {
-            const dist = Math.hypot(pt.x - (dg.x + 12), pt.y - (dg.y + 15));
-            if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
-          });
-          if (bestIdx === -1) return;
-          dragIdx = bestIdx;
-          activeDogIdx = bestIdx;
-          dragOffX = pt.x - st.dogs[dragIdx].x;
-          dragOffY = pt.y - st.dogs[dragIdx].y;
-          cv.setPointerCapture(e.pointerId);
-          cv.style.cursor = 'grabbing';
-        });
-        cv.addEventListener('pointermove', (e) => {
-          if (dragIdx < 0) return;
-          const pt = toCvCoord(e);
-          st.dogs[dragIdx].x = clamp(Math.round(pt.x - dragOffX), -8, 80);
-          st.dogs[dragIdx].y = clamp(Math.round(pt.y - dragOffY), -10, 56);
+    // 右下角完全隐形缩放
+    const rsz = winEl.querySelector('#st-vph-rsz');
+    rsz?.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      rsz.setPointerCapture(e.pointerId);
+      const rect = winEl.getBoundingClientRect();
+      winEl.style.transform = 'none';
+      winEl.style.left = `${Math.round(rect.left)}px`;
+      winEl.style.top = `${Math.round(rect.top)}px`;
+      const sx = e.clientX, sy = e.clientY, ow = rect.width, oh = rect.height;
+      const onM = (ev) => {
+        winEl.style.width = `${clamp(Math.round(ow + ev.clientX - sx), 240, 420)}px`;
+        winEl.style.maxHeight = `${clamp(Math.round(oh + ev.clientY - sy), 260, Math.round(win.innerHeight * 0.92))}px`;
+      };
+      const onU = () => { rsz.removeEventListener('pointermove', onM); rsz.removeEventListener('pointerup', onU); };
+      rsz.addEventListener('pointermove', onM);
+      rsz.addEventListener('pointerup', onU);
+    });
+
+    if (savedPhoto) {
+      winEl.querySelector('#st-vph-del')?.addEventListener('click', () => {
+        config.puppyVisitPhotos = (config.puppyVisitPhotos || []).filter(x => x.id !== savedPhoto.id);
+        saveConfig();
+        winEl.remove();
+        cmNotify('已删除该合照');
+        if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+      });
+    } else {
+      const bgBtns = [];
+      const bgBox = winEl.querySelector('#st-vph-bgs');
+      POLAROID_BGS.forEach(item => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = `st-px-btn${st.bgId === item.id ? ' active' : ''}`;
+        b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+        b.textContent = item.name;
+        b.addEventListener('click', () => {
+          st.bgId = item.id;
+          bgBtns.forEach(x => x.b.classList.toggle('active', x.id === st.bgId));
           redrawCv();
         });
-        const endCvDrag = () => {
-          if (dragIdx >= 0) { dragIdx = -1; cv.style.cursor = 'grab'; renderWin(); }
-        };
-        cv.addEventListener('pointerup', endCvDrag);
-        cv.addEventListener('pointercancel', endCvDrag);
+        bgBtns.push({ id: item.id, b });
+        bgBox.appendChild(b);
+      });
 
-        const bgBox = winEl.querySelector('#st-vph-bgs');
-        POLAROID_BGS.forEach(item => {
-          const b = doc.createElement('button');
-          b.type = 'button';
-          b.className = `st-px-btn${st.bgId === item.id ? ' active' : ''}`;
-          b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
-          b.textContent = item.name;
-          b.addEventListener('click', () => { st.bgId = item.id; renderWin(); });
-          bgBox.appendChild(b);
+      const dogBtns = [];
+      const dtBox = winEl.querySelector('#st-vph-dog-tabs');
+      const poseBtns = [];
+      const pBox = winEl.querySelector('#st-vph-poses');
+      const syncDogAndPoseBtns = () => {
+        const curDog = st.dogs[activeDogIdx] || st.dogs[0];
+        dogBtns.forEach((x, idx) => { x.classList.toggle('active', idx === activeDogIdx); x.classList.toggle('care', idx === activeDogIdx); });
+        poseBtns.forEach(x => x.b.classList.toggle('active', curDog && curDog.pose === x.id));
+      };
+      st.dogs.forEach((dg, idx) => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-px-btn';
+        b.style.cssText = 'height:20px;padding:0 6px;font-size:9.5px;';
+        b.textContent = dg.name;
+        b.addEventListener('click', () => { activeDogIdx = idx; syncDogAndPoseBtns(); });
+        dogBtns.push(b);
+        dtBox.appendChild(b);
+      });
+      POLAROID_DOG_POSES.forEach(item => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-px-btn';
+        b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+        b.textContent = item.name;
+        b.addEventListener('click', () => {
+          const curDog = st.dogs[activeDogIdx];
+          if (curDog) curDog.pose = item.id;
+          syncDogAndPoseBtns();
+          redrawCv();
         });
+        poseBtns.push({ id: item.id, b });
+        pBox.appendChild(b);
+      });
+      syncDogAndPoseBtns();
 
-        const dtBox = winEl.querySelector('#st-vph-dog-tabs');
+      const qBox = winEl.querySelector('#st-vph-qcols');
+      POLAROID_QUICK_COLORS.forEach(qc => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-px-btn';
+        b.style.cssText = `height:20px;padding:0 6px;font-size:9.5px;background:${qc.bg};border-color:${qc.bd};color:${getTextCol(qc.bg)};`;
+        b.textContent = qc.name;
+        b.addEventListener('click', () => {
+          st.paperCol = qc.bg; st.borderCol = qc.bd;
+          if (paperInp) paperInp.value = qc.bg;
+          if (bdInp) bdInp.value = qc.bd;
+          syncCardStyle();
+        });
+        qBox.appendChild(b);
+      });
+
+      winEl.querySelector('#st-vph-title-inp')?.addEventListener('input', (e) => { st.title = e.target.value; syncCardStyle(); });
+      winEl.querySelector('#st-vph-flip')?.addEventListener('click', () => { const d0 = st.dogs[activeDogIdx]; if (d0) { d0.flip = !d0.flip; redrawCv(); } });
+      paperInp?.addEventListener('input', (e) => { st.paperCol = e.target.value; syncCardStyle(); });
+      bdInp?.addEventListener('input', (e) => { st.borderCol = e.target.value; syncCardStyle(); });
+      winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; syncCardStyle(); });
+      dotsBtn?.addEventListener('click', () => { st.dots = !st.dots; syncCardStyle(); });
+      heartBtn?.addEventListener('click', () => { st.showHeart = !st.showHeart; syncCardStyle(); redrawCv(); });
+
+      // 画布内无死角拖动小狗
+      let dragIdx = -1, dragOffX = 0, dragOffY = 0;
+      const toCvCoord = (e) => {
+        const r = cv.getBoundingClientRect();
+        return { x: ((e.clientX - r.left) / r.width) * 96, y: ((e.clientY - r.top) / r.height) * 72 };
+      };
+      cv.addEventListener('pointerdown', (e) => {
+        const pt = toCvCoord(e);
+        let bestIdx = -1, bestDist = 24;
         st.dogs.forEach((dg, idx) => {
-          const b = doc.createElement('button');
-          b.type = 'button';
-          b.className = `st-px-btn${activeDogIdx === idx ? ' active care' : ''}`;
-          b.style.cssText = 'height:20px;padding:0 6px;font-size:9.5px;';
-          b.textContent = dg.name;
-          b.addEventListener('click', () => { activeDogIdx = idx; renderWin(); });
-          dtBox.appendChild(b);
+          const dist = Math.hypot(pt.x - (dg.x + 12), pt.y - (dg.y + 15));
+          if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
         });
+        if (bestIdx === -1) return;
+        dragIdx = bestIdx; activeDogIdx = bestIdx;
+        dragOffX = pt.x - st.dogs[dragIdx].x;
+        dragOffY = pt.y - st.dogs[dragIdx].y;
+        cv.setPointerCapture(e.pointerId);
+        cv.style.cursor = 'grabbing';
+        syncDogAndPoseBtns();
+      });
+      cv.addEventListener('pointermove', (e) => {
+        if (dragIdx < 0) return;
+        const pt = toCvCoord(e);
+        st.dogs[dragIdx].x = clamp(Math.round(pt.x - dragOffX), -8, 80);
+        st.dogs[dragIdx].y = clamp(Math.round(pt.y - dragOffY), -10, 56);
+        redrawCv();
+      });
+      const endCvDrag = () => { if (dragIdx >= 0) { dragIdx = -1; cv.style.cursor = 'grab'; } };
+      cv.addEventListener('pointerup', endCvDrag);
+      cv.addEventListener('pointercancel', endCvDrag);
 
-        const pBox = winEl.querySelector('#st-vph-poses');
-        POLAROID_DOG_POSES.forEach(item => {
-          const b = doc.createElement('button');
-          b.type = 'button';
-          b.className = `st-px-btn${curDog && curDog.pose === item.id ? ' active' : ''}`;
-          b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
-          b.textContent = item.name;
-          b.addEventListener('click', () => { if (curDog) curDog.pose = item.id; renderWin(); });
-          pBox.appendChild(b);
+      winEl.querySelector('#st-vph-save')?.addEventListener('click', () => {
+        if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
+        config.puppyVisitPhotos.unshift({
+          id: `vp_${Date.now()}`,
+          hostName: st.dogs[0]?.name || getPupName(),
+          hostLook: st.dogs[0]?.look || getHostLookSnap(),
+          guestName: st.dogs[1]?.name || '',
+          guestLook: st.dogs[1]?.look || {},
+          date: dateStr,
+          ...st,
+          dogs: st.dogs.map(x => ({ ...x })),
         });
+        if (config.puppyVisitPhotos.length > 64) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 64);
+        saveConfig();
+        cmNotify('合照已存入串门相册！');
+        if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+        winEl.remove();
+      });
+    }
 
-        const qBox = winEl.querySelector('#st-vph-qcols');
-        POLAROID_QUICK_COLORS.forEach(qc => {
-          const b = doc.createElement('button');
-          b.type = 'button';
-          b.className = 'st-px-btn';
-          b.style.cssText = `height:20px;padding:0 6px;font-size:9.5px;background:${qc.bg};border-color:${qc.bd};color:${getTextCol(qc.bg)};`;
-          b.textContent = qc.name;
-          b.addEventListener('click', () => { st.paperCol = qc.bg; st.borderCol = qc.bd; renderWin(); });
-          qBox.appendChild(b);
-        });
-
-        winEl.querySelector('#st-vph-flip')?.addEventListener('click', () => { if (curDog) { curDog.flip = !curDog.flip; redrawCv(); } });
-        winEl.querySelector('#st-vph-paper')?.addEventListener('input', (e) => { st.paperCol = e.target.value; renderWin(); });
-        winEl.querySelector('#st-vph-bd')?.addEventListener('input', (e) => { st.borderCol = e.target.value; renderWin(); });
-        winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; renderWin(); });
-        winEl.querySelector('#st-vph-dots')?.addEventListener('click', () => { st.dots = !st.dots; renderWin(); });
-        winEl.querySelector('#st-vph-heart')?.addEventListener('click', () => { st.showHeart = !st.showHeart; renderWin(); });
-
-        winEl.querySelector('#st-vph-save')?.addEventListener('click', () => {
-          if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
-          config.puppyVisitPhotos.unshift({
-            id: `vp_${Date.now()}`,
-            hostName: st.dogs[0]?.name || getPupName(),
-            hostLook: st.dogs[0]?.look || getHostLookSnap(),
-            guestName: st.dogs[1]?.name || '',
-            guestLook: st.dogs[1]?.look || {},
-            date: dateStr,
-            ...st,
-            dogs: st.dogs.map(x => ({ ...x })),
-          });
-          if (config.puppyVisitPhotos.length > 64) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 64);
-          saveConfig();
-          cmNotify('合照已存入串门相册！');
-          if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
-          winEl.style.display = 'none';
-        });
-      }
-
-      winEl.querySelector('#st-vph-dl')?.addEventListener('click', () => {
-        try {
-          const exp = doc.createElement('canvas');
-          exp.width = 360; exp.height = 330;
-          const eg = exp.getContext('2d');
-          const rr = (x, y, w, h, r) => {
-            const rad = Math.max(0, Math.min(r, w / 2, h / 2));
-            eg.beginPath();
-            eg.moveTo(x + rad, y);
-            eg.arcTo(x + w, y, x + w, y + h, rad);
-            eg.arcTo(x + w, y + h, x, y + h, rad);
-            eg.arcTo(x, y + h, x, y, rad);
-            eg.arcTo(x, y, x + w, y, rad);
-            eg.closePath();
-          };
-          eg.save();
-          rr(3, 3, 354, 324, st.radius * 1.4);
-          eg.clip();
-          eg.fillStyle = st.paperCol; eg.fillRect(0, 0, 360, 330);
-          if (st.dots) {
-            eg.fillStyle = st.borderCol + '40';
-            for (let dy = 12; dy < 324; dy += 20) {
-              for (let dx = 12; dx < 354; dx += 20) {
-                eg.beginPath(); eg.arc(dx, dy, 3.2, 0, Math.PI * 2); eg.fill();
-              }
+    winEl.querySelector('#st-vph-dl')?.addEventListener('click', () => {
+      try {
+        const exp = doc.createElement('canvas');
+        exp.width = 360; exp.height = 330;
+        const eg = exp.getContext('2d');
+        const rr = (x, y, w, h, r) => {
+          const rad = Math.max(0, Math.min(r, w / 2, h / 2));
+          eg.beginPath();
+          eg.moveTo(x + rad, y);
+          eg.arcTo(x + w, y, x + w, y + h, rad);
+          eg.arcTo(x + w, y + h, x, y + h, rad);
+          eg.arcTo(x, y + h, x, y, rad);
+          eg.arcTo(x, y, x + w, y, rad);
+          eg.closePath();
+        };
+        const txtCol = getTextCol(st.paperCol);
+        const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
+        eg.save();
+        rr(3, 3, 354, 324, st.radius * 1.4);
+        eg.clip();
+        eg.fillStyle = st.paperCol; eg.fillRect(0, 0, 360, 330);
+        if (st.dots) {
+          eg.fillStyle = st.borderCol + '40';
+          for (let dy = 12; dy < 324; dy += 20) {
+            for (let dx = 12; dx < 354; dx += 20) {
+              eg.beginPath(); eg.arc(dx, dy, 3.2, 0, Math.PI * 2); eg.fill();
             }
           }
-          eg.imageSmoothingEnabled = false;
-          eg.save();
-          rr(20, 20, 320, 240, Math.max(0, (st.radius - 4) * 1.3));
-          eg.clip();
-          eg.drawImage(cv, 20, 20, 320, 240);
-          eg.restore();
-          rr(20, 20, 320, 240, Math.max(0, (st.radius - 4) * 1.3));
-          eg.strokeStyle = st.borderCol; eg.lineWidth = 3; eg.stroke();
-          eg.fillStyle = txtCol; eg.font = 'bold 16px sans-serif'; eg.textAlign = 'center';
-          eg.fillText(captionStr, 180, 290);
-          eg.fillStyle = subCol; eg.font = '12px sans-serif';
-          eg.fillText(dateStr, 180, 312);
-          eg.restore();
-          rr(3, 3, 354, 324, st.radius * 1.4);
-          eg.strokeStyle = st.borderCol; eg.lineWidth = 5; eg.stroke();
-          const a = doc.createElement('a');
-          a.href = exp.toDataURL('image/png');
-          a.download = `puppy_photo_${Date.now()}.png`;
-          a.click();
-        } catch (_) { cmNotify('导出失败，请长按截图保存'); }
-      });
-    };
-    renderWin();
-    winEl.style.display = 'flex';
+        }
+        eg.imageSmoothingEnabled = false;
+        eg.save();
+        rr(20, 20, 320, 240, Math.max(0, (st.radius - 4) * 1.3));
+        eg.clip();
+        eg.drawImage(cv, 20, 20, 320, 240);
+        eg.restore();
+        rr(20, 20, 320, 240, Math.max(0, (st.radius - 4) * 1.3));
+        eg.strokeStyle = st.borderCol; eg.lineWidth = 3; eg.stroke();
+        eg.fillStyle = txtCol; eg.font = 'bold 16px sans-serif'; eg.textAlign = 'center';
+        eg.fillText(st.title || st.dogs.map(x => x.name).join(' & '), 180, 290);
+        eg.fillStyle = subCol; eg.font = '12px sans-serif';
+        eg.fillText(dateStr, 180, 312);
+        eg.restore();
+        rr(3, 3, 354, 324, st.radius * 1.4);
+        eg.strokeStyle = st.borderCol; eg.lineWidth = 5; eg.stroke();
+        const a = doc.createElement('a');
+        a.href = exp.toDataURL('image/png');
+        a.download = `puppy_photo_${Date.now()}.png`;
+        a.click();
+      } catch (_) { cmNotify('导出失败，请长按截图保存'); }
+    });
+
     showOneTimePanelTip('seenPhotoPopTip', '拍立得小提示', '按住顶部标题栏可以移动拍立得面板，按住右下角边缘可以缩放大小；画布里的小狗也能直接按住拖到任意位置哦~');
   };
 
@@ -29069,11 +29329,11 @@
     return config.puppyVisitCoopDaily;
   };
 
-  const openCoopCookPickerModal = () => {
-    const guest = config.guestPuppy;
+  const openCoopCookPickerModal = (guestId) => {
+    const guest = getGuestList().find(g => g.id === guestId);
     if (!guest) return;
     const daily = getCoopDaily();
-    if (daily.cook >= 3) { showGuestBubble('今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
+    if (daily.cook >= 3) { showGuestBubbleById(guestId, '今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
     let modal = root.querySelector('#st-tb-coop-cook-modal');
     if (!modal) {
       modal = doc.createElement('div');
@@ -29117,7 +29377,7 @@
         btn.append(ic, txtWrap);
         btn.addEventListener('click', () => {
           modal.style.display = 'none';
-          runDualCoopActivity('cook', dish);
+          runDualCoopActivity(guestId, 'cook', dish);
         });
         grid.appendChild(btn);
       });
@@ -29125,18 +29385,20 @@
     modal.style.display = 'flex';
   };
 
-  const runDualCoopActivity = (mode, chosenDish = null) => {
-    const guest = config.guestPuppy;
-    if (!guest) return;
+  const runDualCoopActivity = (guestId, mode, chosenDish = null) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    const rt = guestRuntimes.get(guestId);
+    if (!guest || !rt) return;
     const daily = getCoopDaily();
     const gName = guest.name || '小伙伴';
     const hName = getPupName();
     if (mode === 'water') {
-      if (daily.water >= 3) { showGuestBubble('今天已经一起浇过 3 次花啦，花盆喝得饱饱的~', 2500); return; }
+      if (daily.water >= 3) { showGuestBubbleById(guestId, '今天已经一起浇过 3 次花啦，花盆喝得饱饱的~', 2500); return; }
       daily.water += 1;
-      const lockUntil = Date.now() + 4500;
-      gPup.talkingUntil = lockUntil; pup.talkingUntil = lockUntil;
-      gPup.state = 'bounce'; gPup.timer = 300;
+      const lockUntil = Date.now() + 4600;
+      dualSocialBusyUntil = lockUntil;
+      rt.talkingUntil = lockUntil; pup.talkingUntil = lockUntil;
+      rt.state = 'bounce'; rt.timer = 300;
       setPuppyState('happy', 300);
       let bonusTxt = '';
       if (config.puppyGarden && config.puppyGarden.stage > 0 && config.puppyGarden.stage < 3) {
@@ -29149,12 +29411,12 @@
       }
       saveConfig();
       updatePupStatBars();
-      syncBubbleNoOverlap('host');
+      liftNearbyBubbles('host', pup.x, pup.y || defaultPupY());
       showPuppyBubble(`和 ${gName} 一起提着小水壶浇花，${bonusTxt}`, 2200);
-      setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`和 ${hName} 配合得真默契，花花都精神啦~`, 2400); } }, 2000);
+      setTimeout(() => { if (getGuestList().some(x => x.id === guestId)) showGuestBubbleById(guestId, `和 ${hName} 配合得真默契，花花都精神啦~`, 2400); }, 2000);
     } else if (mode === 'cook') {
-      if (!chosenDish) { openCoopCookPickerModal(); return; }
-      if (daily.cook >= 3) { showGuestBubble('今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
+      if (!chosenDish) { openCoopCookPickerModal(guestId); return; }
+      if (daily.cook >= 3) { showGuestBubbleById(guestId, '今天已经联手做了 3 道大餐啦，厨房歇会儿吧~', 2500); return; }
       const gU = config.puppyGarden?.unlocked || {};
       const curCoins = Math.floor(config.puppyCoins || 0);
       if (!chosenDish.req.every(q => (gU[q.id] || 0) >= q.qty) || curCoins < chosenDish.coins) {
@@ -29165,9 +29427,10 @@
       config.puppyCoins = Math.max(0, curCoins - chosenDish.coins);
       recordCoinsSpent(chosenDish.coins);
       daily.cook += 1;
-      const lockUntil = Date.now() + 4600;
-      gPup.talkingUntil = lockUntil; pup.talkingUntil = lockUntil;
-      gPup.state = 'spin'; gPup.timer = 300;
+      const lockUntil = Date.now() + 4700;
+      dualSocialBusyUntil = lockUntil;
+      rt.talkingUntil = lockUntil; pup.talkingUntil = lockUntil;
+      rt.state = 'spin'; rt.timer = 300;
       setPuppyState('happy', 300);
       const k = ensureKitchen();
       k.cooked += 1;
@@ -29179,28 +29442,29 @@
       saveConfig();
       updatePupStatBars();
       checkPupAchievements();
-      syncBubbleNoOverlap('host');
+      liftNearbyBubbles('host', pup.x, pup.y || defaultPupY());
       showPuppyBubble(`和 ${gName} 联手做出了「${chosenDish.name}（双狗合作版）」！`, 2300);
-      setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`哇好香！和 ${hName} 一起掌勺太好玩啦~`, 2400); } }, 2100);
+      setTimeout(() => { if (getGuestList().some(x => x.id === guestId)) showGuestBubbleById(guestId, `哇好香！和 ${hName} 一起掌勺太好玩啦~`, 2400); }, 2100);
     }
   };
 
-  const finishDismissGuest = () => {
-    if (!config.guestPuppy) return;
-    const gName = config.guestPuppy.name || '小伙伴';
-    showGuestBubble('那我先回家啦，下次再来找你们玩~', 1800);
+  const finishDismissGuest = (guestId) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    if (!guest) return;
+    const gName = guest.name || '小伙伴';
+    showGuestBubbleById(guestId, '那我先回家啦，下次再来找你们玩~', 1400);
     if (guestPopEl) guestPopEl.style.display = 'none';
     setTimeout(() => {
-      config.guestPuppy = null;
+      config.guestPuppies = getGuestList().filter(g => g.id !== guestId);
       saveConfig();
-      if (guestPupEl) guestPupEl.classList.remove('active');
+      syncGuestDomNodes();
       if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
       showPuppyBubble(`把 ${gName} 礼貌送走啦~`, 2400);
     }, 800);
   };
 
-  const dismissGuestPuppy = () => {
-    const guest = config.guestPuppy;
+  const dismissGuestPuppy = (guestId) => {
+    const guest = getGuestList().find(g => g.id === guestId);
     if (!guest) return;
     if (guestPopEl) guestPopEl.style.display = 'none';
     let modal = root.querySelector('#st-tb-return-gift-modal');
@@ -29246,7 +29510,7 @@
       modal.querySelector('#st-rg-x')?.addEventListener('click', () => { modal.style.display = 'none'; });
       if (genCode) {
         modal.querySelector('#st-rg-copy')?.addEventListener('click', () => { copyVisitCodeReliable(genCode); cmNotify('已复制返程码！'); });
-        modal.querySelector('#st-rg-done')?.addEventListener('click', () => { modal.style.display = 'none'; finishDismissGuest(); });
+        modal.querySelector('#st-rg-done')?.addEventListener('click', () => { modal.style.display = 'none'; finishDismissGuest(guestId); });
       } else {
         const gEl = modal.querySelector('#st-rg-grid');
         if (!giftables.length) {
@@ -29270,7 +29534,7 @@
             gEl.appendChild(b);
           });
         }
-        modal.querySelector('#st-rg-direct')?.addEventListener('click', () => { modal.style.display = 'none'; finishDismissGuest(); });
+        modal.querySelector('#st-rg-direct')?.addEventListener('click', () => { modal.style.display = 'none'; finishDismissGuest(guestId); });
         modal.querySelector('#st-rg-pack')?.addEventListener('click', () => {
           const rp = Math.max(0, Math.min(curCoins, Math.min(9999, Math.floor(Number(modal.querySelector('#st-rg-rp')?.value) || 0))));
           const msgTxt = String(modal.querySelector('#st-rg-msg')?.value || '').trim();
@@ -29302,33 +29566,36 @@
     modal.style.display = 'flex';
   };
 
-  const interactWithGuest = (kind) => {
-    const guest = config.guestPuppy;
-    if (!guest) return;
+  const interactWithGuest = (guestId, kind) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    const rt = guestRuntimes.get(guestId);
+    if (!guest || !rt) return;
     config.puppyStats = config.puppyStats || {};
     config.puppyStats.visitInteracts = (config.puppyStats.visitInteracts || 0) + 1;
     saveConfig();
     checkPupAchievements();
 
     if (kind === 'dual') {
-      triggerDualPuppySocial(true);
+      triggerPairSocial(guestId, true, null);
       if (guestPopEl) guestPopEl.style.display = 'none';
       return;
     }
     const pers = guest.pers || 'sleepyhead';
     const pool = (GUEST_INTERACT_LINES[pers] && GUEST_INTERACT_LINES[pers][kind]) || GUEST_INTERACT_LINES.sleepyhead.pet;
     const line = pick(pool).replace(/\{host\}/g, getPupName());
-    if (kind === 'pet') { gPup.state = 'happy'; gPup.timer = 95; }
-    else if (kind === 'nuzzle') { gPup.state = 'nuzzle'; gPup.timer = 105; }
-    else if (kind === 'feed') { gPup.state = 'eat'; gPup.timer = 105; }
-    else if (kind === 'praise') { gPup.state = 'spin'; gPup.timer = 95; }
-    else if (kind === 'play') { gPup.state = pick(['bounce', 'playdead', 'spin']); gPup.timer = 110; }
-    showGuestBubble(line, 2800);
+    rt.talkingUntil = Date.now() + 2900;
+    if (kind === 'pet') { rt.state = 'happy'; rt.timer = 170; }
+    else if (kind === 'nuzzle') { rt.state = 'nuzzle'; rt.timer = 170; }
+    else if (kind === 'feed') { rt.state = 'eat'; rt.timer = 170; }
+    else if (kind === 'praise') { rt.state = 'spin'; rt.timer = 170; }
+    else if (kind === 'play') { rt.state = pick(['bounce', 'playdead', 'spin']); rt.timer = 170; }
+    showGuestBubbleById(guestId, line, 2800);
   };
 
-  const openGuestPop = () => {
-    const guest = config.guestPuppy;
-    if (!guest || !guestPopEl) return;
+  const openGuestPop = (guestId) => {
+    const guest = getGuestList().find(g => g.id === guestId);
+    const rt = guestRuntimes.get(guestId);
+    if (!guest || !rt || !guestPopEl) return;
     const isPinned = Boolean(guest.pinned);
     const hideName = Boolean(guest.hideName);
     guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;cursor:move;user-select:none;padding-bottom:3px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
@@ -29361,216 +29628,183 @@
     }
     const left = (config.guestPopRect && typeof config.guestPopRect.left === 'number')
       ? clamp(config.guestPopRect.left, 8, Math.max(8, win.innerWidth - 230))
-      : clamp(Math.round(gPup.x) - 60, 8, Math.max(8, win.innerWidth - 234));
+      : clamp(Math.round(rt.x) - 60, 8, Math.max(8, win.innerWidth - 234));
     const top = (config.guestPopRect && typeof config.guestPopRect.top === 'number')
       ? clamp(config.guestPopRect.top, 8, Math.max(8, win.innerHeight - 220))
-      : clamp(Math.round((gPup.y || defaultPupY()) - 215), 10, Math.max(10, win.innerHeight - 230));
+      : clamp(Math.round((rt.y || defaultPupY()) - 215), 10, Math.max(10, win.innerHeight - 230));
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
     guestPopEl.style.display = 'block';
-    if (typeof showOneTimePanelTip === 'function') {
-      showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
-    }
+    showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
 
-    // 拖动标题栏移动
     const head = guestPopEl.querySelector('#st-gp-drag-head');
-    if (head) {
-      head.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('button')) return;
-        e.preventDefault();
-        head.setPointerCapture(e.pointerId);
-        const sx = e.clientX, sy = e.clientY;
-        const rect = guestPopEl.getBoundingClientRect();
-        const ox = rect.left, oy = rect.top;
-        const onMove = (ev) => {
-          const nx = clamp(ox + (ev.clientX - sx), 4, Math.max(4, win.innerWidth - rect.width - 4));
-          const ny = clamp(oy + (ev.clientY - sy), 4, Math.max(4, win.innerHeight - rect.height - 4));
-          guestPopEl.style.left = `${Math.round(nx)}px`;
-          guestPopEl.style.top = `${Math.round(ny)}px`;
-        };
-        const onUp = () => {
-          head.removeEventListener('pointermove', onMove);
-          head.removeEventListener('pointerup', onUp);
-          const r2 = guestPopEl.getBoundingClientRect();
-          config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
-          saveConfig();
-        };
-        head.addEventListener('pointermove', onMove);
-        head.addEventListener('pointerup', onUp);
-      });
-    }
-    // 右下角拖拽缩放
+    head?.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      e.preventDefault();
+      head.setPointerCapture(e.pointerId);
+      const sx = e.clientX, sy = e.clientY;
+      const rect = guestPopEl.getBoundingClientRect();
+      const ox = rect.left, oy = rect.top;
+      const onMove = (ev) => {
+        guestPopEl.style.left = `${Math.round(clamp(ox + (ev.clientX - sx), 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
+        guestPopEl.style.top = `${Math.round(clamp(oy + (ev.clientY - sy), 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
+      };
+      const onUp = () => {
+        head.removeEventListener('pointermove', onMove);
+        head.removeEventListener('pointerup', onUp);
+        const r2 = guestPopEl.getBoundingClientRect();
+        config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
+        saveConfig();
+      };
+      head.addEventListener('pointermove', onMove);
+      head.addEventListener('pointerup', onUp);
+    });
     const rsz = guestPopEl.querySelector('#st-gp-resize');
-    if (rsz) {
-      rsz.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        rsz.setPointerCapture(e.pointerId);
-        const sx = e.clientX;
-        const ow = guestPopEl.getBoundingClientRect().width;
-        const onMove = (ev) => {
-          const nw = clamp(Math.round(ow + (ev.clientX - sx)), 210, 340);
-          guestPopEl.style.width = `${nw}px`;
-        };
-        const onUp = () => {
-          rsz.removeEventListener('pointermove', onMove);
-          rsz.removeEventListener('pointerup', onUp);
-          const r2 = guestPopEl.getBoundingClientRect();
-          config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
-          saveConfig();
-        };
-        rsz.addEventListener('pointermove', onMove);
-        rsz.addEventListener('pointerup', onUp);
-      });
-    }
+    rsz?.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      rsz.setPointerCapture(e.pointerId);
+      const sx = e.clientX, ow = guestPopEl.getBoundingClientRect().width;
+      const onMove = (ev) => { guestPopEl.style.width = `${clamp(Math.round(ow + (ev.clientX - sx)), 210, 340)}px`; };
+      const onUp = () => {
+        rsz.removeEventListener('pointermove', onMove);
+        rsz.removeEventListener('pointerup', onUp);
+        const r2 = guestPopEl.getBoundingClientRect();
+        config.guestPopRect = { left: Math.round(r2.left), top: Math.round(r2.top), width: Math.round(r2.width) };
+        saveConfig();
+      };
+      rsz.addEventListener('pointermove', onMove);
+      rsz.addEventListener('pointerup', onUp);
+    });
 
     guestPopEl.querySelector('#st-gp-close')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; });
-    guestPopEl.querySelector('#st-gp-pet')?.addEventListener('click', () => interactWithGuest('pet'));
-    guestPopEl.querySelector('#st-gp-nuzzle')?.addEventListener('click', () => interactWithGuest('nuzzle'));
-    guestPopEl.querySelector('#st-gp-feed')?.addEventListener('click', () => interactWithGuest('feed'));
-    guestPopEl.querySelector('#st-gp-praise')?.addEventListener('click', () => interactWithGuest('praise'));
-    guestPopEl.querySelector('#st-gp-play')?.addEventListener('click', () => interactWithGuest('play'));
-    guestPopEl.querySelector('#st-gp-dual')?.addEventListener('click', () => interactWithGuest('dual'));
-    guestPopEl.querySelector('#st-gp-water')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; runDualCoopActivity('water'); });
-    guestPopEl.querySelector('#st-gp-cook')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; openCoopCookPickerModal(); });
+    guestPopEl.querySelector('#st-gp-pet')?.addEventListener('click', () => interactWithGuest(guestId, 'pet'));
+    guestPopEl.querySelector('#st-gp-nuzzle')?.addEventListener('click', () => interactWithGuest(guestId, 'nuzzle'));
+    guestPopEl.querySelector('#st-gp-feed')?.addEventListener('click', () => interactWithGuest(guestId, 'feed'));
+    guestPopEl.querySelector('#st-gp-praise')?.addEventListener('click', () => interactWithGuest(guestId, 'praise'));
+    guestPopEl.querySelector('#st-gp-play')?.addEventListener('click', () => interactWithGuest(guestId, 'play'));
+    guestPopEl.querySelector('#st-gp-dual')?.addEventListener('click', () => interactWithGuest(guestId, 'dual'));
+    guestPopEl.querySelector('#st-gp-water')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; runDualCoopActivity(guestId, 'water'); });
+    guestPopEl.querySelector('#st-gp-cook')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; openCoopCookPickerModal(guestId); });
     guestPopEl.querySelector('#st-gp-photo')?.addEventListener('click', () => { guestPopEl.style.display = 'none'; openDualPhotoModal(); });
     guestPopEl.querySelector('#st-gp-name-tg')?.addEventListener('click', () => {
       guest.hideName = !guest.hideName;
       saveConfig();
-      gPup.lastRenderKey = '';
-      drawGuestPuppyScene();
-      openGuestPop();
+      rt.lastRenderKey = '';
+      drawSingleGuestScene(guest, rt);
+      openGuestPop(guestId);
     });
     guestPopEl.querySelector('#st-gp-pin')?.addEventListener('click', () => {
       guest.pinned = !guest.pinned;
       if (guest.pinned) {
-        guest.pinX = Math.round(gPup.x);
-        guest.pinY = Math.round(gPup.y || defaultPupY());
-        gPup.state = 'sit';
-        gPup.timer = 180;
-        showGuestBubble('好哒，我就乖乖坐在这里不乱跑啦~', 2200);
+        guest.pinX = Math.round(rt.x);
+        guest.pinY = Math.round(rt.y || defaultPupY());
+        rt.state = 'sit'; rt.timer = 180;
+        showGuestBubbleById(guestId, '好哒，我就乖乖坐在这里不乱跑啦~', 2200);
       } else {
-        showGuestBubble('又能自由溜达逛逛啦~', 2000);
+        showGuestBubbleById(guestId, '又能自由溜达逛逛啦~', 2000);
       }
       saveConfig();
-      openGuestPop();
+      openGuestPop(guestId);
       if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
     });
-    guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', dismissGuestPuppy);
+    guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', () => dismissGuestPuppy(guestId));
   };
 
-  if (guestPupEl) {
-    guestPupEl.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 && e.pointerType === 'mouse') return;
-      e.stopPropagation();
-      guestPupEl.setPointerCapture(e.pointerId);
-      guestDrag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: gPup.x, oy: gPup.y || defaultPupY(), moved: false };
-    });
-    guestPupEl.addEventListener('pointermove', (e) => {
-      if (!guestDrag || guestDrag.id !== e.pointerId) return;
-      const dx = e.clientX - guestDrag.sx;
-      const dy = e.clientY - guestDrag.sy;
-      if (Math.hypot(dx, dy) > 5) guestDrag.moved = true;
-      if (guestDrag.moved) {
-        guestPupEl.classList.add('dragging');
-        gPup.x = clamp(guestDrag.ox + dx, 8, Math.max(8, win.innerWidth - 80));
-        gPup.y = clamp(guestDrag.oy + dy, 40, Math.max(40, win.innerHeight - 80));
-        drawGuestPuppyScene();
-      }
-    });
-    const endGuestDrag = (e) => {
-      if (!guestDrag || guestDrag.id !== e.pointerId) return;
-      const moved = guestDrag.moved;
-      guestDrag = null;
-      guestPupEl.classList.remove('dragging');
-      if (moved && config.guestPuppy?.pinned) {
-        config.guestPuppy.pinX = Math.round(gPup.x);
-        config.guestPuppy.pinY = Math.round(gPup.y);
-        saveConfig();
-      }
-      if (!moved) openGuestPop();
-    };
-    guestPupEl.addEventListener('pointerup', endGuestDrag);
-    guestPupEl.addEventListener('pointercancel', endGuestDrag);
-  }
-
   const stepGuestPuppy = () => {
-    const guest = config.guestPuppy;
-    if (!guest || !config.puppyEnabled || guestDrag) {
-      if (!guest && guestPupEl && guestPupEl.classList.contains('active')) guestPupEl.classList.remove('active');
-      return;
-    }
-    if (!gPup.y) gPup.y = (guest.pinned && guest.pinY) ? guest.pinY : defaultPupY();
-    if (guest.pinned && typeof guest.pinX === 'number' && gPup.tick === 0) gPup.x = guest.pinX;
-    gPup.tick += 1;
-    gPup.timer -= 1;
+    const list = getGuestList();
+    syncGuestDomNodes();
+    if (!list.length) return;
     const now = Date.now();
     const maxX = Math.max(8, win.innerWidth - 80);
 
-    if (gPup.state === 'approach' && !guest.pinned) {
-      const tx = typeof gPup.targetX === 'number' ? gPup.targetX : pup.x;
-      const ty = typeof gPup.targetY === 'number' ? gPup.targetY : (pup.y || defaultPupY());
-      const dx = tx - gPup.x;
-      const dy = ty - gPup.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist <= 4 || gPup.timer <= 0) {
-        const pending = gPup.pendingSocial;
-        gPup.pendingSocial = null;
-        if (pending && pending.sc) playDualSocialDialogue(pending.sc, pending.manual);
-        else { gPup.state = 'idle'; gPup.timer = 100; }
-      } else {
-        const spd = 1.15;
-        gPup.x += (dx / dist) * spd;
-        gPup.y += (dy / dist) * spd;
-        gPup.dir = dx >= 0 ? 1 : -1;
-        const gTrail = guest.look?.trail;
-        if (gTrail && gTrail !== 'trail_none' && gPup.tick % 20 === 0) {
-          spawnWalkTrailDot(gTrail, 0, { x: gPup.x, y: gPup.y, dir: gPup.dir });
+    // 全局调度一对双狗互动（自家↔客人 或 客人A↔客人B），确保绝不冲突
+    if (config.puppyEnabled && now >= nextDualSocialAt && now >= dualSocialBusyUntil) {
+      const idleGuests = list.filter(g => {
+        const rt = guestRuntimes.get(g.id);
+        return rt && !rt.drag && rt.state !== 'approach' && now >= (rt.talkingUntil || 0);
+      });
+      if (idleGuests.length) {
+        const gA = pick(idleGuests);
+        const rtA = guestRuntimes.get(gA.id);
+        const otherGuests = idleGuests.filter(x => x.id !== gA.id);
+        const pickGuestPartner = otherGuests.length && Math.random() < 0.45 ? pick(otherGuests) : null;
+        const targetY = pickGuestPartner ? (guestRuntimes.get(pickGuestPartner.id)?.y || defaultPupY()) : (pup.y || defaultPupY());
+        const sameRow = Math.abs((rtA.y || defaultPupY()) - targetY) < 68;
+        nextDualSocialAt = now + randInt(sameRow ? 18000 : 30000, sameRow ? 30000 : 48000);
+        if (sameRow || Math.random() < 0.6) {
+          triggerPairSocial(gA.id, false, pickGuestPartner ? pickGuestPartner.id : null);
         }
-      }
-      drawGuestPuppyScene();
-      return;
-    }
-
-    const sameRow = Math.abs((gPup.y || defaultPupY()) - (pup.y || defaultPupY())) < 68;
-    if (now >= gPup.nextSocialAt) {
-      gPup.nextSocialAt = now + randInt(sameRow ? 18000 : 32000, sameRow ? 30000 : 50000);
-      if (sameRow || Math.random() < 0.55) {
-        triggerDualPuppySocial(false);
-      }
-    } else if (gPup.state === 'walk' && !guest.pinned) {
-      gPup.x += gPup.dir * 0.65;
-      if (gPup.x <= 8) { gPup.x = 8; gPup.dir = 1; }
-      if (gPup.x >= maxX) { gPup.x = maxX; gPup.dir = -1; }
-      const gTrail = guest.look?.trail;
-      if (gTrail && gTrail !== 'trail_none' && gPup.tick % 24 === 0) {
-        spawnWalkTrailDot(gTrail, 0, { x: gPup.x, y: gPup.y, dir: gPup.dir });
+      } else {
+        nextDualSocialAt = now + 10000;
       }
     }
 
-    if (gPup.timer <= 0) {
-      if (gPup.talkingUntil && now < gPup.talkingUntil) {
-        gPup.timer = 24;
-        drawGuestPuppyScene();
+    list.forEach(guest => {
+      const rt = guestRuntimes.get(guest.id);
+      if (!rt || rt.drag) return;
+      if (!config.puppyEnabled) { rt.el.classList.remove('active'); return; }
+      if (!rt.y) rt.y = (guest.pinned && typeof guest.pinY === 'number') ? guest.pinY : defaultPupY();
+      rt.tick += 1;
+      rt.timer -= 1;
+
+      if (rt.state === 'approach' && !guest.pinned) {
+        const tx = typeof rt.targetX === 'number' ? rt.targetX : pup.x;
+        const ty = typeof rt.targetY === 'number' ? rt.targetY : (pup.y || defaultPupY());
+        const dx = tx - rt.x;
+        const dy = ty - rt.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist <= 4 || rt.timer <= 0) {
+          const pending = rt.pendingSocial;
+          rt.pendingSocial = null;
+          if (pending && pending.actorB) {
+            playPairDialogue({ isHost: false, guest, rt }, pending.actorB, pending.manual);
+          } else {
+            rt.state = 'idle'; rt.timer = 100;
+          }
+        } else {
+          const spd = 1.15;
+          rt.x += (dx / dist) * spd;
+          rt.y += (dy / dist) * spd;
+          rt.dir = dx >= 0 ? 1 : -1;
+          const gTrail = guest.look?.trail;
+          if (gTrail && gTrail !== 'trail_none' && rt.tick % 20 === 0) {
+            spawnWalkTrailDot(gTrail, 0, { x: rt.x, y: rt.y, dir: rt.dir });
+          }
+        }
+        drawSingleGuestScene(guest, rt);
         return;
       }
-      const r = Math.random();
-      if (!guest.pinned && r < 0.38) {
-        if (Math.random() < 0.45) gPup.dir *= -1;
-        gPup.state = 'walk';
-        gPup.timer = randInt(90, 170);
-      } else if (r < 0.72) {
-        gPup.state = 'sit';
-        gPup.timer = randInt(120, 220);
-      } else if (r < 0.84) {
-        gPup.state = 'sleep';
-        gPup.timer = randInt(150, 260);
-      } else {
-        gPup.state = 'idle';
-        gPup.timer = randInt(110, 190);
+
+      if (rt.state === 'walk' && !guest.pinned) {
+        rt.x += rt.dir * 0.65;
+        if (rt.x <= 8) { rt.x = 8; rt.dir = 1; }
+        if (rt.x >= maxX) { rt.x = maxX; rt.dir = -1; }
+        const gTrail = guest.look?.trail;
+        if (gTrail && gTrail !== 'trail_none' && rt.tick % 24 === 0) {
+          spawnWalkTrailDot(gTrail, 0, { x: rt.x, y: rt.y, dir: rt.dir });
+        }
       }
-    }
-    drawGuestPuppyScene();
+
+      if (rt.timer <= 0) {
+        if (rt.talkingUntil && now < rt.talkingUntil) {
+          rt.timer = 24;
+          drawSingleGuestScene(guest, rt);
+          return;
+        }
+        const r = Math.random();
+        if (!guest.pinned && r < 0.38) {
+          if (Math.random() < 0.45) rt.dir *= -1;
+          rt.state = 'walk'; rt.timer = randInt(90, 170);
+        } else if (r < 0.72) {
+          rt.state = 'sit'; rt.timer = randInt(120, 220);
+        } else if (r < 0.84) {
+          rt.state = 'sleep'; rt.timer = randInt(150, 260);
+        } else {
+          rt.state = 'idle'; rt.timer = randInt(110, 190);
+        }
+      }
+      drawSingleGuestScene(guest, rt);
+    });
   };
 
   let visitBookTab = 'stamps';
@@ -29579,30 +29813,38 @@
   function renderPupVisitPanel() {
     if (!advVisitView) return;
     advVisitView.innerHTML = '';
-    const guest = config.guestPuppy;
+    const guests = getGuestList();
 
-    if (guest) {
-      const gCard = doc.createElement('div');
-      gCard.className = 'st-px-adv-card';
-      gCard.style.marginBottom = '6px';
-      gCard.innerHTML = `<div style="font-weight:700;margin-bottom:3px;">当前做客：${guest.name}</div>
-        <div style="font-size:10px;color:#6b5446;margin-bottom:5px;">「${guest.msg || '来串门啦~'}」</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
-          <button type="button" id="st-pv-interact" class="st-px-btn care">互动</button>
-          <button type="button" id="st-pv-photo" class="st-px-btn active">拍合照</button>
-          <button type="button" id="st-pv-pin" class="st-px-btn${guest.pinned ? ' active' : ''}">${guest.pinned ? '已固定' : '固定'}</button>
-          <button type="button" id="st-pv-dismiss" class="st-px-btn" style="color:#a94442;">送客</button>
-        </div>`;
-      advVisitView.appendChild(gCard);
-      gCard.querySelector('#st-pv-interact')?.addEventListener('click', openGuestPop);
-      gCard.querySelector('#st-pv-photo')?.addEventListener('click', () => openDualPhotoModal());
-      gCard.querySelector('#st-pv-pin')?.addEventListener('click', () => {
-        guest.pinned = !guest.pinned;
-        if (guest.pinned) { guest.pinX = Math.round(gPup.x); guest.pinY = Math.round(gPup.y || defaultPupY()); gPup.state = 'sit'; }
-        saveConfig();
-        renderPupVisitPanel();
+    if (guests.length) {
+      const gWrap = doc.createElement('div');
+      gWrap.className = 'st-px-adv-card';
+      gWrap.style.marginBottom = '6px';
+      gWrap.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <span style="font-weight:700;">当前做客小狗 (${guests.length}/6)</span>
+        <button type="button" id="st-pv-photo-all" class="st-px-btn active" style="height:20px;padding:0 6px;font-size:9.5px;">拍合照</button>
+      </div>`;
+      gWrap.querySelector('#st-pv-photo-all')?.addEventListener('click', () => openDualPhotoModal());
+      guests.forEach(guest => {
+        const row = doc.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;padding:4px 5px;background:#fff;border:1px solid var(--px-border,#bfa4ae);margin-top:4px;';
+        row.innerHTML = `<span style="font-weight:700;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${guest.name}</span>
+          <div style="display:flex;gap:3px;flex-shrink:0;">
+            <button type="button" class="st-px-btn care st-pv-i" style="height:20px;padding:0 5px;font-size:9.5px;">互动</button>
+            <button type="button" class="st-px-btn${guest.pinned ? ' active' : ''} st-pv-p" style="height:20px;padding:0 5px;font-size:9.5px;">${guest.pinned ? '已固' : '固定'}</button>
+            <button type="button" class="st-px-btn st-pv-d" style="height:20px;padding:0 5px;font-size:9.5px;color:#a94442;">送客</button>
+          </div>`;
+        row.querySelector('.st-pv-i')?.addEventListener('click', () => openGuestPop(guest.id));
+        row.querySelector('.st-pv-p')?.addEventListener('click', () => {
+          guest.pinned = !guest.pinned;
+          const rt = guestRuntimes.get(guest.id);
+          if (guest.pinned && rt) { guest.pinX = Math.round(rt.x); guest.pinY = Math.round(rt.y || defaultPupY()); rt.state = 'sit'; }
+          saveConfig();
+          renderPupVisitPanel();
+        });
+        row.querySelector('.st-pv-d')?.addEventListener('click', () => dismissGuestPuppy(guest.id));
+        gWrap.appendChild(row);
       });
-      gCard.querySelector('#st-pv-dismiss')?.addEventListener('click', dismissGuestPuppy);
+      advVisitView.appendChild(gWrap);
     }
 
     const outBox = doc.createElement('div');
@@ -29718,7 +29960,7 @@
     const inBox = doc.createElement('div');
     inBox.className = 'st-px-adv-card';
     inBox.style.marginBottom = '6px';
-    inBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">请朋友来串门 / 拆回礼返程码</div>`;
+    inBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">请朋友来串门 / 拆回礼返程码（支持多只共存）</div>`;
     const inTa = doc.createElement('textarea');
     inTa.placeholder = '粘贴 GLC:... 串门码 或 GLCRET:... 返程回礼码';
     inTa.style.cssText = 'width:100%;height:38px;font-size:9.5px;resize:none;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:3px;margin-bottom:5px;';
@@ -29726,7 +29968,7 @@
     inBtn.type = 'button';
     inBtn.className = 'st-px-btn active';
     inBtn.style.width = '100%';
-    inBtn.textContent = '拆开礼物 / 接收返程回礼';
+    inBtn.textContent = '拆开礼物 / 请小狗进桌面';
     inBtn.addEventListener('click', () => {
       const parsed = decodePupVisitCard(inTa.value);
       if (!parsed) { cmNotify('名片码格式不正确'); return; }
@@ -29750,14 +29992,28 @@
         return;
       }
       const cleanName = String(parsed.name).slice(0, 14);
-      config.guestPuppy = {
-        name: cleanName,
-        pers: parsed.pers || 'sleepyhead',
-        look: parsed.look || {},
-        msg: parsed.msg || '来找你们玩啦~',
-        pinned: false,
-        hideName: false,
-      };
+      const curList = getGuestList();
+      let gObj = curList.find(x => x.name === cleanName);
+      if (gObj) {
+        gObj.pers = parsed.pers || 'sleepyhead';
+        gObj.look = parsed.look || {};
+        gObj.msg = parsed.msg || '来找你们玩啦~';
+        const rtOld = guestRuntimes.get(gObj.id);
+        if (rtOld) { rtOld.lastRenderKey = ''; rtOld.lastBubbleSkin = ''; }
+      } else {
+        if (curList.length >= 6) { cmNotify('桌面同时最多招待 6 位客人小狗哦，请先送客一位吧~'); return; }
+        gObj = {
+          id: `gp_${Date.now()}_${Math.floor(Math.random() * 999)}`,
+          name: cleanName,
+          pers: parsed.pers || 'sleepyhead',
+          look: parsed.look || {},
+          msg: parsed.msg || '来找你们玩啦~',
+          pinned: false,
+          hideName: false,
+        };
+        curList.push(gObj);
+      }
+
       config.puppyStats = config.puppyStats || {};
       if (!Array.isArray(config.puppyStats.visitGuestNames)) config.puppyStats.visitGuestNames = [];
       if (!config.puppyStats.visitGuestNames.includes(cleanName)) config.puppyStats.visitGuestNames.push(cleanName);
@@ -29770,42 +30026,40 @@
       if (existing) {
         existing.count = (existing.count || 1) + 1;
         existing.lastDate = dStr;
-        existing.msg = config.guestPuppy.msg;
-        existing.look = config.guestPuppy.look;
+        existing.msg = gObj.msg;
+        existing.look = gObj.look;
         if (giftSummary) existing.lastGift = giftSummary;
       } else {
-        config.puppyVisitLog.unshift({ name: cleanName, count: 1, lastDate: dStr, msg: config.guestPuppy.msg, look: config.guestPuppy.look, lastGift: giftSummary });
+        config.puppyVisitLog.unshift({ name: cleanName, count: 1, lastDate: dStr, msg: gObj.msg, look: gObj.look, lastGift: giftSummary });
         if (config.puppyVisitLog.length > 60) config.puppyVisitLog.length = 60;
       }
 
-      gPup.x = clamp(pup.x + 64, 16, Math.max(16, win.innerWidth - 90));
-      gPup.y = defaultPupY();
-      gPup.dir = -1;
-      gPup.state = 'happy';
-      gPup.timer = 110;
-      gPup.lastRenderKey = '';
-      gPup.lastBubbleSkin = '';
       saveConfig();
+      syncGuestDomNodes();
       checkPupAchievements();
       if (config.puppyEnabled) {
-        drawGuestPuppyScene();
+        const rtNew = guestRuntimes.get(gObj.id);
+        if (rtNew) {
+          rtNew.state = 'happy'; rtNew.timer = 140;
+          drawSingleGuestScene(gObj, rtNew);
+        }
         showPuppyBubble(`哇！${cleanName} 来做客啦~`, 2100);
-        setTimeout(() => { if (config.guestPuppy) { if (puppyBubble) puppyBubble.classList.add('lifted'); showGuestBubble(`哈喽！我是 ${cleanName}，来串门啦~`, 2600); } }, 1900);
+        setTimeout(() => { if (getGuestList().some(x => x.id === gObj.id)) showGuestBubbleById(gObj.id, `哈喽！我是 ${cleanName}，来串门啦~`, 2600); }, 1950);
       }
-      openVisitGiftModal(cleanName, config.guestPuppy.msg, received, rp, false);
+      openVisitGiftModal(cleanName, gObj.msg, received, rp, false);
       renderPupVisitPanel();
     });
     inBox.append(inTa, inBtn);
     advVisitView.appendChild(inBox);
 
-    // 底部：访客印章本 & 双狗合照相册（带 首页/上页/下页/末页 分页）
+    // 底部：访客印章本 & 双狗合照相册（每页 8 项 + 首页/上页/下页/末页）
     const bookBox = doc.createElement('div');
     bookBox.className = 'st-px-adv-card';
     const logs = Array.isArray(config.puppyVisitLog) ? config.puppyVisitLog : [];
     const photos = Array.isArray(config.puppyVisitPhotos) ? config.puppyVisitPhotos : [];
     bookBox.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px;">
       <button type="button" id="st-vb-stamps" class="st-px-btn${visitBookTab === 'stamps' ? ' active' : ''}" style="height:22px;font-size:10px;">访客印章本 (${logs.length})</button>
-      <button type="button" id="st-vb-photos" class="st-px-btn${visitBookTab === 'photos' ? ' active' : ''}" style="height:22px;font-size:10px;">双狗合照 (${photos.length})</button>
+      <button type="button" id="st-vb-photos" class="st-px-btn${visitBookTab === 'photos' ? ' active' : ''}" style="height:22px;font-size:10px;">合照相册 (${photos.length})</button>
     </div><div id="st-vb-body" style="display:flex;flex-direction:column;gap:4px;"></div><div id="st-vb-pager" style="display:none;align-items:center;justify-content:space-between;gap:3px;margin-top:5px;"></div>`;
     bookBox.querySelector('#st-vb-stamps')?.addEventListener('click', () => { visitBookTab = 'stamps'; renderPupVisitPanel(); });
     bookBox.querySelector('#st-vb-photos')?.addEventListener('click', () => { visitBookTab = 'photos'; renderPupVisitPanel(); });
@@ -29870,15 +30124,26 @@
           const pBd = ph.borderCol || '#d6ccc8';
           const pRad = Math.min(10, Math.round((typeof ph.radius === 'number' ? ph.radius : 10) * 0.6));
           const card = doc.createElement('div');
-          card.style.cssText = `background:${pBg};border:1.5px solid ${pBd};border-radius:${pRad}px;padding:3px;cursor:pointer;text-align:center;`;
+          card.style.cssText = `position:relative;background:${pBg};border:1.5px solid ${pBd};border-radius:${pRad}px;padding:3px;cursor:pointer;text-align:center;`;
+          const delX = doc.createElement('button');
+          delX.type = 'button';
+          delX.textContent = '×';
+          delX.title = '删除合照';
+          delX.style.cssText = 'position:absolute;right:2px;top:2px;width:16px;height:16px;line-height:14px;padding:0;border:1px solid #d4b0b8;background:rgba(255,255,255,0.88);color:#a94442;font-size:10px;font-weight:700;cursor:pointer;border-radius:3px;z-index:2;';
+          delX.addEventListener('click', (e) => {
+            e.stopPropagation();
+            config.puppyVisitPhotos = (config.puppyVisitPhotos || []).filter(x => x.id !== ph.id);
+            saveConfig();
+            renderPupVisitPanel();
+          });
           const cv = doc.createElement('canvas');
           cv.style.cssText = `width:100%;aspect-ratio:4/3;display:block;image-rendering:pixelated;border:1px solid ${pBd};border-radius:${Math.max(0, pRad - 2)}px;`;
           drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, ph);
           const cap = doc.createElement('div');
           cap.style.cssText = `font-size:9px;font-weight:700;margin-top:2px;color:${pBd};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
-          cap.textContent = Array.isArray(ph.dogs) && ph.dogs.length ? ph.dogs.map(x => x.name).join('&') : `${ph.hostName}&${ph.guestName}`;
+          cap.textContent = ph.title || (Array.isArray(ph.dogs) && ph.dogs.length ? ph.dogs.map(x => x.name).join('&') : `${ph.hostName}&${ph.guestName}`);
           card.addEventListener('click', () => openDualPhotoModal(ph));
-          card.append(cv, cap);
+          card.append(delX, cv, cap);
           vbBody.appendChild(card);
         });
         renderPager(visitPhotoPage, totalP, (np) => { visitPhotoPage = np; renderPupVisitPanel(); });
@@ -34365,11 +34630,14 @@
   setInterval(() => {
     if (doc.hidden) return;
     const hostOn = Boolean(activeBubDynMode && puppyBubble && puppyBubble.classList.contains('show'));
-    const guestOn = Boolean(guestBubDynMode && guestPupBubble && guestPupBubble.classList.contains('show'));
-    if (!hostOn && !guestOn) return;
+    const guestBubs = Array.from(root.querySelectorAll('.st-tb-guest-bubble.show[data-bub-dyn]')).filter(el => el.dataset.bubDyn);
+    if (!hostOn && !guestBubs.length) return;
     bubFxTick = (bubFxTick + 1) % 240;
     if (hostOn) drawBubFxToCanvas(root.querySelector('#st-tb-bub-fx'), activeBubDynMode, bubFxTick);
-    if (guestOn) drawBubFxToCanvas(root.querySelector('#st-tb-guest-bub-fx'), guestBubDynMode, bubFxTick);
+    guestBubs.forEach(gb => {
+      const gbf = gb.querySelector('.st-tb-guest-bub-fx');
+      if (gbf) drawBubFxToCanvas(gbf, gb.dataset.bubDyn, bubFxTick);
+    });
   }, 150);
 
   // 高颜值像素艺术气泡动态渲染引擎（15 款扭蛋/秘境/生日专属原创，气泡与扭蛋预览共用）
