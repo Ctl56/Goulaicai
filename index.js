@@ -5857,11 +5857,11 @@
       position: absolute;
       right: 0;
       bottom: 0;
-      width: 18px;
-      height: 18px;
+      width: 26px;
+      height: 26px;
       cursor: nwse-resize;
       touch-action: none;
-      z-index: 12;
+      z-index: 45;
     }
     .st-px-resize-br::after {
       content: "";
@@ -21417,8 +21417,9 @@
   const bindPupBagDragHandle = (handleEl) => {
     handleEl.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 && e.pointerType === 'mouse') return;
-      if (e.target.closest('button')) return;
-      handleEl.setPointerCapture(e.pointerId);
+      if (e.target.closest('button, input, textarea, select')) return;
+      e.preventDefault();
+      try { handleEl.setPointerCapture(e.pointerId); } catch (_) {}
       const rect = pupBagEl.getBoundingClientRect();
       pupBagDrag = {
         id: e.pointerId,
@@ -21433,17 +21434,17 @@
       handleEl.classList.add('dragging');
     });
 
-    handleEl.addEventListener('pointermove', (e) => {
-      if (!pupBagDrag || pupBagDrag.id !== e.pointerId) return;
+    const onDragMove = (e) => {
+      if (!pupBagDrag || pupBagDrag.handleEl !== handleEl || pupBagDrag.id !== e.pointerId) return;
       const maxTop = Math.max(BAG_SAFE_TOP, win.innerHeight - pupBagDrag.h - 12);
       const left = clamp(pupBagDrag.origLeft + (e.clientX - pupBagDrag.startX), 8, Math.max(8, win.innerWidth - pupBagDrag.w - 8));
       const top = clamp(pupBagDrag.origTop + (e.clientY - pupBagDrag.startY), BAG_SAFE_TOP, maxTop);
       pupBagEl.style.left = `${Math.round(left)}px`;
       pupBagEl.style.top = `${Math.round(top)}px`;
-    });
+    };
 
     const endDrag = (e) => {
-      if (!pupBagDrag || pupBagDrag.id !== e.pointerId) return;
+      if (!pupBagDrag || pupBagDrag.handleEl !== handleEl || pupBagDrag.id !== e.pointerId) return;
       const rect = pupBagEl.getBoundingClientRect();
       const maxTop = Math.max(BAG_SAFE_TOP, win.innerHeight - rect.height - 12);
       config.pupBagX = clamp(Math.round(rect.left), 8, Math.max(8, win.innerWidth - rect.width - 8));
@@ -21455,8 +21456,9 @@
       try { pupBagDrag.handleEl.releasePointerCapture(e.pointerId); } catch (_) {}
       pupBagDrag = null;
     };
-    handleEl.addEventListener('pointerup', endDrag);
-    handleEl.addEventListener('pointercancel', endDrag);
+    win.addEventListener('pointermove', onDragMove);
+    win.addEventListener('pointerup', endDrag);
+    win.addEventListener('pointercancel', endDrag);
   };
 
   bindPupBagDragHandle(pupBagHead);
@@ -21474,11 +21476,11 @@
     if (e.button !== 0 && e.pointerType === 'mouse') return;
     e.preventDefault();
     e.stopPropagation();
-    pupBagResizeHandle.setPointerCapture(e.pointerId);
+    try { pupBagResizeHandle.setPointerCapture(e.pointerId); } catch (_) {}
     const rect = pupBagEl.getBoundingClientRect();
     pupBagResize = { id: e.pointerId, startX: e.clientX, startY: e.clientY, origW: rect.width, origH: rect.height, origLeft: rect.left, origTop: rect.top };
   });
-  pupBagResizeHandle.addEventListener('pointermove', (e) => {
+  win.addEventListener('pointermove', (e) => {
     if (!pupBagResize || pupBagResize.id !== e.pointerId) return;
     const maxW = Math.max(268, win.innerWidth - pupBagResize.origLeft - 8);
     const maxH = Math.max(260, win.innerHeight - pupBagResize.origTop - 10);
@@ -21497,8 +21499,8 @@
     try { pupBagResizeHandle.releasePointerCapture(e.pointerId); } catch (_) {}
     pupBagResize = null;
   };
-  pupBagResizeHandle.addEventListener('pointerup', endPupBagResize);
-  pupBagResizeHandle.addEventListener('pointercancel', endPupBagResize);
+  win.addEventListener('pointerup', endPupBagResize);
+  win.addEventListener('pointercancel', endPupBagResize);
   pupBagResizeHandle.addEventListener('dblclick', resetPupBagCenter);
   pupBagRescueBtn.addEventListener('click', () => {
     if (!config.puppyEnabled) {
@@ -32319,16 +32321,33 @@
 
       if (Array.isArray(data.acks) && data.acks.length) {
         const latestAck = data.acks[data.acks.length - 1];
-        const summaryLine = latestAck.summary ? `收下内容：${latestAck.summary}` : '已开心收下你的礼物';
+        const who = latestAck.fromName || '好友';
+        const sum = String(latestAck.summary || '');
+        let ackTitle = `「${who}」收下礼物啦！`;
+        let ackDesc = sum ? `收下内容：${sum}` : '已开心收下你的礼物';
+        let pupBub = `${who}收下我们的礼物啦~`;
+        if (sum === '隔空贴贴') {
+          ackTitle = `「${who}」收到你的隔空贴贴啦！`;
+          ackDesc = `${who} 的小狗开心地回抱了你一下~`;
+          pupBub = `${who}隔空回抱我们啦，好暖呼呼~`;
+        } else if (sum === '跨屏浇花') {
+          ackTitle = `「${who}」收到你的浇花啦！`;
+          ackDesc = `对方花园的小花已经喝饱水长大啦~`;
+          pupBub = `${who}谢谢我们帮忙浇花啦~`;
+        } else if (sum === '新留言纸条') {
+          ackTitle = `「${who}」收到你的小纸条啦！`;
+          ackDesc = `你的纸条已经贴上对方的桌面像素留言板~`;
+          pupBub = `${who}的留言板收到我们的纸条啦~`;
+        }
         openPixelPupNoticeModal(
-          `「${latestAck.fromName || '朋友'}」收下礼物啦！`,
-          summaryLine,
+          ackTitle,
+          ackDesc,
           '太好啦',
-          `对方留言：「${latestAck.thankMsg || '谢谢你，超喜欢~'}」`
+          latestAck.thankMsg ? `对方回复：「${latestAck.thankMsg}」` : ''
         );
         if (config.puppyEnabled) {
-          setPuppyState('happy', 110);
-          showPuppyBubble(`${latestAck.fromName || '朋友'}收下我们的礼物啦~`, 3000);
+          setPuppyState('happy', 130);
+          showPuppyBubble(pupBub, 3200);
         }
       }
 
@@ -32414,12 +32433,22 @@
             continue;
           }
 
-          // 隔空贴贴互动消息
+          // 隔空贴贴互动消息（大幅度转圈跳动+连串爱心特效）
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__poke__') {
             if (config.puppyEnabled) {
-              setPuppyState('happy', 110);
-              for (let i = 0; i < 3; i++) spawnPupFx('heart', 8 + i * 3, 5);
-              showPuppyBubble(`「${g.fromName || '朋友'}」隔空过来贴贴抱抱啦~`, 3800);
+              setPuppyState('happy', 190);
+              for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                  spawnPupFx(i % 2 === 0 ? 'heart' : 'sparkle', 6 + (i % 4) * 4, 4 + (i % 2) * 2);
+                }, i * 240);
+              }
+              showPuppyBubble(`「${g.fromName || '好友'}」隔空冲过来大大贴贴抱抱啦！`, 4800);
+              const gMatch = getGuestList().find(x => x && ((g.fromId && x.cloudId === g.fromId) || (g.fromName && x.name === g.fromName)));
+              if (gMatch) {
+                const rtM = guestRuntimes.get(gMatch.id);
+                if (rtM) { rtM.state = 'happy'; rtM.timer = 170; }
+                showGuestBubbleById(gMatch.id, '隔空大大抱住你贴贴！', 3800);
+              }
             }
             fetch(`${baseUrl}/ack`, {
               method: 'POST',
@@ -32586,11 +32615,15 @@
     mask.onclick = (e) => { if (e.target === mask) closeCsg(); };
     mask.querySelector('#st-csg-close')?.addEventListener('click', closeCsg);
     mask.querySelector('#st-csg-cancel')?.addEventListener('click', closeCsg);
-    mask.querySelector('#st-csg-send')?.addEventListener('click', async () => {
+    let csgSending = false;
+    mask.querySelector('#st-csg-send')?.addEventListener('click', async (ev) => {
+      if (csgSending) return;
+      const sBtn = ev.currentTarget;
       const rp = Math.max(0, Math.min(Math.floor(config.puppyCoins || 0), Math.floor(Number(mask.querySelector('#st-csg-rp')?.value || 0) || 0)));
       const msgTxt = String(mask.querySelector('#st-csg-msg')?.value || '').trim() || '给你带了份小礼物，快拆开看看~';
       const gifts = Array.from(selectedMap.values());
       if (!gifts.length && rp <= 0) { openPixelPupNoticeModal('提示', '请先选至少一件礼物或填一点红包币~'); return; }
+      csgSending = true; if (sBtn) { sBtn.disabled = true; sBtn.textContent = '寄出中…'; }
 
       // 扣除物品与金币，若发送失败会回滚
       gifts.forEach(g => {
@@ -32639,6 +32672,8 @@
         });
         if (rp > 0) config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
         openPixelPupNoticeModal('发送失败', '网络好像开小差了，送出的物品与小狗币已自动退回背包。');
+      } finally {
+        csgSending = false; if (sBtn) { sBtn.disabled = false; sBtn.textContent = '确认送出'; }
       }
     });
     mask.style.display = 'flex';
@@ -32740,21 +32775,21 @@
       cv.style.cssText = 'width:48px;height:48px;display:block;image-rendering:pixelated;filter:drop-shadow(2px 3px 0 rgba(59,42,34,0.3));';
       const c = cv.getContext('2d');
       c.imageSmoothingEnabled = false;
-      // 绘制像素软木留言板 + 黄色小纸条 + 红色图钉
-      c.fillStyle = '#8c5636'; c.fillRect(4, 6, 40, 34);
-      c.fillStyle = '#d9a46c'; c.fillRect(7, 9, 34, 28);
-      c.fillStyle = '#c48d56';
-      for (let i = 0; i < 6; i++) c.fillRect(10 + i * 5, 11 + (i % 2) * 18, 2, 2);
-      // 黄色便利贴
-      c.fillStyle = '#b88f44'; c.fillRect(14, 15, 22, 19);
-      c.fillStyle = '#fff5b8'; c.fillRect(13, 14, 22, 18);
-      c.fillStyle = '#c9a66b';
+      // 跟随背包主题色绘制像素留言板（不再使用黄色）
+      const bagCsNb = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+      const nbBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCsNb?.borderTopColor)) || '#937eb8';
+      const nbBg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-bg') || bagCsNb?.backgroundColor)) || '#f3eeff';
+      const nbSoft = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-bg-soft') || '#e8dff7')) || '#e8dff7';
+      c.fillStyle = nbBd; c.fillRect(4, 6, 40, 34);
+      c.fillStyle = nbSoft; c.fillRect(7, 9, 34, 28);
+      c.fillStyle = nbBd; c.fillRect(14, 15, 22, 19);
+      c.fillStyle = nbBg; c.fillRect(13, 14, 22, 18);
+      c.fillStyle = nbBd;
       c.fillRect(16, 19, 14, 2);
       c.fillRect(16, 23, 16, 2);
       c.fillRect(16, 27, 10, 2);
-      // 红色小图钉
-      c.fillStyle = '#e04854'; c.fillRect(22, 11, 5, 5);
-      c.fillStyle = '#ffb3b8'; c.fillRect(23, 12, 2, 2);
+      c.fillStyle = '#e05878'; c.fillRect(22, 11, 5, 5);
+      c.fillStyle = '#ffc4d2'; c.fillRect(23, 12, 2, 2);
       deskNoteboardEl.appendChild(cv);
       const badge = doc.createElement('span');
       badge.id = 'st-tb-nb-badge';
@@ -32809,18 +32844,28 @@
     if (!config.puppyNotes.length) {
       listEl.innerHTML = '<div style="font-size:11px;opacity:0.75;padding:12px 4px;text-align:center;">留言板还是空的，快去给好友留张小纸条吧~</div>';
     } else {
-      config.puppyNotes.slice(0, 30).forEach(n => {
+      const pxSoft = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-bg-soft') || bagCs?.getPropertyValue('--px-bg-soft'))) || '#f3eeff';
+      const pxCard = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-card') || bagCs?.getPropertyValue('--px-card'))) || '#ffffff';
+      config.puppyNotes.slice(0, 40).forEach(n => {
         const card = doc.createElement('div');
-        card.style.cssText = `padding:7px 8px;background:${n.mine ? '#f6f2ff' : '#fffbe0'};border:1.5px solid ${pxBd};box-sizing:border-box;`;
+        card.style.cssText = `padding:7px 8px;background:${n.mine ? pxSoft : pxCard};border:1.5px solid ${pxBd};box-sizing:border-box;`;
         card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;opacity:0.78;margin-bottom:3px;">
           <span style="font-weight:700;">${escapeHtmlSimple(n.mine ? ('我 → ' + (n.toName || '好友')) : (n.fromName || '好友'))}</span>
           <span>${formatCloudAgo(n.ts)}</span>
         </div>
         <div style="font-size:11px;line-height:1.45;word-break:break-word;">${escapeHtmlSimple(n.text)}</div>
-        ${(!n.mine && n.fromId) ? `<div style="display:flex;justify-content:flex-end;margin-top:4px;"><button type="button" class="st-px-btn st-nb-reply" style="height:20px;padding:0 7px;font-size:9.5px;">回纸条</button></div>` : ''}`;
+        <div style="display:flex;justify-content:flex-end;gap:4px;margin-top:5px;">
+          ${(!n.mine && n.fromId) ? `<button type="button" class="st-px-btn st-nb-reply" style="height:20px;padding:0 7px;font-size:9.5px;">回纸条</button>` : ''}
+          <button type="button" class="st-px-btn st-nb-del" style="height:20px;padding:0 7px;font-size:9.5px;color:#a94442;">删除</button>
+        </div>`;
         card.querySelector('.st-nb-reply')?.addEventListener('click', () => {
           mask.style.display = 'none';
           openCloudWriteNoteModal(n.fromId, n.fromName || '好友');
+        });
+        card.querySelector('.st-nb-del')?.addEventListener('click', () => {
+          config.puppyNotes = (config.puppyNotes || []).filter(x => x && x.id !== n.id);
+          saveConfig();
+          openCloudNoteboardModal();
         });
         listEl.appendChild(card);
       });
@@ -32863,9 +32908,13 @@
     mask.onclick = (e) => { if (e.target === mask) closeWn(); };
     mask.querySelector('#st-wn-close')?.addEventListener('click', closeWn);
     mask.querySelector('#st-wn-cancel')?.addEventListener('click', closeWn);
-    mask.querySelector('#st-wn-send')?.addEventListener('click', async () => {
+    let wnSending = false;
+    mask.querySelector('#st-wn-send')?.addEventListener('click', async (ev) => {
+      if (wnSending) return;
+      const btn = ev.currentTarget;
       const txt = String(mask.querySelector('#st-wn-ta')?.value || '').trim();
       if (!txt) { openPixelPupNoticeModal('提示', '请先写一点留言内容再发送哦~'); return; }
+      wnSending = true; if (btn) { btn.disabled = true; btn.textContent = '发送中…'; }
       const baseUrl = getCloudBaseUrl();
       try {
         const resp = await fetch(`${baseUrl}/gift`, {
@@ -32892,12 +32941,16 @@
         openPixelPupNoticeModal('纸条已贴好！', `已把小纸条贴到「${toName}」的桌面像素留言板上啦~`, '好哒');
       } catch (_) {
         openPixelPupNoticeModal('发送失败', '网络好像开小差了，请稍后再试一次~');
+      } finally {
+        wnSending = false; if (btn) { btn.disabled = false; btn.textContent = '贴上留言板'; }
       }
     });
     mask.style.display = 'flex';
   };
 
+  let cloudWaterBusy = false;
   const sendCloudWaterToFriend = async (toCloudId, toName, gardenInfo) => {
+    if (cloudWaterBusy) return;
     if (!toCloudId) {
       openPixelPupNoticeModal('暂未绑定好友', '请先通过好友码添加对方为好友后再帮忙浇花~');
       return;
@@ -32908,6 +32961,7 @@
       openPixelPupNoticeModal('暂时不能浇花', why);
       return;
     }
+    cloudWaterBusy = true;
     const baseUrl = getCloudBaseUrl();
     try {
       const resp = await fetch(`${baseUrl}/gift`, {
@@ -32930,7 +32984,7 @@
       openPixelPupNoticeModal('浇花成功！', `已跨屏帮「${toName}」的「${g.flowerName || '花苗'}」浇了一壶水，对方上线就能看到花朵长高啦~`, '真棒');
     } catch (_) {
       openPixelPupNoticeModal('浇花失败', '网络好像开小差了，请稍后再试一次~');
-    }
+    } finally { cloudWaterBusy = false; }
   };
 
   const inviteFriendToDesktop = (fr) => {
@@ -33031,7 +33085,9 @@
     }
   };
 
+  let cloudPokeBusy = false;
   const sendCloudRemotePoke = async (guestOrCloudId, fallbackName = '') => {
+    if (cloudPokeBusy) return;
     const guest = getGuestList().find(g => g.id === guestOrCloudId || g.cloudId === guestOrCloudId);
     const friend = getFriendList().find(f => f.cloudId === guestOrCloudId);
     const targetCloudId = guest?.cloudId || friend?.cloudId || (String(guestOrCloudId || '').startsWith('pup_') ? guestOrCloudId : '');
@@ -33040,6 +33096,7 @@
       openPixelPupNoticeModal('暂未绑定云端', '请先通过好友码添加对方为云端好友即可隔空贴贴~');
       return;
     }
+    cloudPokeBusy = true;
     const baseUrl = getCloudBaseUrl();
     try {
       const resp = await fetch(`${baseUrl}/gift`, {
@@ -33063,7 +33120,7 @@
       openPixelPupNoticeModal('隔空贴贴已送达！', `已向「${targetName}」的桌面小狗送出一个隔空贴贴，对方打开就能看到小狗开心跳起~`, '好哒');
     } catch (_) {
       openPixelPupNoticeModal('发送失败', '网络开小差了，请稍后再试一次~');
-    }
+    } finally { cloudPokeBusy = false; }
   };
 
   setTimeout(() => {
@@ -33232,96 +33289,177 @@
   let visitStampPage = 1;
   let visitPhotoPage = 1;
   let visitPhotoFilter = 'all';
+  const buildFriendCardEl = (fr, onAfterChange) => {
+    const curGuests = getGuestList();
+    const gMatch = curGuests.find(g => g.cloudId === fr.cloudId || g.name === fr.name);
+    const isOnDesk = Boolean(gMatch && gMatch.onDesktop !== false);
+    const gd = fr.garden || { stage: 0, flowerId: '', flowerName: '' };
+    const canWater = Boolean(gd.flowerId && gd.stage > 0 && gd.stage < 3);
+    const gardenHint = canWater ? `花园：${gd.flowerName || '花苗'}成长中` : (gd.stage >= 3 && gd.flowerName ? `花园：${gd.flowerName}已盛开` : '花园：暂未种花');
+
+    const card = doc.createElement('div');
+    card.style.cssText = 'display:flex;flex-direction:column;gap:5px;padding:6px;background:var(--px-card,#fff);border:1px solid var(--px-border,#bfa4ae);box-sizing:border-box;';
+    const topRow = doc.createElement('div');
+    topRow.style.cssText = 'display:flex;align-items:center;gap:7px;';
+    topRow.appendChild(makeFriendAvatarCanvas(fr.look));
+    const info = doc.createElement('div');
+    info.style.cssText = 'flex:1;min-width:0;';
+    info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+        <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+          <span style="font-size:9px;opacity:0.65;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
+          <button type="button" class="st-px-btn${fr.starred ? ' active care' : ''} st-fr-star" style="height:19px;padding:0 5px;font-size:9px;">${fr.starred ? '已星标' : '星标'}</button>
+        </div>
+      </div>
+      <div style="font-size:9.5px;opacity:0.78;margin-top:2px;">${escapeHtmlSimple(gardenHint)}</div>`;
+    topRow.appendChild(info);
+    card.appendChild(topRow);
+
+    const actRow = doc.createElement('div');
+    actRow.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:4px;';
+    actRow.innerHTML = `<button type="button" class="st-px-btn${isOnDesk ? ' active' : ''} st-fr-desk" style="height:21px;font-size:9.5px;">${isOnDesk ? '送回家' : '请来桌面'}</button>
+      <button type="button" class="st-px-btn${canWater ? ' active' : ''} st-fr-water" style="height:21px;font-size:9.5px;${canWater ? '' : 'opacity:0.5;'}">帮TA浇花</button>
+      <button type="button" class="st-px-btn st-fr-note" style="height:21px;font-size:9.5px;">留纸条</button>
+      <button type="button" class="st-px-btn care st-fr-gift" style="height:21px;font-size:9.5px;">送礼</button>
+      <button type="button" class="st-px-btn st-fr-poke" style="height:21px;font-size:9.5px;">贴贴</button>
+      <button type="button" class="st-px-btn st-fr-del" style="height:21px;font-size:9.5px;color:#a94442;">删好友</button>`;
+    info.querySelector('.st-fr-star')?.addEventListener('click', () => {
+      fr.starred = !fr.starred;
+      saveConfig();
+      if (typeof onAfterChange === 'function') onAfterChange();
+      renderPupVisitPanel();
+    });
+    actRow.querySelector('.st-fr-desk')?.addEventListener('click', () => {
+      inviteFriendToDesktop(fr);
+      if (typeof onAfterChange === 'function') onAfterChange();
+    });
+    actRow.querySelector('.st-fr-water')?.addEventListener('click', () => sendCloudWaterToFriend(fr.cloudId, fr.name, fr.garden));
+    actRow.querySelector('.st-fr-note')?.addEventListener('click', () => openCloudWriteNoteModal(fr.cloudId, fr.name));
+    actRow.querySelector('.st-fr-gift')?.addEventListener('click', () => openCloudSendGiftModal(fr.cloudId));
+    actRow.querySelector('.st-fr-poke')?.addEventListener('click', () => sendCloudRemotePoke(fr.cloudId, fr.name));
+    actRow.querySelector('.st-fr-del')?.addEventListener('click', () => {
+      openGuardConfirm(
+        `删除好友「${fr.name}」？`,
+        '删除后将从云端好友列表移除，但不会影响你已收到的礼物和相册记录。',
+        () => {
+          config.puppyFriends = getFriendList().filter(x => x.cloudId !== fr.cloudId);
+          saveConfig();
+          if (typeof onAfterChange === 'function') onAfterChange();
+          renderPupVisitPanel();
+        },
+        '确认删除',
+        true
+      );
+    });
+    card.appendChild(actRow);
+    return card;
+  };
+
+  let addFriendBusy = false;
+  const openFriendsListModal = () => {
+    let mask = root.querySelector('#st-tb-friends-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-friends-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9994;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const myFid = ensureMyCloudId();
+
+    mask.innerHTML = `<div style="width:320px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12.5px;font-weight:700;">云端好友列表</span>
+        <button type="button" id="st-flm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:5px 7px;background:var(--px-card,#fff);border:1px solid ${pxBd};margin-bottom:7px;box-sizing:border-box;">
+        <span style="font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的好友码：<b>${escapeHtmlSimple(myFid)}</b></span>
+        <button type="button" id="st-flm-copy" class="st-px-btn active" style="height:22px;padding:0 8px;font-size:10px;flex-shrink:0;">复制</button>
+      </div>
+      <div style="display:flex;align-items:stretch;gap:5px;margin-bottom:8px;">
+        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:28px;line-height:28px;padding:0 7px;font-size:10.5px;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
+        <button type="button" id="st-flm-add" class="st-px-btn care" style="height:28px;padding:0 10px;font-size:10.5px;flex-shrink:0;box-sizing:border-box;margin:0;">加好友</button>
+      </div>
+      <div id="st-flm-list" style="display:flex;flex-direction:column;gap:6px;max-height:228px;overflow-y:auto;margin-bottom:9px;box-sizing:border-box;"></div>
+      <button type="button" id="st-flm-ok" class="st-px-btn" style="width:100%;">关闭</button>
+    </div>`;
+
+    const closeFlm = () => { mask.style.display = 'none'; };
+    mask.onclick = (e) => { if (e.target === mask) closeFlm(); };
+    mask.querySelector('#st-flm-close')?.addEventListener('click', closeFlm);
+    mask.querySelector('#st-flm-ok')?.addEventListener('click', closeFlm);
+    mask.querySelector('#st-flm-copy')?.addEventListener('click', () => {
+      copyVisitCodeReliable(myFid);
+      openPixelPupNoticeModal('已复制好友码', `你的专属好友码「${myFid}」已复制好啦，直接发给朋友添加即可~`, '好哒');
+    });
+    mask.querySelector('#st-flm-add')?.addEventListener('click', async (ev) => {
+      if (addFriendBusy) return;
+      const inp = mask.querySelector('#st-flm-in');
+      const btn = ev.currentTarget;
+      addFriendBusy = true;
+      if (btn) { btn.disabled = true; btn.textContent = '添加中…'; }
+      try {
+        const ok = await addCloudFriendByCode(inp?.value || '');
+        if (ok) openFriendsListModal();
+      } finally {
+        addFriendBusy = false;
+        if (btn) { btn.disabled = false; btn.textContent = '加好友'; }
+      }
+    });
+
+    const listEl = mask.querySelector('#st-flm-list');
+    const friends = [...getFriendList()].sort((a, b) => (b.starred ? 1 : 0) - (a.starred ? 1 : 0));
+    if (!friends.length) {
+      listEl.innerHTML = '<div style="font-size:11px;opacity:0.75;padding:14px 6px;text-align:center;">还没有添加好友，把上方好友码发给朋友互相添加吧~</div>';
+    } else {
+      friends.forEach(fr => listEl.appendChild(buildFriendCardEl(fr, openFriendsListModal)));
+    }
+    mask.style.display = 'flex';
+  };
+
   function renderPupVisitPanel() {
     if (!advVisitView) return;
     advVisitView.innerHTML = '';
 
-    // 1) 云端好友系统：我的短好友码 + 添加好友 + 留言板入口
+    // 1) 云端好友系统：好友列表弹窗入口 + 留言板 + 仅展示星标置顶好友（2个高度可滚动）
     const myFid = ensureMyCloudId();
     const unreadCnt = getUnreadNotes().length;
+    const allFriends = getFriendList();
+    const starredFriends = allFriends.filter(f => f && f.starred);
     const friendBox = doc.createElement('div');
     friendBox.className = 'st-px-adv-card';
     friendBox.style.marginBottom = '6px';
     friendBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:5px;">
-        <span style="font-weight:700;">云端好友</span>
-        <button type="button" id="st-fr-open-nb" class="st-px-btn${unreadCnt ? ' active care' : ''}" style="height:20px;padding:0 6px;font-size:9.5px;">留言板${unreadCnt ? ` (${unreadCnt})` : ''}</button>
+        <span style="font-weight:700;">星标好友 (${starredFriends.length})</span>
+        <div style="display:flex;gap:4px;">
+          <button type="button" id="st-fr-open-list" class="st-px-btn active" style="height:21px;padding:0 7px;font-size:9.5px;">好友列表 (${allFriends.length})</button>
+          <button type="button" id="st-fr-open-nb" class="st-px-btn${unreadCnt ? ' active care' : ''}" style="height:21px;padding:0 7px;font-size:9.5px;">留言板${unreadCnt ? ` (${unreadCnt})` : ''}</button>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:4px 6px;background:#fff;border:1px solid var(--px-border,#bfa4ae);margin-bottom:5px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:4px 6px;background:var(--px-card,#fff);border:1px solid var(--px-border,#bfa4ae);margin-bottom:5px;">
         <span style="font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的好友码：<b>${escapeHtmlSimple(myFid)}</b></span>
-        <button type="button" id="st-fr-copy-id" class="st-px-btn active" style="height:20px;padding:0 6px;font-size:9.5px;flex-shrink:0;">复制</button>
-      </div>
-      <div style="display:flex;gap:4px;">
-        <input type="text" id="st-fr-add-in" class="st-px-in" style="flex:1;min-width:0;font-size:10.5px;" placeholder="输入朋友的好友码（pup_...）" />
-        <button type="button" id="st-fr-add-btn" class="st-px-btn care" style="flex-shrink:0;padding:0 8px;">加好友</button>
+        <button type="button" id="st-fr-copy-id" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9.5px;flex-shrink:0;">复制</button>
       </div>`;
+    friendBox.querySelector('#st-fr-open-list')?.addEventListener('click', openFriendsListModal);
     friendBox.querySelector('#st-fr-open-nb')?.addEventListener('click', openCloudNoteboardModal);
     friendBox.querySelector('#st-fr-copy-id')?.addEventListener('click', () => {
       copyVisitCodeReliable(myFid);
       openPixelPupNoticeModal('已复制好友码', `你的专属好友码「${myFid}」已复制好啦，直接发给朋友添加即可~`, '好哒');
     });
-    friendBox.querySelector('#st-fr-add-btn')?.addEventListener('click', async () => {
-      const inp = friendBox.querySelector('#st-fr-add-in');
-      const ok = await addCloudFriendByCode(inp?.value || '');
-      if (ok && inp) inp.value = '';
-    });
 
-    const friends = getFriendList();
-    if (friends.length) {
-      const fListWrap = doc.createElement('div');
-      fListWrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;margin-top:6px;';
-      const curGuests = getGuestList();
-      friends.forEach(fr => {
-        const gMatch = curGuests.find(g => g.cloudId === fr.cloudId || g.name === fr.name);
-        const isOnDesk = Boolean(gMatch && gMatch.onDesktop !== false);
-        const gd = fr.garden || { stage: 0, flowerId: '', flowerName: '' };
-        const canWater = Boolean(gd.flowerId && gd.stage > 0 && gd.stage < 3);
-        const gardenHint = canWater ? `花园：${gd.flowerName || '花苗'}成长中` : (gd.stage >= 3 && gd.flowerName ? `花园：${gd.flowerName}已盛开` : '花园：暂未种花');
-
-        const card = doc.createElement('div');
-        card.style.cssText = 'display:flex;flex-direction:column;gap:5px;padding:6px;background:#fff;border:1px solid var(--px-border,#bfa4ae);';
-        const topRow = doc.createElement('div');
-        topRow.style.cssText = 'display:flex;align-items:center;gap:7px;';
-        topRow.appendChild(makeFriendAvatarCanvas(fr.look));
-        const info = doc.createElement('div');
-        info.style.cssText = 'flex:1;min-width:0;';
-        info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
-            <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
-            <span style="font-size:9px;opacity:0.65;flex-shrink:0;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
-          </div>
-          <div style="font-size:9.5px;opacity:0.78;margin-top:2px;">${escapeHtmlSimple(gardenHint)}</div>`;
-        topRow.appendChild(info);
-        card.appendChild(topRow);
-
-        const actRow = doc.createElement('div');
-        actRow.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:4px;';
-        actRow.innerHTML = `<button type="button" class="st-px-btn${isOnDesk ? ' active' : ''} st-fr-desk" style="height:21px;font-size:9.5px;">${isOnDesk ? '送回家' : '请来桌面'}</button>
-          <button type="button" class="st-px-btn${canWater ? ' active' : ''} st-fr-water" style="height:21px;font-size:9.5px;${canWater ? '' : 'opacity:0.5;'}">帮TA浇花</button>
-          <button type="button" class="st-px-btn st-fr-note" style="height:21px;font-size:9.5px;">留纸条</button>
-          <button type="button" class="st-px-btn care st-fr-gift" style="height:21px;font-size:9.5px;">送礼</button>
-          <button type="button" class="st-px-btn st-fr-poke" style="height:21px;font-size:9.5px;">贴贴</button>
-          <button type="button" class="st-px-btn st-fr-del" style="height:21px;font-size:9.5px;color:#a94442;">删好友</button>`;
-        actRow.querySelector('.st-fr-desk')?.addEventListener('click', () => inviteFriendToDesktop(fr));
-        actRow.querySelector('.st-fr-water')?.addEventListener('click', () => sendCloudWaterToFriend(fr.cloudId, fr.name, fr.garden));
-        actRow.querySelector('.st-fr-note')?.addEventListener('click', () => openCloudWriteNoteModal(fr.cloudId, fr.name));
-        actRow.querySelector('.st-fr-gift')?.addEventListener('click', () => openCloudSendGiftModal(fr.cloudId));
-        actRow.querySelector('.st-fr-poke')?.addEventListener('click', () => sendCloudRemotePoke(fr.cloudId, fr.name));
-        actRow.querySelector('.st-fr-del')?.addEventListener('click', () => {
-          openGuardConfirm(
-            `删除好友「${fr.name}」？`,
-            '删除后将从云端好友列表移除，但不会影响你已收到的礼物和相册记录。',
-            () => {
-              config.puppyFriends = getFriendList().filter(x => x.cloudId !== fr.cloudId);
-              saveConfig();
-              renderPupVisitPanel();
-            },
-            '确认删除',
-            true
-          );
-        });
-        card.appendChild(actRow);
-        fListWrap.appendChild(card);
-      });
-      friendBox.appendChild(fListWrap);
+    if (starredFriends.length) {
+      const starListWrap = doc.createElement('div');
+      starListWrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;max-height:212px;overflow-y:auto;box-sizing:border-box;';
+      starredFriends.forEach(fr => starListWrap.appendChild(buildFriendCardEl(fr)));
+      friendBox.appendChild(starListWrap);
+    } else {
+      const emptyTip = doc.createElement('div');
+      emptyTip.style.cssText = 'font-size:10px;opacity:0.75;padding:6px 4px;text-align:center;';
+      emptyTip.textContent = allFriends.length ? '点击右上角「好友列表」给好友点星标，星标好友就会固定展示在这里~' : '点击右上角「好友列表」添加好友吧~';
+      friendBox.appendChild(emptyTip);
     }
     advVisitView.appendChild(friendBox);
 
@@ -33392,247 +33530,6 @@
       });
       advVisitView.appendChild(gWrap);
     }
-
-    const outBox = doc.createElement('div');
-    outBox.className = 'st-px-adv-card';
-    outBox.style.marginBottom = '6px';
-    const giftables = getAllGiftableItems();
-    const totalPicked = Object.values(guestDraftGifts).reduce((a, b) => a + b, 0);
-    const curCoins = Math.max(0, Math.floor(config.puppyCoins || 0));
-    outBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">寄出串门名片（可选带礼物/扭蛋券：已选 ${totalPicked}/5）</div>`;
-
-    const gGrid = doc.createElement('div');
-    gGrid.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;max-height:76px;overflow-y:auto;margin-bottom:5px;';
-    if (!giftables.length) {
-      gGrid.innerHTML = '<div style="font-size:10px;color:#7a6258;">背包暂无道具/零食/扭蛋券/花朵/料理可带，可直接空手或塞红包~</div>';
-    } else {
-      giftables.forEach(item => {
-        const key = `${item.kind}:${item.id}`;
-        const picked = guestDraftGifts[key] || 0;
-        const b = doc.createElement('button');
-        b.type = 'button';
-        b.className = `st-px-btn${picked > 0 ? ' active' : ''}`;
-        b.style.cssText = 'height:22px;padding:0 6px;font-size:10px;';
-        b.textContent = `${item.name}(${item.qty})${picked > 0 ? ` ×${picked}` : ''}`;
-        b.addEventListener('click', () => {
-          const curTotal = Object.values(guestDraftGifts).reduce((a, b) => a + b, 0);
-          if (picked > 0 && (picked >= item.qty || curTotal >= 5)) delete guestDraftGifts[key];
-          else if (curTotal < 5 && picked < item.qty) guestDraftGifts[key] = picked + 1;
-          else delete guestDraftGifts[key];
-          renderPupVisitPanel();
-        });
-        gGrid.appendChild(b);
-      });
-    }
-    outBox.appendChild(gGrid);
-
-    const rpRow = doc.createElement('div');
-    rpRow.style.cssText = 'display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px;';
-    rpRow.innerHTML = `<span style="font-weight:700;color:#a82e42;">塞红包(币):</span><input type="number" id="st-pv-rp" min="0" max="${Math.min(9999, curCoins)}" value="0" style="width:68px;height:22px;font-size:10px;border:1px solid var(--px-border,#bfa4ae);padding:1px 4px;box-sizing:border-box;" /><span style="color:#7a6258;">当前余额 ${curCoins} 币</span>`;
-    outBox.appendChild(rpRow);
-
-    const msgInp = doc.createElement('input');
-    msgInp.type = 'text';
-    msgInp.className = 'st-tb-input';
-    msgInp.placeholder = '写句串门问候（默认：带了点小礼物来找你玩~）';
-    msgInp.style.cssText = 'width:100%;margin-bottom:5px;font-size:10px;padding:4px 6px;box-sizing:border-box;';
-    const genBtn = doc.createElement('button');
-    genBtn.type = 'button';
-    genBtn.className = 'st-px-btn care';
-    genBtn.style.width = '100%';
-    genBtn.textContent = totalPicked > 0 ? `打包 ${totalPicked} 件礼物并生成短名片码` : '生成串门短名片码';
-
-    const codeRow = doc.createElement('div');
-    codeRow.style.cssText = 'display:flex;gap:4px;margin-top:5px;align-items:center;';
-    const codeOut = doc.createElement('input');
-    codeOut.type = 'text';
-    codeOut.readOnly = true;
-    codeOut.value = lastGeneratedVisitCode || '';
-    codeOut.placeholder = '点上方按钮生成短名片码~';
-    codeOut.style.cssText = 'flex:1;min-width:0;height:24px;font-size:10px;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:2px 5px;background:#fff;';
-    codeOut.addEventListener('click', () => {
-      codeOut.select();
-      if (codeOut.value) { copyVisitCodeReliable(codeOut.value); cmNotify('已复制串门码！'); }
-    });
-    const copyBtn = doc.createElement('button');
-    copyBtn.type = 'button';
-    copyBtn.className = 'st-px-btn active';
-    copyBtn.style.cssText = 'height:24px;padding:0 8px;font-size:10px;flex-shrink:0;';
-    copyBtn.textContent = '一键复制';
-    copyBtn.addEventListener('click', () => {
-      if (!codeOut.value) { cmNotify('请先生成串门名片码'); return; }
-      copyVisitCodeReliable(codeOut.value);
-      cmNotify('已复制串门名片码！');
-    });
-    codeRow.append(codeOut, copyBtn);
-
-    genBtn.addEventListener('click', () => {
-      const rpInp = rpRow.querySelector('#st-pv-rp');
-      const rpVal = Math.max(0, Math.min(curCoins, Math.min(9999, Math.floor(Number(rpInp?.value) || 0))));
-      const gifts = [];
-      let totalQty = 0;
-      const allMap = new Map(giftables.map(it => [`${it.kind}:${it.id}`, it]));
-      for (const [k, qty] of Object.entries(guestDraftGifts)) {
-        const it = allMap.get(k);
-        if (!it || qty <= 0) continue;
-        const take = Math.min(qty, it.qty);
-        totalQty += take;
-        gifts.push({ kind: it.kind, id: it.id, qty: take });
-        if (it.kind === 'gear' || it.kind === 'snack') config.puppyInventory[it.id] = Math.max(0, Math.floor(config.puppyInventory[it.id] || 0) - take);
-        else if (it.kind === 'flower') config.puppyGarden.unlocked[it.id] = Math.max(0, Math.floor(config.puppyGarden.unlocked[it.id] || 0) - take);
-        else if (it.kind === 'dish') config.puppyKitchen.dishes[it.id] = Math.max(0, Math.floor(config.puppyKitchen.dishes[it.id] || 0) - take);
-      }
-      if (rpVal > 0) {
-        config.puppyCoins = Math.max(0, curCoins - rpVal);
-        recordCoinsSpent(rpVal);
-        updatePupStatBars();
-      }
-      if (totalQty >= 5) {
-        config.puppyStats = config.puppyStats || {};
-        config.puppyStats.visitFullGiftSent = (config.puppyStats.visitFullGiftSent || 0) + 1;
-      }
-      const cardCode = encodePupVisitCard(msgInp.value, gifts, rpVal);
-      lastGeneratedVisitCode = cardCode;
-      guestDraftGifts = {};
-      saveConfig();
-      checkPupAchievements();
-      copyVisitCodeReliable(cardCode);
-      cmNotify((gifts.length || rpVal > 0) ? '短名片码已生成并复制，心意已打包！' : '短名片码已生成并复制！');
-      renderPupVisitPanel();
-    });
-    outBox.append(msgInp, genBtn, codeRow);
-    advVisitView.appendChild(outBox);
-
-    const inBox = doc.createElement('div');
-    inBox.className = 'st-px-adv-card';
-    inBox.style.marginBottom = '6px';
-    inBox.innerHTML = `<div style="font-weight:700;margin-bottom:4px;">请朋友来串门 / 拆回礼返程码（支持多只共存）</div>`;
-    const inTa = doc.createElement('textarea');
-    inTa.placeholder = '粘贴 GLC:... 串门码 或 GLCRET:... 返程回礼码';
-    inTa.style.cssText = 'width:100%;height:38px;font-size:9.5px;resize:none;box-sizing:border-box;border:1px solid var(--px-border,#bfa4ae);padding:3px;margin-bottom:5px;';
-    const inBtn = doc.createElement('button');
-    inBtn.type = 'button';
-    inBtn.className = 'st-px-btn active';
-    inBtn.style.width = '100%';
-    inBtn.textContent = '拆开礼物 / 请小狗进桌面';
-    const hashVisitCode = (raw) => {
-      const norm = String(raw || '').replace(/[\s\u200B-\u200D\uFEFF]+/g, '');
-      let h = 2166136261;
-      for (let i = 0; i < norm.length; i++) {
-        h ^= norm.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return 'vc_' + (h >>> 0).toString(36) + '_' + norm.length;
-    };
-    inBtn.addEventListener('click', () => {
-      const parsed = decodePupVisitCard(inTa.value);
-      if (!parsed) { cmNotify('名片码格式不正确'); return; }
-      const hasLoot = (Array.isArray(parsed.gifts) && parsed.gifts.length > 0) || (Number(parsed.redPacket) || 0) > 0;
-      const codeHash = hashVisitCode(inTa.value);
-      if (!Array.isArray(config.puppyUsedVisitCodes)) config.puppyUsedVisitCodes = [];
-      const alreadyRedeemed = hasLoot && config.puppyUsedVisitCodes.includes(codeHash);
-
-      if (parsed.isReturn) {
-        if (alreadyRedeemed) { cmNotify('这个返程码的回礼已经领取过啦，不能重复领取哦~'); return; }
-        const received = grantGiftItems(parsed.gifts);
-        const rp = Math.max(0, Math.floor(Number(parsed.redPacket) || 0));
-        if (rp > 0) {
-          config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
-          config.puppyStats = config.puppyStats || {};
-          config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
-          updatePupStatBars();
-        }
-        if (hasLoot) {
-          config.puppyUsedVisitCodes.unshift(codeHash);
-          if (config.puppyUsedVisitCodes.length > 300) config.puppyUsedVisitCodes.length = 300;
-        }
-        saveConfig();
-        checkPupAchievements();
-        if (config.puppyEnabled) {
-          setPuppyState('happy', 110);
-          showPuppyBubble(`我去 ${parsed.hostName} 家串门回来啦，还带了回礼哦~`, 3000);
-        }
-        openVisitGiftModal(parsed.hostName, parsed.msg, received, rp, true);
-        renderPupVisitPanel();
-        return;
-      }
-
-      const received = alreadyRedeemed ? [] : grantGiftItems(parsed.gifts);
-      const rp = alreadyRedeemed ? 0 : Math.max(0, Math.floor(Number(parsed.redPacket) || 0));
-      if (rp > 0) {
-        config.puppyCoins = Math.floor(config.puppyCoins || 0) + rp;
-        config.puppyStats = config.puppyStats || {};
-        config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + rp;
-        updatePupStatBars();
-      }
-      if (hasLoot && !alreadyRedeemed) {
-        config.puppyUsedVisitCodes.unshift(codeHash);
-        if (config.puppyUsedVisitCodes.length > 300) config.puppyUsedVisitCodes.length = 300;
-      }
-
-      const cleanName = String(parsed.name).slice(0, 14);
-      const curList = getGuestList();
-      let gObj = curList.find(x => x.name === cleanName);
-      if (gObj) {
-        gObj.pers = parsed.pers || 'sleepyhead';
-        gObj.look = parsed.look || {};
-        if (parsed.cloudId) gObj.cloudId = parsed.cloudId;
-        gObj.msg = parsed.msg || '来找你们玩啦~';
-        gObj.onDesktop = true;
-        const rtOld = guestRuntimes.get(gObj.id);
-        if (rtOld) { rtOld.lastRenderKey = ''; rtOld.lastBubbleSkin = ''; drawSingleGuestScene(gObj, rtOld); }
-      } else {
-        if (curList.length >= 10) { cmNotify('桌面同时最多招待 10 位客人小狗哦，请先送客一位吧~'); return; }
-        gObj = {
-          id: `gp_${Date.now()}_${Math.floor(Math.random() * 999)}`,
-          name: cleanName,
-          pers: parsed.pers || 'sleepyhead',
-          look: parsed.look || {},
-          cloudId: parsed.cloudId || '',
-          msg: parsed.msg || '来找你们玩啦~',
-          pinned: false,
-          hideName: false,
-        };
-        curList.push(gObj);
-      }
-
-      config.puppyStats = config.puppyStats || {};
-      if (!Array.isArray(config.puppyStats.visitGuestNames)) config.puppyStats.visitGuestNames = [];
-      if (!config.puppyStats.visitGuestNames.includes(cleanName)) config.puppyStats.visitGuestNames.push(cleanName);
-
-      if (!Array.isArray(config.puppyVisitLog)) config.puppyVisitLog = [];
-      const d = new Date();
-      const dStr = `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
-      const giftSummary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received.map(r => r.label)].join('、');
-      const existing = config.puppyVisitLog.find(x => x.name === cleanName);
-      if (existing) {
-        existing.count = (existing.count || 1) + 1;
-        existing.lastDate = dStr;
-        existing.msg = gObj.msg;
-        existing.look = gObj.look;
-        if (giftSummary) existing.lastGift = giftSummary;
-      } else {
-        config.puppyVisitLog.unshift({ name: cleanName, count: 1, lastDate: dStr, msg: gObj.msg, look: gObj.look, lastGift: giftSummary });
-        if (config.puppyVisitLog.length > 60) config.puppyVisitLog.length = 60;
-      }
-
-      saveConfig();
-      syncGuestDomNodes();
-      checkPupAchievements();
-      if (config.puppyEnabled) {
-        const rtNew = guestRuntimes.get(gObj.id);
-        if (rtNew) {
-          rtNew.state = 'happy'; rtNew.timer = 140;
-          drawSingleGuestScene(gObj, rtNew);
-        }
-        showPuppyBubble(`哇！${cleanName} 来做客啦~`, 2100);
-        setTimeout(() => { if (getGuestList().some(x => x.id === gObj.id)) showGuestBubbleById(gObj.id, `哈喽！我是 ${cleanName}，来串门啦~`, 2600); }, 1950);
-      }
-      openVisitGiftModal(cleanName, alreadyRedeemed ? `${gObj.msg}（该名片码礼物之前已领过，这次小狗直接来做客啦~）` : gObj.msg, received, rp, false);
-      renderPupVisitPanel();
-    });
-    inBox.append(inTa, inBtn);
-    advVisitView.appendChild(inBox);
 
     // 底部：访客印章本 & 双狗合照相册（每页 8 项 + 首页/上页/下页/末页）
     const bookBox = doc.createElement('div');
@@ -47539,7 +47436,7 @@
     if (_rMini && _rMini.contains(e.target)) return;
     if (gachaModalEl && gachaModalEl.contains(e.target)) return;
     if (confirmMask && confirmMask.contains(e.target)) return;
-    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal')) return;
+    if (e.target && typeof e.target.closest === 'function' && e.target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-guest-pop, .st-tb-guest-puppy, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard')) return;
     togglePupBag(false);
     if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
     if (typeof flushAllStreamPending === 'function') flushAllStreamPending();
