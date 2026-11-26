@@ -32683,7 +32683,7 @@
     return `${Math.floor(hrs / 24)}天前`;
   };
 
-  const openPixelPupNoticeModal = (title, msgText, okLabel = '知道了', subBoxText = '', strictClose = false) => {
+  const openPixelPupNoticeModal = (title, msgText, okLabel = '知道了', subBoxText = '', strictClose = false, onCloseCb = null) => {
     let mask = root.querySelector('#st-tb-px-notice-mask');
     if (!mask) {
       mask = doc.createElement('div');
@@ -32704,13 +32704,82 @@
       ${subBoxText ? `<div style="font-size:10.5px;line-height:1.5;background:#ffffff;border:1.5px solid ${pxBd};padding:6px 8px;margin-bottom:10px;word-break:break-word;">${escapeHtmlSimple(subBoxText)}</div>` : ''}
       <button type="button" id="st-pxn-ok" class="st-px-btn care" style="width:100%;">${escapeHtmlSimple(okLabel)}</button>
     </div>`;
-    const closeN = () => { mask.style.display = 'none'; };
+    const closeN = () => {
+      mask.style.display = 'none';
+      if (typeof onCloseCb === 'function') setTimeout(() => { try { onCloseCb(); } catch (_) {} }, 60);
+    };
     mask.onclick = (e) => { e.stopPropagation(); if (!strictClose && e.target === mask) closeN(); };
     mask.querySelector('#st-pxn-close')?.addEventListener('click', closeN);
     mask.querySelector('#st-pxn-ok')?.addEventListener('click', closeN);
     bringModalFront(mask);
     mask.style.display = 'flex';
   };
+
+  // 联机离线/在线消息严格确认：单条逐条确认；离线累积 2 条及以上时合并为「离线联机动态总结」弹窗，必须点击确认才会消失！
+  const cloudNoticeQueue = [];
+  let cloudNoticeShowing = false;
+  let cloudNoticeFlushTimer = null;
+
+  const openCloudOfflineSummaryModal = (items, onDone) => {
+    let mask = root.querySelector('#st-tb-px-notice-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-px-notice-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const rowsHtml = items.map((it, idx) => `
+      <div style="padding:6px 8px;background:#ffffff;border:1.5px solid ${pxBd};margin-bottom:6px;box-sizing:border-box;">
+        <div style="font-size:11px;font-weight:700;margin-bottom:2px;">${idx + 1}. ${escapeHtmlSimple(it.title)}</div>
+        <div style="font-size:10.5px;line-height:1.48;opacity:0.9;word-break:break-word;">${escapeHtmlSimple(it.msgText)}</div>
+        ${it.subBoxText ? `<div style="margin-top:3px;font-size:9.5px;opacity:0.8;border-top:1px dashed ${pxBd};padding-top:3px;word-break:break-word;">${escapeHtmlSimple(it.subBoxText)}</div>` : ''}
+      </div>`).join('');
+    mask.innerHTML = `<div style="width:302px;max-width:calc(100vw - 24px);max-height:80vh;display:flex;flex-direction:column;padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};flex-shrink:0;">
+        <span style="font-size:12px;font-weight:700;">离线联机动态总结</span>
+        <span style="font-size:9.5px;opacity:0.78;">共 ${items.length} 条</span>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;padding-right:2px;margin-bottom:8px;">${rowsHtml}</div>
+      <button type="button" id="st-pxn-ok" class="st-px-btn care" style="width:100%;flex-shrink:0;">全部看完啦</button>
+    </div>`;
+    mask.onclick = (e) => { e.stopPropagation(); };
+    mask.querySelector('#st-pxn-ok')?.addEventListener('click', () => {
+      mask.style.display = 'none';
+      if (typeof onDone === 'function') setTimeout(() => { try { onDone(); } catch (_) {} }, 60);
+    });
+    bringModalFront(mask);
+    mask.style.display = 'flex';
+  };
+
+  const flushCloudNoticeQueue = () => {
+    if (cloudNoticeShowing || !cloudNoticeQueue.length || doc.hidden) return;
+    cloudNoticeShowing = true;
+    if (cloudNoticeQueue.length >= 2) {
+      const batch = cloudNoticeQueue.splice(0, cloudNoticeQueue.length);
+      openCloudOfflineSummaryModal(batch, () => {
+        cloudNoticeShowing = false;
+        flushCloudNoticeQueue();
+      });
+      return;
+    }
+    const next = cloudNoticeQueue.shift();
+    if (!next) { cloudNoticeShowing = false; return; }
+    openPixelPupNoticeModal(next.title, next.msgText, next.okLabel || '知道了', next.subBoxText || '', true, () => {
+      cloudNoticeShowing = false;
+      flushCloudNoticeQueue();
+    });
+  };
+  const enqueueCloudNotice = (title, msgText, okLabel = '知道了', subBoxText = '') => {
+    cloudNoticeQueue.push({ title, msgText, okLabel, subBoxText });
+    clearTimeout(cloudNoticeFlushTimer);
+    cloudNoticeFlushTimer = setTimeout(() => flushCloudNoticeQueue(), 260);
+  };
+  doc.addEventListener('visibilitychange', () => { if (!doc.hidden) flushCloudNoticeQueue(); });
+  win.addEventListener('focus', () => { flushCloudNoticeQueue(); });
 
   const getCloudBaseUrl = () => String(config.puppyCloudUrl || 'https://goulaicai-sync.chanbaek99461.workers.dev').trim().replace(/\/+$/, '');
   const fetchWithTimeout = async (url, opts = {}, ms = 9000) => {
@@ -32981,39 +33050,43 @@
       if (!data) return;
 
       if (Array.isArray(data.acks) && data.acks.length) {
-        const latestAck = data.acks[data.acks.length - 1];
-        const who = latestAck.fromName || '好友';
-        const sum = String(latestAck.summary || '');
-        let ackTitle = `「${who}」收下礼物啦！`;
-        let ackDesc = sum ? `收下内容：${sum}` : '已开心收下你的礼物';
-        let pupBub = `${who}收下我们的礼物啦~`;
-        if (sum === '隔空贴贴') {
-          ackTitle = `「${who}」收到你的隔空贴贴啦！`;
-          ackDesc = `${who} 的小狗开心地回抱了你一下~`;
-          pupBub = `${who}隔空回抱我们啦，好暖呼呼~`;
-        } else if (sum === '跨屏浇花') {
-          ackTitle = `「${who}」收到你的浇花啦！`;
-          ackDesc = `对方花园的小花已经喝饱水长大啦~`;
-          pupBub = `${who}谢谢我们帮忙浇花啦~`;
-        } else if (sum === '新留言纸条') {
-          ackTitle = `「${who}」收到你的小纸条啦！`;
-          ackDesc = `你的纸条已经贴上对方的桌面像素留言板~`;
-          pupBub = `${who}的留言板收到我们的纸条啦~`;
-        } else if (sum === '好友申请已通过' || sum === '好友申请处理') {
-          if (sum === '好友申请处理') return;
-          ackTitle = `「${who}」同意了你的好友申请！`;
-          ackDesc = `你们现在已经是云端好友，快去好友列表看看吧~`;
-          pupBub = `太好啦，${who}成为我们的新好友啦~`;
+        let lastPupBub = '';
+        for (const ack of data.acks) {
+          if (!ack) continue;
+          const who = ack.fromName || '好友';
+          const sum = String(ack.summary || '');
+          if (sum === '好友申请处理') continue;
+          let ackTitle = `「${who}」收下礼物啦！`;
+          let ackDesc = sum ? `收下内容：${sum}` : '已开心收下你的礼物';
+          let pupBub = `${who}收下我们的礼物啦~`;
+          if (sum === '隔空贴贴') {
+            ackTitle = `「${who}」收到你的隔空贴贴啦！`;
+            ackDesc = `${who} 的小狗开心地回抱了你一下~`;
+            pupBub = `${who}隔空回抱我们啦，好暖呼呼~`;
+          } else if (sum === '跨屏浇花') {
+            ackTitle = `「${who}」收到你的浇花啦！`;
+            ackDesc = `对方花园的小花已经喝饱水长大啦~`;
+            pupBub = `${who}谢谢我们帮忙浇花啦~`;
+          } else if (sum === '新留言纸条') {
+            ackTitle = `「${who}」收到你的小纸条啦！`;
+            ackDesc = `你的纸条已经贴上对方的桌面像素留言板~`;
+            pupBub = `${who}的留言板收到我们的纸条啦~`;
+          } else if (sum === '好友申请已通过') {
+            ackTitle = `「${who}」同意了你的好友申请！`;
+            ackDesc = `你们现在已经是云端好友，快去好友列表看看吧~`;
+            pupBub = `太好啦，${who}成为我们的新好友啦~`;
+          }
+          lastPupBub = pupBub;
+          enqueueCloudNotice(
+            ackTitle,
+            ackDesc,
+            '太好啦',
+            ack.thankMsg ? `对方回复：「${ack.thankMsg}」` : ''
+          );
         }
-        openPixelPupNoticeModal(
-          ackTitle,
-          ackDesc,
-          '太好啦',
-          latestAck.thankMsg ? `对方回复：「${latestAck.thankMsg}」` : ''
-        );
-        if (config.puppyEnabled) {
+        if (lastPupBub && config.puppyEnabled) {
           setPuppyState('happy', 130);
-          showPuppyBubble(pupBub, 3200);
+          showPuppyBubble(lastPupBub, 3200);
         }
       }
 
@@ -33096,7 +33169,7 @@
             if (typeof renderGarden === 'function') renderGarden();
             if (typeof syncPuppyBagUI === 'function') syncPuppyBagUI();
             if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
-            openPixelPupNoticeModal(`「${g.fromName || '好友'}」来帮你浇花啦！`, waterResult, '谢谢TA');
+            enqueueCloudNotice(`「${g.fromName || '好友'}」来帮你浇花啦！`, waterResult, '谢谢TA');
             if (config.puppyEnabled) {
               setPuppyState('happy', 110);
               showPuppyBubble(`${g.fromName || '好友'}帮我们给小花浇水啦，好贴心~`, 3400);
@@ -33135,6 +33208,7 @@
             saveConfig();
             checkPupAchievements();
             syncDesktopNoteboard();
+            enqueueCloudNotice(`「${g.fromName || '好友'}」贴了一张新纸条`, `对方在你的桌面像素留言板留了言，点桌面留言板即可查看回复~`, '知道了', g.msg ? `内容：「${g.msg}」` : '');
             fetch(`${baseUrl}/ack`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -33211,7 +33285,7 @@
                   showGuestBubbleById(gMatch.id, '跨屏飞扑过来紧紧贴住你蹭蹭！', 4000);
                 }
               };
-              if (doc.hidden) { pendingRemotePokes.push(playCreativeRemotePoke); }
+              if (doc.hidden) { pendingRemotePokes.push(playCreativeRemotePoke); enqueueCloudNotice(`「${g.fromName || '好友'}」隔空贴贴了你`, `${g.fromName || '好友'} 的小狗在你离开时飞扑过来蹭了蹭你的小狗~`, '好暖心'); }
               else { playCreativeRemotePoke(); }
             }
             fetch(`${baseUrl}/ack`, {
