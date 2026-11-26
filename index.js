@@ -23501,14 +23501,21 @@
       const _nowT = Date.now();
       const _moodMult = Number(_ve.dailyMoodMult || 1);
       const _pokeMult = (_ve.sellRateUntil && _nowT < _ve.sellRateUntil) ? (_ve.sellRateMult || 1) : 1;
-      const _rateMult = _moodMult * _pokeMult;
       const calcSellPrice = (baseP) => {
         const bp = Math.max(1, Math.round(baseP));
-        if (_rateMult < 1 && bp <= 1) return 1;
-        let res = Math.max(1, Math.round(bp * _rateMult));
-        if (_pokeMult > 1 && res <= bp) res = bp + 1;
-        if (_pokeMult < 1 && bp > 1 && res >= bp) res = Math.max(1, bp - 1);
-        return res;
+        let dailyP = bp;
+        if (_moodMult > 1) {
+          dailyP = Math.max(bp + 1, Math.round(bp * _moodMult));
+        } else if (_moodMult < 1 && bp > 1) {
+          dailyP = Math.max(1, Math.min(bp - 1, Math.round(bp * _moodMult)));
+        }
+        let finalP = dailyP;
+        if (_pokeMult > 1) {
+          finalP = Math.max(dailyP + 1, Math.round(dailyP * _pokeMult));
+        } else if (_pokeMult < 1 && dailyP > 1) {
+          finalP = Math.max(1, Math.min(dailyP - 1, Math.round(dailyP * _pokeMult)));
+        }
+        return finalP;
       };
       const _darkLocked = Boolean(_ve.sellDarkLockUntil && _nowT < _ve.sellDarkLockUntil);
       const _vMsgInit = root.querySelector('#st-px-sell-vendor-msg');
@@ -32629,6 +32636,7 @@
   const ensureMyCloudId = () => {
     if (!config.puppyCloudId || !/^[a-zA-Z0-9_-]{4,40}$/.test(config.puppyCloudId)) {
       config.puppyCloudId = 'pup_' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+      try { saveConfig(); } catch (_) {}
     }
     return config.puppyCloudId;
   };
@@ -32922,6 +32930,7 @@
         if (!Array.isArray(config.puppyCloudProcessedGids)) config.puppyCloudProcessedGids = [];
         let changed = false;
         let fallbackGift = null;
+        const offlineFinishedCoAdvs = [];
         for (const g of data.gifts) {
           if (!g || !g.gid || config.puppyCloudProcessedGids.includes(g.gid)) continue;
           config.puppyCloudProcessedGids.unshift(g.gid);
@@ -32951,30 +32960,25 @@
             const advMap = getCoopAdvMap();
             const stAt = Number(meta.startAt) || g.ts || Date.now();
             const edAt = Number(meta.endAt) || (stAt + 10 * 60 * 1000);
-            if (!advMap[g.fromId]) {
-              advMap[g.fromId] = {
-                friendCloudId: g.fromId,
-                friendName: g.fromName || frMatch?.name || '好友',
-                friendLook: frMatch?.look ? JSON.parse(JSON.stringify(frMatch.look)) : {},
-                photoId: ph.id,
-                variant: meta.variant || null,
-                startAt: stAt,
-                endAt: edAt,
-              };
+            const caItem = {
+              friendCloudId: g.fromId,
+              friendName: g.fromName || frMatch?.name || '好友',
+              friendLook: frMatch?.look ? JSON.parse(JSON.stringify(frMatch.look)) : {},
+              photoId: ph.id,
+              variant: meta.variant || null,
+              startAt: stAt,
+              endAt: edAt,
+            };
+            if (edAt <= Date.now()) {
+              offlineFinishedCoAdvs.push(caItem);
+            } else if (!advMap[g.fromId]) {
+              advMap[g.fromId] = caItem;
               saveConfig();
               if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
-              if (edAt > Date.now() && !doc.hidden) {
-                const remM = Math.max(1, Math.ceil((edAt - Date.now()) / 60000));
-                openPixelPupNoticeModal(
-                  `「${g.fromName || '好友'}」约你出发双狗探险啦！`,
-                  `两只小狗已经结伴出发啦，约 ${remM} 分钟后回来就会弹出收获与双人明信片~`,
-                  '知道了',
-                  '',
-                  true
-                );
+              if (!doc.hidden) {
+                openCoopAdvProgressModal(g.fromId);
               }
             }
-            if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
             continue;
           }
 
@@ -33147,6 +33151,10 @@
         if (changed) {
           saveConfig();
           syncDesktopGiftBox();
+        }
+        if (offlineFinishedCoAdvs.length && typeof settleOfflineCoopAdventures === 'function') {
+          // 无论是否切屏，先立刻永久入账金币、零食、羁绊与相册，确保零丢失！
+          settleOfflineCoopAdventures(offlineFinishedCoAdvs);
         }
       }
     } catch (_) {
@@ -33926,7 +33934,9 @@
   };
 
   const addCloudFriendByCode = async (rawCode) => {
-    const fid = String(rawCode || '').trim();
+    const rawStr = String(rawCode || '').trim();
+    const extracted = rawStr.match(/pup_[a-zA-Z0-9_-]{4,36}/);
+    const fid = extracted ? extracted[0] : rawStr;
     if (!/^[a-zA-Z0-9_-]{4,40}$/.test(fid)) {
       openPixelPupNoticeModal('好友码格式不对', '请输入好友发给你的短好友码（例如 pup_xxxxxx）~');
       return false;
@@ -34022,14 +34032,21 @@
     saveConfig();
     syncGuestDomNodes();
   }
+  const ensureCloudPupUploaded = async () => {
+    await pushMyCloudPupNow(true);
+    if (!lastCloudPushSig) {
+      setTimeout(() => { if (!lastCloudPushSig) pushMyCloudPupNow(true); }, 6000);
+      setTimeout(() => { if (!lastCloudPushSig) pushMyCloudPupNow(true); }, 18000);
+    }
+  };
   setTimeout(() => {
-    pushMyCloudPupNow();
+    ensureCloudPupUploaded();
     syncCloudGuestLooks(true);
     pollCloudInbox();
     syncDesktopNoteboard();
     syncDesktopGiftBox();
     if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
-  }, 3500);
+  }, 2200);
   setInterval(() => {
     if (doc.hidden) return;
     pollCloudInbox();
@@ -34220,7 +34237,10 @@
   let visitPhotoFilter = 'all';
 
   // ==================== 好友亲密羁绊（「汪汪羁绊」）+ 联机双狗探险 + 30张全新双人专属相册 ====================
-  const freshNewDualPhotos = new Set();
+  const freshNewDualPhotos = new Set(Array.isArray(config.puppyFreshDualPhotos) ? config.puppyFreshDualPhotos : []);
+  const syncFreshDualPhotosConfig = () => {
+    config.puppyFreshDualPhotos = Array.from(freshNewDualPhotos);
+  };
   let advAlbumMode = 'single'; // 'single' | 'dual'
 
   const FRIEND_BOND_LEVELS = [
@@ -34393,78 +34413,97 @@
     ctx2.fillStyle = 'rgba(255,255,255,0.16)'; ctx2.fillRect(0, 23, 54, 1);
 
     if (m === 'balloon') {
-      // 云端热气球：蓬松三层云海 + 双色条纹大热气球 + 远景迷你气球
+      // 云端热气球：远山晴空 + 蓬松三层柔光云海 + 双色精致条纹大热气球 + 远景迷你气球
+      ctx2.fillStyle = '#c4e4ff';
+      ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.quadraticCurveTo(14,17,28,22); ctx2.quadraticCurveTo(42,16,54,23); ctx2.lineTo(54,26); ctx2.lineTo(0,26); ctx2.fill();
+      // 远景迷你气球
+      ctx2.fillStyle = '#8ec8ff'; ctx2.beginPath(); ctx2.arc(9, 8, 3.2, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(8, 5, 2, 6);
+      ctx2.fillStyle = '#b57b4a'; ctx2.fillRect(8, 12, 2, 2);
+      ctx2.fillStyle = '#ffd078'; ctx2.beginPath(); ctx2.arc(46, 10, 2.6, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#b57b4a'; ctx2.fillRect(45, 13, 2, 1);
+      // 主大热气球（柔和粉白奶油条纹 + 金色花边 + 吊绳与藤篮）
+      ctx2.fillStyle = '#ff7e9d'; ctx2.beginPath(); ctx2.arc(28, 9, 7.5, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#fff7e8'; ctx2.beginPath(); ctx2.ellipse(28, 9, 3.6, 7.2, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ff9cb5'; ctx2.beginPath(); ctx2.ellipse(28, 9, 1.4, 7.3, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(22, 10, 12, 1);
+      ctx2.fillStyle = '#7a5238'; ctx2.fillRect(26, 16, 1, 3); ctx2.fillRect(29, 16, 1, 3);
+      ctx2.fillStyle = '#c98850'; ctx2.fillRect(25, 19, 6, 4);
+      ctx2.fillStyle = '#a36838'; ctx2.fillRect(25, 20, 6, 1);
+      // 蓬松柔白云海前景
+      ctx2.fillStyle = '#dceeff'; ctx2.fillRect(0, 24, 54, 12);
       ctx2.fillStyle = '#ffffff';
-      [[2,20,16,7],[16,22,22,7],[36,19,18,8],[8,17,10,4],[40,16,10,4]].forEach(([x,y,w,h]) => ctx2.fillRect(x,y,w,h));
-      ctx2.fillStyle = '#ffe5f0'; ctx2.fillRect(0, 26, 54, 10);
-      // 主热气球
-      ctx2.fillStyle = '#ff7096'; ctx2.fillRect(20, 2, 14, 11);
-      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(23, 2, 4, 11); ctx2.fillRect(29, 2, 3, 11);
-      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(22, 13, 10, 2);
-      ctx2.fillStyle = '#9c6440'; ctx2.fillRect(24, 17, 6, 4);
-      ctx2.fillStyle = '#d4a678'; ctx2.fillRect(24, 15, 1, 2); ctx2.fillRect(29, 15, 1, 2);
-      // 远景小气球
-      ctx2.fillStyle = '#7ec8ff'; ctx2.fillRect(7, 6, 5, 5); ctx2.fillStyle = '#fff'; ctx2.fillRect(9, 6, 2, 5);
+      [[5,24,7],[16,25,8],[28,24,9],[41,25,8],[51,24,6]].forEach(([cx,cy,r]) => {
+        ctx2.beginPath(); ctx2.arc(cx, cy, r, Math.PI, 0); ctx2.fill();
+      });
+      ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#e6f4ff'; ctx2.fillRect(0, 31, 54, 5);
     } else if (m === 'aquarium') {
       // 海底玻璃隧道：深海丁达尔光柱 + 拱形玻璃钢架 + 荧光水母群 + 热带鱼 + 两侧珊瑚礁 + 水波步道
       ctx2.fillStyle = 'rgba(126,245,255,0.16)';
       ctx2.beginPath(); ctx2.moveTo(8,0); ctx2.lineTo(17,0); ctx2.lineTo(12,24); ctx2.lineTo(4,24); ctx2.fill();
       ctx2.beginPath(); ctx2.moveTo(31,0); ctx2.lineTo(42,0); ctx2.lineTo(47,24); ctx2.lineTo(35,24); ctx2.fill();
-      // 远处珊瑚剪影与海草
       ctx2.fillStyle = '#1b5f87'; ctx2.fillRect(0, 17, 10, 7); ctx2.fillRect(44, 16, 10, 8);
       ctx2.fillStyle = '#ff7fa8'; ctx2.fillRect(2, 19, 3, 5); ctx2.fillRect(5, 20, 2, 4);
       ctx2.fillStyle = '#ffb86c'; ctx2.fillRect(46, 19, 3, 5); ctx2.fillRect(50, 18, 2, 6);
       ctx2.fillStyle = '#4ad4a0'; ctx2.fillRect(8, 18, 1, 6); ctx2.fillRect(44, 18, 1, 6);
-      // 发光水母（粉/青双色）与触须
       ctx2.fillStyle = '#ff9ee0'; ctx2.fillRect(11, 5, 6, 3); ctx2.fillStyle = '#fff0fa'; ctx2.fillRect(12, 5, 2, 1);
       ctx2.fillStyle = '#ffd6f5'; ctx2.fillRect(12, 8, 1, 4); ctx2.fillRect(14, 8, 1, 5); ctx2.fillRect(16, 8, 1, 3);
       ctx2.fillStyle = '#7ef2ff'; ctx2.fillRect(36, 7, 7, 3); ctx2.fillStyle = '#ebfeff'; ctx2.fillRect(38, 7, 2, 1);
       ctx2.fillStyle = '#c4faff'; ctx2.fillRect(37, 10, 1, 4); ctx2.fillRect(39, 10, 1, 5); ctx2.fillRect(41, 10, 1, 3);
-      // 游过的小丑鱼与蓝色鱼群
       ctx2.fillStyle = '#ff9b42'; ctx2.fillRect(23, 10, 4, 2); ctx2.fillStyle = '#ffffff'; ctx2.fillRect(25, 10, 1, 2);
       ctx2.fillStyle = '#ffe066'; ctx2.fillRect(29, 14, 3, 2); ctx2.fillRect(18, 15, 3, 1);
-      // 透明拱形玻璃隧道钢架与反光高光
       ctx2.strokeStyle = 'rgba(205,250,255,0.72)'; ctx2.lineWidth = 1.2;
       ctx2.beginPath(); ctx2.arc(27, 25, 24, Math.PI, 0); ctx2.stroke();
       ctx2.strokeStyle = 'rgba(170,238,255,0.48)'; ctx2.lineWidth = 1;
       ctx2.beginPath(); ctx2.arc(27, 25, 18, Math.PI, 0); ctx2.stroke();
       ctx2.beginPath(); ctx2.arc(27, 25, 12, Math.PI, 0); ctx2.stroke();
-      // 升腾小气泡
       ctx2.fillStyle = '#e6fdff';
       [[7,10],[19,7],[27,5],[45,11],[33,12]].forEach(([bx,by]) => ctx2.fillRect(bx, by, 1, 1));
-      // 隧道透视步道与水波纹光斑
       ctx2.fillStyle = '#123e5e'; ctx2.fillRect(0, 24, 54, 12);
       ctx2.fillStyle = '#1e5c85'; ctx2.fillRect(4, 25, 46, 9);
       ctx2.fillStyle = 'rgba(138,242,255,0.35)';
       ctx2.fillRect(10, 27, 8, 1); ctx2.fillRect(32, 29, 10, 1); ctx2.fillRect(20, 32, 12, 1);
     } else if (m === 'cinema') {
-      // 露天星光影院：白色复古银幕 + 放映机光束 + 彩旗灯串
-      ctx2.fillStyle = '#5c4b78'; ctx2.fillRect(11, 4, 32, 15);
-      ctx2.fillStyle = '#fffdf5'; ctx2.fillRect(13, 6, 28, 11);
-      ctx2.fillStyle = '#ffd6e8'; ctx2.fillRect(16, 9, 8, 5); ctx2.fillStyle = '#9ee0ff'; ctx2.fillRect(28, 8, 9, 6);
-      ctx2.fillStyle = 'rgba(255,244,180,0.2)'; ctx2.fillRect(14, 17, 26, 7);
-      for (let i = 0; i < 9; i++) { ctx2.fillStyle = i % 2 ? '#ffe078' : '#ff8eb0'; ctx2.fillRect(3 + i * 6, 2 + (i % 2), 2, 2); }
+      // 露天星光影院：弧形暖灯串 + 复古胶片大银幕与浪漫剪影 + 放映机柔光束 + 绿荫草坪
+      ctx2.strokeStyle = 'rgba(255,230,150,0.45)'; ctx2.lineWidth = 0.8;
+      ctx2.beginPath(); ctx2.moveTo(0,2); ctx2.quadraticCurveTo(27,6,54,2); ctx2.stroke();
+      for (let i = 0; i < 8; i++) {
+        ctx2.fillStyle = i % 2 ? '#ffe078' : '#ff96b8';
+        ctx2.fillRect(4 + i * 6.5, 2 + (i > 1 && i < 6 ? 2 : 1), 2, 2);
+      }
+      // 两侧树丛剪影
+      ctx2.fillStyle = '#242042';
+      ctx2.beginPath(); ctx2.arc(4, 21, 7, 0, Math.PI * 2); ctx2.arc(50, 21, 7, 0, Math.PI * 2); ctx2.fill();
+      // 银幕支架与发光复古大银幕
+      ctx2.fillStyle = '#4a3d66'; ctx2.fillRect(10, 5, 34, 17); ctx2.fillRect(13, 21, 2, 4); ctx2.fillRect(39, 21, 2, 4);
+      ctx2.fillStyle = '#fff9eb'; ctx2.fillRect(12, 7, 30, 13);
+      // 银幕内夕阳海边画面
+      ctx2.fillStyle = '#ffbfd4'; ctx2.fillRect(13, 8, 28, 7);
+      ctx2.fillStyle = '#ffe588'; ctx2.beginPath(); ctx2.arc(27, 13, 3, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#7bb8e8'; ctx2.fillRect(13, 15, 28, 4);
+      // 柔和放映光晕与夜色草坪
+      ctx2.fillStyle = 'rgba(255,244,190,0.16)';
+      ctx2.beginPath(); ctx2.moveTo(12,20); ctx2.lineTo(42,20); ctx2.lineTo(48,27); ctx2.lineTo(6,27); ctx2.fill();
+      ctx2.fillStyle = '#272340'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#363057'; ctx2.fillRect(0, 24, 54, 2);
     } else if (m === 'cablecar') {
       // 雪顶高山缆车：晴空暖云 + 三重层次雪峰与蓝影面 + 积雪冷杉林 + 铁塔双钢缆 + 红白全景缆车厢
       ctx2.fillStyle = '#ffffff';
       ctx2.fillRect(4, 3, 9, 2); ctx2.fillRect(6, 2, 5, 2);
       ctx2.fillRect(42, 2, 8, 2); ctx2.fillRect(44, 1, 4, 2);
-      // 远景主雪峰（向阳雪白 + 背阴冰蓝）
       ctx2.fillStyle = '#9ec4eb';
       ctx2.beginPath(); ctx2.moveTo(-2,24); ctx2.lineTo(13,6); ctx2.lineTo(29,24); ctx2.fill();
       ctx2.fillStyle = '#7eaad9';
       ctx2.beginPath(); ctx2.moveTo(13,6); ctx2.lineTo(29,24); ctx2.lineTo(19,24); ctx2.fill();
       ctx2.fillStyle = '#ffffff';
       ctx2.beginPath(); ctx2.moveTo(8,12); ctx2.lineTo(13,6); ctx2.lineTo(17,11); ctx2.lineTo(14,13); ctx2.lineTo(11,11); ctx2.fill();
-
       ctx2.fillStyle = '#a8cef2';
       ctx2.beginPath(); ctx2.moveTo(20,24); ctx2.lineTo(39,4); ctx2.lineTo(56,24); ctx2.fill();
       ctx2.fillStyle = '#82aedb';
       ctx2.beginPath(); ctx2.moveTo(39,4); ctx2.lineTo(56,24); ctx2.lineTo(44,24); ctx2.fill();
       ctx2.fillStyle = '#ffffff';
       ctx2.beginPath(); ctx2.moveTo(33,11); ctx2.lineTo(39,4); ctx2.lineTo(44,10); ctx2.lineTo(40,12); ctx2.lineTo(36,10); ctx2.fill();
-
-      // 山脚覆雪冷杉松林
       [3, 9, 44, 49].forEach((tx, idx) => {
         const th = idx % 2 ? 7 : 6;
         ctx2.fillStyle = '#3f6e62';
@@ -34472,89 +34511,189 @@
         ctx2.fillStyle = '#ffffff';
         ctx2.fillRect(tx - 1, 24 - th, 2, 2);
       });
-      // 索道铁塔与双钢缆
       ctx2.fillStyle = '#586a82'; ctx2.fillRect(4, 9, 2, 15); ctx2.fillRect(2, 10, 6, 1);
       ctx2.strokeStyle = '#47576e'; ctx2.lineWidth = 1;
       ctx2.beginPath(); ctx2.moveTo(0, 8); ctx2.lineTo(54, 15); ctx2.stroke();
-      // 红白全景缆车厢 + 吊臂 + 暖窗
       ctx2.fillStyle = '#47576e'; ctx2.fillRect(26, 11, 2, 3);
       ctx2.fillStyle = '#e04f5f'; ctx2.fillRect(21, 14, 12, 8);
       ctx2.fillStyle = '#fff7f2'; ctx2.fillRect(21, 14, 12, 2);
       ctx2.fillStyle = '#ffe9a8'; ctx2.fillRect(23, 16, 3, 4); ctx2.fillRect(28, 16, 3, 4);
       ctx2.fillStyle = '#b83545'; ctx2.fillRect(21, 21, 12, 1);
-      // 蓬松雪坡前景与细雪点
       ctx2.fillStyle = '#f2f9ff'; ctx2.fillRect(0, 24, 54, 12);
       ctx2.fillStyle = '#d4e8fa'; ctx2.fillRect(0, 27, 54, 2); ctx2.fillRect(6, 31, 42, 1);
       ctx2.fillStyle = '#ffffff';
       [[17,5],[29,8],[47,9],[11,16],[36,15]].forEach(([sx,sy]) => ctx2.fillRect(sx, sy, 1, 1));
     } else if (m === 'nightmarket') {
-      // 霓虹夜市：两侧木摊棚 + 暖红灯笼串 + 招牌微光
-      ctx2.fillStyle = '#5c3c6e'; ctx2.fillRect(2, 10, 16, 14); ctx2.fillRect(36, 9, 16, 15);
-      ctx2.fillStyle = '#ff6e88'; ctx2.fillRect(1, 9, 18, 3); ctx2.fillStyle = '#ffbe5c'; ctx2.fillRect(35, 8, 18, 3);
-      ctx2.fillStyle = '#fff2c2'; ctx2.fillRect(5, 14, 10, 6); ctx2.fillRect(39, 13, 10, 6);
-      for (let i = 0; i < 7; i++) { ctx2.fillStyle = i % 2 ? '#ff7096' : '#ffe066'; ctx2.fillRect(6 + i * 7, 5 + (i % 2), 3, 4); }
-    } else if (m === 'sunflower_train') {
-      // 向日葵列车站：绿皮小火车 + 蒸汽云 + 金黄向日葵花田
-      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(12, 4, 8, 4); ctx2.fillRect(22, 3, 6, 3);
-      ctx2.fillStyle = '#3f8c5c'; ctx2.fillRect(8, 12, 36, 9);
-      ctx2.fillStyle = '#ffe878'; ctx2.fillRect(11, 14, 5, 4); ctx2.fillRect(19, 14, 5, 4); ctx2.fillRect(27, 14, 5, 4); ctx2.fillRect(35, 14, 5, 4);
-      ctx2.fillStyle = '#2c3a47'; ctx2.fillRect(6, 21, 42, 2);
-      for (let i = 0; i < 9; i++) { ctx2.fillStyle = '#ffd633'; ctx2.fillRect(2 + i * 6, 24 + (i % 2), 4, 4); ctx2.fillStyle = '#7a4b26'; ctx2.fillRect(3 + i * 6, 25 + (i % 2), 2, 2); }
-    } else if (m === 'camp') {
-      // 星空露营帐篷：松林剪影 + 暖光三角帐篷 + 篝火火星
-      ctx2.fillStyle = '#1b332c';
-      [[3,13],[9,11],[43,12],[49,14]].forEach(([x,y]) => { ctx2.beginPath(); ctx2.moveTo(x,24); ctx2.lineTo(x+4,y); ctx2.lineTo(x+8,24); ctx2.fill(); });
-      ctx2.fillStyle = '#e89048'; ctx2.beginPath(); ctx2.moveTo(16,24); ctx2.lineTo(27,10); ctx2.lineTo(38,24); ctx2.fill();
-      ctx2.fillStyle = '#fff2b2'; ctx2.beginPath(); ctx2.moveTo(23,24); ctx2.lineTo(27,15); ctx2.lineTo(31,24); ctx2.fill();
-      ctx2.fillStyle = '#ff6b3d'; ctx2.fillRect(42, 22, 4, 3); ctx2.fillStyle = '#ffe066'; ctx2.fillRect(43, 20, 2, 2);
-    } else if (m === 'greenhouse') {
-      // 彩虹玻璃温室：拱形白钢窗格 + 七彩彩虹光带 + 盆栽花朵
-      ['#ff9eb8','#ffd882','#a8f0b8','#9ee0ff'].forEach((c0, idx) => { ctx2.fillStyle = c0; ctx2.fillRect(0, 4 + idx * 2, 54, 2); });
-      ctx2.strokeStyle = '#ffffff'; ctx2.lineWidth = 1;
-      ctx2.beginPath(); ctx2.arc(27, 24, 22, Math.PI, 0); ctx2.stroke();
-      for (let x = 11; x <= 43; x += 8) { ctx2.fillStyle = 'rgba(255,255,255,0.7)'; ctx2.fillRect(x, 6, 1, 18); }
-      [[6,22,'#ff7aa8'],[15,23,'#ffe066'],[39,22,'#ff8eb8'],[47,23,'#9ee0ff']].forEach(([x,y,c0]) => { ctx2.fillStyle = c0; ctx2.fillRect(x,y,3,3); });
-    } else if (m === 'ferris') {
-      // 日落海湾摩天轮：橘粉夕阳 + 巨大摩天轮与彩色座舱 + 海面余晖
-      ctx2.fillStyle = '#fff2b8'; ctx2.beginPath(); ctx2.arc(14, 19, 6, 0, Math.PI * 2); ctx2.fill();
-      ctx2.strokeStyle = '#fff5fa'; ctx2.lineWidth = 1.2;
-      ctx2.beginPath(); ctx2.arc(34, 13, 10, 0, Math.PI * 2); ctx2.stroke();
-      for (let k = 0; k < 8; k++) {
-        const a = (Math.PI * 2 * k) / 8;
-        ctx2.fillStyle = k % 2 ? '#ff70a6' : '#ffe066';
-        ctx2.fillRect(Math.round(34 + Math.cos(a) * 10 - 1), Math.round(13 + Math.sin(a) * 10 - 1), 3, 3);
+      // 霓虹夜市小摊：高挂暖红灯笼串 + 左右条纹美食木摊 + 暖光柜台与热气 + 石板夜市街
+      ctx2.strokeStyle = '#5c426e'; ctx2.lineWidth = 0.8;
+      ctx2.beginPath(); ctx2.moveTo(0,4); ctx2.quadraticCurveTo(27,8,54,4); ctx2.stroke();
+      for (let i = 0; i < 6; i++) {
+        ctx2.fillStyle = i % 2 ? '#ff6482' : '#ffd254';
+        ctx2.fillRect(6 + i * 8, 5 + (i > 0 && i < 5 ? 1 : 0), 4, 4);
+        ctx2.fillStyle = '#fff6cc'; ctx2.fillRect(7 + i * 8, 6 + (i > 0 && i < 5 ? 1 : 0), 2, 2);
       }
-      ctx2.fillStyle = '#ff9e78'; ctx2.fillRect(8, 25, 14, 2); ctx2.fillRect(10, 28, 10, 1);
+      // 左侧章鱼烧木摊
+      ctx2.fillStyle = '#6e4538'; ctx2.fillRect(2, 12, 18, 12);
+      for (let i = 0; i < 6; i++) { ctx2.fillStyle = i % 2 ? '#e85870' : '#fff4e0'; ctx2.fillRect(1 + i * 3, 10, 3, 3); }
+      ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(4, 14, 14, 6);
+      ctx2.fillStyle = '#c47b4a'; ctx2.fillRect(3, 19, 16, 2);
+      // 右侧甜品饮品摊
+      ctx2.fillStyle = '#593c66'; ctx2.fillRect(34, 11, 18, 13);
+      for (let i = 0; i < 6; i++) { ctx2.fillStyle = i % 2 ? '#ffbe54' : '#fff4e0'; ctx2.fillRect(33 + i * 3, 9, 3, 3); }
+      ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(36, 13, 14, 6);
+      ctx2.fillStyle = '#9e5c82'; ctx2.fillRect(35, 18, 16, 2);
+      // 夜市石板路与暖灯倒影
+      ctx2.fillStyle = '#362745'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = 'rgba(255,210,120,0.22)'; ctx2.fillRect(6, 26, 10, 2); ctx2.fillRect(38, 26, 10, 2);
+    } else if (m === 'sunflower_train') {
+      // 向日葵列车站：晴空白云 + 复古绿皮小火车与蒸汽 + 远近向日葵花坡 + 木质小站台
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(6, 3, 10, 2); ctx2.fillRect(8, 2, 6, 2);
+      ctx2.fillStyle = '#a8dc8a';
+      ctx2.beginPath(); ctx2.moveTo(0,22); ctx2.quadraticCurveTo(20,16,54,21); ctx2.lineTo(54,25); ctx2.lineTo(0,25); ctx2.fill();
+      // 绿皮小火车与飘浮白蒸汽
+      ctx2.fillStyle = '#ffffff';
+      ctx2.beginPath(); ctx2.arc(13, 9, 2.5, 0, Math.PI * 2); ctx2.arc(17, 7, 3, 0, Math.PI * 2); ctx2.arc(22, 6, 2.2, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#3b7d5e'; ctx2.fillRect(10, 13, 34, 8);
+      ctx2.fillStyle = '#2b5e46'; ctx2.fillRect(12, 10, 3, 3); ctx2.fillRect(9, 19, 36, 2);
+      ctx2.fillStyle = '#ffe588'; ctx2.fillRect(15, 15, 5, 3); ctx2.fillRect(23, 15, 5, 3); ctx2.fillRect(31, 15, 5, 3); ctx2.fillRect(38, 15, 4, 3);
+      ctx2.fillStyle = '#e8c458'; ctx2.fillRect(10, 18, 34, 1);
+      // 绿草地与错落向日葵（干净大朵，不密集）
+      ctx2.fillStyle = '#6eb554'; ctx2.fillRect(0, 23, 54, 13);
+      ctx2.fillStyle = '#5a9c42'; ctx2.fillRect(0, 28, 54, 8);
+      [[6,23],[14,25],[40,24],[48,23]].forEach(([fx,fy]) => {
+        ctx2.fillStyle = '#477d34'; ctx2.fillRect(fx + 1, fy + 3, 1, 5);
+        ctx2.fillStyle = '#ffd638'; ctx2.beginPath(); ctx2.arc(fx + 1.5, fy + 1.5, 2.5, 0, Math.PI * 2); ctx2.fill();
+        ctx2.fillStyle = '#734224'; ctx2.fillRect(fx + 1, fy + 1, 1.5, 1.5);
+      });
+    } else if (m === 'camp') {
+      // 星空露营帐篷：银河星月 + 远山松林剪影 + 暖光尖顶露营帐篷 + 跳动橘红篝火
+      ctx2.fillStyle = '#fff5b8'; ctx2.beginPath(); ctx2.arc(44, 6, 3.5, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#1b244a'; ctx2.beginPath(); ctx2.arc(45.5, 5.2, 3, 0, Math.PI * 2); ctx2.fill();
+      // 远山与冷杉松林
+      ctx2.fillStyle = '#1c333b';
+      ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.lineTo(14,13); ctx2.lineTo(28,24); ctx2.fill();
+      ctx2.beginPath(); ctx2.moveTo(26,24); ctx2.lineTo(42,12); ctx2.lineTo(54,24); ctx2.fill();
+      [4, 10, 46, 51].forEach(tx => {
+        ctx2.fillStyle = '#1a3d34';
+        ctx2.beginPath(); ctx2.moveTo(tx, 14); ctx2.lineTo(tx - 3.5, 24); ctx2.lineTo(tx + 3.5, 24); ctx2.fill();
+      });
+      // 暖光三角帐篷
+      ctx2.fillStyle = '#f29a4b';
+      ctx2.beginPath(); ctx2.moveTo(15, 24); ctx2.lineTo(24, 10); ctx2.lineTo(34, 24); ctx2.fill();
+      ctx2.fillStyle = '#ffe794';
+      ctx2.beginPath(); ctx2.moveTo(21, 24); ctx2.lineTo(24, 15); ctx2.lineTo(28, 24); ctx2.fill();
+      // 篝火与暖地光晕
+      ctx2.fillStyle = '#254234'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = 'rgba(255,175,80,0.22)'; ctx2.beginPath(); ctx2.ellipse(39, 25, 7, 3, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#6e4228'; ctx2.fillRect(36, 24, 6, 2);
+      ctx2.fillStyle = '#ff6b38'; ctx2.beginPath(); ctx2.moveTo(37,24); ctx2.lineTo(39,18); ctx2.lineTo(41,24); ctx2.fill();
+      ctx2.fillStyle = '#ffe066'; ctx2.fillRect(38.5, 21, 1.5, 3);
+    } else if (m === 'greenhouse') {
+      // 彩虹玻璃温室：透亮玻璃穹顶钢架 + 柔和七彩折射彩虹 + 暖木花架与优雅花盆
+      ctx2.strokeStyle = 'rgba(255,150,185,0.45)'; ctx2.lineWidth = 2;
+      ctx2.beginPath(); ctx2.arc(27, 25, 21, Math.PI * 1.1, Math.PI * 1.9); ctx2.stroke();
+      ctx2.strokeStyle = 'rgba(255,225,130,0.45)';
+      ctx2.beginPath(); ctx2.arc(27, 25, 19, Math.PI * 1.1, Math.PI * 1.9); ctx2.stroke();
+      ctx2.strokeStyle = 'rgba(130,225,255,0.45)';
+      ctx2.beginPath(); ctx2.arc(27, 25, 17, Math.PI * 1.1, Math.PI * 1.9); ctx2.stroke();
+      // 玻璃温室白钢拱架
+      ctx2.strokeStyle = '#ffffff'; ctx2.lineWidth = 1.2;
+      ctx2.beginPath(); ctx2.arc(27, 25, 24, Math.PI, 0); ctx2.stroke();
+      ctx2.beginPath(); ctx2.moveTo(27, 1); ctx2.lineTo(27, 24); ctx2.moveTo(13, 6); ctx2.lineTo(13, 24); ctx2.moveTo(41, 6); ctx2.lineTo(41, 24); ctx2.stroke();
+      // 温室绿植与花盆
+      ctx2.fillStyle = '#7ec482'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#e8dfd5'; ctx2.fillRect(14, 24, 26, 12);
+      [[7,20,'#ff85ad'],[45,20,'#ffd254']].forEach(([px,py,fc]) => {
+        ctx2.fillStyle = '#c97a54'; ctx2.fillRect(px, py + 2, 5, 4);
+        ctx2.fillStyle = '#4e9c5c'; ctx2.beginPath(); ctx2.arc(px + 2.5, py + 1, 3.5, 0, Math.PI * 2); ctx2.fill();
+        ctx2.fillStyle = fc; ctx2.fillRect(px + 1, py, 2, 2); ctx2.fillRect(px + 3, py - 1, 2, 2);
+      });
+    } else if (m === 'ferris') {
+      // 日落海湾摩天轮：橘粉夕阳大太阳 + 巨大精致摩天轮与彩色座舱 + 闪耀晚霞海面与海湾栏杆
+      ctx2.fillStyle = '#fff0a6'; ctx2.beginPath(); ctx2.arc(13, 18, 6.5, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = 'rgba(255,240,166,0.28)'; ctx2.beginPath(); ctx2.arc(13, 18, 9.5, 0, Math.PI * 2); ctx2.fill();
+      // 摩天轮支架与巨轮
+      ctx2.strokeStyle = '#5c4b75'; ctx2.lineWidth = 1.3;
+      ctx2.beginPath(); ctx2.moveTo(31,24); ctx2.lineTo(36,13); ctx2.lineTo(41,24); ctx2.stroke();
+      ctx2.strokeStyle = '#fff5f8'; ctx2.lineWidth = 1.2;
+      ctx2.beginPath(); ctx2.arc(36, 12, 9.5, 0, Math.PI * 2); ctx2.stroke();
+      ctx2.strokeStyle = 'rgba(255,245,248,0.55)'; ctx2.lineWidth = 0.7;
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        ctx2.beginPath(); ctx2.moveTo(36, 12); ctx2.lineTo(36 + Math.cos(a) * 9.5, 12 + Math.sin(a) * 9.5); ctx2.stroke();
+      }
+      const cabCols = ['#ff6e9c', '#ffe066', '#82d8ff', '#ff9e66', '#b894ff', '#8be0b8', '#ff6e9c', '#ffe066'];
+      for (let i = 0; i < 8; i++) {
+        const a = (i * Math.PI) / 4;
+        ctx2.fillStyle = cabCols[i];
+        ctx2.fillRect(35 + Math.cos(a) * 9.5, 11 + Math.sin(a) * 9.5, 2.4, 2.4);
+      }
+      // 晚霞海面与木栈道护栏
+      ctx2.fillStyle = '#4e4873'; ctx2.fillRect(0, 23, 54, 13);
+      ctx2.fillStyle = '#ff9c78'; ctx2.fillRect(0, 23, 54, 4);
+      ctx2.fillStyle = '#ffe594'; ctx2.fillRect(8, 24, 10, 1); ctx2.fillRect(10, 26, 7, 1);
+      ctx2.fillStyle = '#3b3454'; ctx2.fillRect(0, 27, 54, 9);
     } else if (m === 'onsen') {
-      // 樱花温泉庭院：木篱笆 + 飘落樱花树枝 + 温泉池与袅袅白雾
-      ctx2.fillStyle = '#8c5e42'; ctx2.fillRect(0, 14, 54, 10);
-      ctx2.fillStyle = '#a87454'; for (let x = 2; x < 54; x += 6) ctx2.fillRect(x, 14, 4, 9);
-      ctx2.fillStyle = '#ff9ec2'; ctx2.fillRect(0, 2, 18, 8); ctx2.fillRect(36, 3, 18, 7);
-      ctx2.fillStyle = '#8cd8f5'; ctx2.fillRect(4, 24, 46, 10);
-      ctx2.fillStyle = 'rgba(255,255,255,0.65)'; ctx2.fillRect(10, 19, 8, 2); ctx2.fillRect(32, 18, 10, 2);
+      // 樱花温泉庭院：彻底重绘！柔和日式瓦檐 + 暖木竹篱 + 圆润柔粉樱花树冠 + 发光石灯笼 + 湛蓝暖雾温泉汤池与木盆
+      // 远景日式灰瓦屋檐与暖木障子窗
+      ctx2.fillStyle = '#6e5c66'; ctx2.fillRect(0, 11, 24, 3);
+      ctx2.fillStyle = '#f5e6d8'; ctx2.fillRect(2, 14, 20, 9);
+      ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(5, 15, 12, 6);
+      ctx2.fillStyle = '#a87d5e'; ctx2.fillRect(10, 15, 1, 6); ctx2.fillRect(5, 18, 12, 1);
+      // 暖木围栏与石灯笼
+      ctx2.fillStyle = '#a87b56'; ctx2.fillRect(22, 16, 32, 7);
+      ctx2.fillStyle = '#8c6242';
+      for (let x = 24; x < 54; x += 6) ctx2.fillRect(x, 16, 1, 7);
+      ctx2.fillStyle = '#9e9699'; ctx2.fillRect(25, 13, 5, 10); ctx2.fillRect(24, 12, 7, 2);
+      ctx2.fillStyle = '#ffe588'; ctx2.fillRect(26, 15, 3, 3);
+      // 柔粉分层樱花树冠（圆润大片，绝不画杂乱碎点！）
+      ctx2.fillStyle = '#734c42'; ctx2.fillRect(44, 10, 4, 13);
+      ctx2.fillStyle = '#ffa6c4';
+      ctx2.beginPath(); ctx2.arc(46, 7, 8, 0, Math.PI * 2); ctx2.arc(38, 9, 6, 0, Math.PI * 2); ctx2.arc(52, 10, 6, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffd1e3';
+      ctx2.beginPath(); ctx2.arc(44, 5, 5.5, 0, Math.PI * 2); ctx2.arc(36, 7, 4, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffebf3';
+      ctx2.beginPath(); ctx2.arc(43, 4, 3, 0, Math.PI * 2); ctx2.fill();
+      // 天然石块池边 + 透亮碧蓝温泉汤池 + 袅袅白雾 + 漂浮小木桶
+      ctx2.fillStyle = '#8c7a72'; ctx2.fillRect(0, 22, 54, 14);
+      ctx2.fillStyle = '#a6968e';
+      [[5,23,5],[16,23,6],[38,23,6],[49,23,5]].forEach(([sx,sy,sr]) => { ctx2.beginPath(); ctx2.arc(sx, sy, sr, Math.PI, 0); ctx2.fill(); });
+      ctx2.fillStyle = '#7fd4f5';
+      ctx2.beginPath(); ctx2.ellipse(27, 29, 23, 6.5, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#a8e6ff';
+      ctx2.beginPath(); ctx2.ellipse(27, 28, 17, 4, 0, 0, Math.PI * 2); ctx2.fill();
+      // 漂浮原木小浴盆与柔和白雾
+      ctx2.fillStyle = '#d49a62'; ctx2.fillRect(40, 26, 5, 3); ctx2.fillStyle = '#f2c894'; ctx2.fillRect(41, 26, 3, 1);
+      ctx2.fillStyle = 'rgba(255,255,255,0.48)';
+      ctx2.beginPath(); ctx2.arc(17, 21, 3.5, 0, Math.PI * 2); ctx2.arc(21, 19, 2.8, 0, Math.PI * 2); ctx2.arc(34, 20, 3.2, 0, Math.PI * 2); ctx2.fill();
     } else if (m === 'pirate') {
-      // 藏宝海盗木船：蓝天白帆 + 木桅杆 + 金币宝箱
-      ctx2.fillStyle = '#704426'; ctx2.fillRect(26, 2, 2, 21);
-      ctx2.fillStyle = '#fffdf5'; ctx2.fillRect(16, 4, 22, 12);
-      ctx2.fillStyle = '#e05868'; ctx2.fillRect(27, 2, 7, 3);
-      ctx2.fillStyle = '#8c5632'; ctx2.fillRect(0, 22, 54, 14);
-      ctx2.fillStyle = '#f5c242'; ctx2.fillRect(40, 18, 8, 6); ctx2.fillStyle = '#fff5b8'; ctx2.fillRect(42, 19, 4, 2);
+      // 藏宝海盗木船：碧海晴云 + 鼓风白帆与红旗 + 实木船舷甲板 + 闪亮黄金宝箱
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(4, 4, 9, 2); ctx2.fillRect(40, 5, 8, 2);
+      ctx2.fillStyle = '#3b8ec4'; ctx2.fillRect(0, 18, 54, 6);
+      ctx2.fillStyle = '#704426'; ctx2.fillRect(25, 2, 2.5, 20);
+      ctx2.fillStyle = '#fffdf5';
+      ctx2.beginPath(); ctx2.moveTo(15,4); ctx2.quadraticCurveTo(26,2,37,5); ctx2.lineTo(35,16); ctx2.quadraticCurveTo(26,14,17,16); ctx2.fill();
+      ctx2.fillStyle = '#e05262'; ctx2.fillRect(27, 2, 8, 3);
+      ctx2.fillStyle = '#9e6238'; ctx2.fillRect(0, 22, 54, 14);
+      ctx2.fillStyle = '#7d4a28'; ctx2.fillRect(0, 22, 54, 2); ctx2.fillRect(0, 28, 54, 1); ctx2.fillRect(0, 33, 54, 1);
+      // 闪亮黄金宝箱
+      ctx2.fillStyle = '#784622'; ctx2.fillRect(40, 17, 10, 7);
+      ctx2.fillStyle = '#f5c242'; ctx2.fillRect(40, 19, 10, 1.5); ctx2.fillRect(44, 18, 2, 3);
+      ctx2.fillStyle = '#fff4b0'; ctx2.fillRect(42, 16, 6, 2);
     } else if (m === 'patisserie') {
-      // 法式街角甜品屋：法式蓝灰斜顶 + 金框招牌 + 玫瑰奶油条纹遮阳棚 + 暖光甜品橱窗 + 鼠尾草绿木门 + 花箱与石板路
-      // 巴黎蓝灰孟莎屋顶与小天窗
+      // 法式街角甜品屋：巴黎蓝灰斜顶 + 金边法式店招 + 玫瑰奶油遮阳棚 + 暖光烘焙橱窗 + 鼠尾草绿木门 + 露天小圆桌与马卡龙塔 + 石板路
       ctx2.fillStyle = '#5c6c87'; ctx2.fillRect(3, 1, 48, 5);
       ctx2.fillStyle = '#7486a3'; ctx2.fillRect(5, 2, 44, 2);
       ctx2.fillStyle = '#48566e'; ctx2.fillRect(2, 5, 50, 1);
       ctx2.fillStyle = '#fff0c2'; ctx2.fillRect(11, 2, 4, 3); ctx2.fillRect(39, 2, 4, 3);
-      // 奶油石膏墙面与立柱装饰
       ctx2.fillStyle = '#fff5ea'; ctx2.fillRect(4, 6, 46, 18);
       ctx2.fillStyle = '#ebd9c8'; ctx2.fillRect(4, 6, 2, 18); ctx2.fillRect(48, 6, 2, 18); ctx2.fillRect(29, 13, 2, 11);
-      // 复古酒红金边法式店招
+      // 复古酒红金边店招
       ctx2.fillStyle = '#73384a'; ctx2.fillRect(12, 6, 30, 4);
       ctx2.fillStyle = '#f2cf78'; ctx2.fillRect(13, 6, 28, 1); ctx2.fillRect(13, 9, 28, 1);
       ctx2.fillStyle = '#fff7e0';
       for (let x = 16; x <= 36; x += 3) ctx2.fillRect(x, 7, 2, 1);
-      // 玫瑰粉白条纹波浪遮阳棚 + 棚下阴影
+      // 玫瑰粉白波浪遮阳棚
       for (let i = 0; i < 12; i++) {
         ctx2.fillStyle = i % 2 ? '#ef7a96' : '#fffaf5';
         ctx2.fillRect(3 + i * 4, 10, 4, 4);
@@ -34562,190 +34701,305 @@
         ctx2.fillRect(3 + i * 4, 14, 4, 1);
       }
       ctx2.fillStyle = 'rgba(120,76,84,0.18)'; ctx2.fillRect(4, 15, 46, 1);
-      // 左侧暖光烘焙橱窗 + 草莓双层蛋糕 & 彩色马卡龙
+      // 暖光烘焙橱窗 + 双层草莓蛋糕 & 马卡龙
       ctx2.fillStyle = '#8c5840'; ctx2.fillRect(7, 15, 20, 9);
       ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(8, 16, 18, 7);
       ctx2.fillStyle = '#ffd680'; ctx2.fillRect(8, 20, 18, 3);
-      // 窗格高光
       ctx2.fillStyle = 'rgba(255,255,255,0.65)'; ctx2.fillRect(9, 16, 2, 3);
-      // 橱窗内双层草莓奶油蛋糕
       ctx2.fillStyle = '#fff8fa'; ctx2.fillRect(10, 20, 6, 3); ctx2.fillRect(11, 18, 4, 2);
       ctx2.fillStyle = '#e8527a'; ctx2.fillRect(12, 17, 2, 1); ctx2.fillRect(10, 20, 6, 1);
-      // 橱窗内马卡龙小碟
       ctx2.fillStyle = '#ff96b8'; ctx2.fillRect(19, 21, 2, 2);
       ctx2.fillStyle = '#8be0b8'; ctx2.fillRect(21, 21, 2, 2);
       ctx2.fillStyle = '#ffe066'; ctx2.fillRect(23, 21, 2, 2);
-      // 窗台小花箱（绿叶 + 粉红玫瑰）
+      // 窗台绿叶玫瑰花箱
       ctx2.fillStyle = '#6c9c5e'; ctx2.fillRect(7, 23, 20, 2);
       ctx2.fillStyle = '#ff6e96'; ctx2.fillRect(9, 22, 2, 2); ctx2.fillRect(16, 22, 2, 2); ctx2.fillRect(23, 22, 2, 2);
-      // 右侧鼠尾草绿法式木门 + 玻璃窗格 + 黄铜把手
+      // 鼠尾草绿法式木门 + 暖光玻璃 + 门边壁灯
       ctx2.fillStyle = '#6e9985'; ctx2.fillRect(33, 15, 11, 9);
       ctx2.fillStyle = '#587d6c'; ctx2.fillRect(33, 15, 11, 1);
       ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(35, 16, 7, 4);
       ctx2.fillStyle = '#6e9985'; ctx2.fillRect(38, 16, 1, 4);
       ctx2.fillStyle = '#f2c95e'; ctx2.fillRect(42, 21, 1, 2);
-      // 门边暖色小壁灯
       ctx2.fillStyle = '#5c463c'; ctx2.fillRect(45, 16, 2, 3);
       ctx2.fillStyle = '#fff2a6'; ctx2.fillRect(45, 17, 2, 2);
-      // 法式暖灰石板街道纹理
+      // 露天法式小圆桌 + 双层马卡龙甜品塔
+      ctx2.fillStyle = '#5c463c'; ctx2.fillRect(26, 28, 2, 5); ctx2.fillRect(24, 32, 6, 1);
+      ctx2.fillStyle = '#fff7f0'; ctx2.fillRect(22, 27, 10, 2);
+      ctx2.fillStyle = '#ff8aa8'; ctx2.fillRect(25, 25, 4, 2);
+      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(26, 24, 2, 1);
+      // 暖灰法式街道
       ctx2.fillStyle = '#d9c6bc'; ctx2.fillRect(0, 24, 54, 12);
-      ctx2.fillStyle = '#cbb4a8';
-      for (let ry = 25; ry < 35; ry += 3) {
-        for (let rx = (ry % 2 ? 2 : 6); rx < 52; rx += 9) ctx2.fillRect(rx, ry, 5, 1);
-      }
+      ctx2.fillStyle = '#cbb4a8'; ctx2.fillRect(0, 24, 54, 1); ctx2.fillRect(0, 30, 54, 1);
+      // 保持圆桌在路面之上
+      ctx2.fillStyle = '#5c463c'; ctx2.fillRect(26, 28, 2, 5); ctx2.fillRect(24, 32, 6, 1);
+      ctx2.fillStyle = '#fff7f0'; ctx2.fillRect(22, 27, 10, 2);
+      ctx2.fillStyle = '#ff8aa8'; ctx2.fillRect(25, 25, 4, 2);
+      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(26, 24, 2, 1);
     } else if (m === 'igloo') {
-      // 极光冰屋营地：流动翡翠粉极光带 + 圆拱冰屋 + 暖黄门洞
-      ctx2.fillStyle = 'rgba(110,255,196,0.45)'; ctx2.fillRect(4, 4, 28, 4); ctx2.fillRect(20, 7, 30, 4);
-      ctx2.fillStyle = 'rgba(180,140,255,0.35)'; ctx2.fillRect(10, 9, 26, 3);
-      ctx2.fillStyle = '#eef9ff'; ctx2.beginPath(); ctx2.arc(27, 24, 11, Math.PI, 0); ctx2.fill();
-      ctx2.fillStyle = '#ffe082'; ctx2.fillRect(24, 18, 6, 6);
+      // 极光冰屋营地：丝滑弧形翡翠粉紫极光带 + 雪松剪影 + 暖光冰砖雪屋 + 蓝白雪地
+      ctx2.strokeStyle = 'rgba(110,255,196,0.52)'; ctx2.lineWidth = 3;
+      ctx2.beginPath(); ctx2.moveTo(0,8); ctx2.quadraticCurveTo(18,2,36,8); ctx2.quadraticCurveTo(46,11,54,5); ctx2.stroke();
+      ctx2.strokeStyle = 'rgba(180,145,255,0.38)'; ctx2.lineWidth = 2.5;
+      ctx2.beginPath(); ctx2.moveTo(4,12); ctx2.quadraticCurveTo(24,6,48,11); ctx2.stroke();
+      [6, 47].forEach(tx => {
+        ctx2.fillStyle = '#255259';
+        ctx2.beginPath(); ctx2.moveTo(tx, 14); ctx2.lineTo(tx - 4, 24); ctx2.lineTo(tx + 4, 24); ctx2.fill();
+        ctx2.fillStyle = '#e6f7ff'; ctx2.fillRect(tx - 1, 14, 2, 2);
+      });
+      ctx2.fillStyle = '#e6f6ff'; ctx2.beginPath(); ctx2.arc(27, 24, 11, Math.PI, 0); ctx2.fill();
+      ctx2.fillStyle = '#c4e4f7'; ctx2.fillRect(17, 19, 20, 1); ctx2.fillRect(19, 16, 16, 1);
+      ctx2.fillStyle = '#ffe282'; ctx2.beginPath(); ctx2.arc(27, 24, 4, Math.PI, 0); ctx2.fill();
+      ctx2.fillStyle = '#eaf7ff'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#cce8fa'; ctx2.fillRect(0, 29, 54, 2);
     } else if (m === 'treehouse') {
-      // 森林树屋吊桥：左右巨树树干 + 木屋暖窗 + 弧形木吊桥
-      ctx2.fillStyle = '#6e472e'; ctx2.fillRect(2, 4, 9, 24); ctx2.fillRect(43, 4, 9, 24);
-      ctx2.fillStyle = '#4c9c5e'; ctx2.fillRect(0, 0, 18, 9); ctx2.fillRect(36, 0, 18, 9);
-      ctx2.fillStyle = '#b87a48'; ctx2.fillRect(38, 8, 12, 10); ctx2.fillStyle = '#ffe682'; ctx2.fillRect(42, 11, 4, 4);
-      ctx2.strokeStyle = '#8c5a32'; ctx2.lineWidth = 1.5; ctx2.beginPath(); ctx2.moveTo(10, 17); ctx2.quadraticCurveTo(27, 22, 44, 17); ctx2.stroke();
+      // 森林树屋吊桥：阳光林间树冠 + 左右参天巨树 + 暖窗森林木屋 + 弧形悬索木吊桥
+      ctx2.fillStyle = '#3c8550';
+      ctx2.beginPath(); ctx2.arc(7, 5, 9, 0, Math.PI * 2); ctx2.arc(47, 5, 9, 0, Math.PI * 2); ctx2.arc(27, 2, 8, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#5eb86e';
+      ctx2.beginPath(); ctx2.arc(10, 4, 6, 0, Math.PI * 2); ctx2.arc(44, 4, 6, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#6e472e'; ctx2.fillRect(2, 6, 9, 22); ctx2.fillRect(43, 6, 9, 22);
+      ctx2.fillStyle = '#8a5a3a'; ctx2.fillRect(4, 6, 3, 22); ctx2.fillRect(45, 6, 3, 22);
+      // 树屋与暖黄圆窗
+      ctx2.fillStyle = '#b87a48'; ctx2.fillRect(36, 9, 14, 10);
+      ctx2.fillStyle = '#734428'; ctx2.beginPath(); ctx2.moveTo(34,10); ctx2.lineTo(43,4); ctx2.lineTo(52,10); ctx2.fill();
+      ctx2.fillStyle = '#ffe682'; ctx2.fillRect(41, 12, 4, 4);
+      // 悬索吊桥
+      ctx2.strokeStyle = '#7a4b2a'; ctx2.lineWidth = 1.4;
+      ctx2.beginPath(); ctx2.moveTo(10, 16); ctx2.quadraticCurveTo(23, 21, 37, 16); ctx2.stroke();
+      ctx2.beginPath(); ctx2.moveTo(10, 19); ctx2.quadraticCurveTo(23, 24, 37, 19); ctx2.stroke();
+      ctx2.fillStyle = '#69a652'; ctx2.fillRect(0, 24, 54, 12);
     } else if (m === 'moonboat') {
-      // 月亮船萤火河：金色弯月船 + 河面荧光倒影 + 飘浮萤火虫
-      ctx2.fillStyle = '#ffe878'; ctx2.beginPath(); ctx2.arc(27, 19, 10, 0.15 * Math.PI, 0.85 * Math.PI); ctx2.fill();
-      ctx2.fillStyle = '#39467a'; ctx2.beginPath(); ctx2.arc(27, 15, 8, 0, Math.PI * 2); ctx2.fill();
-      [[8,14],[16,8],[38,11],[46,16],[22,27],[35,28]].forEach(([x,y]) => { ctx2.fillStyle = '#e6ff82'; ctx2.fillRect(x,y,2,2); });
+      // 月亮船萤火河：星空夜幕 + 远岸芦苇 + 发光金色弯月小船 + 柔光河面倒影与点点萤火
+      ctx2.fillStyle = '#1b2c52'; ctx2.fillRect(0, 18, 54, 18);
+      ctx2.fillStyle = '#253c6e'; ctx2.fillRect(0, 22, 54, 14);
+      ctx2.fillStyle = 'rgba(255,240,140,0.22)'; ctx2.beginPath(); ctx2.ellipse(27, 25, 14, 3, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffe378';
+      ctx2.beginPath(); ctx2.arc(27, 16, 9, 0.25 * Math.PI, 0.85 * Math.PI); ctx2.lineTo(27, 22); ctx2.fill();
+      ctx2.fillStyle = '#fff5b8'; ctx2.fillRect(21, 21, 12, 2);
+      [[10,9],[17,13],[39,8],[45,14],[33,11]].forEach(([fx,fy]) => {
+        ctx2.fillStyle = 'rgba(255,245,140,0.35)'; ctx2.fillRect(fx - 1, fy - 1, 3, 3);
+        ctx2.fillStyle = '#fff9b8'; ctx2.fillRect(fx, fy, 1, 1);
+      });
     } else if (m === 'clocktower') {
-      // 齿轮钟楼露台：黄昏巨型金钟表盘 + 罗马指针 + 复古齿轮
-      ctx2.fillStyle = '#7a5240'; ctx2.fillRect(15, 3, 24, 21);
-      ctx2.fillStyle = '#fff5d6'; ctx2.beginPath(); ctx2.arc(27, 13, 8, 0, Math.PI * 2); ctx2.fill();
-      ctx2.strokeStyle = '#6b4228'; ctx2.lineWidth = 1.2; ctx2.beginPath(); ctx2.moveTo(27,13); ctx2.lineTo(27,7); ctx2.moveTo(27,13); ctx2.lineTo(32,14); ctx2.stroke();
-      ctx2.fillStyle = '#f0be59'; ctx2.fillRect(6, 15, 6, 6); ctx2.fillRect(42, 14, 6, 6);
+      // 齿轮钟楼露台：黄昏晚霞暖云 + 复古尖顶石钟楼 + 暖光巨型金框时钟与刻度指针 + 两侧精致齿牙铜齿轮 + 欧式石雕栏杆露台
+      ctx2.fillStyle = '#ffe5b8'; ctx2.fillRect(3, 4, 10, 2); ctx2.fillRect(41, 3, 9, 2);
+      // 钟楼塔尖与石砖塔身
+      ctx2.fillStyle = '#593e36';
+      ctx2.beginPath(); ctx2.moveTo(13,4); ctx2.lineTo(27,0); ctx2.lineTo(41,4); ctx2.fill();
+      ctx2.fillStyle = '#7d5b4f'; ctx2.fillRect(14, 4, 26, 20);
+      ctx2.fillStyle = '#63463c'; ctx2.fillRect(14, 4, 3, 20); ctx2.fillRect(37, 4, 3, 20);
+      // 金色外环 + 暖光象牙表盘 + 4向刻度 + 时分针
+      ctx2.fillStyle = '#e6b042'; ctx2.beginPath(); ctx2.arc(27, 14, 8.5, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#fff6dc'; ctx2.beginPath(); ctx2.arc(27, 14, 6.8, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#9e6b2e';
+      ctx2.fillRect(26.5, 8, 1, 1.5); ctx2.fillRect(26.5, 18.5, 1, 1.5); ctx2.fillRect(21, 13.5, 1.5, 1); ctx2.fillRect(31.5, 13.5, 1.5, 1);
+      ctx2.fillStyle = '#3b261e';
+      ctx2.fillRect(26.5, 9.5, 1.2, 4.8); ctx2.fillRect(26.5, 13.5, 4.5, 1.2);
+      ctx2.fillStyle = '#d98a2b'; ctx2.fillRect(26, 13, 2, 2);
+      // 左侧与右侧带齿牙复古黄铜齿轮
+      [[7,17,4],[47,16,4.5]].forEach(([gx,gy,gr]) => {
+        ctx2.fillStyle = '#d99e38';
+        ctx2.fillRect(gx - gr - 1, gy - 1, (gr + 1) * 2, 2);
+        ctx2.fillRect(gx - 1, gy - gr - 1, 2, (gr + 1) * 2);
+        ctx2.beginPath(); ctx2.arc(gx, gy, gr, 0, Math.PI * 2); ctx2.fill();
+        ctx2.fillStyle = '#63463c'; ctx2.beginPath(); ctx2.arc(gx, gy, gr * 0.45, 0, Math.PI * 2); ctx2.fill();
+      });
+      // 欧式露台栏杆与暖石地砖
+      ctx2.fillStyle = '#59443c'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#8c6d5e'; ctx2.fillRect(0, 22, 54, 2);
+      for (let x = 2; x < 54; x += 6) ctx2.fillRect(x, 24, 2, 3);
+      ctx2.fillStyle = '#6e554b'; ctx2.fillRect(0, 27, 54, 9);
     } else if (m === 'coral') {
-      // 热带珊瑚栈桥：清澈碧海 + 木栈桥板 + 彩色珊瑚丛
-      ctx2.fillStyle = '#3fb8d9'; ctx2.fillRect(0, 16, 54, 10);
-      ctx2.fillStyle = '#c48a54'; ctx2.fillRect(6, 22, 42, 12);
-      ctx2.fillStyle = '#a36e3e'; for (let x = 8; x < 48; x += 6) ctx2.fillRect(x, 22, 1, 12);
-      [[4,18,'#ff7e78'],[12,19,'#ffd059'],[42,18,'#ff8ec2'],[48,19,'#8cf0c4']].forEach(([x,y,c0]) => { ctx2.fillStyle = c0; ctx2.fillRect(x,y,4,4); });
+      // 热带珊瑚栈桥：晴蓝海天 + 远岛椰树 + 晶莹浅碧海水与彩色珊瑚丛 + 透视原木栈桥
+      ctx2.fillStyle = '#38b5db'; ctx2.fillRect(0, 14, 54, 22);
+      ctx2.fillStyle = '#6ce0f5'; ctx2.fillRect(0, 18, 54, 18);
+      // 珊瑚礁丛
+      ctx2.fillStyle = '#ff7e78'; ctx2.beginPath(); ctx2.arc(8, 22, 4, Math.PI, 0); ctx2.fill();
+      ctx2.fillStyle = '#ffd254'; ctx2.beginPath(); ctx2.arc(14, 23, 3, Math.PI, 0); ctx2.fill();
+      ctx2.fillStyle = '#ff8ec4'; ctx2.beginPath(); ctx2.arc(45, 22, 4.5, Math.PI, 0); ctx2.fill();
+      // 原木栈桥透视
+      ctx2.fillStyle = '#c99660';
+      ctx2.beginPath(); ctx2.moveTo(16,20); ctx2.lineTo(38,20); ctx2.lineTo(48,36); ctx2.lineTo(6,36); ctx2.fill();
+      ctx2.fillStyle = '#a37140';
+      for (let y = 22; y < 35; y += 3) ctx2.fillRect(10, y, 34, 1);
     } else if (m === 'maple_valley') {
-      // 红叶山谷索道：满山橙红枫树 + 山谷暖阳 + 飘落红叶
-      ctx2.fillStyle = '#d95838'; ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.lineTo(16,9); ctx2.lineTo(34,24); ctx2.fill();
-      ctx2.fillStyle = '#f08238'; ctx2.beginPath(); ctx2.moveTo(20,24); ctx2.lineTo(40,7); ctx2.lineTo(54,24); ctx2.fill();
-      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(24, 5, 5, 5);
-      [[8,8],[18,13],[34,9],[46,12],[27,16]].forEach(([x,y]) => { ctx2.fillStyle = '#ff5e40'; ctx2.fillRect(x,y,2,2); });
+      // 红叶山谷索道：暖阳金霞 + 层叠绯红橙金山峦 + 红色观光缆车 + 满地红枫小径
+      ctx2.fillStyle = '#fff0a8'; ctx2.beginPath(); ctx2.arc(27, 13, 5.5, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#d95b38';
+      ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.quadraticCurveTo(14,10,28,24); ctx2.fill();
+      ctx2.fillStyle = '#e87c38';
+      ctx2.beginPath(); ctx2.moveTo(22,24); ctx2.quadraticCurveTo(40,9,54,24); ctx2.fill();
+      ctx2.strokeStyle = '#6e3a28'; ctx2.lineWidth = 0.9;
+      ctx2.beginPath(); ctx2.moveTo(0,8); ctx2.lineTo(54,13); ctx2.stroke();
+      ctx2.fillStyle = '#c43b3b'; ctx2.fillRect(30, 11, 8, 6);
+      ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(32, 12, 4, 3);
+      ctx2.fillStyle = '#b54632'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#ff9640'; ctx2.fillRect(6, 26, 4, 2); ctx2.fillRect(42, 27, 4, 2);
     } else if (m === 'bamboo') {
-      // 萤火虫竹林道：错落青竹竿 + 竹叶 + 发光萤火虫群
-      for (let x = 4; x < 52; x += 7) {
-        ctx2.fillStyle = x % 2 ? '#4c9e6c' : '#357a52';
-        ctx2.fillRect(x, 0, 3, 25);
-        ctx2.fillStyle = '#78c992'; ctx2.fillRect(x, 8, 3, 1); ctx2.fillRect(x, 16, 3, 1);
-      }
-      [[10,9],[20,14],[31,7],[42,12],[16,19],[38,18]].forEach(([x,y]) => { ctx2.fillStyle = '#e0ff78'; ctx2.fillRect(x,y,2,2); });
+      // 萤火虫竹林道：清幽深浅错落竹林 + 柔和竹叶团 + 月色石板小径 + 暖绿萤火光晕
+      [5, 13, 21, 34, 42, 49].forEach((bx, i) => {
+        ctx2.fillStyle = i % 2 ? '#3e855c' : '#2c6947';
+        ctx2.fillRect(bx, 0, 3, 25);
+        ctx2.fillStyle = '#6ec488';
+        for (let y = 4; y < 24; y += 6) ctx2.fillRect(bx, y, 3, 1);
+      });
+      ctx2.fillStyle = '#4aa36c';
+      [[8,4],[17,7],[39,5],[47,8]].forEach(([lx,ly]) => { ctx2.beginPath(); ctx2.ellipse(lx, ly, 4, 2, 0.3, 0, Math.PI * 2); ctx2.fill(); });
+      ctx2.fillStyle = '#244537'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#3b6652'; ctx2.fillRect(14, 24, 26, 12);
+      [[11,10],[25,8],[37,13],[18,17],[44,16]].forEach(([fx,fy]) => {
+        ctx2.fillStyle = 'rgba(215,255,120,0.38)'; ctx2.fillRect(fx - 1, fy - 1, 3, 3);
+        ctx2.fillStyle = '#ecff9e'; ctx2.fillRect(fx, fy, 1, 1);
+      });
     } else if (m === 'windmill') {
-      // 薰衣草风车丘：柔和晚霞白云 + 远近起伏紫花坡 + 层次花垄 + 复古红顶白风车塔与格纹木风叶 + 飘散花瓣
+      // 薰衣草风车丘：彻底重绘！零杂乱小点！晴空白云 + 柔美三层波浪紫花山丘 + 精致白石红顶风车塔与干净木格风叶
       ctx2.fillStyle = '#ffffff';
-      ctx2.fillRect(5, 3, 10, 2); ctx2.fillRect(7, 2, 6, 2);
-      ctx2.fillRect(39, 4, 9, 2); ctx2.fillRect(41, 3, 5, 2);
-      // 远景淡紫山丘
-      ctx2.fillStyle = '#c8b4f2';
-      ctx2.beginPath(); ctx2.moveTo(0,22); ctx2.quadraticCurveTo(16,15,34,20); ctx2.quadraticCurveTo(45,16,54,21); ctx2.lineTo(54,24); ctx2.lineTo(0,24); ctx2.fill();
-      // 远坡柏树剪影
-      ctx2.fillStyle = '#5a7d68';
-      ctx2.fillRect(7, 15, 2, 5); ctx2.fillRect(11, 16, 2, 4); ctx2.fillRect(45, 15, 2, 5);
-      // 复古白石风车塔（梯形塔身 + 红瓦圆顶 + 木门暖窗）
-      ctx2.fillStyle = '#fff9f2';
-      ctx2.beginPath(); ctx2.moveTo(24,9); ctx2.lineTo(30,9); ctx2.lineTo(32,22); ctx2.lineTo(22,22); ctx2.fill();
-      ctx2.fillStyle = '#e6d8cc'; ctx2.fillRect(29, 9, 2, 13);
+      ctx2.beginPath(); ctx2.ellipse(10, 5, 6, 2.2, 0, 0, Math.PI * 2); ctx2.ellipse(44, 6, 5.5, 2, 0, 0, Math.PI * 2); ctx2.fill();
+      // 第一层远景淡紫山丘
+      ctx2.fillStyle = '#cbb8f5';
+      ctx2.beginPath(); ctx2.moveTo(0,22); ctx2.quadraticCurveTo(15,13,31,19); ctx2.quadraticCurveTo(44,14,54,20); ctx2.lineTo(54,25); ctx2.lineTo(0,25); ctx2.fill();
+      // 复古白石风车塔（梯形白塔 + 暖影 + 红瓦圆顶 + 木门暖窗）
+      ctx2.fillStyle = '#fffaf2';
+      ctx2.beginPath(); ctx2.moveTo(23,9); ctx2.lineTo(31,9); ctx2.lineTo(33,22); ctx2.lineTo(21,22); ctx2.fill();
+      ctx2.fillStyle = '#e8dcd0'; ctx2.fillRect(29, 9, 2.5, 13);
       ctx2.fillStyle = '#d95b6a';
-      ctx2.beginPath(); ctx2.moveTo(22,9); ctx2.lineTo(27,4); ctx2.lineTo(32,9); ctx2.fill();
-      ctx2.fillStyle = '#8c5a3c'; ctx2.fillRect(26, 17, 3, 5);
+      ctx2.beginPath(); ctx2.moveTo(21,9); ctx2.lineTo(27,4); ctx2.lineTo(33,9); ctx2.fill();
+      ctx2.fillStyle = '#8c5a3c'; ctx2.fillRect(25.5, 17, 3, 5);
       ctx2.fillStyle = '#ffe588'; ctx2.fillRect(26, 12, 2, 2);
-      // 精致四叶木格风车桨
+      // 干净对称四叶风车桨
       ctx2.strokeStyle = '#7a4e32'; ctx2.lineWidth = 1.4;
       ctx2.beginPath(); ctx2.moveTo(19,3); ctx2.lineTo(35,17); ctx2.moveTo(35,3); ctx2.lineTo(19,17); ctx2.stroke();
-      ctx2.fillStyle = '#fff7e8';
+      ctx2.fillStyle = '#fff5e6';
       ctx2.fillRect(20, 4, 3, 2); ctx2.fillRect(31, 4, 3, 2);
       ctx2.fillRect(20, 14, 3, 2); ctx2.fillRect(31, 14, 3, 2);
       ctx2.fillStyle = '#d95b6a'; ctx2.fillRect(26, 9, 2, 2);
-      // 近景起伏薰衣草花海与透视紫花垄
-      ctx2.fillStyle = '#a47ee0'; ctx2.fillRect(0, 22, 54, 14);
-      ctx2.fillStyle = '#865bc9';
-      for (let row = 0; row < 4; row++) {
-        const y0 = 23 + row * 3;
-        for (let x0 = (row % 2 ? 1 : 4); x0 < 53; x0 += 6) {
-          ctx2.fillRect(x0, y0, 4, 2);
-          ctx2.fillStyle = '#d8c2ff'; ctx2.fillRect(x0 + 1, y0, 2, 1);
-          ctx2.fillStyle = '#865bc9';
-        }
-      }
-      // 随风飘起的淡紫花瓣
-      ctx2.fillStyle = '#efe6ff';
-      [[14,9],[39,11],[18,16],[42,18]].forEach(([px,py]) => ctx2.fillRect(px, py, 1, 1));
+      // 第二层平滑中景薰衣草坡
+      ctx2.fillStyle = '#a480e0';
+      ctx2.beginPath(); ctx2.moveTo(0,25); ctx2.quadraticCurveTo(18,19,36,24); ctx2.quadraticCurveTo(46,21,54,24); ctx2.lineTo(54,36); ctx2.lineTo(0,36); ctx2.fill();
+      // 第三层近景柔和深紫花坡（干净弧面色带，零密集杂点）
+      ctx2.fillStyle = '#8a62cc';
+      ctx2.beginPath(); ctx2.moveTo(0,29); ctx2.quadraticCurveTo(27,25,54,30); ctx2.lineTo(54,36); ctx2.lineTo(0,36); ctx2.fill();
+      ctx2.fillStyle = '#b99af0';
+      ctx2.beginPath(); ctx2.moveTo(0,26); ctx2.quadraticCurveTo(22,23,54,27); ctx2.lineTo(54,28); ctx2.quadraticCurveTo(22,24,0,27); ctx2.fill();
     } else if (m === 'xmasmarket') {
-      // 雪夜圣诞集市：挂满彩灯圣诞树 + 姜饼屋摊位 + 飘雪
-      ctx2.fillStyle = '#2c7a52';
-      ctx2.beginPath(); ctx2.moveTo(27,3); ctx2.lineTo(17,22); ctx2.lineTo(37,22); ctx2.fill();
+      // 雪夜圣诞集市：金星圣诞树 + 彩灯 + 暖窗姜饼木屋摊位 + 柔软雪地
+      ctx2.fillStyle = '#256e49';
+      ctx2.beginPath(); ctx2.moveTo(27,3); ctx2.lineTo(16,23); ctx2.lineTo(38,23); ctx2.fill();
+      ctx2.fillStyle = '#338a5e';
+      ctx2.beginPath(); ctx2.moveTo(27,5); ctx2.lineTo(19,16); ctx2.lineTo(35,16); ctx2.fill();
       ctx2.fillStyle = '#ffe066'; ctx2.fillRect(26, 2, 2, 2);
-      [[24,9,'#ff5e6c'],[29,12,'#ffe066'],[22,16,'#82d8ff'],[31,17,'#ff8eb8']].forEach(([x,y,c0]) => { ctx2.fillStyle = c0; ctx2.fillRect(x,y,2,2); });
-      ctx2.fillStyle = '#b86e42'; ctx2.fillRect(3, 14, 11, 10); ctx2.fillStyle = '#fff5d6'; ctx2.fillRect(6, 17, 5, 4);
-      ctx2.fillStyle = '#ffffff'; [[6,5],[14,9],[42,6],[48,13]].forEach(([x,y]) => ctx2.fillRect(x,y,1,1));
+      [[24,10,'#ff5e6c'],[30,13,'#ffe066'],[21,17,'#82d8ff'],[32,18,'#ff8eb8']].forEach(([x,y,c0]) => { ctx2.fillStyle = c0; ctx2.fillRect(x,y,2,2); });
+      ctx2.fillStyle = '#a85e38'; ctx2.fillRect(2, 13, 12, 11);
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(1, 12, 14, 2);
+      ctx2.fillStyle = '#ffe9a6'; ctx2.fillRect(5, 16, 6, 5);
+      ctx2.fillStyle = '#eaf4ff'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#d0e4fa'; ctx2.fillRect(0, 29, 54, 2);
     } else if (m === 'candyhouse') {
-      // 童话糖果小屋：粉奶油屋顶 + 拐杖糖柱 + 巨大棒棒糖
-      ctx2.fillStyle = '#fff0f5'; ctx2.fillRect(15, 10, 24, 14);
-      ctx2.fillStyle = '#ff7aa8'; ctx2.beginPath(); ctx2.moveTo(12,11); ctx2.lineTo(27,3); ctx2.lineTo(42,11); ctx2.fill();
-      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(24, 16, 6, 8);
-      ctx2.fillStyle = '#ff5e88'; ctx2.beginPath(); ctx2.arc(8, 14, 4, 0, Math.PI * 2); ctx2.fill(); ctx2.fillStyle = '#fff'; ctx2.fillRect(7, 18, 2, 6);
-      ctx2.fillStyle = '#82d8ff'; ctx2.beginPath(); ctx2.arc(46, 13, 4, 0, Math.PI * 2); ctx2.fill(); ctx2.fillStyle = '#fff'; ctx2.fillRect(45, 17, 2, 7);
+      // 童话糖果小屋：粉奶油厚屋顶 + 糖霜屋檐 + 饼干木门 + 左右巨型波纹棒棒糖
+      ctx2.fillStyle = '#fff5f8'; ctx2.fillRect(15, 11, 24, 13);
+      ctx2.fillStyle = '#ff7aa8'; ctx2.beginPath(); ctx2.moveTo(12,12); ctx2.lineTo(27,3); ctx2.lineTo(42,12); ctx2.fill();
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(13, 11, 28, 2);
+      ctx2.fillStyle = '#e09a58'; ctx2.fillRect(24, 16, 6, 8);
+      ctx2.fillStyle = '#ffe078'; ctx2.fillRect(17, 15, 4, 4); ctx2.fillRect(33, 15, 4, 4);
+      ctx2.fillStyle = '#ff6496'; ctx2.beginPath(); ctx2.arc(7, 14, 4.2, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(6, 18, 2, 6);
+      ctx2.fillStyle = '#82d8ff'; ctx2.beginPath(); ctx2.arc(47, 13, 4.2, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(46, 17, 2, 7);
+      ctx2.fillStyle = '#f7c8dc'; ctx2.fillRect(0, 24, 54, 12);
     } else if (m === 'oasis') {
-      // 沙漠绿洲星夜：大弯月 + 月牙蓝泉 + 棕榈树
-      ctx2.fillStyle = '#fff09c'; ctx2.beginPath(); ctx2.arc(42, 7, 4, 0, Math.PI * 2); ctx2.fill();
-      ctx2.fillStyle = '#48b8b0'; ctx2.fillRect(12, 25, 30, 6); ctx2.fillStyle = '#9cf5ec'; ctx2.fillRect(16, 27, 20, 2);
-      ctx2.fillStyle = '#7a5232'; ctx2.fillRect(8, 11, 2, 13); ctx2.fillRect(44, 12, 2, 12);
-      ctx2.fillStyle = '#469e5c'; ctx2.fillRect(4, 9, 10, 3); ctx2.fillRect(40, 10, 10, 3);
+      // 沙漠绿洲星夜：柔和弯月 + 连绵金色沙丘 + 澄澈月牙蓝泉 + 剪影棕榈树
+      ctx2.fillStyle = '#fff2a6'; ctx2.beginPath(); ctx2.arc(42, 6, 4.2, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#252d5c'; ctx2.beginPath(); ctx2.arc(43.8, 5, 3.6, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#c99b62';
+      ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.quadraticCurveTo(18,16,38,22); ctx2.quadraticCurveTo(47,19,54,23); ctx2.lineTo(54,36); ctx2.lineTo(0,36); ctx2.fill();
+      ctx2.fillStyle = '#d9b074'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#4fb8b8'; ctx2.beginPath(); ctx2.ellipse(27, 28, 17, 5, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#82e0dc'; ctx2.beginPath(); ctx2.ellipse(27, 27, 11, 2.5, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#6e472b'; ctx2.fillRect(10, 12, 2.5, 13);
+      ctx2.fillStyle = '#3b8054';
+      ctx2.beginPath(); ctx2.ellipse(7, 12, 5, 2, -0.3, 0, Math.PI * 2); ctx2.ellipse(15, 12, 5, 2, 0.3, 0, Math.PI * 2); ctx2.fill();
     } else if (m === 'skystairs') {
-      // 云海天空之梯：粉蓝晴空 + 逐级升空的洁白阶梯 + 金色光门
-      ctx2.fillStyle = '#ffe882'; ctx2.fillRect(22, 3, 10, 8); ctx2.fillStyle = '#ffffff'; ctx2.fillRect(24, 5, 6, 6);
+      // 云海天空之梯：粉蓝晴空 + 柔和云海 + 透视洁白阶梯通向金色拱门
+      ctx2.fillStyle = '#ffe588';
+      ctx2.beginPath(); ctx2.arc(27, 7, 5, Math.PI, 0); ctx2.fill();
+      ctx2.fillRect(22, 7, 10, 4);
+      ctx2.fillStyle = '#ffffff';
       for (let i = 0; i < 6; i++) {
-        ctx2.fillStyle = i % 2 ? '#ffffff' : '#edf6ff';
-        ctx2.fillRect(20 - i * 2, 11 + i * 2, 14 + i * 4, 2);
+        const w = 10 + i * 3.2;
+        ctx2.fillRect(27 - w / 2, 11 + i * 2.2, w, 1.8);
       }
+      ctx2.fillStyle = '#ffeef8'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#ffffff';
+      [[8,25,7],[22,26,8],[38,25,8],[50,26,6]].forEach(([cx,cy,r]) => { ctx2.beginPath(); ctx2.arc(cx, cy, r, Math.PI, 0); ctx2.fill(); });
     } else if (m === 'lighthouse') {
-      // 海边灯塔悬崖：红白条纹灯塔 + 旋转灯光束 + 碧蓝海浪
-      ctx2.fillStyle = 'rgba(255,248,170,0.35)';
-      ctx2.beginPath(); ctx2.moveTo(39,7); ctx2.lineTo(0,2); ctx2.lineTo(0,13); ctx2.fill();
-      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(36, 7, 7, 16);
-      ctx2.fillStyle = '#e04854'; ctx2.fillRect(36, 10, 7, 3); ctx2.fillRect(36, 16, 7, 3); ctx2.fillRect(35, 5, 9, 2);
-      ctx2.fillStyle = '#4ca4db'; ctx2.fillRect(0, 20, 30, 5);
+      // 海边灯塔悬崖：碧蓝海面 + 绿草悬崖 + 红白条纹灯塔与暖光灯室 + 扫射光束
+      ctx2.fillStyle = '#4a98d4'; ctx2.fillRect(0, 18, 54, 18);
+      ctx2.fillStyle = '#82c4f2'; ctx2.fillRect(4, 21, 14, 1); ctx2.fillRect(34, 23, 12, 1);
+      ctx2.fillStyle = '#68a658';
+      ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.lineTo(30,24); ctx2.lineTo(36,36); ctx2.lineTo(0,36); ctx2.fill();
+      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(10, 7, 7, 17);
+      ctx2.fillStyle = '#e05252'; ctx2.fillRect(10, 10, 7, 3); ctx2.fillRect(10, 16, 7, 3); ctx2.fillRect(9, 5, 9, 2);
+      ctx2.fillStyle = '#ffe988'; ctx2.fillRect(11, 7, 5, 3);
+      ctx2.fillStyle = 'rgba(255,244,160,0.28)';
+      ctx2.beginPath(); ctx2.moveTo(16,8); ctx2.lineTo(54,3); ctx2.lineTo(54,14); ctx2.lineTo(16,10); ctx2.fill();
     } else if (m === 'venice') {
-      // 水城彩船小桥：粉黄彩色欧式小楼 + 石拱桥 + 碧蓝河道
-      ctx2.fillStyle = '#ff9e8a'; ctx2.fillRect(0, 7, 13, 17); ctx2.fillStyle = '#ffe08a'; ctx2.fillRect(41, 6, 13, 18);
-      ctx2.fillStyle = '#fff5e6'; ctx2.fillRect(3, 10, 3, 4); ctx2.fillRect(8, 10, 3, 4); ctx2.fillRect(44, 10, 3, 4); ctx2.fillRect(49, 10, 3, 4);
-      ctx2.fillStyle = '#e8d9c5'; ctx2.fillRect(14, 17, 26, 6); ctx2.fillStyle = '#4a98c4'; ctx2.beginPath(); ctx2.arc(27, 24, 7, Math.PI, 0); ctx2.fill();
+      // 水城彩船小桥：粉橘黄欧式水岸小楼 + 暖石拱桥 + 碧蓝运河与水面波纹
+      ctx2.fillStyle = '#f5a898'; ctx2.fillRect(0, 7, 15, 16);
+      ctx2.fillStyle = '#ffe594'; ctx2.fillRect(39, 6, 15, 17);
+      ctx2.fillStyle = '#d96b58'; ctx2.fillRect(0, 6, 16, 2); ctx2.fillRect(38, 5, 16, 2);
+      ctx2.fillStyle = '#fff5d6'; ctx2.fillRect(4, 11, 3, 4); ctx2.fillRect(10, 11, 3, 4); ctx2.fillRect(43, 10, 3, 4); ctx2.fillRect(49, 10, 3, 4);
+      ctx2.fillStyle = '#4898c4'; ctx2.fillRect(0, 22, 54, 14);
+      ctx2.fillStyle = '#e6d8cc'; ctx2.fillRect(13, 17, 28, 7);
+      ctx2.fillStyle = '#4898c4'; ctx2.beginPath(); ctx2.arc(27, 24, 8, Math.PI, 0); ctx2.fill();
+      ctx2.fillStyle = 'rgba(255,255,255,0.45)'; ctx2.fillRect(8, 28, 12, 1); ctx2.fillRect(34, 30, 12, 1);
     } else if (m === 'vinyl') {
-      // 黑胶唱片小屋：唱片墙 + 暖橘落地灯 + 巨大黑胶唱机
-      ctx2.fillStyle = '#734b3c'; ctx2.fillRect(4, 4, 46, 18);
-      [[10,10,'#ff7a98'],[22,10,'#82c4ff'],[34,10,'#ffe066'],[44,10,'#a8e6b8']].forEach(([x,y,c0]) => {
-        ctx2.fillStyle = '#241e22'; ctx2.beginPath(); ctx2.arc(x, y, 4, 0, Math.PI * 2); ctx2.fill();
-        ctx2.fillStyle = c0; ctx2.fillRect(x - 1, y - 1, 2, 2);
+      // 黑胶唱片小屋：暖木墙板 + 彩色唱片展示架 + 复古暖橘落地灯 + 黑胶唱机
+      ctx2.fillStyle = '#634338'; ctx2.fillRect(0, 0, 54, 24);
+      ctx2.fillStyle = '#4d3228'; ctx2.fillRect(0, 23, 54, 13);
+      [[6,6,'#ff8aa8'],[15,6,'#ffe078'],[24,6,'#82d4ff'],[33,6,'#b894ff']].forEach(([rx,ry,rc]) => {
+        ctx2.fillStyle = rc; ctx2.fillRect(rx, ry, 7, 7);
+        ctx2.fillStyle = '#262024'; ctx2.beginPath(); ctx2.arc(rx + 3.5, ry + 3.5, 2.2, 0, Math.PI * 2); ctx2.fill();
       });
-      ctx2.fillStyle = '#ffbe5c'; ctx2.fillRect(24, 17, 6, 5);
+      // 暖橘落地灯与柔光晕
+      ctx2.fillStyle = 'rgba(255,210,120,0.22)'; ctx2.beginPath(); ctx2.arc(46, 13, 8, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#3b2822'; ctx2.fillRect(45.5, 13, 1.5, 11);
+      ctx2.fillStyle = '#ffbe5c'; ctx2.beginPath(); ctx2.moveTo(42,14); ctx2.lineTo(44,9); ctx2.lineTo(48,9); ctx2.lineTo(50,14); ctx2.fill();
+      // 复古唱机台
+      ctx2.fillStyle = '#8c5a3c'; ctx2.fillRect(19, 17, 16, 7);
+      ctx2.fillStyle = '#262024'; ctx2.beginPath(); ctx2.ellipse(27, 17, 6, 2, 0, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#ff7e9d'; ctx2.fillRect(26, 16.5, 2, 1);
     } else if (m === 'crystal') {
-      // 梦幻水晶溶洞：粉蓝紫发光大晶簇 + 洞顶钟乳光点
-      [[5,24,11,10,'#7ef2ff'],[14,24,19,13,'#d496ff'],[36,24,41,9,'#ff96cc'],[44,24,49,13,'#7ef2ff']].forEach(([x1,y1,x2,y2,c0]) => {
+      // 梦幻水晶溶洞：深邃紫蓝洞壁 + 多棱发光晶簇与高光棱面 + 倒影池面
+      ctx2.fillStyle = '#251e4d'; ctx2.fillRect(0, 24, 54, 12);
+      [[4,24,10,9,'#7ef2ff','#c4fcff'],[13,24,18,12,'#c88cff','#ecd4ff'],[36,24,41,8,'#ff8cc4','#ffd4eb'],[44,24,49,13,'#7ef2ff','#c4fcff']].forEach(([x1,y1,x2,y2,c0,c1]) => {
         ctx2.fillStyle = c0; ctx2.beginPath(); ctx2.moveTo(x1,y1); ctx2.lineTo(x2,y2); ctx2.lineTo(x1+7,y1); ctx2.fill();
+        ctx2.fillStyle = c1; ctx2.beginPath(); ctx2.moveTo(x1+2,y1); ctx2.lineTo(x2,y2); ctx2.lineTo(x2+1.5,y1); ctx2.fill();
       });
-      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(10, 14, 2, 2); ctx2.fillRect(40, 13, 2, 2);
+      ctx2.fillStyle = 'rgba(150,242,255,0.22)'; ctx2.fillRect(6, 27, 14, 2); ctx2.fillRect(35, 28, 13, 2);
     } else if (m === 'redbridge') {
-      // 雾气红桥溪畔：朱红拱桥 + 栏杆金顶 + 飘浮落叶溪水
-      ctx2.fillStyle = '#d94848'; ctx2.fillRect(8, 16, 38, 6);
-      ctx2.fillStyle = '#f5c249'; for (let x = 9; x <= 45; x += 9) ctx2.fillRect(x, 14, 2, 2);
-      ctx2.fillStyle = '#6ba8c4'; ctx2.beginPath(); ctx2.arc(27, 24, 10, Math.PI, 0); ctx2.fill();
-      ctx2.fillStyle = 'rgba(255,255,255,0.45)'; ctx2.fillRect(0, 21, 54, 2);
+      // 雾气红桥溪畔：暖霞远山 + 朱红木拱桥与金顶柱头 + 轻柔雾带 + 碧蓝溪水
+      ctx2.fillStyle = '#e8b4a6';
+      ctx2.beginPath(); ctx2.moveTo(0,21); ctx2.quadraticCurveTo(18,12,38,19); ctx2.lineTo(54,16); ctx2.lineTo(54,24); ctx2.lineTo(0,24); ctx2.fill();
+      ctx2.fillStyle = '#62a4c4'; ctx2.fillRect(0, 22, 54, 14);
+      ctx2.fillStyle = '#d94848'; ctx2.fillRect(7, 15, 40, 7);
+      ctx2.fillStyle = '#b53434'; ctx2.fillRect(7, 19, 40, 1.5);
+      ctx2.fillStyle = '#f5c852'; for (let x = 8; x <= 46; x += 9) ctx2.fillRect(x, 13, 2, 2);
+      ctx2.fillStyle = '#62a4c4'; ctx2.beginPath(); ctx2.arc(27, 24, 10, Math.PI, 0); ctx2.fill();
+      ctx2.fillStyle = 'rgba(255,255,255,0.42)'; ctx2.fillRect(0, 21, 54, 2);
     } else if (m === 'space') {
-      // 太空漫步观测舱：巨大深空圆舷窗 + 蓝白地球 + 环绕土星
+      // 太空漫步观测舱：深空星海 + 金属圆舷窗 + 蓝绿地球与白流云 + 光环土星 + 舱内金属甲板
       ctx2.fillStyle = '#2d395c'; ctx2.fillRect(0, 0, 54, 24);
-      ctx2.fillStyle = '#0d1430'; ctx2.beginPath(); ctx2.arc(27, 13, 12, 0, Math.PI * 2); ctx2.fill();
-      ctx2.strokeStyle = '#96b4d9'; ctx2.lineWidth = 1.5; ctx2.beginPath(); ctx2.arc(27, 13, 12, 0, Math.PI * 2); ctx2.stroke();
-      ctx2.fillStyle = '#5ca8ff'; ctx2.beginPath(); ctx2.arc(27, 16, 6, 0, Math.PI * 2); ctx2.fill();
-      ctx2.fillStyle = '#8ef0b8'; ctx2.fillRect(24, 14, 4, 3); ctx2.fillRect(28, 16, 3, 2);
-      ctx2.fillStyle = '#ffe082'; ctx2.fillRect(20, 7, 2, 2); ctx2.fillRect(34, 8, 2, 2);
+      ctx2.fillStyle = '#0c132e'; ctx2.beginPath(); ctx2.arc(27, 13, 12, 0, Math.PI * 2); ctx2.fill();
+      ctx2.strokeStyle = '#9ab8de'; ctx2.lineWidth = 1.6; ctx2.beginPath(); ctx2.arc(27, 13, 12, 0, Math.PI * 2); ctx2.stroke();
+      ctx2.fillStyle = '#52a4ff'; ctx2.beginPath(); ctx2.arc(27, 17, 6.5, 0, Math.PI * 2); ctx2.fill();
+      ctx2.fillStyle = '#88ebae'; ctx2.fillRect(24, 14, 4, 3); ctx2.fillRect(28, 16, 3, 2);
+      ctx2.fillStyle = 'rgba(255,255,255,0.65)'; ctx2.fillRect(23, 13, 5, 1);
+      // 迷你光环土星
+      ctx2.fillStyle = '#ffd278'; ctx2.beginPath(); ctx2.arc(20, 7, 2, 0, Math.PI * 2); ctx2.fill();
+      ctx2.strokeStyle = '#ffeaa8'; ctx2.lineWidth = 0.8; ctx2.beginPath(); ctx2.ellipse(20, 7, 4, 1, -0.3, 0, Math.PI * 2); ctx2.stroke();
+      ctx2.fillStyle = '#404c6e'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#5a6a91'; ctx2.fillRect(0, 24, 54, 2);
     }
-
     // 绘制两只小狗（使用各自最新/快照外观 + 随机位置/姿势/朝向）
     const shot = overrideShot || (Array.isArray(rec?.history) && rec.history[rec.coverShotIdx || 0]) || rec || {};
     const v = shot.variant || rollDualPhotoVariant();
@@ -34755,8 +35009,8 @@
       const grid = PUP_SPRITES[pose] || PUP_SPRITES.idle1;
       const isSit = pose === 'sit1', isFlat = pose === 'lie';
       ctx2.save();
-      ctx2.translate(dx + 8, dy + 8);
-      ctx2.scale(dir < 0 ? -0.78 : 0.78, 0.78);
+      ctx2.translate(Math.round(dx + 8), Math.round(dy + 8));
+      ctx2.scale(dir < 0 ? -0.8 : 0.8, 0.8);
       ctx2.translate(-12, -16);
       const ox = 4, oy = 10;
       const hx = isSit ? ox + 9 : (isFlat ? ox + 11 : ox + 10);
@@ -34823,6 +35077,7 @@
       history: newHist,
     };
     freshNewDualPhotos.add(ph.id);
+    syncFreshDualPhotosConfig();
     return newShot;
   };
 
@@ -34881,7 +35136,7 @@
         <button type="button" id="st-cap-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
       <div style="display:flex;justify-content:center;margin-bottom:8px;">
-        <canvas id="st-cap-cv" width="110" height="46" style="width:242px;height:101px;image-rendering:pixelated;border:2px solid ${pxBd};background:#ccecff;display:block;"></canvas>
+        <canvas id="st-cap-cv" width="240" height="104" style="width:240px;height:104px;max-width:100%;image-rendering:pixelated;image-rendering:crisp-edges;border:2px solid ${pxBd};background:#ccecff;display:block;"></canvas>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:700;margin-bottom:4px;">
         <span>${escapeHtmlSimple(getPupName())} &amp; ${escapeHtmlSimple(ca.friendName || '好友')}</span>
@@ -34913,10 +35168,9 @@
       if (!c2) return;
       const grid = PUP_SPRITES[poseKey] || PUP_SPRITES.walk1 || PUP_SPRITES.idle1;
       if (!grid || !grid.length) return;
-      const pal = getPupPalette(lk?.fur, lk?.ear, lk?.collar, lk?.outline, lk?.showCollar !== false);
+      const pal = getPupPalette(lk || {});
       c2.save();
-      c2.translate(x, y);
-      c2.scale(0.92, 0.92);
+      c2.translate(Math.round(x), Math.round(y));
       const ox = 0, oy = 0, hx = 10, hy = 2;
       for (let py = 0; py < grid.length; py++) {
         const row = grid[py];
@@ -34961,43 +35215,46 @@
       if (barEl) barEl.style.width = `${pct.toFixed(2)}%`;
       if (tipEl && tick % 14 === 0) tipEl.textContent = walkTips[Math.floor(tick / 14) % walkTips.length];
       if (!c2) return;
-      // 天空渐变
-      const g = c2.createLinearGradient(0, 0, 0, 32);
-      g.addColorStop(0, '#a6ddff'); g.addColorStop(1, '#fff4e8');
-      c2.fillStyle = g; c2.fillRect(0, 0, 110, 32);
-      // 滚动云朵
+      c2.setTransform(2, 0, 0, 2, 0, 0);
+      c2.imageSmoothingEnabled = false;
+      // 清晰分层像素天空（告别渐变模糊）
+      c2.fillStyle = '#9cd8ff'; c2.fillRect(0, 0, 120, 12);
+      c2.fillStyle = '#bfe6ff'; c2.fillRect(0, 12, 120, 11);
+      c2.fillStyle = '#e8f5ff'; c2.fillRect(0, 23, 120, 10);
+      // 滚动清晰像素云朵
       c2.fillStyle = '#ffffff';
-      const cx1 = 110 - ((tick * 2) % 130);
-      const cx2 = 110 - (((tick * 2) + 64) % 130);
-      c2.fillRect(cx1, 5, 16, 4); c2.fillRect(cx1 + 3, 3, 10, 3);
-      c2.fillRect(cx2, 10, 14, 3); c2.fillRect(cx2 + 3, 8, 8, 3);
-      // 远山
-      c2.fillStyle = '#b4deb8';
-      c2.fillRect(0, 26, 110, 6);
+      const cx1 = 120 - ((tick * 2) % 140);
+      const cx2 = 120 - (((tick * 2) + 68) % 140);
+      c2.fillRect(cx1, 5, 16, 4); c2.fillRect(cx1 + 3, 3, 10, 2);
+      c2.fillRect(cx2, 11, 14, 3); c2.fillRect(cx2 + 3, 9, 8, 2);
+      // 远山剪影
+      c2.fillStyle = '#a8d9ab';
+      c2.fillRect(0, 29, 120, 6);
       for (let i = 0; i < 4; i++) {
-        const hx = 120 - (((tick * 1) + i * 34) % 140);
-        c2.fillRect(hx, 23, 18, 4); c2.fillRect(hx + 4, 21, 10, 3);
+        const hx = 130 - (((tick * 1) + i * 36) % 150);
+        c2.fillRect(hx, 26, 20, 4); c2.fillRect(hx + 4, 24, 12, 2);
       }
-      // 草地与小路
-      c2.fillStyle = '#7ec472'; c2.fillRect(0, 31, 110, 15);
-      c2.fillStyle = '#edd8b4'; c2.fillRect(0, 36, 110, 7);
-      // 滚动路边小花与碎石
-      for (let i = 0; i < 6; i++) {
-        const fx = 116 - (((tick * 3) + i * 21) % 126);
+      // 草地与暖色小路
+      c2.fillStyle = '#78bf6e'; c2.fillRect(0, 34, 120, 18);
+      c2.fillStyle = '#edd8b4'; c2.fillRect(0, 40, 120, 8);
+      c2.fillStyle = '#dec49a'; c2.fillRect(0, 40, 120, 1); c2.fillRect(0, 47, 120, 1);
+      // 滚动路边小花与石子
+      for (let i = 0; i < 5; i++) {
+        const fx = 124 - (((tick * 3) + i * 25) % 136);
         c2.fillStyle = i % 2 ? '#ff8aa8' : '#ffe066';
-        c2.fillRect(fx, 33, 2, 2);
-        c2.fillStyle = '#d4bc94';
-        c2.fillRect((fx + 9) % 110, 39, 3, 1);
+        c2.fillRect(fx, 36, 2, 2);
+        c2.fillStyle = '#cbb086';
+        c2.fillRect((fx + 10) % 120, 44, 3, 1);
       }
-      // 两只并肩前进的小狗
+      // 两只并肩前进的超清晰像素小狗（精确 2x 整数像素）
       const bounce1 = tick % 2 === 0 ? 0 : -1;
       const bounce2 = tick % 2 === 0 ? -1 : 0;
-      drawWalkPup(myLook, tick % 2 === 0 ? 'walk1' : 'walk2', 24, 19 + bounce1);
-      drawWalkPup(frLook, tick % 2 === 0 ? 'walk2' : 'walk1', 58, 19 + bounce2);
-      // 飘浮小爱心
-      const hy = 12 - (tick % 4);
+      drawWalkPup(myLook, tick % 2 === 0 ? 'walk1' : 'walk2', 26, 24 + bounce1);
+      drawWalkPup(frLook, tick % 2 === 0 ? 'walk2' : 'walk1', 64, 24 + bounce2);
+      // 飘浮像素小爱心
+      const hy = 15 - (tick % 4);
       c2.fillStyle = '#ff6e9c';
-      c2.fillRect(50, hy, 2, 2); c2.fillRect(53, hy, 2, 2); c2.fillRect(51, hy + 1, 3, 2); c2.fillRect(52, hy + 3, 1, 1);
+      c2.fillRect(54, hy, 2, 2); c2.fillRect(57, hy, 2, 2); c2.fillRect(55, hy + 1, 3, 2); c2.fillRect(56, hy + 3, 1, 1);
       tick++;
     };
 
@@ -35033,7 +35290,7 @@
     const photoAreaHtml = ph
       ? `<div style="position:relative;display:flex;flex-direction:column;align-items:center;padding:7px;background:#ffffff;border:2px solid ${pxBd};margin-bottom:9px;">
           <span style="position:absolute;top:11px;left:11px;padding:1px 6px;font-size:9px;font-weight:700;background:${isNewPhoto ? '#e85686' : '#7b8fa8'};color:#ffffff;border:1px solid rgba(0,0,0,0.2);">${isNewPhoto ? '新照片!' : '新留影'}</span>
-          <canvas id="st-car-photo" width="54" height="36" style="width:244px;height:162px;image-rendering:pixelated;display:block;border:1.5px solid ${pxBd};"></canvas>
+          <canvas id="st-car-photo" width="270" height="180" style="width:270px;height:180px;max-width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;image-rendering:crisp-edges;display:block;border:1.5px solid ${pxBd};"></canvas>
           <div style="margin-top:6px;font-size:11.5px;font-weight:700;text-align:center;">【${escapeHtmlSimple(ph.title)}】</div>
           <div style="margin-top:2px;font-size:9.5px;opacity:0.78;text-align:center;">${escapeHtmlSimple(ph.note || '')} · 已存入双人相册</div>
         </div>`
@@ -35055,7 +35312,7 @@
           <span style="font-size:10px;font-weight:700;">+${coins} 小狗币</span>
         </div>
         ${randSnack ? `<div id="st-car-snack-card" style="flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
-          <div id="st-car-snack-ico" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;"></div>
+          <div id="st-car-snack-ico" style="width:22px;height:22px;display:flex;align-items:center;justify-content:center;"></div>
           <span style="font-size:10px;font-weight:700;text-align:center;line-height:1.2;">${escapeHtmlSimple(randSnack.name)} ×1</span>
         </div>` : ''}
         <div style="flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
@@ -35072,11 +35329,182 @@
     }
     if (randSnack) {
       const sHost = mask.querySelector('#st-car-snack-ico');
-      if (sHost && typeof makeVisitGiftIcon === 'function') {
-        const sCv = makeVisitGiftIcon(randSnack.id);
-        if (sCv) { sCv.style.width = '18px'; sCv.style.height = '18px'; sHost.appendChild(sCv); }
+      if (sHost) {
+        const sCv = doc.createElement('canvas');
+        sCv.width = 22; sCv.height = 22;
+        sCv.style.cssText = 'width:22px;height:22px;image-rendering:pixelated;display:block;';
+        const sg = sCv.getContext('2d');
+        if (sg) {
+          sg.imageSmoothingEnabled = false;
+          const grid = GOODS_ICO_GRIDS[randSnack.id] || GOODS_ICO_GRIDS.snack_cake;
+          for (let gy = 0; gy < grid.length; gy++) {
+            for (let gx = 0; gx < grid[gy].length; gx++) {
+              const col = GOODS_ICO_PAL[grid[gy][gx]];
+              if (col) { sg.fillStyle = col; sg.fillRect(gx * 2, gy * 2, 2, 2); }
+            }
+          }
+        }
+        sHost.innerHTML = '';
+        sHost.appendChild(sCv);
       }
     }
+    mask.onclick = (e) => { e.stopPropagation(); };
+    mask.querySelector('#st-car-ok')?.addEventListener('click', () => { mask.style.display = 'none'; });
+    bringModalFront(mask);
+    mask.style.display = 'flex';
+  };
+
+  const settleOfflineCoopAdventures = (items) => {
+    if (!Array.isArray(items) || !items.length) return;
+    const lootPool = [...SHOP_PUP_GOODS.filter(x => x.cat === 'snack'), ...GACHA_SNACKS];
+    let totalCoins = 0;
+    let totalBond = 0;
+    const snacksMap = new Map();
+    const photoResults = [];
+    const friendNames = new Set();
+
+    items.forEach(ca => {
+      const fr = getFriendList().find(x => x.cloudId === ca.friendCloudId);
+      const bondInfo = fr ? getFriendBondInfo(fr) : { lv: 1 };
+      const extraBonus = bondInfo.lv >= 9 ? 8 : (bondInfo.lv >= 7 ? 4 : 0);
+      const coins = randInt(24, 36) + extraBonus;
+      totalCoins += coins;
+      totalBond += 25;
+      friendNames.add(ca.friendName || '好友');
+      config.puppyCoins = Math.floor(config.puppyCoins || 0) + coins;
+      config.puppyStats = config.puppyStats || {};
+      config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coins;
+      config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
+      const gotPhoto = Math.random() < 0.70;
+      if (gotPhoto) {
+        const ph = PUP_DUAL_PHOTOS.find(x => x.id === ca.photoId) || pick(PUP_DUAL_PHOTOS);
+        const isNewPhoto = !(config.puppyDualAlbum && config.puppyDualAlbum[ph.id]);
+        saveDualAlbumShot(ph, ca.friendName, fr?.look || ca.friendLook, null, ca.variant || null);
+        const savedRec = config.puppyDualAlbum ? config.puppyDualAlbum[ph.id] : null;
+        const latestShot = Array.isArray(savedRec?.history) && savedRec.history.length ? savedRec.history[0] : savedRec;
+        photoResults.push({ ph, rec: savedRec, shot: latestShot, isNewPhoto, friendName: ca.friendName || '好友' });
+      }
+      const randSnack = lootPool.length ? pick(lootPool) : null;
+      if (randSnack) {
+        config.puppyInventory = config.puppyInventory || {};
+        config.puppyInventory[randSnack.id] = Math.floor(config.puppyInventory[randSnack.id] || 0) + 1;
+        const prev = snacksMap.get(randSnack.id);
+        if (prev) prev.qty += 1;
+        else snacksMap.set(randSnack.id, { item: randSnack, qty: 1 });
+      }
+      addFriendBondExp(ca.friendCloudId, 25, true);
+    });
+
+    saveConfig();
+    updatePupStatBars();
+    if (typeof renderPupShop === 'function') renderPupShop();
+    checkPupAchievements();
+    renderPupVisitPanel();
+    if (typeof renderPupAdventure === 'function') renderPupAdventure();
+
+    // 单次离线探险直接走单次结算大图弹窗
+    if (items.length === 1) {
+      const onlyPr = photoResults[0] || null;
+      const onlySn = Array.from(snacksMap.values())[0]?.item || null;
+      openCoopAdvResultModal(
+        items[0].friendName || '好友',
+        onlyPr ? onlyPr.ph : null,
+        onlyPr ? onlyPr.rec : null,
+        onlyPr ? onlyPr.shot : null,
+        onlyPr ? onlyPr.isNewPhoto : false,
+        totalCoins,
+        onlySn,
+        totalBond
+      );
+      return;
+    }
+
+    // 多次离线探险合并为一份清晰可滚动的汇总弹窗，零丢失、不刷屏
+    let mask = root.querySelector('#st-tb-coadv-result-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-coadv-result-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const PX_ICO_COIN = `<svg width="16" height="16" viewBox="0 0 12 12" style="display:block;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="3" y="1" width="6" height="10" fill="#e6a838"/><rect x="1" y="3" width="10" height="6" fill="#e6a838"/><rect x="2" y="2" width="8" height="8" fill="#f7cf54"/><rect x="4" y="3" width="4" height="6" fill="#ffe98a"/><rect x="5" y="4" width="2" height="4" fill="#d99426"/></svg>`;
+    const snacksArr = Array.from(snacksMap.values());
+
+    mask.innerHTML = `<div style="width:304px;max-width:calc(100vw - 24px);max-height:82vh;display:flex;flex-direction:column;padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};flex-shrink:0;">
+        <span style="font-size:12px;font-weight:700;">离线双狗探险汇总</span>
+        <span style="font-size:9.5px;opacity:0.78;">共 ${items.length} 趟探险</span>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;padding-right:2px;">
+        <div style="font-size:10.5px;line-height:1.45;margin-bottom:7px;">你离开期间，小狗和「${escapeHtmlSimple(Array.from(friendNames).join('、'))}」一共完成了 <b>${items.length}</b> 趟双人探险，全部战利品都帮你收好啦！</div>
+        ${photoResults.length ? `<div style="font-size:10px;font-weight:700;margin-bottom:5px;">拍到的双人照片 (${photoResults.length}张 · 相册已标 NEW)</div>
+        <div id="st-car-batch-photos" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:9px;"></div>` : `<div style="padding:10px;background:#ffffff;border:1.5px dashed ${pxBd};font-size:10px;text-align:center;margin-bottom:9px;">这几趟小狗们光顾着撒欢，没顾上按快门，但带回了超多战利品！</div>`}
+        <div style="font-size:10px;font-weight:700;margin-bottom:5px;">累计收获</div>
+        <div id="st-car-batch-rewards" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">
+          <div style="flex:1;min-width:84px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
+            ${PX_ICO_COIN}
+            <span style="font-size:10px;font-weight:700;">+${totalCoins} 小狗币</span>
+          </div>
+          <div style="flex:1;min-width:84px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;transform:scale(1.4);">${PX_ICO_HEART}</span>
+            <span style="font-size:10px;font-weight:700;color:#d94c7a;">羁绊 +${totalBond}</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" id="st-car-ok" class="st-px-btn care" style="width:100%;margin-top:6px;flex-shrink:0;">全部收下</button>
+    </div>`;
+
+    const pGrid = mask.querySelector('#st-car-batch-photos');
+    if (pGrid) {
+      photoResults.forEach(pr => {
+        const card = doc.createElement('div');
+        card.style.cssText = `position:relative;padding:4px;background:#ffffff;border:1.5px solid ${pxBd};display:flex;flex-direction:column;align-items:center;`;
+        const tag = doc.createElement('span');
+        tag.style.cssText = `position:absolute;top:6px;left:6px;padding:1px 4px;font-size:8.5px;font-weight:700;background:${pr.isNewPhoto ? '#e85686' : '#7b8fa8'};color:#ffffff;`;
+        tag.textContent = pr.isNewPhoto ? '新照片!' : '新留影';
+        const cv = doc.createElement('canvas');
+        cv.width = 270; cv.height = 180;
+        cv.style.cssText = 'width:100%;height:auto;aspect-ratio:3/2;image-rendering:pixelated;display:block;';
+        drawDualAdvPhotoCanvas(cv, pr.ph, false, pr.rec, pr.shot);
+        const cap = doc.createElement('div');
+        cap.style.cssText = 'font-size:9px;font-weight:700;margin-top:3px;text-align:center;line-height:1.25;';
+        cap.textContent = pr.ph.title;
+        card.append(tag, cv, cap);
+        pGrid.appendChild(card);
+      });
+    }
+    const rWrap = mask.querySelector('#st-car-batch-rewards');
+    if (rWrap) {
+      snacksArr.forEach(({ item: sn, qty }) => {
+        const sc = doc.createElement('div');
+        sc.style.cssText = `flex:1;min-width:84px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;`;
+        const ic = doc.createElement('canvas');
+        ic.width = 22; ic.height = 22;
+        ic.style.cssText = 'width:22px;height:22px;image-rendering:pixelated;display:block;';
+        const ig = ic.getContext('2d');
+        if (ig) {
+          ig.imageSmoothingEnabled = false;
+          const grid = GOODS_ICO_GRIDS[sn.id] || GOODS_ICO_GRIDS.snack_cake;
+          for (let gy = 0; gy < grid.length; gy++) {
+            for (let gx = 0; gx < grid[gy].length; gx++) {
+              const col = GOODS_ICO_PAL[grid[gy][gx]];
+              if (col) { ig.fillStyle = col; ig.fillRect(gx * 2, gy * 2, 2, 2); }
+            }
+          }
+        }
+        sc.appendChild(ic);
+        const lb = doc.createElement('span');
+        lb.style.cssText = 'font-size:9.5px;font-weight:700;text-align:center;line-height:1.2;';
+        lb.textContent = `${sn.name} ×${qty}`;
+        sc.appendChild(lb);
+        rWrap.appendChild(sc);
+      });
+    }
+
     mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-car-ok')?.addEventListener('click', () => { mask.style.display = 'none'; });
     bringModalFront(mask);
@@ -35164,7 +35592,7 @@
       savedRec = config.puppyDualAlbum ? config.puppyDualAlbum[ph.id] : null;
       latestShot = Array.isArray(savedRec?.history) && savedRec.history.length ? savedRec.history[0] : savedRec;
     }
-    const lootPool = [...SHOP_PUP_GOODS.filter(x => x.type === 'snack'), ...GACHA_SNACKS];
+    const lootPool = [...SHOP_PUP_GOODS.filter(x => x.cat === 'snack'), ...GACHA_SNACKS];
     const randSnack = lootPool.length ? pick(lootPool) : null;
     if (randSnack) {
       config.puppyInventory = config.puppyInventory || {};
@@ -35176,6 +35604,7 @@
     if (typeof renderPupShop === 'function') renderPupShop();
     checkPupAchievements();
     renderPupVisitPanel();
+    if (typeof renderPupAdventure === 'function') renderPupAdventure();
     openCoopAdvResultModal(ca.friendName || '好友', ph, savedRec, latestShot, isNewPhoto, coins, randSnack, 25);
   };
 
@@ -35315,7 +35744,7 @@
     info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;">
           <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
-          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(-1px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
+          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(0px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <span style="font-size:9px;opacity:0.65;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
@@ -35407,6 +35836,8 @@
     mask.querySelector('#st-flm-close')?.addEventListener('click', closeFlm);
     mask.querySelector('#st-flm-ok')?.addEventListener('click', closeFlm);
     mask.querySelector('#st-flm-copy')?.addEventListener('click', () => {
+      saveConfig();
+      if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
       copyVisitCodeReliable(myFid);
       openPixelPupNoticeModal('已复制好友码', `你的专属好友码「${myFid}」已复制好啦，直接发给朋友添加即可~`, '好哒');
     });
@@ -35488,8 +35919,10 @@
     friendBox.querySelector('#st-fr-open-list')?.addEventListener('click', openFriendsListModal);
     friendBox.querySelector('#st-fr-open-nb')?.addEventListener('click', openCloudNoteboardModal);
     friendBox.querySelector('#st-fr-copy-id')?.addEventListener('click', () => {
+      saveConfig();
+      if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
       copyVisitCodeReliable(myFid);
-      openPixelPupNoticeModal('已复制好友码', `你的专属好友码「${myFid}」已复制好啦，直接发给朋友添加即可~`, '好哒');
+      openPixelPupNoticeModal('已复制好友码', `你的专属好友码「${myFid}」已同步云端并复制好啦，直接发给朋友添加即可~`, '好哒');
     });
 
     if (starredFriends.length) {
@@ -35898,7 +36331,7 @@
           card.append(cv, lb);
           if (!locked) {
             card.addEventListener('click', () => {
-              if (freshNewDualPhotos.delete(ph.id)) renderPupAdventure();
+              if (freshNewDualPhotos.delete(ph.id)) { syncFreshDualPhotosConfig(); saveConfig(); renderPupAdventure(); }
               const shots = Array.isArray(rec.history) && rec.history.length ? rec.history : [{ date: rec.date || '', friendName: '好友', variant: rec.variant || null }];
               const getDualCoverIdx = () => clamp(typeof rec.coverShotIdx === 'number' ? rec.coverShotIdx : 0, 0, Math.max(0, shots.length - 1));
               let shotIdx = getDualCoverIdx();
