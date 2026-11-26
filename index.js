@@ -21281,6 +21281,13 @@
           if (hadNew) {
             row.querySelector('.st-px-new-tag')?.remove();
             if (achHeadEl) achHeadEl.innerHTML = `成就称号 (${unlockedSet.size}/${PUP_ACHIEVEMENTS.length})${freshNewAchs.size > 0 ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+            if (freshNewAchs.size > 0) {
+              setTimeout(() => {
+                const nextNew = achListEl?.querySelector('.st-px-new-tag');
+                const nextRow = nextNew ? (nextNew.closest('.st-px-ach-item') || nextNew) : null;
+                if (nextRow && typeof nextRow.scrollIntoView === 'function') nextRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 120);
+            }
           }
           achListEl.querySelectorAll('.st-px-ach-item').forEach(el => { el.style.outline = ''; });
           row.style.outline = '2px solid var(--px-accent, #c486b8)';
@@ -21897,6 +21904,28 @@
     mask.classList.add('open');
   };
 
+  const freshNewWardItems = new Set(Array.isArray(config.puppyFreshWardItems) ? config.puppyFreshWardItems : []);
+  const markWardItemNew = (id) => {
+    if (!id || id === 'none') return;
+    freshNewWardItems.add(id);
+    config.puppyFreshWardItems = Array.from(freshNewWardItems);
+  };
+  const clearWardItemNew = (id) => {
+    if (!id || !freshNewWardItems.has(id)) return false;
+    freshNewWardItems.delete(id);
+    config.puppyFreshWardItems = Array.from(freshNewWardItems);
+    try { saveConfig(); } catch (_) {}
+    return true;
+  };
+  const sortWardListWithNewFirst = (arr) => {
+    const noneItems = [], newItems = [], restItems = [];
+    arr.forEach(it => {
+      if (it.id === 'none') noneItems.push(it);
+      else if (freshNewWardItems.has(it.id)) newItems.push(it);
+      else restItems.push(it);
+    });
+    return [...noneItems, ...newItems, ...restItems];
+  };
   let wardDraft = null;
   const getWardrobeCurrentLook = () => ({
     outfit: config.puppyOutfit || 'none',
@@ -22087,7 +22116,7 @@
         ...[{ id: 'ck_acc_love_letter', name: '头顶小情书' }].filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `#${i.name}`, _wcats: ['limited', 'head'] })),
         ...GACHA_ACCS.filter(item => ownedAccSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_ACC_REAL_CAT[i.id] || 'head'] })),
       ];
-      const list = curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcats.includes(curSub));
+      const list = sortWardListWithNewFirst(curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcats.includes(curSub)));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
       wardPage.acc = clamp(wardPage.acc, 0, totalPages - 1);
@@ -22098,10 +22127,11 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.textContent = item.name;
+        btn.innerHTML = `${escapeHtmlSimple(item.name)}${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
         const isOn = item.id === 'none' ? wornAccs.length === 0 : wornAccs.includes(item.id);
         btn.classList.toggle('active', isOn);
         btn.addEventListener('click', () => {
+          clearWardItemNew(item.id);
           const d = ensureWardDraft();
           if (item.id === 'none') {
             d.accs = [];
@@ -22252,7 +22282,7 @@
         ...GACHA_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
         ...SPECIAL_EVENT_OUTFITS.filter(item => ownedOutfitSet.has(item.id)).map(i => ({ ...i, name: `${/^(ach_|ck_)/.test(i.id) ? '#' : '*'}${i.name}`, _wcats: ['limited', LIM_OUTFIT_REAL_CAT[i.id] || 'daily'] })),
       ];
-      const list = curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcats.includes(curSub));
+      const list = sortWardListWithNewFirst(curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcats.includes(curSub)));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
       wardPage.outfit = clamp(wardPage.outfit, 0, totalPages - 1);
@@ -22263,9 +22293,10 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.textContent = item.name;
+        btn.innerHTML = `${escapeHtmlSimple(item.name)}${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
         btn.classList.toggle('active', wd.outfit === item.id);
         btn.addEventListener('click', () => {
+          clearWardItemNew(item.id);
           const d = ensureWardDraft();
           d.outfit = item.id;
           renderPupWardrobe();
@@ -22284,7 +22315,7 @@
         ...GAME_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `+${i.name}`, _wcat: 'limited' })),
         ...GACHA_COMPANIONS.filter(item => ownedCompSet.has(item.id)).map(i => ({ ...i, name: `^${i.name}`, _wcat: 'limited' })),
       ];
-      const list = curSub === 'all' ? allCompOwned : allCompOwned.filter(i => i._wcat === curSub);
+      const list = sortWardListWithNewFirst(curSub === 'all' ? allCompOwned : allCompOwned.filter(i => i._wcat === curSub));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
       wardPage.comp = clamp(wardPage.comp, 0, totalPages - 1);
@@ -22295,9 +22326,10 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.textContent = item.name;
+        btn.innerHTML = `${escapeHtmlSimple(item.name)}${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
         btn.classList.toggle('active', (wd.comp || 'none') === item.id);
         btn.addEventListener('click', () => {
+          clearWardItemNew(item.id);
           const d = ensureWardDraft();
           d.comp = item.id;
           renderPupWardrobe();
@@ -22747,13 +22779,13 @@
 
     config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
     if (kind === 'outfit') {
-      if (!config.puppyOwnedOutfits.includes(item.id)) config.puppyOwnedOutfits.push(item.id);
+      if (!config.puppyOwnedOutfits.includes(item.id)) { config.puppyOwnedOutfits.push(item.id); markWardItemNew(item.id); }
       config.puppyOutfit = item.id;
     } else if (kind === 'comp') {
-      if (!config.puppyOwnedCompanions.includes(item.id)) config.puppyOwnedCompanions.push(item.id);
+      if (!config.puppyOwnedCompanions.includes(item.id)) { config.puppyOwnedCompanions.push(item.id); markWardItemNew(item.id); }
       config.puppyCompanion = item.id;
     } else {
-      if (!config.puppyOwnedAccs.includes(item.id)) config.puppyOwnedAccs.push(item.id);
+      if (!config.puppyOwnedAccs.includes(item.id)) { config.puppyOwnedAccs.push(item.id); markWardItemNew(item.id); }
       toggleEquipAcc(item.id);
     }
     saveConfig();
@@ -26687,9 +26719,9 @@
             if (unownedTreasures.length && _digCdOk && Math.random() < 0.01) {
               pup._lastDigTreasureAt = Date.now();
               const prize = pick(unownedTreasures);
-              if (prize.kind === 'outfit') config.puppyOwnedOutfits.push(prize.item.id);
-              else if (prize.kind === 'acc') config.puppyOwnedAccs.push(prize.item.id);
-              else config.puppyOwnedCompanions.push(prize.item.id);
+              if (prize.kind === 'outfit') { config.puppyOwnedOutfits.push(prize.item.id); markWardItemNew(prize.item.id); }
+          else if (prize.kind === 'acc') { config.puppyOwnedAccs.push(prize.item.id); markWardItemNew(prize.item.id); }
+          else { config.puppyOwnedCompanions.push(prize.item.id); markWardItemNew(prize.item.id); }
               saveConfig();
               renderPupWardrobe();
               for (let i = 0; i < 4; i++) spawnPupFx('heart', 10 + i * 2, 7);
@@ -32632,6 +32664,16 @@
   };
 
   const getCloudBaseUrl = () => String(config.puppyCloudUrl || 'https://goulaicai-sync.chanbaek99461.workers.dev').trim().replace(/\/+$/, '');
+  const fetchWithTimeout = async (url, opts = {}, ms = 9000) => {
+    if (typeof AbortController === 'undefined') return fetch(url, opts);
+    const ctrl = new AbortController();
+    const t = setTimeout(() => { try { ctrl.abort(); } catch (_) {} }, ms);
+    try {
+      return await fetch(url, { ...opts, signal: ctrl.signal });
+    } finally {
+      clearTimeout(t);
+    }
+  };
 
   const ensureMyCloudId = () => {
     if (!config.puppyCloudId || !/^[a-zA-Z0-9_-]{4,40}$/.test(config.puppyCloudId)) {
@@ -32794,7 +32836,7 @@
     try {
       const id = ensureMyCloudId();
       const code = encodePupVisitCard('', [], 0);
-      const res = await fetch(`${baseUrl}/pup`, {
+      const res = await fetchWithTimeout(`${baseUrl}/pup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, code }),
@@ -32884,7 +32926,7 @@
     const myId = ensureMyCloudId();
     cloudInboxBusy = true;
     try {
-      const resp = await fetch(`${baseUrl}/inbox?id=${encodeURIComponent(myId)}`, { cache: 'no-store' });
+      const resp = await fetchWithTimeout(`${baseUrl}/inbox?id=${encodeURIComponent(myId)}`, { cache: 'no-store' }, 8000);
       if (!resp.ok) return;
       const data = await resp.json().catch(() => null);
       if (!data) return;
@@ -33848,7 +33890,7 @@
 
   const upsertCloudFriendFromId = async (fid, fallbackName = '小伙伴') => {
     const baseUrl = getCloudBaseUrl();
-    const resp = await fetch(`${baseUrl}/pup?id=${encodeURIComponent(fid)}`, { cache: 'no-store' });
+    const resp = await fetchWithTimeout(`${baseUrl}/pup?id=${encodeURIComponent(fid)}`, { cache: 'no-store' }, 9000);
     let parsed = null, updatedAt = Date.now();
     if (resp.ok) {
       const data = await resp.json().catch(() => null);
@@ -33929,7 +33971,7 @@
         openPixelPupNoticeModal('成为好友啦！', `你和「${fr.name}」已经成为云端好友，现在可以去「串门 → 好友列表」星标或请TA来桌面啦~`, '太棒了');
       } finally { accBusy = false; }
     });
-    mask.style.zIndex = '9995';
+    bringModalFront(mask);
     mask.style.display = 'flex';
   };
 
@@ -33947,7 +33989,7 @@
     }
     const baseUrl = getCloudBaseUrl();
     try {
-      const resp = await fetch(`${baseUrl}/pup?id=${encodeURIComponent(fid)}`, { cache: 'no-store' });
+      const resp = await fetchWithTimeout(`${baseUrl}/pup?id=${encodeURIComponent(fid)}`, { cache: 'no-store' }, 9000);
       if (!resp.ok) {
         openPixelPupNoticeModal('没找到该好友', '对方可能还没打开过最新版插件同步云端，让对方刷新一次酒馆页面再试吧~');
         return false;
@@ -33963,7 +34005,7 @@
         return false;
       }
       const targetName = String(parsed.name || '小伙伴').slice(0, 14);
-      const reqResp = await fetch(`${baseUrl}/gift`, {
+      const reqResp = await fetchWithTimeout(`${baseUrl}/gift`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -34051,7 +34093,14 @@
     if (doc.hidden) return;
     pollCloudInbox();
     if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
-  }, 4000);
+  }, 2500);
+  doc.addEventListener('visibilitychange', () => {
+    if (!doc.hidden) {
+      if (!lastCloudPushSig) pushMyCloudPupNow(true);
+      pollCloudInbox();
+      if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
+    }
+  });
   win.addEventListener('focus', () => {
     if (typeof pollCloudInbox === 'function') pollCloudInbox();
     if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
@@ -34373,6 +34422,7 @@
       p1: pick(poses),
       p2: pick(poses),
       fx: pick(fxs),
+      styleIdx: pick([0, 1, 2]),
       seed: randInt(1, 9999),
     };
   };
@@ -34469,11 +34519,18 @@
       return `#${c(0)}${c(1)}${c(2)}`;
     };
 
+    // 读取本次照片的同场景微变化风格（0经典 / 1暖光加小物件 / 2梦幻异色天空+微光）
+    const _shotPreview = overrideShot || (Array.isArray(rec?.history) && rec.history[rec.coverShotIdx || 0]) || rec || {};
+    const _vStyle = _shotPreview.variant || {};
+    const _sIdx = typeof _vStyle.styleIdx === 'number' ? _vStyle.styleIdx : (Number(_vStyle.seed || 0) % 3);
+    const _skyTop = _sIdx === 1 ? mixHex(ph.sky[0], '#ffcfb8', 0.24) : (_sIdx === 2 ? mixHex(ph.sky[0], '#5a4e9c', 0.28) : ph.sky[0]);
+    const _skyBot = _sIdx === 1 ? mixHex(ph.sky[1], '#fff0c8', 0.28) : (_sIdx === 2 ? mixHex(ph.sky[1], '#d9c4ff', 0.22) : ph.sky[1]);
+
     // 清晰四段分层像素天空
-    aDot(0, 0, ph.sky[0], 54, 6);
-    aDot(0, 6, mixHex(ph.sky[0], ph.sky[1], 0.35), 54, 6);
-    aDot(0, 12, mixHex(ph.sky[0], ph.sky[1], 0.7), 54, 6);
-    aDot(0, 18, ph.sky[1], 54, 8);
+    aDot(0, 0, _skyTop, 54, 6);
+    aDot(0, 6, mixHex(_skyTop, _skyBot, 0.35), 54, 6);
+    aDot(0, 12, mixHex(_skyTop, _skyBot, 0.7), 54, 6);
+    aDot(0, 18, _skyBot, 54, 8);
     const m = ph.motif;
 
     // 夜晚场景清晰像素星点
@@ -34545,7 +34602,7 @@
       aDot(0, 24, '#273847', 54, 12); aDot(0, 24, '#334a5c', 54, 2);
       aDot(10, 29, '#e86882', 34, 6);
       for (let rx = 12; rx < 42; rx += 6) aDot(rx, 30, '#fff0f4', 3, 4);
-      aDot(25, 27, '#e84858', 4, 4); aDot(26, 27, '#ffffff', 2, 4); aDot(25, 25, '#fff0a6', 4, 2);
+      aDot(12, 28, '#e84858', 4, 4); aDot(13, 28, '#ffffff', 2, 4); aDot(12, 26, '#fff0a6', 4, 2);
     } else if (m === 'cablecar') {
       // 雪顶高山缆车：晴空白云 + 像素雪峰（阳面雪白/阴面冰蓝）+ 积雪冷杉 + 铁塔钢缆 + 红白缆车厢
       aDot(4, 3, '#ffffff', 9, 2); aDot(6, 2, '#ffffff', 5, 2);
@@ -34861,6 +34918,16 @@
       aDot(24, 14, '#88ebae', 4, 3); aDot(28, 16, '#88ebae', 3, 2); aDot(23, 13, '#ffffff', 5, 1);
       aBlob(20, 7, 2, 2, '#ffd278'); aLine(16, 8, 24, 6, '#ffeaa8');
       aDot(0, 24, '#404c6e', 54, 12); aDot(0, 24, '#5a6a91', 54, 2);
+    }
+
+    // 同场景微变化小物件（1=暖光飘浮花瓣/飞鸟/气泡；2=星光弯月/小流星/微光萤火）
+    if (_sIdx === 1) {
+      aDot(7, 5, '#fff5b8', 2, 1); aDot(8, 4, '#fff5b8', 1, 1);
+      aDot(43, 8, '#ffc4da', 2, 1); aDot(39, 6, '#ffe594', 1, 1);
+      aDot(16, 12, '#ffffff', 1, 1);
+    } else if (_sIdx === 2) {
+      [[6,3],[18,5],[31,3],[47,6],[24,8]].forEach(([sx0,sy0]) => aDot(sx0, sy0, '#fff7cc', 1, 1));
+      aLine(36, 3, 41, 6, '#ffe994'); aDot(41, 6, '#ffffff', 1, 1);
     }
 
     // 绘制两只小狗（使用各自最新/快照外观 + 随机位置/姿势/朝向）
@@ -36194,7 +36261,16 @@
           card.append(cv, lb);
           if (!locked) {
             card.addEventListener('click', () => {
-              if (freshNewDualPhotos.delete(ph.id)) { syncFreshDualPhotosConfig(); saveConfig(); renderPupAdventure(); }
+              if (freshNewDualPhotos.delete(ph.id)) {
+                syncFreshDualPhotosConfig(); saveConfig(); renderPupAdventure();
+                if (freshNewDualPhotos.size > 0) {
+                  setTimeout(() => {
+                    const nt = albumGridEl?.querySelector('.st-px-new-tag');
+                    const nc = nt ? (nt.closest('.st-px-photo-card') || nt) : null;
+                    if (nc && typeof nc.scrollIntoView === 'function') nc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }, 100);
+                }
+              }
               const shots = Array.isArray(rec.history) && rec.history.length ? rec.history : [{ date: rec.date || '', friendName: '好友', variant: rec.variant || null }];
               const getDualCoverIdx = () => clamp(typeof rec.coverShotIdx === 'number' ? rec.coverShotIdx : 0, 0, Math.max(0, shots.length - 1));
               let shotIdx = getDualCoverIdx();
@@ -36318,7 +36394,16 @@
         card.append(cv, lb);
         if (!locked) {
           card.addEventListener('click', () => {
-            if (freshNewPhotos.delete(ph.id)) renderPupAdventure();
+            if (freshNewPhotos.delete(ph.id)) {
+              renderPupAdventure();
+              if (freshNewPhotos.size > 0) {
+                setTimeout(() => {
+                  const nt = albumGridEl?.querySelector('.st-px-new-tag');
+                  const nc = nt ? (nt.closest('.st-px-photo-card') || nt) : null;
+                  if (nc && typeof nc.scrollIntoView === 'function') nc.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+              }
+            }
             const dName = PUP_ADV_DESTS.find(d => d.id === ph.dest)?.name || '';
             const shots = (Array.isArray(rec.history) && rec.history.length)
               ? rec.history
@@ -36548,15 +36633,31 @@
         card.append(nm, sub);
         if (!locked) {
           card.addEventListener('click', () => {
-            if (freshNewCurios.delete(item.id)) renderPupAdventure();
+            const hadNewCurio = freshNewCurios.delete(item.id);
+            if (hadNewCurio) {
+              if (freshNewCurios.size > 0) {
+                const nextId = Array.from(freshNewCurios)[0];
+                const nextIdx = PUP_CURIOS.findIndex(c => c.id === nextId);
+                if (nextIdx >= 0) museumPage = Math.floor(nextIdx / 12);
+              }
+              renderPupAdventure();
+            }
             const dName = item.hidden ? '行囊隐藏秘境' : (PUP_ADV_DESTS.find(d => d.id === item.dest)?.name || '');
             curioDetailEl.style.display = 'block';
             curioDetailEl.innerHTML = `<div style="font-weight:700;color:${CURIO_RARITY_COL[item.r]};">【${CURIO_RARITY_LABEL[item.r]}】${item.name} · ${dName} (持有 ${cnt})</div><div style="margin-top:2px;color:#6b5446;">${item.note}</div>`;
-            try {
-              const scroller = curioDetailEl.closest('.st-px-bag-body, .st-tb-body') || pupBagEl;
-              if (scroller && typeof scroller.scrollTo === 'function') scroller.scrollTo({ top: 0, behavior: 'smooth' });
-              curioDetailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } catch (_) {}
+            setTimeout(() => {
+              try {
+                if (hadNewCurio && freshNewCurios.size > 0) {
+                  const nextTag = museumGridEl?.querySelector('.st-px-new-tag');
+                  const nextCard = nextTag ? (nextTag.closest('.st-px-curio-card') || nextTag) : null;
+                  if (nextCard && typeof nextCard.scrollIntoView === 'function') {
+                    nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                  }
+                }
+                curioDetailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              } catch (_) {}
+            }, 90);
           });
         }
         museumGridEl.appendChild(card);
@@ -44307,13 +44408,13 @@
     const { kind, item } = entry;
     if (kind === 'outfit') {
       config.puppyOwnedOutfits = config.puppyOwnedOutfits || [];
-      if (!config.puppyOwnedOutfits.includes(item.id)) { config.puppyOwnedOutfits.push(item.id); return true; }
+      if (!config.puppyOwnedOutfits.includes(item.id)) { config.puppyOwnedOutfits.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'acc') {
       config.puppyOwnedAccs = config.puppyOwnedAccs || [];
-      if (!config.puppyOwnedAccs.includes(item.id)) { config.puppyOwnedAccs.push(item.id); return true; }
+      if (!config.puppyOwnedAccs.includes(item.id)) { config.puppyOwnedAccs.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'comp') {
       config.puppyOwnedCompanions = config.puppyOwnedCompanions || [];
-      if (!config.puppyOwnedCompanions.includes(item.id)) { config.puppyOwnedCompanions.push(item.id); return true; }
+      if (!config.puppyOwnedCompanions.includes(item.id)) { config.puppyOwnedCompanions.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'bubble') {
       config.puppyOwnedBubbles = config.puppyOwnedBubbles || [];
       if (!config.puppyOwnedBubbles.includes(item.id)) { config.puppyOwnedBubbles.push(item.id); return true; }
