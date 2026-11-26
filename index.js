@@ -766,15 +766,15 @@
     { id: 'af_dyn_butterfly', name: '飞舞小蝴蝶', price: 66, dyn: 'butterfly', charms: [], desc: '[动态] 丁香雾紫边，两只像素小蝴蝶扑扇双翼绕框飞舞' },
     { id: 'af_dyn_halo', name: '小天使翅膀', price: 68, dyn: 'halo', charms: [], desc: '[动态] 奶油浅金边，顶部悬浮光环呼吸配两侧白羽轻扑' },
     { id: 'af_dyn_aurora', name: '极光流彩', price: 70, dyn: 'aurora', charms: [], desc: '[动态] 极光薄荷紫柔边，半透明竖向极光幕帘随风轻摆' },
-    { id: 'af_dyn_clover', name: '四叶草微风', price: 60, dyn: 'clover', charms: [{ pos: 'bl', key: 'clover' }], desc: '[动态] 鼠尾草雾绿边，清风丝线吹拂小嫩叶缓缓飘动' },
+    { id: 'af_dyn_clover', name: '四叶草微风', price: 60, dyn: 'clover', charms: [], desc: '[动态] 鼠尾草雾绿边，清风丝线吹拂小嫩叶缓缓飘动' },
     { id: 'af_dyn_hearts', name: '心动小爱心', price: 60, dyn: 'hearts', charms: [], desc: '[动态] 奶雾浅粉边，圆润粉红小爱心从两侧轻盈冒起' },
     { id: 'af_dyn_rain', name: '绵绵小雨滴', price: 62, dyn: 'rain', charms: [], desc: '[动态] 晴灰蓝雾边，顶部软云飘过下起细密雨丝与涟漪' },
     { id: 'af_dyn_firefly', name: '夏夜萤火虫', price: 66, dyn: 'firefly', charms: [], desc: '[动态] 苔绿夜蓝边，暖黄小萤火虫带柔和光晕忽明忽暗' },
     { id: 'af_dyn_candy', name: '彩虹糖豆', price: 64, dyn: 'candy', charms: [], desc: '[动态] 奶油马卡龙边，五彩小糖豆沿着底边一蹦一跳' },
-    { id: 'af_dyn_mooncloud', name: '云朵小弯月', price: 68, dyn: 'mooncloud', charms: [{ pos: 'tl', key: 'moon' }], desc: '[动态] 雾蓝淡紫边，绵软小白云沿着底边缓缓飘过' },
-    { id: 'af_dyn_berry', name: '草莓牛奶', price: 66, dyn: 'berry', charms: [{ pos: 'tr', key: 'berry' }], desc: '[动态] 草莓奶昔柔边，奶油奶滴与小红点沿框轻轻滴落' },
+    { id: 'af_dyn_mooncloud', name: '云朵小弯月', price: 68, dyn: 'mooncloud', charms: [], desc: '[动态] 雾蓝淡紫边，绵软小白云沿着底边缓缓飘过' },
+    { id: 'af_dyn_berry', name: '草莓牛奶', price: 66, dyn: 'berry', charms: [], desc: '[动态] 草莓奶昔柔边，奶油奶滴与小红点沿框轻轻滴落' },
     { id: 'af_dyn_peach', name: '蜜桃汽水', price: 64, dyn: 'peach', charms: [], desc: '[动态] 水蜜桃奶橘边，底部咕嘟咕嘟不断冒起汽水微泡' },
-    { id: 'af_dyn_leaf', name: '秋日小枫叶', price: 66, dyn: 'leaf', charms: [{ pos: 'tr', key: 'leaf' }], desc: '[动态] 暖焦糖浅棕边，红橙小枫叶左右摇摆轻轻飘落' },
+    { id: 'af_dyn_leaf', name: '秋日小枫叶', price: 66, dyn: 'leaf', charms: [], desc: '[动态] 暖焦糖浅棕边，红橙小枫叶左右摇摆轻轻飘落' },
     { id: 'af_dyn_ocean', name: '海盐波浪', price: 70, dyn: 'ocean', charms: [], desc: '[动态] 海盐薄荷蓝边，底部卷起起伏的像素浪花与白沫' },
     { id: 'af_dyn_dandelion', name: '蒲公英吹风', price: 68, dyn: 'dandelion', charms: [], desc: '[动态] 燕麦暖白边，轻盈的白色蒲公英绒毛随风飘散' },
     { id: 'af_dyn_lantern', name: '暖光小纸灯', price: 72, dyn: 'lantern', charms: [], desc: '[动态] 宣纸暖杏边，两盏迷你红金小纸灯在顶角轻轻摇曳' },
@@ -812,7 +812,8 @@
     { id: 'af_dyn_hot_balloon', name: '热气球漫游框', price: 76, dyn: 'hotballoon', charms: [], desc: '[动态] 暖粉晴空云天边，右上彩色迷你热气球轻盈起伏配底边软云掠过' },
     { id: 'af_dyn_lighthouse', name: '海角灯塔框', price: 78, dyn: 'lighthouse', charms: [], desc: '[动态] 暮蓝海湾柔光边，右下红白迷你灯塔缓缓扫出暖黄光束配海面微光' },
     { id: 'af_dyn_windmill_hill', name: '海盐汽水框', price: 74, dyn: 'seasoda', charms: [], desc: '[动态] 冰透海盐浅蓝边，右下玻璃汽水杯配柠檬片与薄荷叶不断冒出晶莹气泡' },
-    { id: 'af_lux_seraph_wings', name: '星羽天使翼', price: 88, dyn: 'lux_seraph', charms: [], desc: '[动态豪华] 圣洁奶油金边，对称双层大羽翼轻扇配顶部鎏金光环与飘落羽屑' },
+    { id: 'af_lux_seraph_wings', name: '圣辉小天使', price: 88, dyn: 'lux_seraph', charms: [], desc: '[动态豪华] 圣洁奶金柔边，顶部悬空鎏金圣环配流动纯白羽光丝带与珍珠星屑' },
+    { id: 'af_lux_demon_horns', name: '绯夜小恶魔', price: 88, dyn: 'lux_demon', charms: [], desc: '[动态豪华] 暗紫绯红柔边，顶部对称小恶魔尖角配右下摇曳爱心恶魔尾与绯红微光' },
     { id: 'af_lux_royal_cat', name: '鎏金招财猫', price: 88, dyn: 'lux_royalcat', charms: [], desc: '[动态豪华] 暖金绯红柔边，金边粉绒大猫耳配顶心红绳金铃轻晃与招财微光' },
     { id: 'af_lux_ribbon_bunny', name: '缎带垂耳兔', price: 88, dyn: 'lux_ribbunny', charms: [], desc: '[动态豪华] 柔粉珍珠蕾丝边，修长白绒垂耳配粉缎大蝴蝶结与飘落樱瓣' },
     { id: 'af_lux_crown_fox', name: '雪绒九尾狐', price: 92, dyn: 'lux_crownfox', charms: [], desc: '[动态豪华] 冰雾雪白金边，雪绒粉尖大狐耳配额心鎏金花钿与轻摆白尾尖' },
@@ -2672,13 +2673,13 @@
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
     { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'ach_velvet_gold', charms: [], desc: '衣橱主理人成就专属动态限定：酒红丝绒与香槟鎏金雕花冠冕流光头像框' },
-    { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
+    { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'bond_lv9_guard', charms: [], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
-    { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
+    { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'fest_lantern_new', charms: [], desc: '佳节限定动态头像框：绯红鎏金双线边框配轻晃迷你小花灯与金穗光点' },
     { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
-    { id: 'af_cloud_twinstar', name: '[成就] 双子星讯框', dyn: 'gadyn_orbital_ring', charms: [{ pos: 'tl', key: 'heart' }], desc: '跨屏挚友成就专属动态限定：蓝粉双子星轨环绕流光纪念头像框' },
-    { id: 'af_cloud_gallery', name: '[成就] 双子纪念馆框', dyn: 'gadyn_prism_orbit', charms: [{ pos: 'tr', key: 'crown' }, { pos: 'bl', key: 'heart' }], desc: '全图鉴双子星成就专属动态限定：七彩棱镜光轨双人纪念馆头像框' },
+    { id: 'af_cloud_twinstar', name: '[成就] 双子星讯框', dyn: 'cloud_twinstar', charms: [], desc: '跨屏挚友成就专属动态限定：蓝粉双子星轨环绕流光纪念头像框' },
+    { id: 'af_cloud_gallery', name: '[成就] 双子纪念馆框', dyn: 'cloud_gallery', charms: [], desc: '全图鉴双子星成就专属动态限定：七彩棱镜光轨双人纪念馆头像框' },
   ];
   const SECRET_ADV_TRAILS = [
     { id: 'trail_adv_meteor', name: '[秘境] 流星碎光', cols: ['#ffe478', '#9ee8ff', '#ffffff'], desc: '冒险极低概率偶遇的流星碎光足迹' },
@@ -5386,6 +5387,7 @@
     .st-px-avatar-wrap.af-cloud-twinstar { border-color: #c9b882 !important; background: linear-gradient(135deg,#2e3859,#45527d,#2e3859) !important; box-shadow: 0 0 0 1px #e8ecf7, 0 2px 9px rgba(55,68,108,0.4) !important; }
     .st-px-avatar-wrap.af-dyn-windmill-hill { border-color: #7cc4e8 !important; background: linear-gradient(135deg,#eef9ff,#daf2ff,#f7fcff) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(124,196,232,0.38) !important; }
     .st-px-avatar-wrap.af-lux-seraph-wings { border-color: #e6c675 !important; background: linear-gradient(135deg,#fffdf7,#faf2de,#ffffff) !important; box-shadow: inset 0 0 0 1px #ffffff, 0 2px 10px rgba(230,198,117,0.42) !important; }
+    .st-px-avatar-wrap.af-lux-demon-horns { border-color: #b84b68 !important; background: linear-gradient(135deg,#2e2038,#45294a,#2b1c33) !important; box-shadow: inset 0 0 0 1px #e37892, 0 2px 10px rgba(145,48,78,0.48) !important; }
     .st-px-avatar-wrap.af-lux-royal-cat { border-color: #d9828c !important; background: linear-gradient(135deg,#fff8f5,#fcebe8,#fffdf7) !important; box-shadow: inset 0 0 0 1px #f5d682, 0 2px 10px rgba(217,130,140,0.4) !important; }
     .st-px-avatar-wrap.af-lux-ribbon-bunny { border-color: #e3a3b8 !important; background: linear-gradient(135deg,#fff7fa,#fcebf1,#ffffff) !important; box-shadow: inset 0 0 0 1px #ffffff, 0 2px 10px rgba(227,163,184,0.42) !important; }
     .st-px-avatar-wrap.af-lux-crown-fox { border-color: #c9b5d9 !important; background: linear-gradient(135deg,#faf8ff,#eef2fc,#ffffff) !important; box-shadow: inset 0 0 0 1px #f0d68a, 0 2px 10px rgba(180,165,210,0.42) !important; }
@@ -36841,6 +36843,14 @@
     { id: 'funny_anim_chomp', name: '狂炫干饭', cat: 'funny', anim: true },
     { id: 'funny_anim_sweat_drop', name: '冷汗直冒', cat: 'funny', anim: true },
     { id: 'funny_anim_party_crazy', name: '蹦迪狂欢', cat: 'funny', anim: true },
+    { id: 'funny_blank', name: '已读乱回', cat: 'funny' },
+    { id: 'funny_nosebleed', name: '流鼻血', cat: 'funny' },
+    { id: 'funny_clown', name: '小丑是我', cat: 'funny' },
+    { id: 'funny_thumbs_down', name: '给你差评', cat: 'funny' },
+    { id: 'funny_anim_slap', name: '巴掌警告', cat: 'funny', anim: true },
+    { id: 'funny_anim_nod_fast', name: '疯狂赞同', cat: 'funny', anim: true },
+    { id: 'funny_anim_melt', name: '当场融化', cat: 'funny', anim: true },
+    { id: 'funny_anim_sparkle_eye', name: '星星求求', cat: 'funny', anim: true },
   ];
 
   const isHeadAccessoryId = (accId) => {
@@ -36867,8 +36877,8 @@
       const ear = pal.e || '#e2ae74';
       const out = pal.o || '#3b2a22';
       const f = animFrame % 4;
-      const fx = (stickerId === 'funny_anim_shake' || stickerId === 'funny_anim_party_crazy') ? (f === 1 ? -2 : (f === 3 ? 2 : 0)) : (stickerId === 'funny_anim_cry_shake' ? (f % 2 === 0 ? -1 : 1) : 0);
-      const fy = (stickerId === 'funny_anim_laugh' ? (f % 2 === 1 ? 1 : -1) : (stickerId === 'funny_anim_ascend' ? -f : 0));
+      const fx = (stickerId === 'funny_anim_shake' || stickerId === 'funny_anim_party_crazy') ? (f === 1 ? -2 : (f === 3 ? 2 : 0)) : ((stickerId === 'funny_anim_cry_shake' || stickerId === 'funny_anim_slap') ? (f % 2 === 0 ? -2 : 2) : 0);
+      const fy = (stickerId === 'funny_anim_laugh' || stickerId === 'funny_anim_nod_fast') ? (f % 2 === 1 ? 2 : -1) : (stickerId === 'funny_anim_ascend' ? -f : (stickerId === 'funny_anim_melt' ? f : 0));
       const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x + fx, y + fy, w, h); };
       const pAbs = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
       p(6, 7, out, 12, 1); p(5, 8, out, 1, 10); p(18, 8, out, 1, 10); p(6, 18, out, 12, 1);
@@ -36988,6 +36998,36 @@
         p(6, 10, sc, 5, 3); p(13, 10, sc, 5, 3); p(11, 10, '#231814', 2, 1);
         p(10, 15, '#ff8aa6', 4, 2);
         pAbs(2, 2 + (f % 2) * 2, sc, 3, 2); pAbs(19, 4 - (f % 2) * 2, sc, 3, 2);
+      } else if (sub === 'blank') {
+        p(7, 11, out, 4, 1); p(13, 11, out, 4, 1); p(8, 12, out, 2, 1); p(14, 12, out, 2, 1);
+        p(9, 15, out, 6, 1);
+      } else if (sub === 'nosebleed') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(6, 13, '#ff7a96', 3, 2); p(15, 13, '#ff7a96', 3, 2);
+        p(11, 14, '#e0314b', 1, 5); p(13, 14, '#e0314b', 1, 4);
+      } else if (sub === 'clown') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(10, 12, '#e8384f', 4, 3); p(11, 12, '#ffadc4', 1, 1);
+        p(9, 16, '#e8384f', 6, 1);
+        pAbs(2, 5, '#ff6b78', 4, 4); pAbs(18, 5, '#6bc4ff', 4, 4); pAbs(5, 3, '#ffe066', 4, 4); pAbs(15, 3, '#8be0b8', 4, 4);
+      } else if (sub === 'thumbs_down') {
+        p(7, 11, out, 4, 1); p(13, 11, out, 4, 1); p(10, 15, out, 4, 1); p(9, 16, out, 1, 1);
+        pAbs(18, 13, '#ffe066', 4, 4); pAbs(19, 17, '#ffe066', 2, 3); pAbs(17, 13, '#d9a441', 1, 4);
+      } else if (sub === 'anim_slap') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(10, 15, out, 4, 2);
+        pAbs(f % 2 === 0 ? 1 : 18, 12, '#ff8aa6', 5, 4);
+        pAbs(f % 2 === 0 ? 19 : 2, 4, '#ffe066', 3, 3);
+      } else if (sub === 'anim_nod_fast') {
+        p(8, 11, out); p(9, 10, out); p(10, 11, out); p(14, 11, out); p(15, 10, out); p(16, 11, out);
+        p(10, 15, '#ff8aa6', 4, 2);
+        pAbs(19, 3 + (f % 2) * 2, '#ffe066', 3, 3);
+      } else if (sub === 'anim_melt') {
+        p(8, 11, out, 2, 1); p(14, 11, out, 2, 1); p(10, 15, out, 4, 1);
+        pAbs(3, 19, fur, 18, 3); pAbs(2, 21, out, 20, 1);
+      } else if (sub === 'anim_sparkle_eye') {
+        const ec = f % 2 === 0 ? '#ffe066' : '#ffffff';
+        p(7, 10, '#3b2a22', 4, 4); p(8, 11, ec, 2, 2);
+        p(13, 10, '#3b2a22', 4, 4); p(14, 11, ec, 2, 2);
+        p(10, 15, '#ff8aa6', 4, 1);
+        pAbs(2, 2 + (f % 2), '#ffe066', 2, 2); pAbs(20, 3 - (f % 2), '#8cc8f7', 2, 2);
       } else {
         p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1);
         p(6, 14, '#ff8ca8', 3, 2); p(15, 14, '#ff8ca8', 3, 2); p(11, 15, out, 2, 1);
@@ -43941,15 +43981,7 @@
       _px(8, 51, '#d94858', 3, 3); _px(9, 52, '#ffadc4', 1, 1);
       return;
     }
-    if (m === 'halo') {
-      // 小天使翅膀（精确居中于 x=32！）：顶部光环呼吸 + 左右完全对称白羽轻扑
-      const fl = Math.round(Math.sin(t * 0.25) * 1.5);
-      _px(25, 3 + (_bob > 0 ? 0 : 1), '#ffe078', 14, 3); _px(27, 4 + (_bob > 0 ? 0 : 1), '#fffdf2', 10, 1);
-      // 左翼 x=1..9，右翼精确镜像 64 - x - w -> x=54..62
-      _px(2, 24 + fl, '#ffffff', 8, 11); _px(4, 21 + fl, '#ffffff', 6, 3); _px(1, 27 + fl, '#eef5fc', 6, 5);
-      _px(54, 24 + fl, '#ffffff', 8, 11); _px(54, 21 + fl, '#ffffff', 6, 3); _px(57, 27 + fl, '#eef5fc', 6, 5);
-      return;
-    }
+
     if (m === 'catclaw') {
       // 招财小猫耳（精确居中于 x=32！）：左右完全对称猫耳微动 + 顶心小金铃
       const tw = (t % 16) < 2 ? 1 : 0;
@@ -43972,14 +44004,231 @@
       return;
     }
     if (m === 'lux_seraph') {
-      // [豪华] 星羽天使翼（精确居中于 x=32）：双层洁白金边大羽翼 + 鎏金圣光环 + 飘落羽屑
+      // [豪华] 圣辉小天使（全新圣光丝带风格，非大翅膀）：悬空鎏金圣环 + 两侧柔白圣光丝带垂落 + 珍珠金芒
+      const hY = 2 + (_bob > 0 ? 0 : 1);
+      _px(22, hY, '#e6bc5c', 20, 4); _px(24, hY + 1, '#fff9d6', 16, 2); _px(30, hY - 1, '#ffffff', 4, 2);
+      // 两侧垂落轻盈圣光丝带与珍珠
+      for (let i = 0; i < 6; i++) {
+        const sw = Math.round(Math.sin(t * 0.22 + i * 0.6));
+        _px(4 + sw, 14 + i * 6, i % 2 === 0 ? '#ffffff' : '#fff4cc', 3, 5);
+        _px(57 - sw, 14 + i * 6, i % 2 === 0 ? '#ffffff' : '#fff4cc', 3, 5);
+      }
+      _px(10, 52 + _bob, '#ffe078', 3, 3); _px(11, 53 + _bob, '#ffffff', 1, 1);
+      _px(51, 52 - _bob, '#ffe078', 3, 3); _px(52, 53 - _bob, '#ffffff', 1, 1);
+      return;
+    }
+    if (m === 'lux_demon') {
+      // [豪华] 绯夜小恶魔（与圣辉小天使对应的恶魔豪华框，精确居中于 x=32）：对称小恶魔尖角 + 右下摇曳爱心恶魔尾 + 暗绯星点
+      // 左角 x=14..21，右角精确镜像 x=43..50
+      _px(15, 4, '#8c2846', 6, 6); _px(14, 2, '#b83b5e', 5, 4); _px(12, 0, '#d95476', 4, 3); _px(16, 5, '#e87894', 2, 2);
+      _px(43, 4, '#8c2846', 6, 6); _px(45, 2, '#b83b5e', 5, 4); _px(48, 0, '#d95476', 4, 3); _px(46, 5, '#e87894', 2, 2);
+      // 右下轻摆小恶魔爱心尾
+      const sw = Math.round(Math.sin(t * 0.25));
+      _px(52, 46, '#7a223d', 2, 6); _px(54 + sw, 42, '#9e2e4f', 2, 5); _px(55 + sw, 38, '#d9486a', 4, 3); _px(56 + sw, 36, '#ff85a2', 2, 2);
+      // 左下暗紫小蝠影微光
+      if ((t % 10) < 5) { _px(5, 50 + _bob, '#e36b88', 3, 3); _px(6, 51 + _bob, '#ffd6e2', 1, 1); }
+      else { _px(6, 18 - _bob, '#c48cf0', 2, 2); }
+      return;
+    }
+    if (m === 'aurora') {
+      // 极光流彩（全新梦幻弧形极光丝带）：薄荷青→冰蓝→丁香紫三层柔和波浪极光掠过顶边 + 极地闪烁银星 + 底边雪雾
+      const cols = ['#8ff5d8', '#8cd4ff', '#d4b8ff'];
+      for (let x = 6; x <= 56; x += 2) {
+        const wy = Math.round(Math.sin(t * 0.18 + x * 0.16) * 2);
+        _px(x, 4 + wy, cols[0], 2, 2);
+        _px(x, 6 + wy, cols[1], 2, 2);
+        _px(x, 8 + wy, cols[2], 2, 1);
+      }
+      [[5, 22], [57, 18], [7, 44], [55, 48]].forEach(([sx, sy], i) => {
+        if (((t + i * 3) % 8) < 5) { _px(sx, sy, '#ffffff', 2, 2); }
+      });
+      _px(10, 54, 'rgba(220,242,255,0.75)', 44, 3);
+      return;
+    }
+    if (m === 'bee') {
+      // 嗡嗡小蜜蜂（丰富版）：左下金黄蜂巢滴落蜂蜜 + 右上小雏菊 + 圆滚滚小蜜蜂绕框采蜜
+      _px(4, 48, '#e6a838', 10, 8); _px(5, 49, '#ffe066', 4, 3); _px(9, 51, '#ffe066', 4, 3);
+      _px(7, 56, '#ffd24c', 3, 2 + (_bob > 0 ? 1 : 0)); // 垂落小蜜滴
+      // 右上盛开小雏菊
+      _px(51, 5, '#ffffff', 7, 7); _px(53, 7, '#ffe066', 3, 3);
+      // 绕框飞舞的胖蜜蜂
+      const [bx, by] = perimPt(t * 2 + 20);
+      _px(bx - 3, by - 2, '#ffe066', 6, 4); _px(bx - 1, by - 2, '#3b2a22', 1, 4); _px(bx + 1, by - 2, '#3b2a22', 1, 4);
+      _px(bx - 2, by - 4 + (t % 2), '#ffffff', 4, 2); // 扑扇小白翅
+      return;
+    }
+    if (m === 'gadyn_cheese_melt') {
+      // [扭蛋] 芝士吐司框（彻底重做，不对称暖香美食感）：焦糖烤吐司脆边 + 顶边厚实拉丝流心芝士滴落 + 右下小黄油与热气
+      _px(8, 6, '#c9823c', 48, 3); _px(10, 7, '#ffe066', 44, 2);
+      _px(14, 9, '#ffd24c', 5, 4 + (_bob > 0 ? 1 : 0)); _px(29, 9, '#ffe066', 4, 2); _px(43, 9, '#ffd24c', 6, 5 - (_bob > 0 ? 1 : 0));
+      // 右下角立体小吐司切片配黄油
+      _px(47, 46, '#c9823c', 12, 11); _px(49, 48, '#fff4dc', 8, 7); _px(51, 49, '#ffe066', 4, 4); _px(52, 50, '#fff9d6', 2, 2);
+      _px(52 + (_bob > 0 ? 1 : 0), 41, 'rgba(255,255,255,0.8)', 2, 3);
+      return;
+    }
+    if (m === 'gadyn_feather_drift') {
+      // [秘境] 云端小翅膀（精确居中丰富版）：双侧洁白云羽轻扇 + 顶部柔和云端光环 + 飘落云羽
       const fl = Math.round(Math.sin(t * 0.24) * 2);
-      _px(23, 2 + (_bob > 0 ? 0 : 1), '#e6bc5c', 18, 4); _px(25, 3 + (_bob > 0 ? 0 : 1), '#fff9d6', 14, 2);
-      _px(31, 1 + (_bob > 0 ? 0 : 1), '#ffffff', 2, 2);
-      // 豪华双层左翼 & 精确镜像右翼
-      _px(0, 20 + fl, '#ffffff', 10, 14); _px(2, 16 + fl, '#fff9e6', 8, 4); _px(1, 34 + fl, '#e8f2fc', 7, 5); _px(2, 23 + fl, '#f2d98d', 2, 10);
-      _px(54, 20 + fl, '#ffffff', 10, 14); _px(54, 16 + fl, '#fff9e6', 8, 4); _px(56, 34 + fl, '#e8f2fc', 7, 5); _px(60, 23 + fl, '#f2d98d', 2, 10);
-      _px(10, 50 + (_bob2 * 2), '#ffffff', 3, 2); _px(51, 48 - (_bob2 * 2), '#fff4c4', 3, 2);
+      _px(24, 3 + (_bob > 0 ? 0 : 1), '#cfe8fc', 16, 3); _px(26, 4 + (_bob > 0 ? 0 : 1), '#ffffff', 12, 1);
+      _px(1, 22 + fl, '#ffffff', 8, 12); _px(3, 19 + fl, '#e8f5ff', 6, 3);
+      _px(55, 22 + fl, '#ffffff', 8, 12); _px(55, 19 + fl, '#e8f5ff', 6, 3);
+      _px(14, 53 + _bob, '#ffffff', 12, 4); _px(38, 53 - _bob, '#e8f5ff', 14, 4);
+      return;
+    }
+    if (m === 'gadyn_orbital_ring') {
+      // [秘境] 星空小轨迹（丰富版）：冰蓝与香槟金双星绕框公转 + 银河星点微闪
+      const [x1, y1] = perimPt(t * 2);
+      const [x2, y2] = perimPt(t * 2 + 90);
+      _px(x1 - 2, y1 - 2, '#99d6ff', 5, 5); _px(x1 - 1, y1 - 1, '#ffffff', 3, 3);
+      _px(x2 - 2, y2 - 2, '#ffe078', 5, 5); _px(x2 - 1, y2 - 1, '#ffffff', 3, 3);
+      [[6, 6], [56, 8], [8, 55], [55, 54]].forEach(([sx, sy], i) => {
+        if (((t + i * 2) % 8) < 5) _px(sx, sy, i % 2 ? '#ffe078' : '#b8e4ff', 2, 2);
+      });
+      return;
+    }
+    if (m === 'gadyn_lace_ripple') {
+      // [扭蛋] 蕾丝缎带框（丰富版）：四边精致纯白波浪蕾丝 + 左上与右下不对称粉缎蝴蝶结丝带
+      for (let i = 10; i <= 52; i += 4) {
+        _px(i, 7, '#ffffff', 3, 2); _px(i, 55, '#ffffff', 3, 2);
+        _px(7, i, '#ffffff', 2, 3); _px(55, i, '#ffffff', 2, 3);
+      }
+      // 左上粉缎蝴蝶结
+      _px(4, 5, '#f29cb8', 5, 4); _px(11, 5, '#f29cb8', 5, 4); _px(9, 6, '#ffe4ec', 2, 2);
+      _px(6 + _bob, 9, '#f7b8cc', 2, 5);
+      // 右下飘逸丝带尾
+      _px(51, 51, '#f29cb8', 6, 4); _px(53 - _bob, 55, '#ffd6e4', 2, 4);
+      return;
+    }
+    if (m === 'gadyn_kitty_bounce') {
+      // [扭蛋] 软萌猫耳框（精确居中丰富版）：粉白双耳微抖 + 底边依次点亮的小粉肉垫
+      const tw = (t % 14) < 2 ? 1 : 0;
+      _px(13, 3 + tw, '#ffffff', 8, 7); _px(15, 1 + tw, '#ffffff', 4, 2); _px(15, 4 + tw, '#ffbfd4', 4, 4);
+      _px(43, 3, '#ffffff', 8, 7); _px(45, 1, '#ffffff', 4, 2); _px(45, 4, '#ffbfd4', 4, 4);
+      for (let i = 0; i < 3; i++) {
+        const px0 = 15 + i * 14;
+        const on = (Math.floor(t / 4) % 3) === i;
+        _px(px0, 53, on ? '#ff8aa6' : '#ffd6e2', 5, 4); _px(px0 + 1, 51, on ? '#ff8aa6' : '#ffd6e2', 3, 2);
+      }
+      return;
+    }
+    if (m === 'gadyn_pond_ripple') {
+      // [扭蛋] 小青蛙呱呱框（丰富版）：左下大荷叶与探头青蛙 + 右上水滴涟漪
+      _px(3, 50, '#5ca864', 15, 6); _px(5, 44 + (_bob > 0 ? 0 : 1), '#82d484', 9, 6);
+      _px(6, 42 + (_bob > 0 ? 0 : 1), '#82d484', 3, 2); _px(10, 42 + (_bob > 0 ? 0 : 1), '#82d484', 3, 2);
+      _px(7, 43 + (_bob > 0 ? 0 : 1), '#231814', 1, 1); _px(11, 43 + (_bob > 0 ? 0 : 1), '#231814', 1, 1);
+      // 右上扩散水环
+      const r = (t % 6);
+      _px(49 - r, 9, '#b8e8ff', 6 + r * 2, 1); _px(52, 6 + (t % 4), '#ffffff', 2, 2);
+      return;
+    }
+    if (m === 'gadyn_cream_piping') {
+      // [扭蛋] 草莓奶油框（丰富版）：绕框雪白奶油裱花珠 + 右上红草莓与绿叶 + 粉白糖珠
+      for (let i = 10; i <= 52; i += 6) {
+        const hi = ((Math.floor(t / 3) + i) % 2 === 0);
+        _px(i, 6, hi ? '#ffffff' : '#fff0f5', 4, 4); _px(i, 54, hi ? '#fff0f5' : '#ffffff', 4, 4);
+      }
+      _px(49, 4, '#6eb878', 5, 2); _px(48, 6, '#f05a72', 7, 5); _px(49, 11, '#f05a72', 5, 2);
+      _px(6, 49 + _bob, '#ffd6e4', 4, 4); _px(7, 50 + _bob, '#ffffff', 2, 2);
+      return;
+    }
+    if (m === 'gadyn_prism_orbit') {
+      // [扭蛋] 晶钻小皇冠（精确居中丰富版）：顶部幻彩晶钻小皇冠 + 棱镜彩光绕框巡游
+      const cy = 2 + (_bob > 0 ? 0 : 1);
+      _px(25, cy + 3, '#f0c975', 14, 4); _px(25, cy + 1, '#ffe082', 2, 2); _px(31, cy, '#ffffff', 2, 3); _px(37, cy + 1, '#ffe082', 2, 2);
+      _px(31, cy + 4, '#8ce6ff', 2, 2); _px(27, cy + 4, '#ff9ed2', 2, 2); _px(35, cy + 4, '#c9adff', 2, 2);
+      const pCols = ['#ff9ed2', '#8ce6ff', '#ffe694', '#c9adff'];
+      for (let i = 0; i < 4; i++) {
+        const [gx, gy] = perimPt(t * 3 + i * 45);
+        _px(gx - 1, gy - 1, pCols[i], 3, 3); _px(gx, gy, '#ffffff', 1, 1);
+      }
+      return;
+    }
+    if (m === 'gadyn_sky_swing') {
+      // [扭蛋] 云端秋千框（丰富版）：底边云朵秋千弧线轻荡 + 顶边飘浮蓬松软云
+      const sw = Math.round(Math.sin(t * 0.2) * 3);
+      _px(14, 52 + Math.abs(sw > 0 ? 1 : 0), '#ffffff', 36, 5); _px(18 + sw, 50, '#eef7ff', 28, 3);
+      _px(18 + sw, 46, '#d9c4a8', 1, 5); _px(45 + sw, 46, '#d9c4a8', 1, 5);
+      const cx = 8 + ((t) % 30);
+      _px(cx, 5, '#ffffff', 16, 4); _px(cx + 3, 3, '#ffffff', 10, 2);
+      return;
+    }
+    if (m === 'gadyn_twilight_crescent') {
+      // [扭蛋] 暮月云影框（丰富版）：左上银金大弯月 + 暮蓝轻纱云影缓缓流动 + 闪烁夜星
+      _px(5, 4 + (_bob > 0 ? 0 : 1), '#ffe694', 9, 10); _px(9, 5 + (_bob > 0 ? 0 : 1), '#2a3354', 7, 8);
+      const cx = 30 + Math.round(Math.sin(t * 0.14) * 5);
+      _px(cx, 52, 'rgba(184,196,232,0.85)', 22, 5); _px(cx + 4, 50, 'rgba(220,228,250,0.9)', 14, 3);
+      if ((t % 8) < 5) { _px(54, 12, '#fff4c4', 2, 2); _px(8, 48, '#b8d4ff', 2, 2); }
+      return;
+    }
+    if (m === 'gadyn_yuanyang_boil') {
+      // [扭蛋] 鸳鸯火锅框（丰富版）：底边左红麻辣汤+右白清汤咕嘟冒泡 + 飘升热气与小鱼丸
+      _px(10, 52, '#d94c3d', 22, 5); _px(32, 52, '#fff5e0', 22, 5);
+      _px(15 + (t % 5), 50, '#ff8a70', 3, 2); _px(38 + (t % 5), 50, '#ffffff', 3, 2);
+      _px(44, 51 + (_bob > 0 ? 0 : 1), '#ff9eb5', 4, 3); // 鱼丸
+      _px(18, 44 - (t % 6), 'rgba(255,255,255,0.75)', 2, 4); _px(42, 45 - ((t + 3) % 6), 'rgba(255,255,255,0.75)', 2, 4);
+      return;
+    }
+    if (m === 'gadyn_jade_gleam') {
+      // [扭蛋] 玉牌发财框（丰富版）：右下翡翠白玉麻将牌 + 左上转运金铜钱 + 玉光微扫
+      _px(49, 44 + (_bob > 0 ? 0 : 1), '#ffffff', 9, 12); _px(49, 54 + (_bob > 0 ? 0 : 1), '#4f9e72', 9, 2);
+      _px(52, 46 + (_bob > 0 ? 0 : 1), '#4f9e72', 3, 6); _px(51, 49 + (_bob > 0 ? 0 : 1), '#4f9e72', 5, 1);
+      // 左上金铜钱
+      _px(5, 5, '#f2c95c', 8, 8); _px(6, 6, '#fff4bd', 6, 6); _px(8, 8, '#4f9e72', 2, 2);
+      return;
+    }
+    if (m === 'gadyn_music_box') {
+      // [扭蛋] 八音盒发条框（丰富版）：左侧旋转复古金发条 + 彩色音符绕框轻舞
+      const ph = (Math.floor(t / 4) % 2);
+      _px(6, 29, '#d9a441', 4, 2);
+      if (ph === 0) { _px(1, 24, '#ffe078', 5, 4); _px(1, 32, '#ffe078', 5, 4); }
+      else { _px(2, 27, '#ffe078', 4, 6); }
+      const nCols = ['#ff8aa6', '#ffe066', '#8cc8f7'];
+      for (let i = 0; i < 3; i++) {
+        const [nx, ny] = perimPt(t * 2 + i * 60);
+        _px(nx, ny - 3, nCols[i], 2, 5); _px(nx - 2, ny, nCols[i], 3, 3);
+      }
+      return;
+    }
+    if (m === 'gadyn_peach_soda') {
+      // [扭蛋] 蜜桃汽水框（丰富版）：左下饱满水蜜桃 + 透明冰块 + 升腾粉白汽水泡
+      _px(4, 46, '#ff9ea8', 10, 9); _px(6, 44, '#ffc4cc', 6, 3); _px(8, 43, '#6eb878', 4, 2);
+      _px(50, 48 + _bob, 'rgba(230,248,255,0.9)', 7, 7); _px(51, 49 + _bob, '#ffffff', 3, 2);
+      for (let i = 0; i < 4; i++) {
+        const by1 = 46 - ((t * 2 + i * 10) % 36);
+        _px(52 + (i % 2) * 4, by1, i % 2 ? '#ffffff' : '#ffd6e2', 2, 2);
+      }
+      return;
+    }
+    if (m === 'bond_lv9_guard') {
+      // [好感Lv9] 星月守护框（专属独立设计）：左上暖金双心 + 右下银月守护星轨
+      _px(5, 5 + (_bob > 0 ? 0 : 1), '#f26b92', 3, 3); _px(9, 5 + (_bob > 0 ? 0 : 1), '#f26b92', 3, 3);
+      _px(5, 7 + (_bob > 0 ? 0 : 1), '#f26b92', 7, 3); _px(7, 10 + (_bob > 0 ? 0 : 1), '#f26b92', 3, 2);
+      _px(49, 47, '#ffe082', 8, 9); _px(52, 48, '#f7e8f0', 6, 7);
+      const [gx, gy] = perimPt(t * 3);
+      _px(gx - 1, gy - 1, '#ffe082', 3, 3); _px(gx, gy, '#ffffff', 1, 1);
+      return;
+    }
+    if (m === 'amberleaf') {
+      // [签到] 琥珀标本框（丰富独立版）：温润琥珀透亮角 + 左下金色银杏压花 + 右上蜜滴微闪
+      _px(5, 48, '#e6b84c', 8, 6); _px(4, 46, '#f5d26b', 10, 4); _px(8, 54, '#9c6824', 2, 3); // 金色银杏扇叶
+      _px(51, 6, '#f5c84c', 6, 7); _px(52, 7, '#fff4bd', 2, 3); // 琥珀蜜滴
+      if ((t % 10) < 5) { _px(48, 54, '#ffe078', 2, 2); _px(14, 6, '#fff4bd', 2, 2); }
+      return;
+    }
+    if (m === 'cloud_twinstar') {
+      // [成就] 双子星讯框（专属独立设计）：蓝粉双子信标星绕框连线微闪
+      const [x1, y1] = perimPt(t * 2);
+      const [x2, y2] = perimPt(t * 2 + 90);
+      _px(x1 - 2, y1 - 2, '#7cc6f7', 5, 5); _px(x1 - 1, y1 - 1, '#ffffff', 3, 3);
+      _px(x2 - 2, y2 - 2, '#ff9eb8', 5, 5); _px(x2 - 1, y2 - 1, '#ffffff', 3, 3);
+      _px(6, 5, '#ffe082', 2, 2); _px(55, 55, '#ffe082', 2, 2);
+      return;
+    }
+    if (m === 'cloud_gallery') {
+      // [成就] 双子纪念馆框（专属独立设计）：复古画廊鎏金四角 + 左下叠放迷你拍立得相片
+      [[7, 7], [53, 7], [53, 53]].forEach(([cx, cy]) => { _px(cx, cy, '#d9b56c', 4, 4); _px(cx + 1, cy + 1, '#fff9e6', 2, 2); });
+      _px(3, 45, '#ffffff', 11, 13); _px(5, 47, '#bfe3f7', 7, 7); _px(7, 49, '#ff9eb8', 3, 3);
+      if ((t % 10) < 5) { _px(16, 54, '#ffe082', 2, 2); _px(48, 6, '#ffe082', 2, 2); }
       return;
     }
     if (m === 'lux_royalcat') {
