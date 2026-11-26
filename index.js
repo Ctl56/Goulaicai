@@ -19901,7 +19901,7 @@
     spend_520: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-10px;bottom:-5px;', w: 12, h: 12, anim: 'b-tilt', pal: { r: '#e06e7c', p: '#ffb8c4', y: '#f5cc58', w: '#fffdf7' },
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 12, h: 12, anim: 'b-tilt', pal: { r: '#e06e7c', p: '#ffb8c4', y: '#f5cc58', w: '#fffdf7' },
           grid: [
             '..yyyy..',
             '.y....y.',
@@ -19910,7 +19910,7 @@
             'rppppppR'.replace('R','r'),
             'rrrrrrrr',
           ] },
-        { pos: 'right:-9px;top:-6px;', w: 10, h: 9, pal: { y: '#f5cc58', o: '#d99028', w: '#fffbe6' },
+        { pos: 'left:-9px;top:-8px;', w: 10, h: 9, pal: { y: '#f5cc58', o: '#d99028', w: '#fffbe6' },
           grid: [
             '.oooo.',
             'oywwyo',
@@ -19962,7 +19962,7 @@
             '.bbbb..bbbb.',
             '...l....y...',
           ] },
-        { pos: 'right:-11px;top:-8px;', w: 12, h: 10, anim: 'b-shimmer', pal: { w: '#ffffff', l: '#9a7be0', y: '#f5cc58', p: '#e8d8ff' },
+        { pos: 'right:-11px;bottom:-7px;', w: 12, h: 10, anim: 'b-shimmer', pal: { w: '#ffffff', l: '#9a7be0', y: '#f5cc58', p: '#e8d8ff' },
           grid: [
             '.....ww....',
             '....wppw...',
@@ -20092,9 +20092,9 @@
       cls: 'bespoke-lux bespoke-glow',
       ult: ['bottom'],
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 15, pal: { y: '#e6a82e', w: '#fffaf0', r: '#e04858', k: '#4a2e14', l: '#ffe894' },
+        { pos: 'left:-10px;top:-8px;', w: 13, h: 15, pal: { y: '#e6a82e', w: '#fffaf0', r: '#e04858', k: '#4a2e14', l: '#ffe894' },
           grid: ['..yyyyyy....','.ywwwwwwy...','ywrywwyrwy..','ywwwwwwwwy..','ywwwrrwwwy..','.yyyyyyyy...','...llllll...','.llyyyyyyll.','lyyyyyyyyyyl','.yyyyyyyyyy.'] },
-        { pos: 'right:-7px;top:-9px;', w: 11, h: 9, anim: 'b-tilt', pal: { y: '#e8ae32', w: '#fff7cc', r: '#e85268', c: '#72d4e8' },
+        { pos: 'right:-12px;bottom:-7px;', w: 11, h: 9, anim: 'b-tilt', pal: { y: '#e8ae32', w: '#fff7cc', r: '#e85268', c: '#72d4e8' },
           grid: ['..y..y..y..','.yy.yyy.yy.','.yyyyyyyyy.','.yryywycyy.','..yyyyyyy..'] },
       ],
     },
@@ -20191,9 +20191,9 @@
     gb_gacha_no_work_dog: {
       cls: 'bespoke-std bespoke-static',
       pieces: [
-        { pos: 'left:-9px;bottom:-6px;', w: 12, h: 12, anim: 'b-tilt', pal: { r: '#e0586e', y: '#f5cc64', w: '#fff8ec', k: '#7a4830' },
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 12, h: 12, anim: 'b-tilt', pal: { r: '#e0586e', y: '#f5cc64', w: '#fff8ec', k: '#7a4830' },
           grid: ['k........k','.kk....kk.','..rrrrrr..','.rywwwwyr.','rywwwwwwyr','rywwwwwwyr','.rywwwwyr.','..rrrrrr..'] },
-        { pos: 'right:-8px;top:-7px;', w: 10, h: 9, pal: { r: '#eb7288', y: '#f5cc64' },
+        { pos: 'right:-10px;bottom:-7px;', w: 10, h: 9, pal: { r: '#eb7288', y: '#f5cc64' },
           grid: ['..yy...r..','.y....rr..','..yy..r...','.....r....'] },
       ],
     },
@@ -20409,9 +20409,9 @@
       cls: 'bespoke-lux bespoke-glow',
       ult: ['bottom'],
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-hop', pal: { y: '#f2c249', l: '#fff2b0', o: '#9c6216', p: '#ffa4b8', k: '#3b2418' },
+        { pos: 'right:-12px;bottom:-7px;', w: 15, h: 15, anim: 'b-hop', pal: { y: '#f2c249', l: '#fff2b0', o: '#9c6216', p: '#ffa4b8', k: '#3b2418' },
           grid: ['..yy....yy..','.yyyyyyyyyy.','yyykllllkyyy','yyylppppylyy','yyyyyyyyyyyy','.yyyyyyyyyy.','..yy....yy..'] },
-        { pos: 'right:-9px;top:-8px;', w: 11, h: 11, pal: { y: '#e6a82e', w: '#fff6c4' },
+        { pos: 'left:26%;top:-8px;', w: 11, h: 11, pal: { y: '#e6a82e', w: '#fff6c4' },
           grid: ['..yyyy....','.yw..wy...','..yyyyyy..','......y.y.','........y.'] },
       ],
     },
@@ -20420,12 +20420,12 @@
       cls: 'bespoke-lux bespoke-sheen',
       ult: ['bottom'],
       pieces: [
-        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 18, anim: 'b-shimmer', pal: { p: '#ff94c8', c: '#7edcf5', l: '#c496ff', y: '#ffe680', w: '#ffffff', m: '#92f0cc' },
+        { pos: 'right:-13px;top:48%;transform:translateY(-50%);', w: 16, h: 18, anim: 'b-shimmer', pal: { p: '#ff94c8', c: '#7edcf5', l: '#c496ff', y: '#ffe680', w: '#ffffff', m: '#92f0cc' },
           frames: [
             ['..ppwww...','.ppwwwww..','ppwwcwwww.','.llwwcwww.','..llwwwm..','...bbwwm..','..y.bbm...','.yyy......'],
             ['..ccwww...','.ccwwwww..','ccwwpwwww.','.mmwwpwww.','..mmwwwl..','...yywwl..','..p.yyl...','.ppp......'],
           ] },
-        { pos: 'right:-10px;top:-10px;', w: 9, h: 9, anim: 'b-tilt', pal: { a: '#f5cc58', b: '#ff94c8', w: '#ffffff' },
+        { pos: 'left:-10px;bottom:-7px;', w: 9, h: 9, anim: 'b-tilt', pal: { a: '#f5cc58', b: '#ff94c8', w: '#ffffff' },
           grid: ['...aa..','...a.a.','..aa...','.abb...','..aa...'] },
       ],
     },
@@ -20777,7 +20777,7 @@
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 14, anim: 'b-tilt', pal: { y: '#e0a848', w: '#ffffff', p: '#c496eb', b: '#8c96e6' },
           grid: ['..yyyyyy..','.ywwwwwwy.','ywppwwwwyy','ywwwbbwwyy','.ywwwwwwy.','..yyyyyy..'] },
-        { pos: 'right:-10px;top:-9px;', w: 13, h: 12, pal: { b: '#8c82e0', l: '#dcd6ff', c: '#9cd8ff' },
+        { pos: 'left:26%;top:-8px;', w: 13, h: 12, pal: { b: '#8c82e0', l: '#dcd6ff', c: '#9cd8ff' },
           frames: [
             ['..bbbbbb..','.bllllllb.','bbbbbbbbbb','..c....c..','.....c....'],
             ['..bbbbbb..','.bllllllb.','bbbbbbbbbb','....c.....','..c....c..'],
@@ -20787,17 +20787,14 @@
       ],
     },
     cloud_coadv_5: {
-      cls: 'bespoke-lux',
+      cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'right:-10px;top:-7px;', w: 12, h: 9, anim: 'b-tilt', pal: { y: '#f5cc68', o: '#b8844c', w: '#ffffff' }, grid: ['..oooo..','.oywwyo.','oywwwwyo','.oywwyo.','..oooo..'] },
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 12, pal: { o: '#8c5a38', b: '#e8b678', l: '#fff2d6', r: '#e05868' },
-          grid: [
-            '..oooooo..',
-            '.obllllbo.',
-            'obllrrllbo',
-            '.obllllbo.',
-            '..oooooo..',
-          ] },
+        { pos: 'left:-10px;top:-8px;', w: 13, h: 13, anim: 'b-wiggle', pal: { b: '#6ea2e0', l: '#dceeff', y: '#f5cc58', w: '#ffffff', r: '#eb6c78' },
+          grid: ['...bbbb...','..bwwwwb..','.bwrrwyyb.','bbwwwwwwbb','.bwwwwwwb.','..bbbbbb..'] },
+        { pos: 'right:-12px;bottom:-7px;', w: 13, h: 14, anim: 'b-breathe', pal: { b: '#6ea2e0', l: '#e2f0ff', y: '#f5cc58', w: '#ffffff' },
+          grid: ['...bbbb...','.bbbbbbbb.','bllwwwwllb','blwyyyywlb','bllllllllb','.bbbbbbbb.'] },
+        { pos: 'left:64%;top:-8px;', w: 11, h: 8, pal: { b: '#6ea2e0', w: '#ffffff' },
+          grid: ['.....bbbb','..bbbwwwb','bbwwwbb..','...bb....'] },
       ],
     },
     cloud_coadv_20: {
@@ -20844,7 +20841,7 @@
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 16, h: 15, anim: 'b-shimmer', pal: { b: '#7ca8e6', l: '#e0efff', w: '#ffffff', p: '#ff9ec2', y: '#ffe078' },
           grid: ['.bbbbbbbbb.','bwwwwwwwwwb','bwbbwwppwwb','bwwwwwwwwwb','bllwwyywwlb','.bbbbbbbbb.'] },
-        { pos: 'right:-10px;top:-8px;', w: 11, h: 10, pal: { a: '#7ca8e6', b: '#94dcff', w: '#ffffff' },
+        { pos: 'left:66%;bottom:-7px;', w: 11, h: 10, pal: { a: '#7ca8e6', b: '#94dcff', w: '#ffffff' },
           grid: ['....a....','...aba...','.aabwbaa.','...aba...','....a....'] },
         { pos: 'left:28%;bottom:-7px;', w: 11, h: 8, anim: 'b-bob', pal: { p: '#ff9ec2', b: '#8cbef0', w: '#ffffff' },
           grid: ['.pp...bb.','pwwp.bwwb','.pp...bb.'] },
@@ -20853,13 +20850,13 @@
     hidden_cloud_dual_album_all: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
           pal: { y: '#f5c84c', p: '#ff8ab8', b: '#7ac4ff', w: '#ffffff' },
           frames: [
             ['..y..y..y..', '.yyyyyyyyy.', 'ypwwpbbwwby', 'yppwwbbwwpy', '.yyyyyyyyy.'],
             ['.y...y...y.', '.yyyyyyyyy.', 'yppwwbbwwpy', 'ypwwpbbwwby', '.yyyyyyyyy.'],
           ] },
-        { pos: 'right:-11px;top:-9px;', w: 13, h: 11, anim: 'b-sway-lr', pal: { p: '#ffa6cc', c: '#a6e4ff', w: '#ffffff' },
+        { pos: 'left:-9px;top:-8px;', w: 13, h: 11, anim: 'b-sway-lr', pal: { p: '#ffa6cc', c: '#a6e4ff', w: '#ffffff' },
           grid: ['..p....c..', '.pwp..cwc.', '..p....c..'] },
       ],
     },
@@ -20868,7 +20865,7 @@
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-pulse', pal: { p: '#e07ca0', l: '#ffe0ec', y: '#ffe078', w: '#ffffff' },
           grid: ['...yy...','..ywwy..','.ppyypp.','pwwppwwp','.pppppp.','...pp...'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 10, anim: 'b-shimmer', pal: { a: '#f5cc58', b: '#f298b8', w: '#ffffff' },
+        { pos: 'right:-11px;bottom:-7px;', w: 10, h: 10, anim: 'b-shimmer', pal: { a: '#f5cc58', b: '#f298b8', w: '#ffffff' },
           grid: ['...bb...','.aaaaaa.','abwwwwba','.aaaaaa.','...bb...'] },
         { pos: 'right:18px;bottom:-7px;', w: 12, h: 8, pal: { a: '#e07ca0', b: '#ffe078', w: '#ffffff' },
           grid: ['...aaaa...','.aabbbbaa.','abwwwwwwba','.aaaaaaaa.'] },
@@ -20890,7 +20887,7 @@
     cloud_first_friend: {
       cls: 'bespoke-lux',
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 10, anim: 'b-nod', pal: { b: '#5c94e0', l: '#a8d0ff', w: '#ffffff', y: '#f5cc58' },
+        { pos: 'left:-10px;top:-8px;', w: 14, h: 10, anim: 'b-nod', pal: { b: '#5c94e0', l: '#a8d0ff', w: '#ffffff', y: '#f5cc58' },
           grid: [
             '..bbb..bbb..',
             '.blllb.bllb.',
@@ -20898,7 +20895,7 @@
             '.blllb.bllb.',
             '..bbb..bbb..',
           ] },
-        { pos: 'right:-11px;top:-8px;', w: 13, h: 11, anim: 'b-tilt',
+        { pos: 'right:-12px;bottom:-7px;', w: 13, h: 11, anim: 'b-tilt',
           pal: { w: '#ffffff', b: '#78a8e8', s: '#dcebff' },
           grid: [
             '.......bb',
@@ -20964,7 +20961,7 @@
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-tilt', pal: { g: '#5cb59e', l: '#d0f5ec', w: '#ffffff', c: '#8ce0ff' },
           grid: ['....gggg..','...gwwwwg.','.ggwwwwwwg','gwwwwwwwwg','.gggggggg.','..c....c..'] },
-        { pos: 'right:-10px;top:-8px;', w: 12, h: 11, anim: 'b-bob', pal: { g: '#5cb59e', p: '#ff9ec2', y: '#ffe078', w: '#ffffff' },
+        { pos: 'left:66%;bottom:-7px;', w: 12, h: 11, anim: 'b-bob', pal: { g: '#5cb59e', p: '#ff9ec2', y: '#ffe078', w: '#ffffff' },
           grid: ['..pp..pp.','.pwwyywwp','..ppggpp.','....gg...'] },
         { pos: 'right:16px;bottom:-7px;', w: 10, h: 10, anim: 'b-sway-lr', pal: { a: '#8ce0ff', b: '#6ec4a8', w: '#ffffff' },
           grid: ['..aaaa..','.abbbba.','abwwwwba','.abbbba.','...aa...'] },
@@ -21105,9 +21102,9 @@
     fun_game_all: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 14, anim: 'b-tilt', pal: { b: '#7a94eb', l: '#dce6ff', w: '#ffffff', p: '#ff9ec2', y: '#ffe078' },
+        { pos: 'right:-12px;bottom:-7px;', w: 13, h: 14, anim: 'b-tilt', pal: { b: '#7a94eb', l: '#dce6ff', w: '#ffffff', p: '#ff9ec2', y: '#ffe078' },
           grid: ['...pppp...','..pwwwwp..','...pppp...','....bb....','.bbbbbbbb.','bllbyybllb','.bbbbbbbb.'] },
-        { pos: 'right:-9px;top:-7px;', w: 11, h: 8, anim: 'b-shimmer', pal: { b: '#7a94eb', l: '#e6eeff', y: '#ffe078', w: '#ffffff' },
+        { pos: 'left:26%;top:-8px;', w: 11, h: 8, anim: 'b-shimmer', pal: { b: '#7a94eb', l: '#e6eeff', y: '#ffe078', w: '#ffffff' },
           grid: ['.bbbbbbb.','blwywwylb','.bbbbbbb.'] },
       ],
     },
@@ -21125,9 +21122,9 @@
     hidden_2048_double: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 13, anim: 'b-orbit', pal: { y: '#e0a538', l: '#fff2be', w: '#ffffff', o: '#946214' },
+        { pos: 'right:-13px;top:48%;transform:translateY(-50%);', w: 13, h: 13, anim: 'b-orbit', pal: { y: '#e0a538', l: '#fff2be', w: '#ffffff', o: '#946214' },
           grid: ['.yyyyy....','ywwwwyy...','ywyywyyyy.','.yyyywwwwy','....ywyywy','.....yyyy.'] },
-        { pos: 'right:-9px;top:-7px;', w: 10, h: 10, anim: 'b-tilt', pal: { a: '#e6b23c', b: '#fff2b0', w: '#ffffff' },
+        { pos: 'left:-10px;bottom:-7px;', w: 10, h: 10, anim: 'b-tilt', pal: { a: '#e6b23c', b: '#fff2b0', w: '#ffffff' },
           grid: ['....aaa.','..aabba.','.abwwba.','aaaab...','...a....'] },
       ],
     },
@@ -21163,9 +21160,9 @@
     hidden_lucky_coin: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 11, h: 8, anim: 'b-pulse', pal: { a: '#e0b030', b: '#fff4be', w: '#ffffff' },
+        { pos: 'left:22%;top:-8px;', w: 11, h: 8, anim: 'b-pulse', pal: { a: '#e0b030', b: '#fff4be', w: '#ffffff' },
           grid: ['.aaaaaa..','abwwwwbaa','abwwwwba.','.aaaaaa..'] },
-        { pos: 'right:-9px;top:-7px;', w: 10, h: 8, pal: { a: '#e6b840', b: '#ffb5cc', w: '#ffffff' },
+        { pos: 'right:-12px;bottom:-7px;', w: 10, h: 8, pal: { a: '#e6b840', b: '#ffb5cc', w: '#ffffff' },
           grid: ['a.a.a.a','abwwwba','abwbbba','a.a.a.a'] },
       ],
     },
@@ -21174,9 +21171,9 @@
       ult: ['top', 'bottom', 'left', 'right'],
       ultKey: 'seraph_wings',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-nod', pal: { y: '#e6a825', l: '#fff4be', w: '#ffffff', p: '#ff9ec8', c: '#8ce0ff' },
+        { pos: 'left:-10px;top:-8px;', w: 15, h: 15, anim: 'b-nod', pal: { y: '#e6a825', l: '#fff4be', w: '#ffffff', p: '#ff9ec8', c: '#8ce0ff' },
           grid: ['...yyyy...','..ywwwwy..','ppyyyyyycc','pwwyyyywwc','.ppyyyycc.','...yyyy...'] },
-        { pos: 'right:-12px;top:-8px;', w: 11, h: 7, anim: 'b-tilt', pal: { a: '#e6a825', b: '#ffe88c', w: '#ffffff' },
+        { pos: 'left:68%;bottom:-7px;', w: 11, h: 7, anim: 'b-tilt', pal: { a: '#e6a825', b: '#ffe88c', w: '#ffffff' },
           grid: ['.aaa.aaa.','abwbabwba','.aaa.aaa.'] },
       ],
     },
@@ -21185,7 +21182,7 @@
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 12, anim: 'b-tilt', pal: { y: '#e6a838', l: '#fff4c4', w: '#ffffff', r: '#eb6c82' },
           grid: ['.yyyyyyyyy.','ylwwwwwwwly','ywwrrwrrwwy','ylwwwwwwwly','.yyyyyyyyy.'] },
-        { pos: 'right:-10px;top:-7px;', w: 10, h: 10, anim: 'b-pulse', pal: { a: '#e6b23c', b: '#9cd8ff', w: '#ffffff' },
+        { pos: 'left:-9px;top:-8px;', w: 10, h: 10, anim: 'b-pulse', pal: { a: '#e6b23c', b: '#9cd8ff', w: '#ffffff' },
           grid: ['..aaaa..','.aaaaaa.','abwbbwba','abwwwwba','.aaaaaa.'] },
         { pos: 'left:28%;bottom:-7px;', w: 11, h: 8, pal: { y: '#f2c44c', p: '#ffb5cc', w: '#ffffff' },
           grid: ['.pp...pp.','pwwyyywwp','.pp...pp.'] },
@@ -21203,12 +21200,12 @@
     fun_neck_chic: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 14, anim: 'b-pulse', pal: { p: '#b38ce6', l: '#efe2ff', w: '#ffffff', y: '#f5cc58' },
+        { pos: 'right:-11px;bottom:-8px;', w: 14, h: 13, anim: 'b-shimmer', pal: { p: '#b38ce6', l: '#efe2ff', w: '#ffffff', y: '#f5cc58' },
           grid: ['..pp....pp..','.pllp..pllp.','..ppyyyypp..','...pywwyp...','....pwwp....','.....pp.....'] },
-        { pos: 'right:-9px;top:-8px;', w: 11, h: 9, anim: 'b-tilt', pal: { p: '#b38ce6', l: '#f4e8ff', w: '#ffffff' },
+        { pos: 'left:-9px;top:-7px;', w: 11, h: 8, anim: 'b-nod', pal: { p: '#b38ce6', l: '#f4e8ff', w: '#ffffff' },
           grid: ['pp....pp','pwwppwwp','pp....pp'] },
-        { pos: 'left:28%;bottom:-7px;', w: 10, h: 7, pal: { y: '#f5cc58', p: '#d4b8ff', w: '#ffffff' },
-          grid: ['..pp.yy..','.pwwywwy.','..pp.yy..'] },
+        { pos: 'left:62%;top:-8px;', w: 10, h: 9, pal: { y: '#f5cc58', p: '#d4b8ff', w: '#ffffff' },
+          grid: ['...yy...','...pp...','..pwwp..','.pywwyp.','..pwwp..','...pp...'] },
       ],
     },
     fun_trad_lover: {
@@ -21223,12 +21220,12 @@
     pet_legend_300: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-breathe', pal: { p: '#de95b0', l: '#ffe4ef', w: '#ffffff', y: '#f5cc58' },
-          grid: ['.pp..pp..pp.','pwwppwwppwwp','.pppppppppp.','..ppyyyypp..','...pwwwwp...','....pppp....'] },
-        { pos: 'right:-10px;bottom:-6px;', w: 10, h: 8, anim: 'b-tilt', pal: { a: '#f2c44c', b: '#f5a8c4', w: '#ffffff' },
-          grid: ['aa....aa','abwaawba','..abba..','aa....aa'] },
-        { pos: 'right:18px;top:-7px;', w: 10, h: 8, pal: { p: '#eb8cb0', w: '#ffffff' },
-          grid: ['.pp..pp.','pwwppwwp','.pppppp.','...pp...'] },
+        { pos: 'left:-10px;top:-9px;', w: 14, h: 12, anim: 'b-breathe', pal: { p: '#de95b0', l: '#ffe4ef', w: '#ffffff', y: '#f5cc58' },
+          grid: ['.pp..pp..pp.','pwwppwwppwwp','.pppppppppp.','..ppyyyypp..','...pwwwwp...'] },
+        { pos: 'right:-13px;top:54%;transform:translateY(-50%);', w: 13, h: 15, anim: 'b-nod', pal: { y: '#f2c44c', p: '#f5a8c4', w: '#ffffff' },
+          grid: ['..yyyyyy..','.ywwwwwwy.','ywppppppwy','.yyyyyyyy.','..pp..pp..','.pp....pp.'] },
+        { pos: 'left:16px;bottom:-7px;', w: 11, h: 7, pal: { p: '#eb8cb0', w: '#ffffff' },
+          grid: ['ppppppppp','p.p.p.p.p'] },
       ],
     },
     fun_bday_twin: {
@@ -21247,7 +21244,7 @@
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 17, anim: 'b-shimmer', pal: { g: '#5eb878', l: '#a8edb8', y: '#ffe078', w: '#ffffff', o: '#9c6838', p: '#ffb5cc' },
           grid: ['....gg....','...gllg...','..ggyygg..','.gllggppg.','gggpgggggg','gggggggggg','....oo....','...oooo...'] },
-        { pos: 'right:-11px;top:-8px;', w: 11, h: 13, pal: { y: '#f5cc58', w: '#fffdf5', g: '#68b882', r: '#f2889b' },
+        { pos: 'right:-11px;bottom:-7px;', w: 11, h: 13, pal: { y: '#f5cc58', w: '#fffdf5', g: '#68b882', r: '#f2889b' },
           grid: ['...rrr...','.yyyyyyy.','ywwwwwwwy','ywgwwwgwy','ywwwwwwwy','.yyyyyyy.'] },
         { pos: 'right:18px;bottom:-7px;', w: 11, h: 10, anim: 'b-bob', pal: { g: '#68b882', y: '#ffe680', w: '#ffffff' },
           grid: ['...ggg...','..gyyyg..','.gywwwyg.','..gyyyg..','...g.g...'] },
@@ -21256,23 +21253,23 @@
     fun_mirror_star: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-wiggle', pal: { y: '#e6ae5c', k: '#5e3c14', w: '#ffffff', l: '#fff4cc' },
-          grid: ['kykykykyky','kkkkkkkkkk','kwwwwwwwwk','kwlyyyywwk','kwwwwwwwwk','.kkkkkkkk.'] },
-        { pos: 'right:-11px;top:-8px;', w: 13, h: 10, anim: 'b-shimmer', pal: { y: '#e6ae5c', p: '#ff9ec2', w: '#ffffff' },
+        { pos: 'left:-11px;bottom:-7px;', w: 14, h: 12, anim: 'b-wiggle', pal: { y: '#e6ae5c', k: '#5e3c14', w: '#ffffff', l: '#fff4cc' },
+          grid: ['kykykykyky','kkkkkkkkkk','kwwwwwwwwk','kwlyyyywwk','.kkkkkkkk.'] },
+        { pos: 'left:24%;top:-9px;', w: 14, h: 9, anim: 'b-shimmer', pal: { y: '#e6ae5c', p: '#ff9ec2', w: '#ffffff' },
           grid: ['...pp..pp...','..pwwppwwp..','.yyyyyyyyyy.','yy........yy'] },
-        { pos: 'right:16px;bottom:-7px;', w: 10, h: 10, pal: { y: '#f5cc58', w: '#ffffff' },
-          grid: ['....yy....','...ywwy...','yywwwwwwyy','...ywwy...','....yy....'] },
+        { pos: 'right:-13px;top:48%;transform:translateY(-50%);', w: 12, h: 16, pal: { y: '#e6ae5c', c: '#c4ecff', w: '#ffffff' },
+          grid: ['..yyyy..','.yccccy.','ycwwwwcy','.yccccy.','...yy...','..y..y..','...yy...'] },
       ],
     },
     collector_max: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-pulse', pal: { c: '#72b8e8', l: '#dff4ff', y: '#f5cc58', w: '#ffffff' },
+        { pos: 'right:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-shimmer', pal: { c: '#72b8e8', l: '#dff4ff', y: '#f5cc58', w: '#ffffff' },
           grid: ['..yyyyyy..','.yccccccy.','ycwwwwwwcy','ycwyyyywcy','ycwwwwwwcy','.yccccccy.','..yyyyyy..'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 8, anim: 'b-hop', pal: { a: '#72b8e8', b: '#d4f0ff', w: '#ffffff' },
-          grid: ['.....aa.','...aabba','.aabwba.','aaab....'] },
-        { pos: 'right:16px;bottom:-7px;', w: 10, h: 10, anim: 'b-tilt', pal: { a: '#f2c44c', b: '#8cd8ff', w: '#ffffff' },
-          grid: ['..aaaa..','.abwwba.','..aaaa..','...bb...','...bb...'] },
+        { pos: 'left:-9px;top:-8px;', w: 12, h: 11, anim: 'b-breathe', pal: { c: '#72b8e8', l: '#d4f0ff', w: '#ffffff' },
+          grid: ['....cc....','...cwwc...','..cwllwc..','.cwwwwwwc.','..cwwwwc..','...cccc...'] },
+        { pos: 'left:28%;bottom:-7px;', w: 11, h: 8, pal: { y: '#f2c44c', c: '#8cd8ff', w: '#ffffff' },
+          grid: ['..yyyyy..','.ywwcwwy.','yywcccwyy','.yyyyyyy.'] },
       ],
     },
     fun_aura_glow: {
@@ -21309,7 +21306,7 @@
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-pulse', pal: { o: '#e09a5c', l: '#fff2dc', r: '#eb6c78', g: '#68c284', w: '#ffffff' },
           grid: ['..oooooo..','.ollllllo.','oooooooooo','.rrrrrrrr.','.gggggggg.','..oooooo..'] },
-        { pos: 'right:-10px;top:-8px;', w: 12, h: 11, anim: 'b-tilt', pal: { o: '#d98c48', w: '#ffffff', y: '#ffe494' },
+        { pos: 'left:26%;top:-8px;', w: 12, h: 11, anim: 'b-tilt', pal: { o: '#d98c48', w: '#ffffff', y: '#ffe494' },
           grid: ['..o..o..','..o..o..','..oooo..','...oo...','...oo...','...oo...'] },
         { pos: 'right:18px;bottom:-7px;', w: 11, h: 8, pal: { o: '#e09a5c', w: '#fff8ec', y: '#ffe078' },
           grid: ['.oooooo.','owwywwwo','.oooooo.'] },
@@ -21318,12 +21315,12 @@
     fun_coin_saver: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-bob', pal: { y: '#deb44b', l: '#fff4c4', p: '#ffb8cc', w: '#ffffff', k: '#6b4908' },
+        { pos: 'right:-13px;bottom:-7px;', w: 15, h: 13, anim: 'b-breathe', pal: { y: '#deb44b', l: '#fff4c4', p: '#ffb8cc', w: '#ffffff', k: '#6b4908' },
           grid: ['...yyyyyy...','..ywwwwwwy..','.ywkwwwwpwy.','ywwwwwwwwwwy','.yyyyyyyyyy.','..yy....yy..'] },
-        { pos: 'right:-9px;top:-8px;', w: 10, h: 8, anim: 'b-pulse', pal: { a: '#e6b840', b: '#fff6cc', w: '#ffffff' },
-          grid: ['.aa.aa.','abwwwba','abwbbba','.aa.aa.'] },
-        { pos: 'left:26%;bottom:-7px;', w: 9, h: 10, pal: { a: '#deb44b', b: '#ffb8cc', w: '#ffffff' },
-          grid: ['.aaaaa.','abwwwba','abwbbba','abwwwba','a..a..a'] },
+        { pos: 'left:-9px;top:-8px;', w: 11, h: 12, anim: 'b-wiggle', pal: { y: '#e6b840', l: '#fff6cc', w: '#ffffff' },
+          grid: ['..yyyy..','.ywwwwy.','..yyyy..','...yy...','...yyy..','...yy...'] },
+        { pos: 'left:24%;bottom:-7px;', w: 11, h: 7, pal: { y: '#deb44b', l: '#fff4c4', w: '#ffffff' },
+          grid: ['...yyyy...','.yywwwwyy.','yyyyyyyyyy'] },
       ],
     },
     toy_marathon_100: {
@@ -21371,12 +21368,12 @@
     ach_dig_lucky_3: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-shimmer', pal: { y: '#e0a63e', l: '#fff2be', o: '#9c6622', w: '#ffffff' },
+        { pos: 'right:-13px;top:52%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-wiggle', pal: { y: '#e0a63e', l: '#fff2be', o: '#9c6622', w: '#ffffff' },
           grid: ['.....oo..','....oo...','...oo....','..yyyy...','.ywwwwy..','ywwwwwwy.','.yyyyyy..'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 8, anim: 'b-pulse', pal: { a: '#e6b23c', b: '#8ce0ff', w: '#ffffff' },
-          grid: ['..aaaa..','.abwwba.','abwbbwba','..aaaa..'] },
-        { pos: 'right:20px;bottom:-7px;', w: 10, h: 8, pal: { a: '#e0a63e', b: '#ffe484', w: '#ffffff' },
-          grid: ['.aa..aa.','abwbbwba','.abwwba.','..a..a..'] },
+        { pos: 'left:-10px;bottom:-7px;', w: 13, h: 10, anim: 'b-shimmer', pal: { y: '#e6b23c', c: '#8ce0ff', w: '#ffffff', o: '#a87032' },
+          grid: ['....cc....','...cwwc...','.ooyccyoo.','oowwwwwwoo','.oooooooo.'] },
+        { pos: 'left:26%;top:-8px;', w: 10, h: 10, pal: { y: '#e0a63e', w: '#ffffff' },
+          grid: ['..yyyy..','.y....y.','yyyyyyyy','.ywwwwy.','..yyyy..'] },
       ],
     },
     adv_legend_50: {
@@ -21411,9 +21408,9 @@
     hidden_dress_master: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-nod', pal: { p: '#d982c2', l: '#fce0f5', y: '#f5cc58', w: '#ffffff' },
+        { pos: 'left:-14px;top:54%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-nod', pal: { p: '#d982c2', l: '#fce0f5', y: '#f5cc58', w: '#ffffff' },
           grid: ['....yy....','...y..y...','..pppppp..','.pwwwwwwp.','plpppppplp','.pppppppp.'] },
-        { pos: 'right:-10px;top:-8px;', w: 13, h: 10, anim: 'b-shimmer', pal: { p: '#d982c2', y: '#ffe078', w: '#ffffff' },
+        { pos: 'right:-11px;bottom:-7px;', w: 13, h: 10, anim: 'b-shimmer', pal: { p: '#d982c2', y: '#ffe078', w: '#ffffff' },
           grid: ['.p..pp..p.','pppppppppp','.pywwwwyp.','..pppppp..'] },
       ],
     },
@@ -21431,11 +21428,11 @@
     hidden_toy_rally_king: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 15, h: 16, anim: 'b-shimmer', pal: { b: '#6cb8e6', y: '#f5cc58', l: '#fff6cc', w: '#ffffff' },
+        { pos: 'left:-11px;top:-8px;', w: 15, h: 10, anim: 'b-orbit', pal: { b: '#6cb8e6', w: '#ffffff', y: '#ffe078' },
+          grid: ['...bbbbbbb...','.bbwwwwwwwbb.','bbwyyyyyyywbb','.bbbbbbbbbbb.'] },
+        { pos: 'right:-13px;bottom:-7px;', w: 15, h: 15, anim: 'b-shimmer', pal: { b: '#6cb8e6', y: '#f5cc58', l: '#fff6cc', w: '#ffffff' },
           grid: ['.yyyyyyyyyy.','y.ywwwwwwy.y','y.ywbbbbwy.y','..yyyyyyyy..','....yyyy....','..yyyyyyyy..'] },
-        { pos: 'right:-11px;top:-9px;', w: 13, h: 13, anim: 'b-wiggle', pal: { b: '#6cb8e6', w: '#ffffff', y: '#ffe078', o: '#b87c4a' },
-          grid: ['..bbbbb...','.bwbwbwb..','.bwbwbwb.y','..bbbbb.yw','....oo....','....oo....'] },
-        { pos: 'left:22px;bottom:-7px;', w: 12, h: 9, pal: { b: '#6cb8e6', w: '#ffffff', o: '#8c6038' },
+        { pos: 'left:24%;bottom:-7px;', w: 12, h: 9, pal: { b: '#6cb8e6', w: '#ffffff', o: '#8c6038' },
           grid: ['o.bwbwbw.','o.wbwbwb.','o.bwbwbw.','o........','o........'] },
       ],
     },
@@ -21473,7 +21470,7 @@
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-wiggle', pal: { b: '#8f96e8', l: '#e4e6ff', y: '#ffe484', w: '#ffffff' },
           grid: ['...yyyy...','..yywww...','.yyy..bb..','.yyy.bwwb.','..yyyybb..','...yyyy...'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 11, anim: 'b-nod', pal: { a: '#8f96e8', b: '#ffe484', w: '#ffffff' },
+        { pos: 'right:-10px;bottom:-7px;', w: 10, h: 11, anim: 'b-nod', pal: { a: '#8f96e8', b: '#ffe484', w: '#ffffff' },
           grid: ['..aa..aa','..abba..','.abwwba.','abwwwwba','.aaaaaa.','..a..a..'] },
       ],
     },
@@ -21489,9 +21486,9 @@
     hidden_twin_sparkle: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 14, anim: 'b-pulse', pal: { c: '#6ec4e8', l: '#dcf6ff', y: '#ffe484', w: '#ffffff' },
+        { pos: 'right:-12px;bottom:-7px;', w: 14, h: 14, anim: 'b-pulse', pal: { c: '#6ec4e8', l: '#dcf6ff', y: '#ffe484', w: '#ffffff' },
           grid: ['...cc...','..cwwc..','.cwyywc.','ccwwwwcc','.cwyywc.','..cwwc..','...cc...'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 11, pal: { a: '#f5cc58', b: '#8ce0ff', w: '#ffffff' },
+        { pos: 'left:26%;top:-8px;', w: 10, h: 11, pal: { a: '#f5cc58', b: '#8ce0ff', w: '#ffffff' },
           grid: ['..aaaa..','..abwa..','.abwwba.','abwwwwba','.abbbba.','...aa...'] },
       ],
     },
@@ -21505,12 +21502,14 @@
       ],
     },
     hidden_secret_mail: {
-      cls: 'bespoke-std',
+      cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 10, h: 10, anim: 'b-breathe', pal: { a: '#d982b8', b: '#fce6f4', w: '#ffffff' },
-          grid: ['a......a','aa....aa','abbwwbba','.abwwba.','..aaaa..'] },
-        { pos: 'left:-10px;top:-8px;', w: 10, h: 11, anim: 'b-tilt', pal: { a: '#d982b8', b: '#ffe078', w: '#ffffff' },
-          grid: ['..aaaaa.','.abwwwba','abwbbwba','.abwwwba','...aaa..','...a.a..'] },
+        { pos: 'left:-12px;bottom:-7px;', w: 15, h: 12, anim: 'b-nod', pal: { p: '#d982b8', l: '#fce6f4', r: '#e05878', w: '#ffffff' },
+          grid: ['.pppppppp.','ppwwwwwwpp','pwwprrpwwp','pwwwrrwwwp','ppwwwwwwpp','.pppppppp.'] },
+        { pos: 'left:68%;top:-9px;', w: 13, h: 10, anim: 'b-orbit', pal: { w: '#ffffff', p: '#d982b8', y: '#ffe078' },
+          grid: ['..pp....','..pwwp..','pwwwwwwy','.pwwwwp.','..pppp..'] },
+        { pos: 'right:-12px;top:46%;transform:translateY(-50%);', w: 11, h: 15, pal: { p: '#d982b8', l: '#ffe4f2', w: '#ffffff' },
+          grid: ['..pppp..','.pwwwwp.','ppwwwwpp','pppppppp','..pppp..','..pppp..'] },
       ],
     },
     hidden_mutant_flower: {
@@ -21534,9 +21533,9 @@
     hidden_festival_wish: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-pulse', pal: { r: '#e67c98', l: '#ffe4ec', y: '#ffe078', w: '#ffffff' },
+        { pos: 'right:-13px;top:48%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-pulse', pal: { r: '#e67c98', l: '#ffe4ec', y: '#ffe078', w: '#ffffff' },
           grid: ['...yy...','..rwwr..','rywwwwyr','.rryyrr.','...yy...','..r..r..'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 10, pal: { a: '#e67c98', b: '#ffe078', w: '#ffffff' },
+        { pos: 'left:-10px;bottom:-7px;', w: 10, h: 10, pal: { a: '#e67c98', b: '#ffe078', w: '#ffffff' },
           grid: ['..aa.aa.','.abwwwba','abwbbwba','.abwwwba','..aa.aa.'] },
       ],
     },
@@ -21561,9 +21560,9 @@
     hidden_visitor_all: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 13, anim: 'b-breathe', pal: { p: '#e08ca8', l: '#ffe4ee', w: '#ffffff', y: '#ffe078' },
+        { pos: 'left:22%;top:-8px;', w: 15, h: 13, anim: 'b-breathe', pal: { p: '#e08ca8', l: '#ffe4ee', w: '#ffffff', y: '#ffe078' },
           grid: ['.pp..pp..pp.','pwwppwwppwwp','.pppppppppp.','..ppyyyypp..'] },
-        { pos: 'right:-9px;top:-8px;', w: 10, h: 10, anim: 'b-tilt', pal: { a: '#e08ca8', b: '#ffe484', w: '#ffffff' },
+        { pos: 'right:-12px;bottom:-7px;', w: 10, h: 10, anim: 'b-tilt', pal: { a: '#e08ca8', b: '#ffe484', w: '#ffffff' },
           grid: ['..aaaa..','.abwwba.','.abbbba.','abwwwwba','.aaaaaa.'] },
       ],
     },
@@ -21579,20 +21578,20 @@
     hidden_mutant_5: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-shimmer', pal: { p: '#b382e0', c: '#d6f2ff', g: '#6ec488', w: '#ffffff', y: '#ffe078' },
+        { pos: 'right:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-shimmer', pal: { p: '#b382e0', c: '#d6f2ff', g: '#6ec488', w: '#ffffff', y: '#ffe078' },
           grid: ['...cccc...','..cwwwwc..','.cwppppwc.','.cwyggywc.','.cwggggwc.','.pppppppp.'] },
-        { pos: 'right:-11px;top:-8px;', w: 11, h: 13, anim: 'b-breathe', pal: { p: '#b382e0', l: '#f0e4ff', w: '#ffffff', o: '#9c6842' },
+        { pos: 'left:-10px;bottom:-7px;', w: 11, h: 13, anim: 'b-breathe', pal: { p: '#b382e0', l: '#f0e4ff', w: '#ffffff', o: '#9c6842' },
           grid: ['...oo...','..oooo..','..pppp..','.pwwwwp.','pwllllwp','.pppppp.'] },
-        { pos: 'left:22px;bottom:-7px;', w: 12, h: 8, pal: { g: '#6ec488', o: '#b87c4a', w: '#ffffff' },
-          grid: ['..gggg....','ggwwwwgooo','..gggg....'] },
+        { pos: 'left:30%;top:-8px;', w: 12, h: 8, pal: { g: '#6ec488', l: '#c8f5d6', w: '#ffffff' },
+          grid: ['.ggg..ggg.','gwwg..gwwg','..gg..gg..','....gg....'] },
       ],
     },
     hidden_dark_gourmet: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-tilt', pal: { p: '#8c68b8', l: '#e6d9ff', g: '#7fd99e', w: '#ffffff' },
+        { pos: 'left:-10px;top:-8px;', w: 15, h: 14, anim: 'b-tilt', pal: { p: '#8c68b8', l: '#e6d9ff', g: '#7fd99e', w: '#ffffff' },
           grid: ['..g....g..','.pppppppp.','pwwwwwwwwp','pwggwwggwp','.pppppppp.'] },
-        { pos: 'right:-9px;top:-8px;', w: 10, h: 10, pal: { a: '#9e7cc8', b: '#92e0aa', w: '#ffffff' },
+        { pos: 'left:68%;bottom:-7px;', w: 10, h: 10, pal: { a: '#9e7cc8', b: '#92e0aa', w: '#ffffff' },
           grid: ['....aa..','...abwa.','.aaabwa.','abwwwba.','.aaaaa..'] },
       ],
     },
@@ -21619,9 +21618,9 @@
     hidden_garden_gift_30: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 10, h: 10, anim: 'b-shimmer', pal: { a: '#e68aa8', b: '#ffe4ee', w: '#ffffff' },
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 10, h: 10, anim: 'b-shimmer', pal: { a: '#e68aa8', b: '#ffe4ee', w: '#ffffff' },
           grid: ['..aaaa..','abwwwwba','abwbbwba','..aaaa..','..a..a..'] },
-        { pos: 'right:-9px;top:-8px;', w: 10, h: 10, pal: { a: '#e68aa8', b: '#ffe484', w: '#ffffff' },
+        { pos: 'left:-9px;top:-8px;', w: 10, h: 10, pal: { a: '#e68aa8', b: '#ffe484', w: '#ffffff' },
           grid: ['.aaaaa..','awwwwba.','awbbbwa.','awwwwba.','..aaaa..'] },
       ],
     },
@@ -21646,9 +21645,9 @@
     hidden_visit_host_5: {
       cls: 'bespoke-std',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 10, h: 10, anim: 'b-breathe', pal: { a: '#e08ca8', b: '#ffe4ee', w: '#ffffff' },
+        { pos: 'left:-12px;bottom:-7px;', w: 10, h: 10, anim: 'b-breathe', pal: { a: '#e08ca8', b: '#ffe4ee', w: '#ffffff' },
           grid: ['....a...','..aabaa.','.abwwwba','.abbbbba','..a...a.'] },
-        { pos: 'right:-9px;top:-8px;', w: 11, h: 9, anim: 'b-tilt', pal: { p: '#e08ca8', w: '#ffffff' },
+        { pos: 'left:66%;top:-8px;', w: 11, h: 9, anim: 'b-tilt', pal: { p: '#e08ca8', w: '#ffffff' },
           grid: ['.pp..pp.','pwwppwwp','.pppppp.'] },
       ],
     },
@@ -21712,6 +21711,17 @@
           grid: ['..yy..yy..','.ywwyywwy.','yyyyyyyyyy','.yyyyyyyy.','....oo....','....oo....'] },
         { pos: 'left:20px;top:-8px;', w: 10, h: 10, pal: { a: '#d49642', b: '#eb7d8e', w: '#ffffff' },
           grid: ['.aa...a.','abwbaa..','abwwba..','.aaaa...','..bb....'] },
+      ],
+    },
+    ach_trail_collector: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-12px;bottom:-7px;', w: 13, h: 13, anim: 'b-nod', pal: { g: '#6ec4a6', l: '#d6f7ec', y: '#ffe078', w: '#ffffff' },
+          grid: ['..gggg....','..gwwg....','..gllg....','.ggggggg..','ggwwwwwwg.','.ggggggg..'] },
+        { pos: 'right:-13px;top:44%;transform:translateY(-50%);', w: 13, h: 14, anim: 'b-breathe', pal: { g: '#6ec4a6', l: '#e8faf4', o: '#b88258', w: '#ffffff' },
+          grid: ['oooooooooo','.gwwwwwwg.','.gwggwwwg.','.gwwwggwg.','oooooooooo'] },
+        { pos: 'left:32%;top:-8px;', w: 13, h: 7, pal: { g: '#6ec4a6', w: '#ffffff' },
+          grid: ['.g.g....g.g.','gwwg...gwwg.','.gg.....gg..'] },
       ],
     },
   };
