@@ -7127,6 +7127,7 @@
       box-sizing: border-box !important;
       text-align: left !important;
       margin: 0 !important;
+      overflow: visible !important;
     }
     .st-dm-msg-bub::after,
     .st-dm-msg-bub::before {
@@ -33696,7 +33697,7 @@
           if (!ack) continue;
           const who = ack.fromName || '好友';
           const sum = String(ack.summary || '');
-          if (sum === '好友申请处理') continue;
+          if (sum === '好友申请处理' || sum === '私聊已读') continue;
           let ackTitle = `「${who}」收下礼物啦！`;
           let ackDesc = sum ? `收下内容：${sum}` : '已开心收下你的礼物';
           let pupBub = `${who}收下我们的礼物啦~`;
@@ -36675,23 +36676,45 @@
     { id: 'party', name: '撒花' },
     { id: 'tea', name: '喝奶茶' },
     { id: 'shy', name: '害羞' },
+    { id: 'shock', name: '震惊' },
+    { id: 'cool', name: '耍酷' },
+    { id: 'dizzy', name: '晕了' },
+    { id: 'rich', name: '财迷' },
+    { id: 'sweat', name: '无语' },
+    { id: 'kiss', name: '么么' },
+    { id: 'cheer', name: '加油' },
+    { id: 'ghost', name: '灵魂出窍' },
   ];
 
+  const isHeadAccessoryId = (accId) => {
+    if (!accId || accId === 'none') return false;
+    const sItem = SHOP_PUP_ACCS.find(x => x.id === accId);
+    if (sItem) return sItem.cat === 'head';
+    if (typeof LIM_ACC_REAL_CAT === 'object' && LIM_ACC_REAL_CAT && LIM_ACC_REAL_CAT[accId]) {
+      return LIM_ACC_REAL_CAT[accId] === 'head';
+    }
+    const nonHead = /wing|aura|bag|pack|pouch|tote|satchel|scarf|neck|collar|choker|bib|cape|ribbon_tail|ring|orbit|skateboard|umbrella|key|lantern|quill|watch|shawl|lei|lock|tassel|pendant|harp|wand/i;
+    return !nonHead.test(accId);
+  };
+
   const drawPupHeadPortrait = (canvas, lookObj, stickerId = '') => {
-    canvas.width = 16;
-    canvas.height = 16;
+    // 15x15 logical grid (scaled 10x -> 150x150 crisp pixel canvas)
+    // Head slice is 11px wide (cols 5..15) -> ox = 2 gives exact 2px left & 2px right symmetry!
+    canvas.width = 150;
+    canvas.height = 150;
     const g = canvas.getContext('2d');
+    g.setTransform(10, 0, 0, 10, 0, 0);
     g.imageSmoothingEnabled = false;
-    g.clearRect(0, 0, 16, 16);
+    g.clearRect(0, 0, 15, 15);
+    const look = lookObj || {};
     const pal = typeof getPupPalette === 'function'
-      ? getPupPalette(lookObj || {})
+      ? getPupPalette(look)
       : { w: '#fffdf7', s: '#ece5da', e: '#e2ae74', o: '#3b2a22', k: '#231814', p: '#f59eb0' };
     const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
 
-    // Crop ONLY the REAL puppy's HEAD from PUP_SPRITES.idle1 (rows 0..6, cols 5..15 — ZERO neck/body!)
     const grid = PUP_SPRITES.idle1;
     const ox = 2;
-    const oy = 6;
+    const oy = 5; // Head rows 0..7 span y=5..12 -> centered with room on top for head accessories!
     for (let y = 0; y <= 6; y++) {
       const row = grid[y];
       for (let x = 5; x <= 15; x++) {
@@ -36700,91 +36723,152 @@
         p(ox + (x - 5), oy + y, pal[ch]);
       }
     }
-    // Clean 1px rounded chin outline right under row 6 (cols 7..13 -> ox+2..ox+8)
+    // Clean 1px rounded chin outline right under row 6 (ZERO neck/body!)
     for (let x = 7; x <= 13; x++) p(ox + (x - 5), oy + 7, pal.o);
+
+    // Draw equipped HEAD accessories on BOTH avatars and stickers!
+    if (Array.isArray(look.accs) && look.accs.length) {
+      const headAccs = look.accs.filter(isHeadAccessoryId);
+      if (headAccs.length) {
+        const prevCtx = activePxCtx;
+        const prevOffsets = config.puppyAccOffsets;
+        try {
+          activePxCtx = g;
+          if (look.accOffsets) config.puppyAccOffsets = look.accOffsets;
+          const headOx = ox - 5;
+          const hx = headOx + 10;
+          const hy = oy + 2;
+          headAccs.forEach(a => {
+            try { drawPupAccessory(a, hx, hy, headOx, oy, false, false); } catch (_) {}
+          });
+        } finally {
+          activePxCtx = prevCtx;
+          config.puppyAccOffsets = prevOffsets;
+        }
+      }
+    }
 
     if (!stickerId) return;
 
-    // Eye coords on 16x16 canvas: left eye (ox+3, oy+4) = (5,10), right eye (ox+7, oy+4) = (9,10)
-    // Nose: (ox+5, oy+5) = (7,11), blush: (4,11) & (10,11)
+    // Exact eye coords on 15x15 canvas: left eye (5, 9), right eye (9, 9), nose (7, 10)
     const fur = pal.w || '#fffdf7';
     const out = pal.o || '#3b2a22';
     const eyeCol = pal.k || '#231814';
-    const clearEyes = () => {
-      p(5, 10, fur); p(9, 10, fur);
-    };
+    const clearEyes = () => { p(5, 9, fur); p(9, 9, fur); };
 
     if (stickerId === 'happy') {
       clearEyes();
-      p(4, 10, out); p(5, 9, out); p(6, 10, out);
-      p(8, 10, out); p(9, 9, out); p(10, 10, out);
-      p(6, 12, '#ff8aa6', 3, 1);
-      p(1, 2, '#ffd24c', 1, 3); p(0, 3, '#ffd24c', 3, 1);
-      p(13, 3, '#ff8aa6', 2, 2);
+      p(4, 9, out); p(5, 8, out); p(6, 9, out);
+      p(8, 9, out); p(9, 8, out); p(10, 9, out);
+      p(6, 11, '#ff8aa6', 3, 1);
+      p(1, 1, '#ffd24c', 1, 3); p(0, 2, '#ffd24c', 3, 1);
+      p(12, 2, '#ff8aa6', 2, 2);
     } else if (stickerId === 'love') {
       clearEyes();
-      p(5, 10, '#e84a72'); p(9, 10, '#e84a72');
-      p(11, 1, '#f05a82', 2, 2); p(14, 1, '#f05a82', 2, 2); p(11, 2, '#f05a82', 5, 1); p(12, 3, '#f05a82', 3, 1); p(13, 4, '#f05a82', 1, 1);
-      p(1, 3, '#ff8aa6', 1, 1); p(3, 3, '#ff8aa6', 1, 1); p(1, 4, '#ff8aa6', 3, 1); p(2, 5, '#ff8aa6', 1, 1);
+      p(5, 9, '#e84a72'); p(9, 9, '#e84a72');
+      p(10, 0, '#f05a82', 2, 2); p(13, 0, '#f05a82', 2, 2); p(10, 1, '#f05a82', 5, 1); p(11, 2, '#f05a82', 3, 1); p(12, 3, '#f05a82', 1, 1);
+      p(0, 2, '#ff8aa6', 1, 1); p(2, 2, '#ff8aa6', 1, 1); p(0, 3, '#ff8aa6', 3, 1); p(1, 4, '#ff8aa6', 1, 1);
     } else if (stickerId === 'cry') {
-      // Waterfall tears right below real puppy's eyes
-      p(5, 11, '#7cc6f7', 1, 4); p(9, 11, '#7cc6f7', 1, 4);
-      p(4, 14, '#a8dcff', 1, 1); p(10, 14, '#a8dcff', 1, 1);
-      p(6, 12, out, 3, 1);
+      p(5, 10, '#7cc6f7', 1, 4); p(9, 10, '#7cc6f7', 1, 4);
+      p(4, 13, '#a8dcff', 1, 1); p(10, 13, '#a8dcff', 1, 1);
+      p(6, 11, out, 3, 1);
     } else if (stickerId === 'sleep') {
       clearEyes();
-      p(4, 10, out, 2, 1); p(9, 10, out, 2, 1);
-      p(8, 12, '#8ed2ff', 1, 2); // tiny drool
-      p(11, 1, '#7b99cc', 4, 1); p(13, 2, '#7b99cc', 1, 1); p(12, 3, '#7b99cc', 1, 1); p(11, 4, '#7b99cc', 4, 1);
-      p(8, 2, '#a8bee6', 2, 1); p(8, 3, '#a8bee6', 2, 1);
+      p(4, 9, out, 2, 1); p(9, 9, out, 2, 1);
+      p(8, 11, '#8ed2ff', 1, 2);
+      p(10, 0, '#7b99cc', 4, 1); p(12, 1, '#7b99cc', 1, 1); p(11, 2, '#7b99cc', 1, 1); p(10, 3, '#7b99cc', 4, 1);
+      p(7, 1, '#a8bee6', 2, 1); p(7, 2, '#a8bee6', 2, 1);
     } else if (stickerId === 'angry') {
-      p(4, 9, out); p(5, 10, eyeCol); p(10, 9, out); p(9, 10, eyeCol);
-      p(6, 12, '#ff6b78', 3, 1);
-      p(12, 1, '#e84858', 1, 3); p(11, 2, '#e84858', 3, 1);
-      p(1, 4, '#ff6b78', 2, 1);
+      p(4, 8, out); p(5, 9, eyeCol); p(10, 8, out); p(9, 9, eyeCol);
+      p(6, 11, '#ff6b78', 3, 1);
+      p(12, 0, '#e84858', 1, 3); p(11, 1, '#e84858', 3, 1);
+      p(1, 3, '#ff6b78', 2, 1);
     } else if (stickerId === 'snack') {
-      // Cute white bone in mouth
-      p(4, 12, '#ffffff', 7, 1);
-      p(3, 11, '#ffffff', 2, 3); p(10, 11, '#ffffff', 2, 3);
-      p(3, 12, '#d9cfc5', 1, 1); p(11, 12, '#d9cfc5', 1, 1);
-      p(13, 2, '#ffd24c', 1, 3); p(12, 3, '#ffd24c', 3, 1);
+      p(4, 11, '#ffffff', 7, 1);
+      p(3, 10, '#ffffff', 2, 3); p(10, 10, '#ffffff', 2, 3);
+      p(3, 11, '#d9cfc5', 1, 1); p(11, 11, '#d9cfc5', 1, 1);
+      p(12, 1, '#ffd24c', 1, 3); p(11, 2, '#ffd24c', 3, 1);
     } else if (stickerId === 'good') {
-      p(6, 12, out, 3, 1);
-      p(13, 8, '#ffe066', 3, 4); p(14, 6, '#ffe066', 2, 2); p(12, 9, '#d9a441', 1, 3);
-      p(1, 2, '#ffe066', 1, 3); p(0, 3, '#ffe066', 3, 1);
+      p(6, 11, out, 3, 1);
+      p(12, 8, '#ffe066', 3, 4); p(13, 6, '#ffe066', 2, 2); p(11, 9, '#d9a441', 1, 3);
+      p(1, 1, '#ffe066', 1, 3); p(0, 2, '#ffe066', 3, 1);
     } else if (stickerId === 'hug') {
       clearEyes();
-      p(4, 10, out); p(5, 9, out); p(6, 10, out);
-      p(8, 10, out); p(9, 9, out); p(10, 10, out);
-      p(6, 1, '#f05a82', 1, 1); p(8, 1, '#f05a82', 1, 1); p(6, 2, '#f05a82', 3, 1); p(7, 3, '#f05a82', 1, 1);
-      p(0, 11, fur, 2, 3); p(1, 12, '#ffbfd4', 1, 1);
-      p(14, 11, fur, 2, 3); p(14, 12, '#ffbfd4', 1, 1);
+      p(4, 9, out); p(5, 8, out); p(6, 9, out);
+      p(8, 9, out); p(9, 8, out); p(10, 9, out);
+      p(6, 0, '#f05a82', 1, 1); p(8, 0, '#f05a82', 1, 1); p(6, 1, '#f05a82', 3, 1); p(7, 2, '#f05a82', 1, 1);
+      p(0, 10, fur, 2, 3); p(1, 11, '#ffbfd4', 1, 1);
+      p(13, 10, fur, 2, 3); p(13, 11, '#ffbfd4', 1, 1);
     } else if (stickerId === 'what') {
-      p(7, 12, out, 1, 1);
-      p(12, 0, '#5a78b5', 3, 1); p(14, 1, '#5a78b5', 1, 2); p(13, 2, '#5a78b5', 1, 1); p(13, 4, '#5a78b5', 1, 1);
+      p(7, 11, out, 1, 1);
+      p(11, 0, '#5a78b5', 3, 1); p(13, 1, '#5a78b5', 1, 2); p(12, 2, '#5a78b5', 1, 1); p(12, 4, '#5a78b5', 1, 1);
     } else if (stickerId === 'party') {
       clearEyes();
-      p(4, 10, out); p(5, 9, out); p(6, 10, out);
-      p(8, 10, out); p(9, 9, out); p(10, 10, out);
-      // Party hat right on top of real puppy's head
-      p(7, 1, '#ff8aa6', 1, 1); p(6, 2, '#ffe066', 3, 1); p(5, 3, '#8cc8f7', 5, 2); p(5, 5, '#ff8aa6', 5, 1);
-      p(1, 2, '#ffe066', 2, 2); p(13, 2, '#8be0b8', 2, 2);
+      p(4, 9, out); p(5, 8, out); p(6, 9, out);
+      p(8, 9, out); p(9, 8, out); p(10, 9, out);
+      p(7, 0, '#ff8aa6', 1, 1); p(6, 1, '#ffe066', 3, 1); p(5, 2, '#8cc8f7', 5, 2); p(5, 4, '#ff8aa6', 5, 1);
+      p(0, 1, '#ffe066', 2, 2); p(13, 1, '#8be0b8', 2, 2);
     } else if (stickerId === 'tea') {
-      // Milk tea cup beside real puppy
-      p(13, 7, '#6b4423', 1, 3);
-      p(11, 10, '#ffffff', 5, 1);
-      p(11, 11, '#e6c39c', 5, 4);
-      p(12, 13, '#4a3222', 1, 1); p(14, 13, '#4a3222', 1, 1);
-      p(1, 3, '#ff8aa6', 2, 2);
+      p(12, 6, '#6b4423', 1, 3);
+      p(10, 9, '#ffffff', 5, 1);
+      p(10, 10, '#e6c39c', 5, 4);
+      p(11, 12, '#4a3222', 1, 1); p(13, 12, '#4a3222', 1, 1);
+      p(1, 2, '#ff8aa6', 2, 2);
+    } else if (stickerId === 'shock') {
+      clearEyes();
+      p(4, 8, '#ffffff', 3, 3); p(8, 8, '#ffffff', 3, 3);
+      p(5, 9, eyeCol); p(9, 9, eyeCol);
+      p(6, 11, out, 3, 2); p(7, 11, '#ff8aa6', 1, 1);
+      p(12, 0, '#e84858', 2, 3); p(12, 4, '#e84858', 2, 1);
+    } else if (stickerId === 'cool') {
+      // Pixel shades + smirk
+      p(3, 8, '#231814', 4, 2); p(8, 8, '#231814', 4, 2); p(7, 8, '#231814', 1, 1);
+      p(4, 8, '#ffffff', 1, 1); p(9, 8, '#ffffff', 1, 1);
+      p(7, 11, out, 2, 1); p(9, 10, out, 1, 1);
+      p(1, 1, '#ffe066', 1, 3); p(0, 2, '#ffe066', 3, 1);
+    } else if (stickerId === 'dizzy') {
+      clearEyes();
+      p(4, 8, out); p(6, 8, out); p(5, 9, out); p(4, 10, out); p(6, 10, out);
+      p(8, 8, out); p(10, 8, out); p(9, 9, out); p(8, 10, out); p(10, 10, out);
+      p(6, 11, out, 3, 1);
+      p(2, 1, '#ffe066', 2, 1); p(7, 0, '#8cc8f7', 2, 1); p(11, 2, '#ffe066', 2, 1);
+    } else if (stickerId === 'rich') {
+      clearEyes();
+      p(4, 8, '#f5c84c', 3, 3); p(5, 9, '#fff7cc');
+      p(8, 8, '#f5c84c', 3, 3); p(9, 9, '#fff7cc');
+      p(6, 11, '#ff8aa6', 3, 1);
+      p(1, 1, '#f5c84c', 2, 2); p(12, 0, '#f5c84c', 2, 2);
+    } else if (stickerId === 'sweat') {
+      p(6, 11, out, 3, 1);
+      // Giant blue sweatdrop on forehead/side
+      p(12, 3, '#7cc6f7', 2, 3); p(12, 2, '#a8dcff', 1, 1); p(13, 4, '#ffffff', 1, 1);
+    } else if (stickerId === 'kiss') {
+      clearEyes();
+      p(4, 9, out, 2, 1); p(9, 9, out, 2, 1);
+      p(7, 11, '#f05a82', 2, 1);
+      p(11, 8, '#f05a82', 1, 1); p(13, 8, '#f05a82', 1, 1); p(11, 9, '#f05a82', 3, 1); p(12, 10, '#f05a82', 1, 1);
+      p(13, 4, '#ff8aa6', 2, 2);
+    } else if (stickerId === 'cheer') {
+      // Red headband across forehead + raised fist
+      p(3, 7, '#e84858', 9, 1); p(12, 7, '#e84858', 2, 1); p(13, 8, '#e84858', 2, 1);
+      p(6, 11, '#ff8aa6', 3, 1);
+      p(0, 7, fur, 2, 3); p(0, 6, '#ffe066', 2, 1);
+    } else if (stickerId === 'ghost') {
+      clearEyes();
+      p(4, 9, '#ffffff', 2, 1); p(9, 9, '#ffffff', 2, 1);
+      p(6, 11, out, 3, 1);
+      // Tiny white ghost floating up from head
+      p(6, 0, '#ffffff', 3, 4); p(5, 1, '#ffffff', 5, 2);
+      p(6, 1, '#3b2a22'); p(8, 1, '#3b2a22');
     } else {
-      // shy: wide rosy cheeks + sparkles
-      p(3, 11, '#ff8ca8', 2, 1); p(10, 11, '#ff8ca8', 2, 1);
-      p(1, 3, '#ffb5c8', 1, 3); p(0, 4, '#ffb5c8', 3, 1);
-      p(14, 3, '#ffb5c8', 1, 3); p(13, 4, '#ffb5c8', 3, 1);
+      // shy
+      p(3, 10, '#ff8ca8', 2, 1); p(10, 10, '#ff8ca8', 2, 1);
+      p(1, 2, '#ffb5c8', 1, 3); p(0, 3, '#ffb5c8', 3, 1);
+      p(13, 2, '#ffb5c8', 1, 3); p(12, 3, '#ffb5c8', 3, 1);
     }
   };
 
-    const drawPupStickerCanvas = (stickerId, pxSize = 48, lookObj = null) => {
+  const drawPupStickerCanvas = (stickerId, pxSize = 48, lookObj = null) => {
     const c = doc.createElement('canvas');
     c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
     drawPupHeadPortrait(c, lookObj || getMyCurrentLookObj(), stickerId);
@@ -36812,13 +36896,16 @@
     bubble: config.puppyBubbleSkin || 'bub_default',
   });
 
-  const makeDmHeadAvatar = (lookObj, boxPx = 36) => {
+  const makeDmHeadAvatar = (lookObj, boxPx = 40) => {
     const look = lookObj || {};
     const wrap = doc.createElement('div');
     wrap.className = 'st-px-avatar-wrap';
     const afId = look.avatarFrame || 'af_custom';
     const hasFrameClass = Boolean(afId && afId !== 'af_custom' && afId !== 'af_none');
-    wrap.style.cssText = `position:relative;width:${boxPx}px;height:${boxPx}px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;margin:0;border-width:2px;border-style:solid;border-color:var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;`;
+    // CRITICAL: When hasFrameClass is true, DO NOT set inline background/borderColor so the exact .af-xxxx CSS gradient & border apply!
+    wrap.style.cssText = hasFrameClass
+      ? `position:relative;width:${boxPx}px;height:${boxPx}px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;margin:0;border-width:2px;border-style:solid;box-sizing:border-box;overflow:visible;`
+      : `position:relative;width:${boxPx}px;height:${boxPx}px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0;margin:0;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;`;
     if (!hasFrameClass && (look.afBorderCol || look.afBgCol)) {
       if (look.afBorderCol) wrap.style.borderColor = look.afBorderCol;
       if (look.afBgCol) wrap.style.background = look.afBgCol;
@@ -36838,8 +36925,11 @@
         fxCvs.dataset.afDyn = afObj.dyn;
         fxCvs.width = 64;
         fxCvs.height = 64;
-        const padFx = Math.round(boxPx * 0.22);
-        fxCvs.style.cssText = `position:absolute;left:-${padFx}px;top:-${padFx}px;width:${boxPx + padFx * 2}px;height:${boxPx + padFx * 2}px;pointer-events:none;image-rendering:pixelated;z-index:4;`;
+        // Exact centering relative to padding-box (boxPx - 4): offset = -(fxSize - (boxPx - 4)) / 2
+        const innerBox = boxPx - 4;
+        const fxSize = innerBox + 20;
+        const fxOff = -10;
+        fxCvs.style.cssText = `position:absolute;left:${fxOff}px;top:${fxOff}px;width:${fxSize}px;height:${fxSize}px;pointer-events:none;image-rendering:pixelated;z-index:4;`;
         wrap.appendChild(fxCvs);
         if (typeof drawAfDynFxToCanvas === 'function') {
           try { drawAfDynFxToCanvas(fxCvs, afObj.dyn, afFxTick || 0); } catch (_) {}
@@ -36850,7 +36940,7 @@
       }
     }
     const cv = doc.createElement('canvas');
-    const innerPx = boxPx >= 36 ? 32 : 24;
+    const innerPx = boxPx - 4;
     cv.style.cssText = `width:${innerPx}px;height:${innerPx}px;display:block;image-rendering:pixelated;`;
     drawPupHeadPortrait(cv, look, '');
     wrap.appendChild(cv);
@@ -36886,6 +36976,7 @@
 
   const applyDmBubbleSkin = (bubEl, dir, msg) => {
     bubEl.className = 'st-tb-guest-bubble st-dm-msg-bub';
+    bubEl.querySelectorAll('.st-px-bub-orn').forEach(n => n.remove());
     bubEl.style.background = '';
     bubEl.style.borderColor = '';
     bubEl.style.color = '';
@@ -36893,11 +36984,20 @@
       bubEl.classList.add(dir === 'me' ? 'dm-def-me' : 'dm-def-them');
       return;
     }
+    const allBubs = [...SHOP_PUP_BUBBLES, ...SECRET_ADV_BUBBLES, ...GACHA_BUBBLES, ...SPECIAL_EVENT_BUBBLES];
     let bubId = '';
     if (dir === 'me') {
       bubId = config.puppyBubbleSkin || 'bub_default';
       if (bubId && bubId !== 'bub_default') {
         bubEl.classList.add(bubId.replace(/_/g, '-'));
+        const bObj = allBubs.find(b => b.id === bubId);
+        if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
+          bObj.charms.forEach(ch => {
+            const c = makeAfCharm9(ch.key, ch.pos);
+            c.className = `st-px-bub-orn ${ch.pos}`;
+            bubEl.appendChild(c);
+          });
+        }
         if (config.puppyBubOverrideCol) {
           bubEl.style.borderColor = config.puppyBubBorderCol || '#bfa4ae';
           bubEl.style.background = config.puppyBubBgCol || '#fffdf9';
@@ -36913,6 +37013,14 @@
       bubId = (msg && msg.bubbleId && msg.bubbleId !== 'bub_default') ? msg.bubbleId : (fr?.look?.bubble || 'bub_default');
       if (bubId && bubId !== 'bub_default') {
         bubEl.classList.add(bubId.replace(/_/g, '-'));
+        const bObj = allBubs.find(b => b.id === bubId);
+        if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
+          bObj.charms.forEach(ch => {
+            const c = makeAfCharm9(ch.key, ch.pos);
+            c.className = `st-px-bub-orn ${ch.pos}`;
+            bubEl.appendChild(c);
+          });
+        }
         if (msg && msg.bubBg) bubEl.style.background = msg.bubBg;
         if (msg && msg.bubBd) bubEl.style.borderColor = msg.bubBd;
         if (msg && msg.bubFg) bubEl.style.color = msg.bubFg;
@@ -36951,14 +37059,14 @@
       const isMe = m.dir === 'me';
       const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
-      row.style.cssText = `display:flex;align-items:flex-start;gap:7px;margin-bottom:9px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
-      const avWrap = makeDmHeadAvatar(senderLook, 38);
+      row.style.cssText = `display:flex;align-items:flex-start;gap:9px;margin-bottom:11px;padding:0 3px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+      const avWrap = makeDmHeadAvatar(senderLook, 40);
       const bubCol = doc.createElement('div');
       bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
       const bub = doc.createElement('div');
-      applyDmBubbleSkin(bub, isMe ? 'me' : 'them', m);
+      const bodyEl = doc.createElement('div');
+      bodyEl.style.cssText = 'position:relative;z-index:1;';
       if (m.sticker) {
-        bub.style.padding = '5px 7px';
         const stWrap = doc.createElement('div');
         stWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
         const stLook = (m.stickerLook && typeof m.stickerLook === 'object') ? m.stickerLook : senderLook;
@@ -36969,10 +37077,13 @@
           tx.textContent = m.text;
           stWrap.appendChild(tx);
         }
-        bub.appendChild(stWrap);
+        bodyEl.appendChild(stWrap);
       } else {
-        bub.textContent = m.text || '';
+        bodyEl.textContent = m.text || '';
       }
+      bub.appendChild(bodyEl);
+      applyDmBubbleSkin(bub, isMe ? 'me' : 'them', m);
+      if (m.sticker) bub.style.padding = '5px 7px';
       const tm = doc.createElement('div');
       tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;';
       const dObj = new Date(m.ts || Date.now());
@@ -36984,7 +37095,7 @@
     listEl.scrollTop = listEl.scrollHeight;
   };
 
-  let dmSendBusy = false;
+    let dmSendBusy = false;
   const sendFriendDmMessage = async (fid, fname, text, sticker = '', stickerLook = null) => {
     if (dmSendBusy) return;
     const cleanTxt = String(text || '').trim().slice(0, 300);
@@ -37001,6 +37112,8 @@
       const bubFg = config.puppyBubOverrideCol ? (config.puppyBubTextCol || '') : '';
       const stLkCompact = stickerLook ? {
         fur: stickerLook.fur || '', ear: stickerLook.ear || '', collar: stickerLook.collar || '', outline: stickerLook.outline || '', showCollar: stickerLook.showCollar !== false,
+        accs: Array.isArray(stickerLook.accs) ? stickerLook.accs.filter(isHeadAccessoryId) : [],
+        accOffsets: stickerLook.accOffsets || {},
       } : null;
       config.puppyDmHistory[fid].push({
         id: msgId, dir: 'me', text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
@@ -37098,7 +37211,7 @@
     panel.onclick = (e) => e.stopPropagation();
 
     const headAvSlot = panel.querySelector('#st-dm-head-av');
-    if (headAvSlot) headAvSlot.appendChild(makeDmHeadAvatar(fullFr.look || {}, 36));
+    if (headAvSlot) headAvSlot.appendChild(makeDmHeadAvatar(fullFr.look || {}, 38));
 
     panel.querySelector('#st-dm-bond-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -37243,7 +37356,7 @@
         <button type="button" id="st-dm-pill-x" class="st-px-btn" style="height:18px;padding:0 4px;font-size:9px;margin-left:2px;" title="关闭">×</button>`;
       pEl.onclick = (ev) => ev.stopPropagation();
       const pav = pEl.querySelector('#st-dm-pill-av');
-      if (pav) pav.appendChild(makeDmHeadAvatar(fullFr.look || {}, 30));
+      if (pav) pav.appendChild(makeDmHeadAvatar(fullFr.look || {}, 32));
       pEl.querySelector('#st-dm-pill-x')?.addEventListener('click', (ev) => {
         ev.stopPropagation();
         pEl.style.display = 'none';
