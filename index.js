@@ -877,6 +877,7 @@
     { lv: '元气吉', text: '活力满格的一天! 带着小跟班一起出门逛逛吧~', luckTag: 'comp', luckLabel: '携带任意漂浮小跟班' },
     { lv: '摸鱼吉', text: '宜放松、宜发呆、宜边看小说边揉揉小狗脑袋!', luckTag: 'onesie', luckLabel: '换上任意连体衣或睡衣' },
     { lv: '小确幸', text: '平凡日子里也有闪光小瞬间，小狗会一直陪着你汪。', luckTag: 'head', luckLabel: '佩戴任意头饰配饰' },
+    { lv: '飒气吉', text: '微风拂过衣角，披上拉风小斗篷出门气场直接拉满!', luckTag: 'cape', luckLabel: '披上任意叠穿斗篷' },
   ];
 
   const CURIO_RARITY_LABEL = { 1: '常见', 2: '稀有', 3: '珍稀', 4: '传说' };
@@ -1346,8 +1347,9 @@
     { id: 'ft_cozy', name: '软萌睡衣趴', desc: '推荐：连体衣/睡衣 + 头饰/颈部 + 萌宠跟班', outfitCat: 'onesie', accCats: ['head', 'neck'], compIds: ['mini_cloud', 'mini_cat', 'mini_bunny', 'mini_shiba_doll'] },
     { id: 'ft_travel', name: '出行小旅人', desc: '推荐：任意裙子/连体 + 包包 + 漂浮跟班', outfitCat: 'skirt', accCats: ['bag', 'head'], compIds: ['mini_hotair', 'mini_balloon', 'mini_paper_plane', 'mini_cloud'] },
     { id: 'ft_angel', name: '天使降临日', desc: '推荐：小裙子 + 翅膀 + 光环', outfitCat: 'skirt', accCats: ['wing', 'aura'], compIds: ['mini_fairy', 'mini_butterfly', 'mini_ghost', 'mini_crane'] },
-    { id: 'ft_palace', name: '宫廷舞会夜', desc: '推荐：华丽大裙 + 颈饰/头饰 + 发光跟班', outfitCat: 'skirt', accCats: ['neck', 'head'], compIds: ['mini_star', 'mini_heart_spirit', 'mini_crane'] },
-    { id: 'ft_witch', name: '暗黑小魔女', desc: '推荐：小裙子 + 翅膀/头饰 + 蓝狐火/小幽灵', outfitCat: 'skirt', accCats: ['wing', 'head'], compIds: ['mini_ghost', 'mini_fox_fire', 'mini_moon'] },
+    { id: 'ft_palace', name: '宫廷舞会夜', desc: '推荐：华丽大裙 + 斗篷/颈饰/头饰 + 发光跟班', outfitCat: 'skirt', accCats: ['cape', 'neck', 'head'], compIds: ['mini_star', 'mini_heart_spirit', 'mini_crane'] },
+    { id: 'ft_witch', name: '暗黑小魔女', desc: '推荐：小裙子 + 斗篷/翅膀/头饰 + 蓝狐火/小幽灵', outfitCat: 'skirt', accCats: ['cape', 'wing', 'head'], compIds: ['mini_ghost', 'mini_fox_fire', 'mini_moon'] },
+    { id: 'ft_cape_knight', name: '披风小骑士', desc: '推荐：小裙子 + 叠穿斗篷 + 头饰/翅膀', outfitCat: 'skirt', accCats: ['cape', 'head', 'wing'], compIds: ['mini_star', 'mini_cloud', 'mini_butterfly', 'mini_paper_plane'] },
     { id: 'ft_forest', name: '森林采花童', desc: '推荐：小裙子 + 头饰/包包 + 花精灵/小蜜蜂', outfitCat: 'skirt', accCats: ['head', 'bag'], compIds: ['mini_fairy', 'mini_bee', 'mini_butterfly'] },
     { id: 'ft_ocean', name: '海洋人鱼梦', desc: '推荐：小裙子 + 光环/颈饰 + 小蓝鲸/小水母', outfitCat: 'skirt', accCats: ['aura', 'neck'], compIds: ['mini_whale', 'mini_jellyfish', 'mini_cloud'] },
     { id: 'ft_campus', name: '校园优等生', desc: '推荐：小裙子 + 包包/头饰 + 纸飞机/小云朵', outfitCat: 'skirt', accCats: ['bag', 'head'], compIds: ['mini_paper_plane', 'mini_cloud', 'mini_chick'] },
@@ -21213,10 +21215,19 @@
   // 原创非模板化铭牌一体式包裹画布（96x36 逻辑像素，徽章主体位于 x:10..86, y:10..26，四周各留 10px 创作空间）
   // 每一款均按标题与主题独立手绘左+上包裹、顶篷、底托、环抱等原创组合构图，绝不复用模板或零碎散点！
   const renderOriginalBadgeWrap = (id, bdCol, fgCol) => {
-    // 仅少量平价基础款商店铭牌采用包裹构图作为风格点缀；真龙天狗及所有高价铭牌、顶级成就全部恢复原版精致设计！
+    // 商店平价精选(6) + 各领域代表成就(24) + 扭蛋SSR精选(2)：每款均为完全原创手绘包裹构图（保留贴图叠层，绝不模板化、绝不重复）
     const HANDCRAFTED_WRAPS = new Set([
       'sb_sakura_dream', 'sb_sweet_berry', 'sb_pearl_lady',
-      'sb_clover_luck', 'sb_mid_nap_master', 'sb_milk_tea_boss'
+      'sb_clover_luck', 'sb_mid_nap_master', 'sb_milk_tea_boss',
+      'garden_bloom', 'garden_collector_15', 'garden_collector_30', 'garden_all_42',
+      'kitchen_lv10_master', 'kitchen_dark_chef',
+      'adv_album_all', 'adv_curio_all', 'hidden_adv_miracle', 'hidden_adv_legend',
+      'collector_max', 'ach_wardrobe_30', 'hidden_fashion_sss',
+      'soulmate', 'aff_lv10', 'hidden_cloud_soulmate', 'hidden_cloud_bond_lv10',
+      'rich_tycoon_500', 'lt_coins_5000', 'ach_rich_10k',
+      'gacha_count_300', 'gacha_count_1000', 'hidden_gacha_ssr_lucky',
+      'game_champ', 'ach_2048_2048',
+      'gb_gacha_destiny_star', 'gb_gacha_sleepy_rich'
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
     const cv = doc.createElement('canvas');
@@ -21384,13 +21395,83 @@
       // 绝版七彩萌主：顶边七彩棱镜王冠华盖 + 左+下双层虹彩丝绸飘带环抱
       px(14, 4, '#ff8cb8', 14, 3); px(28, 3, '#ffe078', 14, 4); px(42, 2, '#8ce6ff', 14, 5); px(56, 3, '#c9a6ff', 14, 4); px(70, 4, '#9bf2d8', 12, 3);
       px(4, 10, '#c9a6ff', 4, 18); px(6, 26, '#ff8cb8', 32, 3); px(38, 26, '#8ce6ff', 32, 3); px(70, 26, '#ffe078', 16, 3);
-    } else {
-      // 最高级传说/神迹成就：专属原创左+上+右金辉锦缎包裹（按各自配色独立演绎，零零碎碎彻底消失！）
-      const M = bdCol || '#e0a238', D = fgCol || '#5c3300';
-      px(5, 7, M, 3, 19); px(5, 6, M, 48, 3); px(12, 4, '#ffe078', 20, 2); px(38, 5, '#ffffff', 12, 2);
-      px(88, 10, M, 3, 16); px(52, 26, M, 38, 3); px(60, 27, '#ffe078', 20, 2);
-      px(4, 5, D, 4, 4); px(5, 6, '#fff6cc', 2, 2);
-      px(87, 24, D, 4, 4); px(88, 25, '#fff6cc', 2, 2);
+    } else if (id === 'garden_bloom') {
+      // 像素小花匠：左+下青绿苗圃栅栏托起 + 左上探出嫩芽小黄花
+      px(5, 16, '#8c6239', 3, 12); px(7, 26, '#8c6239', 48, 3); px(14, 24, '#a8794c', 3, 5); px(30, 24, '#a8794c', 3, 5); px(46, 24, '#a8794c', 3, 5);
+      px(4, 11, '#68c274', 4, 5); px(3, 8, '#ffe066', 6, 4); px(5, 9, '#ffffff', 2, 2);
+    } else if (id === 'garden_collector_15') {
+      // 百花小园丁：右+上爬藤月季枝包裹 + 粉白两朵小花苞
+      px(44, 6, '#58a864', 44, 3); px(85, 6, '#58a864', 3, 16);
+      px(52, 4, '#ff8cb0', 6, 5); px(54, 5, '#fff5f8', 2, 2); px(76, 4, '#ffd6e6', 5, 4);
+    } else if (id === 'garden_collector_30') {
+      // 植物学大师：左+上玻璃温室拱顶细框包裹 + 顶边垂挂小蕨叶
+      px(5, 7, '#78c49e', 3, 18); px(5, 6, '#78c49e', 58, 2); px(18, 4, '#d9fff0', 32, 2);
+      px(14, 8, '#58a864', 4, 4); px(46, 8, '#8ce09e', 5, 3);
+    } else if (id === 'garden_all_42') {
+      // 万花筒宗师：左+上+右繁花拱廊华盖包裹（粉/黄/紫/青四色像素花环）
+      px(5, 9, '#58a864', 3, 17); px(88, 9, '#58a864', 3, 17); px(6, 6, '#68c274', 84, 3);
+      px(12, 4, '#ff8cb0', 7, 5); px(34, 3, '#ffe066', 7, 5); px(56, 3, '#c7a6ff', 7, 5); px(76, 4, '#8ce0ff', 7, 5);
+    } else if (id === 'kitchen_lv10_master') {
+      // 厨房宗师：底部红白格纹餐桌布托起 + 左上袅袅花茶蒸汽
+      for (let x = 8; x <= 82; x += 6) { px(x, 26, (x % 12 === 0) ? '#f27c8c' : '#ffffff', 6, 3); }
+      px(6, 5, '#ffffff', 3, 7); px(11, 3, '#fff5d6', 3, 8); px(16, 6, '#ffe6f0', 2, 5);
+    } else if (id === 'kitchen_dark_chef') {
+      // 暗黑料理王：左+下暗紫冒泡坩埚烟雾包裹 + 飘浮诡异绿星气泡
+      px(4, 14, '#5a3b7a', 4, 14); px(6, 25, '#462a63', 52, 4); px(14, 23, '#98e66c', 5, 3); px(38, 24, '#c78cff', 6, 3);
+      px(3, 8, '#98e66c', 4, 4); px(9, 5, '#c78cff', 3, 3);
+    } else if (id === 'adv_album_all') {
+      // 旅拍全图鉴：顶边与底边复古电影胶片齿孔长条包裹
+      px(12, 5, '#4a3d38', 72, 4); px(12, 26, '#4a3d38', 72, 4);
+      for (let x = 16; x <= 78; x += 8) { px(x, 6, '#fff8e8', 4, 2); px(x, 27, '#fff8e8', 4, 2); }
+    } else if (id === 'adv_curio_all') {
+      // 藏品博物馆长：左+上深红天鹅绒展柜金边包裹 + 顶心聚光灯弧
+      px(5, 7, '#a82c44', 4, 19); px(5, 6, '#d9a441', 54, 3); px(34, 3, '#fff4b8', 24, 3);
+    } else if (id === 'hidden_adv_miracle') {
+      // 秘境奇遇：左+下流动银河星雾包裹 + 右上悬垂秘境极光带
+      px(5, 12, '#6c7ae0', 3, 16); px(7, 26, '#7ce0f5', 46, 3); px(22, 27, '#ffe680', 18, 2);
+      px(64, 4, '#9bf2d8', 22, 3); px(72, 7, '#c7a6ff', 14, 3);
+    } else if (id === 'hidden_adv_legend') {
+      // 旅人隐秘祝福：右+下复古航海羊皮卷轴边包裹 + 金色罗盘角
+      px(86, 10, '#d9b580', 4, 18); px(42, 26, '#f2dfc2', 46, 4); px(42, 25, '#b88c52', 4, 5);
+      px(83, 6, '#f2c249', 7, 7); px(85, 8, '#ffffff', 3, 3);
+    } else if (id === 'collector_max') {
+      // 收藏满贯：左+上+右金色丝绒帷幕华盖包裹
+      px(5, 7, '#d9a441', 4, 19); px(87, 7, '#d9a441', 4, 19); px(5, 5, '#e6b84c', 86, 4);
+      px(18, 4, '#ff8cb8', 10, 3); px(43, 3, '#8ce6ff', 10, 4); px(68, 4, '#c7a6ff', 10, 3);
+    } else if (id === 'ach_wardrobe_30') {
+      // 衣橱主理人：顶边香槟金衣架拱形挂钩 + 左侧垂坠丝绸缎带
+      px(14, 6, '#d9a441', 68, 2); px(44, 2, '#d9a441', 8, 4); px(46, 3, '#fff6cc', 4, 2);
+      px(4, 10, '#eb7ca4', 4, 17); px(6, 14, '#ffd6e6', 2, 10);
+    } else if (id === 'hidden_fashion_sss') {
+      // 传说穿搭王：底部红毯走秀台阶托起 + 顶边双束T台聚光灯
+      px(8, 26, '#d93b58', 80, 4); px(14, 27, '#ffe078', 68, 1);
+      px(16, 3, '#fff6cc', 18, 4); px(62, 3, '#fff6cc', 18, 4);
+    } else if (id === 'soulmate' || id === 'aff_lv10') {
+      // 灵魂挚友/满分偏爱：左+上粉金双股同心丝带紧紧环绕 + 右下暖心结
+      px(5, 9, '#ff8cb0', 3, 18); px(6, 6, '#ff8cb0', 48, 3); px(14, 5, '#ffe078', 22, 2);
+      px(80, 23, '#ff6e98', 8, 6); px(82, 25, '#ffffff', 3, 2);
+    } else if (id === 'hidden_cloud_soulmate' || id === 'hidden_cloud_bond_lv10') {
+      // 跨屏挚友/宿命双星：左蓝右粉双星轨跨越顶边相连
+      px(5, 10, '#78b8ff', 3, 16); px(88, 10, '#ff94bc', 3, 16);
+      px(6, 6, '#78b8ff', 42, 3); px(48, 6, '#ff94bc', 42, 3); px(44, 4, '#ffe680', 8, 5);
+    } else if (id === 'rich_tycoon_500' || id === 'lt_coins_5000' || id === 'ach_rich_10k') {
+      // 富豪系列：右+下层叠闪亮小狗金币堆包裹 + 左上金库金条边
+      px(44, 25, '#f2c249', 44, 5); px(52, 23, '#ffe680', 14, 3); px(70, 23, '#fff4bd', 12, 3);
+      px(85, 14, '#e0a22e', 4, 14); px(5, 6, '#f2c249', 24, 3);
+    } else if (id === 'gacha_count_300' || id === 'gacha_count_1000' || id === 'hidden_gacha_ssr_lucky') {
+      // 扭蛋传说系列：顶边彩蛋机条纹圆篷包裹 + 右下滚落三色扭蛋球
+      for (let x = 10; x <= 80; x += 10) { px(x, 5, (x % 20 === 0) ? '#ff8cb0' : '#ffe078', 10, 4); }
+      px(72, 25, '#8ce6ff', 6, 5); px(79, 24, '#ff8cb0', 6, 6); px(86, 25, '#ffe078', 6, 5);
+    } else if (id === 'game_champ' || id === 'ach_2048_2048') {
+      // 游戏传说系列：左+上+下复古街机霓虹像素框包裹
+      px(5, 7, '#64d9c4', 3, 21); px(5, 6, '#64d9c4', 44, 3); px(5, 26, '#c78cff', 48, 3);
+      px(12, 4, '#ffe066', 8, 2); px(26, 27, '#ffe066', 12, 2);
+    } else if (id === 'gb_gacha_destiny_star') {
+      // [扭蛋SSR] 满级幸运星：左+上天蓝四叶星云缎带包裹（保留原SSR四向贴图叠层）
+      px(5, 8, '#7e90e6', 3, 18); px(5, 6, '#9eb4ff', 50, 3); px(14, 4, '#ffe680', 16, 2); px(36, 4, '#a8f0c6', 12, 2);
+    } else if (id === 'gb_gacha_sleepy_rich') {
+      // [扭蛋SSR] 躺赢富贵汪：底部松软鎏金云朵枕头托底包裹（保留原SSR四向贴图叠层）
+      px(10, 26, '#ffe694', 76, 4); px(18, 25, '#fffdf5', 22, 3); px(54, 25, '#fffdf5', 22, 3);
     }
     return cv;
   };
@@ -21689,81 +21770,19 @@
           ]);
           const isSenior = seniorSet.has(ach.id);
           el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
-          // 彻底取消重复的上下居中波浪条 makeCustomTrim！改用 24 款完全互不重复的独立像素小饰件，按档位错落点缀
-          const EXTRA_ACCENTS = [
-            ['..gg..','.gllg.','g..g..','..g...'], // 嫩叶芽
-            ['.pp...','pwwp..','.pp...','..p...'], // 樱花瓣
-            ['..yy..','.ywwy.','.y..y.','..yy..'], // 金环结
-            ['..c...','.cwc..','.cwc..','..c...'], // 珍珠滴
-            ['..p.p.','.ppppp','..ppp.','...p..'], // 迷你心芽
-            ['..yy..','.y..y.','..y...','.yy...'], // 小音符
-            ['.cc...','cwwc..','.ccc..','..c...'], // 软云朵
-            ['.r..r.','rrwwrr','.r..r.','......'], // 迷你缎结
-            ['..gg..','.gwwg.','..gg..','...g..'], // 苜蓿小芽
-            ['..l...','.lwl..','lwwwl.','.lwl..'], // 浅紫花苞
-            ['..b...','.bwb..','..bb..','...b..'], // 琥珀水滴
-            ['.yy...','ywwy..','y.....','.yy...'], // 小弯月牙
-            ['..m...','.mwm..','m...m.','.mmm..'], // 薄荷铃铛
-            ['.oo...','owwo..','.oo...','..y...'], // 暖橘糖珠
-            ['..cc..','.c..c.','cwwwwc','..cc..'], // 小贝壳
-            ['.p..p.','.pwwp.','..pp..','..yy..'], // 蝶翼小结
-            ['..r...','.rwr..','.rgr..','..g...'], // 红浆果枝
-            ['.y..y.','.ywwy.','..yy..','.y..y.'], // 流金穗结
-            ['y.y.y.','yyyyyy','.ywwy.','......'], // 迷你小皇冠
-            ['.rrrr.','rwwwwr','.rrrr.','..gg..'], // 小草莓
-            ['.bbbb.','bwwwwb','bwwwwb','.bbbb.'], // 迷你书本
-            ['..mm..','.mwwm.','mwwwwm','..bb..'], // 迷你茶杯
-            ['.yy...','yyyyyy','.yy..y','......'], // 小金钥匙
-            ['..pp..','.pwwp.','..gg..','.g..g.'], // 郁金香苞
-          ];
-          const idx3 = (h >> 2) % EXTRA_ACCENTS.length;
-          const idx4 = (idx3 + 5 + (h % 7)) % EXTRA_ACCENTS.length;
-          const idx5 = (idx4 + 7 + ((h >> 3) % 5)) % EXTRA_ACCENTS.length;
-          const g3 = EXTRA_ACCENTS[idx3];
-          const g4 = EXTRA_ACCENTS[idx4];
-          const g5 = EXTRA_ACCENTS[idx5];
-
-          const mythicSet = new Set([
-            'collector_max', 'soulmate', 'hidden_all_master', 'hidden_gacha_triple_ssr',
-            'hidden_cloud_soulmate', 'hidden_cloud_gallery', 'hidden_fashion_sss',
-            'hidden_gacha_ssr_lucky', 'adv_album_all', 'adv_curio_all'
-          ]);
-          const isMythic = (ach.tier >= 4) || mythicSet.has(ach.id);
-
-          // 找出 p1/p2 未占用的安全错落位置池（绝不压顶正中 40%~60%，绝不重复同一边）
-          const usedTop = /top:-/.test(p1) || /top:-/.test(p2);
-          const usedBot = /bottom:-/.test(p1) || /bottom:-/.test(p2);
-          const usedRight = /right:-/.test(p1) || /right:-/.test(p2);
-          const usedLeft = /left:-/.test(p1) || /left:-/.test(p2);
-          const leftBand = 18 + ((h >> 4) % 15);  // 18%..32%
-          const rightBand = 68 + ((h >> 5) % 16); // 68%..83%
-          const freeSlots = [];
-          if (!usedRight) freeSlots.push(`right:-9px;top:${sideTopR}%;transform:translateY(-50%);`);
-          if (!usedBot) freeSlots.push(`left:${(h % 2 === 0) ? rightBand : leftBand}%;bottom:-6px;transform:translateX(-50%);`);
-          if (!usedTop) freeSlots.push(`left:${(h % 2 === 0) ? leftBand : rightBand}%;top:-7px;transform:translateX(-50%);`);
-          if (!usedLeft) freeSlots.push(`left:-9px;top:${sideTopL}%;transform:translateY(-50%);`);
-          // 额外对角错位备选（仅在最高级需要第5件饰品时补充）
-          freeSlots.push(`right:${5 + ((h >> 6) % 10)}px;bottom:-6px;`);
-          freeSlots.push(`right:${6 + ((h >> 3) % 10)}px;top:-7px;`);
-
+          // 彻底取消会重复且零散的公共 3 号散点池！有原创主题包裹的成就直接叠加专属包裹 + 独立主副贴图，其余保持干净唯一的 1对1 主副贴图 + 多样动效
           const ACH_ANIMS = ['b-bob', 'b-tilt', 'b-sway-lr', 'b-pulse', 'b-hop'];
           const a1 = ACH_ANIMS[h % ACH_ANIMS.length];
           const a2 = ACH_ANIMS[(h + 2) % ACH_ANIMS.length];
-          if (isMythic) {
+          const achWrap = renderOriginalBadgeWrap(ach.id, ach.bd, ach.fg);
+          if (achWrap) el.appendChild(achWrap);
+          if (isSenior) {
             el.appendChild(renderBespokePiece({ pos: p1, w: 15, h: 13, anim: a1, pal, grid: g1 }));
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, anim: (h % 2 === 0 ? a2 : ''), pal, grid: subG }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 10, h: 8, anim: a2, pal, grid: g3 }));
-          } else if (isSenior) {
-            el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? a1 : ''), pal, grid: g1 }));
-            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 9, h: 8, anim: (h % 3 !== 0 ? a2 : ''), pal, grid: g3 }));
           } else {
             if (h % 3 === 0) el.classList.add('bespoke-static');
-            el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 3 === 0 ? a1 : ''), pal, grid: g1 }));
-            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
-            if (ach.tier >= 2 || (h % 2 === 0)) {
-              el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 8, h: 7, anim: (h % 2 === 0 ? a2 : ''), pal, grid: g3 }));
-            }
+            el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 2 === 0 ? a1 : ''), pal, grid: g1 }));
+            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, anim: (h % 3 === 1 ? a2 : ''), pal, grid: subG }));
           }
         }
       }
@@ -41522,8 +41541,8 @@
   };
   const inferAccCatShared = (item) => {
     if (!item) return '';
-    if (item.cat === 'cape') return 'wing';
-    if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag'].includes(item.cat)) return item.cat;
+    if (item.cat === 'cape' || /^(?:gacha_)?cape_/.test(String(item.id || ''))) return 'cape';
+    if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag', 'cape'].includes(item.cat)) return item.cat;
     const nm = `${item.id || ''} ${item.name || ''}`;
     if (/wing|feather|cape|quill|key|翅|羽|披风|发条/.test(nm)) return 'wing';
     if (/aura|halo|star|moon|glow|ring|cloud|lantern|光环|光晕|星|月|极光|雾|提灯/.test(nm)) return 'aura';
@@ -41534,7 +41553,7 @@
   const matchesLuckyTag = (tag) => {
     const allOutfits = [...SHOP_PUP_OUTFITS, ...GACHA_OUTFITS, ...TREASURE_OUTFITS, ...SPECIAL_EVENT_OUTFITS, ...FREE_PUP_OUTFITS];
     const allAccs = [...SHOP_PUP_ACCS, ...GACHA_ACCS, ...TREASURE_ACCS];
-    if (tag === 'wing' || tag === 'aura' || tag === 'bag' || tag === 'head' || tag === 'neck') {
+    if (tag === 'wing' || tag === 'aura' || tag === 'bag' || tag === 'head' || tag === 'neck' || tag === 'cape') {
       return (config.puppyAccs || []).some(id => {
         const aObj = allAccs.find(a => a.id === id);
         return aObj && inferAccCatShared(aObj) === tag;
