@@ -5306,6 +5306,34 @@
       border: 1px solid var(--px-border, #bfa4ae);
       color: var(--px-custom-fg, var(--px-fg, #54444a));
     }
+    #st-tb-snap-ask-modal .st-px-btn,
+    #st-tb-photo-pick-modal .st-px-btn,
+    #st-tb-visit-photo-win .st-px-btn,
+    #st-tb-saved-photo-viewer .st-px-btn {
+      background: var(--px-card, #ffffff);
+      border-color: var(--px-border, #bfa4ae);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
+    }
+    #st-tb-snap-ask-modal .st-px-btn.care,
+    #st-tb-photo-pick-modal .st-px-btn.care,
+    #st-tb-visit-photo-win .st-px-btn.care,
+    #st-tb-saved-photo-viewer .st-px-btn.care {
+      background: var(--px-bg-soft, #f6eaf0);
+    }
+    #st-tb-snap-ask-modal .st-px-btn.active,
+    #st-tb-photo-pick-modal .st-px-btn.active,
+    #st-tb-visit-photo-win .st-px-btn.active,
+    #st-tb-saved-photo-viewer .st-px-btn.active {
+      background: var(--px-bg-soft, #f0e4ea);
+      border-color: var(--px-border, #bfa4ae);
+    }
+    #st-tb-visit-photo-win #st-vph-head {
+      background: var(--px-head-bg, transparent);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
+      margin: -9px -9px 6px -9px;
+      padding: 6px 9px;
+      border-bottom: 1.5px dashed var(--px-border, #bfa4ae);
+    }
     .st-gp-resize {
       position: absolute;
       right: 0;
@@ -21154,12 +21182,12 @@
       ],
     },
     hidden_lucky_coin: {
-      cls: 'bespoke-std',
+      cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:22%;top:-8px;', w: 11, h: 8, anim: 'b-pulse', pal: { a: '#e0b030', b: '#fff4be', w: '#ffffff' },
-          grid: ['.aaaaaa..','abwwwwbaa','abwwwwba.','.aaaaaa..'] },
-        { pos: 'right:-12px;bottom:-7px;', w: 10, h: 8, pal: { a: '#e6b840', b: '#ffb5cc', w: '#ffffff' },
-          grid: ['a.a.a.a','abwwwba','abwbbba','a.a.a.a'] },
+        { pos: 'right:-13px;bottom:-7px;', w: 15, h: 14, anim: 'b-shimmer', pal: { y: '#e0b030', l: '#fff4c4', g: '#68c284', r: '#eb6c78', w: '#ffffff' },
+          grid: ['.yy......yy.','ywwyyyyyywwy','ywwgwwwwgwwy','ywwwwrrwwwwy','.yyyyyyyyyy.','..yyllllll..'] },
+        { pos: 'left:-12px;top:52%;transform:translateY(-50%);', w: 11, h: 15, anim: 'b-wiggle', pal: { y: '#e0b030', o: '#b87432', r: '#eb6c78', w: '#ffffff' },
+          grid: ['..y..r..y.','..y..r..y.','.oooooooo.','owyyyyyywo','owwwwwwwwo','.oooooooo.'] },
       ],
     },
     hidden_gacha_triple_ssr: {
@@ -21490,12 +21518,10 @@
     hidden_secret_mail: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-12px;bottom:-7px;', w: 15, h: 12, anim: 'b-nod', pal: { p: '#d982b8', l: '#fce6f4', r: '#e05878', w: '#ffffff' },
-          grid: ['.pppppppp.','pwwwwwwyyp','pwwprrpwwp','pwwwrrwwwp','pwwwwwwwwp','.pppppppp.','...pppp...'] },
-        { pos: 'left:68%;top:-9px;', w: 13, h: 10, anim: 'b-orbit', pal: { w: '#ffffff', p: '#d982b8', y: '#ffe078' },
-          grid: ['..pp....','..pwwp..','pwwwwwwy','.pwwwwp.','..pppp..'] },
-        { pos: 'right:-12px;top:46%;transform:translateY(-50%);', w: 11, h: 15, pal: { p: '#d982b8', l: '#ffe4f2', w: '#ffffff' },
-          grid: ['..pppp..','.pwwwwp.','ppwwwwpp','pppppppp','..pppp..','..pppp..'] },
+        { pos: 'right:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 13, anim: 'b-nod', pal: { p: '#d982b8', l: '#fce6f4', r: '#e05878', y: '#ffe078', w: '#ffffff' },
+          grid: ['.pppppppppp.','pwwwwyywwwwp','pwwwyrrwwwwp','pwwwwyywwwwp','.pppppppppp.'] },
+        { pos: 'left:-11px;top:-9px;', w: 13, h: 14, anim: 'b-breathe', pal: { p: '#d982b8', w: '#ffffff', k: '#6b2050', l: '#ffd6ec' },
+          grid: ['......ww..','.....wppw.','....wpp...','...kk.....','.kkkkkk...','kkllllkk..','.kkkkkk...'] },
       ],
     },
     hidden_mutant_flower: {
@@ -21564,12 +21590,10 @@
     hidden_mutant_5: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'right:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-shimmer', pal: { p: '#b382e0', c: '#d6f2ff', g: '#6ec488', w: '#ffffff', y: '#ffe078' },
-          grid: ['...cccc...','..cwwwwc..','.cwppppwc.','.cwyggywc.','.cwggggwc.','.pppppppp.'] },
-        { pos: 'left:-10px;bottom:-7px;', w: 11, h: 13, anim: 'b-breathe', pal: { p: '#b382e0', l: '#f0e4ff', w: '#ffffff', o: '#9c6842' },
-          grid: ['...oo...','..oooo..','..pppp..','.pwwwwp.','pwllllwp','.pppppp.'] },
-        { pos: 'left:30%;top:-8px;', w: 12, h: 8, pal: { g: '#6ec488', l: '#c8f5d6', w: '#ffffff' },
-          grid: ['.ggg..ggg.','gwwg..gwwg','..gg..gg..','....gg....'] },
+        { pos: 'left:-13px;bottom:-7px;', w: 15, h: 14, anim: 'b-shimmer', pal: { p: '#b382e0', l: '#f2e4ff', g: '#6ec488', y: '#ffe484', w: '#ffffff' },
+          grid: ['...pppp...','.ppwwwwpp.','pwwpyypwwp','.ppggggpp.','...g..g...','..gg..gg..'] },
+        { pos: 'right:-12px;top:48%;transform:translateY(-50%);', w: 11, h: 15, anim: 'b-breathe', pal: { p: '#b382e0', c: '#a8e4ff', w: '#ffffff', y: '#ffe484' },
+          grid: ['...yyyy...','....cc....','..cccccc..','.cwwwwwwc.','.cwppppwc.','.cwppppwc.','..cccccc..'] },
       ],
     },
     hidden_dark_gourmet: {
@@ -21839,6 +21863,8 @@
       // v140 新增 8 款各不相同的创意包裹（绝不动已有 57 款）
       'pet_legend_300', 'fun_coin_saver', 'cloud_coadv_5', 'cloud_bond_lv5',
       'adv_hidden_curio', 'ach_dig_lucky_3', 'hidden_toy_rally_king', 'hidden_job_wrecker',
+      // v141 新增 3 款各不相同的创意包裹（绝不动已有 65 款）
+      'hidden_lucky_coin', 'hidden_secret_mail', 'hidden_mutant_5',
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
     const cv = doc.createElement('canvas');
@@ -22227,6 +22253,24 @@
       }
       px(5, 8, '#db6c6c', 2, 7); px(87, 19, '#db6c6c', 2, 7);
       px(82, 5, '#db6c6c', 2, 2); px(84, 7, '#db6c6c', 2, 2); px(82, 9, '#db6c6c', 2, 2);
+
+    // ==================== v141 新增 3 款全新创意包裹（绝不动已有 65 款） ====================
+    } else if (id === 'hidden_lucky_coin') {
+      // 天选欧皇狗：底边锯齿幸运奖券票根边 + 左上翠金四叶幸运结
+      px(10, 26, '#e0b030', 74, 3);
+      for (let x = 14; x <= 78; x += 8) px(x, 27, '#fff6cc', 4, 1);
+      px(6, 5, '#68c284', 6, 3); px(6, 9, '#68c284', 6, 3); px(8, 7, '#ffe078', 3, 3);
+    } else if (id === 'hidden_secret_mail') {
+      // 秘密收信人：右上复古航空信斜纹红蓝邮边 + 左下火漆印角
+      for (let i = 0; i < 6; i++) {
+        px(50 + i * 6, 5, i % 2 === 0 ? '#e07a9c' : '#8cb8f0', 4, 2);
+      }
+      px(85, 6, '#d982b8', 2, 11);
+      px(6, 24, '#e05878', 6, 5); px(8, 25, '#ffd4e4', 2, 2);
+    } else if (id === 'hidden_mutant_5') {
+      // 秘境育花师：左上与右下紫罗兰玻璃温室拱窗格棂
+      px(6, 5, '#b382e0', 18, 2); px(6, 5, '#b382e0', 2, 12); px(14, 7, '#dcd0ff', 2, 5); px(8, 11, '#8ee0a8', 6, 1);
+      px(72, 27, '#b382e0', 16, 2); px(86, 17, '#b382e0', 2, 12); px(78, 22, '#dcd0ff', 2, 5);
     }
     return cv;
   };
@@ -27956,7 +28000,8 @@
           const pickedIds = new Set();
           const namePreview = allGuests.slice(0, 3).map(g => g.name).join('、') + (allGuests.length > 3 ? ` 等${allGuests.length}只小狗` : '');
           const renderAsk = () => {
-            askM.innerHTML = `<div style="width:258px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+            if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(askM);
+            askM.innerHTML = `<div style="width:258px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-custom-fg,var(--px-fg,#54444a));font-family:inherit;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                 <span style="font-size:11.5px;font-weight:700;">咔嚓合影</span>
                 <button type="button" id="st-sna-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
@@ -34500,6 +34545,7 @@
         if (e.target === modal) modal.style.display = 'none';
       });
     }
+    if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(modal);
     const dogs = Array.isArray(ph.dogs) && ph.dogs.length
       ? ph.dogs
       : [
@@ -34644,7 +34690,8 @@
         }
         const checkedIds = new Set(cands.filter(c => c.defaultOn).map(c => c.id));
         const renderPick = () => {
-          selM.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+          if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(selM);
+          selM.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-custom-fg,var(--px-fg,#54444a));font-family:inherit;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
               <span style="font-size:11.5px;font-weight:700;">选择一起拍合照的小狗 (不限数量)</span>
               <button type="button" id="st-ppk-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
@@ -34756,8 +34803,9 @@
     const posCss = (pr && typeof pr.left === 'number' && typeof pr.top === 'number')
       ? `left:${clamp(pr.left, 4, Math.max(4, win.innerWidth - pW - 4))}px;top:${clamp(pr.top, 4, Math.max(4, win.innerHeight - 200))}px;`
       : 'left:50%;top:50%;transform:translate(-50%,-50%);';
-    winEl.style.cssText = `position:fixed;${posCss}width:${pW}px;${pH ? `height:${pH}px;` : 'max-height:76vh;'}background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:#3b2a22;font-family:inherit;z-index:9991;display:flex;flex-direction:column;pointer-events:auto;box-sizing:border-box;`;
+    winEl.style.cssText = `position:fixed;${posCss}width:${pW}px;${pH ? `height:${pH}px;` : 'max-height:76vh;'}background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:9px;color:var(--px-custom-fg,var(--px-fg,#54444a));font-family:inherit;z-index:9991;display:flex;flex-direction:column;pointer-events:auto;box-sizing:border-box;`;
     root.appendChild(winEl);
+    if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(winEl);
     if (typeof bringFloatFront === 'function') bringFloatFront(winEl);
 
     const getTextCol = (hex) => {
@@ -35971,6 +36019,10 @@
     'st-tb-dark-buff-mask',
     'st-tb-pup-icon-export-mask',
     'st-tb-draftrescue-mask',
+    'st-tb-snap-ask-modal',
+    'st-tb-photo-pick-modal',
+    'st-tb-visit-photo-win',
+    'st-tb-saved-photo-viewer',
   ];
   const syncBagThemeToEl = (el) => {
     if (!el || !pupBagEl) return;
