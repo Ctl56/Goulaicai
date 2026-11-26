@@ -39810,9 +39810,9 @@
         <span style="font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的好友码：<b>${escapeHtmlSimple(myFid)}</b></span>
         <button type="button" id="st-flm-copy" class="st-px-btn active" style="height:22px;padding:0 8px;font-size:10px;flex-shrink:0;">复制</button>
       </div>
-      <div style="display:flex;align-items:stretch;gap:5px;margin-bottom:8px;">
-        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:28px;line-height:28px;padding:0 7px;font-size:10.5px;background:#ffffff !important;background-color:#ffffff !important;color:${pxFg} !important;border:2px solid ${pxBd} !important;border-radius:0 !important;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
-        <button type="button" id="st-flm-add" class="st-px-btn care" style="height:28px;padding:0 10px;font-size:10.5px;flex-shrink:0;box-sizing:border-box;margin:0;">加好友</button>
+      <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+        <input type="text" id="st-flm-in" class="st-px-in" style="flex:1;min-width:0;height:26px !important;min-height:26px !important;max-height:26px !important;line-height:22px !important;padding:0 7px !important;font-size:10.5px !important;background:#ffffff !important;background-color:#ffffff !important;color:${pxFg} !important;border:2px solid ${pxBd} !important;border-radius:0 !important;box-sizing:border-box;margin:0;" placeholder="输入朋友的好友码（pup_...）" />
+        <button type="button" id="st-flm-add" class="st-px-btn care" style="flex:0 0 auto !important;width:auto !important;min-width:0 !important;height:26px !important;min-height:26px !important;max-height:26px !important;line-height:22px !important;padding:0 10px !important;font-size:10.5px !important;white-space:nowrap;box-sizing:border-box;margin:0;">加好友</button>
       </div>
       <div id="st-flm-list" style="display:flex;flex-direction:column;gap:6px;max-height:228px;overflow-y:auto;margin-bottom:9px;box-sizing:border-box;"></div>
       <button type="button" id="st-flm-ok" class="st-px-btn" style="width:100%;">关闭</button>
@@ -54129,12 +54129,15 @@
       if (manual) showPuppyBubble('当前可选范围里没有服装配饰哦，点「可选范围」勾选几件吧~', 2400);
       return;
     }
+    const maxAccCap = typeof getMaxAccSlots === 'function' ? getMaxAccSlots() : 3;
     if (manual && typeof ensureWardDraft === 'function') {
       const d = ensureWardDraft();
       if (ownedO.length) d.outfit = pick(ownedO);
       if (ownedA.length) {
         const shuffled = [...ownedA].sort(() => Math.random() - 0.5);
-        d.accs = shuffled.slice(0, Math.min(2, shuffled.length));
+        const cap = Math.min(maxAccCap, shuffled.length);
+        const pickCnt = 1 + Math.floor(Math.random() * cap);
+        d.accs = shuffled.slice(0, pickCnt);
       }
       if (ownedC.length) d.comp = Math.random() < 0.8 ? pick(ownedC) : 'none';
       if (typeof renderPupWardrobe === 'function') renderPupWardrobe();
@@ -54143,7 +54146,9 @@
     if (ownedO.length) config.puppyOutfit = pick(ownedO);
     if (ownedA.length) {
       const shuffled = [...ownedA].sort(() => Math.random() - 0.5);
-      config.puppyAccs = shuffled.slice(0, Math.min(2, shuffled.length));
+      const cap = Math.min(maxAccCap, shuffled.length);
+      const pickCnt = 1 + Math.floor(Math.random() * cap);
+      config.puppyAccs = shuffled.slice(0, pickCnt);
       config.puppyAcc = config.puppyAccs[0] || 'none';
     }
     if (ownedC.length) config.puppyCompanion = Math.random() < 0.8 ? pick(ownedC) : 'none';
