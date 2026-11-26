@@ -20648,20 +20648,17 @@
     // ===== 11 款剩余 tier 4 传说高阶成就：豪华多层堆叠大件（媲美炽天使汪与万元户） =====
     ach_2048_2048: {
       cls: 'bespoke-lux bespoke-sheen',
-      ult: ['top', 'bottom'],
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-bob', pal: { y: '#e6a028', l: '#fff2a8', w: '#ffffff', o: '#8c520a' },
-          grid: ['.yyyyyyyy.','yywwwwwwyy','ywyyyyyywy','ywywwwwywy','ywyyyyyywy','.yyyyyyyy.','....yy....','..yyyyyy..'] },
-        { pos: 'right:-10px;top:-7px;', w: 11, h: 13, pal: { y: '#ffe066', w: '#ffffff', o: '#e08e28' },
-          frames: [
-            ['....yyy..','...ywwy..','..yyyyy..','....yyy..','...yy....'],
-            ['...yyy...','..ywwy...','.yyyyy...','...yyy...','..yy.....'],
-          ] },
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-bob', pal: { y: '#e09a2b', l: '#fff2b0', w: '#ffffff', o: '#8c520a', g: '#f5cc58' },
+          grid: ['.yyyyyyyy.','yyllllllyy','ylwwwwwwly','ylwyyyywly','ylwyyyywly','ylwwwwwwly','.yyyyyyyy.','..gggggg..'] },
+        { pos: 'right:-10px;top:-7px;', w: 11, h: 10, anim: 'b-tilt', pal: { y: '#e6a82e', l: '#ffe88c', w: '#ffffff' },
+          grid: ['y...y...y','yy.yyy.yy','yyyyyyyyy','.ylwwwly.','.yyyyyyy.'] },
+        { pos: 'left:28%;bottom:-7px;', w: 9, h: 7, anim: 'b-pulse', pal: { y: '#f2c44c', w: '#ffffff' },
+          grid: ['...yy...','..ywwy..','.ywwwwy.','..ywwy..'] },
       ],
     },
     garden_all_42: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 2]],
       pieces: [
         { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 17, pal: { g: '#58b878', p: '#ff96be', c: '#82d8ff', y: '#ffe478', l: '#c496ff', w: '#ffffff' },
           grid: ['..pp..cc..','.pwwpcwwc.','..ppggcc..','.llggggyy.','lwwggggwwy','..llggyy..','....gg....','...gggg...'] },
@@ -20683,20 +20680,18 @@
     },
     gacha_count_1000: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['top', 7], ['bottom', 0]],
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 17, pal: { r: '#eb6c88', w: '#ffffff', c: '#8ce0ff', y: '#ffe066', p: '#ffa6d4', o: '#a8445c' },
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 17, pal: { y: '#e0a42c', l: '#fff2b8', w: '#ffffff', p: '#ff9ec8', c: '#8ce0ff', o: '#8f5a0c' },
           frames: [
-            ['..rrrrrr..','.rwwwwwwr.','rwccwwyywr','rwwppccwwr','.rrrrrrrr.','..rryyrr..','..rrrrrr..'],
-            ['..rrrrrr..','.rwwwwwwr.','rwyywwppwr','rwwccyywwr','.rrrrrrrr.','..rrwwrr..','..rrrrrr..'],
+            ['..yyyyyy..','.ywwwwwwy.','ywppwwccwy','ywwccppwwy','.yyyyyyyy.','..yywwyy..','..yyyyyy..'],
+            ['..yyyyyy..','.ywwwwwwy.','ywccwwppwy','ywwppccwwy','.yyyyyyyy.','..yywwyy..','..yyyyyy..'],
           ] },
-        { pos: 'right:-9px;bottom:-6px;', w: 12, h: 9, pal: { y: '#ffe066', p: '#ff9ec8', c: '#82d8ff', w: '#ffffff' },
-          grid: ['.yy..pp..cc','ywwypwwpcwc','.yy..pp..cc'] },
+        { pos: 'right:-10px;bottom:-7px;', w: 12, h: 10, anim: 'b-tilt', pal: { y: '#e6a82e', l: '#ffe88c', w: '#ffffff', p: '#ff9ec8' },
+          grid: ['.yyyyyyyy.','ywwlppwwly','ywwwwwwwwy','.yyyyyyyy.'] },
       ],
     },
     lt_coins_5000: {
       cls: 'bespoke-lux bespoke-glow',
-      trim: [['bottom', 1]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, pal: { k: '#4a382e', y: '#f2c44c', w: '#fff6cc', r: '#e05868' },
           grid: ['...kkkkkk...','...kwwwwk...','...krrrrk...','.kkkkkkkkkk.','....yyyy....','...yywwyy...','....yyyy....'] },
@@ -20706,7 +20701,6 @@
     },
     hidden_garden_blooms_60: {
       cls: 'bespoke-lux bespoke-glow',
-      trim: [['top', 2]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 17, pal: { g: '#4eb572', l: '#b8f2cc', p: '#ff8eb4', w: '#ffffff', y: '#ffe478' },
           grid: ['...gggg..','..gllgg..','.ggppgg..','ggpwwpg..','.ggppgg..','..gllgg..','...ggyy..','....gg...'] },
@@ -20726,54 +20720,56 @@
     },
     hidden_mem_perfect_5: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 4]],
       pieces: [
-        { pos: 'left:10px;top:-10px;', w: 16, h: 12, anim: 'b-bob', pal: { b: '#6c98e6', w: '#ffffff', y: '#f5cc58', p: '#ff96be' },
+        { pos: 'left:12px;top:-9px;', w: 15, h: 11, anim: 'b-bob', pal: { b: '#7aa4e6', l: '#d6e8ff', w: '#ffffff', y: '#f5cc58', p: '#ff9ec2' },
           grid: ['.bbbb..bbbb.','bwwwwbbwwwwb','bwywwbbwpwwb','bwwwwbbwwwwb','.bbbb..bbbb.'] },
-        { pos: 'right:-11px;top:50%;transform:translateY(-50%);', w: 12, h: 15, pal: { y: '#e6b23c', l: '#fff2b0', g: '#6ec488' },
-          grid: ['...yy...','..yggy..','.yyggyy.','..yggy..','...yy...','..yggy..','...yy...'] },
+        { pos: 'right:-11px;top:50%;transform:translateY(-50%);', w: 12, h: 13, anim: 'b-tilt', pal: { y: '#e6b84c', c: '#9cd8ff', w: '#ffffff' },
+          grid: ['..yyyy..','.yccccy.','ycwwwwcy','.yccccy.','...yy...','....yy..'] },
+        { pos: 'left:-9px;bottom:-6px;', w: 10, h: 9, anim: 'b-pulse', pal: { b: '#7aa4e6', y: '#ffe078', w: '#ffffff' },
+          grid: ['..bb..','.byyb.','bywwyb','.byyb.'] },
       ],
     },
     hidden_mem_hard_3: {
       cls: 'bespoke-lux bespoke-glow',
-      ult: ['top', 'bottom'],
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 16, pal: { y: '#e0a238', w: '#ffffff', r: '#e04e64', k: '#3b2c38' },
-          grid: ['.yyyyyy...','ywwwwwwy..','ywrwwrwy..','ywwrrwwy..','ywwwwwwyyy','.yyyyyywwy','.....ywkwy','.....yyyyy'] },
-        { pos: 'right:-9px;top:-9px;', w: 12, h: 10, anim: 'b-tilt', pal: { y: '#f2c249', w: '#fff6cc', r: '#e85268' },
-          grid: ['..y..y..y.','.yy.yyy.yy','.yyyyyyyyy','.yryywyryy','..yyyyyyy.'] },
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-bob', pal: { y: '#dfa042', l: '#fff2be', w: '#ffffff', r: '#eb6c82' },
+          grid: ['.yyyyyy...','ywwwwwwy..','ywrwwrwy..','ywwrrwwy..','ywwwwwwyyy','.yyyyyywwy','.....ywrwy','.....yyyyy'] },
+        { pos: 'right:-9px;top:-8px;', w: 12, h: 10, anim: 'b-tilt', pal: { y: '#e6ae3c', l: '#ffe894', w: '#ffffff', r: '#eb6c82' },
+          grid: ['y...y...y','yy.yyy.yy','yyyyyyyyy','.ylrwrly.','.yyyyyyy.'] },
       ],
     },
     hidden_job_wrecker: {
       cls: 'bespoke-lux bespoke-glow',
-      trim: [['bottom', 6]],
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 16, pal: { w: '#e6e0e0', k: '#5c5050', r: '#e05252', y: '#f5cc58', o: '#b87442' },
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, pal: { w: '#f5ecec', k: '#734a4a', r: '#db6c6c', y: '#f5cc58', o: '#c48658' },
           frames: [
             ['..w...w....','...w...w...','.kkkkkkkk..','kkwwwwwwkk.','.kkkkkkkk..','...o..o....','..o....o...'],
             ['...w...w...','..w...w....','.kkkkkkkk..','kkwwwwwwkk.','.kkkkkkkk..','...o..o....','..o....o...'],
           ] },
-        { pos: 'right:8px;top:-9px;', w: 11, h: 10, anim: 'b-tilt', pal: { r: '#eb5a5a', y: '#ffe066', w: '#ffffff' },
+        { pos: 'right:8px;top:-9px;', w: 11, h: 10, anim: 'b-tilt', pal: { r: '#e06c6c', y: '#ffe078', w: '#ffffff' },
           grid: ['...rrr...','..ryyyr..','.rywwwyr.','..ryyyr..','...rrr...'] },
+        { pos: 'right:-9px;bottom:-6px;', w: 10, h: 9, anim: 'b-hop', pal: { r: '#db6c6c', p: '#ffd0d0', w: '#ffffff' },
+          grid: ['..rr..','.rwwr.','rwpwpr','.rrrr.'] },
       ],
     },
     hidden_adv_rest_8: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 5]],
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-tilt', pal: { y: '#e0a848', w: '#ffffff', r: '#e05864', b: '#7896e0' },
-          grid: ['..yyyyyy..','.ywwwwwwy.','ywrrwwwwyy','ywwwbbwwyy','.ywwwwwwy.','..yyyyyy..'] },
-        { pos: 'right:-10px;top:-9px;', w: 13, h: 12, pal: { b: '#7c92c4', l: '#c4d4f5', c: '#82d8ff' },
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 14, anim: 'b-tilt', pal: { y: '#e0a848', w: '#ffffff', p: '#c496eb', b: '#8c96e6' },
+          grid: ['..yyyyyy..','.ywwwwwwy.','ywppwwwwyy','ywwwbbwwyy','.ywwwwwwy.','..yyyyyy..'] },
+        { pos: 'right:-10px;top:-9px;', w: 13, h: 12, pal: { b: '#8c82e0', l: '#dcd6ff', c: '#9cd8ff' },
           frames: [
             ['..bbbbbb..','.bllllllb.','bbbbbbbbbb','..c....c..','.....c....'],
             ['..bbbbbb..','.bllllllb.','bbbbbbbbbb','....c.....','..c....c..'],
           ] },
+        { pos: 'left:24%;bottom:-7px;', w: 11, h: 9, anim: 'b-bob', pal: { p: '#9882e0', l: '#e8dfff', w: '#ffffff' },
+          grid: ['..pppppp..','.plwwwwlp.','pppppppppp','....pp....','...pp.....'] },
       ],
     },
     cloud_coadv_5: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'right:-10px;top:-7px;', w: 12, h: 9, anim: 'b-tilt', pal: { y: '#f5cc68', o: '#b8844c', w: '#ffffff' }, grid: ['..oooo..','.oywwyo.','oywwwwyo','.oywwyo.','..oooo..'] },
         { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 12, anim: 'b-bob',
           pal: { o: '#8c5a38', b: '#e8b678', l: '#fff2d6', r: '#e05868' },
           grid: [
@@ -20787,8 +20783,8 @@
     },
     cloud_coadv_20: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'left:-10px;bottom:-6px;', w: 12, h: 9, anim: 'b-sway-lr', pal: { b: '#78b4f5', w: '#ffffff', y: '#ffe694' }, grid: ['..bbbb..','.bwwwwb.','bwwyywwb','.bbbbbb.'] },
         { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14,
           pal: { y: '#f5c249', w: '#fff8d6', b: '#6ea8f0', o: '#9c6822' },
           frames: [
@@ -20799,7 +20795,6 @@
     },
     cloud_coadv_50: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
           pal: { b: '#4c6cc4', c: '#a6dcff', y: '#ffe066', w: '#ffffff' },
@@ -20814,8 +20809,8 @@
     },
     cloud_dual_album_10: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'left:-10px;top:-7px;', w: 12, h: 9, anim: 'b-pulse', pal: { p: '#ff96b8', b: '#82bdf5', w: '#ffffff' }, grid: ['.pp..bb.','pwwpbwwb','.pp..bb.'] },
         { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 12, anim: 'b-tilt',
           pal: { d: '#4a3a44', w: '#ffffff', p: '#ff96b8', b: '#7eb8f5' },
           grid: [
@@ -20828,8 +20823,8 @@
     },
     cloud_dual_album_25: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'right:-10px;bottom:-6px;', w: 13, h: 9, anim: 'b-tilt', pal: { y: '#f5cc68', w: '#ffffff', p: '#ffa6cc' }, grid: ['.yyyyyy.','ywwppwwy','ywwwwwwy','.yyyyyy.'] },
         { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 14,
           pal: { p: '#ff8eb8', b: '#78b8ff', y: '#ffe078', w: '#ffffff' },
           frames: [
@@ -20840,7 +20835,6 @@
     },
     hidden_cloud_dual_album_all: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
           pal: { y: '#f5c84c', p: '#ff8ab8', b: '#7ac4ff', w: '#ffffff' },
@@ -20855,8 +20849,8 @@
     },
     cloud_bond_lv5: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'left:-10px;top:-7px;', w: 12, h: 9, anim: 'b-pulse', pal: { p: '#ff8eb8', w: '#ffffff', y: '#ffe694' }, grid: ['..pp..pp.','.pwwppwwp','..pppppp.','...pppp..','....pp...'] },
         { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 13,
           pal: { p: '#ff6e9c', l: '#ffc2d6', y: '#ffe066', w: '#ffffff' },
           frames: [
@@ -20867,7 +20861,6 @@
     },
     hidden_cloud_bond_lv10: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
           pal: { p: '#ff70a6', b: '#78b4ff', y: '#ffe066', w: '#ffffff' },
@@ -20882,7 +20875,6 @@
     },
     cloud_first_friend: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 10, anim: 'b-bob',
           pal: { b: '#5c94e0', l: '#a8d0ff', w: '#ffffff', y: '#f5cc58' },
@@ -20907,7 +20899,6 @@
     },
     cloud_friend_circle: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-10px;top:-8px;', w: 13, h: 13, anim: 'b-tilt',
           pal: { w: '#ffffff', o: '#b88a96', p: '#ff9ec0', b: '#82bdf2' },
@@ -20934,8 +20925,8 @@
     },
     cloud_water_5: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'left:-10px;bottom:-6px;', w: 12, h: 9, anim: 'b-bob', pal: { g: '#64c292', c: '#8ce0ff', w: '#ffffff' }, grid: ['...cc...','..cwwc..','.ggccgg.','gwwggwwg','..gggg..'] },
         { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 13,
           pal: { g: '#58b88a', l: '#9ee8c4', w: '#ffffff', c: '#74d0ff' },
           frames: [
@@ -20958,7 +20949,6 @@
     },
     cloud_water_20: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 14,
           pal: { g: '#4ea882', c: '#d9f7ff', w: '#ffffff', f: '#ff92b8' },
@@ -20979,7 +20969,6 @@
     },
     cloud_note_10: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-11px;top:50%;transform:translateY(-50%);', w: 13, h: 13,
           pal: { r: '#e05252', y: '#fff3b8', o: '#c9a66b', l: '#b89458' },
@@ -21004,7 +20993,6 @@
     },
     cloud_note_30: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'right:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
           pal: { r: '#d95454', l: '#ff8a8a', w: '#ffffff', y: '#f5cc58', d: '#8c3232' },
@@ -21019,7 +21007,6 @@
     },
     cloud_poke_15: {
       cls: 'bespoke-lux',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 11, anim: 'b-bob',
           pal: { f: '#f7d6b5', p: '#ff8eb0', o: '#8c5a44' },
@@ -21039,8 +21026,8 @@
     },
     hidden_cloud_santa: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
+        { pos: 'left:-10px;top:-7px;', w: 12, h: 9, anim: 'b-hop', pal: { r: '#e05868', y: '#ffe078', w: '#ffffff', g: '#66c28e' }, grid: ['..ggyygg..','.rwwwwwwr.','rwwyyyywwr','.rrrrrrrr.'] },
         { pos: 'right:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15,
           pal: { r: '#e04858', y: '#ffd659', w: '#ffffff', g: '#66c28e' },
           frames: [
@@ -21051,7 +21038,6 @@
     },
     hidden_cloud_soulmate: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 12, h: 14, anim: 'b-bob',
           pal: { y: '#f5cc58', b: '#82b8ff', p: '#ff92c2', w: '#ffffff' },
@@ -21072,7 +21058,6 @@
     },
     hidden_visit_bestie: {
       cls: 'bespoke-lux bespoke-sheen',
-      trim: [['bottom', 0]],
       pieces: [
         // 右侧主复合图案：明信片 + 冒热气草莓奶油茶杯 + 金色火漆印章（多元素有机组合！）
         { pos: 'right:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 16,
@@ -21119,6 +21104,118 @@
             '.ywwy.pp',
             '..yy..p.',
           ] },
+      ],
+    },
+    aff_lv10: {
+      cls: 'bespoke-lux bespoke-glow',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 12, anim: 'b-pulse', pal: { p: '#e882a6', l: '#ffd6e6', w: '#ffffff', y: '#ffe484' },
+          grid: ['.pp....pp.','pwwp..pllp','pppppppppp','.pppppppp.','..ppyypp..','....pp....'] },
+        { pos: 'right:-10px;top:-7px;', w: 11, h: 10, anim: 'b-bob', pal: { p: '#d98ca8', l: '#ffe4ef', w: '#ffffff' },
+          grid: ['..pp..pp.','.pwwppwwp','.pppppppp','..pppppp.','....pp...'] },
+      ],
+    },
+    game_champ: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 13, anim: 'b-bob', pal: { y: '#dfb340', l: '#fff4c4', w: '#ffffff', r: '#f2889b', o: '#8c6014' },
+          grid: ['.yyyyyyyy.','yywwwwwwyy','ywoywrrwwy','ywwwwwwwwy','.yy....yy.'] },
+        { pos: 'right:-9px;bottom:-6px;', w: 11, h: 9, anim: 'b-tilt', pal: { y: '#e6b84c', l: '#fff2b0', w: '#ffffff' },
+          grid: ['y..yy..y','yyyyyyyy','.ylwwly.','.yyyyyy.'] },
+      ],
+    },
+    fun_game_all: {
+      cls: 'bespoke-std',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 14, anim: 'b-tilt', pal: { b: '#7a94eb', l: '#dce6ff', w: '#ffffff', p: '#ff9ec2', y: '#ffe078' },
+          grid: ['...pppp...','..pwwwwp..','...pppp...','....bb....','.bbbbbbbb.','bllbyybllb','.bbbbbbbb.'] },
+        { pos: 'right:-9px;top:-7px;', w: 11, h: 8, anim: 'b-sway-lr', pal: { b: '#7a94eb', l: '#e6eeff', y: '#ffe078', w: '#ffffff' },
+          grid: ['.bbbbbbb.','blwywwylb','.bbbbbbb.'] },
+      ],
+    },
+    game_legend_100: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-bob', pal: { b: '#7aa8e0', l: '#d8ecff', y: '#f5c854', w: '#ffffff' },
+          grid: ['y..yy..y..','yyyyyyyy..','.ylwwly...','.bbbbbb...','bllwwllb..','.bbbbbb...','...bb.....'] },
+        { pos: 'right:-9px;bottom:-6px;', w: 11, h: 10, anim: 'b-pulse', pal: { y: '#f2c44c', l: '#fff2b0', w: '#ffffff', b: '#7aa8e0' },
+          grid: ['..yyyy..','.ywwwwy.','ywbbwwby','.ywwwwy.','..yyyy..'] },
+      ],
+    },
+    hidden_2048_double: {
+      cls: 'bespoke-std',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 13, anim: 'b-hop', pal: { y: '#e0a538', l: '#fff2be', w: '#ffffff', o: '#946214' },
+          grid: ['.yyyyy....','ywwwwyy...','ywyywyyyy.','.yyyywwwwy','....ywyywy','.....yyyy.'] },
+        { pos: 'right:-9px;top:-7px;', w: 10, h: 10, anim: 'b-bob', pal: { y: '#e6b23c', l: '#fff2b0', w: '#ffffff' },
+          grid: ['..yyyy..','.ylllly.','ylwwwwly','.ylllly.','..yyyy..'] },
+      ],
+    },
+    hidden_mem_streak_5: {
+      cls: 'bespoke-std',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 13, anim: 'b-sway-lr', pal: { b: '#829ce6', l: '#e0e8ff', w: '#ffffff', y: '#f5cc58' },
+          grid: ['.bbbbb....','bwwwwwb...','bwwywwbbbb','bwwwwwbwwb','.bbbbbbwyb','......bbbb'] },
+        { pos: 'right:-9px;bottom:-6px;', w: 10, h: 10, anim: 'b-tilt', pal: { y: '#f2c44c', l: '#fff2b0', w: '#ffffff' },
+          grid: ['...yy...','..yllly.','.ylwwwly','yyyyyyyy','...yy...'] },
+      ],
+    },
+    hidden_gacha_lucky: {
+      cls: 'bespoke-std',
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 12, anim: 'b-sway-lr', pal: { p: '#c482e0', l: '#f2d9ff', w: '#ffffff', y: '#ffe078', r: '#ff96b8' },
+          grid: ['...pppp...','..pwwwwpp.','ppwrrwwppp','..pwwwwpp.','...pppp...'] },
+        { pos: 'right:-9px;top:-7px;', w: 10, h: 10, anim: 'b-bob', pal: { p: '#c482e0', l: '#f4e0ff', w: '#ffffff', y: '#ffe078' },
+          grid: ['..pppp..','.pllllp.','pwwwwwwp','.yyyyyy.','..yyyy..'] },
+      ],
+    },
+    hidden_gacha_ssr_lucky: {
+      cls: 'bespoke-lux bespoke-glow',
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-bob', pal: { y: '#e6b23c', l: '#fff4c4', w: '#ffffff', p: '#ff9ec2', k: '#5e3d12' },
+          grid: ['..y..y..y..','..yyyyyyy..','.yywwwwwwy.','ywkwwwwkwy.','ywwwppwwwy.','.yyyyyyyy..','..llllll...'] },
+        { pos: 'right:-10px;bottom:-6px;', w: 11, h: 11, anim: 'b-tilt', pal: { g: '#6ec488', l: '#c8f5d6', w: '#ffffff', y: '#f2c44c' },
+          grid: ['..gg..gg..','.gllggllg.','.gggggggg.','..ggyygg..','....gg....'] },
+      ],
+    },
+    hidden_lucky_coin: {
+      cls: 'bespoke-std',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 13, anim: 'b-pulse', pal: { y: '#e0b030', l: '#fff4be', w: '#ffffff', g: '#68c284' },
+          grid: ['..yyyyyy..','.ywwwwwwy.','ywggwwggwy','ywwwggwwwy','.ywwwwwwy.','..yyyyyy..'] },
+        { pos: 'right:-9px;top:-7px;', w: 11, h: 9, anim: 'b-tilt', pal: { y: '#e6b840', p: '#ffb5cc', w: '#ffffff' },
+          grid: ['..pp..pp.','.pwwyywwp','..pp..pp.'] },
+      ],
+    },
+    hidden_gacha_triple_ssr: {
+      cls: 'bespoke-lux bespoke-glow',
+      ult: ['top', 'bottom', 'left', 'right'],
+      ultKey: 'seraph_wings',
+      pieces: [
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, anim: 'b-bob', pal: { y: '#e6a825', l: '#fff4be', w: '#ffffff', p: '#ff9ec8', c: '#8ce0ff' },
+          grid: ['...yyyy...','..ywwwwy..','ppyyyyyycc','pwwyyyywwc','.ppyyyycc.','...yyyy...'] },
+        { pos: 'right:-12px;top:-8px;', w: 12, h: 11, anim: 'b-tilt', pal: { y: '#e6a825', l: '#ffe88c', w: '#ffffff', p: '#ff9ec8' },
+          grid: ['y...y...y','yy.yyy.yy','yyyyyyyyy','.ylpwply.','.yyyyyyy.'] },
+      ],
+    },
+    hidden_merchant_halfticket: {
+      cls: 'bespoke-lux bespoke-sheen',
+      pieces: [
+        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 12, anim: 'b-sway-lr', pal: { y: '#e6a838', l: '#fff4c4', w: '#ffffff', r: '#eb6c82' },
+          grid: ['.yyyyyyyyy.','ylwwwwwwwly','ywwrrwrrwwy','ylwwwwwwwly','.yyyyyyyyy.'] },
+        { pos: 'right:-10px;top:-7px;', w: 11, h: 11, anim: 'b-pulse', pal: { y: '#e6b23c', c: '#9cd8ff', w: '#ffffff' },
+          grid: ['...yy...','..yccy..','.ycwwcy.','..yccy..','...yy...'] },
+        { pos: 'left:28%;bottom:-7px;', w: 11, h: 8, anim: 'b-bob', pal: { y: '#f2c44c', p: '#ffb5cc', w: '#ffffff' },
+          grid: ['.pp...pp.','pwwyyywwp','.pp...pp.'] },
+      ],
+    },
+    gacha_count_300: {
+      cls: 'bespoke-std',
+      pieces: [
+        { pos: 'left:-12px;top:50%;transform:translateY(-50%);', w: 14, h: 13, anim: 'b-bob', pal: { p: '#b38ce6', l: '#efe0ff', w: '#ffffff', y: '#ffe078', c: '#94dcff' },
+          grid: ['..pppp....','.pllllp...','pwwwwwwccc','.yyyyyycwc','..yyyy..cc'] },
+        { pos: 'right:-9px;bottom:-6px;', w: 10, h: 10, anim: 'b-tilt', pal: { p: '#b38ce6', l: '#f0e4ff', w: '#ffffff' },
+          grid: ['..pppp..','.pwwwwp.','pwllllwp','.pppppp.'] },
       ],
     },
   };
@@ -21215,19 +21312,28 @@
   // 原创非模板化铭牌一体式包裹画布（96x36 逻辑像素，徽章主体位于 x:10..86, y:10..26，四周各留 10px 创作空间）
   // 每一款均按标题与主题独立手绘左+上包裹、顶篷、底托、环抱等原创组合构图，绝不复用模板或零碎散点！
   const renderOriginalBadgeWrap = (id, bdCol, fgCol) => {
-    // 商店平价精选(6) + 各领域代表成就(24) + 扭蛋SSR精选(2)：每款均为完全原创手绘包裹构图（保留贴图叠层，绝不模板化、绝不重复）
+    // 6 款好评商店包裹 + 3 款 SSR 扭蛋原创包裹 + 23 款各分类成就原创包裹（1款1型绝不重复，柔和同色系有机像素造型，零生硬矩形条）
     const HANDCRAFTED_WRAPS = new Set([
+      // 商店好评 6 款（原样保留）
       'sb_sakura_dream', 'sb_sweet_berry', 'sb_pearl_lady',
       'sb_clover_luck', 'sb_mid_nap_master', 'sb_milk_tea_boss',
-      'garden_bloom', 'garden_collector_15', 'garden_collector_30', 'garden_all_42',
-      'kitchen_lv10_master', 'kitchen_dark_chef',
-      'adv_album_all', 'adv_curio_all', 'hidden_adv_miracle', 'hidden_adv_legend',
-      'collector_max', 'ach_wardrobe_30', 'hidden_fashion_sss',
-      'soulmate', 'aff_lv10', 'hidden_cloud_soulmate', 'hidden_cloud_bond_lv10',
-      'rich_tycoon_500', 'lt_coins_5000', 'ach_rich_10k',
-      'gacha_count_300', 'gacha_count_1000', 'hidden_gacha_ssr_lucky',
-      'game_champ', 'ach_2048_2048',
-      'gb_gacha_destiny_star', 'gb_gacha_sleepy_rich'
+      // 扭蛋 SSR 原创包裹 3 款
+      'gb_gacha_destiny_star', 'gb_gacha_sleepy_rich', 'gb_gacha_read_nonsense',
+      // 游乐与扭蛋成就原创包裹 5 款
+      'game_champ', 'ach_2048_2048', 'hidden_gacha_ssr_lucky',
+      'gacha_count_1000', 'hidden_mem_hard_3',
+      // 花园成就原创包裹 4 款
+      'garden_all_42', 'hidden_garden_blooms_60', 'garden_collector_30', 'garden_bloom_100',
+      // 厨房成就原创包裹 3 款
+      'kitchen_lv10_master', 'lt_cook_100', 'kitchen_god_stroke',
+      // 冒险成就原创包裹 3 款
+      'adv_album_all', 'adv_curio_all', 'hidden_adv_legend',
+      // 衣橱成就原创包裹 2 款
+      'ach_wardrobe_30', 'hidden_fashion_sss',
+      // 陪伴、打卡与联机成就原创包裹 4 款
+      'aff_lv10', 'soulmate', 'ach_ck_100', 'hidden_cloud_bond_lv10',
+      // 财富成就原创包裹 2 款
+      'lt_coins_5000', 'ach_rich_10k',
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
     const cv = doc.createElement('canvas');
@@ -21236,250 +21342,241 @@
     cv.style.cssText = 'position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);pointer-events:none;image-rendering:pixelated;z-index:2;';
     const g = cv.getContext('2d');
     const px = (x, y, c, w = 1, h = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+    // 辅助：画柔和圆润小花簇 / 珍珠 / 云团 / 花边扇贝，彻底告别生硬直条
+    const dot = (x, y, c, hi = '#ffffff') => { px(x, y, c, 4, 4); px(x + 1, y + 1, hi, 1, 1); };
+    const blossom = (x, y, c, mid = '#fffdf9') => {
+      px(x + 1, y, c, 3, 5); px(x, y + 1, c, 5, 3); px(x + 2, y + 2, mid, 1, 1);
+    };
+    const puff = (x, y, c, hi = '#ffffff') => {
+      px(x + 1, y, c, 4, 1); px(x, y + 1, c, 6, 3); px(x + 1, y + 4, c, 4, 1);
+      px(x + 1, y + 1, hi, 2, 1);
+    };
+    const leaf = (x, y, c, hi) => {
+      px(x, y + 1, c, 4, 2); px(x + 1, y, c, 2, 4); if (hi) px(x + 1, y + 1, hi, 1, 1);
+    };
 
+    // ==================== 商店好评 6 款（原样保留） ====================
     if (id === 'sb_sakura_dream') {
-      // 爱狗人士：左+上蜿蜒樱花枝包裹 + 枝头粉白花簇 + 右下飘落单瓣
       px(6, 26, '#7a4b3a', 3, 2); px(5, 13, '#7a4b3a', 3, 14); px(6, 8, '#7a4b3a', 32, 2); px(36, 7, '#7a4b3a', 14, 2);
       px(3, 11, '#ff9eb8', 6, 5); px(5, 12, '#fff5f8', 2, 2);
       px(18, 5, '#ffb8cc', 7, 5); px(20, 7, '#ffffff', 3, 2);
       px(42, 5, '#ff9eb8', 6, 4); px(44, 6, '#ffe680', 2, 1);
       px(82, 27, '#ffb8cc', 5, 3); px(84, 28, '#ffffff', 2, 1);
-    } else if (id === 'sb_star_ocean') {
-      // 超级狗力：左+下闪电能量弧包裹 + 右上跃起红金超人披风角
-      px(5, 14, '#54a8ff', 3, 14); px(7, 26, '#54a8ff', 42, 3); px(14, 27, '#ffe066', 18, 2); px(46, 25, '#8ce0ff', 10, 3);
-      px(78, 5, '#e84858', 12, 4); px(83, 9, '#e84858', 7, 8); px(80, 6, '#ffe066', 4, 2);
-    } else if (id === 'sb_cloud_candy') {
-      // 黄金左脸：左+上复古金色相机取景框包角 + 右上柔光灯弧 + 底部胶片刻度
-      px(5, 6, '#e0a22e', 16, 3); px(5, 6, '#e0a22e', 3, 14); px(7, 8, '#fff4bd', 10, 1);
-      px(75, 5, '#fff4bd', 13, 3); px(85, 6, '#e0a22e', 3, 10); px(80, 3, '#ffffff', 5, 2);
-      for (let x = 22; x <= 74; x += 6) px(x, 27, '#e0a22e', 3, 2);
     } else if (id === 'sb_sweet_berry') {
-      // 妈妈咪呀：整条顶边厚实草莓奶油淋面垂滴 + 左上带叶大草莓
       px(9, 6, '#fffdf9', 78, 4); px(14, 10, '#fffdf9', 6, 3); px(30, 10, '#fffdf9', 8, 4); px(54, 10, '#fffdf9', 6, 3); px(72, 10, '#fffdf9', 7, 4);
       px(5, 4, '#eb4c6a', 8, 7); px(7, 3, '#68c274', 5, 2); px(7, 6, '#ffe694', 1, 1); px(10, 8, '#ffe694', 1, 1);
       px(82, 24, '#ffb5c8', 6, 5); px(84, 25, '#fffdf9', 2, 2);
-    } else if (id === 'sb_angel_whisper') {
-      // 真龙天狗：左+上青金龙鳞云纹缠绕 + 右侧盘旋金龙尾与祥云
-      px(5, 8, '#e09a38', 3, 18); px(5, 7, '#e09a38', 46, 3); px(10, 6, '#ffe680', 12, 2); px(28, 6, '#64c2a8', 14, 2);
-      px(85, 11, '#e09a38', 5, 15); px(81, 24, '#ffe680', 9, 4); px(87, 8, '#64c2a8', 4, 4);
-    } else if (id === 'sb_moon_lullaby') {
-      // 吸狗狂魔：左+下毛绒软爪拥抱包裹 + 顶边冒出双爱心雾
-      px(4, 15, '#d6dcff', 5, 13); px(6, 25, '#d6dcff', 38, 4); px(4, 13, '#8f96e8', 5, 2);
-      px(10, 26, '#ffb5cc', 4, 2); px(18, 26, '#ffb5cc', 4, 2); px(26, 26, '#ffb5cc', 4, 2);
-      px(66, 4, '#ff8eb0', 5, 4); px(68, 5, '#ffffff', 1, 1); px(75, 6, '#c4a8ff', 4, 3);
     } else if (id === 'sb_pearl_lady') {
-      // 摸鱼大王：底边整片晃动浅蓝水波包裹 + 右下摆尾小咸鱼 + 左上懒云
       for (let x = 8; x <= 84; x += 6) { px(x, 26, '#8cc8f5', 5, 3); px(x + 2, 25, '#dff3ff', 3, 2); }
       px(78, 23, '#9aa8bd', 10, 5); px(88, 22, '#9aa8bd', 3, 7); px(80, 24, '#3b2a22', 1, 1);
       px(6, 4, '#ffffff', 18, 4); px(9, 2, '#f0e6ff', 12, 3);
-    } else if (id === 'sb_royal_pup') {
-      // 天选干饭狗：左+下金边小饭碗托起 + 右上交叉像素筷子与热饭香雾
-      px(6, 18, '#dfa838', 3, 10); px(8, 26, '#dfa838', 56, 3); px(12, 28, '#f7d87c', 48, 2);
-      px(76, 4, '#b87a4b', 14, 2); px(78, 8, '#b87a4b', 12, 2);
-      px(80, 12, '#ffffff', 2, 5); px(85, 10, '#fff5d6', 2, 6);
     } else if (id === 'sb_clover_luck') {
-      // 欧气爆棚：左+上青翠四叶草藤蔓紧紧缠绕 + 右下冒出双嫩芽
       px(5, 9, '#5cb874', 3, 18); px(5, 7, '#5cb874', 44, 3); px(12, 5, '#8ee09e', 6, 4); px(30, 5, '#64bf84', 7, 4);
       px(3, 15, '#8ee09e', 5, 5); px(5, 17, '#ffffff', 1, 1);
       px(82, 24, '#64bf84', 6, 5); px(84, 22, '#a8f0b4', 4, 3);
-    } else if (id === 'sb_ribbon_idol') {
-      // 汪界顶流：左+上+下绯粉缎带斜绕 + 左上立体蝴蝶结 + 右上聚光灯束
-      px(4, 9, '#e082b8', 4, 19); px(6, 7, '#f5a8d4', 36, 3); px(6, 26, '#e082b8', 28, 3);
-      px(3, 5, '#ff9ec9', 9, 5); px(6, 6, '#ffffff', 3, 2);
-      px(74, 4, '#fff4b8', 14, 3); px(80, 7, '#ffe078', 8, 4);
-    } else if (id === 'sb_lantern_night') {
-      // 暴富小狗：右+下堆叠小金元宝与红绳铜钱串包裹 + 左上暖红小灯笼
-      px(84, 14, '#e04858', 4, 14); px(46, 26, '#f2c249', 42, 4); px(54, 24, '#ffe680', 10, 3); px(70, 24, '#ffe680', 10, 3);
-      px(5, 4, '#e04858', 8, 7); px(7, 5, '#fff5c8', 4, 4); px(8, 11, '#f2c249', 2, 4);
-    } else if (id === 'sb_crystal_prism') {
-      // 绝世小甜心：左+上冰蓝粉紫透明糖纸包裹 + 底边珍珠串链
-      px(4, 7, '#8ce0ff', 4, 16); px(6, 6, '#e6b8ff', 40, 3); px(14, 4, '#ffffff', 10, 2); px(32, 4, '#ffb8e0', 10, 2);
-      for (let x = 22; x <= 84; x += 5) { px(x, 26, '#ffffff', 3, 3); px(x + 1, 27, '#c7e9ff', 1, 1); }
-    } else if (id === 'sb_paw_guardian') {
-      // 十级顺毛师：右+上木柄圆梳弧形包裹 + 左边飞起的奶油软毛球
-      px(52, 6, '#c78d5a', 36, 3); px(85, 6, '#c78d5a', 4, 18); px(56, 4, '#f5d29c', 26, 2);
-      px(3, 12, '#fffdf7', 7, 6); px(4, 20, '#ffdfea', 6, 5); px(6, 14, '#ffffff', 2, 2);
-    } else if (id === 'sb_golden_bell') {
-      // 宇宙第一乖：顶边淡金光环弧托起 + 左+下系带小铃铛蝴蝶结
-      px(18, 4, '#ffe078', 60, 2); px(26, 2, '#fff6cc', 44, 2);
-      px(5, 16, '#f2c249', 4, 12); px(7, 26, '#f2c249', 30, 3); px(4, 22, '#ffe078', 7, 6); px(6, 24, '#6b4906', 3, 2);
-    } else if (id === 'sb_music_star') {
-      // 熬夜冠军：左+上深蓝夜空弯月垂挂小夜灯 + 右下热咖啡杯
-      px(5, 6, '#5c6eb8', 3, 16); px(5, 6, '#5c6eb8', 42, 3);
-      px(4, 4, '#ffe680', 8, 8); px(8, 5, '#2f3d7a', 5, 6);
-      px(79, 21, '#ffffff', 9, 7); px(88, 22, '#ffffff', 2, 4); px(81, 17, '#c9d6ff', 2, 3); px(85, 16, '#c9d6ff', 2, 4);
-    } else if (id === 'sb_arcade_god') {
-      // 毛茸茸教主：左+上+右一整圈蓬松奶油云朵绒领包裹
-      for (let x = 6; x <= 84; x += 8) { px(x, 5, '#ffffff', 7, 5); px(x + 2, 4, '#eef5ff', 4, 2); }
-      px(4, 10, '#ffffff', 5, 14); px(87, 10, '#ffffff', 5, 14); px(3, 14, '#e6f0ff', 2, 6); px(91, 14, '#e6f0ff', 2, 6);
-    } else if (id === 'sb_ancient_fan') {
-      // 大宋第一汪：右+下青瓷展开折扇托底包裹 + 左上斜垂玉佩流苏
-      px(44, 26, '#7dc4a8', 44, 4); px(52, 24, '#d9f5eb', 34, 3); px(84, 14, '#64b898', 5, 14); px(86, 16, '#fff4d6', 2, 10);
-      px(5, 6, '#64b898', 6, 6); px(7, 8, '#ffffff', 2, 2); px(7, 12, '#e07a6c', 2, 8);
-    } else if (id === 'sb_heart_devotion') {
-      // 人间富贵狗：左+上丝绒金链包裹 + 右下大颗红宝石胸针
-      px(5, 8, '#f0c458', 3, 16); px(5, 7, '#f0c458', 50, 3);
-      for (let x = 10; x <= 50; x += 6) px(x, 6, '#ff8cb0', 3, 3);
-      px(79, 22, '#e03c68', 9, 7); px(81, 24, '#ffb8cc', 4, 3); px(78, 21, '#f0c458', 11, 1);
-    } else if (id === 'sb_aurora_halo') {
-      // 满级宠狗狂：顶边一整道流动青紫极光幕帘垂落 + 左+下双色丝带环抱
-      px(8, 5, '#7af0d4', 28, 3); px(34, 4, '#8cc8ff', 28, 3); px(60, 5, '#c9a6ff', 26, 3);
-      px(5, 12, '#8cc8ff', 3, 16); px(6, 26, '#c9a6ff', 38, 3); px(16, 27, '#7af0d4', 18, 2);
-    } else if (id === 'sb_mid_cuddle_pro') {
-      // 贴贴小天才：左右两只软乎乎小毛爪从两侧探出环抱铭牌
-      px(2, 12, '#fff5f8', 7, 12); px(4, 14, '#ffb5cc', 3, 3); px(4, 19, '#ffb5cc', 3, 3);
-      px(87, 12, '#fff5f8', 7, 12); px(89, 14, '#ffb5cc', 3, 3); px(89, 19, '#ffb5cc', 3, 3);
     } else if (id === 'sb_mid_nap_master') {
-      // 带薪打盹王：底部整块格纹软枕头托住铭牌 + 左上耷拉一角小棉被
       px(10, 26, '#c9e0ff', 76, 4); px(16, 27, '#ffffff', 12, 2); px(42, 27, '#ffffff', 12, 2); px(68, 27, '#ffffff', 12, 2);
       px(5, 6, '#b8a8f0', 18, 5); px(5, 11, '#d9d0ff', 6, 8);
-    } else if (id === 'sb_mid_snack_boss') {
-      // 零食大户：左+上彩色波板糖与曲奇饼干拼盘包裹
-      px(4, 6, '#ff8cb0', 8, 8); px(6, 8, '#ffffff', 4, 4); px(7, 14, '#ffffff', 2, 10);
-      px(14, 5, '#d99858', 10, 5); px(17, 6, '#5c3418', 2, 2); px(21, 7, '#5c3418', 1, 1);
-      px(26, 6, '#ffe078', 16, 3);
-    } else if (id === 'sb_mid_good_mood') {
-      // 快乐小狗勾：顶边整道马卡龙彩虹拱桥跨越 + 左下向日葵小花
-      px(14, 4, '#ff9eb8', 68, 2); px(18, 6, '#ffe078', 60, 2); px(22, 8, '#8ce6b8', 52, 1);
-      px(4, 21, '#ffe066', 8, 7); px(6, 23, '#9c6228', 4, 3);
-    } else if (id === 'sb_mid_lucky_paw') {
-      // 招财小肉垫：左+上招财红绳金铃项圈包裹 + 右下抬起的粉嫩招财肉垫
-      px(5, 8, '#e04858', 3, 16); px(5, 7, '#e04858', 46, 3); px(16, 5, '#f2c249', 7, 5); px(18, 7, '#6b4208', 3, 1);
-      px(81, 21, '#fff5e6', 9, 8); px(83, 24, '#ff9eb8', 5, 3); px(82, 22, '#ff9eb8', 2, 2); px(87, 22, '#ff9eb8', 2, 2);
-    } else if (id === 'sb_milk_cloud_pup') {
-      // 云端软糖汪：左+下双色透明小熊软糖与绵密奶泡包裹
-      px(4, 14, '#9ad8ff', 6, 12); px(5, 16, '#ffffff', 2, 2);
-      px(8, 25, '#ffffff', 52, 4); px(14, 24, '#ffd6e8', 12, 3); px(36, 24, '#d6f0ff', 14, 3);
-    } else if (id === 'sb_lazy_sunshine') {
-      // 晒太阳冠军：右+上暖橘半轮大太阳光芒包裹 + 底部青青草坡
-      px(72, 3, '#ffbd4a', 16, 7); px(76, 5, '#fff4b8', 8, 4); px(86, 10, '#ffbd4a', 4, 10);
-      px(12, 26, '#8cd488', 68, 3); px(24, 25, '#b8eb9e', 24, 2);
     } else if (id === 'sb_milk_tea_boss') {
-      // 全糖去冰汪：底部奶茶液面与颗颗Q弹黑糖珍珠包裹 + 右上斜插粗吸管
       px(8, 25, '#e8c29b', 78, 4);
       for (let x = 14; x <= 78; x += 9) px(x, 26, '#4a2e1f', 4, 3);
       px(78, 2, '#f294a8', 4, 9); px(80, 4, '#ffffff', 1, 5);
-    } else if (id === 'sb_ult_candy_queen') {
-      // 甜心教主：顶边童话糖果城堡尖顶华盖 + 左+下马卡龙缎带全包
-      px(18, 5, '#ff9ec9', 60, 4); px(24, 2, '#ffe078', 8, 4); px(44, 1, '#8ce6ff', 8, 5); px(64, 2, '#c9a6ff', 8, 4);
-      px(4, 10, '#ff9ec9', 4, 18); px(6, 26, '#9bf2d8', 56, 4); px(20, 27, '#ffe078', 22, 2);
-    } else if (id === 'sb_ult_sakura_empress') {
-      // 樱花公主汪：左+上+右拱形垂枝樱花廊包裹 + 顶边迷你珍珠皇冠
-      px(5, 8, '#7a4b3a', 3, 18); px(88, 8, '#7a4b3a', 3, 18); px(5, 6, '#ffb8cc', 86, 3);
-      px(38, 2, '#f2c249', 20, 4); px(42, 1, '#ffffff', 3, 2); px(51, 1, '#ffffff', 3, 2);
-      px(3, 12, '#ff9eb8', 6, 5); px(87, 14, '#ff9eb8', 6, 5);
-    } else if (id === 'sb_ult_ancient_jade') {
-      // 大明第一萌：左+上碧玉如意卷云雕框包裹 + 右下朱红金丝宫绦流苏
-      px(5, 6, '#5cb896', 4, 20); px(5, 6, '#5cb896', 54, 3); px(9, 4, '#d9fff0', 14, 2); px(34, 4, '#ffe078', 16, 2);
-      px(84, 18, '#e04858', 5, 11); px(85, 22, '#ffe078', 3, 6); px(76, 26, '#5cb896', 12, 3);
-    } else if (id === 'sb_ult_star_emperor') {
-      // 发财小锦鲤：底部碧波水浪包裹 + 左下跃出橘白大锦鲤划过顶边水花
-      for (let x = 8; x <= 84; x += 6) { px(x, 26, '#7ec8eb', 5, 3); px(x + 2, 25, '#ffffff', 3, 2); }
-      px(4, 12, '#ff7a45', 10, 6); px(7, 13, '#ffffff', 4, 3); px(2, 14, '#ff9e66', 3, 4);
-      px(16, 5, '#d6f4ff', 28, 3); px(24, 3, '#ffe078', 10, 2);
-    } else if (id === 'sb_ult_angel_seraph') {
-      // 炽天使汪：左右不对称舒展纯白金边多层大羽翼包裹 + 顶边微斜暖金光环
-      px(1, 9, '#ffffff', 8, 5); px(2, 14, '#e6f4ff', 7, 5); px(4, 19, '#ffffff', 5, 5);
-      px(87, 11, '#ffffff', 8, 5); px(87, 16, '#e6f4ff', 7, 5); px(87, 21, '#ffffff', 5, 5);
-      px(26, 3, '#ffe078', 44, 2); px(34, 5, '#fff6cc', 28, 1);
-    } else if (id === 'sb_ult_meow_dog_god') {
-      // 宇宙无敌狗：左+下深邃星云与倾斜土星光环环绕 + 右上悬浮棱镜行星
-      px(4, 10, '#7c62d9', 4, 18); px(6, 26, '#6298e6', 54, 4); px(16, 27, '#ffe078', 24, 2);
-      px(78, 4, '#c9a6ff', 10, 7); px(74, 7, '#ffe078', 18, 2); px(82, 5, '#ffffff', 2, 2);
-    } else if (id === 'sb_ult_moon_valkyrie') {
-      // 天选小可爱：左+下柔粉细蕾丝花边包裹 + 右上超大立体丝绒蝴蝶结
-      for (let y = 10; y <= 24; y += 4) px(5, y, '#ffffff', 3, 3);
-      for (let x = 8; x <= 74; x += 5) { px(x, 26, '#ffffff', 4, 3); px(x + 1, 27, '#ffbfd4', 2, 2); }
-      px(74, 4, '#eb7ca4', 15, 6); px(79, 5, '#ffffff', 5, 3); px(77, 10, '#f7a8c4', 3, 4); px(84, 10, '#f7a8c4', 3, 4);
-    } else if (id === 'sb_supreme_rainbow') {
-      // 绝版七彩萌主：顶边七彩棱镜王冠华盖 + 左+下双层虹彩丝绸飘带环抱
-      px(14, 4, '#ff8cb8', 14, 3); px(28, 3, '#ffe078', 14, 4); px(42, 2, '#8ce6ff', 14, 5); px(56, 3, '#c9a6ff', 14, 4); px(70, 4, '#9bf2d8', 12, 3);
-      px(4, 10, '#c9a6ff', 4, 18); px(6, 26, '#ff8cb8', 32, 3); px(38, 26, '#8ce6ff', 32, 3); px(70, 26, '#ffe078', 16, 3);
-    } else if (id === 'garden_bloom') {
-      // 像素小花匠：左+下青绿苗圃栅栏托起 + 左上探出嫩芽小黄花
-      px(5, 16, '#8c6239', 3, 12); px(7, 26, '#8c6239', 48, 3); px(14, 24, '#a8794c', 3, 5); px(30, 24, '#a8794c', 3, 5); px(46, 24, '#a8794c', 3, 5);
-      px(4, 11, '#68c274', 4, 5); px(3, 8, '#ffe066', 6, 4); px(5, 9, '#ffffff', 2, 2);
-    } else if (id === 'garden_collector_15') {
-      // 百花小园丁：右+上爬藤月季枝包裹 + 粉白两朵小花苞
-      px(44, 6, '#58a864', 44, 3); px(85, 6, '#58a864', 3, 16);
-      px(52, 4, '#ff8cb0', 6, 5); px(54, 5, '#fff5f8', 2, 2); px(76, 4, '#ffd6e6', 5, 4);
-    } else if (id === 'garden_collector_30') {
-      // 植物学大师：左+上玻璃温室拱顶细框包裹 + 顶边垂挂小蕨叶
-      px(5, 7, '#78c49e', 3, 18); px(5, 6, '#78c49e', 58, 2); px(18, 4, '#d9fff0', 32, 2);
-      px(14, 8, '#58a864', 4, 4); px(46, 8, '#8ce09e', 5, 3);
-    } else if (id === 'garden_all_42') {
-      // 万花筒宗师：左+上+右繁花拱廊华盖包裹（粉/黄/紫/青四色像素花环）
-      px(5, 9, '#58a864', 3, 17); px(88, 9, '#58a864', 3, 17); px(6, 6, '#68c274', 84, 3);
-      px(12, 4, '#ff8cb0', 7, 5); px(34, 3, '#ffe066', 7, 5); px(56, 3, '#c7a6ff', 7, 5); px(76, 4, '#8ce0ff', 7, 5);
-    } else if (id === 'kitchen_lv10_master') {
-      // 厨房宗师：底部红白格纹餐桌布托起 + 左上袅袅花茶蒸汽
-      for (let x = 8; x <= 82; x += 6) { px(x, 26, (x % 12 === 0) ? '#f27c8c' : '#ffffff', 6, 3); }
-      px(6, 5, '#ffffff', 3, 7); px(11, 3, '#fff5d6', 3, 8); px(16, 6, '#ffe6f0', 2, 5);
-    } else if (id === 'kitchen_dark_chef') {
-      // 暗黑料理王：左+下暗紫冒泡坩埚烟雾包裹 + 飘浮诡异绿星气泡
-      px(4, 14, '#5a3b7a', 4, 14); px(6, 25, '#462a63', 52, 4); px(14, 23, '#98e66c', 5, 3); px(38, 24, '#c78cff', 6, 3);
-      px(3, 8, '#98e66c', 4, 4); px(9, 5, '#c78cff', 3, 3);
-    } else if (id === 'adv_album_all') {
-      // 旅拍全图鉴：顶边与底边复古电影胶片齿孔长条包裹
-      px(12, 5, '#4a3d38', 72, 4); px(12, 26, '#4a3d38', 72, 4);
-      for (let x = 16; x <= 78; x += 8) { px(x, 6, '#fff8e8', 4, 2); px(x, 27, '#fff8e8', 4, 2); }
-    } else if (id === 'adv_curio_all') {
-      // 藏品博物馆长：左+上深红天鹅绒展柜金边包裹 + 顶心聚光灯弧
-      px(5, 7, '#a82c44', 4, 19); px(5, 6, '#d9a441', 54, 3); px(34, 3, '#fff4b8', 24, 3);
-    } else if (id === 'hidden_adv_miracle') {
-      // 秘境奇遇：左+下流动银河星雾包裹 + 右上悬垂秘境极光带
-      px(5, 12, '#6c7ae0', 3, 16); px(7, 26, '#7ce0f5', 46, 3); px(22, 27, '#ffe680', 18, 2);
-      px(64, 4, '#9bf2d8', 22, 3); px(72, 7, '#c7a6ff', 14, 3);
-    } else if (id === 'hidden_adv_legend') {
-      // 旅人隐秘祝福：右+下复古航海羊皮卷轴边包裹 + 金色罗盘角
-      px(86, 10, '#d9b580', 4, 18); px(42, 26, '#f2dfc2', 46, 4); px(42, 25, '#b88c52', 4, 5);
-      px(83, 6, '#f2c249', 7, 7); px(85, 8, '#ffffff', 3, 3);
-    } else if (id === 'collector_max') {
-      // 收藏满贯：左+上+右金色丝绒帷幕华盖包裹
-      px(5, 7, '#d9a441', 4, 19); px(87, 7, '#d9a441', 4, 19); px(5, 5, '#e6b84c', 86, 4);
-      px(18, 4, '#ff8cb8', 10, 3); px(43, 3, '#8ce6ff', 10, 4); px(68, 4, '#c7a6ff', 10, 3);
-    } else if (id === 'ach_wardrobe_30') {
-      // 衣橱主理人：顶边香槟金衣架拱形挂钩 + 左侧垂坠丝绸缎带
-      px(14, 6, '#d9a441', 68, 2); px(44, 2, '#d9a441', 8, 4); px(46, 3, '#fff6cc', 4, 2);
-      px(4, 10, '#eb7ca4', 4, 17); px(6, 14, '#ffd6e6', 2, 10);
-    } else if (id === 'hidden_fashion_sss') {
-      // 传说穿搭王：底部红毯走秀台阶托起 + 顶边双束T台聚光灯
-      px(8, 26, '#d93b58', 80, 4); px(14, 27, '#ffe078', 68, 1);
-      px(16, 3, '#fff6cc', 18, 4); px(62, 3, '#fff6cc', 18, 4);
-    } else if (id === 'soulmate' || id === 'aff_lv10') {
-      // 灵魂挚友/满分偏爱：左+上粉金双股同心丝带紧紧环绕 + 右下暖心结
-      px(5, 9, '#ff8cb0', 3, 18); px(6, 6, '#ff8cb0', 48, 3); px(14, 5, '#ffe078', 22, 2);
-      px(80, 23, '#ff6e98', 8, 6); px(82, 25, '#ffffff', 3, 2);
-    } else if (id === 'hidden_cloud_soulmate' || id === 'hidden_cloud_bond_lv10') {
-      // 跨屏挚友/宿命双星：左蓝右粉双星轨跨越顶边相连
-      px(5, 10, '#78b8ff', 3, 16); px(88, 10, '#ff94bc', 3, 16);
-      px(6, 6, '#78b8ff', 42, 3); px(48, 6, '#ff94bc', 42, 3); px(44, 4, '#ffe680', 8, 5);
-    } else if (id === 'rich_tycoon_500' || id === 'lt_coins_5000' || id === 'ach_rich_10k') {
-      // 富豪系列：右+下层叠闪亮小狗金币堆包裹 + 左上金库金条边
-      px(44, 25, '#f2c249', 44, 5); px(52, 23, '#ffe680', 14, 3); px(70, 23, '#fff4bd', 12, 3);
-      px(85, 14, '#e0a22e', 4, 14); px(5, 6, '#f2c249', 24, 3);
-    } else if (id === 'gacha_count_300' || id === 'gacha_count_1000' || id === 'hidden_gacha_ssr_lucky') {
-      // 扭蛋传说系列：顶边彩蛋机条纹圆篷包裹 + 右下滚落三色扭蛋球
-      for (let x = 10; x <= 80; x += 10) { px(x, 5, (x % 20 === 0) ? '#ff8cb0' : '#ffe078', 10, 4); }
-      px(72, 25, '#8ce6ff', 6, 5); px(79, 24, '#ff8cb0', 6, 6); px(86, 25, '#ffe078', 6, 5);
-    } else if (id === 'game_champ' || id === 'ach_2048_2048') {
-      // 游戏传说系列：左+上+下复古街机霓虹像素框包裹
-      px(5, 7, '#64d9c4', 3, 21); px(5, 6, '#64d9c4', 44, 3); px(5, 26, '#c78cff', 48, 3);
-      px(12, 4, '#ffe066', 8, 2); px(26, 27, '#ffe066', 12, 2);
+
+    // ==================== 扭蛋 SSR 原创包裹 3 款 ====================
     } else if (id === 'gb_gacha_destiny_star') {
-      // [扭蛋SSR] 满级幸运星：左+上天蓝四叶星云缎带包裹（保留原SSR四向贴图叠层）
-      px(5, 8, '#7e90e6', 3, 18); px(5, 6, '#9eb4ff', 50, 3); px(14, 4, '#ffe680', 16, 2); px(36, 4, '#a8f0c6', 12, 2);
+      // 满级幸运星（蓝紫奶黄同色系）：左上绵软星云团弧 + 垂挂奶黄圆珠 + 右下小云尾
+      puff(5, 5, '#9eaef5', '#ffffff'); puff(11, 4, '#c4d2ff', '#ffffff'); puff(18, 4, '#dfe8ff', '#ffffff');
+      puff(25, 5, '#f5e4ff', '#ffffff'); puff(32, 5, '#d9f0ff', '#ffffff');
+      px(6, 10, '#9eaef5', 2, 5); px(5, 15, '#b8c6ff', 3, 5); px(6, 20, '#d9e4ff', 2, 4);
+      dot(15, 7, '#ffe478', '#ffffff'); dot(29, 7, '#a8e8c8', '#ffffff');
+      puff(77, 25, '#c4d2ff', '#ffffff'); puff(83, 24, '#f5e4ff', '#ffffff');
     } else if (id === 'gb_gacha_sleepy_rich') {
-      // [扭蛋SSR] 躺赢富贵汪：底部松软鎏金云朵枕头托底包裹（保留原SSR四向贴图叠层）
-      px(10, 26, '#ffe694', 76, 4); px(18, 25, '#fffdf5', 22, 3); px(54, 25, '#fffdf5', 22, 3);
+      // 躺赢富贵汪（暖金奶白淡粉同色系）：底边整块蓬松丝绒拉扣金软垫 + 左上淡粉丝带结
+      px(10, 25, '#f2c864', 76, 5); px(12, 26, '#ffe8a8', 72, 3);
+      px(18, 27, '#dfa236', 2, 2); px(36, 27, '#dfa236', 2, 2); px(56, 27, '#dfa236', 2, 2); px(74, 27, '#dfa236', 2, 2);
+      px(24, 26, '#fffdf9', 6, 1); px(43, 26, '#fffdf9', 6, 1); px(62, 26, '#fffdf9', 6, 1);
+      px(5, 5, '#f5a8c0', 5, 4); px(11, 5, '#f5a8c0', 5, 4); px(9, 6, '#fff5f8', 3, 2);
+      px(6, 9, '#ffd4e2', 2, 5); px(11, 9, '#ffe494', 2, 4);
+    } else if (id === 'gb_gacha_read_nonsense') {
+      // 已读乱回专家（浅天蓝淡紫蜜桃同色系）：右上卷边柔云气泡花环 + 左下轻盈省略号圆点
+      puff(56, 4, '#c9dcff', '#ffffff'); puff(63, 3, '#e6d9ff', '#ffffff'); puff(70, 4, '#c9dcff', '#ffffff');
+      puff(78, 5, '#ffe0d4', '#ffffff'); puff(84, 7, '#c9dcff', '#ffffff');
+      px(87, 12, '#9eb6f0', 2, 5); px(86, 17, '#c9dcff', 2, 4);
+      dot(12, 26, '#9eb6f0', '#ffffff'); dot(18, 26, '#c4a8f5', '#ffffff'); dot(24, 26, '#f5b8a8', '#ffffff');
+
+    // ==================== 游乐与扭蛋成就原创包裹 5 款 ====================
+    } else if (id === 'game_champ') {
+      // 电玩冠军（暖金奶油珊瑚同色系）：左+左下弧形金色月桂叶冠包裹 + 右上小爱心与金币微光
+      px(7, 10, '#d9a438', 2, 13); px(9, 22, '#d9a438', 3, 3); px(12, 25, '#e6b84c', 18, 2);
+      leaf(4, 9, '#f2ca58', '#fff7d6'); leaf(4, 15, '#e6b84c', '#fff7d6'); leaf(5, 21, '#f2ca58', '#fff7d6');
+      leaf(13, 25, '#f2ca58', '#fff7d6'); leaf(21, 26, '#e6b84c', '#fff7d6'); leaf(29, 25, '#f2ca58', '#fff7d6');
+      // 右上暖珊瑚小爱心 + 金色圆珠
+      px(79, 5, '#f2889b', 2, 2); px(83, 5, '#f2889b', 2, 2); px(79, 7, '#f2889b', 6, 2); px(81, 9, '#f2889b', 2, 1);
+      px(80, 6, '#ffffff', 1, 1); dot(86, 11, '#ffe478', '#ffffff');
+    } else if (id === 'ach_2048_2048') {
+      // 2048终极传说（琥珀蜂蜜奶白同色系）：左上与右下阶梯蜂蜜小方块拼花包角
+      px(6, 5, '#f5c65c', 5, 5); px(7, 6, '#fff6d6', 2, 2);
+      px(12, 4, '#ffe08a', 4, 4); px(13, 5, '#ffffff', 1, 1);
+      px(5, 11, '#e8a838', 4, 4); px(6, 12, '#fff2bd', 1, 1);
+      px(17, 5, '#f7d478', 3, 3);
+      // 右下呼应蜂蜜阶梯小格
+      px(84, 24, '#e8a838', 5, 5); px(85, 25, '#fff6d6', 2, 2);
+      px(78, 26, '#f5c65c', 5, 4); px(79, 27, '#ffffff', 1, 1);
+      px(86, 19, '#ffe08a', 4, 4); px(73, 27, '#ffe69e', 4, 3);
+    } else if (id === 'hidden_gacha_ssr_lucky') {
+      // 天选欧皇汪（香槟金奶白柔粉同色系）：顶边连贯波浪帷幔华盖 + 两侧柔和金粉垂穗
+      px(10, 5, '#ffe494', 76, 3); px(14, 8, '#ffd4e2', 18, 2); px(39, 8, '#ffe494', 18, 2); px(64, 8, '#ffd4e2', 18, 2);
+      px(18, 10, '#fff5f8', 10, 1); px(43, 10, '#fffdf0', 10, 1); px(68, 10, '#fff5f8', 10, 1);
+      px(16, 6, '#ffffff', 6, 1); px(45, 6, '#ffffff', 6, 1); px(72, 6, '#ffffff', 6, 1);
+      blossom(5, 5, '#f2c44c', '#ffffff'); px(6, 11, '#ffe484', 2, 5); px(5, 16, '#ffd4e2', 4, 2);
+      blossom(85, 5, '#f5a8c0', '#ffffff'); px(86, 11, '#ffd4e2', 2, 6); dot(84, 22, '#ffe484', '#ffffff');
+    } else if (id === 'gacha_count_1000') {
+      // 扭蛋千抽传说（暖金马卡龙同色系）：左+上弯曲马卡龙扭蛋珠串花环 + 左上蝴蝶结
+      const cols = ['#ffe078', '#ffb5cc', '#a8e0ff', '#d4b8ff', '#a8e8c0', '#ffe078', '#ffb5cc'];
+      for (let i = 0; i < cols.length; i++) {
+        dot(14 + i * 8, i % 2 === 0 ? 4 : 5, cols[i], '#ffffff');
+      }
+      dot(5, 11, '#ffe078', '#ffffff'); dot(4, 17, '#ffb5cc', '#ffffff'); dot(6, 23, '#a8e0ff', '#ffffff');
+      // 左上柔和奶油金小结
+      px(6, 5, '#e8a838', 3, 3); px(10, 5, '#e8a838', 3, 3); px(8, 6, '#fff6d6', 3, 2);
+    } else if (id === 'hidden_mem_hard_3') {
+      // 极限记忆王（暖金奶白淡莓同色系）：左上+右下对角藤蔓花体金丝卷纹 + 奶油珍珠蕾
+      px(6, 6, '#dfa042', 8, 2); px(6, 6, '#dfa042', 2, 9); px(14, 5, '#f5cc6c', 6, 2); px(5, 15, '#f5cc6c', 2, 4);
+      blossom(7, 5, '#ffe084', '#ffffff'); dot(21, 5, '#f5a8b8', '#ffffff');
+      px(81, 26, '#dfa042', 8, 2); px(87, 19, '#dfa042', 2, 9); px(74, 27, '#f5cc6c', 7, 2);
+      blossom(83, 23, '#ffe084', '#ffffff'); dot(70, 26, '#f5a8b8', '#ffffff');
+
+    // ==================== 花园成就原创包裹 4 款 ====================
+    } else if (id === 'garden_all_42') {
+      // 万花筒宗师（淡紫粉绿同色系）：左+上蜿蜒柔绿藤蔓 + 5朵不同马卡龙色小花绽放
+      px(6, 10, '#6ec488', 2, 14); px(7, 7, '#6ec488', 46, 2);
+      leaf(4, 17, '#8ee0a4', '#e8fff0'); leaf(22, 6, '#8ee0a4', '#e8fff0'); leaf(40, 6, '#8ee0a4', '#e8fff0');
+      blossom(4, 8, '#f5a2cc', '#fff8d6');
+      blossom(14, 4, '#ffe078', '#ffffff');
+      blossom(29, 4, '#9ad8ff', '#ffffff');
+      blossom(45, 4, '#cfa6ff', '#fff8d6');
+      blossom(83, 24, '#ffb8a6', '#ffffff');
+    } else if (id === 'hidden_garden_blooms_60') {
+      // 繁花秘境主（翡翠薄荷绿奶白同色系）：底边蓬松薄荷绿篱 + 白色雏菊花链 + 左侧小芽
+      for (let x = 10; x <= 78; x += 8) {
+        puff(x, 25, x % 16 === 2 ? '#68bd88' : '#8ee0a8', '#e8fff0');
+      }
+      blossom(18, 24, '#ffffff', '#ffe078'); blossom(44, 24, '#ffffff', '#ffe078'); blossom(70, 24, '#ffffff', '#ffe078');
+      px(6, 15, '#68bd88', 2, 11); leaf(4, 13, '#8ee0a8', '#ffffff');
+    } else if (id === 'garden_collector_30') {
+      // 植物学大师（清新嫩叶绿同色系）：右上+右侧弯弧蕨叶环抱 + 晶莹小露珠
+      px(52, 6, '#6cb878', 32, 2); px(84, 7, '#6cb878', 2, 16);
+      leaf(54, 4, '#92dc9c', '#ffffff'); leaf(64, 4, '#7ac988', '#e8fff0'); leaf(74, 4, '#92dc9c', '#ffffff');
+      leaf(83, 11, '#92dc9c', '#ffffff'); leaf(83, 18, '#7ac988', '#e8fff0');
+      dot(10, 25, '#b8f0d4', '#ffffff');
+    } else if (id === 'garden_bloom_100') {
+      // 百年老花匠（草木绿暖陶粉同色系）：左下小花盆弧边花篱 + 左上粉红蔷薇花苞簇
+      for (let x = 10; x <= 48; x += 6) {
+        px(x, 26, x % 12 === 4 ? '#d9a482' : '#e8be9e', 5, 3);
+        px(x + 1, 26, '#fff4ea', 2, 1);
+      }
+      leaf(8, 23, '#68b878', '#d4f5dc'); leaf(48, 23, '#68b878', '#d4f5dc');
+      blossom(5, 5, '#f294b0', '#fff4f8'); blossom(11, 4, '#ffb8cc', '#ffffff'); leaf(16, 6, '#68b878', '#d4f5dc');
+
+    // ==================== 厨房成就原创包裹 3 款 ====================
+    } else if (id === 'kitchen_lv10_master') {
+      // 殿堂级花厨（暖蜜金奶白同色系）：顶边连贯焦糖蜂蜜淋面曲线 + 左侧金黄麦穗环抱
+      px(14, 5, '#f5c864', 66, 3); px(20, 8, '#ffe08a', 10, 2); px(42, 8, '#f5c864', 12, 3); px(66, 8, '#ffe08a', 8, 2);
+      px(22, 6, '#fffdf5', 8, 1); px(46, 6, '#fffdf5', 10, 1);
+      px(6, 9, '#d99a38', 2, 16);
+      leaf(4, 9, '#f2c864', '#fff8d6'); leaf(7, 13, '#f2c864', '#fff8d6');
+      leaf(4, 17, '#e6b248', '#fff8d6'); leaf(7, 21, '#f2c864', '#fff8d6');
+    } else if (id === 'lt_cook_100') {
+      // 百年小厨房传人（莓果粉奶白同色系）：底边草莓格纹围裙蕾丝荷叶边 + 右上果酱小旋花
+      for (let x = 10; x <= 80; x += 6) {
+        puff(x, 25, x % 12 === 4 ? '#ffd4e2' : '#fffdf9', '#ffffff');
+      }
+      for (let x = 13; x <= 79; x += 12) px(x, 27, '#e08ca8', 2, 1);
+      blossom(82, 5, '#eb82a4', '#fffdf9'); dot(77, 7, '#ffc4d6', '#ffffff');
+    } else if (id === 'kitchen_god_stroke') {
+      // 神来一笔厨（暖杏铜色奶油同色系）：右侧袅袅升起奶油香气卷云 + 左下香料小绿叶
+      puff(84, 18, '#ffe6cf', '#ffffff'); puff(86, 12, '#fff2e4', '#ffffff'); puff(83, 6, '#ffe0c4', '#ffffff');
+      px(86, 23, '#e6a874', 2, 4);
+      leaf(7, 24, '#7ac488', '#e8fff0'); leaf(13, 25, '#e6a874', '#fff4e8'); dot(19, 26, '#f5c488', '#ffffff');
+
+    // ==================== 冒险成就原创包裹 3 款 ====================
+    } else if (id === 'adv_album_all') {
+      // 环游摄影师（晴空蓝奶白同色系）：顶+右漫步软云轨迹与虚线航迹 + 左下相片柔和折角
+      puff(44, 4, '#d4eeff', '#ffffff'); puff(52, 3, '#ffffff', '#ffffff'); puff(61, 4, '#c4e4ff', '#ffffff');
+      for (let x = 22; x <= 38; x += 4) px(x, 6, '#8ac6f0', 2, 1);
+      puff(82, 12, '#d4eeff', '#ffffff');
+      px(6, 23, '#6cb8e6', 2, 5); px(6, 27, '#6cb8e6', 7, 2); px(8, 25, '#c4e6ff', 3, 1);
+    } else if (id === 'adv_curio_all') {
+      // 百宝箱大王（藏宝金松石绿同色系）：底+左垂坠珍珠宝石珠链包裹
+      const beads = ['#f5c854', '#7fd9c8', '#ffe494', '#f5c854', '#7fd9c8', '#ffe494', '#f5c854', '#7fd9c8'];
+      for (let i = 0; i < beads.length; i++) {
+        dot(12 + i * 9, i % 2 === 0 ? 25 : 26, beads[i], '#ffffff');
+      }
+      dot(5, 19, '#f5c854', '#ffffff'); dot(6, 13, '#7fd9c8', '#ffffff');
+    } else if (id === 'hidden_adv_legend') {
+      // 天涯旅狗行（玫瑰薰衣草同色系）：左+左上轻盈柔羽微风弧 + 右下飘落花瓣点
+      puff(5, 8, '#f0c4e0', '#ffffff'); puff(10, 5, '#f7d9ec', '#ffffff'); puff(17, 4, '#e4b8e6', '#ffffff');
+      puff(4, 15, '#e6b0d4', '#ffffff'); puff(6, 21, '#f5d2e8', '#ffffff');
+      blossom(81, 24, '#e89ec8', '#ffffff'); dot(75, 26, '#f5c4e0', '#ffffff');
+
+    // ==================== 衣橱成就原创包裹 2 款 ====================
+    } else if (id === 'ach_wardrobe_30') {
+      // 衣橱主理人（柔丁香紫奶白同色系）：底边连贯镂空蕾丝花边裙摆 + 左侧柔和丝带 + 右上丁香蝴蝶结
+      px(10, 25, '#ffffff', 72, 2);
+      for (let x = 10; x <= 76; x += 6) { px(x, 27, '#e2c4f5', 5, 2); px(x + 1, 29, '#f5e8ff', 3, 1); }
+      px(6, 13, '#d9a8eb', 3, 13); px(7, 15, '#ffffff', 1, 9);
+      px(78, 4, '#c486d9', 4, 4); px(85, 4, '#c486d9', 4, 4); px(82, 5, '#f5e4ff', 3, 3);
+      px(80, 8, '#d9a8eb', 2, 4); px(85, 8, '#d9a8eb', 2, 4);
+    } else if (id === 'hidden_fashion_sss') {
+      // 传说穿搭王（香槟金奶油同色系）：左上到右下柔丝缎带曲线包边 + 珍珠别针
+      puff(6, 5, '#ffe4a8', '#ffffff'); puff(13, 4, '#f5c86e', '#fffdf9'); puff(20, 5, '#ffecc2', '#ffffff');
+      dot(5, 12, '#fffdf9', '#ffffff'); dot(27, 5, '#f2b858', '#ffffff');
+      puff(72, 25, '#ffecc2', '#ffffff'); puff(79, 25, '#f5c86e', '#fffdf9'); puff(85, 22, '#ffe4a8', '#ffffff');
+
+    // ==================== 陪伴、打卡与联机成就原创包裹 4 款 ====================
+    } else if (id === 'aff_lv10') {
+      // 满分偏爱（樱桃奶粉同色系）：左上+右下双色花瓣爱心藤环绕 + 珍珠柔光
+      blossom(6, 5, '#f5a8c4', '#ffffff'); blossom(13, 4, '#ffd4e4', '#ffffff'); leaf(20, 6, '#e89ab8', '#ffffff');
+      px(5, 11, '#f29eb8', 2, 6); dot(5, 18, '#ffdce8', '#ffffff');
+      blossom(82, 24, '#f5a8c4', '#ffffff'); blossom(75, 25, '#ffd4e4', '#ffffff'); dot(69, 26, '#fffdf9', '#ffffff');
+    } else if (id === 'soulmate') {
+      // 灵魂小狗（蜜桃玫瑰粉同色系）：底边两侧软绵绵云朵小羽翼托起 + 飘浮粉爱心雾
+      puff(6, 23, '#ffd4e6', '#ffffff'); puff(12, 25, '#ffb8d4', '#ffffff'); puff(19, 26, '#ffe6f0', '#ffffff');
+      puff(84, 23, '#ffd4e6', '#ffffff'); puff(78, 25, '#ffb8d4', '#ffffff'); puff(71, 26, '#ffe6f0', '#ffffff');
+      dot(10, 5, '#ff9ec2', '#ffffff'); dot(82, 6, '#ffb8d4', '#ffffff');
+    } else if (id === 'ach_ck_100') {
+      // 百日纪念章（酒红玫瑰奶白金同色系）：左上折角柔红丝绸书签缎带 + 金色火漆小花 + 飘带尾
+      px(6, 5, '#e07a90', 38, 4); px(6, 6, '#f5b8c6', 34, 2);
+      px(5, 8, '#d4627a', 4, 16); px(6, 10, '#f5b8c6', 2, 11);
+      px(44, 6, '#e07a90', 6, 3); px(50, 7, '#f2a8b8', 5, 2);
+      blossom(7, 5, '#f2c864', '#fffdf5');
+      px(80, 25, '#e07a90', 8, 3); px(85, 22, '#f2a8b8', 3, 4); dot(76, 26, '#f2c864', '#ffffff');
+    } else if (id === 'hidden_cloud_bond_lv10') {
+      // 宿命双星誓约（紫罗兰天蓝同色系）：左+底边连贯双色交织流云缎带 + 奶油金星珠
+      for (let x = 10; x <= 78; x += 4) {
+        const up = ((x - 10) / 4) % 2 === 0;
+        px(x, up ? 25 : 27, '#cfa0f2', 4, 2);
+        px(x, up ? 27 : 25, '#9ed0ff', 4, 2);
+      }
+      px(5, 10, '#cfa0f2', 3, 8); px(6, 18, '#9ed0ff', 3, 8);
+      dot(24, 25, '#ffe484', '#ffffff'); dot(58, 25, '#ffe484', '#ffffff');
+
+    // ==================== 财富成就原创包裹 2 款 ====================
+    } else if (id === 'lt_coins_5000') {
+      // 桌面大富翁（暖金奶油同色系）：左下叠叠圆润金币堆与金叶弧托起 + 右上金色柔光珠
+      dot(9, 25, '#f2c44c', '#fffdf0'); dot(15, 26, '#ffe084', '#ffffff'); dot(21, 25, '#e6b238', '#fffdf0');
+      dot(27, 26, '#f2c44c', '#fffdf0'); dot(33, 25, '#ffe084', '#ffffff');
+      leaf(5, 20, '#f2c44c', '#fffdf0'); leaf(39, 25, '#e6b238', '#fffdf0');
+      dot(82, 5, '#ffe078', '#ffffff'); dot(86, 9, '#fff2b8', '#ffffff');
+    } else if (id === 'ach_rich_10k') {
+      // 万元户（暖金奶白丝绒同色系）：右上丝绒抽绳金蝴蝶结环抱 + 底边圆润小金珠
+      px(78, 4, '#dfa028', 4, 4); px(85, 4, '#dfa028', 4, 4); px(81, 5, '#fff5cc', 4, 3);
+      px(85, 9, '#f2c458', 2, 6); px(87, 13, '#ffe084', 2, 6);
+      for (let x = 20; x <= 72; x += 10) dot(x, 26, x % 20 === 0 ? '#f2c458' : '#ffe494', '#ffffff');
     }
     return cv;
   };
 
-
-  // 为商店中原本只有 1~2 个元素的铭牌补充 20 款完全原创、互不重复的组合/长短错落贴图（含动态轻摇与组合造型）
-
-  // 扭蛋全部 15 款铭牌（5 SSR + 10 SR）专属原创非对称组合贴图（按各自主题手绘、零重复、多样动效、绝不死板居中）
   const GACHA_BADGE_COMBOS = {
     gb_gacha_lucky_dog:     { pos: 'left:22%;top:-8px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-tilt', pal: { y: '#f2c249', w: '#ffffff', k: '#4a3a36', r: '#e05858' }, grid: ['..yyyyy...yyyy..','.ywwwwwy.ywwwwy.','.ywkwkwy.ywrrwy.','.ywwkwwy..yyyy..','..yyyyy.........'] },
     gb_gacha_star_sugar:    { pos: 'right:10px;bottom:-7px;', w: 17, h: 8, anim: 'b-pulse', pal: { l: '#c2a6ff', p: '#ff9ec9', c: '#8ce0ff', w: '#ffffff' }, grid: ['..lll..pp..ccc..','.lwwwlpwwpcwwwc.','..lll..pp..ccc..','....llllpppp....','................'] },
@@ -21655,6 +21752,8 @@
           hidden_mem_streak_5:  ['.bbbb.bbbb','bwwwbbwwwb','.bbbb.bbbb'],
           hidden_job_first_oops:['..rrrrrr..','.rwwwwwwr.','rwwrwwrwwr','.rrrrrrrr.'],
           hidden_adv_rest_3:    ['..bbbbbb..','.bwwwwwwb.','..cc..cc..'],
+          hidden_visit_host_5:  ['..pppppp..','.pwwwwwwp.','pwppwwppwp','pwwwwwwwwp','.pppppppp.','...pppp...'],
+          hidden_visit_generous:['...rrrr...','..rwwwwr..','.pppppppp.','pwwrwwrwwp','pwwwwwwwwp','.pppppppp.'],
         };
         const g1 = UNIQUE_ACH_PROPS[ach.id] || ['..MMMMMM..','.MwwwwwwM.','MwMwwwwMwM','.MwwwwwwM.','..MMMMMM..'];
         // 签到打卡成就（ach_ck_52 / ach_ck_60 / ach_ck_99）保持原样不动！
@@ -21759,6 +21858,8 @@
             hidden_mem_streak_5:  ['.bb...','bwwb..','.bb...'],
             hidden_job_first_oops:['..rr..','.rwwr.','..rr..'],
             hidden_adv_rest_3:    ['..bb..','.bccb.','..cc..'],
+            hidden_visit_host_5:  ['.p..p.','pwwwwp','.pppp.'],
+            hidden_visit_generous:['..yy..','ywwwwy','.yyyy.'],
           };
           const subG = UNIQUE_ACH_SUBS[ach.id];
           const seniorSet = new Set([
@@ -21781,8 +21882,8 @@
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, anim: (h % 2 === 0 ? a2 : ''), pal, grid: subG }));
           } else {
             if (h % 3 === 0) el.classList.add('bespoke-static');
-            el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 2 === 0 ? a1 : ''), pal, grid: g1 }));
-            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, anim: (h % 3 === 1 ? a2 : ''), pal, grid: subG }));
+            el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? a1 : ''), pal, grid: g1 }));
+            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, anim: (h % 3 === 1 ? a2 : ''), pal, grid: subG }));
           }
         }
       }
