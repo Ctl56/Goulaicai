@@ -2777,6 +2777,7 @@
     puppyBarkUrl: '',
     puppyBarkIconUrl: '',
     streamDraftRescue: true,
+    badgeGestureMode: 'tap_panel_hold_qd',
     puppyBellSound: true,
     puppyBellTone: 'ios_tri',
     puppyShowPersTag: false,
@@ -11503,9 +11504,34 @@
 
   let dragState = null;
   let badgeLongPressTimer = null;
+  let badgeTapTimer = null;
+  let badgeLastTapAt = 0;
+
+  const getBadgeGestureSpec = () => {
+    const mode = String(config.badgeGestureMode || 'tap_panel_hold_qd');
+    if (mode === 'tap_qd_hold_panel') return { tap: 'qd', hold: 'panel', dbl: null };
+    if (mode === 'tap_panel_dbl_qd') return { tap: 'panel', hold: null, dbl: 'qd' };
+    if (mode === 'tap_qd_dbl_panel') return { tap: 'qd', hold: null, dbl: 'panel' };
+    return { tap: 'panel', hold: 'qd', dbl: null };
+  };
+
+  const triggerBadgeTarget = (target) => {
+    if (target === 'qd') {
+      if (panelOpen) togglePanel(false);
+      if (typeof toggleQuickDock === 'function') {
+        const isQdOpen = Boolean(quickDockEl && quickDockEl.classList.contains('open'));
+        toggleQuickDock(!isQdOpen);
+      }
+    } else if (target === 'panel') {
+      if (typeof toggleQuickDock === 'function') toggleQuickDock(false);
+      togglePanel(!panelOpen);
+    }
+  };
+
   badge.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    if (typeof toggleQuickDock === 'function') toggleQuickDock(true);
+    const spec = getBadgeGestureSpec();
+    triggerBadgeTarget(spec.hold || spec.dbl || 'qd');
   });
   badge.addEventListener('pointerdown', (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
@@ -11523,12 +11549,15 @@
       longPressed: false,
     };
     clearTimeout(badgeLongPressTimer);
-    badgeLongPressTimer = setTimeout(() => {
-      if (dragState && !dragState.moved) {
-        dragState.longPressed = true;
-        if (typeof toggleQuickDock === 'function') toggleQuickDock(true);
-      }
-    }, 280);
+    const spec = getBadgeGestureSpec();
+    if (spec.hold) {
+      badgeLongPressTimer = setTimeout(() => {
+        if (dragState && !dragState.moved) {
+          dragState.longPressed = true;
+          triggerBadgeTarget(spec.hold);
+        }
+      }, 280);
+    }
   });
 
   badge.addEventListener('pointermove', (e) => {
@@ -11562,8 +11591,26 @@
       saveConfig();
       applyBadgePosition(false);
     } else if (!wasLong) {
-      if (typeof toggleQuickDock === 'function') toggleQuickDock(false);
-      togglePanel(!panelOpen);
+      const spec = getBadgeGestureSpec();
+      if (spec.dbl) {
+        const nowTap = Date.now();
+        if (nowTap - badgeLastTapAt < 260) {
+          clearTimeout(badgeTapTimer);
+          badgeTapTimer = null;
+          badgeLastTapAt = 0;
+          triggerBadgeTarget(spec.dbl);
+        } else {
+          badgeLastTapAt = nowTap;
+          clearTimeout(badgeTapTimer);
+          badgeTapTimer = setTimeout(() => {
+            badgeTapTimer = null;
+            badgeLastTapAt = 0;
+            triggerBadgeTarget(spec.tap);
+          }, 240);
+        }
+      } else {
+        triggerBadgeTarget(spec.tap);
+      }
     }
   };
 
@@ -59519,6 +59566,18 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (config.badgeTextColor) b.style.color = config.badgeTextColor;
       quickDockEl.appendChild(b);
     });
+    const editBtn = doc.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'st-tb-qd-btn';
+    editBtn.dataset.qd = '__edit__';
+    editBtn.textContent = '编辑';
+    editBtn.title = '直接自定义快捷面板与悬浮球手势';
+    const bRadEdit = Number.isFinite(Number(config.quickDockBtnRadius)) ? clamp(Number(config.quickDockBtnRadius), 0, 20) : 12;
+    editBtn.style.borderRadius = `${bRadEdit}px`;
+    editBtn.style.borderStyle = 'dashed';
+    editBtn.style.opacity = '0.86';
+    if (config.badgeTextColor) editBtn.style.color = config.badgeTextColor;
+    quickDockEl.appendChild(editBtn);
     syncQuickDockUI();
   };
 
@@ -59555,7 +59614,16 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdCfgMask.id = 'st-tb-qd-cfg-mask';
       qdCfgMask.className = 'st-tb-qd-modal-mask';
       qdCfgMask.innerHTML = `<div class="st-tb-qd-modal">
-        <div class="st-tb-qd-modal-title"><span>自定义长按悬浮球快捷栏</span><button class="st-tb-mini-btn" id="st-tb-qd-cfg-close" type="button">关闭</button></div>
+        <div class="st-tb-qd-modal-title"><span>自定义快捷面板与悬浮球手势</span><button class="st-tb-mini-btn" id="st-tb-qd-cfg-close" type="button">关闭</button></div>
+        <div style="padding:7px 8px;border:1px solid var(--tb-border,#ccc);border-radius:8px;background:var(--tb-surface,#fff);margin-bottom:4px;">
+          <div style="font-size:11.5px;font-weight:700;margin-bottom:5px;">悬浮球打开方式</div>
+          <div id="st-tb-qd-gesture-bar" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+            <button type="button" class="st-tb-mini-btn" data-gmode="tap_panel_hold_qd" style="padding:5px 4px;font-size:10.5px;">单击工具箱 / 长按快捷</button>
+            <button type="button" class="st-tb-mini-btn" data-gmode="tap_qd_hold_panel" style="padding:5px 4px;font-size:10.5px;">单击快捷 / 长按工具箱</button>
+            <button type="button" class="st-tb-mini-btn" data-gmode="tap_panel_dbl_qd" style="padding:5px 4px;font-size:10.5px;">单击工具箱 / 双击快捷</button>
+            <button type="button" class="st-tb-mini-btn" data-gmode="tap_qd_dbl_panel" style="padding:5px 4px;font-size:10.5px;">单击快捷 / 双击工具箱</button>
+          </div>
+        </div>
         <div style="font-size:11.5px;opacity:0.78;">已启用的快捷按钮，可按住左侧横杠拖动或点上下排序，也能改名或移除：</div>
         <div class="st-tb-qd-list" id="st-tb-qd-active-list"></div>
         <div style="font-size:11.5px;opacity:0.78;">点击下方功能即可加入长按快捷栏：</div>
@@ -59574,9 +59642,26 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdCfgMask.querySelector('#st-tb-qd-cfg-close')?.addEventListener('click', closeCfg);
       qdCfgMask.querySelector('#st-tb-qd-cfg-done')?.addEventListener('click', closeCfg);
       qdCfgMask.addEventListener('click', (e) => { if (e.target === qdCfgMask) closeCfg(); });
+      const syncGestureModeUI = () => {
+        const curM = String(config.badgeGestureMode || 'tap_panel_hold_qd');
+        qdCfgMask.querySelectorAll('#st-tb-qd-gesture-bar [data-gmode]').forEach(b => {
+          b.classList.toggle('active', b.dataset.gmode === curM);
+        });
+      };
+      qdCfgMask.querySelectorAll('#st-tb-qd-gesture-bar [data-gmode]').forEach(b => {
+        b.addEventListener('click', () => {
+          config.badgeGestureMode = b.dataset.gmode;
+          saveConfig();
+          syncGestureModeUI();
+          showImmNotice(`悬浮球手势已切换：${b.textContent}`);
+        });
+      });
+      qdCfgMask._syncGestureModeUI = syncGestureModeUI;
       qdCfgMask.querySelector('#st-tb-qd-cfg-reset')?.addEventListener('click', () => {
         config.quickDockItems = QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
+        config.badgeGestureMode = 'tap_panel_hold_qd';
         saveConfig();
+        syncGestureModeUI();
         renderQuickDock();
         renderQdCfgBody();
       });
@@ -59713,6 +59798,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       };
     }
     renderQdCfgBody();
+    if (typeof qdCfgMask._syncGestureModeUI === 'function') qdCfgMask._syncGestureModeUI();
     qdCfgMask.classList.add('open');
   };
 
@@ -60032,6 +60118,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       } else if (act === 'draftrescue') {
         toggleQuickDock(false);
         if (typeof openDraftRescueModal === 'function') openDraftRescueModal();
+      } else if (act === '__edit__') {
+        toggleQuickDock(false);
+        openQuickDockCustomizer();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
         saveConfig();
