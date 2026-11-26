@@ -33012,9 +33012,14 @@
       ctx.fillRect(avgX - 3, my + 1, 8, 2); ctx.fillRect(avgX - 2, my + 3, 6, 2); ctx.fillRect(avgX, my + 5, 2, 1);
     }
 
+    const _myPupName = typeof getPupName === 'function' ? getPupName() : '';
     dogs.forEach(d => {
       const fr = (POLAROID_DOG_POSES.find(p => p.id === (d.pose || 'happy')) || POLAROID_DOG_POSES[0]).frame;
-      renderPupSpriteToCtx(ctx, d.look || {}, Math.round(d.x || 0), Math.round(d.y || 0), Boolean(d.flip), fr);
+      const isHostDog = Boolean(d && (d.id === 'host' || (d.name && _myPupName && d.name === _myPupName)));
+      const mergedLook = isHostDog
+        ? { ...(d.look || {}), accOffsets: { ...((d.look && d.look.accOffsets) || {}), ...(config.puppyAccOffsets || {}) } }
+        : (d.look || {});
+      renderPupSpriteToCtx(ctx, mergedLook, Math.round(d.x || 0), Math.round(d.y || 0), Boolean(d.flip), fr);
     });
     if (opts.photoFilter && opts.photoFilter !== 'none') {
       applyPolaroidFilter(ctx, W, H, opts.photoFilter, opts.photoFilterStrength);
@@ -33025,7 +33030,7 @@
     fur: config.puppyFur || '#fffdf7', ear: config.puppyEar || '#e2ae74',
     collar: config.puppyCollar || '#d66565', outline: config.puppyOutline || '#3b2a22',
     showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit || 'none',
-    accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, 2) : [],
+    accs: Array.isArray(config.puppyAccs) ? config.puppyAccs.slice(0, typeof getMaxAccSlots === 'function' ? getMaxAccSlots() : 4) : [],
     accOffsets: config.puppyAccOffsets ? JSON.parse(JSON.stringify(config.puppyAccOffsets)) : {},
     comp: config.puppyCompanion || 'none', onesieShowEars: Boolean(config.puppyOnesieShowEars),
   });
@@ -37494,7 +37499,7 @@
           config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
           if (lk.accOffsets) config.puppyAccOffsets = lk.accOffsets;
           drawPupOutfit(lk.outfit || 'none', ox, oy, hx, hy, isFlat, false, isSit, false);
-          if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false));
+          const _prevStOff = config.puppyAccOffsets; if (lk && lk.accOffsets) config.puppyAccOffsets = lk.accOffsets; if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false)); config.puppyAccOffsets = _prevStOff;
           drawPupCompanion(lk.comp || lk.companion || 'none', ox, oy, false);
         }
       } finally {
@@ -37668,7 +37673,7 @@
           config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
           if (lk.accOffsets) config.puppyAccOffsets = lk.accOffsets;
           drawPupOutfit(lk.outfit || 'none', ox, oy, hx, hy, false, false, false, false);
-          if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+          const _prevStOff2 = config.puppyAccOffsets; if (lk && lk.accOffsets) config.puppyAccOffsets = lk.accOffsets; if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false)); config.puppyAccOffsets = _prevStOff2;
           drawPupCompanion(lk.comp || lk.companion || 'none', ox, oy, false);
         }
       } finally {
@@ -38794,9 +38799,12 @@
           const headOx = ox - 5;
           const hx = headOx + 10;
           const hy = oy + 2;
+          const prevDmOff = config.puppyAccOffsets;
+          if (look && look.accOffsets) config.puppyAccOffsets = look.accOffsets;
           headAccs.forEach(a => {
             try { drawPupAccessory(a, hx, hy, headOx, oy, false, false); } catch (_) {}
           });
+          config.puppyAccOffsets = prevDmOff;
         } finally {
           activePxCtx = prevCtx;
           config.puppyAccOffsets = prevOffsets;
@@ -46144,32 +46152,70 @@
       return;
     }
     if (m === 'gadyn_prism_orbit') {
-      // [扭蛋] 晶钻小皇冠（精确居中丰富版）：顶部幻彩晶钻小皇冠 + 棱镜彩光绕框巡游
-      const cy = 2 + (_bob > 0 ? 0 : 1);
-      _px(25, cy + 3, '#f0c975', 14, 4); _px(25, cy + 1, '#ffe082', 2, 2); _px(31, cy, '#ffffff', 2, 3); _px(37, cy + 1, '#ffe082', 2, 2);
-      _px(31, cy + 4, '#8ce6ff', 2, 2); _px(27, cy + 4, '#ff9ed2', 2, 2); _px(35, cy + 4, '#c9adff', 2, 2);
-      const pCols = ['#ff9ed2', '#8ce6ff', '#ffe694', '#c9adff'];
-      for (let i = 0; i < 4; i++) {
-        const [gx, gy] = perimPt(t * 3 + i * 45);
-        _px(gx - 1, gy - 1, pCols[i], 3, 3); _px(gx, gy, '#ffffff', 1, 1);
+      // [扭蛋SSR 豪华版] 晶钻小皇冠：顶部宝石大皇冠 + 双侧棱镜彩虹垂纱 + 6颗绕框旋转晶钻 + 底边香槟金蕾丝花环
+      const cy = 1 + (_bob > 0 ? 0 : 1);
+      // 奢华五尖皇冠底座与宝石
+      _px(21, cy + 4, '#d9a441', 22, 4); _px(23, cy + 3, '#ffe082', 18, 2);
+      _px(21, cy + 1, '#ffe082', 2, 3); _px(26, cy + 1, '#fff4bd', 2, 3); _px(31, cy, '#ffffff', 2, 4); _px(36, cy + 1, '#fff4bd', 2, 3); _px(41, cy + 1, '#ffe082', 2, 3);
+      _px(31, cy + 5, '#8ce6ff', 2, 2); _px(25, cy + 5, '#ff9ed2', 2, 2); _px(37, cy + 5, '#c9adff', 2, 2);
+      // 两侧晶莹垂珠与棱镜折光
+      _px(6, 16 + (_bob > 0 ? 0 : 1), '#ffe694', 2, 2); _px(5, 21, '#8ce6ff', 2, 2); _px(6, 26, '#ff9ed2', 2, 2);
+      _px(56, 16 + (_bob > 0 ? 1 : 0), '#ffe694', 2, 2); _px(57, 21, '#c9adff', 2, 2); _px(56, 26, '#8ce6ff', 2, 2);
+      // 底边香槟金花环 + 中心菱钻
+      _px(16, 55, '#f0c975', 32, 2); _px(22, 57, '#ffe694', 20, 2);
+      _px(30, 54, '#ffffff', 4, 4); _px(31, 55, '#8ce6ff', 2, 2);
+      // 6颗环绕巡游彩虹晶钻
+      const pCols = ['#ff9ed2', '#8ce6ff', '#ffe694', '#c9adff', '#9bf2d8', '#ffffff'];
+      for (let i = 0; i < 6; i++) {
+        const [px0, py0] = perimPt(t * 2 + i * 31);
+        _px(px0, py0, pCols[i], 3, 3);
+        _px(px0 + 1, py0 + 1, '#ffffff', 1, 1);
       }
       return;
     }
     if (m === 'gadyn_sky_swing') {
-      // [扭蛋] 云端秋千框（丰富版）：底边云朵秋千弧线轻荡 + 顶边飘浮蓬松软云
-      const sw = Math.round(Math.sin(t * 0.2) * 3);
-      _px(14, 52 + Math.abs(sw > 0 ? 1 : 0), '#ffffff', 36, 5); _px(18 + sw, 50, '#eef7ff', 28, 3);
-      _px(18 + sw, 46, '#d9c4a8', 1, 5); _px(45 + sw, 46, '#d9c4a8', 1, 5);
-      const cx = 8 + ((t) % 30);
-      _px(cx, 5, '#ffffff', 16, 4); _px(cx + 3, 3, '#ffffff', 10, 2);
+      // [扭蛋SSR 豪华版] 云端秋千框：蓬松多层云朵秋千座 + 金色编织荡绳 + 粉白晚霞浮云 + 飘舞羽毛与虹彩星尘
+      const sw = Math.round(Math.sin(t * 0.18) * 3);
+      // 两侧金色秋千绳 + 绑带蝴蝶结
+      _px(16 + sw, 42, '#f0c975', 2, 10); _px(46 + sw, 42, '#f0c975', 2, 10);
+      _px(15 + sw, 48, '#ffb8d0', 4, 2); _px(45 + sw, 48, '#ffb8d0', 4, 2);
+      // 蓬松三层云朵秋千座
+      _px(11 + sw, 52, '#ffffff', 42, 6); _px(15 + sw, 50, '#eef7ff', 34, 4); _px(19 + sw, 57, '#d4e9ff', 26, 2);
+      _px(24 + sw, 53, '#ffe6f0', 16, 2);
+      // 顶边流动粉白晚霞云团 + 太阳微芒
+      const cx1 = 6 + (t % 26);
+      _px(cx1, 4, '#ffffff', 18, 4); _px(cx1 + 3, 2, '#fff5fa', 12, 3); _px(cx1 + 2, 7, '#d8ecff', 14, 1);
+      const cx2 = 42 - (t % 22);
+      _px(cx2, 6, '#ffeaf2', 14, 3); _px(cx2 + 3, 4, '#ffffff', 8, 2);
+      // 左右飘舞蓝白小羽毛与彩虹光点
+      const fy = 18 + Math.round(Math.sin(t * 0.22) * 3);
+      _px(4, fy, '#ffffff', 3, 2); _px(6, fy + 2, '#a8dcff', 2, 2);
+      _px(57, 36 - Math.round(Math.cos(t * 0.2) * 3), '#ffe694', 2, 2);
+      if ((t % 6) < 4) { _px(8, 34, '#c9f2ff', 2, 2); _px(55, 16, '#ffd6e8', 2, 2); }
       return;
     }
     if (m === 'gadyn_twilight_crescent') {
-      // [扭蛋] 暮月云影框（丰富版）：左上银金大弯月 + 暮蓝轻纱云影缓缓流动 + 闪烁夜星
-      _px(5, 4 + (_bob > 0 ? 0 : 1), '#ffe694', 9, 10); _px(9, 5 + (_bob > 0 ? 0 : 1), '#2a3354', 7, 8);
-      const cx = 30 + Math.round(Math.sin(t * 0.14) * 5);
-      _px(cx, 52, 'rgba(184,196,232,0.85)', 22, 5); _px(cx + 4, 50, 'rgba(220,228,250,0.9)', 14, 3);
-      if ((t % 8) < 5) { _px(54, 12, '#fff4c4', 2, 2); _px(8, 48, '#b8d4ff', 2, 2); }
+      // [扭蛋SSR 豪华版] 暮月云影框：左上大金弯月 + 垂坠星珠链 + 右下层叠暮蓝星纱云海 + 星座连线微光
+      const my = 3 + (_bob > 0 ? 0 : 1);
+      // 大金弯月 + 柔光晕
+      _px(4, my, '#ffe694', 11, 12); _px(9, my + 1, '#263052', 8, 10);
+      _px(5, my + 2, '#ffffff', 2, 2);
+      // 月尖垂坠星珠链
+      _px(12, my + 11, '#f0c975', 1, 6); _px(11, my + 17, '#fff6cc', 3, 3);
+      _px(7, my + 12, '#d4e2ff', 1, 4); _px(6, my + 16, '#ffffff', 2, 2);
+      // 右下层叠流动暮蓝紫云海
+      const cx = 24 + Math.round(Math.sin(t * 0.14) * 5);
+      _px(cx, 51, '#6878b8', 28, 6); _px(cx + 4, 49, '#9baee6', 22, 4); _px(cx + 8, 47, '#dce6ff', 14, 3);
+      _px(6, 53, '#4c5b94', 18, 4); _px(9, 51, '#7f92cf', 12, 3);
+      // 右上星座闪光与巡游银星尘
+      if ((t % 8) < 5) {
+        _px(52, 8, '#fff4c4', 3, 3); _px(53, 9, '#ffffff', 1, 1);
+        _px(57, 16, '#b8d4ff', 2, 2); _px(48, 14, '#d6c2ff', 2, 2);
+      }
+      for (let i = 0; i < 4; i++) {
+        const [sx, sy] = perimPt(t + i * 47);
+        _px(sx, sy, i % 2 === 0 ? '#ffe694' : '#b8d4ff', 2, 2);
+      }
       return;
     }
     if (m === 'gadyn_yuanyang_boil') {
@@ -46181,23 +46227,50 @@
       return;
     }
     if (m === 'gadyn_jade_gleam') {
-      // [扭蛋] 玉牌发财框（丰富版）：右下翡翠白玉麻将牌 + 左上转运金铜钱 + 玉光微扫
-      _px(49, 44 + (_bob > 0 ? 0 : 1), '#ffffff', 9, 12); _px(49, 54 + (_bob > 0 ? 0 : 1), '#4f9e72', 9, 2);
-      _px(52, 46 + (_bob > 0 ? 0 : 1), '#4f9e72', 3, 6); _px(51, 49 + (_bob > 0 ? 0 : 1), '#4f9e72', 5, 1);
-      // 左上金铜钱
-      _px(5, 5, '#f2c95c', 8, 8); _px(6, 6, '#fff4bd', 6, 6); _px(8, 8, '#4f9e72', 2, 2);
+      // [扭蛋SSR 豪华版] 玉牌发财框：右下立雕白玉发财牌 + 朱红流苏中国结 + 左上旋转金元宝铜钱 + 四角翡翠金包角与扫光
+      const jy = _bob > 0 ? 0 : 1;
+      // 四角翡翠金镶边包角
+      _px(8, 8, '#f2c95c', 8, 2); _px(8, 8, '#f2c95c', 2, 8);
+      _px(48, 8, '#f2c95c', 8, 2); _px(54, 8, '#f2c95c', 2, 8);
+      _px(8, 54, '#f2c95c', 8, 2); _px(8, 48, '#f2c95c', 2, 8);
+      // 左上转运金铜钱 + 小元宝
+      _px(4, 4 + jy, '#f2c95c', 10, 10); _px(5, 5 + jy, '#fff4bd', 8, 8); _px(8, 8 + jy, '#4f9e72', 2, 2);
+      _px(16, 4, '#ffe078', 7, 4); _px(18, 3, '#fff6cc', 3, 2);
+      // 右下白玉发财麻将牌 + 红色流苏
+      _px(47, 42 + jy, '#ffffff', 12, 15); _px(47, 54 + jy, '#3f8c62', 12, 3);
+      _px(51, 45 + jy, '#3f8c62', 4, 7); _px(49, 48 + jy, '#3f8c62', 8, 2);
+      _px(44, 51 + jy, '#d94854', 3, 3); _px(44, 54 + jy, '#f25c66', 2, 5); _px(46, 55 + jy, '#f2c95c', 1, 4);
+      // 翡翠柔光沿框巡游
+      for (let i = 0; i < 4; i++) {
+        const [gx, gy] = perimPt(t * 2 + i * 46);
+        _px(gx, gy, i % 2 === 0 ? '#7de8b0' : '#ffe694', 2, 2);
+      }
       return;
     }
     if (m === 'gadyn_music_box') {
-      // [扭蛋] 八音盒发条框（丰富版）：左侧旋转复古金发条 + 彩色音符绕框轻舞
+      // [扭蛋SSR 豪华版] 八音盒发条框：左侧旋转复古金发条 + 左下联动齿轮 + 顶右弧形金谱线与跃动彩色音符 + 黄铜雕花角
       const ph = (Math.floor(t / 4) % 2);
-      _px(6, 29, '#d9a441', 4, 2);
-      if (ph === 0) { _px(1, 24, '#ffe078', 5, 4); _px(1, 32, '#ffe078', 5, 4); }
-      else { _px(2, 27, '#ffe078', 4, 6); }
-      const nCols = ['#ff8aa6', '#ffe066', '#8cc8f7'];
-      for (let i = 0; i < 3; i++) {
-        const [nx, ny] = perimPt(t * 2 + i * 60);
-        _px(nx, ny - 3, nCols[i], 2, 5); _px(nx - 2, ny, nCols[i], 3, 3);
+      // 复古金发条钥匙
+      _px(6, 28, '#c99232', 5, 3);
+      if (ph === 0) {
+        _px(1, 22, '#ffe078', 6, 5); _px(2, 23, '#fff6cc', 3, 2);
+        _px(1, 32, '#ffe078', 6, 5); _px(2, 33, '#fff6cc', 3, 2);
+      } else {
+        _px(2, 25, '#ffe078', 5, 9); _px(3, 27, '#fff6cc', 2, 5);
+      }
+      // 左下联动小齿轮
+      const gp = t % 4;
+      _px(6, 48, '#d9a441', 7, 7); _px(8, 50, '#fff4bd', 3, 3);
+      _px(gp < 2 ? 9 : 6, 46, '#ffe078', 2, 2); _px(gp < 2 ? 9 : 12, 55, '#ffe078', 2, 2);
+      // 右上黄铜花边 + 跃动五线谱音符
+      _px(44, 5, '#e6bd67', 14, 2); _px(56, 5, '#e6bd67', 2, 12);
+      _px(48, 56, '#e6bd67', 10, 2); _px(56, 48, '#e6bd67', 2, 10);
+      const nCols = ['#ff8aa6', '#ffe066', '#8cc8f7', '#c7a6ff', '#9be3c2'];
+      for (let i = 0; i < 5; i++) {
+        const [nx, ny] = perimPt(t * 2 + i * 37);
+        _px(nx, ny, nCols[i], 3, 2);
+        _px(nx + 2, ny - 3, nCols[i], 1, 4);
+        _px(nx + 3, ny - 3, '#ffffff', 2, 1);
       }
       return;
     }
@@ -50134,6 +50207,53 @@
     });
   }
 
+  let gachaLockTimer = null;
+  const syncGachaLockButtons = () => {
+    const ve = config.puppyVendorEgg || {};
+    const now = Date.now();
+    const locked = Boolean(ve.gachaLockUntil && now < ve.gachaLockUntil);
+    if (locked) {
+      const remSec = Math.max(1, Math.ceil((ve.gachaLockUntil - now) / 1000));
+      const m = Math.floor(remSec / 60);
+      const s = remSec % 60;
+      const clock = `${m}:${String(s).padStart(2, '0')}`;
+      if (gachaPullBtn) {
+        if (!gachaPullBtn.dataset.origTxt) gachaPullBtn.dataset.origTxt = gachaPullBtn.textContent || '单抽';
+        gachaPullBtn.disabled = true;
+        gachaPullBtn.textContent = `卷帘门已关 ${clock}`;
+      }
+      if (gachaPull10Btn) {
+        if (!gachaPull10Btn.dataset.origTxt) gachaPull10Btn.dataset.origTxt = gachaPull10Btn.textContent || '十连';
+        gachaPull10Btn.disabled = true;
+        gachaPull10Btn.textContent = `冷静中 ${clock}`;
+      }
+      if (gachaVendorMsg) gachaVendorMsg.textContent = `「喵呜还在生气中！卷帘门剩余 ${m} 分 ${String(s).padStart(2, '0')} 秒后再开~」`;
+      if (!gachaLockTimer) {
+        gachaLockTimer = setInterval(() => {
+          const v2 = config.puppyVendorEgg || {};
+          if (!v2.gachaLockUntil || Date.now() >= v2.gachaLockUntil) {
+            clearInterval(gachaLockTimer);
+            gachaLockTimer = null;
+            syncGachaLockButtons();
+          } else {
+            syncGachaLockButtons();
+          }
+        }, 1000);
+      }
+    } else {
+      if (gachaLockTimer) { clearInterval(gachaLockTimer); gachaLockTimer = null; }
+      if (gachaPullBtn && gachaPullBtn.dataset.origTxt) {
+        gachaPullBtn.textContent = gachaPullBtn.dataset.origTxt;
+        gachaPullBtn.disabled = false;
+      }
+      if (gachaPull10Btn && gachaPull10Btn.dataset.origTxt) {
+        gachaPull10Btn.textContent = gachaPull10Btn.dataset.origTxt;
+        gachaPull10Btn.disabled = false;
+      }
+    }
+    return locked;
+  };
+
   const renderGachaView = () => {
     if (!gachaViewEl) return;
     drawGachaMachine(0, null);
@@ -50160,7 +50280,21 @@
         cell.style.cssText = `margin:0;padding:4px 2px;text-align:center;font-size:9px;opacity:${own ? '1' : '0.52'};${isSsr && own ? 'border-color:#e0a538;background:#fff9e6;' : ''}`;
         const tagMap = { outfit: '衣', acc: '饰', comp: '伴', bubble: '泡', trail: '迹', avatarframe: '框', badge: '牌', recipe: '谱' };
         const tag = tagMap[entry.kind] || '限';
-        cell.innerHTML = `<div style="font-weight:700;">${own ? entry.item.name.replace('[扭蛋] ', '') : '???'}</div><div style="font-size:8px;color:${isSsr ? '#9c620a' : '#6b5446'};">${entry.tier}·${tag} ${own ? '已有' : '限定'}</div>`;
+        cell.innerHTML = `<div style="font-weight:700;">${own ? entry.item.name.replace('[扭蛋] ', '') : '???'}</div><div style="font-size:8px;color:${isSsr ? '#9c620a' : '#6b5446'};">${entry.tier}·${tag} ${own ? '点我预览' : '限定'}</div>`;
+        if (own) {
+          cell.style.cursor = 'pointer';
+          cell.addEventListener('click', () => {
+            if (typeof showGachaResultModal === 'function') {
+              showGachaResultModal([{
+                tier: entry.tier,
+                iconType: entry.kind,
+                itemId: entry.item.id,
+                name: entry.item.name.replace('[扭蛋] ', ''),
+                sub: entry.item.desc || `${entry.tier} 限定收藏`,
+              }]);
+            }
+          });
+        }
         gachaDexEl.appendChild(cell);
       });
     }
@@ -50284,7 +50418,7 @@
         bub_gacha_jellyfish_sea: 'background:linear-gradient(130deg,#1c2b4a,#27426e);border-color:#82d4ff;color:#e8f7ff;',
         bub_gacha_peach_oolong: 'background:linear-gradient(130deg,#fff2f0,#ffe9e0);border-color:#f0a496;color:#6e352c;',
       };
-      box.style.cssText = (styles[itemId] || 'background:#fff9eb;border-color:#e3a530;color:#6b3d06;') + 'position:relative;overflow:hidden;min-width:52px;height:36px;display:flex;align-items:center;justify-content:center;padding:0 8px;';
+      box.style.cssText = 'border:2px solid #bfa4ae;border-radius:6px;box-sizing:border-box;' + (styles[itemId] || 'background:#fff9eb;border-color:#e3a530;color:#6b3d06;') + 'position:relative;overflow:hidden;width:54px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:0 6px;';
       const lbl = doc.createElement('span');
       lbl.textContent = '汪';
       lbl.style.cssText = 'position:relative;z-index:2;font-size:10px;font-weight:700;';
@@ -50299,15 +50433,17 @@
       return box;
     }
 
-    // 3b. Avatar Frame: 真实头像框样式 + 实时动态微效叠加预览
+    // 3b. Avatar Frame: 真实头像框样式 + 实时动态微效叠加预览（严格收纳在 48x48 预览框内，绝不溢出）
     if (type === 'avatarframe') {
       const afObj = [...GACHA_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES, ...SHOP_PUP_AVATAR_FRAMES].find(a => a.id === itemId);
+      const outer = doc.createElement('div');
+      outer.style.cssText = 'width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;box-sizing:border-box;';
       const wrap = doc.createElement('div');
       wrap.className = `st-px-avatar-wrap ${itemId.replace(/_/g, '-')}`;
-      wrap.style.cssText = 'width:40px;height:40px;flex-shrink:0;position:relative;overflow:visible;';
+      wrap.style.cssText = 'width:32px;height:32px;flex-shrink:0;position:relative;overflow:visible;box-sizing:border-box;';
       const cvs = doc.createElement('canvas');
       cvs.width = 24; cvs.height = 24;
-      cvs.style.cssText = 'width:100%;height:100%;image-rendering:pixelated;';
+      cvs.style.cssText = 'width:100%;height:100%;image-rendering:pixelated;display:block;';
       const ctx = cvs.getContext('2d');
       const pal = getPupPalette();
       const grid = PUP_SPRITES.idle1;
@@ -50322,10 +50458,11 @@
         const fx = doc.createElement('canvas');
         fx.width = 64; fx.height = 64;
         fx.dataset.gachaAfDyn = afObj.dyn;
-        fx.style.cssText = 'position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px);image-rendering:pixelated;pointer-events:none;z-index:3;';
+        fx.style.cssText = 'position:absolute;inset:-7px;width:46px;height:46px;image-rendering:pixelated;pointer-events:none;z-index:3;';
         wrap.appendChild(fx);
       }
-      return wrap;
+      outer.appendChild(wrap);
+      return outer;
     }
 
     // 3c. Nameplate Badge: render a real mini流光铭牌 pill!
@@ -50734,52 +50871,6 @@
     }, 110);
   };
 
-  let gachaLockTimer = null;
-  const syncGachaLockButtons = () => {
-    const ve = config.puppyVendorEgg || {};
-    const now = Date.now();
-    const locked = Boolean(ve.gachaLockUntil && now < ve.gachaLockUntil);
-    if (locked) {
-      const remSec = Math.max(1, Math.ceil((ve.gachaLockUntil - now) / 1000));
-      const m = Math.floor(remSec / 60);
-      const s = remSec % 60;
-      const clock = `${m}:${String(s).padStart(2, '0')}`;
-      if (gachaPullBtn) {
-        if (!gachaPullBtn.dataset.origTxt) gachaPullBtn.dataset.origTxt = gachaPullBtn.textContent || '单抽';
-        gachaPullBtn.disabled = true;
-        gachaPullBtn.textContent = `卷帘门已关 ${clock}`;
-      }
-      if (gachaPull10Btn) {
-        if (!gachaPull10Btn.dataset.origTxt) gachaPull10Btn.dataset.origTxt = gachaPull10Btn.textContent || '十连';
-        gachaPull10Btn.disabled = true;
-        gachaPull10Btn.textContent = `冷静中 ${clock}`;
-      }
-      if (gachaVendorMsg) gachaVendorMsg.textContent = `「喵呜还在生气中！卷帘门剩余 ${m} 分 ${String(s).padStart(2, '0')} 秒后再开~」`;
-      if (!gachaLockTimer) {
-        gachaLockTimer = setInterval(() => {
-          const v2 = config.puppyVendorEgg || {};
-          if (!v2.gachaLockUntil || Date.now() >= v2.gachaLockUntil) {
-            clearInterval(gachaLockTimer);
-            gachaLockTimer = null;
-            syncGachaLockButtons();
-          } else {
-            syncGachaLockButtons();
-          }
-        }, 1000);
-      }
-    } else {
-      if (gachaLockTimer) { clearInterval(gachaLockTimer); gachaLockTimer = null; }
-      if (gachaPullBtn && gachaPullBtn.dataset.origTxt) {
-        gachaPullBtn.textContent = gachaPullBtn.dataset.origTxt;
-        gachaPullBtn.disabled = false;
-      }
-      if (gachaPull10Btn && gachaPull10Btn.dataset.origTxt) {
-        gachaPull10Btn.textContent = gachaPull10Btn.dataset.origTxt;
-        gachaPull10Btn.disabled = false;
-      }
-    }
-    return locked;
-  };
   const checkGachaLock = () => syncGachaLockButtons();
   if (gachaPullBtn) gachaPullBtn.addEventListener('click', () => {
     if (checkGachaLock()) return;
