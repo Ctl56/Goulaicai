@@ -31661,13 +31661,7 @@
           ctx.beginPath();
           ctx.arc(cx, cy, vr, 0, Math.PI * 2);
           ctx.fill();
-        } else if (bgShape === 'bone' || bgShape === 'ring') {
-          // 像素小骨头
-          ctx.fillRect(cx - 2 * sc, cy - sc, 5 * sc, sc);
-          ctx.fillRect(cx - 3 * sc, cy - 2 * sc, sc, sc);
-          ctx.fillRect(cx - 3 * sc, cy, sc, sc);
-          ctx.fillRect(cx + 3 * sc, cy - 2 * sc, sc, sc);
-          ctx.fillRect(cx + 3 * sc, cy, sc, sc);
+
         } else if (bgShape === 'heart') {
           ctx.fillRect(cx - 2 * sc, cy - 1 * sc, 2 * sc, 2 * sc);
           ctx.fillRect(cx + 1 * sc, cy - 1 * sc, 2 * sc, 2 * sc);
@@ -31689,7 +31683,7 @@
           ctx.ellipse(cx, cy + 1.15 * s, 2.0 * s, 1.45 * s, 0, 0, Math.PI * 2);
           ctx.fill();
           // 4颗圆弧排列的小脚趾垫
-          [[-2.2, -0.35, -0.35], [-0.85, -1.6, -0.12], [0.85, -1.6, 0.12], [2.2, -0.35, 0.35]].forEach(([dx, dy, ang]) => {
+          [[-2.55, -0.6, -0.35], [-0.85, -1.6, -0.12], [0.85, -1.6, 0.12], [2.55, -0.6, 0.35]].forEach(([dx, dy, ang]) => {
             ctx.beginPath();
             ctx.ellipse(cx + dx * s, cy + dy * s, 0.72 * s, 0.98 * s, ang, 0, Math.PI * 2);
             ctx.fill();
@@ -31715,59 +31709,7 @@
           ctx.moveTo(cx - 0.3 * s, cy + 0.5 * s); ctx.lineTo(cx - 1.45 * s, cy + 2.35 * s);
           ctx.moveTo(cx + 0.3 * s, cy + 0.5 * s); ctx.lineTo(cx + 1.45 * s, cy + 2.35 * s);
           ctx.stroke();
-        } else if (bgShape === 'crown' || bgShape === 'cherry') {
-          // 像素小皇冠
-          ctx.fillRect(cx - 2 * sc, cy - 2 * sc, sc, 3 * sc);
-          ctx.fillRect(cx, cy - 2 * sc, sc, 3 * sc);
-          ctx.fillRect(cx + 2 * sc, cy - 2 * sc, sc, 3 * sc);
-          ctx.fillRect(cx - 2 * sc, cy, 5 * sc, 2 * sc);
-          ctx.fillStyle = bgC1;
-          ctx.fillRect(cx - sc, cy + sc, sc, sc);
-          ctx.fillRect(cx + sc, cy + sc, sc, sc);
-          ctx.fillStyle = bgC2;
-        } else if (bgShape === 'moon') {
-          // 像素弯月
-          ctx.fillRect(cx - sc, cy - 2 * sc, 2 * sc, sc);
-          ctx.fillRect(cx - 2 * sc, cy - sc, 2 * sc, 2 * sc);
-          ctx.fillRect(cx - sc, cy + sc, 2 * sc, sc);
-          ctx.fillRect(cx + sc, cy - 2 * sc, sc, sc);
-          ctx.fillRect(cx + sc, cy + sc, sc, sc);
-        } else if (bgShape === 'butterfly') {
-          // 像素小蝴蝶
-          ctx.fillRect(cx - 2 * sc, cy - 2 * sc, 2 * sc, 2 * sc);
-          ctx.fillRect(cx + sc, cy - 2 * sc, 2 * sc, 2 * sc);
-          ctx.fillRect(cx - 2 * sc, cy + sc, sc, sc);
-          ctx.fillRect(cx + 2 * sc, cy + sc, sc, sc);
-          ctx.fillRect(cx, cy - sc, sc, 3 * sc);
-        } else if (bgShape === 'berry') {
-          // 像素小草莓
-          ctx.fillRect(cx - sc, cy - 2 * sc, 3 * sc, sc);
-          ctx.fillRect(cx - 2 * sc, cy - sc, 5 * sc, 2 * sc);
-          ctx.fillRect(cx - sc, cy + sc, 3 * sc, sc);
-          ctx.fillRect(cx, cy + 2 * sc, sc, sc);
-          ctx.fillStyle = bgC1;
-          ctx.fillRect(cx - sc, cy, sc, sc);
-          ctx.fillRect(cx + sc, cy, sc, sc);
-          ctx.fillStyle = bgC2;
-        } else if (bgShape === 'shroom') {
-          // 像素小蘑菇
-          ctx.fillRect(cx - sc, cy - 2 * sc, 3 * sc, sc);
-          ctx.fillRect(cx - 2 * sc, cy - sc, 5 * sc, 2 * sc);
-          ctx.fillRect(cx - sc, cy + sc, 3 * sc, 2 * sc);
-          ctx.fillStyle = bgC1;
-          ctx.fillRect(cx - sc, cy - sc, sc, sc);
-          ctx.fillRect(cx + sc, cy - sc, sc, sc);
-          ctx.fillStyle = bgC2;
-        } else if (bgShape === 'candy') {
-          // 像素小糖果
-          ctx.fillRect(cx - 3 * sc, cy - sc, sc, 3 * sc);
-          ctx.fillRect(cx + 3 * sc, cy - sc, sc, 3 * sc);
-          ctx.fillRect(cx - 2 * sc, cy, sc, sc);
-          ctx.fillRect(cx + 2 * sc, cy, sc, sc);
-          ctx.fillRect(cx - sc, cy - sc, 3 * sc, 3 * sc);
-          ctx.fillStyle = bgC1;
-          ctx.fillRect(cx, cy, sc, sc);
-          ctx.fillStyle = bgC2;
+
         } else if (bgShape === 'diamond') {
           const r = Math.max(2, bgSize);
           for (let dy = -r; dy <= r; dy++) {
@@ -33482,17 +33424,10 @@
             <div id="st-vph-diy-shape-row" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;">
               <span>图案</span>
               <button type="button" class="st-px-btn" data-bg-shape="dot" style="height:19px;padding:0 5px;font-size:9px;">圆点</button>
-              <button type="button" class="st-px-btn" data-bg-shape="bone" style="height:19px;padding:0 5px;font-size:9px;">小骨头</button>
               <button type="button" class="st-px-btn" data-bg-shape="heart" style="height:19px;padding:0 5px;font-size:9px;">爱心</button>
               <button type="button" class="st-px-btn" data-bg-shape="flower" style="height:19px;padding:0 5px;font-size:9px;">小花</button>
               <button type="button" class="st-px-btn" data-bg-shape="paw" style="height:19px;padding:0 5px;font-size:9px;">爪印</button>
               <button type="button" class="st-px-btn" data-bg-shape="bow" style="height:19px;padding:0 5px;font-size:9px;">蝴蝶结</button>
-              <button type="button" class="st-px-btn" data-bg-shape="crown" style="height:19px;padding:0 5px;font-size:9px;">小皇冠</button>
-              <button type="button" class="st-px-btn" data-bg-shape="moon" style="height:19px;padding:0 5px;font-size:9px;">弯月</button>
-              <button type="button" class="st-px-btn" data-bg-shape="butterfly" style="height:19px;padding:0 5px;font-size:9px;">蝴蝶</button>
-              <button type="button" class="st-px-btn" data-bg-shape="berry" style="height:19px;padding:0 5px;font-size:9px;">草莓</button>
-              <button type="button" class="st-px-btn" data-bg-shape="shroom" style="height:19px;padding:0 5px;font-size:9px;">蘑菇</button>
-              <button type="button" class="st-px-btn" data-bg-shape="candy" style="height:19px;padding:0 5px;font-size:9px;">糖果</button>
               <button type="button" class="st-px-btn" data-bg-shape="diamond" style="height:19px;padding:0 5px;font-size:9px;">菱形</button>
               <button type="button" class="st-px-btn" data-bg-shape="cloud" style="height:19px;padding:0 5px;font-size:9px;">云朵</button>
               <button type="button" class="st-px-btn" data-bg-shape="music" style="height:19px;padding:0 5px;font-size:9px;">音符</button>
