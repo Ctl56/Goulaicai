@@ -19698,6 +19698,21 @@
         c.width = 17; c.height = 5;
         grid = ['.p..m..y..m..p...','pwp.m.ywy.m.pwp..','.p..m..y..m..p...','.....ppwpp.......','.......p.........'];
       }
+    } else if (styleKey === 'kitchen_feast_ult') {
+      // 满汉花席全鉴专属：四向盛宴雕塑（顶部大厨金冠花茶壶 + 左侧三层草莓塔 + 右侧金叉勺丝带 + 底部宴席蕾丝甜点）
+      if (pos === 'left') {
+        c.width = 9; c.height = 13;
+        grid = ['...rrr...','..rgggr..','..wwwww..','.wppwppw.','..wwwww..','.yyyyyyy.','ywwpwpwwy','.yyyyyyy.','ooooooooo','.oowwwoo.','..ooooo..','.........','.........'];
+      } else if (pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['..y.y.y..','..yyyyy..','...yyy...','...yyy...','..ppppp..','.ppwwwpp.','...yyy...','...yyy...','..yyyyy..','.ywwwwwy.','..yyyyy..','.........','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['...w...yyy...w...','..ww..ywwwy..ww..','....yyyyyyyyy....','..p.oowwwwwwoo.p.','.ppp.oooooooo.ppp','..p............p.'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['.y..p..www..p..y.','ywy.p.wpppw.p.ywy','.y..p..www..p..y.','...yyyyyyyyyyy...','.................'];
+      }
     } else if (styleKey === 'gframe_triple_ssr_mythic') {
       // 天选三金神迹专属：三峰宝石大皇冠 + 双侧三钻鎏金权杖 + 底边虹彩流金桂冠四向超豪华雕框
       if (pos === 'left' || pos === 'right') {
@@ -20653,9 +20668,10 @@
     },
     kitchen_dex_all: {
       cls: 'bespoke-lux bespoke-glow',
-      trim: [['bottom', 1], ['right', 3]],
+      ult: ['top', 'bottom', 'left', 'right'],
+      ultKey: 'kitchen_feast_ult',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 17, anim: 'b-bob', pal: { w: '#ffffff', l: '#e8d8f5', y: '#e6b242', p: '#f28cb4', o: '#b87442' },
+        { pos: 'left:-14px;top:46%;transform:translateY(-50%);', w: 15, h: 17, anim: 'b-bob', pal: { w: '#ffffff', l: '#e8d8f5', y: '#e6b242', p: '#f28cb4', o: '#b87442' },
           grid: ['..ww..ww..','.wwwwwwww.','wwwwwwwwww','.wllllllw.','..yyyyyy..','oooooooooo','.oowppwoo.','..oooooo..'] },
       ],
     },
@@ -21375,6 +21391,31 @@
     return cv;
   };
 
+
+  // 为商店中原本只有 1~2 个元素的铭牌补充 20 款完全原创、互不重复的组合/长短错落贴图（含动态轻摇与组合造型）
+  const SHOP_BADGE_EXTRA_COMBOS = {
+    sb_star_ocean:     { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { y: '#ffe066', c: '#66c2ff', w: '#ffffff' }, grid: ['..cc....yy....cc..','.cwwc..ywwy..cwwc.','..cc....yy....cc..','....cccccccc......','..................'] },
+    sb_cloud_candy:    { pos: 'right:12px;top:-8px;', w: 16, h: 8, anim: 'b-bob', pal: { y: '#f5c242', w: '#ffffff', k: '#4a3a36', c: '#a8dcff' }, grid: ['....yyyyyyyy....','...ywwwwwwwwy...','..ywkkkwwkkkwy..','..ywwwwccwwwwy..','...yyyyyyyyyy...'] },
+    sb_moon_lullaby:   { pos: 'left:68%;top:-8px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-bob', pal: { l: '#b8a8ff', p: '#ff9ec2', w: '#ffffff' }, grid: ['..ll..pp..pp..ll','.lwwlpppppppplwwl','..ll..pppppp..ll','.......pppp.....','........pp......'] },
+    sb_royal_pup:      { pos: 'left:28%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: '', pal: { o: '#b87a4b', w: '#ffffff', y: '#f2c249', r: '#e05858' }, grid: ['..oooo......yyyy..','..o..oooo..ywwwwy.','.....o..oo.ywrrwy.','............yyyy..','..................'] },
+    sb_ribbon_idol:    { pos: 'right:10px;bottom:-7px;', w: 17, h: 7, anim: 'b-bob', pal: { p: '#ff8cb8', w: '#ffffff', y: '#ffe078', l: '#d6b8ff' }, grid: ['pp..yy..ll..yy..pp','.pwwyywwllwwyywwp.','..pp..yyyy..ll....','......y..y........','..................'] },
+    sb_lantern_night:  { pos: 'left:22%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { y: '#f2c249', w: '#fff6cc', r: '#e04858' }, grid: ['..yyyy....yyyy..','.ywwwwy..ywwwwy.','.ywrrwy..ywrrwy.','..yyyyrrrrryyy..','......rrrr......'] },
+    sb_crystal_prism:  { pos: 'left:66%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { c: '#7ed6f7', p: '#ffb8e0', l: '#c9a6ff', w: '#ffffff' }, grid: ['..c...pp...ll...c.','.cwc.pwwp.lwwl.cwc','..c...pp...ll...c.','....ccccpppp......','..................'] },
+    sb_paw_guardian:   { pos: 'left:26%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { w: '#ffffff', p: '#ffbfd4', o: '#c78d5a' }, grid: ['..www..ppp..www.','.wwwwwpppppwwwww','..www..ppp..www.','....oooooooo....','................'] },
+    sb_golden_bell:    { pos: 'right:14px;bottom:-7px;', w: 16, h: 7, anim: 'b-bob', pal: { y: '#f2c249', w: '#fff8d6', p: '#ff9ec2' }, grid: ['....yyyyyyyy....','..yywwwwwwwwyy..','..ywwppwwppwwy..','....yyyyyyyy....','.......yy.......'] },
+    sb_music_star:     { pos: 'left:30%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { y: '#ffe078', b: '#788ee6', w: '#ffffff' }, grid: ['...bb.....yyy.....','...bwb...ywwwy....','..bb.b...y........','..bb.....yyyy.....','..................'] },
+    sb_arcade_god:     { pos: 'left:64%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { w: '#ffffff', c: '#a8d8ff', l: '#d6c2ff' }, grid: ['..www..cccc..www','.wwwwwccccccwwww','..wwwllwwwwllwww','.....llllllll...','................'] },
+    sb_ancient_fan:    { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: '', pal: { g: '#64b898', w: '#effcf7', y: '#e6c278', r: '#e06c6c' }, grid: ['....gggggggggg....','..ggwwwwwwwwwwgg..','..gwwyyyyyyyywwg..','.....gggrrggg.....','........rr........'] },
+    sb_heart_devotion: { pos: 'right:12px;top:-8px;', w: 16, h: 7, anim: 'b-bob', pal: { r: '#e65c8c', p: '#ffb8d0', y: '#f5cc68', w: '#ffffff' }, grid: ['..rr..rr..yyyy..','.rrrrrrrrywwwwy.','..rrrrrr..yyyy..','...rrrr.........','....rr..........'] },
+    sb_aurora_halo:    { pos: 'left:32%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { m: '#7af0d4', c: '#8cc8ff', l: '#c9a6ff', w: '#ffffff' }, grid: ['mmmmmmccccccclllll','.mwwm..cwwc..lwwl.','..mm....cc....ll..','..................','..................'] },
+    sb_mid_cuddle_pro: { pos: 'left:64%;bottom:-7px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { p: '#ff9ec2', w: '#ffffff', y: '#ffe694' }, grid: ['..pp..pp..yyyy..','.ppppppp.ywwwwy.','..pppppp..yyyy..','...pppp.........','....pp..........'] },
+    sb_mid_snack_boss: { pos: 'left:26%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: '', pal: { o: '#d99858', k: '#5c3418', p: '#ff8cb0', w: '#ffffff' }, grid: ['..oooo....ppppp...','.ookkoo..pwwwwwp..','.ookkoo..pwwwwwp..','..oooo....ppppp...','..................'] },
+    sb_mid_good_mood:  { pos: 'right:12px;top:-8px;', w: 16, h: 7, anim: 'b-bob', pal: { g: '#68c284', y: '#ffe066', w: '#ffffff', p: '#ff9eb8' }, grid: ['..gg..yyyy..pp..','.gwwgywwwwypwwp.','..gg..yyyy..pp..','......gggg......','................'] },
+    sb_mid_lucky_paw:  { pos: 'left:66%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { y: '#f2c249', r: '#e04858', w: '#fff6cc' }, grid: ['..yyyy....rrrr..','.ywwwwy..rwwwwr.','..yyyyrrrrryyy..','......rrrr......','................'] },
+    sb_milk_cloud_pup: { pos: 'left:28%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { c: '#9ad8ff', p: '#ffb8d4', w: '#ffffff' }, grid: ['..ccc..www..ppp.','.cwwwcwwwwwpwwwp','..ccc..www..ppp.','................','................'] },
+    sb_lazy_sunshine:  { pos: 'left:28%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { y: '#ffbd4a', w: '#fff4b8', g: '#8cd488' }, grid: ['......yyyyyy......','....yywwwwwwyy....','..ggyyyyyyyyyygg..','.gggggggggggggggg.','..................'] },
+  };
+
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
     const tier = isMystery ? 1 : (ach.tier || 1);
     const fKey = ach.frame || 'stars';
@@ -21395,13 +21436,19 @@
       const origWrap = renderOriginalBadgeWrap(ach.id, ach.bd, ach.fg);
       if (origWrap) {
         el.appendChild(origWrap);
-      } else {
-        if (Array.isArray(bespoke.ult)) {
-          bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, fKey)));
-        }
-        if (Array.isArray(bespoke.pieces)) {
-          bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
-        }
+      }
+      if (Array.isArray(bespoke.ult)) {
+        const uKey = bespoke.ultKey || fKey;
+        bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, uKey)));
+      }
+      if (!origWrap && Array.isArray(bespoke.trim)) {
+        bespoke.trim.forEach(([side, vIdx]) => el.appendChild(makeCustomTrim(side, ach.bd, ach.fg, vIdx)));
+      }
+      if (Array.isArray(bespoke.pieces)) {
+        bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
+      }
+      if (SHOP_BADGE_EXTRA_COMBOS[ach.id]) {
+        el.appendChild(renderBespokePiece(SHOP_BADGE_EXTRA_COMBOS[ach.id]));
       }
     } else if (tier >= 4 && !isMystery) {
       el.appendChild(makeUltOrn('top', fKey));
