@@ -5831,10 +5831,19 @@
     }
     #st-tb-root #st-tb-pup-bag input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
     #st-tb-root #st-tb-pup-bag select,
-    #st-tb-root #st-tb-pup-bag textarea {
+    #st-tb-root #st-tb-pup-bag textarea,
+    #st-tb-root [id^="st-tb-"][id$="-mask"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+    #st-tb-root [id^="st-tb-"][id$="-mask"] select,
+    #st-tb-root [id^="st-tb-"][id$="-mask"] textarea,
+    #st-tb-root [id^="st-tb-"][id$="-modal"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+    #st-tb-root [id^="st-tb-"][id$="-modal"] select,
+    #st-tb-root [id^="st-tb-"][id$="-modal"] textarea,
+    #st-tb-root #st-tb-dm-panel input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+    #st-tb-root #st-tb-dm-panel select,
+    #st-tb-root #st-tb-dm-panel textarea {
       background: var(--px-card, #ffffff) !important;
       background-color: var(--px-card, #ffffff) !important;
-      color: var(--px-fg, #54444a) !important;
+      color: var(--px-custom-fg, var(--px-fg, #54444a)) !important;
       border: 2px solid var(--px-border, #bfa4ae) !important;
       border-radius: 0 !important;
       box-shadow: none !important;
@@ -5849,9 +5858,14 @@
       outline: none !important;
     }
     #st-tb-root #st-tb-pup-bag input::placeholder,
-    #st-tb-root #st-tb-pup-bag textarea::placeholder {
-      color: var(--px-fg, #54444a) !important;
-      -webkit-text-fill-color: var(--px-fg, #54444a) !important;
+    #st-tb-root #st-tb-pup-bag textarea::placeholder,
+    #st-tb-root [id^="st-tb-"][id$="-mask"] input::placeholder,
+    #st-tb-root [id^="st-tb-"][id$="-mask"] textarea::placeholder,
+    #st-tb-root [id^="st-tb-"][id$="-modal"] input::placeholder,
+    #st-tb-root [id^="st-tb-"][id$="-modal"] textarea::placeholder,
+    #st-tb-root #st-tb-dm-panel input::placeholder {
+      color: var(--px-custom-fg, var(--px-fg, #54444a)) !important;
+      -webkit-text-fill-color: var(--px-custom-fg, var(--px-fg, #54444a)) !important;
       opacity: 0.52 !important;
     }
     #st-tb-root #st-tb-pup-bag input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]):focus,
@@ -33260,8 +33274,17 @@
     'st-tb-pup-icon-export-mask',
     'st-tb-draftrescue-mask',
   ];
+  const syncBagThemeToEl = (el) => {
+    if (!el || !pupBagEl) return;
+    ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+      const val = pupBagEl.style.getPropertyValue(v);
+      if (val) el.style.setProperty(v, val);
+      else el.style.removeProperty(v);
+    });
+  };
   const bringModalFront = (maskEl) => {
     if (!maskEl) return;
+    syncBagThemeToEl(maskEl);
     const visibleOthers = ALL_PUP_MODAL_IDS
       .map(id => root.querySelector('#' + id))
       .filter(el => el && el !== maskEl && el.style.display && el.style.display !== 'none');
@@ -36655,121 +36678,113 @@
   ];
 
   const drawPupHeadPortrait = (canvas, lookObj, stickerId = '') => {
-    canvas.width = 24;
-    canvas.height = 24;
+    canvas.width = 16;
+    canvas.height = 16;
     const g = canvas.getContext('2d');
     g.imageSmoothingEnabled = false;
-    g.clearRect(0, 0, 24, 24);
-    const pal = typeof getPupPalette === 'function' ? getPupPalette(lookObj || {}) : { w: '#fffdf7', s: '#ece5da', e: '#e2ae74', o: '#3b2a22', r: '#d66565', g: '#f4cf5e' };
-    const fur = pal.w || '#fffdf7';
-    const furShade = pal.s || fur;
-    const ear = pal.e || '#e2ae74';
-    const out = pal.o || '#3b2a22';
-    const colr = pal.r || '#d66565';
-    const bell = pal.g || '#f4cf5e';
+    g.clearRect(0, 0, 16, 16);
+    const pal = typeof getPupPalette === 'function'
+      ? getPupPalette(lookObj || {})
+      : { w: '#fffdf7', s: '#ece5da', e: '#e2ae74', o: '#3b2a22', k: '#231814', p: '#f59eb0' };
     const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
 
-    // Cute pixel puppy HEAD + NECK & COLLAR (24x24 pure integer grid)
-    // Neck & collar (bottom y=18..22)
-    p(8, 18, out, 8, 1);
-    p(7, 19, out, 1, 4); p(16, 19, out, 1, 4);
-    p(8, 19, colr, 8, 2);
-    p(11, 20, bell, 2, 2); // little collar bell
-    p(8, 21, furShade, 8, 2);
-    p(9, 21, fur, 6, 2);
-
-    // Floppy ears
-    p(3, 8, out, 2, 7); p(4, 9, ear, 2, 6); p(5, 14, out, 1, 1);
-    p(19, 8, out, 2, 7); p(18, 9, ear, 2, 6); p(18, 14, out, 1, 1);
-
-    // Head outline & fill
-    p(6, 6, out, 12, 1);
-    p(5, 7, out, 1, 11); p(18, 7, out, 1, 11);
-    p(6, 18, out, 12, 1);
-    p(6, 7, fur, 12, 11);
-    p(6, 16, furShade, 12, 2); // soft chin shading
-    p(7, 7, '#ffffff', 2, 1); // subtle pixel forehead highlight
-
-    // Blush cheeks
-    p(7, 13, '#ffb5c8', 2, 1); p(15, 13, '#ffb5c8', 2, 1);
-    // Nose
-    p(11, 12, out, 2, 1);
-
-    if (!stickerId) {
-      // Standard cute pixel portrait eyes & smile
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2);
-      p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
-      p(10, 14, out, 1, 1); p(11, 15, out, 2, 1); p(13, 14, out, 1, 1);
-      return;
+    // Crop ONLY the REAL puppy's HEAD from PUP_SPRITES.idle1 (rows 0..6, cols 5..15 — ZERO neck/body!)
+    const grid = PUP_SPRITES.idle1;
+    const ox = 2;
+    const oy = 6;
+    for (let y = 0; y <= 6; y++) {
+      const row = grid[y];
+      for (let x = 5; x <= 15; x++) {
+        const ch = row[x];
+        if (ch === '.' || !pal[ch]) continue;
+        p(ox + (x - 5), oy + y, pal[ch]);
+      }
     }
+    // Clean 1px rounded chin outline right under row 6 (cols 7..13 -> ox+2..ox+8)
+    for (let x = 7; x <= 13; x++) p(ox + (x - 5), oy + 7, pal.o);
 
-    // Hilarious expressive pixel stickers (v87 style!)
+    if (!stickerId) return;
+
+    // Eye coords on 16x16 canvas: left eye (ox+3, oy+4) = (5,10), right eye (ox+7, oy+4) = (9,10)
+    // Nose: (ox+5, oy+5) = (7,11), blush: (4,11) & (10,11)
+    const fur = pal.w || '#fffdf7';
+    const out = pal.o || '#3b2a22';
+    const eyeCol = pal.k || '#231814';
+    const clearEyes = () => {
+      p(5, 10, fur); p(9, 10, fur);
+    };
+
     if (stickerId === 'happy') {
-      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
-      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
-      p(10, 14, out, 4, 1); p(11, 15, '#ff8aa6', 2, 2);
-      p(2, 2, '#ffd24c', 1, 3); p(1, 3, '#ffd24c', 3, 1);
-      p(20, 3, '#ff8aa6', 2, 2);
+      clearEyes();
+      p(4, 10, out); p(5, 9, out); p(6, 10, out);
+      p(8, 10, out); p(9, 9, out); p(10, 10, out);
+      p(6, 12, '#ff8aa6', 3, 1);
+      p(1, 2, '#ffd24c', 1, 3); p(0, 3, '#ffd24c', 3, 1);
+      p(13, 3, '#ff8aa6', 2, 2);
     } else if (stickerId === 'love') {
-      p(8, 10, '#e84a72', 2, 2); p(14, 10, '#e84a72', 2, 2);
-      p(10, 14, out, 4, 1); p(11, 15, '#ff8aa6', 2, 1);
-      p(17, 1, '#f05a82', 2, 2); p(20, 1, '#f05a82', 2, 2); p(17, 2, '#f05a82', 5, 2); p(18, 4, '#f05a82', 3, 1); p(19, 5, '#f05a82', 1, 1);
-      p(18, 2, '#ffd6e2', 1, 1);
+      clearEyes();
+      p(5, 10, '#e84a72'); p(9, 10, '#e84a72');
+      p(11, 1, '#f05a82', 2, 2); p(14, 1, '#f05a82', 2, 2); p(11, 2, '#f05a82', 5, 1); p(12, 3, '#f05a82', 3, 1); p(13, 4, '#f05a82', 1, 1);
+      p(1, 3, '#ff8aa6', 1, 1); p(3, 3, '#ff8aa6', 1, 1); p(1, 4, '#ff8aa6', 3, 1); p(2, 5, '#ff8aa6', 1, 1);
     } else if (stickerId === 'cry') {
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2);
-      p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
-      p(8, 12, '#7cc6f7', 2, 6); p(14, 12, '#7cc6f7', 2, 6);
-      p(10, 15, out, 4, 1); p(9, 16, out, 1, 1); p(14, 16, out, 1, 1);
+      // Waterfall tears right below real puppy's eyes
+      p(5, 11, '#7cc6f7', 1, 4); p(9, 11, '#7cc6f7', 1, 4);
+      p(4, 14, '#a8dcff', 1, 1); p(10, 14, '#a8dcff', 1, 1);
+      p(6, 12, out, 3, 1);
     } else if (stickerId === 'sleep') {
-      p(8, 11, out, 3, 1); p(13, 11, out, 3, 1);
-      p(11, 14, out, 2, 1); p(12, 15, '#99d6ff', 1, 2); // tiny drool
-      p(17, 1, '#7b99cc', 4, 1); p(19, 2, '#7b99cc', 1, 1); p(18, 3, '#7b99cc', 1, 1); p(17, 4, '#7b99cc', 4, 1);
-      p(13, 2, '#a8bee6', 3, 1); p(14, 3, '#a8bee6', 1, 1); p(13, 4, '#a8bee6', 3, 1);
+      clearEyes();
+      p(4, 10, out, 2, 1); p(9, 10, out, 2, 1);
+      p(8, 12, '#8ed2ff', 1, 2); // tiny drool
+      p(11, 1, '#7b99cc', 4, 1); p(13, 2, '#7b99cc', 1, 1); p(12, 3, '#7b99cc', 1, 1); p(11, 4, '#7b99cc', 4, 1);
+      p(8, 2, '#a8bee6', 2, 1); p(8, 3, '#a8bee6', 2, 1);
     } else if (stickerId === 'angry') {
-      p(8, 9, out, 1, 1); p(9, 10, out, 2, 1); p(15, 9, out, 1, 1); p(13, 10, out, 2, 1);
-      p(10, 14, out, 4, 1); p(10, 15, '#ff6b78', 4, 2);
-      p(18, 1, '#e84858', 1, 4); p(17, 2, '#e84858', 3, 1); p(20, 3, '#e84858', 2, 1);
+      p(4, 9, out); p(5, 10, eyeCol); p(10, 9, out); p(9, 10, eyeCol);
+      p(6, 12, '#ff6b78', 3, 1);
+      p(12, 1, '#e84858', 1, 3); p(11, 2, '#e84858', 3, 1);
+      p(1, 4, '#ff6b78', 2, 1);
     } else if (stickerId === 'snack') {
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
-      p(8, 14, '#ffffff', 8, 2); p(7, 13, '#ffffff', 2, 4); p(15, 13, '#ffffff', 2, 4);
-      p(7, 14, '#d9cfc5', 1, 2); p(16, 14, '#d9cfc5', 1, 2);
+      // Cute white bone in mouth
+      p(4, 12, '#ffffff', 7, 1);
+      p(3, 11, '#ffffff', 2, 3); p(10, 11, '#ffffff', 2, 3);
+      p(3, 12, '#d9cfc5', 1, 1); p(11, 12, '#d9cfc5', 1, 1);
+      p(13, 2, '#ffd24c', 1, 3); p(12, 3, '#ffd24c', 3, 1);
     } else if (stickerId === 'good') {
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
-      p(10, 14, out, 4, 1);
-      p(19, 11, '#ffe066', 3, 4); p(20, 9, '#ffe066', 2, 2); p(18, 12, '#d9a441', 1, 3);
-      p(2, 2, '#ffe066', 1, 3); p(1, 3, '#ffe066', 3, 1);
+      p(6, 12, out, 3, 1);
+      p(13, 8, '#ffe066', 3, 4); p(14, 6, '#ffe066', 2, 2); p(12, 9, '#d9a441', 1, 3);
+      p(1, 2, '#ffe066', 1, 3); p(0, 3, '#ffe066', 3, 1);
     } else if (stickerId === 'hug') {
-      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
-      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
-      p(10, 14, out, 4, 1);
-      p(4, 16, fur, 3, 3); p(5, 17, '#ffbfd4', 1, 1);
-      p(17, 16, fur, 3, 3); p(18, 17, '#ffbfd4', 1, 1);
-      p(10, 1, '#f05a82', 4, 2); p(11, 3, '#f05a82', 2, 1);
+      clearEyes();
+      p(4, 10, out); p(5, 9, out); p(6, 10, out);
+      p(8, 10, out); p(9, 9, out); p(10, 10, out);
+      p(6, 1, '#f05a82', 1, 1); p(8, 1, '#f05a82', 1, 1); p(6, 2, '#f05a82', 3, 1); p(7, 3, '#f05a82', 1, 1);
+      p(0, 11, fur, 2, 3); p(1, 12, '#ffbfd4', 1, 1);
+      p(14, 11, fur, 2, 3); p(14, 12, '#ffbfd4', 1, 1);
     } else if (stickerId === 'what') {
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2);
-      p(11, 14, out, 2, 2);
-      p(18, 1, '#5a78b5', 3, 1); p(20, 2, '#5a78b5', 1, 2); p(19, 3, '#5a78b5', 1, 1); p(19, 5, '#5a78b5', 1, 1);
+      p(7, 12, out, 1, 1);
+      p(12, 0, '#5a78b5', 3, 1); p(14, 1, '#5a78b5', 1, 2); p(13, 2, '#5a78b5', 1, 1); p(13, 4, '#5a78b5', 1, 1);
     } else if (stickerId === 'party') {
-      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
-      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
-      p(10, 14, out, 4, 1); p(11, 15, '#ff8aa6', 2, 1);
-      p(11, 1, '#ff8aa6', 2, 1); p(10, 2, '#ffe066', 4, 1); p(9, 3, '#8cc8f7', 6, 2); p(8, 5, '#ff8aa6', 8, 1);
-      p(2, 3, '#ffe066', 2, 2); p(20, 3, '#8be0b8', 2, 2);
+      clearEyes();
+      p(4, 10, out); p(5, 9, out); p(6, 10, out);
+      p(8, 10, out); p(9, 9, out); p(10, 10, out);
+      // Party hat right on top of real puppy's head
+      p(7, 1, '#ff8aa6', 1, 1); p(6, 2, '#ffe066', 3, 1); p(5, 3, '#8cc8f7', 5, 2); p(5, 5, '#ff8aa6', 5, 1);
+      p(1, 2, '#ffe066', 2, 2); p(13, 2, '#8be0b8', 2, 2);
     } else if (stickerId === 'tea') {
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
-      p(10, 14, out, 4, 1);
-      p(19, 10, '#6b4423', 1, 3);
-      p(17, 13, '#ffffff', 5, 1);
-      p(17, 14, '#e6c39c', 5, 5);
-      p(18, 17, '#4a3222', 1, 1); p(20, 17, '#4a3222', 1, 1);
+      // Milk tea cup beside real puppy
+      p(13, 7, '#6b4423', 1, 3);
+      p(11, 10, '#ffffff', 5, 1);
+      p(11, 11, '#e6c39c', 5, 4);
+      p(12, 13, '#4a3222', 1, 1); p(14, 13, '#4a3222', 1, 1);
+      p(1, 3, '#ff8aa6', 2, 2);
     } else {
-      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
-      p(6, 13, '#ff8ca8', 3, 2); p(15, 13, '#ff8ca8', 3, 2);
-      p(11, 14, out, 2, 1);
+      // shy: wide rosy cheeks + sparkles
+      p(3, 11, '#ff8ca8', 2, 1); p(10, 11, '#ff8ca8', 2, 1);
+      p(1, 3, '#ffb5c8', 1, 3); p(0, 4, '#ffb5c8', 3, 1);
+      p(14, 3, '#ffb5c8', 1, 3); p(13, 4, '#ffb5c8', 3, 1);
     }
   };
 
-  const drawPupStickerCanvas = (stickerId, pxSize = 48, lookObj = null) => {
+    const drawPupStickerCanvas = (stickerId, pxSize = 48, lookObj = null) => {
     const c = doc.createElement('canvas');
     c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
     drawPupHeadPortrait(c, lookObj || getMyCurrentLookObj(), stickerId);
@@ -36835,7 +36850,7 @@
       }
     }
     const cv = doc.createElement('canvas');
-    const innerPx = Math.max(24, boxPx - 6);
+    const innerPx = boxPx >= 36 ? 32 : 24;
     cv.style.cssText = `width:${innerPx}px;height:${innerPx}px;display:block;image-rendering:pixelated;`;
     drawPupHeadPortrait(cv, look, '');
     wrap.appendChild(cv);
@@ -36849,6 +36864,12 @@
     const bg = pupBagEl.style.background || cs.backgroundColor || '#faf6f7';
     const bd = pupBagEl.style.getPropertyValue('--px-border') || cs.borderTopColor || '#bfa4ae';
     const fg = pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || cs.color || '#54444a';
+    if (typeof ALL_PUP_MODAL_IDS !== 'undefined') {
+      ALL_PUP_MODAL_IDS.forEach(id => {
+        const mEl = root.querySelector('#' + id);
+        if (mEl) syncBagThemeToEl(mEl);
+      });
+    }
     ['#st-tb-dm-panel', '#st-tb-dm-pill'].forEach(sel => {
       const el = root.querySelector(sel);
       if (!el) return;
@@ -37094,7 +37115,7 @@
         const b = doc.createElement('button');
         b.type = 'button';
         b.className = 'st-px-btn st-dm-st-btn';
-        b.appendChild(drawPupStickerCanvas(st.id, 36, useLk));
+        b.appendChild(drawPupStickerCanvas(st.id, 32, useLk));
         const lb = doc.createElement('span');
         lb.style.cssText = 'font-size:9.5px;font-weight:700;line-height:1.15;display:block;white-space:nowrap;';
         lb.textContent = st.name;
