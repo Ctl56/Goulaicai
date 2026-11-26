@@ -2798,7 +2798,9 @@
     puppyBagPalettes: [],
     puppyDmHistory: {},
     puppyDmUnread: {},
-    puppyDmUseMyBubble: false,
+    puppyDmUseMyBubble: true,
+    puppyDmBubDefaultOnV1: false,
+    puppyFriendRemarks: {},
     puppyDmRect: null,
     puppyBagFollowST: false,
     puppyReplyBell: true,
@@ -2951,6 +2953,8 @@
     config.puppyEnabled = true;
   }
   if (config.effect === 'dandelion') config.effect = 'none';
+  if (!config.puppyDmBubDefaultOnV1) { config.puppyDmUseMyBubble = true; config.puppyDmBubDefaultOnV1 = true; }
+  if (!config.puppyFriendRemarks || typeof config.puppyFriendRemarks !== 'object') config.puppyFriendRemarks = {};
   const REMOVED_OUTFITS = new Set(['gingham_red', 'matcha_lolita', 'peach_cake_dress', 'cream_plaid_dress', 'academy_skirt', 'shark_onesie', 'sakura_dress', 'denim_overalls', 'panda_onesie']);
   const REMOVED_ACCS = new Set(['beret', 'lotus_hat', 'mini_ghost', 'camera_neck', 'straw_hat', 'cat_headband', 'bunny_ear_band', 'pearl_ribbon', 'devil_horns', 'gold_bell_bow']);
   const REMOVED_COMPS = new Set(['mini_ufo', 'mini_lantern', 'mini_slime']);
@@ -36605,7 +36609,7 @@
     info.style.cssText = 'flex:1;min-width:0;';
     info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;">
-          <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
+          <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple((config.puppyFriendRemarks && config.puppyFriendRemarks[fr.cloudId]) || fr.name || '小伙伴')}</span>
           <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(0px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
@@ -36974,9 +36978,15 @@
     });
   };
 
+  const getFriendDisplayName = (fid, fallbackName = '好友') => {
+    const rmk = (config.puppyFriendRemarks && fid) ? String(config.puppyFriendRemarks[fid] || '').trim() : '';
+    return rmk || fallbackName || '好友';
+  };
+
   const applyDmBubbleSkin = (bubEl, dir, msg) => {
-    bubEl.className = 'st-tb-guest-bubble st-dm-msg-bub';
-    bubEl.querySelectorAll('.st-px-bub-orn').forEach(n => n.remove());
+    bubEl.className = 'st-tb-guest-bubble st-dm-msg-bub show';
+    bubEl.querySelectorAll('.st-px-bub-orn, .st-tb-guest-bub-fx').forEach(n => n.remove());
+    delete bubEl.dataset.bubDyn;
     bubEl.style.background = '';
     bubEl.style.borderColor = '';
     bubEl.style.color = '';
@@ -36985,19 +36995,33 @@
       return;
     }
     const allBubs = [...SHOP_PUP_BUBBLES, ...SECRET_ADV_BUBBLES, ...GACHA_BUBBLES, ...SPECIAL_EVENT_BUBBLES];
+    const attachBubDecor = (bubId) => {
+      bubEl.classList.add(bubId.replace(/_/g, '-'));
+      const bObj = allBubs.find(b => b.id === bubId);
+      if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
+        bObj.charms.forEach(ch => {
+          const c = makeAfCharm9(ch.key, ch.pos);
+          c.className = `st-px-bub-orn ${ch.pos}`;
+          bubEl.appendChild(c);
+        });
+      }
+      if (bObj && bObj.dyn) {
+        bubEl.dataset.bubDyn = bObj.dyn;
+        const fxCvs = doc.createElement('canvas');
+        fxCvs.className = 'st-tb-guest-bub-fx';
+        fxCvs.width = 160;
+        fxCvs.height = 44;
+        bubEl.appendChild(fxCvs);
+        if (typeof drawBubFxToCanvas === 'function') {
+          try { drawBubFxToCanvas(fxCvs, bObj.dyn, bubFxTick || 0); } catch (_) {}
+        }
+      }
+    };
     let bubId = '';
     if (dir === 'me') {
       bubId = config.puppyBubbleSkin || 'bub_default';
       if (bubId && bubId !== 'bub_default') {
-        bubEl.classList.add(bubId.replace(/_/g, '-'));
-        const bObj = allBubs.find(b => b.id === bubId);
-        if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
-          bObj.charms.forEach(ch => {
-            const c = makeAfCharm9(ch.key, ch.pos);
-            c.className = `st-px-bub-orn ${ch.pos}`;
-            bubEl.appendChild(c);
-          });
-        }
+        attachBubDecor(bubId);
         if (config.puppyBubOverrideCol) {
           bubEl.style.borderColor = config.puppyBubBorderCol || '#bfa4ae';
           bubEl.style.background = config.puppyBubBgCol || '#fffdf9';
@@ -37012,15 +37036,7 @@
       const fr = getFriendList().find(x => x.cloudId === activeDmFriendId);
       bubId = (msg && msg.bubbleId && msg.bubbleId !== 'bub_default') ? msg.bubbleId : (fr?.look?.bubble || 'bub_default');
       if (bubId && bubId !== 'bub_default') {
-        bubEl.classList.add(bubId.replace(/_/g, '-'));
-        const bObj = allBubs.find(b => b.id === bubId);
-        if (bObj && Array.isArray(bObj.charms) && typeof makeAfCharm9 === 'function') {
-          bObj.charms.forEach(ch => {
-            const c = makeAfCharm9(ch.key, ch.pos);
-            c.className = `st-px-bub-orn ${ch.pos}`;
-            bubEl.appendChild(c);
-          });
-        }
+        attachBubDecor(bubId);
         if (msg && msg.bubBg) bubEl.style.background = msg.bubBg;
         if (msg && msg.bubBd) bubEl.style.borderColor = msg.bubBd;
         if (msg && msg.bubFg) bubEl.style.color = msg.bubFg;
@@ -37042,25 +37058,30 @@
     }
   };
 
+  let dmSearchQuery = '';
   const renderFriendDmMessages = (fid) => {
     const panel = root.querySelector('#st-tb-dm-panel');
     if (!panel || panel.style.display === 'none' || panel.dataset.fid !== fid) return;
     const listEl = panel.querySelector('#st-dm-msg-list');
     if (!listEl) return;
     const fr = getFriendList().find(x => x.cloudId === fid) || getGuestList().find(x => x.cloudId === fid) || { cloudId: fid, name: panel.dataset.fname || '好友', look: {} };
-    const msgs = Array.isArray(config.puppyDmHistory?.[fid]) ? config.puppyDmHistory[fid] : [];
+    const allMsgs = Array.isArray(config.puppyDmHistory?.[fid]) ? config.puppyDmHistory[fid] : [];
+    const q = String(dmSearchQuery || '').trim().toLowerCase();
+    const msgs = q ? allMsgs.filter(m => String(m.text || '').toLowerCase().includes(q)) : allMsgs;
+    const cntEl = panel.querySelector('#st-dm-search-cnt');
+    if (cntEl) cntEl.textContent = q ? `找到 ${msgs.length} 条` : '';
     const myLook = getMyCurrentLookObj();
     listEl.innerHTML = '';
     if (!msgs.length) {
-      listEl.innerHTML = '<div style="text-align:center;font-size:10.5px;opacity:0.65;padding:24px 8px;">还没有聊天记录，发句话或小狗表情包打个招呼吧~</div>';
+      listEl.innerHTML = `<div style="text-align:center;font-size:10.5px;opacity:0.65;padding:24px 8px;">${q ? '没有搜到包含该关键词的聊天记录~' : '还没有聊天记录，发句话或小狗表情包打个招呼吧~'}</div>`;
       return;
     }
     msgs.forEach(m => {
       const isMe = m.dir === 'me';
       const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
-      row.style.cssText = `display:flex;align-items:flex-start;gap:9px;margin-bottom:11px;padding:0 3px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
-      const avWrap = makeDmHeadAvatar(senderLook, 40);
+      row.style.cssText = `display:flex;align-items:flex-start;gap:10px;margin-bottom:13px;padding:4px 6px 0;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+      const avWrap = makeDmHeadAvatar(senderLook, 34);
       const bubCol = doc.createElement('div');
       bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
       const bub = doc.createElement('div');
@@ -37180,20 +37201,46 @@
     panel.style.left = `${left}px`;
     panel.style.top = `${top}px`;
 
+    dmSearchQuery = '';
+    const dispName = getFriendDisplayName(fid, fname);
+    const PX_ICO_GEAR = `<svg width="11" height="11" viewBox="0 0 11 11" style="display:block;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="4" y="0" width="3" height="2" fill="currentColor"/><rect x="4" y="9" width="3" height="2" fill="currentColor"/><rect x="0" y="4" width="2" height="3" fill="currentColor"/><rect x="9" y="4" width="2" height="3" fill="currentColor"/><rect x="2" y="2" width="7" height="7" fill="currentColor"/><rect x="4" y="4" width="3" height="3" fill="var(--px-card,#fff)"/></svg>`;
     panel.innerHTML = `
       <div id="st-dm-head" style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 8px;border-bottom:2px dashed var(--px-border,#bfa4ae);cursor:grab;user-select:none;flex-shrink:0;overflow:visible;">
-        <div style="display:flex;align-items:center;gap:7px;min-width:0;flex:1;overflow:visible;">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;overflow:visible;">
           <span id="st-dm-head-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;"></span>
-          <span style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
+          <span id="st-dm-head-name" style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(dispName)}</span>
           <button type="button" id="st-dm-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(0px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${bondLv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
-          <button type="button" id="st-dm-bub-toggle" class="st-px-btn${config.puppyDmUseMyBubble ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9px;" title="切换私聊气泡风格">${config.puppyDmUseMyBubble ? '气泡:当前' : '气泡:默认'}</button>
-          <button type="button" id="st-dm-min" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;" title="缩小放在一边">—</button>
-          <button type="button" id="st-dm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;" title="关闭私聊">×</button>
+          <button type="button" id="st-dm-set-btn" class="st-px-btn" style="width:22px;height:20px;padding:0;display:inline-flex;align-items:center;justify-content:center;" title="私聊设置">${PX_ICO_GEAR}</button>
+          <button type="button" id="st-dm-min" class="st-px-btn" style="width:22px;height:20px;padding:0;font-size:11px;line-height:1;" title="缩小">—</button>
+          <button type="button" id="st-dm-close" class="st-px-btn" style="width:22px;height:20px;padding:0;font-size:11px;line-height:1;" title="关闭">×</button>
         </div>
       </div>
-      <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:8px 8px 4px;box-sizing:border-box;background:var(--px-bg-soft,rgba(255,255,255,0.45));"></div>
+      <div id="st-dm-settings-panel" style="display:none;flex-direction:column;gap:6px;padding:7px 8px;border-bottom:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);font-size:10px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="flex-shrink:0;font-weight:700;">备注</span>
+          <input type="text" id="st-dm-rmk-inp" maxlength="14" value="${escapeHtmlSimple((config.puppyFriendRemarks && config.puppyFriendRemarks[fid]) || '')}" placeholder="留空恢复原昵称(${escapeHtmlSimple(fname)})" style="flex:1;min-width:0;height:22px !important;min-height:22px !important;font-size:10px !important;" />
+          <button type="button" id="st-dm-rmk-save" class="st-px-btn care" style="height:22px;padding:0 7px;font-size:9.5px;flex-shrink:0;">保存</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="flex-shrink:0;font-weight:700;">搜索</span>
+          <input type="text" id="st-dm-search-inp" maxlength="30" placeholder="搜索聊天记录关键词..." style="flex:1;min-width:0;height:22px !important;min-height:22px !important;font-size:10px !important;" />
+          <span id="st-dm-search-cnt" style="font-size:9px;opacity:0.75;flex-shrink:0;"></span>
+          <button type="button" id="st-dm-search-clr" class="st-px-btn" style="height:22px;padding:0 5px;font-size:9.5px;flex-shrink:0;">清</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="font-weight:700;">使用当前气泡装扮</span>
+          <button type="button" id="st-dm-bub-toggle" class="st-px-btn${config.puppyDmUseMyBubble ? ' active' : ''}" style="height:20px;padding:0 8px;font-size:9.5px;">${config.puppyDmUseMyBubble ? '开' : '关'}</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+          <button type="button" id="st-dm-act-gift" class="st-px-btn care" style="height:21px;font-size:9.5px;padding:0 2px;">送礼</button>
+          <button type="button" id="st-dm-act-note" class="st-px-btn" style="height:21px;font-size:9.5px;padding:0 2px;">留纸条</button>
+          <button type="button" id="st-dm-act-export" class="st-px-btn" style="height:21px;font-size:9.5px;padding:0 2px;">复制记录</button>
+          <button type="button" id="st-dm-act-clear" class="st-px-btn" style="height:21px;font-size:9.5px;padding:0 2px;color:#a94442;">清空记录</button>
+        </div>
+      </div>
+      <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:10px 10px 6px;box-sizing:border-box;background:var(--px-bg-soft,rgba(255,255,255,0.45));"></div>
       <div id="st-dm-sticker-wrap" style="display:none;flex-direction:column;border-top:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);flex-shrink:0;">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 7px 2px;font-size:9.5px;">
           <span style="font-weight:700;">小狗表情包</span>
@@ -37211,7 +37258,7 @@
     panel.onclick = (e) => e.stopPropagation();
 
     const headAvSlot = panel.querySelector('#st-dm-head-av');
-    if (headAvSlot) headAvSlot.appendChild(makeDmHeadAvatar(fullFr.look || {}, 38));
+    if (headAvSlot) headAvSlot.appendChild(makeDmHeadAvatar(fullFr.look || {}, 42));
 
     panel.querySelector('#st-dm-bond-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -37314,14 +37361,94 @@
       win.addEventListener('pointercancel', onUp);
     });
 
+    const setPanel = panel.querySelector('#st-dm-settings-panel');
+    panel.querySelector('#st-dm-set-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!setPanel) return;
+      const openNow = setPanel.style.display !== 'flex';
+      setPanel.style.display = openNow ? 'flex' : 'none';
+      if (openNow && stWrap) stWrap.style.display = 'none';
+    });
+    // Click blank chat message area -> auto-collapse sticker panel & settings panel
+    panel.querySelector('#st-dm-msg-list')?.addEventListener('click', () => {
+      if (stWrap && stWrap.style.display !== 'none') stWrap.style.display = 'none';
+      if (setPanel && setPanel.style.display !== 'none') setPanel.style.display = 'none';
+    });
+    panel.querySelector('#st-dm-rmk-save')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rInp = panel.querySelector('#st-dm-rmk-inp');
+      const rVal = String(rInp?.value || '').trim().slice(0, 14);
+      if (!config.puppyFriendRemarks || typeof config.puppyFriendRemarks !== 'object') config.puppyFriendRemarks = {};
+      if (rVal) config.puppyFriendRemarks[fid] = rVal;
+      else delete config.puppyFriendRemarks[fid];
+      saveConfig();
+      const hn = panel.querySelector('#st-dm-head-name');
+      if (hn) hn.textContent = getFriendDisplayName(fid, fname);
+      const fm = root.querySelector('#st-tb-friends-mask');
+      if (fm && fm.style.display === 'flex' && typeof openFriendsListModal === 'function') openFriendsListModal(true);
+    });
+    const sInp = panel.querySelector('#st-dm-search-inp');
+    sInp?.addEventListener('input', () => {
+      dmSearchQuery = sInp.value || '';
+      renderFriendDmMessages(fid);
+    });
+    panel.querySelector('#st-dm-search-clr')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dmSearchQuery = '';
+      if (sInp) sInp.value = '';
+      renderFriendDmMessages(fid);
+    });
     panel.querySelector('#st-dm-bub-toggle')?.addEventListener('click', (e) => {
       e.stopPropagation();
       config.puppyDmUseMyBubble = !config.puppyDmUseMyBubble;
       saveConfig();
       const btn = e.currentTarget;
-      btn.textContent = config.puppyDmUseMyBubble ? '气泡:当前' : '气泡:默认';
+      btn.textContent = config.puppyDmUseMyBubble ? '开' : '关';
       btn.classList.toggle('active', config.puppyDmUseMyBubble);
       renderFriendDmMessages(fid);
+    });
+    panel.querySelector('#st-dm-act-gift')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (setPanel) setPanel.style.display = 'none';
+      if (typeof openCloudSendGiftModal === 'function') openCloudSendGiftModal(fid);
+    });
+    panel.querySelector('#st-dm-act-note')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (setPanel) setPanel.style.display = 'none';
+      if (typeof openCloudWriteNoteModal === 'function') openCloudWriteNoteModal(fid, getFriendDisplayName(fid, fname));
+    });
+    panel.querySelector('#st-dm-act-export')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const list = Array.isArray(config.puppyDmHistory?.[fid]) ? config.puppyDmHistory[fid] : [];
+      if (!list.length) {
+        openPixelPupNoticeModal('暂无记录', '当前还没有可复制的私聊记录哦~');
+        return;
+      }
+      const myN = getPupName();
+      const taN = getFriendDisplayName(fid, fname);
+      const txtOut = list.map(m => {
+        const d = new Date(m.ts || Date.now());
+        const tStr = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        const body = m.sticker ? `[表情:${PUP_DM_STICKERS.find(s => s.id === m.sticker)?.name || m.sticker}]${m.text ? ' ' + m.text : ''}` : (m.text || '');
+        return `[${tStr}] ${m.dir === 'me' ? myN : taN}: ${body}`;
+      }).join('\n');
+      try { navigator.clipboard?.writeText(txtOut); } catch (_) {}
+      openPixelPupNoticeModal('已复制聊天记录', `共复制 ${list.length} 条与「${taN}」的私聊记录到剪贴板~`, '好哒');
+    });
+    panel.querySelector('#st-dm-act-clear')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openGuardConfirm(
+        '清空私聊记录？',
+        `确定要清空与「${getFriendDisplayName(fid, fname)}」的本地聊天记录吗？清空后无法恢复。`,
+        () => {
+          if (config.puppyDmHistory) config.puppyDmHistory[fid] = [];
+          saveConfig();
+          renderFriendDmMessages(fid);
+          if (setPanel) setPanel.style.display = 'none';
+        },
+        '确认清空',
+        true
+      );
     });
 
     panel.querySelector('#st-dm-close')?.addEventListener('click', (e) => {
@@ -37351,7 +37478,7 @@
       pEl.style.left = `${pl}px`;
       pEl.style.top = `${pt}px`;
       pEl.innerHTML = `<span id="st-dm-pill-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;"></span>
-        <span style="font-size:10.5px;font-weight:700;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
+        <span style="font-size:10.5px;font-weight:700;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(getFriendDisplayName(fid, fname))}</span>
         <span id="st-dm-pill-badge" style="display:none;min-width:15px;height:15px;padding:0 4px;border-radius:0;background:#e05263;color:#fff;font-size:9px;font-weight:700;align-items:center;justify-content:center;">0</span>
         <button type="button" id="st-dm-pill-x" class="st-px-btn" style="height:18px;padding:0 4px;font-size:9px;margin-left:2px;" title="关闭">×</button>`;
       pEl.onclick = (ev) => ev.stopPropagation();
