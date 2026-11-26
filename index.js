@@ -31625,48 +31625,49 @@
     { id: 'mono',     name: '复古黑白' },
     { id: 'dream',    name: '梦幻柔焦' },
   ];
-  const applyPolaroidFilter = (ctx, W, H, filterId) => {
+  const applyPolaroidFilter = (ctx, W, H, filterId, strength = 75) => {
     if (!filterId || filterId === 'none') return;
+    const k = Math.max(0.1, Math.min(1.0, (Number(strength ?? 75) || 75) / 100));
+    const a = (base) => Number((base * k).toFixed(3));
     ctx.save();
     if (filterId === 'warm') {
       ctx.globalCompositeOperation = 'source-atop';
       const g = ctx.createLinearGradient(0, 0, W, H);
-      g.addColorStop(0, 'rgba(255,212,140,0.22)');
-      g.addColorStop(1, 'rgba(255,158,122,0.16)');
+      g.addColorStop(0, `rgba(255,212,140,${a(0.32)})`);
+      g.addColorStop(1, `rgba(255,158,122,${a(0.24)})`);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     } else if (filterId === 'cool') {
       const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, 'rgba(155,215,255,0.22)');
-      g.addColorStop(1, 'rgba(180,235,245,0.14)');
+      g.addColorStop(0, `rgba(155,215,255,${a(0.32)})`);
+      g.addColorStop(1, `rgba(180,235,245,${a(0.22)})`);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     } else if (filterId === 'vintage') {
-      ctx.fillStyle = 'rgba(218,176,118,0.24)';
+      ctx.fillStyle = `rgba(218,176,118,${a(0.34)})`;
       ctx.fillRect(0, 0, W, H);
-      // 确定性轻胶片颗粒（保证预览与导出 100% 一致）
       for (let i = 0; i < 95; i++) {
         const gx = (i * 37 + 13) % W;
         const gy = (i * 53 + 7) % H;
-        ctx.fillStyle = (i % 2 === 0) ? 'rgba(255,245,220,0.18)' : 'rgba(70,45,25,0.14)';
+        ctx.fillStyle = (i % 2 === 0) ? `rgba(255,245,220,${a(0.24)})` : `rgba(70,45,25,${a(0.20)})`;
         ctx.fillRect(gx, gy, 1, 1);
       }
       const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.72);
       vg.addColorStop(0, 'rgba(0,0,0,0)');
-      vg.addColorStop(1, 'rgba(55,34,18,0.26)');
+      vg.addColorStop(1, `rgba(55,34,18,${a(0.36)})`);
       ctx.fillStyle = vg;
       ctx.fillRect(0, 0, W, H);
     } else if (filterId === 'pink') {
       const g = ctx.createLinearGradient(0, 0, W, H);
-      g.addColorStop(0, 'rgba(255,192,218,0.25)');
-      g.addColorStop(1, 'rgba(255,235,242,0.18)');
+      g.addColorStop(0, `rgba(255,192,218,${a(0.36)})`);
+      g.addColorStop(1, `rgba(255,235,242,${a(0.26)})`);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     } else if (filterId === 'vignette') {
-      const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.25, W / 2, H / 2, Math.max(W, H) * 0.68);
-      vg.addColorStop(0, 'rgba(255,250,242,0.06)');
-      vg.addColorStop(0.65, 'rgba(25,18,22,0.10)');
-      vg.addColorStop(1, 'rgba(20,14,22,0.42)');
+      const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.24, W / 2, H / 2, Math.max(W, H) * 0.68);
+      vg.addColorStop(0, `rgba(255,250,242,${a(0.08)})`);
+      vg.addColorStop(0.65, `rgba(25,18,22,${a(0.14)})`);
+      vg.addColorStop(1, `rgba(20,14,22,${a(0.56)})`);
       ctx.fillStyle = vg;
       ctx.fillRect(0, 0, W, H);
     } else if (filterId === 'mono') {
@@ -31677,14 +31678,16 @@
       for (let i = 0; i < data.length; i += 4) {
         const y = Math.round(data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
         const c = Math.max(0, Math.min(255, Math.round((y - 128) * 1.08 + 130)));
-        data[i] = c; data[i + 1] = c; data[i + 2] = c;
+        data[i] = Math.round(data[i] * (1 - k) + c * k);
+        data[i + 1] = Math.round(data[i + 1] * (1 - k) + c * k);
+        data[i + 2] = Math.round(data[i + 2] * (1 - k) + c * k);
       }
       ctx.putImageData(img, 0, 0);
     } else if (filterId === 'dream') {
       const g = ctx.createRadialGradient(W / 2, H / 2, 4, W / 2, H / 2, Math.max(W, H) * 0.72);
-      g.addColorStop(0, 'rgba(255,248,255,0.18)');
-      g.addColorStop(0.6, 'rgba(220,198,255,0.16)');
-      g.addColorStop(1, 'rgba(255,195,220,0.22)');
+      g.addColorStop(0, `rgba(255,248,255,${a(0.24)})`);
+      g.addColorStop(0.6, `rgba(220,198,255,${a(0.24)})`);
+      g.addColorStop(1, `rgba(255,195,220,${a(0.32)})`);
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
     }
@@ -32774,7 +32777,7 @@
       renderPupSpriteToCtx(ctx, d.look || {}, Math.round(d.x || 0), Math.round(d.y || 0), Boolean(d.flip), fr);
     });
     if (opts.photoFilter && opts.photoFilter !== 'none') {
-      applyPolaroidFilter(ctx, W, H, opts.photoFilter);
+      applyPolaroidFilter(ctx, W, H, opts.photoFilter, opts.photoFilterStrength);
     }
   };
 
@@ -33133,6 +33136,7 @@
       photoStyle: ph.photoStyle || 'polaroid',
       photoRatio: ph.photoRatio || '3:4',
       photoFilter: ph.photoFilter || 'none',
+      photoFilterStrength: typeof ph.photoFilterStrength === 'number' ? ph.photoFilterStrength : 75,
       photoOrient: ph.photoOrient || 'land',
       bgId: ph.bgId || 'meadow',
       bgCol1: ph.bgCol1 || '#fff3f7',
@@ -33176,9 +33180,9 @@
         </div>
         <div id="st-spv-fbot" style="display:none;justify-content:space-between;align-items:center;padding:4px 4px 2px;"></div>
       </div>
-      <div style="display:flex;gap:4px;margin-bottom:7px;">
-        <input type="text" id="st-spv-rename-inp" class="st-tb-input" value="${st.title.replace(/"/g, '&quot;')}" placeholder="输入新照片名字~" style="flex:1;min-width:0;font-size:10px;padding:3px 6px;" />
-        <button type="button" id="st-spv-rename-ok" class="st-px-btn" style="height:24px;padding:0 8px;font-size:10px;flex-shrink:0;">改名</button>
+      <div style="display:flex;align-items:center;gap:4px;margin-bottom:7px;">
+        <input type="text" id="st-spv-rename-inp" class="st-tb-input" value="${st.title.replace(/"/g, '&quot;')}" placeholder="输入新照片名字~" style="flex:1;min-width:0;height:24px;line-height:22px;font-size:10px;padding:0 6px;margin:0;box-sizing:border-box;" />
+        <button type="button" id="st-spv-rename-ok" class="st-px-btn" style="height:24px;line-height:22px;padding:0 8px;font-size:10px;margin:0;flex-shrink:0;box-sizing:border-box;">改名</button>
       </div>
       <div style="display:flex;gap:5px;">
         <button type="button" id="st-spv-del" class="st-px-btn" style="flex:1;color:#a94442;">删除照片</button>
@@ -33337,8 +33341,9 @@
       photoStyle: (['polaroid', 'photo', 'film', 'postcard'].includes(savedPhoto?.photoStyle || config.photoStyle) ? (savedPhoto?.photoStyle || config.photoStyle) : 'polaroid'),
       photoRatio: savedPhoto?.photoRatio || config.photoRatio || '3:4',
       photoFilter: savedPhoto?.photoFilter || ((typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? (config.photoFilter || 'none') : 'none'),
+      photoFilterStrength: typeof savedPhoto?.photoFilterStrength === 'number' ? savedPhoto.photoFilterStrength : (typeof config.photoFilterStrength === 'number' ? config.photoFilterStrength : 75),
       photoOrient: savedPhoto?.photoOrient || config.photoOrient || 'land',
-      bgId: savedPhoto?.bgId || extraOpts?.bgId || 'meadow',
+      bgId: savedPhoto?.bgId || ((typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? (extraOpts?.bgId || 'meadow') : 'meadow'),
       bgCol1: savedPhoto?.bgCol1 || extraOpts?.bgCol1 || '#fff3f7',
       bgCol2: savedPhoto?.bgCol2 || extraOpts?.bgCol2 || '#f2b8c9',
       dogs: initDogs,
@@ -33489,9 +33494,6 @@
           </div>
 
 
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">滤镜${(typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? '' : ' · Lv8解锁'}</div>
-          <div id="st-vph-filters" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
-
           <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">人物</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
             <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
@@ -33500,7 +33502,18 @@
           <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
 
           <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景样式</div>
-          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">滤镜 · Lv8专属${(typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? '' : '（未解锁）'}</div>
+          <div id="st-vph-filters" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:4px;"></div>
+          <div id="st-vph-flt-str-row" style="display:${st.photoFilter && st.photoFilter !== 'none' ? 'flex' : 'none'};align-items:center;gap:5px;margin-bottom:6px;font-size:9.5px;">
+            <span>滤镜程度</span>
+            <input type="range" id="st-vph-flt-str" min="10" max="100" value="${st.photoFilterStrength}" style="flex:1;min-width:80px;" />
+            <span id="st-vph-flt-str-v">${st.photoFilterStrength}%</span>
+          </div>
+
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">DIY背景 · Lv8专属${(typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? '' : '（未解锁）'}</div>
+          <div id="st-vph-diy-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
           <div id="st-vph-diy-cols" style="display:none;flex-direction:column;gap:5px;padding:6px;margin-bottom:6px;background:rgba(255,255,255,0.68);border:1px dashed var(--px-border,#bfa4ae);font-size:9.5px;">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
               <label style="display:inline-flex;align-items:center;gap:4px;font-weight:700;">色1<input type="color" id="st-vph-bgc1" class="st-vph-round-col" value="${st.bgCol1}" /></label>
@@ -33747,20 +33760,27 @@
           bgSwatchesEl.appendChild(sb);
         });
       }
+      const diyBgBox = winEl.querySelector('#st-vph-diy-bgs');
+      const canUseDiyBg = typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8;
       POLAROID_BGS.forEach(item => {
+        const isDiy = Boolean(item.diy);
         const b = doc.createElement('button');
         b.type = 'button';
         b.className = `st-px-btn${st.bgId === item.id ? ' active' : ''}`;
-        b.style.cssText = 'height:20px;padding:0 5px;font-size:9.5px;';
+        b.style.cssText = `height:20px;padding:0 5px;font-size:9.5px;${(isDiy && !canUseDiyBg) ? 'opacity:0.55;' : ''}`;
         b.textContent = item.name;
         b.addEventListener('click', () => {
+          if (isDiy && !canUseDiyBg) {
+            cmNotify('好感度达到 Lv.8 即可解锁专属 DIY 背景哦~');
+            return;
+          }
           st.bgId = item.id;
           bgBtns.forEach(x => x.b.classList.toggle('active', x.id === st.bgId));
           syncDiyColUI();
           redrawCv();
         });
         bgBtns.push({ id: item.id, b });
-        bgBox.appendChild(b);
+        (isDiy && diyBgBox ? diyBgBox : bgBox).appendChild(b);
       });
       syncDiyColUI();
 
@@ -33832,10 +33852,20 @@
             config.photoFilter = fl.id;
             scheduleSaveConfig();
             fBtns.forEach(x => x.b.classList.toggle('active', x.id === st.photoFilter));
+            const sRow = winEl.querySelector('#st-vph-flt-str-row');
+            if (sRow) sRow.style.display = st.photoFilter !== 'none' ? 'flex' : 'none';
             redrawCv();
           });
           fBtns.push({ id: fl.id, b });
           filterBox.appendChild(b);
+        });
+        winEl.querySelector('#st-vph-flt-str')?.addEventListener('input', (e) => {
+          st.photoFilterStrength = Number(e.target.value) || 75;
+          config.photoFilterStrength = st.photoFilterStrength;
+          const sv = winEl.querySelector('#st-vph-flt-str-v');
+          if (sv) sv.textContent = `${st.photoFilterStrength}%`;
+          scheduleSaveConfig();
+          redrawCv();
         });
       }
       const styleBox = winEl.querySelector('#st-vph-styles');
