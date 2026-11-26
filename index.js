@@ -21548,9 +21548,9 @@
           if (ach.bonus.outfit) { config.puppyOwnedOutfits = config.puppyOwnedOutfits || []; if (!config.puppyOwnedOutfits.includes(ach.bonus.outfit)) config.puppyOwnedOutfits.push(ach.bonus.outfit); }
           if (ach.bonus.acc) { config.puppyOwnedAccs = config.puppyOwnedAccs || []; if (!config.puppyOwnedAccs.includes(ach.bonus.acc)) config.puppyOwnedAccs.push(ach.bonus.acc); }
           if (ach.bonus.comp) { config.puppyOwnedCompanions = config.puppyOwnedCompanions || []; if (!config.puppyOwnedCompanions.includes(ach.bonus.comp)) config.puppyOwnedCompanions.push(ach.bonus.comp); }
-          if (ach.bonus.bubble) { config.puppyOwnedBubbles = config.puppyOwnedBubbles || []; if (!config.puppyOwnedBubbles.includes(ach.bonus.bubble)) config.puppyOwnedBubbles.push(ach.bonus.bubble); }
-          if (ach.bonus.avatarframe) { config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || []; if (!config.puppyOwnedAvatarFrames.includes(ach.bonus.avatarframe)) config.puppyOwnedAvatarFrames.push(ach.bonus.avatarframe); }
-          if (ach.bonus.trail) { config.puppyOwnedTrails = config.puppyOwnedTrails || []; if (!config.puppyOwnedTrails.includes(ach.bonus.trail)) config.puppyOwnedTrails.push(ach.bonus.trail); }
+          if (ach.bonus.bubble) { config.puppyOwnedBubbles = config.puppyOwnedBubbles || []; if (!config.puppyOwnedBubbles.includes(ach.bonus.bubble)) config.puppyOwnedBubbles.push(ach.bonus.bubble); markWardItemNew(ach.bonus.bubble); }
+          if (ach.bonus.avatarframe) { config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || []; if (!config.puppyOwnedAvatarFrames.includes(ach.bonus.avatarframe)) config.puppyOwnedAvatarFrames.push(ach.bonus.avatarframe); markWardItemNew(ach.bonus.avatarframe); }
+          if (ach.bonus.trail) { config.puppyOwnedTrails = config.puppyOwnedTrails || []; if (!config.puppyOwnedTrails.includes(ach.bonus.trail)) config.puppyOwnedTrails.push(ach.bonus.trail); markWardItemNew(ach.bonus.trail); }
           if (ach.bonus.tickets) {
             config.puppyInventory = config.puppyInventory || {};
             config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + ach.bonus.tickets;
@@ -21594,7 +21594,7 @@
     const newly = [];
     if (lv >= 6) {
       config.puppyOwnedBubbles = Array.isArray(config.puppyOwnedBubbles) ? config.puppyOwnedBubbles : [];
-      if (!config.puppyOwnedBubbles.includes('bub_bond_lv6')) { config.puppyOwnedBubbles.push('bub_bond_lv6'); newly.push('心意微光泡'); }
+      if (!config.puppyOwnedBubbles.includes('bub_bond_lv6')) { config.puppyOwnedBubbles.push('bub_bond_lv6'); markWardItemNew('bub_bond_lv6'); newly.push('心意微光泡'); }
     }
     if (lv >= 7) {
       config.puppyOwnedAccs = Array.isArray(config.puppyOwnedAccs) ? config.puppyOwnedAccs : [];
@@ -21606,7 +21606,7 @@
     }
     if (lv >= 9) {
       config.puppyOwnedAvatarFrames = Array.isArray(config.puppyOwnedAvatarFrames) ? config.puppyOwnedAvatarFrames : [];
-      if (!config.puppyOwnedAvatarFrames.includes('af_bond_lv9')) { config.puppyOwnedAvatarFrames.push('af_bond_lv9'); newly.push('星月守护框'); }
+      if (!config.puppyOwnedAvatarFrames.includes('af_bond_lv9')) { config.puppyOwnedAvatarFrames.push('af_bond_lv9'); markWardItemNew('af_bond_lv9'); newly.push('星月守护框'); }
     }
     if (lv >= 10) {
       config.puppyOwnedOutfits = Array.isArray(config.puppyOwnedOutfits) ? config.puppyOwnedOutfits : [];
@@ -22071,11 +22071,11 @@
         got.push('限定礼服【奶油生日礼裙】');
       }
       if (!config.puppyOwnedBubbles.includes('bub_bday_cake')) {
-        config.puppyOwnedBubbles.push('bub_bday_cake');
+        config.puppyOwnedBubbles.push('bub_bday_cake'); markWardItemNew('bub_bday_cake');
         got.push('限定气泡【蜡烛礼赞框】');
       }
       config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || [];
-      if (!config.puppyOwnedAvatarFrames.includes('af_bday_candle')) { config.puppyOwnedAvatarFrames.push('af_bday_candle'); got.push('限定头像框【奶油蛋糕框】'); }
+      if (!config.puppyOwnedAvatarFrames.includes('af_bday_candle')) { config.puppyOwnedAvatarFrames.push('af_bday_candle'); markWardItemNew('af_bday_candle'); got.push('限定头像框【奶油蛋糕框】'); }
       config.puppyInventory.snack_cake = (config.puppyInventory.snack_cake || 0) + 2;
       got.push('草莓小蛋糕x2');
     } else {
@@ -22084,11 +22084,11 @@
         got.push('限定披风【瑞雪福运披风】');
       }
       if (!config.puppyOwnedBubbles.includes('bub_fest_lantern')) {
-        config.puppyOwnedBubbles.push('bub_fest_lantern');
+        config.puppyOwnedBubbles.push('bub_fest_lantern'); markWardItemNew('bub_fest_lantern');
         got.push('限定气泡【佳节花灯框】');
       }
       config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || [];
-      if (!config.puppyOwnedAvatarFrames.includes('af_fest_lantern')) { config.puppyOwnedAvatarFrames.push('af_fest_lantern'); got.push('限定头像框【花灯喜庆框】'); }
+      if (!config.puppyOwnedAvatarFrames.includes('af_fest_lantern')) { config.puppyOwnedAvatarFrames.push('af_fest_lantern'); markWardItemNew('af_fest_lantern'); got.push('限定头像框【花灯喜庆框】'); }
       config.puppyInventory.snack_lucky_candy = (config.puppyInventory.snack_lucky_candy || 0) + 1;
       got.push('好运彩虹糖x1');
     }
@@ -23333,7 +23333,7 @@
         return;
       }
       config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
-      config.puppyOwnedBadges.push(item.id);
+      config.puppyOwnedBadges.push(item.id); markWardItemNew(item.id);
       config.puppyActiveShopBadge = item.id;
       saveConfig();
       updatePupStatBars();
@@ -23801,10 +23801,10 @@
           if (it.kind === 'outfit') { config.puppyOwnedOutfits = config.puppyOwnedOutfits || []; if (!config.puppyOwnedOutfits.includes(it.id)) config.puppyOwnedOutfits.push(it.id); }
           else if (it.kind === 'acc') { config.puppyOwnedAccs = config.puppyOwnedAccs || []; if (!config.puppyOwnedAccs.includes(it.id)) config.puppyOwnedAccs.push(it.id); }
           else if (it.kind === 'comp') { config.puppyOwnedCompanions = config.puppyOwnedCompanions || []; if (!config.puppyOwnedCompanions.includes(it.id)) config.puppyOwnedCompanions.push(it.id); }
-          else if (it.kind === 'badge') { config.puppyOwnedBadges = config.puppyOwnedBadges || []; if (!config.puppyOwnedBadges.includes(it.id)) config.puppyOwnedBadges.push(it.id); }
-          else if (it.kind === 'trail') { config.puppyOwnedTrails = config.puppyOwnedTrails || []; if (!config.puppyOwnedTrails.includes(it.id)) config.puppyOwnedTrails.push(it.id); }
-          else if (it.kind === 'bubble') { config.puppyOwnedBubbles = config.puppyOwnedBubbles || []; if (!config.puppyOwnedBubbles.includes(it.id)) config.puppyOwnedBubbles.push(it.id); }
-          else if (it.kind === 'avatarframe') { config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || []; if (!config.puppyOwnedAvatarFrames.includes(it.id)) config.puppyOwnedAvatarFrames.push(it.id); }
+          else if (it.kind === 'badge') { config.puppyOwnedBadges = config.puppyOwnedBadges || []; if (!config.puppyOwnedBadges.includes(it.id)) config.puppyOwnedBadges.push(it.id); markWardItemNew(it.id); }
+          else if (it.kind === 'trail') { config.puppyOwnedTrails = config.puppyOwnedTrails || []; if (!config.puppyOwnedTrails.includes(it.id)) config.puppyOwnedTrails.push(it.id); markWardItemNew(it.id); }
+          else if (it.kind === 'bubble') { config.puppyOwnedBubbles = config.puppyOwnedBubbles || []; if (!config.puppyOwnedBubbles.includes(it.id)) config.puppyOwnedBubbles.push(it.id); markWardItemNew(it.id); }
+          else if (it.kind === 'avatarframe') { config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || []; if (!config.puppyOwnedAvatarFrames.includes(it.id)) config.puppyOwnedAvatarFrames.push(it.id); markWardItemNew(it.id); }
           it.sold = true;
           saveConfig();
           updatePupStatBars();
@@ -24577,16 +24577,18 @@
           renderPupShop();
         });
       }
-      catArr.forEach(item => {
+      sortWardListWithNewFirst(catArr).forEach(item => {
         const ownedC = Boolean(item.free) || ownArr.includes(item.id);
         const wearingC = curAct === item.id;
         const isPrev = shopPreviewItem && shopPreviewItem.kind === shopSubCat && shopPreviewItem.item.id === item.id;
+        const isNewC = ownedC && freshNewWardItems.has(item.id);
         const card = doc.createElement('button');
         card.type = 'button';
         card.className = `st-px-shop-item${wearingC ? ' equipped' : ''}${isPrev ? ' previewing' : ''}`;
-        card.innerHTML = `<span class="st-px-shop-name">${item.name}</span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
+        card.innerHTML = `<span class="st-px-shop-name">${item.name}${isNewC ? '<span class="st-px-new-tag">NEW</span>' : ''}</span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: shopSubCat, item };
+          const clearedCosNew = clearWardItemNew(item.id);
           if (shopSubCat === 'bagskin') {
             applyPupCosmeticSkins(item.id, null);
           } else if (shopSubCat === 'bubskin') {
@@ -24618,10 +24620,11 @@
       if (pupShopCatHeadEl) pupShopCatHeadEl.textContent = `流光铭牌 (${allShowBadges.length}) · 可与成就叠加`;
       pupShopGridEl.innerHTML = '';
       pupShopGridEl.style.gridTemplateColumns = 'repeat(2, 1fr)';
-      allShowBadges.forEach(item => {
+      sortWardListWithNewFirst(allShowBadges).forEach(item => {
         const ownedB = (config.puppyOwnedBadges || []).includes(item.id);
         const wearingB = config.puppyActiveShopBadge === item.id;
         const isPrev = shopPreviewItem && shopPreviewItem.kind === 'badge' && shopPreviewItem.item.id === item.id;
+        const isNewB = ownedB && freshNewWardItems.has(item.id);
         const card = doc.createElement('button');
         card.type = 'button';
         card.className = `st-px-shop-item${wearingB ? ' equipped' : ''}${isPrev ? ' previewing' : ''}`;
@@ -24633,10 +24636,18 @@
         meta.className = 'st-px-shop-meta';
         meta.style.marginTop = '5px';
         meta.style.width = '100%';
-        meta.innerHTML = `<span>${ownedB ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingB ? '戴着' : (ownedB ? '戴' : '买')}</span>`;
+        meta.innerHTML = `<span>${ownedB ? '已有' : `${item.price}币`}${isNewB ? '<span class="st-px-new-tag">NEW</span>' : ''}</span><span class="st-px-shop-tag">${wearingB ? '戴着' : (ownedB ? '戴' : '买')}</span>`;
         card.append(pill, meta);
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: 'badge', item };
+          if (clearWardItemNew(item.id)) {
+            renderPupShop();
+            return;
+          }
+          if (clearedCosNew) {
+            renderPupShop();
+            return;
+          }
           if (pupShopGridEl) pupShopGridEl.querySelectorAll('.previewing').forEach(el => el.classList.remove('previewing'));
           card.classList.add('previewing');
           drawShopPreview();
@@ -26522,28 +26533,82 @@
         config.puppyStats = config.puppyStats || {};
         config.puppyStats.snapPhotos = (config.puppyStats.snapPhotos || 0) + 1;
         logDiaryEvent('和主人拍了纪念合影');
-        // Lv8 咔嚓合影：先播快门闪光拍照（自动带入桌面串门小狗），拍完弹出拍立得DIY工坊，自定义取名、背景调色后存入相册
-        const triggerSnapPhotoStudio = () => {
+        // Lv8 咔嚓合影：默认单人；若有其他串门小狗则先询问是否一起拍，再播柔和慢闪快门并进入拍立得DIY工坊
+        const runSnapFlashAndOpen = (snapped) => {
           try {
             let fl = root.querySelector('#st-tb-snap-flash');
             if (fl) fl.remove();
             fl = doc.createElement('div');
             fl.id = 'st-tb-snap-flash';
-            fl.style.cssText = 'position:fixed;inset:0;background:rgba(255,253,248,0.88);z-index:10050;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity 0.36s ease;opacity:1;';
-            fl.innerHTML = '<div style="width:156px;height:116px;border:3px dashed #8a6d62;box-shadow:0 0 0 4px rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#54444a;letter-spacing:2px;">咔嚓!</div>';
+            fl.style.cssText = 'position:fixed;inset:0;background:rgba(255,253,248,0.88);z-index:10050;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity 0.68s ease;opacity:1;';
+            fl.innerHTML = '<div style="width:168px;height:124px;border:3px dashed #8a6d62;box-shadow:0 0 0 4px rgba(255,255,255,0.75);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#54444a;letter-spacing:2px;">咔嚓!</div>';
             root.appendChild(fl);
-            setTimeout(() => { fl.style.opacity = '0'; }, 140);
-            setTimeout(() => { fl.remove(); }, 520);
+            setTimeout(() => { fl.style.opacity = '0'; }, 420);
+            setTimeout(() => { fl.remove(); }, 1120);
           } catch (_) {}
           setTimeout(() => {
-            const deskGuests = (typeof getGuestList === 'function' ? getGuestList() : []).filter(g => g.onDesktop !== false);
-            const snapped = [{ id: 'host', name: getPupName(), look: getHostLookSnap() }];
-            deskGuests.forEach(g => snapped.push({ id: `g_${g.id}`, name: g.name, look: g.look || {} }));
             const defTitle = snapped.length > 1
               ? `${snapped.map(x => x.name).join(' & ')}`
               : `${getPupName()}的咔嚓纪念`;
             openDualPhotoModal(null, snapped, { bgId: 'diy_dots', bgCol1: '#fff3f7', bgCol2: '#f2b8c9', title: defTitle });
-          }, 380);
+          }, 860);
+        };
+        const triggerSnapPhotoStudio = () => {
+          const hostDog = { id: 'host', name: getPupName(), look: getHostLookSnap() };
+          const allGuests = typeof getGuestList === 'function' ? getGuestList() : [];
+          if (!allGuests.length) {
+            runSnapFlashAndOpen([hostDog]);
+            return;
+          }
+          let askM = root.querySelector('#st-tb-snap-ask-modal');
+          if (askM) askM.remove();
+          askM = doc.createElement('div');
+          askM.id = 'st-tb-snap-ask-modal';
+          askM.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;z-index:10035;pointer-events:auto;';
+          const pickedIds = new Set();
+          const namePreview = allGuests.slice(0, 3).map(g => g.name).join('、') + (allGuests.length > 3 ? ` 等${allGuests.length}只小狗` : '');
+          const renderAsk = () => {
+            askM.innerHTML = `<div style="width:258px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-size:11.5px;font-weight:700;">咔嚓合影</span>
+                <button type="button" id="st-sna-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+              </div>
+              <div style="font-size:10.5px;line-height:1.5;margin-bottom:7px;">要和 <b>${escapeHtmlSimple(namePreview)}</b> 也一起拍照吗？</div>
+              <div id="st-sna-list" style="display:flex;flex-wrap:wrap;gap:4px;max-height:110px;overflow-y:auto;margin-bottom:8px;"></div>
+              <div style="display:flex;gap:5px;">
+                <button type="button" id="st-sna-solo" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">只拍自己</button>
+                <button type="button" id="st-sna-go" class="st-px-btn care" style="flex:1;height:24px;font-size:10px;">${pickedIds.size ? `一起拍(${pickedIds.size + 1}只)` : '开始拍照'}</button>
+              </div>
+            </div>`;
+            askM.querySelector('#st-sna-x')?.addEventListener('click', () => askM.remove());
+            askM.querySelector('#st-sna-solo')?.addEventListener('click', () => {
+              askM.remove();
+              runSnapFlashAndOpen([hostDog]);
+            });
+            askM.querySelector('#st-sna-go')?.addEventListener('click', () => {
+              const snapped = [hostDog];
+              allGuests.forEach(g => { if (pickedIds.has(g.id)) snapped.push({ id: `g_${g.id}`, name: g.name, look: g.look || {} }); });
+              askM.remove();
+              runSnapFlashAndOpen(snapped);
+            });
+            const lEl = askM.querySelector('#st-sna-list');
+            allGuests.forEach(g => {
+              const on = pickedIds.has(g.id);
+              const b = doc.createElement('button');
+              b.type = 'button';
+              b.className = `st-px-btn${on ? ' active' : ''}`;
+              b.style.cssText = 'height:23px;padding:0 7px;font-size:10px;';
+              b.textContent = `${on ? '✓ ' : ''}${g.name}`;
+              b.addEventListener('click', () => {
+                if (on) pickedIds.delete(g.id); else pickedIds.add(g.id);
+                renderAsk();
+              });
+              lEl.appendChild(b);
+            });
+          };
+          askM.addEventListener('click', (e) => { if (e.target === askM) askM.remove(); });
+          renderAsk();
+          root.appendChild(askM);
         };
         triggerSnapPhotoStudio();
       }
@@ -26554,7 +26619,52 @@
       const sf = getPupSelfName();
       if (act === 'nuzzle') msg = pick([`${sf}凑过来贴贴${ow}的脸颊~`, `蹭蹭${ow}, 最喜欢${ow}啦!`]);
       else if (act === 'heart_pose') msg = pick([`${sf}举起像素爱心牌送给${ow}!`, `这份心意只给${ow}一个人看~`]);
-      else if (act === 'star_wish') msg = pick([`和${ow}一起看像素流星雨, 许个愿吧!`, `${sf}许愿一直陪着${ow}~`]);
+      else if (act === 'star_wish') {
+        msg = pick([`和${ow}一起看像素流星雨, 许个愿吧!`, `${sf}许愿一直陪着${ow}~`]);
+        const todayStr = getTodayStr();
+        if (!config.puppyStarWishDaily || config.puppyStarWishDaily.date !== todayStr) {
+          config.puppyStarWishDaily = { date: todayStr, clicks: 0, target: 1 + Math.floor(Math.random() * 3), granted: false };
+        }
+        const swd = config.puppyStarWishDaily;
+        if (!swd.granted) {
+          swd.clicks = (swd.clicks || 0) + 1;
+          if (swd.clicks >= (swd.target || 2)) {
+            swd.granted = true;
+            const r = Math.random();
+            let giftText = '';
+            if (r < 0.35) {
+              const cAmt = 3 + Math.floor(Math.random() * 6);
+              config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + cAmt;
+              config.puppyStats = config.puppyStats || {};
+              config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + cAmt;
+              giftText = `小狗币 +${cAmt}`;
+            } else if (r < 0.60) {
+              const snPool = [...SHOP_PUP_GOODS.filter(x => x.cat === 'snack'), ...GACHA_SNACKS];
+              const sn = pick(snPool);
+              config.puppyInventory = config.puppyInventory || {};
+              config.puppyInventory[sn.id] = Math.floor(config.puppyInventory[sn.id] || 0) + 1;
+              giftText = `零食【${sn.name}】x1`;
+            } else if (r < 0.80) {
+              const gPool = [{ id: 'gacha_ticket', name: '扭蛋券' }, ...SHOP_PUP_GOODS.filter(x => x.cat === 'gear' && x.id !== 'personality_potion' && x.id !== 'gender_potion')];
+              const gi = pick(gPool);
+              config.puppyInventory = config.puppyInventory || {};
+              config.puppyInventory[gi.id] = Math.floor(config.puppyInventory[gi.id] || 0) + 1;
+              giftText = `道具【${gi.name}】x1`;
+            } else {
+              const fl = pick(PUP_FLOWERS);
+              config.puppyGarden = config.puppyGarden || { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {} };
+              config.puppyGarden.unlocked = config.puppyGarden.unlocked || {};
+              config.puppyGarden.unlocked[fl.id] = Math.floor(config.puppyGarden.unlocked[fl.id] || 0) + 1;
+              giftText = `像素花【${fl.name}】x1`;
+            }
+            for (let k = 0; k < 5; k++) spawnPupFx('sparkle', 6 + k * 3, 4);
+            saveConfig();
+            updatePupStatBars();
+            msg = `流星听见愿望啦! 送给${ow}一份惊喜：${giftText}~`;
+            setTimeout(() => { if (config.puppyEnabled) showPuppyBubble(`流星实现心愿啦! 获得 ${giftText}~`, 3000); }, 260);
+          }
+        }
+      }
       else if (act === 'listen_music') {
         msg = pick([`分${ow}一半小耳机，正在随机挑一首歌`, `戴上耳机吧${ow}，我先去搜一首随机好歌`]);
         try {
@@ -30052,7 +30162,7 @@
         const lockedB = SECRET_ADV_BUBBLES.filter(b => !config.puppyOwnedBubbles.includes(b.id));
         if (lockedB.length) {
           const sb = pick(lockedB);
-          config.puppyOwnedBubbles.push(sb.id);
+          config.puppyOwnedBubbles.push(sb.id); markWardItemNew(sb.id);
           secretNotice = `奇遇! 带回了秘境限定气泡【${sb.name}】!`;
         }
       } else if (Math.random() < 0.008) {
@@ -30061,13 +30171,13 @@
         const lockedAf = SECRET_ADV_AVATAR_FRAMES.filter(a => !config.puppyOwnedAvatarFrames.includes(a.id));
         if (lockedAf.length && Math.random() < 0.015) {
           const hitAf = pick(lockedAf);
-          config.puppyOwnedAvatarFrames.push(hitAf.id);
+          config.puppyOwnedAvatarFrames.push(hitAf.id); markWardItemNew(hitAf.id);
           secretLines.push(`秘境奇遇! 解锁隐藏头像框【${hitAf.name}】`);
         }
         const lockedT = SECRET_ADV_TRAILS.filter(t => !t.achOnly && !config.puppyOwnedTrails.includes(t.id));
         if (lockedT.length) {
           const stItem = pick(lockedT);
-          config.puppyOwnedTrails.push(stItem.id);
+          config.puppyOwnedTrails.push(stItem.id); markWardItemNew(stItem.id);
           secretNotice = `奇遇! 领悟了秘境走路特效【${stItem.name}】!`;
         }
       }
@@ -30422,7 +30532,7 @@
     if (tq > 0) list.push({ kind: 'gear', catLabel: '券', id: 'gacha_ticket', name: '扭蛋券', qty: tq });
     SHOP_PUP_GOODS.forEach(x => {
       const q = Math.floor(inv[x.id] || 0);
-      if (q > 0 && x.id !== 'personality_potion' && x.id !== 'gender_potion') {
+      if (q > 0) {
         list.push({ kind: x.cat === 'gear' ? 'gear' : 'snack', catLabel: x.cat === 'gear' ? '道具' : '零食', id: x.id, name: x.name, qty: q });
       }
     });
@@ -32657,10 +32767,10 @@
       bgCol2: savedPhoto?.bgCol2 || extraOpts?.bgCol2 || '#f2b8c9',
       dogs: initDogs,
       title: savedPhoto?.title || extraOpts?.title || initDogs.map(x => x.name).join(' & '),
-      showHeart: savedPhoto?.showHeart !== false,
+      showHeart: savedPhoto ? (savedPhoto.showHeart !== false) : (config.photoShowHeart !== false),
       paperCol: savedPhoto?.paperCol || '#ffffff',
       borderCol: savedPhoto?.borderCol || '#d6ccc8',
-      dots: savedPhoto?.dots !== false,
+      dots: savedPhoto ? (savedPhoto.dots !== false) : (config.photoDots !== false),
       radius: typeof savedPhoto?.radius === 'number' ? savedPhoto.radius : (typeof config.photoRadius === 'number' ? config.photoRadius : 0),
     };
     let activeDogIdx = 0;
@@ -32689,7 +32799,7 @@
         <button type="button" id="st-vph-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
       <div id="st-vph-card" style="padding:7px 7px 8px;margin-bottom:6px;flex-shrink:0;">
-        <canvas id="st-vph-cv" width="96" height="72" style="width:100%;max-height:190px;object-fit:contain;aspect-ratio:4/3;display:block;image-rendering:pixelated;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
+        <canvas id="st-vph-cv" width="96" height="72" style="width:100%;max-width:248px;height:auto;aspect-ratio:4/3;margin:0 auto;display:block;image-rendering:pixelated;touch-action:none;cursor:${savedPhoto ? 'default' : 'grab'};"></canvas>
         <div id="st-vph-cap" style="margin-top:5px;text-align:center;font-size:11px;font-weight:700;"></div>
         <div id="st-vph-date" style="text-align:center;font-size:9.5px;">${dateStr}</div>
       </div>
@@ -32952,8 +33062,8 @@
       paperInp?.addEventListener('input', (e) => { st.paperCol = e.target.value; syncCardStyle(); });
       bdInp?.addEventListener('input', (e) => { st.borderCol = e.target.value; syncCardStyle(); });
       winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; config.photoRadius = st.radius; scheduleSaveConfig(); syncCardStyle(); });
-      dotsBtn?.addEventListener('click', () => { st.dots = !st.dots; syncCardStyle(); });
-      heartBtn?.addEventListener('click', () => { st.showHeart = !st.showHeart; syncCardStyle(); redrawCv(); });
+      dotsBtn?.addEventListener('click', () => { st.dots = !st.dots; config.photoDots = st.dots; scheduleSaveConfig(); syncCardStyle(); });
+      heartBtn?.addEventListener('click', () => { st.showHeart = !st.showHeart; config.photoShowHeart = st.showHeart; scheduleSaveConfig(); syncCardStyle(); redrawCv(); });
 
       // 画布内无死角拖动小狗
       let dragIdx = -1, dragOffX = 0, dragOffY = 0;
@@ -48487,16 +48597,16 @@
       if (!config.puppyOwnedCompanions.includes(item.id)) { config.puppyOwnedCompanions.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'bubble') {
       config.puppyOwnedBubbles = config.puppyOwnedBubbles || [];
-      if (!config.puppyOwnedBubbles.includes(item.id)) { config.puppyOwnedBubbles.push(item.id); return true; }
+      if (!config.puppyOwnedBubbles.includes(item.id)) { config.puppyOwnedBubbles.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'trail') {
       config.puppyOwnedTrails = config.puppyOwnedTrails || [];
-      if (!config.puppyOwnedTrails.includes(item.id)) { config.puppyOwnedTrails.push(item.id); return true; }
+      if (!config.puppyOwnedTrails.includes(item.id)) { config.puppyOwnedTrails.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'avatarframe') {
       config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || [];
-      if (!config.puppyOwnedAvatarFrames.includes(item.id)) { config.puppyOwnedAvatarFrames.push(item.id); return true; }
+      if (!config.puppyOwnedAvatarFrames.includes(item.id)) { config.puppyOwnedAvatarFrames.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'badge') {
       config.puppyOwnedBadges = config.puppyOwnedBadges || [];
-      if (!config.puppyOwnedBadges.includes(item.id)) { config.puppyOwnedBadges.push(item.id); return true; }
+      if (!config.puppyOwnedBadges.includes(item.id)) { config.puppyOwnedBadges.push(item.id); markWardItemNew(item.id); return true; }
     } else if (kind === 'recipe') {
       config.puppyOwnedRecipes = config.puppyOwnedRecipes || [];
       if (!config.puppyOwnedRecipes.includes(item.id)) { config.puppyOwnedRecipes.push(item.id); return true; }
@@ -61889,12 +61999,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }
       if (ck.streak >= 60) {
         grantMilestone('s60', 20, 1, () => {
-          if (!config.puppyOwnedBubbles.includes('bub_ck_vintage_post')) config.puppyOwnedBubbles.push('bub_ck_vintage_post');
+          if (!config.puppyOwnedBubbles.includes('bub_ck_vintage_post')) config.puppyOwnedBubbles.push('bub_ck_vintage_post'); markWardItemNew('bub_ck_vintage_post');
         }, '连签60天礼：邮戳明信片泡 + 扭蛋券×1');
       }
       if (ck.streak >= 99) {
         grantMilestone('s99', 25, 2, () => {
-          if (!config.puppyOwnedAvatarFrames.includes('af_ck_amber_press')) config.puppyOwnedAvatarFrames.push('af_ck_amber_press');
+          if (!config.puppyOwnedAvatarFrames.includes('af_ck_amber_press')) config.puppyOwnedAvatarFrames.push('af_ck_amber_press'); markWardItemNew('af_ck_amber_press');
         }, '连签99天礼：琥珀标本框 + 扭蛋券×2');
       }
       if (ck.total >= 100) {
