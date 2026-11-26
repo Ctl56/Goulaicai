@@ -22985,7 +22985,12 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.innerHTML = `${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${escapeHtmlSimple(item.name)}`;
+        if (freshNewWardItems.has(item.id)) {
+          btn.style.cssText = 'display:flex;align-items:center;justify-content:flex-start;gap:3px;padding:0 5px;text-align:left;overflow:hidden;';
+          btn.innerHTML = `<span class="st-px-new-tag" style="flex-shrink:0;margin:0;">NEW</span><span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;">${escapeHtmlSimple(item.name)}</span>`;
+        } else {
+          btn.innerHTML = escapeHtmlSimple(item.name);
+        }
         const isOn = item.id === 'none' ? wornAccs.length === 0 : wornAccs.includes(item.id);
         btn.classList.toggle('active', isOn);
         btn.addEventListener('click', () => {
@@ -23161,7 +23166,12 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.innerHTML = `${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${escapeHtmlSimple(item.name)}`;
+        if (freshNewWardItems.has(item.id)) {
+          btn.style.cssText = 'display:flex;align-items:center;justify-content:flex-start;gap:3px;padding:0 5px;text-align:left;overflow:hidden;';
+          btn.innerHTML = `<span class="st-px-new-tag" style="flex-shrink:0;margin:0;">NEW</span><span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;">${escapeHtmlSimple(item.name)}</span>`;
+        } else {
+          btn.innerHTML = escapeHtmlSimple(item.name);
+        }
         btn.classList.toggle('active', wd.outfit === item.id);
         btn.addEventListener('click', () => {
           clearWardItemNew(item.id);
@@ -23194,7 +23204,12 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.innerHTML = `${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${escapeHtmlSimple(item.name)}`;
+        if (freshNewWardItems.has(item.id)) {
+          btn.style.cssText = 'display:flex;align-items:center;justify-content:flex-start;gap:3px;padding:0 5px;text-align:left;overflow:hidden;';
+          btn.innerHTML = `<span class="st-px-new-tag" style="flex-shrink:0;margin:0;">NEW</span><span style="min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;">${escapeHtmlSimple(item.name)}</span>`;
+        } else {
+          btn.innerHTML = escapeHtmlSimple(item.name);
+        }
         btn.classList.toggle('active', (wd.comp || 'none') === item.id);
         btn.addEventListener('click', () => {
           clearWardItemNew(item.id);
@@ -24829,7 +24844,7 @@
         const card = doc.createElement('button');
         card.type = 'button';
         card.className = `st-px-shop-item${wearingC ? ' equipped' : ''}${isPrev ? ' previewing' : ''}`;
-        card.innerHTML = `<span style="display:flex;align-items:center;gap:3px;width:100%;">${isNewC ? '<span class="st-px-new-tag" style="flex-shrink:0;margin-left:0;">NEW</span>' : ''}<span class="st-px-shop-name" style="min-width:0;flex:1;text-align:left;">${item.name}</span></span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
+        card.innerHTML = `<span style="display:flex;align-items:center;justify-content:flex-start;gap:3px;width:100%;overflow:hidden;">${isNewC ? '<span class="st-px-new-tag" style="flex-shrink:0;margin:0;">NEW</span>' : ''}<span class="st-px-shop-name" style="min-width:0;flex:1;text-align:left;">${item.name}</span></span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: shopSubCat, item };
           const clearedCosNew = clearWardItemNew(item.id);
@@ -35012,6 +35027,9 @@
     }
     const g = guest.pendingGifts.shift();
     if (!g) return false;
+    if (Array.isArray(config.puppyPendingCloudGifts)) {
+      config.puppyPendingCloudGifts = config.puppyPendingCloudGifts.filter(x => x && x.gid !== g.gid);
+    }
     const baseUrl = getCloudBaseUrl();
     const myId = ensureMyCloudId();
     const received = grantGiftItems(g.gifts || []);
@@ -35033,6 +35051,7 @@
       rt.bubEl.classList.remove('show');
       rt.bubbleUntil = 0;
     }
+    if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
     const summary = [...(rp > 0 ? [`红包+${rp}币`] : []), ...received.map(r => r.label)].join('、');
     openVisitGiftModal(
       g.fromName || guest.name || '朋友',
@@ -35539,20 +35558,43 @@
             continue;
           }
 
+          // 无论在线、离线还是切屏回来，所有未收礼物统一进入侧边礼物盒队列（按 gid 去重，多人轮流收下绝不被挤掉）
+          if (!Array.isArray(config.puppyPendingCloudGifts)) config.puppyPendingCloudGifts = [];
+          if (!config.puppyPendingCloudGifts.some(x => x && x.gid === g.gid)) {
+            config.puppyPendingCloudGifts.push(g);
+          }
           const matchGuest = getGuestList().find(x => x && ((g.fromId && x.cloudId === g.fromId) || (g.fromName && x.name === g.fromName)));
-          if (matchGuest && config.puppyEnabled) {
+          if (matchGuest && matchGuest.onDesktop !== false && config.puppyEnabled) {
             if (!Array.isArray(matchGuest.pendingGifts)) matchGuest.pendingGifts = [];
-            matchGuest.pendingGifts.push(g);
+            if (!matchGuest.pendingGifts.some(x => x && x.gid === g.gid)) matchGuest.pendingGifts.push(g);
             const lines = GUEST_GIFT_WAIT_LINES[matchGuest.pers] || GUEST_GIFT_WAIT_LINES.sleepyhead;
             showGuestBubbleById(matchGuest.id, pick(lines), 86400000);
-          } else {
-            if (!Array.isArray(config.puppyPendingCloudGifts)) config.puppyPendingCloudGifts = [];
-            config.puppyPendingCloudGifts.push(g);
           }
         }
         if (changed) {
           saveConfig();
-          syncDesktopGiftBox();
+          const isGiftModalOpen = () => {
+            const m = root.querySelector('#st-tb-visit-gift-modal');
+            return Boolean(m && m.style.display && m.style.display !== 'none');
+          };
+          const isUserBusyForAutoGift = () => {
+            if (doc.hidden || !config.puppyEnabled) return true;
+            if (isGiftModalOpen()) return true;
+            const bag = root.querySelector('#st-tb-pup-bag');
+            if (bag && bag.classList.contains('open')) return true;
+            if (root.querySelector('#st-tb-visit-photo-win')) return true;
+            const dm = root.querySelector('#st-tb-dm-panel');
+            if (dm && dm.style.display === 'flex') return true;
+            const busySel = '#st-tb-snap-album-modal, #st-tb-saved-photo-viewer, #st-tb-friends-modal, #st-tb-cloud-send-mask, #st-tb-noteboard-modal, #st-tb-guard-confirm';
+            return Array.from(root.querySelectorAll(busySel)).some(el => el.style.display && el.style.display !== 'none');
+          };
+          if (Array.isArray(config.puppyPendingCloudGifts) && config.puppyPendingCloudGifts.length && !isUserBusyForAutoGift()) {
+            // 在线且当前空闲：直接弹出拆礼物弹窗（若有多人送礼，其余礼物留在侧边礼物盒排队绝不被挤掉）
+            claimNextDeskCloudGift();
+          } else {
+            // 正在忙别的事或切屏回来：不打断当前操作，静静变成侧边像素礼物盒排队等待拆收
+            syncDesktopGiftBox();
+          }
         }
         if (offlineFinishedCoAdvs.length && typeof settleOfflineCoopAdventures === 'function') {
           // 无论是否切屏，先立刻永久入账金币、零食、羁绊与相册，确保零丢失！
@@ -35841,6 +35883,18 @@
   const claimNextDeskCloudGift = () => {
     if (!Array.isArray(config.puppyPendingCloudGifts) || !config.puppyPendingCloudGifts.length) return;
     const g = config.puppyPendingCloudGifts.shift();
+    if (g && g.gid) {
+      getGuestList().forEach(gst => {
+        if (Array.isArray(gst.pendingGifts) && gst.pendingGifts.some(x => x && x.gid === g.gid)) {
+          gst.pendingGifts = gst.pendingGifts.filter(x => x && x.gid !== g.gid);
+          const rt = guestRuntimes.get(gst.id);
+          if (rt && rt.bubEl && !gst.pendingGifts.length) {
+            rt.bubEl.classList.remove('show');
+            rt.bubbleUntil = 0;
+          }
+        }
+      });
+    }
     const baseUrl = getCloudBaseUrl();
     const myId = ensureMyCloudId();
     const received = grantGiftItems(g.gifts || []);
@@ -35903,7 +35957,7 @@
     if (!deskGiftBoxEl) {
       deskGiftBoxEl = doc.createElement('div');
       deskGiftBoxEl.id = 'st-tb-desk-giftbox';
-      deskGiftBoxEl.style.cssText = 'position:fixed;right:18px;bottom:206px;width:54px;height:54px;z-index:9993;pointer-events:auto;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;';
+      deskGiftBoxEl.style.cssText = 'position:fixed;right:16px;bottom:142px;width:54px;height:54px;z-index:9993;pointer-events:auto;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;';
       const cv = doc.createElement('canvas');
       cv.width = 48; cv.height = 48;
       cv.style.cssText = 'width:48px;height:48px;display:block;image-rendering:pixelated;filter:drop-shadow(2px 3px 0 rgba(59,42,34,0.3));';
