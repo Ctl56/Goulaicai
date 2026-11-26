@@ -7118,16 +7118,14 @@
       opacity: 1 !important;
       pointer-events: auto !important;
       display: inline-block !important;
+      width: auto !important;
       max-width: 196px !important;
-      min-width: 24px !important;
+      min-width: 36px !important;
       white-space: pre-wrap !important;
       word-break: break-word !important;
-      padding: 5px 8px !important;
-      font-size: 11px !important;
-      line-height: 1.48 !important;
-      border-radius: 0 !important;
-      border-width: 2px !important;
-      border-style: solid !important;
+      padding: 6px 10px;
+      font-size: 11px;
+      line-height: 1.48;
       box-sizing: border-box !important;
       text-align: left !important;
       margin: 0 !important;
@@ -36688,6 +36686,14 @@
     { id: 'kiss', name: '么么' },
     { id: 'cheer', name: '加油' },
     { id: 'ghost', name: '灵魂出窍' },
+    { id: 'anim_nod', name: '狂点头', anim: true },
+    { id: 'anim_wag', name: '摇摆', anim: true },
+    { id: 'anim_heart_pop', name: '冒爱心', anim: true },
+    { id: 'anim_cry_flood', name: '泪奔', anim: true },
+    { id: 'anim_zzz', name: '打呼噜', anim: true },
+    { id: 'anim_sparkle', name: '亮晶晶', anim: true },
+    { id: 'anim_spin_star', name: '转圈星', anim: true },
+    { id: 'anim_eat', name: '吧唧干饭', anim: true },
   ];
 
   const isHeadAccessoryId = (accId) => {
@@ -36701,7 +36707,7 @@
     return !nonHead.test(accId);
   };
 
-  const drawPupHeadPortrait = (canvas, lookObj, stickerId = '') => {
+  const drawPupHeadPortrait = (canvas, lookObj, stickerId = '', animFrame = 0) => {
     // 15x15 logical grid (scaled 10x -> 150x150 crisp pixel canvas)
     // Head slice is 11px wide (cols 5..15) -> ox = 2 gives exact 2px left & 2px right symmetry!
     canvas.width = 150;
@@ -36717,8 +36723,9 @@
     const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
 
     const grid = PUP_SPRITES.idle1;
-    const ox = 2;
-    const oy = 5; // Head rows 0..7 span y=5..12 -> centered with room on top for head accessories!
+    const f = animFrame % 4;
+    const ox = 2 + (stickerId === 'anim_wag' ? (f === 1 ? -1 : (f === 3 ? 1 : 0)) : 0);
+    const oy = 5 + (stickerId === 'anim_nod' ? (f % 2 === 1 ? 1 : 0) : 0);
     for (let y = 0; y <= 6; y++) {
       const row = grid[y];
       for (let x = 5; x <= 15; x++) {
@@ -36861,9 +36868,71 @@
       clearEyes();
       p(4, 9, '#ffffff', 2, 1); p(9, 9, '#ffffff', 2, 1);
       p(6, 11, out, 3, 1);
-      // Tiny white ghost floating up from head
       p(6, 0, '#ffffff', 3, 4); p(5, 1, '#ffffff', 5, 2);
       p(6, 1, '#3b2a22'); p(8, 1, '#3b2a22');
+    } else if (stickerId === 'anim_nod') {
+      const dy = (f % 2 === 1) ? 1 : 0;
+      p(5, 9 + dy, fur); p(9, 9 + dy, fur);
+      p(4, 9 + dy, out); p(5, 8 + dy, out); p(6, 9 + dy, out);
+      p(8, 9 + dy, out); p(9, 8 + dy, out); p(10, 9 + dy, out);
+      p(6, 11 + dy, '#ff8aa6', 3, 1);
+      if (f % 2 === 0) { p(1, 2, '#ffd24c', 1, 3); p(0, 3, '#ffd24c', 3, 1); }
+      else { p(13, 2, '#ffd24c', 1, 3); p(12, 3, '#ffd24c', 3, 1); }
+    } else if (stickerId === 'anim_wag') {
+      const dx = f === 1 ? -1 : (f === 3 ? 1 : 0);
+      p(5 + dx, 9, fur); p(9 + dx, 9, fur);
+      p(4 + dx, 9, out); p(5 + dx, 8, out); p(6 + dx, 9, out);
+      p(8 + dx, 9, out); p(9 + dx, 8, out); p(10 + dx, 9, out);
+      p(6 + dx, 11, '#ff8aa6', 3, 1);
+      p(f % 2 === 0 ? 1 : 12, 1, '#ff8aa6', 2, 2);
+      p(f % 2 === 0 ? 12 : 1, 2, '#ffd24c', 2, 1);
+    } else if (stickerId === 'anim_heart_pop') {
+      clearEyes();
+      p(5, 9, '#e84a72'); p(9, 9, '#e84a72');
+      p(6, 11, '#ff8aa6', 3, 1);
+      const hy1 = Math.max(0, 3 - f);
+      const hy2 = Math.max(0, 4 - ((f + 2) % 4));
+      p(2, hy1, '#f05a82', 1, 1); p(4, hy1, '#f05a82', 1, 1); p(2, hy1 + 1, '#f05a82', 3, 1); p(3, hy1 + 2, '#f05a82', 1, 1);
+      p(10, hy2, '#ff8aa6', 1, 1); p(12, hy2, '#ff8aa6', 1, 1); p(10, hy2 + 1, '#ff8aa6', 3, 1); p(11, hy2 + 2, '#ff8aa6', 1, 1);
+    } else if (stickerId === 'anim_cry_flood') {
+      const shift = f % 2;
+      p(5, 10, '#7cc6f7', 1, 4); p(9, 10, '#7cc6f7', 1, 4);
+      p(5, 10 + shift, '#ffffff', 1, 1); p(9, 10 + shift, '#ffffff', 1, 1);
+      p(4, 13, '#7cc6f7', 2, 1); p(9, 13, '#7cc6f7', 2, 1);
+      p(6, 11, out, 3, 1);
+    } else if (stickerId === 'anim_zzz') {
+      clearEyes();
+      p(4, 9, out, 2, 1); p(9, 9, out, 2, 1);
+      // Breathing snot bubble!
+      if (f % 2 === 0) { p(8, 10, '#c8ebff', 2, 2); p(8, 10, '#ffffff', 1, 1); }
+      else { p(8, 10, '#a8dcff', 3, 3); p(9, 11, '#ffffff', 1, 1); }
+      const zy = f % 2 === 0 ? 1 : 0;
+      p(11, zy, '#7b99cc', 3, 1); p(12, zy + 1, '#7b99cc', 1, 1); p(11, zy + 2, '#7b99cc', 3, 1);
+    } else if (stickerId === 'anim_sparkle') {
+      if (f % 2 === 0) {
+        p(5, 9, '#ffe066'); p(9, 9, '#ffe066');
+        p(1, 1, '#ffe066', 1, 3); p(0, 2, '#ffe066', 3, 1);
+        p(13, 11, '#8cc8f7', 1, 3); p(12, 12, '#8cc8f7', 3, 1);
+      } else {
+        p(5, 9, '#ffffff'); p(9, 9, '#ffffff');
+        p(13, 1, '#ffe066', 1, 3); p(12, 2, '#ffe066', 3, 1);
+        p(1, 11, '#ff8aa6', 1, 3); p(0, 12, '#ff8aa6', 3, 1);
+      }
+      p(6, 11, '#ff8aa6', 3, 1);
+    } else if (stickerId === 'anim_spin_star') {
+      const pos = [[2, 1], [7, 0], [12, 1], [7, 2]];
+      const s1 = pos[f], s2 = pos[(f + 2) % 4];
+      p(s1[0], s1[1], '#ffe066', 2, 2); p(s2[0], s2[1], '#8cc8f7', 2, 2);
+      p(6, 11, out, 3, 1);
+    } else if (stickerId === 'anim_eat') {
+      // Chomping bone animation!
+      if (f % 2 === 0) {
+        p(4, 11, '#ffffff', 7, 1); p(3, 10, '#ffffff', 2, 3); p(10, 10, '#ffffff', 2, 3);
+      } else {
+        p(4, 10, '#ffffff', 7, 1); p(3, 9, '#ffffff', 2, 3); p(10, 9, '#ffffff', 2, 3);
+        p(6, 11, '#ff8aa6', 3, 1);
+      }
+      p(12, 2 + (f % 2), '#ffd24c', 2, 1);
     } else {
       // shy
       p(3, 10, '#ff8ca8', 2, 1); p(10, 10, '#ff8ca8', 2, 1);
@@ -36872,10 +36941,34 @@
     }
   };
 
+  let dmAnimTick = 0;
+  setInterval(() => {
+    const dmP = root.querySelector('#st-tb-dm-panel');
+    if (!dmP || dmP.style.display === 'none') return;
+    const animList = dmP.querySelectorAll('canvas.st-dm-anim-st');
+    if (!animList.length) return;
+    dmAnimTick = (dmAnimTick + 1) % 4;
+    animList.forEach(cvs => {
+      if (cvs.offsetParent === null) return;
+      try {
+        const sid = cvs.dataset.stId || '';
+        const lk = cvs.__stLook || getMyCurrentLookObj();
+        drawPupHeadPortrait(cvs, lk, sid, dmAnimTick);
+      } catch (_) {}
+    });
+  }, 280);
+
   const drawPupStickerCanvas = (stickerId, pxSize = 48, lookObj = null) => {
     const c = doc.createElement('canvas');
     c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
-    drawPupHeadPortrait(c, lookObj || getMyCurrentLookObj(), stickerId);
+    const lk = lookObj || getMyCurrentLookObj();
+    const stObj = PUP_DM_STICKERS.find(x => x.id === stickerId);
+    if (stObj && stObj.anim) {
+      c.className = 'st-dm-anim-st';
+      c.dataset.stId = stickerId;
+      c.__stLook = lk;
+    }
+    drawPupHeadPortrait(c, lk, stickerId, dmAnimTick);
     return c;
   };
 
@@ -37009,12 +37102,19 @@
         bubEl.dataset.bubDyn = bObj.dyn;
         const fxCvs = doc.createElement('canvas');
         fxCvs.className = 'st-tb-guest-bub-fx';
-        fxCvs.width = 160;
-        fxCvs.height = 44;
+        fxCvs.width = 72;
+        fxCvs.height = 28;
         bubEl.appendChild(fxCvs);
-        if (typeof drawBubFxToCanvas === 'function') {
-          try { drawBubFxToCanvas(fxCvs, bObj.dyn, bubFxTick || 0); } catch (_) {}
-        }
+        const syncFxSizeAndDraw = () => {
+          const bw = Math.max(42, Math.round((bubEl.offsetWidth || 80) / 2)) + 10;
+          const bh = Math.max(22, Math.round((bubEl.offsetHeight || 28) / 2)) + 10;
+          if (fxCvs.width !== bw || fxCvs.height !== bh) { fxCvs.width = bw; fxCvs.height = bh; }
+          if (typeof drawBubFxToCanvas === 'function') {
+            try { drawBubFxToCanvas(fxCvs, bObj.dyn, bubFxTick || 0); } catch (_) {}
+          }
+        };
+        syncFxSizeAndDraw();
+        requestAnimationFrame(syncFxSizeAndDraw);
       }
     };
     let bubId = '';
@@ -37556,6 +37656,9 @@
     if (typeof bringFloatFront === 'function') bringFloatFront(panel);
     syncDmPanelTheme();
     renderFriendDmMessages(fid);
+    if (typeof showOneTimePanelTip === 'function') {
+      showOneTimePanelTip('seenDmPanelTip', '私聊面板小提示', '按住顶部标题栏可自由拖动私聊框位置，按住右下角边缘可自由放大或缩小；点顶部齿轮可修改备注、搜索记录或切换气泡样式~');
+    }
   };
 
     let addFriendBusy = false;
@@ -53710,10 +53813,56 @@
     if (!file) return;
     try {
       const buf = await file.arrayBuffer();
-      let text = new TextDecoder('utf-8').decode(buf);
-      if (text.includes('\uFFFD')) {
-        try { text = new TextDecoder('gb18030').decode(buf); } catch (_) {}
-      }
+      const u8 = new Uint8Array(buf);
+      const decodeNovelBuffer = (bytes) => {
+        if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+          return new TextDecoder('utf-8').decode(bytes.subarray(3));
+        }
+        if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) {
+          return new TextDecoder('utf-16le').decode(bytes.subarray(2));
+        }
+        if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
+          return new TextDecoder('utf-16be').decode(bytes.subarray(2));
+        }
+        // Heuristic for BOM-less UTF-16LE / UTF-16BE
+        const sampleN = Math.min(bytes.length, 4096);
+        let zEven = 0, zOdd = 0;
+        for (let i = 0; i < sampleN; i++) {
+          if (bytes[i] === 0) { if (i % 2 === 0) zEven++; else zOdd++; }
+        }
+        if (zOdd > sampleN * 0.12 && zEven < zOdd * 0.3) {
+          try { return new TextDecoder('utf-16le').decode(bytes); } catch (_) {}
+        }
+        if (zEven > sampleN * 0.12 && zOdd < zEven * 0.3) {
+          try { return new TextDecoder('utf-16be').decode(bytes); } catch (_) {}
+        }
+        // Strict UTF-8 check first (rejects invalid GBK/Big5 byte sequences immediately)
+        try {
+          return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+        } catch (_) {}
+        // Score GB18030 / GBK / Big5 on a 16KB sample and pick the cleanest Chinese decoding
+        const probe = bytes.subarray(0, Math.min(bytes.length, 16384));
+        const cands = ['gb18030', 'gbk', 'big5'];
+        let bestEnc = 'gb18030';
+        let bestScore = -1e9;
+        for (const enc of cands) {
+          try {
+            const s = new TextDecoder(enc).decode(probe);
+            let bad = 0, cjk = 0, punc = 0;
+            for (let i = 0; i < s.length; i++) {
+              const cc = s.charCodeAt(i);
+              if (cc === 0xFFFD) bad++;
+              else if (cc >= 0x4E00 && cc <= 0x9FFF) cjk++;
+              else if (cc === 0x3002 || cc === 0xFF0C || cc === 0x201C || cc === 0x201D || cc === 0xFF01 || cc === 0xFF1F) punc++;
+            }
+            const score = cjk * 2 + punc * 6 - bad * 30;
+            if (score > bestScore) { bestScore = score; bestEnc = enc; }
+          } catch (_) {}
+        }
+        try { return new TextDecoder(bestEnc).decode(bytes); } catch (_) {}
+        return new TextDecoder('utf-8').decode(bytes);
+      };
+      let text = decodeNovelBuffer(u8).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
       const id = `novel_${Date.now()}`;
       const name = file.name.replace(/\.txt$/i, '').trim() || '未命名小说';
       await dbPutNovel(id, text);
