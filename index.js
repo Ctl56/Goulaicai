@@ -31656,21 +31656,18 @@
       ctx.fillStyle = bgC2;
       const drawMotif = (cx, cy) => {
         const sc = bgSize >= 5 ? 2 : 1;
+        const vr = Math.max(1.2, bgSize * 0.85);
         if (bgShape === 'dot') {
-          const r = bgSize;
-          for (let dy = -r; dy <= r; dy++) {
-            for (let dx = -r; dx <= r; dx++) {
-              if (dx * dx + dy * dy <= r * r + 0.35) ctx.fillRect(cx + dx, cy + dy, 1, 1);
-            }
-          }
+          ctx.beginPath();
+          ctx.arc(cx, cy, vr, 0, Math.PI * 2);
+          ctx.fill();
         } else if (bgShape === 'ring') {
-          const r = Math.max(2, bgSize);
-          for (let dy = -r; dy <= r; dy++) {
-            for (let dx = -r; dx <= r; dx++) {
-              const d2 = dx * dx + dy * dy;
-              if (d2 <= r * r + 0.35 && d2 >= (r - 1.2) * (r - 1.2)) ctx.fillRect(cx + dx, cy + dy, 1, 1);
-            }
-          }
+          const rr = Math.max(1.8, vr);
+          ctx.beginPath();
+          ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+          ctx.strokeStyle = bgC2;
+          ctx.lineWidth = Math.max(0.65, rr * 0.34);
+          ctx.stroke();
         } else if (bgShape === 'heart') {
           ctx.fillRect(cx - 2 * sc, cy - 1 * sc, 2 * sc, 2 * sc);
           ctx.fillRect(cx + 1 * sc, cy - 1 * sc, 2 * sc, 2 * sc);
@@ -31686,22 +31683,60 @@
           ctx.fillRect(cx, cy, sc, sc);
           ctx.fillStyle = bgC2;
         } else if (bgShape === 'paw') {
-          ctx.fillRect(cx - sc, cy, 3 * sc, 2 * sc);
-          ctx.fillRect(cx - 2 * sc, cy - 2 * sc, sc, sc);
-          ctx.fillRect(cx, cy - 2 * sc, sc, sc);
-          ctx.fillRect(cx + 2 * sc, cy - 2 * sc, sc, sc);
+          const s = Math.max(0.85, bgSize * 0.36);
+          // 圆润大肉垫
+          ctx.beginPath();
+          ctx.ellipse(cx, cy + 1.15 * s, 2.0 * s, 1.45 * s, 0, 0, Math.PI * 2);
+          ctx.fill();
+          // 4颗圆弧排列的小脚趾垫
+          [[-2.2, -0.35, -0.35], [-0.85, -1.6, -0.12], [0.85, -1.6, 0.12], [2.2, -0.35, 0.35]].forEach(([dx, dy, ang]) => {
+            ctx.beginPath();
+            ctx.ellipse(cx + dx * s, cy + dy * s, 0.72 * s, 0.98 * s, ang, 0, Math.PI * 2);
+            ctx.fill();
+          });
         } else if (bgShape === 'bow') {
-          ctx.fillRect(cx - 2 * sc, cy - sc, sc, 3 * sc);
-          ctx.fillRect(cx + 2 * sc, cy - sc, sc, 3 * sc);
-          ctx.fillRect(cx - sc, cy, 3 * sc, sc);
-          ctx.fillRect(cx - sc, cy + sc, sc, sc);
-          ctx.fillRect(cx + sc, cy + sc, sc, sc);
+          const s = Math.max(0.9, bgSize * 0.42);
+          // 柔和收腰双耳蝴蝶结 + 中央结扣 + 下垂小飘带
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.bezierCurveTo(cx - 1.2 * s, cy - 1.9 * s, cx - 3.3 * s, cy - 1.4 * s, cx - 3.0 * s, cy);
+          ctx.bezierCurveTo(cx - 3.3 * s, cy + 1.4 * s, cx - 1.2 * s, cy + 1.6 * s, cx, cy);
+          ctx.moveTo(cx, cy);
+          ctx.bezierCurveTo(cx + 1.2 * s, cy - 1.9 * s, cx + 3.3 * s, cy - 1.4 * s, cx + 3.0 * s, cy);
+          ctx.bezierCurveTo(cx + 3.3 * s, cy + 1.4 * s, cx + 1.2 * s, cy + 1.6 * s, cx, cy);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(cx, cy, 0.82 * s, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = bgC2;
+          ctx.lineWidth = Math.max(0.6, 0.65 * s);
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(cx - 0.3 * s, cy + 0.5 * s); ctx.lineTo(cx - 1.45 * s, cy + 2.35 * s);
+          ctx.moveTo(cx + 0.3 * s, cy + 0.5 * s); ctx.lineTo(cx + 1.45 * s, cy + 2.35 * s);
+          ctx.stroke();
         } else if (bgShape === 'cherry') {
-          ctx.fillRect(cx - 2 * sc, cy + sc, 2 * sc, 2 * sc);
-          ctx.fillRect(cx + sc, cy + sc, 2 * sc, 2 * sc);
-          ctx.fillRect(cx - sc, cy - sc, sc, 2 * sc);
-          ctx.fillRect(cx + sc, cy - sc, sc, 2 * sc);
-          ctx.fillRect(cx, cy - 2 * sc, sc, sc);
+          const s = Math.max(0.85, bgSize * 0.38);
+          // 双樱桃弯柄 + 小叶子
+          ctx.strokeStyle = bgC2;
+          ctx.lineWidth = Math.max(0.45, 0.45 * s);
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(cx - 1.4 * s, cy + 0.7 * s);
+          ctx.quadraticCurveTo(cx - 0.8 * s, cy - 1.4 * s, cx + 0.2 * s, cy - 2.3 * s);
+          ctx.moveTo(cx + 1.4 * s, cy + 1.0 * s);
+          ctx.quadraticCurveTo(cx + 1.1 * s, cy - 1.0 * s, cx + 0.2 * s, cy - 2.3 * s);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.ellipse(cx + 1.35 * s, cy - 2.0 * s, 1.15 * s, 0.52 * s, -0.42, 0, Math.PI * 2);
+          ctx.fill();
+          // 两颗圆润小樱桃 + 高光
+          ctx.beginPath(); ctx.arc(cx - 1.4 * s, cy + 1.3 * s, 1.32 * s, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx + 1.35 * s, cy + 1.55 * s, 1.32 * s, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = bgC1;
+          ctx.beginPath(); ctx.arc(cx - 1.85 * s, cy + 0.9 * s, 0.36 * s, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(cx + 0.9 * s, cy + 1.15 * s, 0.36 * s, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = bgC2;
         } else if (bgShape === 'diamond') {
           const r = Math.max(2, bgSize);
           for (let dy = -r; dy <= r; dy++) {
@@ -32801,12 +32836,6 @@
         eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), padX, capY + 12);
         eg.fillStyle = pcTxt; eg.font = '32px monospace'; eg.textAlign = 'right';
         eg.fillText(`POST · ${dateStr}`, eW - padX, capY + 12);
-      } else if (mode === 'frame' || mode === 'tape' || mode === 'stamp') {
-        const fTxt = st.pcTextCol || txtCol;
-        eg.fillStyle = fTxt; eg.font = 'bold 46px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'center';
-        eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), eW / 2, capY);
-        eg.fillStyle = fTxt; eg.globalAlpha = 0.72; eg.font = '32px "PingFang SC","Microsoft YaHei",sans-serif';
-        eg.fillText(dateStr, eW / 2, dtY); eg.globalAlpha = 1;
       } else {
         eg.fillStyle = txtCol; eg.font = 'bold 48px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'center';
         eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), eW / 2, capY);
@@ -32814,9 +32843,7 @@
         eg.fillText(dateStr, eW / 2, dtY);
       }
       eg.restore();
-      const isGalleryFrame = (mode === 'frame' || mode === 'tape' || mode === 'stamp');
-      const finalBw = isGalleryFrame ? 28 : fBw;
-      rr(eg, Math.ceil(finalBw / 2), Math.ceil(finalBw / 2), eW - finalBw, eH - finalBw, isGalleryFrame ? 4 : rad * 3.8);
+      rr(eg, Math.ceil(fBw / 2), Math.ceil(fBw / 2), eW - fBw, eH - fBw, rad * 3.8);
       if (mode === 'postcard') {
         const ps = st.pcBorderStyle || 'dashed';
         if (ps === 'dashed') eg.setLineDash([24, 14]);
@@ -32826,11 +32853,7 @@
           eg.lineWidth = Math.max(4, Math.floor(fBw * 0.6)); eg.stroke();
         }
       } else {
-        eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = finalBw; eg.stroke();
-        if (isGalleryFrame) {
-          eg.strokeStyle = 'rgba(0,0,0,0.16)'; eg.lineWidth = 6;
-          eg.strokeRect(finalBw + 2, finalBw + 2, eW - finalBw * 2 - 4, eH - finalBw * 2 - 4);
-        }
+        eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = fBw; eg.stroke();
       }
       eg.setLineDash([]);
       const a = doc.createElement('a');
@@ -32958,21 +32981,6 @@
       if (metaEl) { metaEl.style.display = 'flex'; metaEl.style.justifyContent = 'space-between'; metaEl.style.alignItems = 'center'; }
       if (capEl) { capEl.style.textAlign = 'left'; capEl.style.color = pcTxt; capEl.textContent = titleTxt; }
       if (dateEl) { dateEl.style.textAlign = 'right'; dateEl.style.color = pcTxt; dateEl.style.opacity = '0.82'; dateEl.textContent = isThumb ? 'POST' : `POST · ${dateStr}`; }
-    } else if (mode === 'frame' || mode === 'tape' || mode === 'stamp') {
-      // 像素画框：立体双层画廊外框 + 留白卡纸内衬 + 底部铭牌标题
-      const outerCol = st.borderCol || '#8c6b54';
-      const matCol = st.paperCol || '#faf5ec';
-      const fTxt = st.pcTextCol || txtCol;
-      cardEl.style.padding = isThumb ? '5px' : '9px 9px 7px';
-      cardEl.style.backgroundColor = matCol;
-      cardEl.style.backgroundImage = 'none';
-      cardEl.style.border = `${isThumb ? 4 : 6}px solid ${outerCol}`;
-      cardEl.style.boxShadow = `inset 0 0 0 ${isThumb ? 1 : 2}px rgba(0,0,0,0.14)`;
-      cardEl.style.borderRadius = '2px';
-      cvEl.style.border = `1.5px solid ${outerCol}88`;
-      cvEl.style.borderRadius = '0';
-      if (capEl) { capEl.style.color = fTxt; capEl.textContent = titleTxt; }
-      if (dateEl) { dateEl.style.color = fTxt; dateEl.style.opacity = '0.72'; dateEl.textContent = dateStr; }
     } else {
       const pX = Math.max(2, Math.round((Number(st.padX ?? 7) || 7) * sc));
       const pT = Math.max(2, Math.round((Number(st.padTop ?? 7) || 7) * sc));
@@ -33002,7 +33010,7 @@
       modal.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === modal) modal.style.display = 'none'; });
     }
     const list = Array.isArray(config.puppySnapAlbum) ? config.puppySnapAlbum : [];
-    const styleLabelMap = { polaroid: '拍立得', photo: '照片', film: '胶片', postcard: '明信片', frame: '画框', tape: '画框', stamp: '画框' };
+    const styleLabelMap = { polaroid: '拍立得', photo: '照片', film: '胶片', postcard: '明信片' };
     modal.innerHTML = `<div style="width:296px;max-width:92vw;max-height:80vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;display:flex;flex-direction:column;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;flex-shrink:0;">
         <span style="font-size:12px;font-weight:700;">咔嚓相册 (${list.length}/64)</span>
@@ -33099,7 +33107,7 @@
       filmInk: ph.filmInk || '#f0c975',
       radius: typeof ph.radius === 'number' ? ph.radius : 0,
     };
-    const styleNames = { polaroid: '拍立得', photo: '照片', film: '胶片底片', postcard: '明信片', frame: '像素画框', tape: '像素画框', stamp: '像素画框' };
+    const styleNames = { polaroid: '拍立得', photo: '照片', film: '胶片底片', postcard: '明信片' };
     modal.innerHTML = `<div style="width:266px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:4px;">
         <span id="st-spv-head-txt" style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${styleNames[st.photoStyle] || '拍立得'} · ${escapeHtmlSimple(st.title)}</span>
@@ -33272,7 +33280,7 @@
         });
 
     const st = {
-      photoStyle: savedPhoto?.photoStyle || config.photoStyle || 'polaroid',
+      photoStyle: (['polaroid', 'photo', 'film', 'postcard'].includes(savedPhoto?.photoStyle || config.photoStyle) ? (savedPhoto?.photoStyle || config.photoStyle) : 'polaroid'),
       photoRatio: savedPhoto?.photoRatio || config.photoRatio || '3:4',
       photoOrient: savedPhoto?.photoOrient || config.photoOrient || 'land',
       bgId: savedPhoto?.bgId || extraOpts?.bgId || 'meadow',
@@ -33425,18 +33433,6 @@
             </div>
           </div>
 
-          <div id="st-vph-panel-frame" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <span style="font-size:9.5px;font-weight:700;">像素画框设置</span>
-              <button type="button" id="st-vph-rst-frame" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;">
-              <label style="display:inline-flex;align-items:center;gap:2px;">外框<input type="color" id="st-vph-st-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:2px;">卡纸<input type="color" id="st-vph-st-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:2px;">字色<input type="color" id="st-vph-fr-txt" value="${st.pcTextCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <button type="button" id="st-vph-heart-frame" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
-            </div>
-          </div>
 
           <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">人物</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
@@ -33505,8 +33501,8 @@
     const filmBotEl = winEl.querySelector('#st-vph-film-bot');
     const syncCardStyle = () => {
       const mode = st.photoStyle || 'polaroid';
-      const normMode = (mode === 'stamp' || mode === 'tape') ? 'frame' : mode;
-      ['polaroid', 'photo', 'film', 'postcard', 'frame'].forEach(k => {
+      const normMode = ['polaroid', 'photo', 'film', 'postcard'].includes(mode) ? mode : 'polaroid';
+      ['polaroid', 'photo', 'film', 'postcard'].forEach(k => {
         const p = winEl.querySelector(`#st-vph-panel-${k}`);
         if (p) p.style.display = (k === normMode) ? 'block' : 'none';
       });
@@ -33768,7 +33764,6 @@
           { id: 'photo',    name: '直接照片' },
           { id: 'film',     name: '胶片底片' },
           { id: 'postcard', name: '明信片' },
-          { id: 'frame',    name: '像素画框' },
         ];
         const stBtns = [];
         STYLE_DEFS.forEach(sd => {
