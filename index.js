@@ -21739,28 +21739,28 @@
   // 原创非模板化铭牌一体式包裹画布（96x36 逻辑像素，徽章主体位于 x:10..86, y:10..26，四周各留 10px 创作空间）
   // 每一款均按标题与主题独立手绘左+上包裹、顶篷、底托、环抱等原创组合构图，绝不复用模板或零碎散点！
   const renderOriginalBadgeWrap = (id, bdCol, fgCol) => {
-    // 6 款好评商店包裹 + 3 款扭蛋 SSR 创新包裹 + 31 款成就创新包裹（共 40 款，1款1型，彻底告别泡泡/圆点串，采用折纸角、三角彩旗、邮票锯齿、画框花纹、丝带结、折扇、棱面水晶、羽毛弧等多样创意造型）
+    // 保留商店 6 款好评包裹 + 恢复原有 v133 柔和泡泡/珍珠包裹 + 新增 8 款全新非泡泡创意包裹（共 40 款，1款1型）
     const HANDCRAFTED_WRAPS = new Set([
       // 商店好评 6 款（原样保留）
       'sb_sakura_dream', 'sb_sweet_berry', 'sb_pearl_lady',
       'sb_clover_luck', 'sb_mid_nap_master', 'sb_milk_tea_boss',
-      // 扭蛋 SSR 原创包裹 3 款
+      // 扭蛋 SSR 原创包裹 3 款（保留 v133 原版）
       'gb_gacha_destiny_star', 'gb_gacha_sleepy_rich', 'gb_gacha_read_nonsense',
-      // 游乐与扭蛋成就原创包裹 6 款
+      // 游乐与扭蛋成就原创包裹 6 款（前5保留 v133 原版，game_legend_100 为全新非泡泡款）
       'game_champ', 'ach_2048_2048', 'hidden_gacha_ssr_lucky',
       'gacha_count_1000', 'hidden_mem_hard_3', 'game_legend_100',
-      // 花园成就原创包裹 4 款
+      // 花园成就原创包裹 4 款（保留 v133 原版）
       'garden_all_42', 'hidden_garden_blooms_60', 'garden_collector_30', 'garden_bloom_100',
-      // 厨房成就原创包裹 3 款
+      // 厨房成就原创包裹 3 款（保留 v133 原版）
       'kitchen_lv10_master', 'lt_cook_100', 'kitchen_god_stroke',
-      // 冒险成就原创包裹 3 款
+      // 冒险成就原创包裹 3 款（保留 v133 原版）
       'adv_album_all', 'adv_curio_all', 'hidden_adv_legend',
-      // 衣橱与国风/画框成就原创包裹 4 款
+      // 衣橱与国风/画框成就原创包裹 4 款（前2保留 v133 原版，后2为全新非泡泡款）
       'ach_wardrobe_30', 'hidden_fashion_sss', 'fun_trad_lover', 'ach_frame_collector',
-      // 陪伴、打卡与联机成就原创包裹 8 款
+      // 陪伴、打卡与联机成就原创包裹 8 款（aff_lv10/soulmate/ach_ck_100/hidden_cloud_bond_lv10 保留 v133 原版，其余 4 款为全新非泡泡款）
       'aff_lv10', 'soulmate', 'ach_ck_100', 'ach_ck_60',
       'cloud_coadv_50', 'cloud_note_30', 'hidden_cloud_soulmate', 'hidden_cloud_bond_lv10',
-      // 财富成就原创包裹 3 款
+      // 财富成就原创包裹 3 款（前2保留 v133 原版，spend_5000 为全新非泡泡款）
       'lt_coins_5000', 'ach_rich_10k', 'spend_5000',
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
@@ -21770,18 +21770,19 @@
     cv.style.cssText = 'position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);pointer-events:none;image-rendering:pixelated;z-index:2;';
     const g = cv.getContext('2d');
     const px = (x, y, c, w = 1, h = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
-    // 多样非圆点辅助笔刷：菱形切面、三角旗、尖叶、十字绣、小花瓣
-    const diamond = (x, y, c, hi = '#ffffff') => {
-      px(x + 2, y, c, 1, 5); px(x + 1, y + 1, c, 3, 3); px(x, y + 2, c, 5, 1); px(x + 2, y + 1, hi, 1, 1);
+    const dot = (x, y, c, hi = '#ffffff') => { px(x, y, c, 4, 4); px(x + 1, y + 1, hi, 1, 1); };
+    const blossom = (x, y, c, mid = '#fffdf9') => {
+      px(x + 1, y, c, 3, 5); px(x, y + 1, c, 5, 3); px(x + 2, y + 2, mid, 1, 1);
     };
-    const pennant = (x, y, c, hi = '#ffffff') => {
-      px(x, y, c, 5, 1); px(x + 1, y + 1, c, 3, 2); px(x + 2, y + 3, c, 1, 1); px(x + 1, y, hi, 2, 1);
+    const puff = (x, y, c, hi = '#ffffff') => {
+      px(x + 1, y, c, 4, 1); px(x, y + 1, c, 6, 3); px(x + 1, y + 4, c, 4, 1);
+      px(x + 1, y + 1, hi, 2, 1);
     };
     const leaf = (x, y, c, hi) => {
       px(x, y + 1, c, 4, 2); px(x + 1, y, c, 2, 4); if (hi) px(x + 1, y + 1, hi, 1, 1);
     };
-    const blossom = (x, y, c, mid = '#fffdf9') => {
-      px(x + 1, y, c, 3, 5); px(x, y + 1, c, 5, 3); px(x + 2, y + 2, mid, 1, 1);
+    const diamond = (x, y, c, hi = '#ffffff') => {
+      px(x + 2, y, c, 1, 5); px(x + 1, y + 1, c, 3, 3); px(x, y + 2, c, 5, 1); px(x + 2, y + 1, hi, 1, 1);
     };
     const chevron = (x, y, c) => { px(x, y, c, 2, 1); px(x + 1, y + 1, c, 2, 1); px(x + 2, y + 2, c, 2, 1); };
 
@@ -21812,37 +21813,33 @@
       for (let x = 14; x <= 78; x += 9) px(x, 26, '#4a2e1f', 4, 3);
       px(78, 2, '#f294a8', 4, 9); px(80, 4, '#ffffff', 1, 5);
 
-    // ==================== 扭蛋 SSR 创新包裹 3 款 ====================
+    // ==================== 扭蛋 SSR 原创包裹 3 款（保留原版） ====================
     } else if (id === 'gb_gacha_destiny_star') {
-      // 满级幸运星：左上棱面蓝紫水晶簇 + 斜切星轨丝带 + 右下双切面晶角
-      diamond(6, 4, '#8c9ef0', '#ffffff'); diamond(13, 3, '#c4b8ff', '#ffffff'); diamond(20, 4, '#94dcff', '#ffffff');
-      px(6, 10, '#8c9ef0', 2, 7); px(5, 17, '#b8c6ff', 2, 5);
-      px(26, 6, '#ffe484', 12, 1); px(39, 5, '#c4b8ff', 6, 1);
-      diamond(81, 24, '#ffe484', '#ffffff'); diamond(74, 25, '#94dcff', '#ffffff');
+      puff(5, 5, '#9eaef5', '#ffffff'); puff(11, 4, '#c4d2ff', '#ffffff'); puff(18, 4, '#dfe8ff', '#ffffff');
+      puff(25, 5, '#f5e4ff', '#ffffff'); puff(32, 5, '#d9f0ff', '#ffffff');
+      px(6, 10, '#9eaef5', 2, 5); px(5, 15, '#b8c6ff', 3, 5); px(6, 20, '#d9e4ff', 2, 4);
+      dot(15, 7, '#ffe478', '#ffffff'); dot(29, 7, '#a8e8c8', '#ffffff');
+      puff(77, 25, '#c4d2ff', '#ffffff'); puff(83, 24, '#f5e4ff', '#ffffff');
     } else if (id === 'gb_gacha_sleepy_rich') {
-      // 躺赢富贵汪：底边整块拉扣金丝绒软垫 + 左上淡粉丝带结
       px(10, 25, '#f2c864', 76, 5); px(12, 26, '#ffe8a8', 72, 3);
       px(18, 27, '#dfa236', 2, 2); px(36, 27, '#dfa236', 2, 2); px(56, 27, '#dfa236', 2, 2); px(74, 27, '#dfa236', 2, 2);
       px(24, 26, '#fffdf9', 6, 1); px(43, 26, '#fffdf9', 6, 1); px(62, 26, '#fffdf9', 6, 1);
       px(5, 5, '#f5a8c0', 5, 4); px(11, 5, '#f5a8c0', 5, 4); px(9, 6, '#fff5f8', 3, 2);
       px(6, 9, '#ffd4e2', 2, 5); px(11, 9, '#ffe494', 2, 4);
     } else if (id === 'gb_gacha_read_nonsense') {
-      // 已读乱回专家：右上折纸信笺包角 + 对话折线尾 + 左下斜折标签角
-      px(62, 5, '#8fa8e8', 24, 2); px(84, 5, '#8fa8e8', 2, 14);
-      px(66, 3, '#d6e4ff', 16, 2); px(86, 8, '#f0d8ff', 2, 9);
-      chevron(56, 4, '#f5b0a0'); chevron(84, 20, '#8fa8e8');
-      px(8, 26, '#8fa8e8', 14, 2); px(6, 21, '#c4b8f5', 2, 7); px(10, 28, '#ffe0d4', 8, 1);
+      puff(56, 4, '#c9dcff', '#ffffff'); puff(63, 3, '#e6d9ff', '#ffffff'); puff(70, 4, '#c9dcff', '#ffffff');
+      puff(78, 5, '#ffe0d4', '#ffffff'); puff(84, 7, '#c9dcff', '#ffffff');
+      px(87, 12, '#9eb6f0', 2, 5); px(86, 17, '#c9dcff', 2, 4);
+      dot(12, 26, '#9eb6f0', '#ffffff'); dot(18, 26, '#c4a8f5', '#ffffff'); dot(24, 26, '#f5b8a8', '#ffffff');
 
-    // ==================== 游乐与扭蛋成就创新包裹 6 款 ====================
+    // ==================== 游乐与扭蛋成就包裹 6 款 ====================
     } else if (id === 'game_champ') {
-      // 电玩冠军：左+左下金色月桂叶冠包裹 + 右上像素小爱心与双V光纹
       px(7, 10, '#d9a438', 2, 13); px(9, 22, '#d9a438', 3, 3); px(12, 25, '#e6b84c', 18, 2);
       leaf(4, 9, '#f2ca58', '#fff7d6'); leaf(4, 15, '#e6b84c', '#fff7d6'); leaf(5, 21, '#f2ca58', '#fff7d6');
       leaf(13, 25, '#f2ca58', '#fff7d6'); leaf(21, 26, '#e6b84c', '#fff7d6'); leaf(29, 25, '#f2ca58', '#fff7d6');
       px(79, 5, '#f2889b', 2, 2); px(83, 5, '#f2889b', 2, 2); px(79, 7, '#f2889b', 6, 2); px(81, 9, '#f2889b', 2, 1);
-      px(80, 6, '#ffffff', 1, 1); diamond(85, 11, '#ffe478', '#ffffff');
+      px(80, 6, '#ffffff', 1, 1); dot(86, 11, '#ffe478', '#ffffff');
     } else if (id === 'ach_2048_2048') {
-      // 2048终极传说：左上与右下阶梯蜂蜜小方块拼花包角
       px(6, 5, '#f5c65c', 5, 5); px(7, 6, '#fff6d6', 2, 2);
       px(12, 4, '#ffe08a', 4, 4); px(13, 5, '#ffffff', 1, 1);
       px(5, 11, '#e8a838', 4, 4); px(6, 12, '#fff2bd', 1, 1);
@@ -21851,56 +21848,46 @@
       px(78, 26, '#f5c65c', 5, 4); px(79, 27, '#ffffff', 1, 1);
       px(86, 19, '#ffe08a', 4, 4); px(73, 27, '#ffe69e', 4, 3);
     } else if (id === 'hidden_gacha_ssr_lucky') {
-      // 天选欧皇汪：顶边连贯波浪帷幔华盖 + 两侧柔和金粉垂穗
       px(10, 5, '#ffe494', 76, 3); px(14, 8, '#ffd4e2', 18, 2); px(39, 8, '#ffe494', 18, 2); px(64, 8, '#ffd4e2', 18, 2);
       px(18, 10, '#fff5f8', 10, 1); px(43, 10, '#fffdf0', 10, 1); px(68, 10, '#fff5f8', 10, 1);
       px(16, 6, '#ffffff', 6, 1); px(45, 6, '#ffffff', 6, 1); px(72, 6, '#ffffff', 6, 1);
       blossom(5, 5, '#f2c44c', '#ffffff'); px(6, 11, '#ffe484', 2, 5); px(5, 16, '#ffd4e2', 4, 2);
-      blossom(85, 5, '#f5a8c0', '#ffffff'); px(86, 11, '#ffd4e2', 2, 6); diamond(84, 21, '#ffe484', '#ffffff');
+      blossom(85, 5, '#f5a8c0', '#ffffff'); px(86, 11, '#ffd4e2', 2, 6); dot(84, 22, '#ffe484', '#ffffff');
     } else if (id === 'gacha_count_1000') {
-      // 扭蛋千抽传说：顶边庆典小三角彩旗串 + 左上丝带垂尾
-      px(10, 5, '#d99e30', 76, 1);
-      const fc = ['#ffe078', '#ffb5cc', '#94dcff', '#d4b8ff', '#92e0b4', '#ffe078', '#ffb5cc', '#94dcff', '#d4b8ff'];
-      for (let i = 0; i < fc.length; i++) pennant(13 + i * 8, 6, fc[i], '#ffffff');
-      px(6, 6, '#e8a838', 3, 8); px(5, 14, '#ffe078', 2, 5); px(8, 14, '#ffb5cc', 2, 4);
+      const cols = ['#ffe078', '#ffb5cc', '#a8e0ff', '#d4b8ff', '#a8e8c0', '#ffe078', '#ffb5cc'];
+      for (let i = 0; i < cols.length; i++) dot(14 + i * 8, i % 2 === 0 ? 4 : 5, cols[i], '#ffffff');
+      dot(5, 11, '#ffe078', '#ffffff'); dot(4, 17, '#ffb5cc', '#ffffff'); dot(6, 23, '#a8e0ff', '#ffffff');
+      px(6, 5, '#e8a838', 3, 3); px(10, 5, '#e8a838', 3, 3); px(8, 6, '#fff6d6', 3, 2);
     } else if (id === 'hidden_mem_hard_3') {
-      // 极限记忆王：左上+右下对角藤蔓花体金丝卷纹 + 菱形小宝石
       px(6, 6, '#dfa042', 8, 2); px(6, 6, '#dfa042', 2, 9); px(14, 5, '#f5cc6c', 6, 2); px(5, 15, '#f5cc6c', 2, 4);
-      blossom(7, 5, '#ffe084', '#ffffff'); diamond(21, 4, '#f5a8b8', '#ffffff');
+      blossom(7, 5, '#ffe084', '#ffffff'); dot(21, 5, '#f5a8b8', '#ffffff');
       px(81, 26, '#dfa042', 8, 2); px(87, 19, '#dfa042', 2, 9); px(74, 27, '#f5cc6c', 7, 2);
-      blossom(83, 23, '#ffe084', '#ffffff'); diamond(69, 25, '#f5a8b8', '#ffffff');
+      blossom(83, 23, '#ffe084', '#ffffff'); dot(70, 26, '#f5a8b8', '#ffffff');
     } else if (id === 'game_legend_100') {
-      // 游乐厅霸主（豪华）：顶+左蓝金阶梯皇家城垛花边 + 右下像素V形荣耀光角
+      // 【新做非泡泡】游乐厅霸主（豪华）：顶+左蓝金阶梯皇家城垛花边 + 右下像素V形荣耀光角
       px(8, 6, '#7aa8e0', 54, 2);
       for (let x = 10; x <= 56; x += 8) { px(x, 4, '#f2c858', 4, 2); px(x + 1, 4, '#fff8d6', 2, 1); }
       px(6, 7, '#7aa8e0', 2, 15); px(4, 11, '#a8d0ff', 2, 3); px(4, 17, '#f2c858', 2, 3);
       px(72, 26, '#f2c858', 14, 2); px(85, 18, '#f2c858', 2, 10);
       px(76, 28, '#a8d0ff', 8, 1); diamond(83, 14, '#ffe484', '#ffffff');
 
-    // ==================== 花园成就创新包裹 4 款 ====================
+    // ==================== 花园成就包裹 4 款（保留原版） ====================
     } else if (id === 'garden_all_42') {
-      // 万花筒宗师：左+上蜿蜒柔绿藤蔓 + 5朵不同马卡龙色小花绽放
       px(6, 10, '#6ec488', 2, 14); px(7, 7, '#6ec488', 46, 2);
       leaf(4, 17, '#8ee0a4', '#e8fff0'); leaf(22, 6, '#8ee0a4', '#e8fff0'); leaf(40, 6, '#8ee0a4', '#e8fff0');
       blossom(4, 8, '#f5a2cc', '#fff8d6'); blossom(14, 4, '#ffe078', '#ffffff');
       blossom(29, 4, '#9ad8ff', '#ffffff'); blossom(45, 4, '#cfa6ff', '#fff8d6');
       blossom(83, 24, '#ffb8a6', '#ffffff');
     } else if (id === 'hidden_garden_blooms_60') {
-      // 繁花秘境主：底边连贯交织绿蔓花架 + 对生尖叶与小郁金香花苞
-      px(10, 26, '#58b878', 74, 2);
-      for (let x = 14; x <= 74; x += 12) {
-        leaf(x, 24, '#8ee0a8', '#ffffff');
-        px(x + 6, 24, '#ff9ec2', 3, 2); px(x + 7, 23, '#fff0f5', 1, 1);
-      }
-      px(6, 14, '#58b878', 2, 13); leaf(4, 12, '#8ee0a8', '#ffffff');
+      for (let x = 10; x <= 78; x += 8) puff(x, 25, x % 16 === 2 ? '#68bd88' : '#8ee0a8', '#e8fff0');
+      blossom(18, 24, '#ffffff', '#ffe078'); blossom(44, 24, '#ffffff', '#ffe078'); blossom(70, 24, '#ffffff', '#ffe078');
+      px(6, 15, '#68bd88', 2, 11); leaf(4, 13, '#8ee0a8', '#ffffff');
     } else if (id === 'garden_collector_30') {
-      // 植物学大师：右上+右侧弯弧蕨叶环抱 + 菱形小露珠
       px(52, 6, '#6cb878', 32, 2); px(84, 7, '#6cb878', 2, 16);
       leaf(54, 4, '#92dc9c', '#ffffff'); leaf(64, 4, '#7ac988', '#e8fff0'); leaf(74, 4, '#92dc9c', '#ffffff');
       leaf(83, 11, '#92dc9c', '#ffffff'); leaf(83, 18, '#7ac988', '#e8fff0');
-      diamond(9, 24, '#9ce8c4', '#ffffff');
+      dot(10, 25, '#b8f0d4', '#ffffff');
     } else if (id === 'garden_bloom_100') {
-      // 百年老花匠：左下小花盆弧边花篱 + 左上粉红蔷薇花苞簇
       for (let x = 10; x <= 48; x += 6) {
         px(x, 26, x % 12 === 4 ? '#d9a482' : '#e8be9e', 5, 3);
         px(x + 1, 26, '#fff4ea', 2, 1);
@@ -21908,136 +21895,119 @@
       leaf(8, 23, '#68b878', '#d4f5dc'); leaf(48, 23, '#68b878', '#d4f5dc');
       blossom(5, 5, '#f294b0', '#fff4f8'); blossom(11, 4, '#ffb8cc', '#ffffff'); leaf(16, 6, '#68b878', '#d4f5dc');
 
-    // ==================== 厨房成就创新包裹 3 款 ====================
+    // ==================== 厨房成就包裹 3 款（保留原版） ====================
     } else if (id === 'kitchen_lv10_master') {
-      // 殿堂级花厨：顶边连贯焦糖蜂蜜淋面曲线 + 左侧金黄麦穗环抱
       px(14, 5, '#f5c864', 66, 3); px(20, 8, '#ffe08a', 10, 2); px(42, 8, '#f5c864', 12, 3); px(66, 8, '#ffe08a', 8, 2);
       px(22, 6, '#fffdf5', 8, 1); px(46, 6, '#fffdf5', 10, 1);
       px(6, 9, '#d99a38', 2, 16);
       leaf(4, 9, '#f2c864', '#fff8d6'); leaf(7, 13, '#f2c864', '#fff8d6');
       leaf(4, 17, '#e6b248', '#fff8d6'); leaf(7, 21, '#f2c864', '#fff8d6');
     } else if (id === 'lt_cook_100') {
-      // 百年小厨房传人：底边连贯草莓格纹锯齿围裙裙边 + 右上蝴蝶结系带
-      px(10, 25, '#ffd4e2', 74, 2);
-      for (let x = 12; x <= 78; x += 6) { px(x, 27, '#f29cb8', 4, 2); px(x + 1, 29, '#fff5f8', 2, 1); }
-      px(78, 5, '#e888a8', 4, 3); px(84, 5, '#e888a8', 4, 3); px(82, 6, '#fffdf9', 2, 2);
-      px(80, 8, '#ffd4e2', 2, 4); px(85, 8, '#ffd4e2', 2, 4);
+      for (let x = 10; x <= 80; x += 6) puff(x, 25, x % 12 === 4 ? '#ffd4e2' : '#fffdf9', '#ffffff');
+      for (let x = 13; x <= 79; x += 12) px(x, 27, '#e08ca8', 2, 1);
+      blossom(82, 5, '#eb82a4', '#fffdf9'); dot(77, 7, '#ffc4d6', '#ffffff');
     } else if (id === 'kitchen_god_stroke') {
-      // 神来一笔厨：右侧S形袅袅香气细丝卷纹 + 左下香料尖叶枝
-      px(86, 20, '#e6a874', 2, 4); px(84, 16, '#f2be8c', 2, 4); px(86, 12, '#ffe0c4', 2, 4); px(84, 8, '#fff2e4', 2, 4);
-      px(88, 14, '#ffe6cf', 1, 4); px(82, 10, '#f5c898', 1, 3);
-      leaf(7, 24, '#7ac488', '#e8fff0'); leaf(13, 25, '#e6a874', '#fff4e8'); px(18, 26, '#f5c488', 5, 1);
+      puff(84, 18, '#ffe6cf', '#ffffff'); puff(86, 12, '#fff2e4', '#ffffff'); puff(83, 6, '#ffe0c4', '#ffffff');
+      px(86, 23, '#e6a874', 2, 4);
+      leaf(7, 24, '#7ac488', '#e8fff0'); leaf(13, 25, '#e6a874', '#fff4e8'); dot(19, 26, '#f5c488', '#ffffff');
 
-    // ==================== 冒险成就创新包裹 3 款 ====================
+    // ==================== 冒险成就包裹 3 款（保留原版） ====================
     } else if (id === 'adv_album_all') {
-      // 环游摄影师：顶边邮票锯齿边 + 虚线航迹与小折纸机 + 左下相片包角
-      for (let x = 14; x <= 78; x += 6) { px(x, 5, '#8ac6f0', 4, 2); px(x + 1, 4, '#dff2ff', 2, 1); }
-      px(82, 5, '#6cb8e6', 4, 1); px(83, 6, '#6cb8e6', 3, 1); px(84, 7, '#a8dcff', 2, 1);
-      px(6, 22, '#6cb8e6', 2, 6); px(6, 27, '#6cb8e6', 8, 2); px(9, 25, '#c4e6ff', 3, 1);
+      puff(44, 4, '#d4eeff', '#ffffff'); puff(52, 3, '#ffffff', '#ffffff'); puff(61, 4, '#c4e4ff', '#ffffff');
+      for (let x = 22; x <= 38; x += 4) px(x, 6, '#8ac6f0', 2, 1);
+      puff(82, 12, '#d4eeff', '#ffffff');
+      px(6, 23, '#6cb8e6', 2, 5); px(6, 27, '#6cb8e6', 7, 2); px(8, 25, '#c4e6ff', 3, 1);
     } else if (id === 'adv_curio_all') {
-      // 百宝箱大王：底+左金边镶嵌菱形松石宝石包角
-      px(8, 26, '#dfa838', 56, 2); px(6, 14, '#dfa838', 2, 14);
-      diamond(16, 24, '#7fd9c8', '#ffffff'); diamond(34, 24, '#ffe078', '#ffffff'); diamond(52, 24, '#7fd9c8', '#ffffff');
-      diamond(5, 12, '#ffe078', '#ffffff');
+      const beads = ['#f5c854', '#7fd9c8', '#ffe494', '#f5c854', '#7fd9c8', '#ffe494', '#f5c854', '#7fd9c8'];
+      for (let i = 0; i < beads.length; i++) dot(12 + i * 9, i % 2 === 0 ? 25 : 26, beads[i], '#ffffff');
+      dot(5, 19, '#f5c854', '#ffffff'); dot(6, 13, '#7fd9c8', '#ffffff');
     } else if (id === 'hidden_adv_legend') {
-      // 天涯旅狗行：左+左上舒展分层羽翼尖弧 + 右下飘落单羽
-      px(6, 6, '#e8a8d0', 14, 2); px(10, 4, '#f7d9ec', 14, 2); px(18, 3, '#d982b8', 10, 2);
-      px(5, 9, '#e096c4', 3, 8); px(4, 14, '#f5cde6', 3, 6); px(6, 20, '#d982b8', 2, 4);
-      px(78, 26, '#e8a8d0', 7, 2); px(83, 25, '#f7d9ec', 5, 2); px(87, 24, '#ffffff', 2, 1);
+      puff(5, 8, '#f0c4e0', '#ffffff'); puff(10, 5, '#f7d9ec', '#ffffff'); puff(17, 4, '#e4b8e6', '#ffffff');
+      puff(4, 15, '#e6b0d4', '#ffffff'); puff(6, 21, '#f5d2e8', '#ffffff');
+      blossom(81, 24, '#e89ec8', '#ffffff'); dot(75, 26, '#f5c4e0', '#ffffff');
 
-    // ==================== 衣橱、国风与画框创新包裹 4 款 ====================
+    // ==================== 衣橱与国风/画框包裹 4 款 ====================
     } else if (id === 'ach_wardrobe_30') {
-      // 衣橱主理人：底边连贯镂空蕾丝裙摆 + 左侧丝带 + 右上丁香蝴蝶结
       px(10, 25, '#ffffff', 72, 2);
       for (let x = 10; x <= 76; x += 6) { px(x, 27, '#e2c4f5', 5, 2); px(x + 1, 29, '#f5e8ff', 3, 1); }
       px(6, 13, '#d9a8eb', 3, 13); px(7, 15, '#ffffff', 1, 9);
       px(78, 4, '#c486d9', 4, 4); px(85, 4, '#c486d9', 4, 4); px(82, 5, '#f5e4ff', 3, 3);
       px(80, 8, '#d9a8eb', 2, 4); px(85, 8, '#d9a8eb', 2, 4);
     } else if (id === 'hidden_fashion_sss') {
-      // 传说穿搭王：左上+右下斜折香槟金丝缎披肩褶皱 + 菱形珍珠扣
-      px(6, 5, '#f5c86e', 20, 2); px(8, 3, '#ffecc2', 14, 2); px(5, 7, '#e09e48', 3, 9);
-      diamond(14, 4, '#fffdf5', '#ffffff');
-      px(70, 26, '#f5c86e', 18, 2); px(74, 28, '#ffecc2', 12, 1); px(86, 18, '#e09e48', 3, 10);
-      diamond(78, 24, '#fffdf5', '#ffffff');
+      puff(6, 5, '#ffe4a8', '#ffffff'); puff(13, 4, '#f5c86e', '#fffdf9'); puff(20, 5, '#ffecc2', '#ffffff');
+      dot(5, 12, '#fffdf9', '#ffffff'); dot(27, 5, '#f2b858', '#ffffff');
+      puff(72, 25, '#ffecc2', '#ffffff'); puff(79, 25, '#f5c86e', '#fffdf9'); puff(85, 22, '#ffe4a8', '#ffffff');
     } else if (id === 'fun_trad_lover') {
-      // 国风小雅士：左上朱砂金边书卷轴头 + 垂红流苏 + 右下竹节小弯枝
+      // 【新做非泡泡】国风小雅士：左上朱砂金边书卷轴头 + 垂红流苏 + 右下竹节小弯枝
       px(5, 5, '#c95258', 3, 14); px(6, 4, '#f2c864', 1, 16);
       px(8, 6, '#e07a7a', 26, 2); px(10, 5, '#ffe8b8', 20, 1);
       px(5, 20, '#e0646c', 2, 5); px(7, 21, '#f2c864', 1, 3);
       px(76, 26, '#68b878', 11, 2); px(85, 20, '#68b878', 2, 8); leaf(82, 19, '#8ee09e', '#ffffff');
     } else if (id === 'ach_frame_collector') {
-      // 画框鉴赏家：四角对称轻巧丁香金巴洛克花体画框包角
+      // 【新做非泡泡】画框鉴赏家：四角轻巧丁香金巴洛克花体画框包角
       px(5, 5, '#a68ce0', 12, 2); px(5, 5, '#a68ce0', 2, 10); px(7, 7, '#f2c864', 5, 1); px(7, 7, '#f2c864', 1, 5);
       px(79, 5, '#a68ce0', 12, 2); px(89, 5, '#a68ce0', 2, 10); px(84, 7, '#f2c864', 5, 1);
       px(5, 27, '#a68ce0', 12, 2); px(5, 19, '#a68ce0', 2, 10); px(7, 26, '#f2c864', 5, 1);
       px(79, 27, '#a68ce0', 12, 2); px(89, 19, '#a68ce0', 2, 10); px(84, 26, '#f2c864', 5, 1);
 
-    // ==================== 陪伴、打卡与联机创新包裹 8 款 ====================
+    // ==================== 陪伴、打卡与联机包裹 8 款 ====================
     } else if (id === 'aff_lv10') {
-      // 满分偏爱：左上+右下双色丝带结花边 + 细针脚金线
-      px(6, 5, '#e882a6', 18, 2); px(6, 5, '#e882a6', 2, 11);
-      blossom(7, 4, '#ffb8d0', '#ffffff'); px(26, 6, '#f5c864', 4, 1); px(32, 6, '#f5c864', 4, 1);
-      px(72, 27, '#e882a6', 16, 2); px(86, 18, '#e882a6', 2, 11);
-      blossom(82, 23, '#ffb8d0', '#ffffff'); px(62, 27, '#f5c864', 4, 1);
+      blossom(6, 5, '#f5a8c4', '#ffffff'); blossom(13, 4, '#ffd4e4', '#ffffff'); leaf(20, 6, '#e89ab8', '#ffffff');
+      px(5, 11, '#f29eb8', 2, 6); dot(5, 18, '#ffdce8', '#ffffff');
+      blossom(82, 24, '#f5a8c4', '#ffffff'); blossom(75, 25, '#ffd4e4', '#ffffff'); dot(69, 26, '#fffdf9', '#ffffff');
     } else if (id === 'soulmate') {
-      // 灵魂小狗：底边两侧轻盈尖羽天使小翼托起 + 顶角双小爱心
-      px(6, 22, '#ffbad6', 4, 2); px(9, 24, '#f598be', 7, 2); px(14, 26, '#ffe0ec', 9, 2);
-      px(86, 22, '#ffbad6', 4, 2); px(80, 24, '#f598be', 7, 2); px(73, 26, '#ffe0ec', 9, 2);
-      px(10, 4, '#eb7ca8', 2, 2); px(13, 4, '#eb7ca8', 2, 2); px(11, 6, '#eb7ca8', 3, 1);
-      px(80, 5, '#eb7ca8', 2, 2); px(83, 5, '#eb7ca8', 2, 2); px(81, 7, '#eb7ca8', 3, 1);
+      puff(6, 23, '#ffd4e6', '#ffffff'); puff(12, 25, '#ffb8d4', '#ffffff'); puff(19, 26, '#ffe6f0', '#ffffff');
+      puff(84, 23, '#ffd4e6', '#ffffff'); puff(78, 25, '#ffb8d4', '#ffffff'); puff(71, 26, '#ffe6f0', '#ffffff');
+      dot(10, 5, '#ff9ec2', '#ffffff'); dot(82, 6, '#ffb8d4', '#ffffff');
     } else if (id === 'ach_ck_100') {
-      // 百日纪念章：左上折角柔红丝绸书签缎带 + 金色火漆小花 + 飘带尾
       px(6, 5, '#e07a90', 38, 4); px(6, 6, '#f5b8c6', 34, 2);
       px(5, 8, '#d4627a', 4, 16); px(6, 10, '#f5b8c6', 2, 11);
       px(44, 6, '#e07a90', 6, 3); px(50, 7, '#f2a8b8', 5, 2);
       blossom(7, 5, '#f2c864', '#fffdf5');
-      px(80, 25, '#e07a90', 8, 3); px(85, 22, '#f2a8b8', 3, 4); diamond(75, 25, '#f2c864', '#ffffff');
+      px(80, 25, '#e07a90', 8, 3); px(85, 22, '#f2a8b8', 3, 4); dot(76, 26, '#f2c864', '#ffffff');
     } else if (id === 'ach_ck_60') {
-      // 双月同行：焦糖金日历撕页锯齿顶边 + 左下暖金弯月托弧
+      // 【新做非泡泡】双月同行：焦糖金日历撕页锯齿顶边 + 左下暖金弯月托弧
       for (let x = 16; x <= 74; x += 8) { px(x, 5, '#c99a74', 5, 2); px(x + 1, 4, '#f5e0c8', 3, 1); }
       px(6, 18, '#e6b864', 2, 8); px(8, 25, '#e6b864', 10, 2); px(10, 27, '#fff2c8', 6, 1);
       diamond(83, 24, '#e6b864', '#ffffff');
     } else if (id === 'cloud_coadv_50') {
-      // 传说双子旅人（豪华）：星蓝金罗盘刻度包角 + 顶部流光航线折带 + 菱形双星坐标
+      // 【新做非泡泡】传说双子旅人（豪华）：星蓝金罗盘刻度包角 + 顶部流光航线折带 + 菱形双星坐标
       px(5, 5, '#7c82e0', 18, 2); px(5, 5, '#7c82e0', 2, 14); px(7, 7, '#ffe484', 10, 1);
       px(73, 5, '#7c82e0', 18, 2); px(89, 5, '#7c82e0', 2, 14); px(79, 7, '#ffe484', 10, 1);
       for (let x = 28; x <= 64; x += 6) px(x, 5, '#a8c4ff', 3, 1);
       diamond(46, 3, '#ffe484', '#ffffff');
       px(14, 27, '#9ea8f5', 68, 2); px(22, 28, '#ffe484', 16, 1); px(58, 28, '#ffe484', 16, 1);
     } else if (id === 'cloud_note_30') {
-      // 软木板笔友：左上与右下斜贴胶带纸条 + 暖红小图钉折角
+      // 【新做非泡泡】软木板笔友：左上与右下斜贴胶带纸条 + 暖红小图钉折角
       px(6, 6, '#f2c8a8', 12, 3); px(9, 4, '#ffe6cc', 10, 3); px(12, 5, '#d97a7a', 3, 3);
       px(76, 25, '#f2c8a8', 12, 3); px(79, 23, '#ffe6cc', 10, 3); px(82, 24, '#d97a7a', 3, 3);
     } else if (id === 'hidden_cloud_soulmate') {
-      // 跨屏挚友：左右双侧斜折信封封口线 + 顶部双色流光折纹
+      // 【新做非泡泡】跨屏挚友：左右双侧斜折信封封口线 + 双色流光折纹
       px(5, 9, '#8a82e0', 2, 16); px(7, 11, '#d9c4ff', 2, 12);
       px(89, 9, '#8a82e0', 2, 16); px(87, 11, '#ffcce2', 2, 12);
       chevron(16, 4, '#a8a0f0'); chevron(22, 4, '#f5a8c8');
       chevron(70, 26, '#a8a0f0'); chevron(76, 26, '#f5a8c8');
     } else if (id === 'hidden_cloud_bond_lv10') {
-      // 宿命双星誓约：左+底边连贯双色交织缎带 + 菱形星辉
       for (let x = 10; x <= 78; x += 4) {
         const up = ((x - 10) / 4) % 2 === 0;
         px(x, up ? 25 : 27, '#cfa0f2', 4, 2);
         px(x, up ? 27 : 25, '#9ed0ff', 4, 2);
       }
       px(5, 10, '#cfa0f2', 3, 8); px(6, 18, '#9ed0ff', 3, 8);
-      diamond(24, 24, '#ffe484', '#ffffff'); diamond(58, 24, '#ffe484', '#ffffff');
+      dot(24, 25, '#ffe484', '#ffffff'); dot(58, 25, '#ffe484', '#ffffff');
 
-    // ==================== 财富成就创新包裹 3 款 ====================
+    // ==================== 财富成就包裹 3 款 ====================
     } else if (id === 'lt_coins_5000') {
-      // 桌面大富翁：左下阶梯金元宝叠层 + 金色月桂双叶 + 右上菱形金辉
-      px(9, 26, '#e6b238', 32, 3); px(13, 25, '#ffe084', 24, 2); px(18, 24, '#fff6cc', 14, 1);
-      leaf(5, 21, '#f2c44c', '#fffdf0'); leaf(41, 25, '#e6b238', '#fffdf0');
-      diamond(81, 4, '#ffe078', '#ffffff');
+      dot(9, 25, '#f2c44c', '#fffdf0'); dot(15, 26, '#ffe084', '#ffffff'); dot(21, 25, '#e6b238', '#fffdf0');
+      dot(27, 26, '#f2c44c', '#fffdf0'); dot(33, 25, '#ffe084', '#ffffff');
+      leaf(5, 20, '#f2c44c', '#fffdf0'); leaf(39, 25, '#e6b238', '#fffdf0');
+      dot(82, 5, '#ffe078', '#ffffff'); dot(86, 9, '#fff2b8', '#ffffff');
     } else if (id === 'ach_rich_10k') {
-      // 万元户：右上丝绒抽绳金蝴蝶结 + 底边锯齿金穗流苏
       px(78, 4, '#dfa028', 4, 4); px(85, 4, '#dfa028', 4, 4); px(81, 5, '#fff5cc', 4, 3);
       px(85, 9, '#f2c458', 2, 6); px(87, 13, '#ffe084', 2, 6);
-      px(18, 26, '#dfa028', 58, 2);
-      for (let x = 20; x <= 72; x += 6) px(x, 28, '#ffe084', 3, 2);
+      for (let x = 20; x <= 72; x += 10) dot(x, 26, x % 20 === 0 ? '#f2c458' : '#ffe494', '#ffffff');
     } else if (id === 'spend_5000') {
-      // 豪掷千金汪：复古焦糖皮箱黄铜铆钉包角 + 右上丝带封条
+      // 【新做非泡泡】豪掷千金汪：复古焦糖皮箱黄铜铆钉包角 + 右上丝带封条
       px(5, 6, '#a86b42', 11, 3); px(5, 6, '#a86b42', 3, 10); px(7, 7, '#f2c864', 2, 2);
       px(80, 25, '#a86b42', 11, 3); px(88, 18, '#a86b42', 3, 10); px(87, 25, '#f2c864', 2, 2);
       px(72, 5, '#d99a58', 14, 2); px(82, 4, '#ffe4a8', 4, 4);
