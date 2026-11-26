@@ -8682,6 +8682,7 @@
             <span id="st-px-ward-head">配饰（最多同戴 3 个）</span>
             <div style="display:flex;align-items:center;gap:6px;">
               <span id="st-px-acc-slot-cnt">0/3</span>
+              <button class="st-px-btn" id="st-px-ward-strip-acc-btn" type="button" style="height:20px;padding:0 6px;font-size:10px;line-height:18px;" title="一键脱下当前穿戴的所有配饰（保留衣服和跟班）">脱下配饰</button>
               <button class="st-px-btn" id="st-px-ward-strip-btn" type="button" style="height:20px;padding:0 6px;font-size:10px;line-height:18px;" title="一键脱下当前所有衣服、配饰和伙伴">一键脱下</button>
             </div>
           </div>
@@ -22710,8 +22711,22 @@
     const wd = ensureWardDraft();
     const wornAccs = Array.isArray(wd.accs) ? wd.accs : [];
 
-    pupWardTabBtns.forEach(b => b.classList.toggle('active', b.dataset.wardTab === wardTab));
+    const wardTabLabels = { acc: '配饰', outfit: '衣服', comp: '跟班', preset: '穿搭方案' };
+    const wardTabHasNew = {
+      acc: (config.puppyOwnedAccs || []).some(id => freshNewWardItems.has(id)),
+      outfit: (config.puppyOwnedOutfits || []).some(id => freshNewWardItems.has(id)),
+      comp: (config.puppyOwnedCompanions || []).some(id => freshNewWardItems.has(id)),
+    };
+    pupWardTabBtns.forEach(b => {
+      const tk = b.dataset.wardTab;
+      b.classList.toggle('active', tk === wardTab);
+      if (wardTabLabels[tk]) {
+        b.innerHTML = `${wardTabLabels[tk]}${wardTabHasNew[tk] ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+      }
+    });
     if (pupAccSlotCntEl) pupAccSlotCntEl.textContent = wardTab === 'acc' ? `${wornAccs.length}/${getMaxAccSlots()}` : '';
+    const stripAccBtn = root.querySelector('#st-px-ward-strip-acc-btn');
+    if (stripAccBtn) stripAccBtn.style.display = wardTab === 'acc' ? 'inline-block' : 'none';
     if (presetAddBtn) presetAddBtn.style.display = wardTab === 'preset' ? 'inline-block' : 'none';
     if (wardTab !== 'preset') presetRenameRow.style.display = 'none';
 
@@ -22766,7 +22781,7 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.innerHTML = `${escapeHtmlSimple(item.name)}${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+        btn.innerHTML = `${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${escapeHtmlSimple(item.name)}`;
         const isOn = item.id === 'none' ? wornAccs.length === 0 : wornAccs.includes(item.id);
         btn.classList.toggle('active', isOn);
         btn.addEventListener('click', () => {
@@ -22942,7 +22957,7 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.innerHTML = `${escapeHtmlSimple(item.name)}${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+        btn.innerHTML = `${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${escapeHtmlSimple(item.name)}`;
         btn.classList.toggle('active', wd.outfit === item.id);
         btn.addEventListener('click', () => {
           clearWardItemNew(item.id);
@@ -22975,7 +22990,7 @@
         const btn = doc.createElement('button');
         btn.type = 'button';
         btn.className = 'st-px-btn';
-        btn.innerHTML = `${escapeHtmlSimple(item.name)}${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+        btn.innerHTML = `${freshNewWardItems.has(item.id) ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${escapeHtmlSimple(item.name)}`;
         btn.classList.toggle('active', (wd.comp || 'none') === item.id);
         btn.addEventListener('click', () => {
           clearWardItemNew(item.id);
@@ -23912,6 +23927,7 @@
     const isGachaTab = shopMainCat === 'gacha';
     if (gachaViewEl) gachaViewEl.style.display = isGachaTab ? 'block' : 'none';
     if (pupShopSubTabsEl && isGachaTab) pupShopSubTabsEl.style.display = 'none';
+    if (isGachaTab) syncShopOwnFilterUI(true);
     if (pupShopGridEl) pupShopGridEl.style.display = isGachaTab ? 'none' : 'grid';
     if (pupShopCatHeadEl?.parentElement) pupShopCatHeadEl.parentElement.style.display = isGachaTab ? 'none' : 'flex';
     const _vBoxG = root.querySelector('#st-px-sell-vendor');
@@ -23964,7 +23980,11 @@
         sb.type = 'button';
         sb.className = `st-px-btn${shopSubCat === d.id ? ' active' : ''}`;
         sb.style.cssText = 'font-size:9px;height:21px;padding:0 3px;line-height:19px;';
-        sb.textContent = d.label;
+        const hasSubNew = (d.id === 'badge' && (config.puppyOwnedBadges || []).some(id => freshNewWardItems.has(id)))
+          || (d.id === 'trail' && (config.puppyOwnedTrails || []).some(id => freshNewWardItems.has(id)))
+          || (d.id === 'bubskin' && (config.puppyOwnedBubbles || []).some(id => freshNewWardItems.has(id)))
+          || (d.id === 'avatarframe' && (config.puppyOwnedAvatarFrames || []).some(id => freshNewWardItems.has(id)));
+        sb.innerHTML = `${d.label}${hasSubNew ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
         sb.addEventListener('click', () => {
           clearTimeout(bubPreviewRevertTimer);
           applyPupCosmeticSkins();
@@ -24604,7 +24624,7 @@
         const card = doc.createElement('button');
         card.type = 'button';
         card.className = `st-px-shop-item${wearingC ? ' equipped' : ''}${isPrev ? ' previewing' : ''}`;
-        card.innerHTML = `<span class="st-px-shop-name">${item.name}${isNewC ? '<span class="st-px-new-tag">NEW</span>' : ''}</span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
+        card.innerHTML = `<span style="display:flex;align-items:center;gap:3px;width:100%;">${isNewC ? '<span class="st-px-new-tag" style="flex-shrink:0;margin-left:0;">NEW</span>' : ''}<span class="st-px-shop-name" style="min-width:0;flex:1;text-align:left;">${item.name}</span></span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: shopSubCat, item };
           const clearedCosNew = clearWardItemNew(item.id);
@@ -24655,7 +24675,7 @@
         meta.className = 'st-px-shop-meta';
         meta.style.marginTop = '5px';
         meta.style.width = '100%';
-        meta.innerHTML = `<span>${ownedB ? '已有' : `${item.price}币`}${isNewB ? '<span class="st-px-new-tag">NEW</span>' : ''}</span><span class="st-px-shop-tag">${wearingB ? '戴着' : (ownedB ? '戴' : '买')}</span>`;
+        meta.innerHTML = `<span>${isNewB ? '<span class="st-px-new-tag" style="margin-left:0;margin-right:3px;">NEW</span>' : ''}${ownedB ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingB ? '戴着' : (ownedB ? '戴' : '买')}</span>`;
         card.append(pill, meta);
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: 'badge', item };
@@ -59778,6 +59798,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     }
   });
   const pupWardStripBtn = root.querySelector('#st-px-ward-strip-btn');
+  root.querySelector('#st-px-ward-strip-acc-btn')?.addEventListener('click', () => {
+    const d = ensureWardDraft();
+    d.accs = [];
+    renderPupWardrobe();
+  });
   if (pupWardStripBtn) {
     pupWardStripBtn.addEventListener('click', () => {
       const doStrip = () => {
