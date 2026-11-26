@@ -1623,6 +1623,9 @@
     { id: 'gacha_asym_tulip_skirt', name: '郁金香斜裙', tier: 'SR' },
     { id: 'gacha_pleated_tennis_skirt', name: '奶霜百褶裙', tier: 'SR' },
     { id: 'gacha_daisy_slip_dress', name: '雏菊吊带裙', tier: 'SR' },
+    { id: 'gacha_bunny_onesie', name: '垂耳兔连体', tier: 'SR' },
+    { id: 'gacha_sheep_onesie', name: '软绵羊连体', tier: 'SR' },
+    { id: 'gacha_penguin_onesie', name: '小企鹅连体', tier: 'SR' },
   ];
   const GACHA_ACCS = [
     { id: 'gacha_crystal_wings', name: '彩虹糖纸翅', tier: 'SSR' },
@@ -7130,16 +7133,54 @@
     }
     #st-tb-dm-panel {
       position: fixed;
-      width: 292px;
+      width: 296px;
       max-width: calc(100vw - 16px);
-      height: 376px;
+      height: 382px;
       max-height: calc(100vh - 76px);
       display: none;
       flex-direction: column;
       z-index: 9994;
       pointer-events: auto;
       box-sizing: border-box;
+      background: var(--px-bg, #faf6f7);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
+      border: 3px solid var(--px-border, #bfa4ae);
       font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    #st-tb-root #st-tb-dm-panel input#st-dm-inp {
+      background: var(--px-card, #ffffff) !important;
+      background-color: var(--px-card, #ffffff) !important;
+      color: var(--px-fg, #54444a) !important;
+      border: 2px solid var(--px-border, #bfa4ae) !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      font-family: inherit !important;
+      font-size: 10.5px !important;
+      font-weight: 600 !important;
+      height: 26px !important;
+      min-height: 26px !important;
+      line-height: 20px !important;
+      padding: 0 7px !important;
+      box-sizing: border-box !important;
+      outline: none !important;
+    }
+    #st-tb-root #st-tb-dm-panel input#st-dm-inp::placeholder {
+      color: var(--px-fg, #54444a) !important;
+      -webkit-text-fill-color: var(--px-fg, #54444a) !important;
+      opacity: 0.52 !important;
+    }
+    #st-tb-dm-panel .st-dm-st-btn {
+      height: auto !important;
+      min-height: 60px !important;
+      line-height: 1.2 !important;
+      overflow: visible !important;
+      padding: 4px 2px 5px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 3px !important;
+      color: var(--px-custom-fg, var(--px-fg, #54444a)) !important;
     }
     #st-tb-dm-pill {
       position: fixed;
@@ -15591,141 +15632,190 @@
         px(hc + 1, hy - 2, '#ffe066');
       });
     } else if (outfit === 'gacha_stained_glass_cape') {
-      // [扭蛋SSR 豪华] 晚风银蓝裙：雾银蕾丝立领+午夜柔蓝缎面+浅蓝银纱拖尾
+      // [扭蛋SSR 豪华] 晚风银蓝裙：纯午夜柔蓝抹胸 + 银月胸针 + 横向星雾渐变大裙与拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#d2dff2');
+        for (let x = 2; x <= topMax - 2; x++) px(bx + x, by - 1, '#e8f0fc');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffffff' : '#4a6085');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#dbe7f7' : '#5e769e');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#7994bf' : '#4a6085');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#eef4fc' : '#96aed4');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#43587d');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#58719c');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#7590bd');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#b8cceb');
+      // 散落银星与胸针（非竖条）
+      pxBody(bx + 4, by, '#ffffff');
+      pxBody(bx + 1, by + 1, '#ffffff'); pxBody(bx + 7, by + 2, '#eef5ff'); pxBody(bx + 3, by + 2, '#ffffff');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#d2dff2' : '#6983ad');
-        px(bx + xMin - 2, by + 3, '#eef4fc');
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, '#eef4fc');
+        px(bx + xMin - 2, by + 3, '#98b4de');
         px(bx + xMin - 3, by + 4, '#ffffff');
       }
     } else if (outfit === 'gacha_jellyfish_veil') {
-      // [扭蛋SSR 豪华] 海盐水母裙：纯净奶白珍珠领+浅海盐冰蓝伞形纱裙+垂坠珠光丝带
+      // [扭蛋SSR 豪华] 海盐水母裙：通透冰蓝圆弧水母伞裙 + 奶白珍珠弧边 + 错落垂坠触须
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#e0f2fc');
+        for (let x = 2; x <= topMax - 2; x++) px(bx + x, by - 1, '#ffffff');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#f7fbff' : '#d6eefc');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#ffffff' : '#bfe3f7');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#e6f4fc' : '#a9d6f0');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#cfe9f7');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#cde8fa');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#dff2ff');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#eef8ff');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#ffffff');
+      pxBody(bx + 2, by + 1, '#ffffff'); pxBody(bx + 6, by + 1, '#ffffff');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 1; x <= xMax + 1; x += 2) px(bx + x, by + 4, x % 4 === 0 ? '#ffffff' : '#bfe3f7');
-        px(bx + xMin - 1, by + 3, '#ffffff');
-        px(bx + xMax + 1, by + 3, '#ffffff');
+        px(bx + xMin, by + 4, '#b8dff7'); px(bx + 2, by + 4, '#ffffff');
+        px(bx + 5, by + 4, '#cde8fa'); px(bx + 8, by + 4, '#ffffff'); px(bx + xMax, by + 4, '#b8dff7');
       }
     } else if (outfit === 'gacha_rose_velvet_train') {
-      // [扭蛋SSR 豪华] 红丝绒宫廷拖尾裙：香槟金蕾丝立领+酒红丝绒收腰+层叠珍珠大拖尾
+      // [扭蛋SSR 豪华] 丝绒拖尾裙：纯酒红天鹅绒礼裙 + 香槟金斜腰带 + 象牙白蕾丝拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x === 4 ? '#fff6d6' : (x % 2 === 0 ? '#f0c975' : '#fffdf7'));
+        for (let x = 2; x <= topMax - 2; x++) px(bx + x, by - 1, '#fff6e0');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffe082' : '#7a1c2e');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 5) ? '#f0c975' : '#94243a');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#b5334c' : '#7a1c2e');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#f7dc94' : '#5e1322');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#852035');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#751b2e');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#691628');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#571120');
+      // 胸口金饰 + 斜挂金丝带
+      pxBody(bx + 4, by, '#f0cb75');
+      pxBody(bx + 3, by + 1, '#f0cb75'); pxBody(bx + 4, by + 1, '#ffe49e'); pxBody(bx + 5, by + 2, '#f0cb75');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#7a1c2e' : '#f0c975');
-        px(bx + xMin - 2, by + 3, '#94243a');
-        px(bx + xMin - 3, by + 4, '#fff8e6');
-        px(bx + xMax + 1, by + 3, '#fff8e6');
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, '#fff8eb');
+        px(bx + xMin - 2, by + 3, '#751b2e');
+        px(bx + xMin - 3, by + 4, '#f0cb75');
       }
     } else if (outfit === 'gacha_denim_jumper_skirt') {
-      // [扭蛋SR 短裙] 牛仔背带小短裙：奶白短袖衬衫+水洗浅蓝牛仔双肩背带+利落A字短裙
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 2 || x === 6) ? '#6e9ac4' : '#fffdf7');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 2 || x === 6) ? '#f2c14e' : (x >= 2 && x <= 6 ? '#7da9d4' : '#fffdf7'));
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#6995bf' : '#7da9d4');
-      for (let x = 1; x <= topMax - 1; x++) pxBody(bx + x, by + 3, '#e8f1fa');
+      // [扭蛋SR 短裙] 牛仔背带裙：白T恤 + 浅丹宁蓝胸挡双背带与铜扣 + 利落A字短裙
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 2 || x === 6) ? '#6e9ac4' : '#ffffff');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x >= 2 && x <= 6) ? '#7aa6d1' : '#ffffff');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, '#6b97c2');
+      for (let x = 1; x <= topMax - 1; x++) pxBody(bx + x, by + 3, '#5e89b3');
+      pxBody(bx + 2, by + 1, '#e8c166'); pxBody(bx + 6, by + 1, '#e8c166');
     } else if (outfit === 'gacha_asym_tulip_skirt') {
-      // [扭蛋SR 斜摆裙] 斜摆郁金香裙：奶油方领上衣+珊瑚粉不对称斜裁垂坠裙摆与侧腰花结
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x >= 3 && x <= 5) ? '#fffdf7' : '#ffccd8');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, x === 2 ? '#e85d75' : '#ff9eb5');
-      for (let x = xMin; x <= topMax; x++) pxBody(bx + x, by + 2, x < 3 ? '#f27999' : '#ffb5c7');
-      for (let x = xMin; x <= Math.floor(topMax * 0.65); x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffe6ed' : '#f27999');
+      // [扭蛋SR 斜摆裙] 郁金香斜裙：奶油方领上衣 + 柔粉不对称斜裁包裹裙 + 侧腰玫瑰结
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#fffdf7');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, '#f7bfd0');
+      for (let x = xMin; x <= topMax; x++) pxBody(bx + x, by + 2, '#f0a6bc');
+      for (let x = xMin; x <= Math.floor(topMax * 0.6); x++) pxBody(bx + x, by + 3, '#e68fa9');
+      pxBody(bx + 2, by + 1, '#d96284'); pxBody(bx + 3, by + 1, '#ffe6ee');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        px(bx + xMin, by + 4, '#ff9eb5');
-        px(bx + xMin + 1, by + 4, '#ffe6ed');
+        px(bx + xMin, by + 4, '#f7bfd0');
+        px(bx + xMin + 1, by + 4, '#fff0f5');
       }
     } else if (outfit === 'gacha_pleated_tennis_skirt') {
-      // [扭蛋SR 百褶短裙] 奶霜百褶小裙：燕麦针织小背心配焦糖V领边与清爽双色短百褶裙
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 3 || x === 5) ? '#9c6644' : '#f7efe1');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#9c6644' : '#fffaf0');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#d4a373' : '#faedcd');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#bc8a5f' : '#ffffff');
+      // [扭蛋SR 百褶短裙] 奶霜百褶裙：燕麦针织背心 + 焦糖V领 + 柔和浅棕短裙与下摆细褶
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 3 || x === 5) ? '#8f5f42' : '#f7f0e4');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#8f5f42' : '#f7f0e4');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, '#d4b08c');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, (x === 1 || x === 4 || x === 7) ? '#b58d67' : '#dfc0a0');
     } else if (outfit === 'gacha_daisy_slip_dress') {
-      // [扭蛋SR 茶歇裙] 雏菊细带茶歇裙：淡鹅黄细肩带连衣裙点缀奶白小雏菊与花边下摆
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 2 || x === 6) ? '#f5d76e' : '#fffdf7');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 7) ? '#ffffff' : '#fae38c');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, (x === 1 || x === 5) ? '#ffffff' : (x === 4 ? '#a8d5a2' : '#f5d76e'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#fffdf7' : '#fceaa6');
+      // [扭蛋SR 茶歇裙] 雏菊吊带裙：柔和奶油黄细带连衣裙 + 3朵错落小雏菊
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 2 || x === 6) ? '#f2d97e' : '#fffdf7');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, '#faea9e');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, '#f5e08a');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#fffdf7');
+      pxBody(bx + 2, by + 1, '#ffffff'); pxBody(bx + 6, by + 2, '#ffffff'); pxBody(bx + 3, by + 2, '#a8cf9b');
     } else if (outfit === 'lux_gold_camellia_gown') {
-      // [商城豪华 22币] 鎏金山茶花礼裙：香槟金花边立领+象牙缎面山茶花胸饰+多层珍珠拖尾
+      // [商城豪华 22币] 山茶花礼裙：象牙缎面抹胸 + 胸前立体山茶花 + 奶油香槟渐变拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x === 4 ? '#fffdf7' : (x % 2 === 0 ? '#e6bd63' : '#fff7e0'));
+        for (let x = 2; x <= topMax - 2; x++) px(bx + x, by - 1, '#fff9eb');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 3 || x === 5) ? '#f0c975' : '#fffaf0');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#e6bd63' : (x % 2 === 0 ? '#fffdf7' : '#f7e9cc'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#f0c975' : '#fff4db');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#e6bd63');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#fffaf0');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#faf0dc');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#f5e6c8');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#edd7ae');
+      // 胸前山茶花与腰间香槟金细带
+      pxBody(bx + 4, by, '#ffffff'); pxBody(bx + 5, by, '#f0cc7a');
+      for (let x = 1; x <= topMax - 1; x++) pxBody(bx + x, by + 1, (x === 4) ? '#e6bc60' : '#faf0dc');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#f7e9cc' : '#e6bd63');
-        px(bx + xMin - 2, by + 3, '#fffdf7');
-        px(bx + xMin - 3, by + 4, '#ffffff');
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, '#fffdf7');
+        px(bx + xMin - 2, by + 3, '#f5e6c8');
+        px(bx + xMin - 3, by + 4, '#f0cc7a');
       }
     } else if (outfit === 'lux_peacock_feather_gown') {
-      // [商城豪华 26币] 月白蕾丝裙：银珠蕾丝立领+冰月白与雾霾灰蓝层叠缎面大拖尾
+      // [商城豪华 26币] 月白蕾丝裙：冰月白缎面 + 银白蕾丝立领 + 横向雾霾蓝层次大拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#cfdbe8');
+        for (let x = 2; x <= topMax - 2; x++) px(bx + x, by - 1, '#ffffff');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffffff' : '#dce6f2');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#f5f8fc' : '#c4d4e6');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffffff' : '#adc1d9');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#96aec9');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#eef4fa');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#dce7f5');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#bed0e6');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#9fb6d4');
+      pxBody(bx + 4, by, '#ffffff'); pxBody(bx + 4, by + 1, '#ffffff');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#e6eef7' : '#9eb5cf');
-        px(bx + xMin - 2, by + 3, '#f5f8fc');
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, '#f2f7fc');
+        px(bx + xMin - 2, by + 3, '#bed0e6');
         px(bx + xMin - 3, by + 4, '#ffffff');
       }
     } else if (outfit === 'lux_sunset_phoenix_gown') {
-      // [商城豪华 30币] 玫瑰奶纱裙：奶油白蕾丝立领+复古干枯玫瑰粉层叠纱裙与香槟柔粉长拖尾
+      // [商城豪华 30币] 玫瑰奶纱裙：奶油蕾丝立领 + 干枯玫瑰粉腰带大蝴蝶结 + 层叠柔粉长拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#fffdf9' : '#f2d5dc');
+        for (let x = 2; x <= topMax - 2; x++) px(bx + x, by - 1, '#fffdf9');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fffdf9' : '#e6b8c4');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#f7e4e8' : '#d99fae');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#fff9fa' : '#cc8b9d');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#fffdf9' : '#bf7a8e');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#edd2da');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#fff5f7'); // 奶油缎面束腰带
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#dbabb9');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#cc95a6');
+      pxBody(bx + 3, by + 1, '#e8b3c3'); pxBody(bx + 4, by + 1, '#ffffff'); pxBody(bx + 5, by + 1, '#e8b3c3');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 3; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#f5dfe5' : '#cc8b9d');
-        px(bx + xMin - 2, by + 3, '#f7e4e8');
+        for (let x = xMin - 3; x <= xMax + 1; x++) px(bx + x, by + 4, '#faedf0');
+        px(bx + xMin - 2, by + 3, '#dbabb9');
         px(bx + xMin - 3, by + 3, '#fffdf9');
         px(bx + xMax + 1, by + 3, '#fffdf9');
       }
     } else if (outfit === 'gacha_retro_vinyl_jacket') {
-      // [扭蛋SR] 复古唱片棒球服：森林绿羊毛衣身配奶油袖口与黑胶金徽章
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#f7f1e1' : '#245943');
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x <= 1 || x >= topMax - 1) ? '#f7f1e1' : (x === 4 ? '#f2c14e' : '#1e4d3a'));
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, (x <= 1 || x >= topMax - 1) ? '#ebe2cc' : (x === 4 ? '#222222' : '#245943'));
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#f7f1e1' : '#1e4d3a');
+      // [扭蛋SR] 绿白棒球服：纯复古墨绿衣身 + 奶白插肩袖 + 胸口金色徽章
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x <= 1 || x >= topMax - 1) ? '#f7f2e4' : '#265c45');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x <= 1 || x >= topMax - 1) ? '#f7f2e4' : '#265c45');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, (x <= 1 || x >= topMax - 1) ? '#ebe3ce' : '#1f4f3b');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, '#f7f2e4');
+      pxBody(bx + 3, by + 1, '#edd07e');
     } else if (outfit === 'gacha_porcelain_teapot') {
-      // [扭蛋SR] 青釉茶壶蓬裙：温润青瓷釉色上衣配象牙白花边与暖金丝带
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fffdf7' : '#8ec4b8');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#e6b85c');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffffff' : '#a8d8cd');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#fffdf7' : '#7ab2a6');
+      // [扭蛋SR] 青瓷小蓬裙：淡青瓷上衣 + 奶白娃娃领 + 纯奶白蓬裙与淡金腰线
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x >= 3 && x <= 5) ? '#fffdf7' : '#96c9bc');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#e8cc84');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#f2faf7');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#ffffff');
+      pxBody(bx + 2, by + 2, '#96c9bc'); pxBody(bx + 6, by + 2, '#96c9bc');
     } else if (outfit === 'gacha_mushroom_poncho') {
-      // [扭蛋SR] 白点伞菇斗篷：珊瑚红白波点伞菇连帽斗篷配褶皱奶杏领与苔绿边
-      for (let x = xMin; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#fff4e0' : '#ebd5b3');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 1 || x === 5) ? '#fffdf7' : '#d94848');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 3 || x === 7) ? '#fffdf7' : '#c93b3b');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#7fa668' : '#f7ecd8');
-      drawHood('#d94848', '#c93b3b', '#fff4e0', (hc) => {
+      // [扭蛋SR] 红蘑菇斗篷：柔和暖红波点伞菇连帽斗篷 + 奶杏领口 + 苔藓绿底边
+      for (let x = xMin; x <= topMax; x++) pxBody(bx + x, by, '#f7ebd6');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#cf5353');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#c24646');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#88ab75');
+      pxBody(bx + 1, by + 1, '#fffdf7'); pxBody(bx + 6, by + 1, '#fffdf7'); pxBody(bx + 3, by + 2, '#fffdf7');
+      drawHood('#cf5353', '#c24646', '#f7ebd6', (hc) => {
         px(hc - 2, hy - 2, '#fffdf7');
         px(hc + 1, hy - 3, '#fffdf7');
         px(hc + 2, hy - 1, '#fffdf7');
+      });
+    } else if (outfit === 'gacha_bunny_onesie') {
+      // [扭蛋SR 连体衣] 垂耳兔连体：奶白绒绒连体衣 + 胸口淡粉小蝴蝶结 + 粉内耳垂耳兔帽兜
+      for (let y = 0; y <= 3; y++) for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + y, y === 3 ? '#f2ecee' : '#fffdf9');
+      // 胸口粉蝴蝶结
+      pxBody(bx + 3, by + 1, '#f7a8be'); pxBody(bx + 4, by + 1, '#ffe4ec'); pxBody(bx + 5, by + 1, '#f7a8be');
+      drawHood('#fffdf9', '#f7edf0', '#f7a8be', (hc) => {
+        // 两侧软萌垂耳
+        px(hc - 3, hy - 2, '#fffdf9'); px(hc - 4, hy - 1, '#fffdf9'); px(hc - 4, hy, '#f7b8ca');
+        px(hc + 3, hy - 2, '#fffdf9'); px(hc + 4, hy - 1, '#fffdf9'); px(hc + 4, hy, '#f7b8ca');
+      });
+    } else if (outfit === 'gacha_sheep_onesie') {
+      // [扭蛋SR 连体衣] 软绵羊连体：云朵米白羊羔毛连体衣 + 胸口小金铃 + 浅杏卷角帽兜
+      for (let y = 0; y <= 2; y++) for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + y, (x + y) % 3 === 0 ? '#f5efe6' : '#fffdf7');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, '#ede4d5');
+      // 颈间小金铃
+      pxBody(bx + 4, by, '#e8c468'); pxBody(bx + 4, by + 1, '#fff3c4');
+      drawHood('#fffdf7', '#f5efe6', '#dec8a8', (hc) => {
+        px(hc - 3, hy - 3, '#d9be98'); px(hc - 2, hy - 3, '#ebd6b7');
+        px(hc + 2, hy - 3, '#ebd6b7'); px(hc + 3, hy - 3, '#d9be98');
+      });
+    } else if (outfit === 'gacha_penguin_onesie') {
+      // [扭蛋SR 连体衣] 小企鹅连体：雾霾灰蓝连体衣 + 奶白圆肚皮 + 鹅黄小喙企鹅帽兜
+      for (let y = 0; y <= 3; y++) {
+        for (let x = 0; x <= topMax; x++) {
+          const isBelly = (x >= 2 && x <= topMax - 2 && y >= 1 && y <= 3);
+          pxBody(bx + x, by + y, isBelly ? '#fffdf9' : '#6e87a3');
+        }
+      }
+      // 颈间小围巾结
+      pxBody(bx + 3, by, '#f2c975'); pxBody(bx + 4, by, '#f2c975'); pxBody(bx + 5, by, '#f2c975');
+      drawHood('#6e87a3', '#849db8', '#fffdf9', (hc) => {
+        px(hc, hy - 2, '#f5c85c'); px(hc + 1, hy - 2, '#f5c85c');
       });
     } else if (outfit === 'gacha_egg_plush') {
       // [扭蛋SR 搞笑] 荷包蛋卫衣：圆滚滚蛋白软卫衣正中一颗溏心大蛋黄
@@ -22749,6 +22839,7 @@
         treasure_star_pajama: 'onesie', gacha_fried_shrimp: 'onesie', gacha_cat_hoodie: 'onesie',
         gacha_cloud_pajama: 'onesie', gacha_frog_raincoat: 'onesie', gacha_bread_toast: 'onesie',
         gacha_banana_suit: 'onesie', gacha_milk_cow_onesie: 'onesie', gacha_star_raincoat: 'onesie', gacha_mushroom_poncho: 'onesie',
+        gacha_bunny_onesie: 'onesie', gacha_sheep_onesie: 'onesie', gacha_penguin_onesie: 'onesie',
         treasure_clover_cloak: 'daily', game_crown_cape: 'daily',
         ck_outfit_knit_cardigan: 'daily', ck_outfit_century_cloak: 'daily',
         gacha_peach_preppy: 'daily', gacha_sailor_cream: 'daily', gacha_honey_bear_coat: 'daily',
@@ -26162,6 +26253,17 @@
     puppyBubble.classList.remove('show');
     puppyEl.classList.remove('active', 'dragging', 'bob', 'hop', 'shake');
     togglePupBag(false);
+    if (typeof guestRuntimes !== 'undefined') {
+      guestRuntimes.forEach(rt => {
+        if (rt && rt.el) rt.el.classList.remove('active');
+        if (rt) {
+          rt._active = false;
+          clearTimeout(rt.bubbleTimer);
+          if (rt.bubble) rt.bubble.classList.remove('show', 'lifted');
+        }
+      });
+    }
+    if (typeof guestPopEl !== 'undefined' && guestPopEl) guestPopEl.style.display = 'none';
     badgeDot.classList.toggle('active', config.effect !== 'none' || config.puppyEnabled);
   };
 
@@ -27077,6 +27179,14 @@
     puppyEl.classList.add('active');
     setPuppyState('walk', 180);
     drawPuppyScene();
+    if (typeof guestRuntimes !== 'undefined' && typeof getGuestList === 'function' && typeof drawSingleGuestScene === 'function') {
+      const gList = getGuestList();
+      guestRuntimes.forEach((rt, id) => {
+        rt._active = null;
+        const g = gList.find(x => x.id === id);
+        if (g) drawSingleGuestScene(g, rt);
+      });
+    }
     updatePupStatBars();
     showPuppyBubble(getPersTalk('greet'), 2200);
     setTimeout(checkBirthdayCelebration, 1500);
@@ -33111,13 +33221,18 @@
     });
     guestPopEl.querySelector('#st-gp-hide')?.addEventListener('click', () => {
       guest.onDesktop = false;
+      const rtCur = guestRuntimes.get(guest.id);
+      if (rtCur) {
+        rtCur._active = null;
+        if (rtCur.bubble) { clearTimeout(rtCur.bubbleTimer); rtCur.bubble.classList.remove('show', 'lifted'); rtCur.pendingSocial = null; }
+        drawSingleGuestScene(guest, rtCur);
+      }
       saveConfig();
       guestPopEl.style.display = 'none';
-      syncGuestDomNodes();
       renderPupVisitPanel();
       openPixelPupNoticeModal(
-        '已隐藏串门小狗',
-        `已将「${guest.name || '小伙伴'}」暂时从桌面隐藏（不会解除好友关系）。如需重新显示，可打开「小狗背包 → 设置 → 串门 → 好友列表」，点击对应好友的「请来桌面」即可重新开启！`,
+        '已从桌面隐藏',
+        `已将「${guest.name || '小伙伴'}」暂时从桌面隐藏（仍保留在「当前做客」中，没有送回家）。想重新在桌面显示时，请打开「小狗背包 → 串门 → 当前做客」，点击对应小狗右侧的「已藏」按钮即可恢复！`,
         '知道啦'
       );
     });
@@ -34040,8 +34155,16 @@
     wrap.style.cssText = hasCustomClass
       ? 'position:relative;width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;margin:4px;border-width:2px;border-style:solid;box-sizing:border-box;overflow:visible;'
       : 'position:relative;width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;margin:4px;border:2px solid var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;';
+    if (!hasCustomClass && showFrame && look && (look.afBorderCol || look.afBgCol)) {
+      if (look.afBorderCol) wrap.style.borderColor = look.afBorderCol;
+      if (look.afBgCol) wrap.style.background = look.afBgCol;
+    }
     if (hasCustomClass) {
       wrap.classList.add(afId.replace(/_/g, '-'));
+      if (look && look.afOverrideCol) {
+        if (look.afBorderCol) wrap.style.borderColor = look.afBorderCol;
+        if (look.afBgCol) wrap.style.background = look.afBgCol;
+      }
       const allAf = [...SHOP_PUP_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...GACHA_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES];
       const afObj = allAf.find(a => a.id === afId);
       if (afObj && afObj.dyn) {
@@ -36454,101 +36577,90 @@
     { id: 'shy', name: '害羞' },
   ];
 
-  const drawPupStickerCanvas = (stickerId, pxSize = 52) => {
+  const drawPupStickerCanvas = (stickerId, pxSize = 54, lookObj = null) => {
     const c = doc.createElement('canvas');
-    c.width = 24;
-    c.height = 24;
+    c.width = 120;
+    c.height = 120;
     c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
     const g = c.getContext('2d');
+    g.setTransform(5, 0, 0, 5, 0, 0);
     g.imageSmoothingEnabled = false;
+    const lk = lookObj || getMyCurrentLookObj();
+    const pal = typeof getPupPalette === 'function' ? getPupPalette(lk) : { f: '#f4d9b5', e: '#c88c58', o: '#3b2a22', c: '#e06c88' };
     const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
-    const pal = typeof getPupPalette === 'function' ? getPupPalette() : { fur: '#f4d9b5', ear: '#c88c58', outline: '#3b2a22', collar: '#e06c88' };
-    const fur = pal.fur || '#f4d9b5';
-    const ear = pal.ear || '#c88c58';
-    const out = pal.outline || '#3b2a22';
-    // Base cute puppy head centered at (12, 13)
-    p(6, 7, out, 12, 1); p(5, 8, out, 1, 10); p(18, 8, out, 1, 10); p(6, 18, out, 12, 1);
-    p(6, 8, fur, 12, 10);
-    // Floppy ears
-    p(3, 8, out, 2, 7); p(4, 9, ear, 2, 6);
-    p(19, 8, out, 2, 7); p(18, 9, ear, 2, 6);
-    // Blush cheeks
-    p(7, 14, '#ffb5c8', 2, 1); p(15, 14, '#ffb5c8', 2, 1);
-    // Nose & default smile
-    p(11, 13, out, 2, 1);
-    // Eyes & emotion props by stickerId
+    const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
+    const grid = (stickerId === 'sleep' && PUP_SPRITES.sleep1) ? PUP_SPRITES.sleep1 : (PUP_SPRITES.sit1 || PUP_SPRITES.idle1);
+    for (let y = 0; y < grid.length; y++) {
+      const row = grid[y];
+      for (let x = 0; x < row.length; x++) {
+        const col = pal[row[x]];
+        if (col) p(ox + x, oy + y, col);
+      }
+    }
+    // Render user's outfit so the sticker really looks like their own puppy
+    const prevCtx = activePxCtx;
+    const prevShowEars = config.puppyOnesieShowEars;
+    try {
+      activePxCtx = g;
+      if (lk && lk.outfit && lk.outfit !== 'none' && stickerId !== 'sleep') {
+        config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
+        drawPupOutfit(lk.outfit, ox, oy, hx, hy, false, false, false, false);
+      }
+    } catch (_) {} finally {
+      activePxCtx = prevCtx;
+      config.puppyOnesieShowEars = prevShowEars;
+    }
+    // Crisp pixel emotion overlays tailored to each sticker
     if (stickerId === 'happy') {
-      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
-      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
-      p(10, 15, out, 4, 1); p(11, 16, '#ff8aa6', 2, 1);
-      p(2, 3, '#ffd24c', 1, 3); p(1, 4, '#ffd24c', 3, 1);
-      p(20, 4, '#ff8aa6', 2, 2);
+      p(3, 4, '#ffd24c', 1, 3); p(2, 5, '#ffd24c', 3, 1);
+      p(19, 3, '#ff8aa6', 1, 1); p(21, 3, '#ff8aa6', 1, 1); p(19, 4, '#ff8aa6', 3, 1); p(20, 5, '#ff8aa6', 1, 1);
+      p(18, 9, '#ffd24c', 1, 1);
     } else if (stickerId === 'love') {
-      p(8, 11, '#e84a72', 2, 2); p(14, 11, '#e84a72', 2, 2);
-      p(10, 15, out, 4, 1);
-      // Floating heart top right
-      p(17, 2, '#f05a82', 2, 2); p(20, 2, '#f05a82', 2, 2); p(17, 3, '#f05a82', 5, 2); p(18, 5, '#f05a82', 3, 1); p(19, 6, '#f05a82', 1, 1);
-      p(18, 3, '#ffd6e2', 1, 1);
+      p(2, 4, '#f05a82', 2, 2); p(5, 4, '#f05a82', 2, 2); p(2, 5, '#f05a82', 5, 2); p(3, 7, '#f05a82', 3, 1); p(4, 8, '#f05a82', 1, 1);
+      p(3, 5, '#ffd6e2', 1, 1);
+      p(18, 3, '#ff8aa6', 1, 1); p(20, 3, '#ff8aa6', 1, 1); p(18, 4, '#ff8aa6', 3, 1); p(19, 5, '#ff8aa6', 1, 1);
     } else if (stickerId === 'cry') {
-      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2);
-      p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
-      p(8, 13, '#7cc6f7', 2, 5); p(14, 13, '#7cc6f7', 2, 5);
-      p(10, 16, out, 4, 1); p(9, 17, out, 1, 1); p(14, 17, out, 1, 1);
+      // Sparkling blue teardrops under eyes
+      p(hx - 1, hy + 4, '#7cc6f7', 1, 4); p(hx + 2, hy + 4, '#7cc6f7', 1, 4);
+      p(hx - 2, hy + 7, '#a8dcff', 1, 1); p(hx + 3, hy + 7, '#a8dcff', 1, 1);
+      p(3, 5, '#7cc6f7', 2, 2); p(4, 4, '#a8dcff', 1, 1);
     } else if (stickerId === 'sleep') {
-      p(8, 12, out, 3, 1); p(13, 12, out, 3, 1);
-      p(11, 15, out, 2, 1);
-      // Zzz
-      p(17, 2, '#7b99cc', 4, 1); p(19, 3, '#7b99cc', 1, 1); p(18, 4, '#7b99cc', 1, 1); p(17, 5, '#7b99cc', 4, 1);
-      p(13, 3, '#a8bee6', 3, 1); p(14, 4, '#a8bee6', 1, 1); p(13, 5, '#a8bee6', 3, 1);
+      p(16, 3, '#7b99cc', 4, 1); p(18, 4, '#7b99cc', 1, 1); p(17, 5, '#7b99cc', 1, 1); p(16, 6, '#7b99cc', 4, 1);
+      p(11, 5, '#a8bee6', 3, 1); p(12, 6, '#a8bee6', 1, 1); p(11, 7, '#a8bee6', 3, 1);
     } else if (stickerId === 'angry') {
-      p(8, 10, out, 1, 1); p(9, 11, out, 2, 1); p(15, 10, out, 1, 1); p(13, 11, out, 2, 1);
-      p(10, 15, out, 4, 1); p(10, 16, '#ff6b78', 4, 1);
-      // Anger cross top right
-      p(18, 2, '#e84858', 1, 4); p(17, 3, '#e84858', 3, 1); p(20, 4, '#e84858', 2, 1);
+      p(18, 3, '#e84858', 1, 4); p(17, 4, '#e84858', 3, 1); p(20, 5, '#e84858', 2, 1);
+      p(3, 6, '#ff6b78', 2, 1); p(2, 7, '#ff6b78', 1, 1);
     } else if (stickerId === 'snack') {
-      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
-      // Bone in mouth
-      p(8, 15, '#ffffff', 8, 2); p(7, 14, '#ffffff', 2, 4); p(15, 14, '#ffffff', 2, 4);
-      p(7, 15, '#d9cfc5', 1, 2); p(16, 15, '#d9cfc5', 1, 2);
+      // Cute white bone beside puppy
+      p(2, 5, '#ffffff', 6, 2); p(1, 4, '#ffffff', 2, 4); p(7, 4, '#ffffff', 2, 4);
+      p(1, 5, '#d9cfc5', 1, 2); p(8, 5, '#d9cfc5', 1, 2);
+      p(19, 4, '#ffd24c', 1, 3); p(18, 5, '#ffd24c', 3, 1);
     } else if (stickerId === 'good') {
-      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
-      p(10, 15, out, 4, 1);
-      // Gold thumbs-up / star badge
-      p(19, 11, '#ffe066', 3, 4); p(20, 9, '#ffe066', 2, 2); p(18, 12, '#d9a441', 1, 3);
-      p(3, 3, '#ffe066', 1, 3); p(2, 4, '#ffe066', 3, 1);
+      // Gold star & thumb badge
+      p(18, 4, '#ffe066', 3, 4); p(19, 2, '#ffe066', 2, 2); p(17, 5, '#d9a441', 1, 3);
+      p(3, 4, '#ffe066', 1, 3); p(2, 5, '#ffe066', 3, 1);
     } else if (stickerId === 'hug') {
-      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
-      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
-      p(10, 15, out, 4, 1);
-      // Open paws
-      p(4, 16, fur, 3, 3); p(5, 17, '#ffbfd4', 1, 1);
-      p(17, 16, fur, 3, 3); p(18, 17, '#ffbfd4', 1, 1);
-      p(10, 2, '#f05a82', 4, 2); p(11, 4, '#f05a82', 2, 1);
+      p(9, 3, '#f05a82', 2, 2); p(12, 3, '#f05a82', 2, 2); p(9, 4, '#f05a82', 5, 2); p(10, 6, '#f05a82', 3, 1); p(11, 7, '#f05a82', 1, 1);
+      p(2, 7, '#ffb5c8', 2, 1); p(20, 7, '#ffb5c8', 2, 1);
     } else if (stickerId === 'what') {
-      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2);
-      p(11, 15, out, 2, 2);
-      // Big question mark
-      p(18, 1, '#5a78b5', 3, 1); p(20, 2, '#5a78b5', 1, 2); p(19, 3, '#5a78b5', 1, 1); p(19, 5, '#5a78b5', 1, 1);
+      p(17, 2, '#5a78b5', 3, 1); p(19, 3, '#5a78b5', 1, 2); p(18, 4, '#5a78b5', 1, 1); p(18, 6, '#5a78b5', 1, 1);
+      p(3, 4, '#8aa8d9', 2, 1); p(4, 5, '#8aa8d9', 1, 1); p(4, 7, '#8aa8d9', 1, 1);
     } else if (stickerId === 'party') {
-      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
-      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
-      p(10, 15, out, 4, 1); p(11, 16, '#ff8aa6', 2, 1);
-      // Party hat + confetti
-      p(11, 2, '#ff8aa6', 2, 1); p(10, 3, '#ffe066', 4, 1); p(9, 4, '#8cc8f7', 6, 2); p(8, 6, '#ff8aa6', 8, 1);
-      p(2, 3, '#ffe066', 2, 2); p(20, 3, '#8be0b8', 2, 2); p(3, 19, '#ff8aa6', 2, 1); p(19, 19, '#8cc8f7', 2, 1);
+      // Cute party hat on head + confetti
+      p(hx, hy - 3, '#ff8aa6', 2, 1); p(hx - 1, hy - 2, '#ffe066', 4, 1); p(hx - 2, hy - 1, '#8cc8f7', 6, 1);
+      p(2, 4, '#ffe066', 2, 2); p(20, 4, '#8be0b8', 2, 2); p(3, 18, '#ff8aa6', 2, 1); p(20, 17, '#8cc8f7', 2, 1);
     } else if (stickerId === 'tea') {
-      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
-      p(10, 15, out, 4, 1);
-      // Milk tea cup on right
-      p(19, 10, '#6b4423', 1, 3); // straw
-      p(17, 13, '#ffffff', 5, 1); // lid
-      p(17, 14, '#e6c39c', 5, 5); // milk tea
-      p(18, 17, '#4a3222', 1, 1); p(20, 17, '#4a3222', 1, 1); // boba pearls
+      // Cute milk tea cup
+      p(4, 2, '#6b4423', 1, 3);
+      p(2, 5, '#ffffff', 5, 1);
+      p(2, 6, '#e6c39c', 5, 5);
+      p(3, 9, '#4a3222', 1, 1); p(5, 9, '#4a3222', 1, 1);
+      p(19, 5, '#ff8aa6', 2, 2);
     } else {
-      // shy
-      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
-      p(6, 14, '#ff8ca8', 3, 2); p(15, 14, '#ff8ca8', 3, 2);
-      p(11, 15, out, 2, 1);
+      // shy: rosy blush + sparkle
+      p(hx - 2, hy + 4, '#ff8ca8', 2, 1); p(hx + 2, hy + 4, '#ff8ca8', 2, 1);
+      p(3, 5, '#ffb5c8', 1, 3); p(2, 6, '#ffb5c8', 3, 1);
+      p(19, 5, '#ffb5c8', 1, 3); p(18, 6, '#ffb5c8', 3, 1);
     }
     return c;
   };
@@ -36562,12 +36674,35 @@
     outfit: config.puppyOutfit || 'none',
     accs: Array.isArray(config.puppyAccs) ? config.puppyAccs : [],
     accOffsets: config.puppyAccOffsets || {},
-    avatarFrame: config.puppyAvatarFrame || 'af_default',
+    comp: config.puppyCompanion || 'none',
+    onesieShowEars: Boolean(config.puppyOnesieShowEars),
+    avatarFrame: config.puppyAvatarFrame || 'af_custom',
     afOverrideCol: Boolean(config.puppyAfOverrideCol),
     afBorderCol: config.puppyAfBorderCol || '',
     afBgCol: config.puppyAfBgCol || '',
     bubble: config.puppyBubbleSkin || 'bub_default',
   });
+
+  const syncDmPanelTheme = () => {
+    if (!pupBagEl) return;
+    const cs = win.getComputedStyle(pupBagEl);
+    const vars = ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'];
+    const bg = pupBagEl.style.background || cs.backgroundColor || '#faf6f7';
+    const bd = pupBagEl.style.getPropertyValue('--px-border') || cs.borderTopColor || '#bfa4ae';
+    const fg = pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || cs.color || '#54444a';
+    ['#st-tb-dm-panel', '#st-tb-dm-pill'].forEach(sel => {
+      const el = root.querySelector(sel);
+      if (!el) return;
+      vars.forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) el.style.setProperty(v, val);
+        else el.style.removeProperty(v);
+      });
+      el.style.background = bg;
+      el.style.borderColor = bd;
+      el.style.color = fg;
+    });
+  };
 
   const applyDmBubbleSkin = (bubEl, dir, msg) => {
     bubEl.className = 'st-tb-guest-bubble st-dm-msg-bub';
@@ -36619,6 +36754,17 @@
     }
   };
 
+  const makeScaledDmAvatar = (lookObj, boxPx = 38, scale = 0.72) => {
+    const box = doc.createElement('div');
+    box.style.cssText = `width:${boxPx}px;height:${boxPx}px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;position:relative;`;
+    const av = makeFriendAvatarCanvas(lookObj || {}, true);
+    av.style.margin = '0';
+    av.style.transform = `scale(${scale})`;
+    av.style.transformOrigin = 'center center';
+    box.appendChild(av);
+    return box;
+  };
+
   const renderFriendDmMessages = (fid) => {
     const panel = root.querySelector('#st-tb-dm-panel');
     if (!panel || panel.style.display === 'none' || panel.dataset.fid !== fid) return;
@@ -36634,11 +36780,10 @@
     }
     msgs.forEach(m => {
       const isMe = m.dir === 'me';
+      const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
-      row.style.cssText = `display:flex;align-items:flex-start;gap:6px;margin-bottom:8px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
-      const avWrap = doc.createElement('div');
-      avWrap.style.cssText = 'flex-shrink:0;transform:scale(0.86);transform-origin:top center;';
-      avWrap.appendChild(makeFriendAvatarCanvas(isMe ? myLook : (fr.look || {})));
+      row.style.cssText = `display:flex;align-items:flex-start;gap:7px;margin-bottom:9px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+      const avWrap = makeScaledDmAvatar(senderLook, 40, 0.8);
       const bubCol = doc.createElement('div');
       bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
       const bub = doc.createElement('div');
@@ -36647,7 +36792,7 @@
         bub.style.padding = '5px 7px';
         const stWrap = doc.createElement('div');
         stWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
-        stWrap.appendChild(drawPupStickerCanvas(m.sticker, 52));
+        stWrap.appendChild(drawPupStickerCanvas(m.sticker, 56, senderLook));
         if (m.text) {
           const tx = doc.createElement('div');
           tx.style.cssText = 'font-size:10.5px;margin-top:2px;';
@@ -36713,16 +36858,14 @@
   const openFriendDmPanel = (fr) => {
     if (!fr || !fr.cloudId) return;
     const fid = fr.cloudId;
-    const fname = fr.name || '好友';
+    const fullFr = getFriendList().find(x => x.cloudId === fid) || fr;
+    const fname = fullFr.name || '好友';
+    const bondLv = typeof getFriendBondInfo === 'function' ? getFriendBondInfo(fullFr).lv : 1;
     activeDmFriendId = fid;
     if (config.puppyDmUnread && config.puppyDmUnread[fid]) {
       config.puppyDmUnread[fid] = 0;
       saveConfig();
     }
-    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
-    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
-    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
 
     let pill = root.querySelector('#st-tb-dm-pill');
     if (pill) pill.style.display = 'none';
@@ -36735,26 +36878,24 @@
     }
     panel.dataset.fid = fid;
     panel.dataset.fname = fname;
-    panel.style.background = pxBg;
-    panel.style.color = pxFg;
-    panel.style.border = `3px solid ${pxBd}`;
     panel.style.boxShadow = '5px 5px 0 rgba(59,42,34,0.28)';
 
     const savedRect = config.puppyDmRect || {};
     const left = typeof savedRect.left === 'number'
-      ? clamp(savedRect.left, 8, Math.max(8, win.innerWidth - 300))
-      : Math.max(8, Math.round((win.innerWidth - 292) / 2));
+      ? clamp(savedRect.left, 8, Math.max(8, win.innerWidth - 304))
+      : Math.max(8, Math.round((win.innerWidth - 296) / 2));
     const top = typeof savedRect.top === 'number'
-      ? clamp(savedRect.top, 8, Math.max(8, win.innerHeight - 384))
-      : Math.max(12, Math.round((win.innerHeight - 376) / 2));
+      ? clamp(savedRect.top, 8, Math.max(8, win.innerHeight - 390))
+      : Math.max(12, Math.round((win.innerHeight - 382) / 2));
     panel.style.left = `${left}px`;
     panel.style.top = `${top}px`;
 
     panel.innerHTML = `
-      <div id="st-dm-head" style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:6px 8px;border-bottom:2px dashed ${pxBd};cursor:grab;user-select:none;flex-shrink:0;">
-        <div style="display:flex;align-items:center;gap:5px;min-width:0;flex:1;">
-          <span id="st-dm-head-av" style="display:inline-flex;transform:scale(0.68);transform-origin:left center;width:24px;height:24px;flex-shrink:0;"></span>
+      <div id="st-dm-head" style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:6px 8px;border-bottom:2px dashed var(--px-border,#bfa4ae);cursor:grab;user-select:none;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+          <span id="st-dm-head-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"></span>
           <span style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
+          <button type="button" id="st-dm-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(0px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${bondLv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <button type="button" id="st-dm-bub-toggle" class="st-px-btn${config.puppyDmUseMyBubble ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9px;" title="切换私聊气泡风格">${config.puppyDmUseMyBubble ? '气泡:当前' : '气泡:默认'}</button>
@@ -36762,28 +36903,33 @@
           <button type="button" id="st-dm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;" title="关闭私聊">×</button>
         </div>
       </div>
-      <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:8px 8px 4px;box-sizing:border-box;background:rgba(255,255,255,0.45);"></div>
-      <div id="st-dm-sticker-box" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border-top:2px dashed ${pxBd};background:${pxBg};max-height:132px;overflow-y:auto;flex-shrink:0;"></div>
-      <div style="display:flex;align-items:center;gap:4px;padding:6px 7px;border-top:2px dashed ${pxBd};flex-shrink:0;">
+      <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:8px 8px 4px;box-sizing:border-box;background:var(--px-bg-soft,rgba(255,255,255,0.45));"></div>
+      <div id="st-dm-sticker-box" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border-top:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);max-height:152px;overflow-y:auto;flex-shrink:0;"></div>
+      <div style="display:flex;align-items:center;gap:4px;padding:6px 7px;border-top:2px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
         <button type="button" id="st-dm-sticker-btn" class="st-px-btn" style="height:26px;padding:0 6px;font-size:10px;flex-shrink:0;">表情</button>
-        <input type="text" id="st-dm-inp" class="st-px-input" maxlength="300" placeholder="发条私聊消息..." style="flex:1;min-width:0;height:26px;font-size:11px;padding:0 7px;box-sizing:border-box;" />
+        <input type="text" id="st-dm-inp" maxlength="300" placeholder="发条私聊消息..." style="flex:1;min-width:0;" />
         <button type="button" id="st-dm-send" class="st-px-btn care" style="height:26px;padding:0 9px;font-size:10.5px;flex-shrink:0;">发送</button>
       </div>`;
 
     const headAvSlot = panel.querySelector('#st-dm-head-av');
-    if (headAvSlot) headAvSlot.appendChild(makeFriendAvatarCanvas(fr.look || {}));
+    if (headAvSlot) headAvSlot.appendChild(makeScaledDmAvatar(fullFr.look || {}, 34, 0.66));
 
-    // Populate sticker picker
+    panel.querySelector('#st-dm-bond-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (typeof openFriendBondModal === 'function') openFriendBondModal(fid);
+    });
+
+    // Populate sticker picker using user's actual puppy look
     const stBox = panel.querySelector('#st-dm-sticker-box');
     if (stBox) {
+      const myLk = getMyCurrentLookObj();
       PUP_DM_STICKERS.forEach(st => {
         const b = doc.createElement('button');
         b.type = 'button';
-        b.className = 'st-px-btn';
-        b.style.cssText = 'height:auto;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;';
-        b.appendChild(drawPupStickerCanvas(st.id, 36));
+        b.className = 'st-px-btn st-dm-st-btn';
+        b.appendChild(drawPupStickerCanvas(st.id, 38, myLk));
         const lb = doc.createElement('span');
-        lb.style.cssText = 'font-size:9px;line-height:1.1;';
+        lb.style.cssText = 'font-size:9.5px;font-weight:700;line-height:1.15;display:block;white-space:nowrap;';
         lb.textContent = st.name;
         b.appendChild(lb);
         b.addEventListener('click', () => {
@@ -36850,26 +36996,24 @@
       }
       pEl.dataset.fid = fid;
       pEl.dataset.fname = fname;
-      pEl.style.background = pxBg;
-      pEl.style.color = pxFg;
-      pEl.style.border = `2px solid ${pxBd}`;
+      pEl.style.borderWidth = '2px';
+      pEl.style.borderStyle = 'solid';
       pEl.style.boxShadow = '3px 3px 0 rgba(59,42,34,0.25)';
       const pr = config.puppyDmRect || {};
-      const pl = typeof pr.pillLeft === 'number' ? clamp(pr.pillLeft, 6, Math.max(6, win.innerWidth - 120)) : Math.max(8, win.innerWidth - 128);
+      const pl = typeof pr.pillLeft === 'number' ? clamp(pr.pillLeft, 6, Math.max(6, win.innerWidth - 132)) : Math.max(8, win.innerWidth - 136);
       const pt = typeof pr.pillTop === 'number' ? clamp(pr.pillTop, 6, Math.max(6, win.innerHeight - 54)) : Math.max(60, Math.round(win.innerHeight * 0.42));
       pEl.style.left = `${pl}px`;
       pEl.style.top = `${pt}px`;
-      pEl.innerHTML = `<span id="st-dm-pill-av" style="display:inline-flex;transform:scale(0.65);transform-origin:left center;width:24px;height:24px;flex-shrink:0;"></span>
+      pEl.innerHTML = `<span id="st-dm-pill-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"></span>
         <span style="font-size:10.5px;font-weight:700;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
         <span id="st-dm-pill-badge" style="display:none;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:#e05263;color:#fff;font-size:9px;font-weight:700;align-items:center;justify-content:center;">0</span>
         <button type="button" id="st-dm-pill-x" class="st-px-btn" style="height:18px;padding:0 4px;font-size:9px;margin-left:2px;" title="关闭">×</button>`;
       const pav = pEl.querySelector('#st-dm-pill-av');
-      if (pav) pav.appendChild(makeFriendAvatarCanvas(fr.look || {}));
+      if (pav) pav.appendChild(makeScaledDmAvatar(fullFr.look || {}, 30, 0.58));
       pEl.querySelector('#st-dm-pill-x')?.addEventListener('click', (ev) => {
         ev.stopPropagation();
         pEl.style.display = 'none';
       });
-      // Drag or click pill
       let moved = false;
       pEl.onpointerdown = (ev) => {
         if (ev.target.closest('button')) return;
@@ -36898,7 +37042,7 @@
             config.puppyDmRect = { ...(config.puppyDmRect || {}), pillLeft: Math.round(r2.left), pillTop: Math.round(r2.top) };
             saveConfig();
           } else {
-            const curFr = getFriendList().find(x => x.cloudId === fid) || fr;
+            const curFr = getFriendList().find(x => x.cloudId === fid) || fullFr;
             openFriendDmPanel(curFr);
           }
         };
@@ -36907,6 +37051,7 @@
         win.addEventListener('pointercancel', onU);
       };
       pEl.style.display = 'flex';
+      syncDmPanelTheme();
       syncDmPillBadge();
     });
 
@@ -36931,10 +37076,11 @@
     });
 
     panel.style.display = 'flex';
+    syncDmPanelTheme();
     renderFriendDmMessages(fid);
   };
 
-  let addFriendBusy = false;
+    let addFriendBusy = false;
   const openFriendsListModal = (skipSync = false) => {
     if (!skipSync && typeof syncCloudGuestLooks === 'function') syncCloudGuestLooks(true).then(() => { const m = root.querySelector('#st-tb-friends-mask'); if (m && m.style.display === 'flex') openFriendsListModal(true); }).catch(() => {});
     let mask = root.querySelector('#st-tb-friends-mask');
@@ -43508,6 +43654,7 @@
     } else {
       pupBagEl.style.removeProperty('--px-custom-fg');
     }
+    if (typeof syncDmPanelTheme === 'function') syncDmPanelTheme();
     if (headEl) {
       const parseRgb = (hex) => {
         const m = String(hex || '').trim().match(/^#?([0-9a-f]{6})$/i);
