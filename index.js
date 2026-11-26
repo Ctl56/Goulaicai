@@ -800,14 +800,14 @@
     { id: 'af_dyn_window_rain', name: '窗边雨滴框', price: 74, dyn: 'windowrain', charms: [], desc: '[动态] 奶油木窗质感边，左右窗沿滑落晶莹小雨滴配底边摇曳小盆栽' },
     { id: 'af_dyn_polaroid', name: '玻璃温室框', price: 72, dyn: 'greenhouse', charms: [], desc: '[动态] 拱形白铁艺玻璃温室边，左右垂落随风轻摆的嫩绿藤蔓配柔光日光' },
     { id: 'af_dyn_stamp_post', name: '邮票信笺框', price: 68, dyn: 'stamppost', charms: [], desc: '[动态] 复古锯齿邮票白边，右上红粉邮戳波浪线随微风轻盈滑过' },
-    { id: 'af_dyn_vinyl_music', name: '黑胶唱片框', price: 74, dyn: 'vinylmusic', charms: [], desc: '[动态] 复古咖啡奶油边，右下迷你黑胶唱片缓缓旋转并飘起柔和像素音符' },
+    { id: 'af_dyn_vinyl_music', name: '月光铃兰框', price: 74, dyn: 'vinylmusic', charms: [], desc: '[动态] 月白浅蓝柔边，两侧垂落摇曳的纯白铃兰花铃与银白露珠微光' },
     { id: 'af_dyn_lantern_night', name: '檐下灯笼框', price: 76, dyn: 'lanternnight', charms: [], desc: '[动态] 温柔暮蓝夜色边，顶角两盏暖橘纸灯笼轻轻摇曳并浮起细碎暖光' },
     { id: 'af_dyn_snow_globe', name: '水晶雪球框', price: 78, dyn: 'snowglobe', charms: [], desc: '[动态] 冰透薄荷水晶边，细密雪花沿两侧缓缓飘落并在底边凝成软绵雪堆' },
     { id: 'af_dyn_bookshelf', name: '暖灯书架框', price: 72, dyn: 'bookshelf', charms: [], desc: '[动态] 暖胡桃木小书架边，底边排满彩色精装书脊配左上摇曳暖黄台灯' },
     { id: 'af_dyn_music_tape', name: '星空摩天轮框', price: 74, dyn: 'ferriswheel', charms: [], desc: '[动态] 暮粉浅蓝夜空边，右下精致迷你摩天轮缓缓转动并依次点亮彩色座舱灯' },
     { id: 'af_dyn_arcade_crt', name: '像素掌机框', price: 74, dyn: 'arcadecrt', charms: [], desc: '[动态] 薄荷绿复古掌机外壳，左上电量灯呼吸闪烁配左下十字键按压互动' },
     { id: 'af_dyn_train_window', name: '电车窗景框', price: 76, dyn: 'trainwindow', charms: [], desc: '[动态] 奶油复古电车窗框，顶边远山绿坡与小白云匀速缓缓掠过' },
-    { id: 'af_dyn_windmill', name: '风车花田框', price: 74, dyn: 'windmill', charms: [], desc: '[动态] 晴空奶蓝柔边，右下白色小风车叶片匀速旋转配底边彩花草坡' },
+    { id: 'af_dyn_windmill', name: '甜莓奶盖框', price: 74, dyn: 'windmill', charms: [], desc: '[动态] 粉白草莓奶盖柔边，顶边绵密奶盖与红草莓轻晃配跃动小奶珠' },
     { id: 'af_dyn_music_box', name: '发条八音盒框', price: 74, dyn: 'musicbox', charms: [], desc: '[动态] 香槟奶油木盒边，左下小金发条匀速转动并从右上飘起彩色音符' },
     { id: 'af_dyn_hot_balloon', name: '热气球漫游框', price: 76, dyn: 'hotballoon', charms: [], desc: '[动态] 暖粉晴空云天边，右上彩色迷你热气球轻盈起伏配底边软云掠过' },
     { id: 'af_dyn_lighthouse', name: '海角灯塔框', price: 78, dyn: 'lighthouse', charms: [], desc: '[动态] 暮蓝海湾柔光边，右下红白迷你灯塔缓缓扫出暖黄光束配海面微光' },
@@ -2667,7 +2667,7 @@
     { id: 'af_adv_star', name: '[秘境] 星空小轨迹', dyn: 'gadyn_orbital_ring', charms: [], desc: '冒险极低概率偶遇的银河星轨动态头像框：双色星轨流光与双星绕框公转' },
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
-    { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'gadyn_prism_orbit', charms: [], desc: '衣橱主理人成就专属动态限定：高定丝绒鎏金流光头像框' },
+    { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'ach_velvet_gold', charms: [], desc: '衣橱主理人成就专属动态限定：酒红丝绒与香槟鎏金雕花冠冕流光头像框' },
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'starfall', charms: [{ pos: 'tl', key: 'crown' }, { pos: 'br', key: 'heart' }], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
     { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [{ pos: 'tl', key: 'leaf' }], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
@@ -2802,6 +2802,7 @@
     puppyDmBubDefaultOnV1: false,
     puppyFriendRemarks: {},
     puppyDmFavStickers: [],
+    puppyDmLayout: null,
     puppyDmRect: null,
     puppyBagFollowST: false,
     puppyReplyBell: true,
@@ -5367,6 +5368,21 @@
     #st-tb-puppy-bubble.bub-dyn-honeybee::after, .st-tb-guest-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
     #st-tb-puppy-bubble.bub-spend-5k-vinyl, .st-tb-guest-bubble.bub-spend-5k-vinyl { background: linear-gradient(135deg,#fff8ef,#f7e8d8,#fdf1e4); border-color: #8c5a3c; color: #4a2c1c; box-shadow: 0 2px 10px rgba(140,90,60,0.34); }
     #st-tb-puppy-bubble.bub-spend-5k-vinyl::after, .st-tb-guest-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
+    #st-tb-puppy-bubble.bub-gacha-hotpot-bub, .st-tb-guest-bubble.bub-gacha-hotpot-bub { background: linear-gradient(135deg,#fff4ef,#ffe4d9,#fff8f0); border-color: #d96b52; color: #6e3124; box-shadow: 0 2px 7px rgba(217,107,82,0.28); }
+    #st-tb-puppy-bubble.bub-gacha-hotpot-bub::after, .st-tb-guest-bubble.bub-gacha-hotpot-bub::after { background: #ffece3; border-color: #d96b52; }
+    #st-tb-puppy-bubble.bub-gacha-mahjong-tile, .st-tb-guest-bubble.bub-gacha-mahjong-tile { background: linear-gradient(135deg,#f4fff8,#e2f7ea,#fffdf7); border-color: #4f9e72; color: #2b5940; box-shadow: 0 2px 7px rgba(79,158,114,0.26); }
+    #st-tb-puppy-bubble.bub-gacha-mahjong-tile::after, .st-tb-guest-bubble.bub-gacha-mahjong-tile::after { background: #ebf9f0; border-color: #4f9e72; }
+    #st-tb-puppy-bubble.bub-ach-fluff, .st-tb-guest-bubble.bub-ach-fluff { background: linear-gradient(135deg,#fffdf9,#f8f1e8,#fffaf4); border-color: #cfb9a5; color: #5c493a; box-shadow: 0 2px 7px rgba(190,165,142,0.26); }
+    #st-tb-puppy-bubble.bub-ach-fluff::after, .st-tb-guest-bubble.bub-ach-fluff::after { background: #fbf6ef; border-color: #cfb9a5; }
+    #st-tb-puppy-bubble.bub-cloud-memo, .st-tb-guest-bubble.bub-cloud-memo { background: linear-gradient(135deg,#fffcf2,#f7edd8); border-color: #c7a67d; color: #59432c; box-shadow: 0 2px 7px rgba(185,152,110,0.26); }
+    #st-tb-puppy-bubble.bub-cloud-memo::after, .st-tb-guest-bubble.bub-cloud-memo::after { background: #fbf4e3; border-color: #c7a67d; }
+    #st-tb-puppy-bubble.bub-cloud-compass, .st-tb-guest-bubble.bub-cloud-compass { background: linear-gradient(135deg,#2b3554,#3e4b73,#2b3554); border-color: #d9be78; color: #f7ebca; box-shadow: 0 2px 8px rgba(45,56,90,0.34); }
+    #st-tb-puppy-bubble.bub-cloud-compass::after, .st-tb-guest-bubble.bub-cloud-compass::after { background: #344063; border-color: #d9be78; }
+    .st-px-avatar-wrap.af-ach-velvet { border-color: #d9b664 !important; background: linear-gradient(135deg,#661b2d,#85263d,#591525) !important; box-shadow: inset 0 0 0 1.5px #f5de9d, 0 2px 9px rgba(110,28,48,0.42) !important; }
+    .st-px-avatar-wrap.af-cloud-twinstar { border-color: #c9b882 !important; background: linear-gradient(135deg,#2e3859,#45527d,#2e3859) !important; box-shadow: 0 0 0 1px #e8ecf7, 0 2px 9px rgba(55,68,108,0.4) !important; }
+    .st-px-avatar-wrap.af-cloud-gallery { border-color: #cfb07c !important; background: linear-gradient(135deg,#fffaf0,#f5ead6,#fffdf7) !important; box-shadow: inset 0 0 0 1.5px #ffffff, 0 2px 8px rgba(186,154,104,0.34) !important; }
+    .st-px-avatar-wrap.af-dyn-windmill { border-color: #e395ab !important; background: linear-gradient(135deg,#fff7f9,#fce6ee,#fffdf9) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(227,149,171,0.36) !important; }
+    .st-px-avatar-wrap.af-dyn-vinyl-music { border-color: #a9bed9 !important; background: linear-gradient(135deg,#f4f8fc,#e8f0fa,#fbfdff) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(155,178,208,0.38) !important; }
     #st-tb-puppy-bubble.bub-gacha-milk-strawberry, .st-tb-guest-bubble.bub-gacha-milk-strawberry { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
     #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after, .st-tb-guest-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
 
@@ -33791,10 +33807,7 @@
                 saveConfig();
               }
             }
-            fetch(`${baseUrl}/ack`, {
-              method: 'POST', headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ myId, myName: getPupName(), fromId: g.fromId, gid: g.gid, thankMsg: '', summary: '私聊已读' }),
-            }).catch(() => {});
+            // 私聊不发送 /ack 回执，省掉一半 Cloudflare KV 写入额度（本地已通过 puppyCloudProcessedGids 与 msgId 去重）
             continue;
           }
           // 对方同意了好友申请
@@ -36779,6 +36792,12 @@
     { id: 'anim_sparkle', name: '亮晶晶', cat: 'cute', anim: true },
     { id: 'anim_spin_star', name: '转圈星', cat: 'cute', anim: true },
     { id: 'anim_eat', name: '吧唧干饭', cat: 'cute', anim: true },
+    { id: 'wink', name: '眨眼', cat: 'cute' },
+    { id: 'giggle', name: '偷笑', cat: 'cute' },
+    { id: 'flower', name: '送花花', cat: 'cute' },
+    { id: 'yawn', name: '打哈欠', cat: 'cute' },
+    { id: 'anim_jump', name: '蹦蹦跳', cat: 'cute', anim: true },
+    { id: 'anim_blush', name: '害羞晃', cat: 'cute', anim: true },
     // 搞怪分类 (12款：经典方脸大头搞怪漫画版，无脖子，跟随毛色/耳色)
     { id: 'funny_happy', name: '咧嘴笑', cat: 'funny' },
     { id: 'funny_love', name: '花痴眼', cat: 'funny' },
@@ -36792,6 +36811,14 @@
     { id: 'funny_party', name: '狂欢', cat: 'funny' },
     { id: 'funny_tea', name: '喝波霸', cat: 'funny' },
     { id: 'funny_shy', name: '大脸红', cat: 'funny' },
+    { id: 'funny_shock', name: '裂开了', cat: 'funny' },
+    { id: 'funny_sweat', name: '汗流浃背', cat: 'funny' },
+    { id: 'funny_cool', name: '墨镜大佬', cat: 'funny' },
+    { id: 'funny_peek', name: '暗中观察', cat: 'funny' },
+    { id: 'funny_anim_shake', name: '疯狂摇头', cat: 'funny', anim: true },
+    { id: 'funny_anim_laugh', name: '拍桌狂笑', cat: 'funny', anim: true },
+    { id: 'funny_anim_ascend', name: '原地升天', cat: 'funny', anim: true },
+    { id: 'funny_anim_boom', name: '气到冒烟', cat: 'funny', anim: true },
   ];
 
   const isHeadAccessoryId = (accId) => {
@@ -36817,7 +36844,11 @@
       const fur = pal.w || '#fffdf7';
       const ear = pal.e || '#e2ae74';
       const out = pal.o || '#3b2a22';
-      const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+      const f = animFrame % 4;
+      const fx = stickerId === 'funny_anim_shake' ? (f === 1 ? -2 : (f === 3 ? 2 : 0)) : 0;
+      const fy = (stickerId === 'funny_anim_laugh' ? (f % 2 === 1 ? 1 : -1) : (stickerId === 'funny_anim_ascend' ? -f : 0));
+      const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x + fx, y + fy, w, h); };
+      const pAbs = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
       p(6, 7, out, 12, 1); p(5, 8, out, 1, 10); p(18, 8, out, 1, 10); p(6, 18, out, 12, 1);
       p(6, 8, fur, 12, 10);
       p(3, 8, out, 2, 7); p(4, 9, ear, 2, 6);
@@ -36862,6 +36893,35 @@
       } else if (sub === 'tea') {
         p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1); p(10, 15, out, 4, 1);
         p(19, 10, '#6b4423', 1, 3); p(17, 13, '#fff', 5, 1); p(17, 14, '#e6c39c', 5, 5); p(18, 17, '#4a3222', 1, 1); p(20, 17, '#4a3222', 1, 1);
+      } else if (sub === 'shock') {
+        p(7, 10, '#fff', 4, 4); p(13, 10, '#fff', 4, 4); p(9, 11, out, 1, 2); p(14, 11, out, 1, 2);
+        p(10, 15, out, 4, 3); p(11, 16, '#ff8aa6', 2, 1);
+        pAbs(11, 7, '#5a6b8c', 1, 3); pAbs(12, 9, '#5a6b8c', 1, 3); pAbs(11, 11, '#5a6b8c', 1, 3); // 裂纹
+      } else if (sub === 'sweat') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(10, 15, out, 4, 1);
+        pAbs(19, 4, '#7cc6f7', 2, 4); pAbs(20, 3, '#a8dcff', 1, 1);
+        pAbs(2, 5, '#7cc6f7', 2, 3);
+      } else if (sub === 'cool') {
+        p(6, 10, '#1e1b22', 5, 3); p(13, 10, '#1e1b22', 5, 3); p(11, 10, '#1e1b22', 2, 1);
+        p(7, 10, '#fff', 2, 1); p(14, 10, '#fff', 2, 1); p(11, 15, out, 3, 1); p(14, 14, out, 1, 1);
+      } else if (sub === 'peek') {
+        p(7, 11, '#fff', 3, 2); p(14, 11, '#fff', 3, 2); p(9, 11, out, 1, 2); p(16, 11, out, 1, 2);
+        p(10, 15, out, 4, 1); pAbs(1, 16, '#8c5a32', 22, 3); // 扒墙偷瞄
+      } else if (sub === 'anim_shake') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(10, 15, out, 4, 2);
+        pAbs(f % 2 === 0 ? 1 : 21, 9, '#a8bee6', 2, 5);
+      } else if (sub === 'anim_laugh') {
+        p(8, 11, out); p(9, 10, out); p(10, 11, out); p(14, 11, out); p(15, 10, out); p(16, 11, out);
+        p(9, 14, out, 6, 3); p(10, 15, '#ff7a96', 4, 2);
+        pAbs(2, 19, '#ffd24c', 5, 2); pAbs(17, 19, '#ffd24c', 5, 2);
+      } else if (sub === 'anim_ascend') {
+        p(8, 11, '#fff', 3, 1); p(13, 11, '#fff', 3, 1); p(11, 15, out, 2, 1);
+        p(9, 3, '#ffe066', 6, 2); p(10, 4, '#fff9d6', 4, 1); // 头顶小金环缓缓升天
+      } else if (sub === 'anim_boom') {
+        p(8, 10, out); p(9, 11, out, 2, 1); p(15, 10, out); p(13, 11, out, 2, 1);
+        p(9, 15, '#e84858', 6, 2);
+        const sy = 2 - (f % 2);
+        pAbs(7, sy, '#ffffff', 4, 3); pAbs(13, sy + 1, '#e8e8e8', 4, 3); // 头顶冒白烟
       } else {
         p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1);
         p(6, 14, '#ff8ca8', 3, 2); p(15, 14, '#ff8ca8', 3, 2); p(11, 15, out, 2, 1);
@@ -36884,8 +36944,8 @@
 
     const grid = PUP_SPRITES.idle1;
     const f = animFrame % 4;
-    const ox = 2 + (stickerId === 'anim_wag' ? (f === 1 ? -1 : (f === 3 ? 1 : 0)) : 0);
-    const oy = 5 + (stickerId === 'anim_nod' ? (f % 2 === 1 ? 1 : 0) : 0);
+    const ox = 2 + ((stickerId === 'anim_wag' || stickerId === 'anim_blush') ? (f === 1 ? -1 : (f === 3 ? 1 : 0)) : 0);
+    const oy = 5 + (stickerId === 'anim_nod' ? (f % 2 === 1 ? 1 : 0) : (stickerId === 'anim_jump' ? (f % 2 === 1 ? -1 : 0) : 0));
     for (let y = 0; y <= 6; y++) {
       const row = grid[y];
       for (let x = 5; x <= 15; x++) {
@@ -37093,6 +37153,33 @@
         p(6, 11, '#ff8aa6', 3, 1);
       }
       p(12, 2 + (f % 2), '#ffd24c', 2, 1);
+    } else if (stickerId === 'wink') {
+      clearEyes();
+      p(5, 9, eyeCol); p(8, 9, out); p(9, 8, out); p(10, 9, out);
+      p(6, 11, '#ff8aa6', 3, 1);
+      p(12, 2, '#ffe066', 1, 3); p(11, 3, '#ffe066', 3, 1);
+    } else if (stickerId === 'giggle') {
+      clearEyes();
+      p(4, 9, out, 2, 1); p(9, 9, out, 2, 1);
+      p(6, 11, fur, 3, 2); p(6, 11, '#ffbfd4', 2, 2); // 小爪捂嘴偷笑
+      p(1, 2, '#ff8aa6', 2, 2);
+    } else if (stickerId === 'flower') {
+      p(6, 11, '#ff8aa6', 3, 1);
+      // 举着一朵小粉花
+      p(12, 10, '#6eb878', 1, 4); p(11, 7, '#ff9eb8', 3, 3); p(12, 8, '#ffe066', 1, 1);
+    } else if (stickerId === 'yawn') {
+      clearEyes();
+      p(4, 9, out, 2, 1); p(9, 9, out, 2, 1);
+      p(6, 10, out, 3, 3); p(7, 11, '#ff8aa6', 1, 2);
+      p(11, 2, '#8cc8f7', 2, 2);
+    } else if (stickerId === 'anim_jump') {
+      const dy = (f % 2 === 1) ? -1 : 0;
+      p(6, 11 + dy, '#ff8aa6', 3, 1);
+      p(1, 2 - dy, '#ffe066', 2, 2); p(12, 2 - dy, '#ff8aa6', 2, 2);
+    } else if (stickerId === 'anim_blush') {
+      const dx = f === 1 ? -1 : (f === 3 ? 1 : 0);
+      p(3 + dx, 10, '#ff8ca8', 2, 1); p(10 + dx, 10, '#ff8ca8', 2, 1);
+      p(f % 2 === 0 ? 1 : 12, 2, '#ffb5c8', 2, 2);
     } else {
       // shy
       p(3, 10, '#ff8ca8', 2, 1); p(10, 10, '#ff8ca8', 2, 1);
@@ -37385,11 +37472,12 @@
       listEl.innerHTML = `<div style="text-align:center;font-size:10.5px;opacity:0.65;padding:24px 8px;">${q ? '没有搜到包含该关键词的聊天记录~' : '还没有聊天记录，发句话或小狗表情包打个招呼吧~'}</div>`;
       return;
     }
+    const lay = Object.assign({ avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11 }, config.puppyDmLayout || {});
     msgs.forEach(m => {
       const isMe = m.dir === 'me';
       const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
-      row.style.cssText = `display:flex;align-items:flex-start;gap:10px;margin-bottom:13px;padding:4px 6px 0;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+      row.style.cssText = `display:flex;align-items:flex-start;gap:${lay.bubGap}px;margin-bottom:${lay.rowGap}px;padding:4px ${lay.avPad}px 0;${isMe ? 'flex-direction:row-reverse;' : ''}`;
       const avWrap = makeDmHeadAvatar(senderLook, 34);
       const bubCol = doc.createElement('div');
       bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
@@ -37413,7 +37501,8 @@
       }
       bub.appendChild(bodyEl);
       applyDmBubbleSkin(bub, isMe ? 'me' : 'them', m);
-      if (m.sticker) bub.style.padding = '5px 7px';
+      bub.style.padding = m.sticker ? `${Math.max(3, lay.bubPad - 1)}px ${lay.bubPad + 1}px` : `${lay.bubPad}px ${lay.bubPad + 4}px`;
+      bub.style.fontSize = `${lay.fontSize}px`;
       const tm = doc.createElement('div');
       tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;';
       const dObj = new Date(m.ts || Date.now());
@@ -37542,6 +37631,20 @@
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <span style="font-weight:700;">使用当前气泡装扮</span>
           <button type="button" id="st-dm-bub-toggle" class="st-px-btn${config.puppyDmUseMyBubble ? ' active' : ''}" style="height:20px;padding:0 8px;font-size:9.5px;">${config.puppyDmUseMyBubble ? '开' : '关'}</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="font-weight:700;">排版与字号调节</span>
+          <div style="display:flex;gap:4px;">
+            <button type="button" id="st-dm-lay-toggle" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;">展开</button>
+            <button type="button" id="st-dm-lay-reset" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;">默认</button>
+          </div>
+        </div>
+        <div id="st-dm-lay-box" style="display:none;flex-direction:column;gap:4px;padding:4px 5px;border:1px dashed var(--px-border,#bfa4ae);background:var(--px-bg-soft,rgba(255,255,255,0.4));">
+          <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">头像边距</span><input id="st-dm-lay-avpad" type="range" min="0" max="12" step="1" class="st-px-range" /><span id="st-dm-lay-avpad-v" style="width:26px;text-align:right;">2</span></div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">气泡间距</span><input id="st-dm-lay-bgap" type="range" min="4" max="20" step="1" class="st-px-range" /><span id="st-dm-lay-bgap-v" style="width:26px;text-align:right;">11</span></div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">气泡内距</span><input id="st-dm-lay-bpad" type="range" min="3" max="14" step="1" class="st-px-range" /><span id="st-dm-lay-bpad-v" style="width:26px;text-align:right;">6</span></div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">上下行距</span><input id="st-dm-lay-rgap" type="range" min="4" max="24" step="1" class="st-px-range" /><span id="st-dm-lay-rgap-v" style="width:26px;text-align:right;">13</span></div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">文字大小</span><input id="st-dm-lay-fs" type="range" min="9" max="16" step="1" class="st-px-range" /><span id="st-dm-lay-fs-v" style="width:26px;text-align:right;">11</span></div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
           <button type="button" id="st-dm-act-gift" class="st-px-btn care" style="height:21px;font-size:9.5px;padding:0 2px;">送礼</button>
@@ -37810,7 +37913,56 @@
       try { navigator.clipboard?.writeText(txtOut); } catch (_) {}
       openPixelPupNoticeModal('已复制聊天记录', `共复制 ${list.length} 条与「${taN}」的私聊记录到剪贴板~`, '好哒');
     });
-    panel.querySelector('#st-dm-act-clear')?.addEventListener('click', (e) => {
+    const layBox = panel.querySelector('#st-dm-lay-box');
+    const layDefs = { avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11 };
+    const syncLayInputs = () => {
+      const cur = Object.assign({}, layDefs, config.puppyDmLayout || {});
+      const pairs = [
+        ['#st-dm-lay-avpad', '#st-dm-lay-avpad-v', 'avPad'],
+        ['#st-dm-lay-bgap', '#st-dm-lay-bgap-v', 'bubGap'],
+        ['#st-dm-lay-bpad', '#st-dm-lay-bpad-v', 'bubPad'],
+        ['#st-dm-lay-rgap', '#st-dm-lay-rgap-v', 'rowGap'],
+        ['#st-dm-lay-fs', '#st-dm-lay-fs-v', 'fontSize'],
+      ];
+      pairs.forEach(([iSel, vSel, key]) => {
+        const inp = panel.querySelector(iSel);
+        const valEl = panel.querySelector(vSel);
+        if (inp) inp.value = String(cur[key]);
+        if (valEl) valEl.textContent = `${cur[key]}px`;
+      });
+    };
+    syncLayInputs();
+    panel.querySelector('#st-dm-lay-toggle')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!layBox) return;
+      const open = layBox.style.display !== 'flex';
+      layBox.style.display = open ? 'flex' : 'none';
+      e.currentTarget.textContent = open ? '收起' : '展开';
+    });
+    panel.querySelector('#st-dm-lay-reset')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      config.puppyDmLayout = { ...layDefs };
+      saveConfig();
+      syncLayInputs();
+      renderFriendDmMessages(fid);
+    });
+    [
+      ['#st-dm-lay-avpad', '#st-dm-lay-avpad-v', 'avPad'],
+      ['#st-dm-lay-bgap', '#st-dm-lay-bgap-v', 'bubGap'],
+      ['#st-dm-lay-bpad', '#st-dm-lay-bpad-v', 'bubPad'],
+      ['#st-dm-lay-rgap', '#st-dm-lay-rgap-v', 'rowGap'],
+      ['#st-dm-lay-fs', '#st-dm-lay-fs-v', 'fontSize'],
+    ].forEach(([iSel, vSel, key]) => {
+      const inp = panel.querySelector(iSel);
+      inp?.addEventListener('input', () => {
+        config.puppyDmLayout = Object.assign({}, layDefs, config.puppyDmLayout || {}, { [key]: Number(inp.value) });
+        const valEl = panel.querySelector(vSel);
+        if (valEl) valEl.textContent = `${inp.value}px`;
+        saveConfig();
+        renderFriendDmMessages(fid);
+      });
+    });
+        panel.querySelector('#st-dm-act-clear')?.addEventListener('click', (e) => {
       e.stopPropagation();
       openGuardConfirm(
         '清空私聊记录？',
@@ -43427,7 +43579,209 @@
       if (n < 135) return [54 - (n - 90), 54];
       return [9, 54 - (n - 135)];
     };
-    const drawGridAt = (gx, gy, grid, pal) => {
+    const _px = (x, y, c, w = 1, h = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+    const _bob = Math.round(Math.sin(t * 0.25));
+    const _bob2 = Math.round(Math.cos(t * 0.22));
+    if (m === 'gadyn_shutter_flash') {
+      // 胶带拍立得：干净奶白拍立得相纸厚底边 + 顶角斜贴粉蓝和纸胶带 + 温柔星光微闪
+      _px(8, 52, '#ffffff', 48, 7); _px(8, 58, '#d9cfc5', 48, 1);
+      _px(24, 54, '#e0d5c8', 16, 2); // 底边手写小横线
+      // 左上淡粉斜胶带
+      _px(4, 7, '#f7bfd0', 12, 4); _px(6, 5, '#fad4df', 8, 2); _px(6, 8, '#ffffff', 2, 1); _px(11, 8, '#ffffff', 2, 1);
+      // 右上浅蓝斜胶带
+      _px(48, 7, '#b5dcf5', 12, 4); _px(50, 5, '#d2ebfa', 8, 2); _px(51, 8, '#ffffff', 2, 1); _px(56, 8, '#ffffff', 2, 1);
+      // 柔和星光点
+      if ((t % 12) < 6) { _px(55, 53, '#ffe078', 1, 3); _px(54, 54, '#ffe078', 3, 1); }
+      else { _px(8, 53, '#ffadc4', 1, 3); _px(7, 54, '#ffadc4', 3, 1); }
+      return;
+    }
+    if (m === 'ach_velvet_gold') {
+      // 高定丝绒金框：顶部珍珠金冠 + 四角复古鎏金雕花 + 绕框巡游香槟金流光
+      _px(26, 4 + (_bob > 0 ? 0 : 1), '#e6bc5c', 12, 4);
+      _px(26, 2 + (_bob > 0 ? 0 : 1), '#f5d982', 2, 2); _px(31, 1 + (_bob > 0 ? 0 : 1), '#fff4c4', 2, 3); _px(36, 2 + (_bob > 0 ? 0 : 1), '#f5d982', 2, 2);
+      _px(31, 5 + (_bob > 0 ? 0 : 1), '#d94862', 2, 2);
+      // 四角香槟金雕花
+      [[7, 7], [53, 7], [7, 53], [53, 53]].forEach(([cx, cy]) => {
+        _px(cx, cy, '#e6bc5c', 4, 4); _px(cx + 1, cy + 1, '#fff4c4', 2, 2);
+      });
+      for (let i = 0; i < 3; i++) {
+        const [gx, gy] = perimPt(t * 3 + i * 60);
+        _px(gx - 1, gy - 1, '#fff4c4', 2, 2); _px(gx, gy, '#ffffff', 1, 1);
+      }
+      return;
+    }
+    if (m === 'shibatoast') {
+      // 芝士吐司框：顶边暖金融化芝士滴 + 左下圆滚滚笑脸烤吐司
+      _px(10, 7, '#d99a4e', 44, 3); // 烤吐司脆边
+      _px(12, 8, '#ffe066', 40, 2);
+      _px(16, 10, '#ffe066', 4, 3 + (_bob > 0 ? 1 : 0)); _px(30, 10, '#ffd24c', 5, 4); _px(46, 10, '#ffe066', 4, 2 + (_bob2 > 0 ? 1 : 0));
+      // 左下笑眯眯小吐司
+      const tx = 4, ty = 46 + (_bob > 0 ? 0 : 1);
+      _px(tx, ty, '#c9823c', 13, 12); _px(tx + 1, ty - 1, '#c9823c', 11, 2);
+      _px(tx + 2, ty + 1, '#fff2d6', 9, 9);
+      _px(tx + 4, ty + 4, '#3b2a22', 1, 1); _px(tx + 8, ty + 4, '#3b2a22', 1, 1);
+      _px(tx + 3, ty + 6, '#ffb5c4', 2, 1); _px(tx + 8, ty + 6, '#ffb5c4', 2, 1);
+      _px(tx + 6, ty + 6, '#3b2a22', 1, 1);
+      _px(53, 50 - _bob, '#ffe066', 5, 4); _px(54, 51 - _bob, '#fff7cc', 2, 2); // 右下小黄油块
+      return;
+    }
+    if (m === 'greenhouse') {
+      // 玻璃温室框：白铁艺拱形顶棚 + 左右摇曳常春藤与小粉白花苞 + 柔和日光
+      _px(14, 4, '#ffffff', 36, 2); _px(10, 6, '#e6f0f5', 44, 2); _px(31, 4, '#d2e4ed', 2, 5);
+      // 左右摇曳绿藤蔓
+      for (let y = 10; y <= 48; y += 5) {
+        const sw = Math.round(Math.sin(t * 0.2 + y * 0.15));
+        _px(6 + sw, y, '#78b878', 3, 4); _px(5 + sw, y + 1, '#a6dba6', 2, 2);
+        _px(55 - sw, y, '#78b878', 3, 4); _px(57 - sw, y + 1, '#a6dba6', 2, 2);
+      }
+      // 点缀柔粉与奶白小花苞
+      _px(5, 18 + _bob, '#ffbfd4', 3, 3); _px(6, 19 + _bob, '#ffffff', 1, 1);
+      _px(56, 32 - _bob, '#fff6cc', 3, 3); _px(57, 33 - _bob, '#ffbfd4', 1, 1);
+      _px(6, 42 - _bob2, '#ffffff', 3, 3); _px(7, 43 - _bob2, '#ffe066', 1, 1);
+      return;
+    }
+    if (m === 'lantern') {
+      // 暖光小纸灯：左右顶角两盏精致珊瑚红金纸灯轻摇 + 暖黄灯芯微闪 + 细红穗
+      const sw = Math.round(Math.sin(t * 0.22));
+      const drawLantern = (lx, ly) => {
+        _px(lx + 4, ly - 2, '#d9a441', 2, 2); // 挂绳
+        _px(lx + 2, ly, '#e6b85c', 6, 2); // 金顶盖
+        _px(lx, ly + 2, '#e35d6a', 10, 8); _px(lx + 1, ly + 2, '#f27986', 8, 8);
+        _px(lx + 3, ly + 3, (t % 8) < 4 ? '#fff6cc' : '#ffe082', 4, 6); // 暖光灯芯
+        _px(lx + 2, ly + 10, '#e6b85c', 6, 2); // 金底托
+        _px(lx + 4 + sw, ly + 12, '#d94858', 2, 4); // 摇摆细红穗
+      };
+      drawLantern(3 + sw, 7);
+      drawLantern(51 - sw, 7);
+      if ((t % 10) < 5) { _px(18, 55, '#ffe082', 2, 2); _px(44, 55, '#ffe082', 2, 2); }
+      return;
+    }
+    if (m === 'windmill') {
+      // 甜莓奶盖框：顶边软绵绵波浪奶盖 + 晶莹小红草莓 + 弹跳小奶珠
+      for (let x = 8; x <= 54; x += 4) {
+        _px(x, 6, '#ffffff', 4, 4);
+        _px(x + 1, 10, '#fff5f8', 2, (x % 8 === 0) ? 3 : 2);
+      }
+      const drawBerry = (bx, by) => {
+        _px(bx + 1, by - 1, '#6eb878', 4, 2);
+        _px(bx, by + 1, '#f05a72', 6, 4); _px(bx + 1, by + 5, '#f05a72', 4, 2);
+        _px(bx + 1, by + 2, '#ffe8ee', 1, 1); _px(bx + 4, by + 3, '#ffe8ee', 1, 1);
+      };
+      drawBerry(5, 48 + _bob);
+      drawBerry(53, 48 - _bob);
+      drawBerry(29, 3);
+      _px(6, 24 + _bob2 * 2, '#ffffff', 3, 3); _px(55, 30 - _bob2 * 2, '#ffd6e4', 3, 3);
+      return;
+    }
+    if (m === 'vinylmusic') {
+      // 月光铃兰框：两侧翠绿弯茎 + 摇曳纯白铃兰花铃 + 银白露珠微光
+      const sw = Math.round(Math.sin(t * 0.22));
+      _px(5, 16, '#7cb585', 2, 34); _px(7, 14, '#7cb585', 4, 2);
+      _px(57, 16, '#7cb585', 2, 34); _px(53, 14, '#7cb585', 4, 2);
+      const drawBell = (bx, by) => {
+        _px(bx + 1, by, '#ffffff', 4, 3); _px(bx, by + 3, '#eef5fc', 6, 2);
+        _px(bx + 2, by + 5, '#ffe899', 2, 1);
+      };
+      drawBell(6 + sw, 18); drawBell(4 + sw, 30); drawBell(5 + sw, 42);
+      drawBell(52 - sw, 18); drawBell(54 - sw, 30); drawBell(53 - sw, 42);
+      _px(30, 4, '#fff9d6', 4, 4); _px(32, 5, '#dce8f7', 2, 2); // 顶部小银月
+      if ((t % 10) < 5) { _px(18, 55, '#ffffff', 2, 2); _px(46, 55, '#cfe3fa', 2, 2); }
+      return;
+    }
+    if (m === 'ufo') {
+      // 迷你小飞碟（丰富版）：星夜闪烁星点 + 银蓝飞碟彩灯圆顶 + 柔和半透光束
+      const ux = 10 + Math.round((Math.sin(t * 0.14) * 0.5 + 0.5) * 30);
+      const uy = 2 + _bob;
+      // 半透光束
+      _px(ux + 4, uy + 7, 'rgba(180,240,255,0.35)', 6, 4); _px(ux + 3, uy + 11, 'rgba(180,240,255,0.2)', 8, 3);
+      // 飞碟主体
+      _px(ux + 4, uy, '#b8f0ff', 6, 3); _px(ux + 5, uy + 1, '#ffffff', 2, 1);
+      _px(ux, uy + 3, '#8aa0c4', 14, 3); _px(ux + 2, uy + 6, '#627699', 10, 1);
+      _px(ux + 2, uy + 4, (t % 6) < 3 ? '#ffe066' : '#ff8aa6', 2, 1);
+      _px(ux + 6, uy + 4, (t % 6) < 3 ? '#78f0d8' : '#ffe066', 2, 1);
+      _px(ux + 10, uy + 4, (t % 6) < 3 ? '#ff8aa6' : '#78f0d8', 2, 1);
+      // 四周闪烁星星
+      [[5, 18], [56, 22], [6, 48], [55, 50]].forEach(([sx, sy], i) => {
+        if (((t + i * 3) % 8) < 5) { _px(sx, sy, '#fff4b8', 2, 2); }
+      });
+      return;
+    }
+    if (m === 'ghost') {
+      // 软糯小幽灵（丰富版）：左右双只脸红软萌小幽灵交替漂浮 + 浅紫星光
+      const drawGhost = (gx, gy) => {
+        _px(gx + 2, gy, '#ffffff', 6, 2); _px(gx + 1, gy + 2, '#ffffff', 8, 7);
+        _px(gx + 1, gy + 9, '#eef0fa', 2, 2); _px(gx + 4, gy + 9, '#eef0fa', 2, 2); _px(gx + 7, gy + 9, '#eef0fa', 2, 2);
+        _px(gx + 3, gy + 4, '#3b2a22', 1, 2); _px(gx + 6, gy + 4, '#3b2a22', 1, 2);
+        _px(gx + 2, gy + 6, '#ffb5c8', 2, 1); _px(gx + 6, gy + 6, '#ffb5c8', 2, 1);
+      };
+      drawGhost(2, 10 + _bob * 2);
+      drawGhost(52, 42 - _bob * 2);
+      _px(54, 12 + _bob2, '#d4c2ff', 1, 3); _px(53, 13 + _bob2, '#d4c2ff', 3, 1);
+      _px(8, 52 - _bob2, '#ffe082', 1, 3); _px(7, 53 - _bob2, '#ffe082', 3, 1);
+      return;
+    }
+    if (m === 'snowglobe') {
+      // 水晶雪球框（丰富版）：左上晶莹圆弧高光 + 多层飘落雪花 + 底边蓬松积雪堆
+      _px(10, 6, '#ffffff', 12, 2); _px(7, 8, '#e6f7ff', 4, 6);
+      for (let i = 0; i < 8; i++) {
+        const sx = i % 2 === 0 ? (4 + (i * 3) % 6) : (54 + (i * 3) % 6);
+        const sy = 8 + ((t * 2 + i * 9) % 44);
+        _px(sx, sy, i % 3 === 0 ? '#d2f0ff' : '#ffffff', 2, 2);
+      }
+      // 底边软绵积雪堆
+      _px(10, 53, '#ffffff', 44, 4); _px(14, 51, '#ffffff', 14, 2); _px(36, 51, '#eef8ff', 16, 2);
+      _px(26, 55, '#cde8fa', 12, 2);
+      return;
+    }
+    if (m === 'hotballoon') {
+      // 热气球漫游框（丰富版）：右上粉蓝条纹热气球 + 左上远景小气球 + 底边飘浮白云
+      const bx = 48, by = 4 + _bob * 2;
+      _px(bx + 3, by, '#ff9eb8', 6, 2); _px(bx + 1, by + 2, '#99d6ff', 10, 3);
+      _px(bx + 1, by + 5, '#ffe082', 10, 2); _px(bx + 2, by + 7, '#ff9eb8', 8, 2);
+      _px(bx + 4, by + 9, '#8c5a32', 1, 2); _px(bx + 7, by + 9, '#8c5a32', 1, 2);
+      _px(bx + 4, by + 11, '#c98a4a', 4, 3);
+      // 左上迷你远景气球
+      _px(5, 10 - _bob, '#b8e8c8', 6, 5); _px(6, 11 - _bob, '#ffffff', 2, 2); _px(7, 16 - _bob, '#b8864b', 2, 2);
+      // 底边软云
+      const cx = 10 + ((t) % 24);
+      _px(cx, 53, '#ffffff', 14, 4); _px(cx + 3, 51, '#ffffff', 8, 2);
+      _px(44, 54, '#fff5f8', 12, 3);
+      return;
+    }
+    if (m === 'frog') {
+      // 荷叶小青蛙（丰富版）：大荷叶 + 会眨眼的萌青蛙 + 粉嫩荷花苞 + 升腾透明泡泡
+      _px(44, 51, '#5ca864', 16, 6); _px(46, 50, '#78c47e', 12, 4);
+      // 小青蛙
+      const fx = 47, fy = 43 + (_bob > 0 ? 0 : 1);
+      _px(fx + 1, fy, '#88d486', 3, 3); _px(fx + 6, fy, '#88d486', 3, 3);
+      _px(fx, fy + 2, '#78c47e', 10, 6); _px(fx + 2, fy + 6, '#e8f7d6', 6, 2);
+      if ((t % 16) < 13) { _px(fx + 2, fy + 1, '#231814', 1, 1); _px(fx + 7, fy + 1, '#231814', 1, 1); }
+      else { _px(fx + 2, fy + 1, '#4a7a4d', 2, 1); _px(fx + 6, fy + 1, '#4a7a4d', 2, 1); }
+      _px(fx + 1, fy + 4, '#ffb5c4', 2, 1); _px(fx + 7, fy + 4, '#ffb5c4', 2, 1);
+      // 左下小粉荷花
+      _px(5, 51, '#5ca864', 10, 4); _px(7, 46, '#ff9eb8', 6, 5); _px(9, 44, '#ffd6e4', 2, 3);
+      // 上升泡泡
+      const by1 = 42 - ((t * 2) % 30);
+      _px(56, by1, '#b8e8ff', 3, 3); _px(56, by1, '#ffffff', 1, 1);
+      return;
+    }
+    if (m === 'miniwhale') {
+      // 云海小鲸框（丰富版）：顶边小蓝鲸游动喷弧形水花 + 底边蓬松云海
+      const wx = 12 + Math.round((Math.sin(t * 0.14) * 0.5 + 0.5) * 26);
+      const wy = 3 + _bob;
+      _px(wx + 2, wy + 2, '#78b8eb', 10, 5); _px(wx + 4, wy + 1, '#99cef7', 6, 2);
+      _px(wx + 4, wy + 6, '#ffffff', 6, 2); // 白肚皮
+      _px(wx, wy + 3, '#78b8eb', 3, 3); _px(wx - 1, wy + 2, '#99cef7', 2, 2); // 小尾巴
+      _px(wx + 10, wy + 4, '#231814', 1, 1);
+      // 喷出弧形小水花
+      if ((t % 8) < 5) {
+        _px(wx + 6, wy - 1, '#d6f2ff', 2, 2); _px(wx + 4, wy - 2, '#ffffff', 2, 1); _px(wx + 8, wy - 2, '#ffffff', 2, 1);
+      }
+      // 底边软云海
+      _px(8, 53, '#ffffff', 48, 4); _px(12, 51, '#e8f5ff', 14, 2); _px(36, 51, '#ffffff', 16, 2);
+      return;
+    }
+        const drawGridAt = (gx, gy, grid, pal) => {
       for (let r = 0; r < grid.length; r++) {
         for (let c = 0; c < grid[r].length; c++) {
           const col = pal[grid[r][c]];
