@@ -21193,16 +21193,10 @@
   // 原创非模板化铭牌一体式包裹画布（96x36 逻辑像素，徽章主体位于 x:10..86, y:10..26，四周各留 10px 创作空间）
   // 每一款均按标题与主题独立手绘左+上包裹、顶篷、底托、环抱等原创组合构图，绝不复用模板或零碎散点！
   const renderOriginalBadgeWrap = (id, bdCol, fgCol) => {
+    // 仅少量平价基础款商店铭牌采用包裹构图作为风格点缀；真龙天狗及所有高价铭牌、顶级成就全部恢复原版精致设计！
     const HANDCRAFTED_WRAPS = new Set([
-      'sb_sakura_dream', 'sb_star_ocean', 'sb_cloud_candy', 'sb_sweet_berry', 'sb_angel_whisper',
-      'sb_moon_lullaby', 'sb_pearl_lady', 'sb_royal_pup', 'sb_clover_luck', 'sb_ribbon_idol',
-      'sb_lantern_night', 'sb_crystal_prism', 'sb_paw_guardian', 'sb_golden_bell', 'sb_music_star',
-      'sb_arcade_god', 'sb_ancient_fan', 'sb_heart_devotion', 'sb_aurora_halo', 'sb_mid_cuddle_pro',
-      'sb_mid_nap_master', 'sb_mid_snack_boss', 'sb_mid_good_mood', 'sb_mid_lucky_paw', 'sb_milk_cloud_pup',
-      'sb_lazy_sunshine', 'sb_milk_tea_boss', 'sb_ult_candy_queen', 'sb_ult_sakura_empress', 'sb_ult_ancient_jade',
-      'sb_ult_star_emperor', 'sb_ult_angel_seraph', 'sb_ult_meow_dog_god', 'sb_ult_moon_valkyrie', 'sb_supreme_rainbow',
-      'collector_max', 'soulmate', 'hidden_all_master', 'hidden_gacha_triple_ssr', 'hidden_cloud_soulmate',
-      'hidden_cloud_gallery', 'hidden_fashion_sss', 'hidden_gacha_ssr_lucky', 'adv_album_all', 'adv_curio_all'
+      'sb_sakura_dream', 'sb_sweet_berry', 'sb_pearl_lady',
+      'sb_clover_luck', 'sb_mid_nap_master', 'sb_milk_tea_boss'
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
     const cv = doc.createElement('canvas');
@@ -21672,11 +21666,10 @@
           freeSlots.push(`right:${6 + ((h >> 3) % 10)}px;top:-7px;`);
 
           if (isMythic) {
-            // 最高级传说/神迹成就：原创一体式金辉包裹画布 + 主饰件 + 副饰件（不再堆零碎散点！）
-            const mWrap = renderOriginalBadgeWrap(ach.id, ach.bd, ach.fg);
-            if (mWrap) el.appendChild(mWrap);
+            // 最高级传说/神迹成就：恢复原版精致大尺寸主饰件 + 副饰件 + 1处错落独立饰件，不使用包裹画布
             el.appendChild(renderBespokePiece({ pos: p1, w: 15, h: 13, anim: 'b-bob', pal, grid: g1 }));
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, pal, grid: subG }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 9, h: 8, anim: 'b-bob', pal, grid: g3 }));
           } else if (isSenior) {
             // 高级成就：主饰件 + 副饰件 + 仅1处错落大尺寸饰件（清爽成组不零碎）
             el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
