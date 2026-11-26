@@ -811,7 +811,11 @@
     { id: 'af_dyn_music_box', name: '发条八音盒框', price: 74, dyn: 'musicbox', charms: [], desc: '[动态] 香槟奶油木盒边，左下小金发条匀速转动并从右上飘起彩色音符' },
     { id: 'af_dyn_hot_balloon', name: '热气球漫游框', price: 76, dyn: 'hotballoon', charms: [], desc: '[动态] 暖粉晴空云天边，右上彩色迷你热气球轻盈起伏配底边软云掠过' },
     { id: 'af_dyn_lighthouse', name: '海角灯塔框', price: 78, dyn: 'lighthouse', charms: [], desc: '[动态] 暮蓝海湾柔光边，右下红白迷你灯塔缓缓扫出暖黄光束配海面微光' },
-    { id: 'af_dyn_windmill_hill', name: '风车草坡框', price: 74, dyn: 'windmill', charms: [], desc: '[动态] 晴空草坡柔光边，右下迷你白风车缓缓转动扇叶配顶部飘动小白云' },
+    { id: 'af_dyn_windmill_hill', name: '海盐汽水框', price: 74, dyn: 'seasoda', charms: [], desc: '[动态] 冰透海盐浅蓝边，右下玻璃汽水杯配柠檬片与薄荷叶不断冒出晶莹气泡' },
+    { id: 'af_lux_seraph_wings', name: '星羽天使翼', price: 88, dyn: 'lux_seraph', charms: [], desc: '[动态豪华] 圣洁奶油金边，对称双层大羽翼轻扇配顶部鎏金光环与飘落羽屑' },
+    { id: 'af_lux_royal_cat', name: '鎏金招财猫', price: 88, dyn: 'lux_royalcat', charms: [], desc: '[动态豪华] 暖金绯红柔边，金边粉绒大猫耳配顶心红绳金铃轻晃与招财微光' },
+    { id: 'af_lux_ribbon_bunny', name: '缎带垂耳兔', price: 88, dyn: 'lux_ribbunny', charms: [], desc: '[动态豪华] 柔粉珍珠蕾丝边，修长白绒垂耳配粉缎大蝴蝶结与飘落樱瓣' },
+    { id: 'af_lux_crown_fox', name: '雪绒九尾狐', price: 92, dyn: 'lux_crownfox', charms: [], desc: '[动态豪华] 冰雾雪白金边，雪绒粉尖大狐耳配额心鎏金花钿与轻摆白尾尖' },
     { id: 'af_dyn_aquarium_bowl', name: '迷你鱼缸框', price: 76, dyn: 'aquarium', charms: [], desc: '[动态] 清透水蓝玻璃框，底部橘白小鱼游动配摇曳水草与上升珍珠气泡' },
   ];
   // 按价格升序排列商城各分类，确保新增物品自然插入对应价位区间
@@ -5380,6 +5384,11 @@
     #st-tb-puppy-bubble.bub-cloud-compass::after, .st-tb-guest-bubble.bub-cloud-compass::after { background: #344063; border-color: #d9be78; }
     .st-px-avatar-wrap.af-ach-velvet { border-color: #d9b664 !important; background: linear-gradient(135deg,#661b2d,#85263d,#591525) !important; box-shadow: inset 0 0 0 1.5px #f5de9d, 0 2px 9px rgba(110,28,48,0.42) !important; }
     .st-px-avatar-wrap.af-cloud-twinstar { border-color: #c9b882 !important; background: linear-gradient(135deg,#2e3859,#45527d,#2e3859) !important; box-shadow: 0 0 0 1px #e8ecf7, 0 2px 9px rgba(55,68,108,0.4) !important; }
+    .st-px-avatar-wrap.af-dyn-windmill-hill { border-color: #7cc4e8 !important; background: linear-gradient(135deg,#eef9ff,#daf2ff,#f7fcff) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(124,196,232,0.38) !important; }
+    .st-px-avatar-wrap.af-lux-seraph-wings { border-color: #e6c675 !important; background: linear-gradient(135deg,#fffdf7,#faf2de,#ffffff) !important; box-shadow: inset 0 0 0 1px #ffffff, 0 2px 10px rgba(230,198,117,0.42) !important; }
+    .st-px-avatar-wrap.af-lux-royal-cat { border-color: #d9828c !important; background: linear-gradient(135deg,#fff8f5,#fcebe8,#fffdf7) !important; box-shadow: inset 0 0 0 1px #f5d682, 0 2px 10px rgba(217,130,140,0.4) !important; }
+    .st-px-avatar-wrap.af-lux-ribbon-bunny { border-color: #e3a3b8 !important; background: linear-gradient(135deg,#fff7fa,#fcebf1,#ffffff) !important; box-shadow: inset 0 0 0 1px #ffffff, 0 2px 10px rgba(227,163,184,0.42) !important; }
+    .st-px-avatar-wrap.af-lux-crown-fox { border-color: #c9b5d9 !important; background: linear-gradient(135deg,#faf8ff,#eef2fc,#ffffff) !important; box-shadow: inset 0 0 0 1px #f0d68a, 0 2px 10px rgba(180,165,210,0.42) !important; }
     .st-px-avatar-wrap.af-cloud-gallery { border-color: #cfb07c !important; background: linear-gradient(135deg,#fffaf0,#f5ead6,#fffdf7) !important; box-shadow: inset 0 0 0 1.5px #ffffff, 0 2px 8px rgba(186,154,104,0.34) !important; }
     .st-px-avatar-wrap.af-dyn-windmill { border-color: #e395ab !important; background: linear-gradient(135deg,#fff7f9,#fce6ee,#fffdf9) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(227,149,171,0.36) !important; }
     .st-px-avatar-wrap.af-dyn-vinyl-music { border-color: #a9bed9 !important; background: linear-gradient(135deg,#f4f8fc,#e8f0fa,#fbfdff) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(155,178,208,0.38) !important; }
@@ -33767,15 +33776,17 @@
             openFriendRequestModal(g);
             continue;
           }
-          // 收到好友私聊消息
+          // 收到好友私聊消息（支持单条与连发合并批量包）
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__dm_chat__') {
-            const meta = g.gifts[0];
             const fid = String(g.fromId || '').trim();
             if (fid) {
               if (!config.puppyDmHistory || typeof config.puppyDmHistory !== 'object') config.puppyDmHistory = {};
               if (!Array.isArray(config.puppyDmHistory[fid])) config.puppyDmHistory[fid] = [];
-              const msgId = String(meta.id || g.gid || `dm_${Date.now()}`);
-              if (!config.puppyDmHistory[fid].some(m => m.id === msgId)) {
+              let addedCnt = 0;
+              g.gifts.forEach((meta, mIdx) => {
+                if (!meta || meta.kind !== '__dm_chat__') return;
+                const msgId = String(meta.id || `${g.gid}_${mIdx}`);
+                if (config.puppyDmHistory[fid].some(m => m.id === msgId)) return;
                 config.puppyDmHistory[fid].push({
                   id: msgId,
                   dir: 'them',
@@ -33788,6 +33799,9 @@
                   bubFg: String(meta.bubFg || ''),
                   ts: Number(meta.ts || g.ts || Date.now()),
                 });
+                addedCnt++;
+              });
+              if (addedCnt > 0) {
                 if (config.puppyDmHistory[fid].length > 80) {
                   config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
                 }
@@ -33797,11 +33811,11 @@
                   if (typeof renderFriendDmMessages === 'function') renderFriendDmMessages(fid);
                 } else {
                   if (!config.puppyDmUnread || typeof config.puppyDmUnread !== 'object') config.puppyDmUnread = {};
-                  config.puppyDmUnread[fid] = Math.max(0, Number(config.puppyDmUnread[fid] || 0)) + 1;
+                  config.puppyDmUnread[fid] = Math.max(0, Number(config.puppyDmUnread[fid] || 0)) + addedCnt;
                   if (typeof syncDmPillBadge === 'function') syncDmPillBadge();
                   if (config.puppyEnabled) {
-                    const fName = g.fromName || (getFriendList().find(x => x.cloudId === fid)?.name) || '好友';
-                    showPuppyBubble(`${fName} 发来一条私聊消息~`, 2400);
+                    const fName = getFriendDisplayName(fid, g.fromName || (getFriendList().find(x => x.cloudId === fid)?.name) || '好友');
+                    showPuppyBubble(`${fName} 发来 ${addedCnt > 1 ? addedCnt + ' 条' : '一条'}私聊消息~`, 2400);
                   }
                 }
                 saveConfig();
@@ -36819,6 +36833,14 @@
     { id: 'funny_anim_laugh', name: '拍桌狂笑', cat: 'funny', anim: true },
     { id: 'funny_anim_ascend', name: '原地升天', cat: 'funny', anim: true },
     { id: 'funny_anim_boom', name: '气到冒烟', cat: 'funny', anim: true },
+    { id: 'funny_anim_eye_pop', name: '眼珠弹飞', cat: 'funny', anim: true },
+    { id: 'funny_anim_dizzy_spin', name: '大脑宕机', cat: 'funny', anim: true },
+    { id: 'funny_anim_sneeze', name: '阿嚏喷嚏', cat: 'funny', anim: true },
+    { id: 'funny_anim_money_rain', name: '撒币狂喜', cat: 'funny', anim: true },
+    { id: 'funny_anim_cry_shake', name: '哭到发抖', cat: 'funny', anim: true },
+    { id: 'funny_anim_chomp', name: '狂炫干饭', cat: 'funny', anim: true },
+    { id: 'funny_anim_sweat_drop', name: '冷汗直冒', cat: 'funny', anim: true },
+    { id: 'funny_anim_party_crazy', name: '蹦迪狂欢', cat: 'funny', anim: true },
   ];
 
   const isHeadAccessoryId = (accId) => {
@@ -36845,7 +36867,7 @@
       const ear = pal.e || '#e2ae74';
       const out = pal.o || '#3b2a22';
       const f = animFrame % 4;
-      const fx = stickerId === 'funny_anim_shake' ? (f === 1 ? -2 : (f === 3 ? 2 : 0)) : 0;
+      const fx = (stickerId === 'funny_anim_shake' || stickerId === 'funny_anim_party_crazy') ? (f === 1 ? -2 : (f === 3 ? 2 : 0)) : (stickerId === 'funny_anim_cry_shake' ? (f % 2 === 0 ? -1 : 1) : 0);
       const fy = (stickerId === 'funny_anim_laugh' ? (f % 2 === 1 ? 1 : -1) : (stickerId === 'funny_anim_ascend' ? -f : 0));
       const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x + fx, y + fy, w, h); };
       const pAbs = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
@@ -36921,7 +36943,51 @@
         p(8, 10, out); p(9, 11, out, 2, 1); p(15, 10, out); p(13, 11, out, 2, 1);
         p(9, 15, '#e84858', 6, 2);
         const sy = 2 - (f % 2);
-        pAbs(7, sy, '#ffffff', 4, 3); pAbs(13, sy + 1, '#e8e8e8', 4, 3); // 头顶冒白烟
+        pAbs(7, sy, '#ffffff', 4, 3); pAbs(13, sy + 1, '#e8e8e8', 4, 3);
+      } else if (sub === 'anim_eye_pop') {
+        const pop = (f % 2 === 1) ? 2 : 0;
+        p(7 - pop, 10 - pop, '#fff', 4 + pop, 4 + pop); p(13, 10 - pop, '#fff', 4 + pop, 4 + pop);
+        p(8 - pop, 11 - pop, out, 2, 2); p(14 + pop, 11 - pop, out, 2, 2);
+        p(10, 15, out, 4, 3);
+      } else if (sub === 'anim_dizzy_spin') {
+        p(8, 10, f % 2 === 0 ? out : '#5a78b5', 3, 3); p(9, 11, '#fff', 1, 1);
+        p(13, 10, f % 2 === 1 ? out : '#5a78b5', 3, 3); p(14, 11, '#fff', 1, 1);
+        p(10, 15, out, 4, 1);
+        const sp = [[6, 2], [11, 1], [16, 2], [11, 4]][f];
+        pAbs(sp[0], sp[1], '#ffe066', 3, 2);
+      } else if (sub === 'anim_sneeze') {
+        if (f < 2) {
+          p(8, 11, out, 3, 1); p(13, 11, out, 3, 1); p(11, 15, out, 2, 1);
+        } else {
+          p(8, 11, out, 3, 1); p(13, 11, out, 3, 1); p(10, 14, '#ff7a96', 4, 3);
+          pAbs(18, 13, '#ffffff', 5, 2); pAbs(19, 11, '#d6f2ff', 4, 2); pAbs(19, 16, '#ffffff', 4, 2);
+        }
+      } else if (sub === 'anim_money_rain') {
+        p(7, 10, '#f5c84c', 4, 3); p(8, 11, '#fff9d6', 2, 1);
+        p(13, 10, '#f5c84c', 4, 3); p(14, 11, '#fff9d6', 2, 1);
+        p(10, 15, '#ff8aa6', 4, 2);
+        pAbs(2, (f * 5) % 18, '#f5c84c', 3, 3); pAbs(19, ((f * 5) + 9) % 18, '#f5c84c', 3, 3);
+      } else if (sub === 'anim_cry_shake') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2);
+        p(8, 13, '#7cc6f7', 2, 8); p(14, 13, '#7cc6f7', 2, 8);
+        p(8, 14 + (f % 2), '#ffffff', 1, 2); p(14, 14 + (f % 2), '#ffffff', 1, 2);
+        p(10, 15, out, 4, 2);
+      } else if (sub === 'anim_chomp') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2);
+        if (f % 2 === 0) {
+          p(8, 14, out, 8, 3); p(9, 15, '#ff8aa6', 6, 2);
+          p(14, 15, '#d98a42', 6, 3); p(19, 16, '#fff', 3, 2); // 鸡腿
+        } else {
+          p(9, 15, out, 6, 1); p(13, 14, '#d98a42', 5, 3); p(18, 15, '#fff', 2, 2);
+        }
+      } else if (sub === 'anim_sweat_drop') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(10, 15, out, 4, 1);
+        pAbs(18, 4 + f * 2, '#7cc6f7', 2, 4); pAbs(19, 3 + f * 2, '#ffffff', 1, 1);
+      } else if (sub === 'anim_party_crazy') {
+        const sc = ['#ff6b9d', '#ffe066', '#6be5ff', '#8be0b8'][f];
+        p(6, 10, sc, 5, 3); p(13, 10, sc, 5, 3); p(11, 10, '#231814', 2, 1);
+        p(10, 15, '#ff8aa6', 4, 2);
+        pAbs(2, 2 + (f % 2) * 2, sc, 3, 2); pAbs(19, 4 - (f % 2) * 2, sc, 3, 2);
       } else {
         p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1);
         p(6, 14, '#ff8ca8', 3, 2); p(15, 14, '#ff8ca8', 3, 2); p(11, 15, out, 2, 1);
@@ -37472,15 +37538,17 @@
       listEl.innerHTML = `<div style="text-align:center;font-size:10.5px;opacity:0.65;padding:24px 8px;">${q ? '没有搜到包含该关键词的聊天记录~' : '还没有聊天记录，发句话或小狗表情包打个招呼吧~'}</div>`;
       return;
     }
-    const lay = Object.assign({ avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11 }, config.puppyDmLayout || {});
+    const lay = Object.assign({ avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub' }, config.puppyDmLayout || {});
     msgs.forEach(m => {
       const isMe = m.dir === 'me';
       const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
       row.style.cssText = `display:flex;align-items:flex-start;gap:${lay.bubGap}px;margin-bottom:${lay.rowGap}px;padding:4px ${lay.avPad}px 0;${isMe ? 'flex-direction:row-reverse;' : ''}`;
-      const avWrap = makeDmHeadAvatar(senderLook, 34);
+      const avCol = doc.createElement('div');
+      avCol.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;';
+      avCol.appendChild(makeDmHeadAvatar(senderLook, 34));
       const bubCol = doc.createElement('div');
-      bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
+      bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;margin-top:${lay.bubTop}px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
       const bub = doc.createElement('div');
       const bodyEl = doc.createElement('div');
       bodyEl.style.cssText = 'position:relative;z-index:1;';
@@ -37503,44 +37571,43 @@
       applyDmBubbleSkin(bub, isMe ? 'me' : 'them', m);
       bub.style.padding = m.sticker ? `${Math.max(3, lay.bubPad - 1)}px ${lay.bubPad + 1}px` : `${lay.bubPad}px ${lay.bubPad + 4}px`;
       bub.style.fontSize = `${lay.fontSize}px`;
-      const tm = doc.createElement('div');
-      tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;';
       const dObj = new Date(m.ts || Date.now());
-      tm.textContent = `${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
-      bubCol.append(bub, tm);
-      row.append(avWrap, bubCol);
+      const tmTxt = `${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
+      if (lay.showTime !== false) {
+        const tm = doc.createElement('div');
+        tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;flex-shrink:0;';
+        tm.textContent = tmTxt;
+        if (lay.timePos === 'below_av') {
+          avCol.appendChild(tm);
+          bubCol.appendChild(bub);
+        } else if (lay.timePos === 'beside_bub') {
+          const line = doc.createElement('div');
+          line.style.cssText = `display:flex;align-items:flex-end;gap:5px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+          line.append(bub, tm);
+          bubCol.appendChild(line);
+        } else {
+          bubCol.append(bub, tm);
+        }
+      } else {
+        bubCol.appendChild(bub);
+      }
+      row.append(avCol, bubCol);
       listEl.appendChild(row);
     });
     listEl.scrollTop = listEl.scrollHeight;
   };
 
-    let dmSendBusy = false;
-  const sendFriendDmMessage = async (fid, fname, text, sticker = '', stickerLook = null) => {
-    if (dmSendBusy) return;
-    const cleanTxt = String(text || '').trim().slice(0, 300);
-    if (!cleanTxt && !sticker) return;
-    dmSendBusy = true;
+    // 连发合并队列：2.5 秒内发给同一好友的多条文字/表情包自动合并为 1 次云端写入，大幅节省 Cloudflare KV 每日写入额度！
+  const dmOutQueue = new Map();
+  const flushDmBatch = async (fid) => {
+    const q = dmOutQueue.get(fid);
+    if (!q || !q.items.length) return;
+    clearTimeout(q.timer);
+    const batch = q.items.splice(0, q.items.length);
+    dmOutQueue.delete(fid);
     try {
-      const nowTs = Date.now();
-      const msgId = `dm_${nowTs}_${Math.floor(Math.random() * 9999)}`;
-      if (!config.puppyDmHistory || typeof config.puppyDmHistory !== 'object') config.puppyDmHistory = {};
-      if (!Array.isArray(config.puppyDmHistory[fid])) config.puppyDmHistory[fid] = [];
-      const bubId = config.puppyBubbleSkin || 'bub_default';
-      const bubBg = config.puppyBubOverrideCol ? (config.puppyBubBgCol || '') : '';
-      const bubBd = config.puppyBubOverrideCol ? (config.puppyBubBorderCol || '') : '';
-      const bubFg = config.puppyBubOverrideCol ? (config.puppyBubTextCol || '') : '';
-      const stLkCompact = stickerLook ? {
-        fur: stickerLook.fur || '', ear: stickerLook.ear || '', collar: stickerLook.collar || '', outline: stickerLook.outline || '', showCollar: stickerLook.showCollar !== false,
-        accs: Array.isArray(stickerLook.accs) ? stickerLook.accs.filter(isHeadAccessoryId) : [],
-        accOffsets: stickerLook.accOffsets || {},
-      } : null;
-      config.puppyDmHistory[fid].push({
-        id: msgId, dir: 'me', text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
-      });
-      if (config.puppyDmHistory[fid].length > 80) config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
-      saveConfig();
-      renderFriendDmMessages(fid);
       const baseUrl = getCloudBaseUrl();
+      const last = batch[batch.length - 1];
       await fetchWithTimeout(`${baseUrl}/gift`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37548,15 +37615,48 @@
           fromId: ensureMyCloudId(),
           fromName: getPupName(),
           toId: fid,
-          gifts: [{ kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs }],
+          gifts: batch,
           redPacket: 0,
-          msg: cleanTxt || `[${PUP_DM_STICKERS.find(s => s.id === sticker)?.name || '表情包'}]`,
+          msg: last.text || `[${PUP_DM_STICKERS.find(s => s.id === last.sticker)?.name || '表情包'}]`,
         }),
       }, 9000);
     } catch (_) {
-      openPixelPupNoticeModal('发送失败', '网络波动，消息未能送达，请稍后再试~');
-    } finally {
-      dmSendBusy = false;
+      openPixelPupNoticeModal('发送失败', '网络波动，部分私聊消息未能送达，请稍后再试~');
+    }
+  };
+  win.addEventListener('pagehide', () => { Array.from(dmOutQueue.keys()).forEach(fid => flushDmBatch(fid)); });
+
+  const sendFriendDmMessage = async (fid, fname, text, sticker = '', stickerLook = null) => {
+    const cleanTxt = String(text || '').trim().slice(0, 300);
+    if (!cleanTxt && !sticker) return;
+    const nowTs = Date.now();
+    const msgId = `dm_${nowTs}_${Math.floor(Math.random() * 9999)}`;
+    if (!config.puppyDmHistory || typeof config.puppyDmHistory !== 'object') config.puppyDmHistory = {};
+    if (!Array.isArray(config.puppyDmHistory[fid])) config.puppyDmHistory[fid] = [];
+    const bubId = config.puppyBubbleSkin || 'bub_default';
+    const bubBg = config.puppyBubOverrideCol ? (config.puppyBubBgCol || '') : '';
+    const bubBd = config.puppyBubOverrideCol ? (config.puppyBubBorderCol || '') : '';
+    const bubFg = config.puppyBubOverrideCol ? (config.puppyBubTextCol || '') : '';
+    const stLkCompact = stickerLook ? {
+      fur: stickerLook.fur || '', ear: stickerLook.ear || '', collar: stickerLook.collar || '', outline: stickerLook.outline || '', showCollar: stickerLook.showCollar !== false,
+      accs: Array.isArray(stickerLook.accs) ? stickerLook.accs.filter(isHeadAccessoryId) : [],
+      accOffsets: stickerLook.accOffsets || {},
+    } : null;
+    const payloadItem = { kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs };
+    config.puppyDmHistory[fid].push({
+      id: msgId, dir: 'me', text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
+    });
+    if (config.puppyDmHistory[fid].length > 80) config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
+    saveConfig();
+    renderFriendDmMessages(fid);
+    let q = dmOutQueue.get(fid);
+    if (!q) { q = { items: [], timer: null }; dmOutQueue.set(fid, q); }
+    q.items.push(payloadItem);
+    clearTimeout(q.timer);
+    if (q.items.length >= 8) {
+      flushDmBatch(fid);
+    } else {
+      q.timer = setTimeout(() => flushDmBatch(fid), 2500);
     }
   };
 
@@ -37644,7 +37744,20 @@
           <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">气泡间距</span><input id="st-dm-lay-bgap" type="range" min="4" max="20" step="1" class="st-px-range" /><span id="st-dm-lay-bgap-v" style="width:26px;text-align:right;">11</span></div>
           <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">气泡内距</span><input id="st-dm-lay-bpad" type="range" min="3" max="14" step="1" class="st-px-range" /><span id="st-dm-lay-bpad-v" style="width:26px;text-align:right;">6</span></div>
           <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">上下行距</span><input id="st-dm-lay-rgap" type="range" min="4" max="24" step="1" class="st-px-range" /><span id="st-dm-lay-rgap-v" style="width:26px;text-align:right;">13</span></div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">气泡上下</span><input id="st-dm-lay-btop" type="range" min="-6" max="14" step="1" class="st-px-range" /><span id="st-dm-lay-btop-v" style="width:26px;text-align:right;">0px</span></div>
           <div style="display:flex;align-items:center;gap:5px;font-size:9.5px;"><span style="width:52px;flex-shrink:0;">文字大小</span><input id="st-dm-lay-fs" type="range" min="9" max="16" step="1" class="st-px-range" /><span id="st-dm-lay-fs-v" style="width:26px;text-align:right;">11</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:9.5px;margin-top:2px;">
+            <span>显示时间戳</span>
+            <button type="button" id="st-dm-lay-time-tg" class="st-px-btn active" style="height:19px;padding:0 7px;font-size:9px;">开</button>
+          </div>
+          <div id="st-dm-lay-timepos-row" style="display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:9.5px;">
+            <span>时间位置</span>
+            <div style="display:flex;gap:3px;">
+              <button type="button" class="st-px-btn st-dm-tpos-btn" data-tpos="below_bub" style="height:18px;padding:0 5px;font-size:8.5px;">气泡下</button>
+              <button type="button" class="st-px-btn st-dm-tpos-btn" data-tpos="beside_bub" style="height:18px;padding:0 5px;font-size:8.5px;">气泡旁</button>
+              <button type="button" class="st-px-btn st-dm-tpos-btn" data-tpos="below_av" style="height:18px;padding:0 5px;font-size:8.5px;">头像下</button>
+            </div>
+          </div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
           <button type="button" id="st-dm-act-gift" class="st-px-btn care" style="height:21px;font-size:9.5px;padding:0 2px;">送礼</button>
@@ -37914,7 +38027,7 @@
       openPixelPupNoticeModal('已复制聊天记录', `共复制 ${list.length} 条与「${taN}」的私聊记录到剪贴板~`, '好哒');
     });
     const layBox = panel.querySelector('#st-dm-lay-box');
-    const layDefs = { avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11 };
+    const layDefs = { avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub' };
     const syncLayInputs = () => {
       const cur = Object.assign({}, layDefs, config.puppyDmLayout || {});
       const pairs = [
@@ -37922,6 +38035,7 @@
         ['#st-dm-lay-bgap', '#st-dm-lay-bgap-v', 'bubGap'],
         ['#st-dm-lay-bpad', '#st-dm-lay-bpad-v', 'bubPad'],
         ['#st-dm-lay-rgap', '#st-dm-lay-rgap-v', 'rowGap'],
+        ['#st-dm-lay-btop', '#st-dm-lay-btop-v', 'bubTop'],
         ['#st-dm-lay-fs', '#st-dm-lay-fs-v', 'fontSize'],
       ];
       pairs.forEach(([iSel, vSel, key]) => {
@@ -37930,6 +38044,11 @@
         if (inp) inp.value = String(cur[key]);
         if (valEl) valEl.textContent = `${cur[key]}px`;
       });
+      const tg = panel.querySelector('#st-dm-lay-time-tg');
+      const tpRow = panel.querySelector('#st-dm-lay-timepos-row');
+      if (tg) { tg.textContent = cur.showTime !== false ? '开' : '关'; tg.classList.toggle('active', cur.showTime !== false); }
+      if (tpRow) tpRow.style.display = cur.showTime !== false ? 'flex' : 'none';
+      panel.querySelectorAll('.st-dm-tpos-btn').forEach(b => b.classList.toggle('active', (b.dataset.tpos || 'below_bub') === (cur.timePos || 'below_bub')));
     };
     syncLayInputs();
     panel.querySelector('#st-dm-lay-toggle')?.addEventListener('click', (e) => {
@@ -37951,6 +38070,7 @@
       ['#st-dm-lay-bgap', '#st-dm-lay-bgap-v', 'bubGap'],
       ['#st-dm-lay-bpad', '#st-dm-lay-bpad-v', 'bubPad'],
       ['#st-dm-lay-rgap', '#st-dm-lay-rgap-v', 'rowGap'],
+      ['#st-dm-lay-btop', '#st-dm-lay-btop-v', 'bubTop'],
       ['#st-dm-lay-fs', '#st-dm-lay-fs-v', 'fontSize'],
     ].forEach(([iSel, vSel, key]) => {
       const inp = panel.querySelector(iSel);
@@ -37959,6 +38079,24 @@
         const valEl = panel.querySelector(vSel);
         if (valEl) valEl.textContent = `${inp.value}px`;
         saveConfig();
+        renderFriendDmMessages(fid);
+      });
+    });
+        panel.querySelector('#st-dm-lay-time-tg')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const cur = Object.assign({}, layDefs, config.puppyDmLayout || {});
+      cur.showTime = cur.showTime === false;
+      config.puppyDmLayout = cur;
+      saveConfig();
+      syncLayInputs();
+      renderFriendDmMessages(fid);
+    });
+    panel.querySelectorAll('.st-dm-tpos-btn').forEach(tb => {
+      tb.addEventListener('click', (e) => {
+        e.stopPropagation();
+        config.puppyDmLayout = Object.assign({}, layDefs, config.puppyDmLayout || {}, { timePos: tb.dataset.tpos || 'below_bub' });
+        saveConfig();
+        syncLayInputs();
         renderFriendDmMessages(fid);
       });
     });
@@ -43611,18 +43749,18 @@
       return;
     }
     if (m === 'shibatoast') {
-      // 芝士吐司框：顶边暖金融化芝士滴 + 左下圆滚滚笑脸烤吐司
-      _px(10, 7, '#d99a4e', 44, 3); // 烤吐司脆边
-      _px(12, 8, '#ffe066', 40, 2);
-      _px(16, 10, '#ffe066', 4, 3 + (_bob > 0 ? 1 : 0)); _px(30, 10, '#ffd24c', 5, 4); _px(46, 10, '#ffe066', 4, 2 + (_bob2 > 0 ? 1 : 0));
-      // 左下笑眯眯小吐司
-      const tx = 4, ty = 46 + (_bob > 0 ? 0 : 1);
-      _px(tx, ty, '#c9823c', 13, 12); _px(tx + 1, ty - 1, '#c9823c', 11, 2);
-      _px(tx + 2, ty + 1, '#fff2d6', 9, 9);
-      _px(tx + 4, ty + 4, '#3b2a22', 1, 1); _px(tx + 8, ty + 4, '#3b2a22', 1, 1);
-      _px(tx + 3, ty + 6, '#ffb5c4', 2, 1); _px(tx + 8, ty + 6, '#ffb5c4', 2, 1);
-      _px(tx + 6, ty + 6, '#3b2a22', 1, 1);
-      _px(53, 50 - _bob, '#ffe066', 5, 4); _px(54, 51 - _bob, '#fff7cc', 2, 2); // 右下小黄油块
+      // 芝士吐司框（不对称精致版）：右上角斜盖一片融化流心芝士 + 左下角立体烤脆边小吐司与微热气
+      _px(36, 6, '#ffe066', 18, 4); _px(40, 10, '#ffd24c', 14, 3);
+      _px(43, 13, '#ffe066', 3, 3 + (_bob > 0 ? 1 : 0)); _px(50, 13, '#ffd24c', 4, 5 + (_bob2 > 0 ? 1 : 0));
+      _px(38, 7, '#fff7cc', 8, 1); // 芝士高光
+      // 左下圆润烤吐司片 + 一小块融化黄油
+      const tx = 3, ty = 45 + (_bob > 0 ? 0 : 1);
+      _px(tx + 1, ty, '#b87232', 11, 2); _px(tx, ty + 2, '#c9823c', 13, 11);
+      _px(tx + 2, ty + 2, '#fff5de', 9, 9); _px(tx + 3, ty + 1, '#fff5de', 7, 2);
+      _px(tx + 4, ty + 4, '#ffe066', 4, 4); _px(tx + 5, ty + 5, '#fff9d6', 2, 2); // 融化小黄油
+      // 袅袅白热气
+      _px(tx + 5 + (_bob > 0 ? 1 : 0), ty - 4, 'rgba(255,255,255,0.85)', 2, 3);
+      _px(tx + 9 - (_bob > 0 ? 1 : 0), ty - 3, 'rgba(255,255,255,0.7)', 1, 2);
       return;
     }
     if (m === 'greenhouse') {
@@ -43657,35 +43795,224 @@
       return;
     }
     if (m === 'windmill') {
-      // 甜莓奶盖框：顶边软绵绵波浪奶盖 + 晶莹小红草莓 + 弹跳小奶珠
-      for (let x = 8; x <= 54; x += 4) {
-        _px(x, 6, '#ffffff', 4, 4);
-        _px(x + 1, 10, '#fff5f8', 2, (x % 8 === 0) ? 3 : 2);
-      }
-      const drawBerry = (bx, by) => {
-        _px(bx + 1, by - 1, '#6eb878', 4, 2);
-        _px(bx, by + 1, '#f05a72', 6, 4); _px(bx + 1, by + 5, '#f05a72', 4, 2);
-        _px(bx + 1, by + 2, '#ffe8ee', 1, 1); _px(bx + 4, by + 3, '#ffe8ee', 1, 1);
-      };
-      drawBerry(5, 48 + _bob);
-      drawBerry(53, 48 - _bob);
-      drawBerry(29, 3);
-      _px(6, 24 + _bob2 * 2, '#ffffff', 3, 3); _px(55, 30 - _bob2 * 2, '#ffd6e4', 3, 3);
+      // 甜莓奶盖框（不对称设计）：顶边一侧厚一侧薄斜淋奶盖 + 左上斜放红草莓切面 + 右下奶油花与跳动奶珠
+      _px(10, 6, '#ffffff', 26, 4); _px(14, 10, '#fff5f8', 6, 4); _px(25, 10, '#ffffff', 5, 2 + (_bob > 0 ? 1 : 0));
+      _px(36, 7, '#fff5f8', 16, 2); _px(44, 9, '#ffffff', 4, 2);
+      // 左上角斜放红草莓与绿叶
+      _px(4, 5, '#6eb878', 5, 2); _px(3, 7, '#f05a72', 7, 5); _px(4, 12, '#f05a72', 5, 2);
+      _px(5, 9, '#ffe8ee', 1, 1); _px(8, 10, '#ffe8ee', 1, 1);
+      // 右下角奶油小花 + 弹跳奶珠
+      _px(50, 50, '#ffffff', 7, 5); _px(52, 48, '#ffffff', 3, 2); _px(52, 51, '#ffadc4', 3, 2);
+      _px(43, 54 - Math.abs(_bob), '#ffffff', 3, 3); _px(56, 41 + _bob2, '#ffd6e4', 2, 2);
       return;
     }
     if (m === 'vinylmusic') {
-      // 月光铃兰框：两侧翠绿弯茎 + 摇曳纯白铃兰花铃 + 银白露珠微光
+      // 月光铃兰框（优雅不对称构图）：左上斜探一枝翠绿花茎垂下三朵错落白铃兰 + 右下小银月与星尘
       const sw = Math.round(Math.sin(t * 0.22));
-      _px(5, 16, '#7cb585', 2, 34); _px(7, 14, '#7cb585', 4, 2);
-      _px(57, 16, '#7cb585', 2, 34); _px(53, 14, '#7cb585', 4, 2);
+      // 左上斜拱花茎
+      _px(6, 36, '#6ca676', 2, 16); _px(7, 22, '#6ca676', 2, 14); _px(8, 12, '#7cb886', 2, 10);
+      _px(10, 8, '#7cb886', 10, 2); _px(20, 7, '#8ec998', 8, 2);
+      // 一片托叶在左下
+      _px(3, 44, '#5e9668', 5, 6); _px(5, 42, '#7cb886', 4, 4);
+      // 三朵错落垂挂的纯白铃兰花铃
       const drawBell = (bx, by) => {
-        _px(bx + 1, by, '#ffffff', 4, 3); _px(bx, by + 3, '#eef5fc', 6, 2);
-        _px(bx + 2, by + 5, '#ffe899', 2, 1);
+        _px(bx + 1, by, '#ffffff', 4, 3); _px(bx, by + 3, '#eef5fc', 6, 2); _px(bx + 2, by + 5, '#ffe899', 2, 1);
       };
-      drawBell(6 + sw, 18); drawBell(4 + sw, 30); drawBell(5 + sw, 42);
-      drawBell(52 - sw, 18); drawBell(54 - sw, 30); drawBell(53 - sw, 42);
-      _px(30, 4, '#fff9d6', 4, 4); _px(32, 5, '#dce8f7', 2, 2); // 顶部小银月
-      if ((t % 10) < 5) { _px(18, 55, '#ffffff', 2, 2); _px(46, 55, '#cfe3fa', 2, 2); }
+      drawBell(11 + sw, 10);
+      drawBell(22 + sw, 9);
+      drawBell(4 + sw, 24);
+      // 右下弯弯小银月与银白微光
+      _px(50, 48, '#fff7cc', 7, 8); _px(53, 49, '#dce8f7', 5, 6);
+      if ((t % 10) < 5) { _px(46, 54, '#ffffff', 2, 2); _px(56, 42, '#d2e4fa', 2, 2); }
+      return;
+    }
+    if (m === 'berry') {
+      // 草莓牛奶（不对称重做）：顶边柔和粉白奶浪 + 右上斜切草莓 + 左下迷你玻璃草莓牛奶瓶
+      _px(22, 6, '#ffe6ef', 28, 3); _px(28, 9, '#ffffff', 6, 2); _px(42, 9, '#ffd6e6', 4, 3 + (_bob > 0 ? 1 : 0));
+      // 左下迷你草莓牛奶瓶
+      _px(4, 42, '#ffffff', 6, 2); _px(3, 44, '#ffd6e6', 8, 12); _px(4, 45, '#ffadc8', 6, 9);
+      _px(5, 48, '#ffffff', 4, 3); _px(6, 49, '#f05a72', 2, 1); // 瓶身小草莓贴纸
+      // 右上红草莓与跃动奶珠
+      _px(51, 5, '#6eb878', 5, 2); _px(50, 7, '#f05a72', 7, 5); _px(51, 12, '#f05a72', 5, 2);
+      _px(52, 9, '#fff5f8', 1, 1); _px(55, 10, '#fff5f8', 1, 1);
+      _px(56, 26 + _bob2 * 2, '#ffffff', 2, 2);
+      return;
+    }
+    if (m === 'clover') {
+      // 四叶草微风（不对称清新重做）：右上斜吹淡绿微风线 + 左下错落四叶草簇 + 飘飞嫩叶
+      const wx = (t * 2) % 24;
+      _px(32 + (wx % 12), 6, 'rgba(138,204,132,0.75)', 12, 1);
+      _px(38 + (wx % 10), 8, 'rgba(184,235,174,0.85)', 8, 1);
+      // 左下四叶草簇
+      const drawClover = (cx, cy, c1, c2) => {
+        _px(cx + 1, cy, c1, 2, 2); _px(cx + 4, cy, c2, 2, 2);
+        _px(cx + 1, cy + 3, c2, 2, 2); _px(cx + 4, cy + 3, c1, 2, 2);
+        _px(cx + 3, cy + 2, '#fff9d6', 1, 1);
+      };
+      drawClover(4, 49 + (_bob > 0 ? 0 : 1), '#72bd6c', '#98db92');
+      drawClover(12, 52, '#88cc82', '#b2e8ad');
+      // 随风斜飘的一片小嫩叶
+      const lx = 54 - ((t * 2) % 28), ly = 12 + ((t) % 16);
+      if (lx > 48 || ly < 14) { _px(lx, ly, '#88cc82', 3, 2); _px(lx + 1, ly - 1, '#c4f2bf', 2, 1); }
+      return;
+    }
+    if (m === 'mooncloud') {
+      // 云朵小弯月（不对称重做）：左上立体奶黄弯月配小星 + 右下层叠蓬松飘云
+      _px(5, 4 + (_bob > 0 ? 0 : 1), '#ffe685', 8, 9); _px(8, 5 + (_bob > 0 ? 0 : 1), '#d6d4ec', 6, 7);
+      _px(16, 6, '#fff7cc', 2, 2); _px(4, 17, '#ffffff', 1, 1);
+      // 右下层叠白云轻漂
+      const cx = 34 + Math.round(Math.sin(t * 0.16) * 3);
+      _px(cx, 51, '#ffffff', 20, 6); _px(cx + 3, 48, '#ffffff', 12, 3); _px(cx + 8, 46, '#f2f7ff', 6, 2);
+      _px(cx + 2, 55, '#dce8f7', 16, 2);
+      return;
+    }
+    if (m === 'leaf') {
+      // 秋日小枫叶（不对称重做）：右上暖棕细枝探出 + 错落红橙金枫叶沿对角轻落
+      _px(44, 5, '#8c5a38', 14, 2); _px(54, 7, '#8c5a38', 2, 8);
+      const drawMaple = (mx, my, c1, c2) => {
+        _px(mx + 2, my, c1, 2, 2); _px(mx, my + 2, c2, 6, 2); _px(mx + 1, my + 4, c1, 4, 2); _px(mx + 2, my + 6, '#8c5a38', 1, 1);
+      };
+      drawMaple(49, 8 + _bob, '#d95b43', '#f28b50');
+      drawMaple(53, 26 + _bob2 * 2, '#f29f4b', '#f7c865');
+      drawMaple(5, 49 - _bob, '#c94a38', '#e87846');
+      return;
+    }
+    if (m === 'seasoda') {
+      // 海盐汽水框（替换风车草坡）：右下透明玻璃汽水杯配柠檬片与薄荷叶 + 晶莹气泡升腾
+      _px(47, 42, '#ffffff', 11, 15); _px(48, 44, '#8ce0ff', 9, 12); _px(49, 45, '#b8efff', 7, 4);
+      _px(55, 38, '#ff8aa6', 2, 5); // 吸管
+      _px(45, 41, '#ffe066', 4, 4); _px(46, 42, '#fff9d6', 2, 2); // 柠檬片
+      _px(49, 40, '#6eb878', 3, 2); // 薄荷叶
+      for (let i = 0; i < 4; i++) {
+        const by1 = 40 - ((t * 2 + i * 9) % 32);
+        const bx1 = 48 + (i * 3) % 10;
+        _px(bx1, by1, '#ffffff', 2, 2); _px(bx1, by1, '#b8efff', 1, 1);
+      }
+      _px(6, 53, '#d6f4ff', 14, 3); _px(8, 52, '#ffffff', 6, 1);
+      return;
+    }
+    if (m === 'jellyfish') {
+      // 水母浮游框（丰富版）：右上透明大水母轻盈舒展触手 + 左下迷你小水母 + 细密上升水泡
+      const jy = 5 + _bob * 2;
+      _px(49, jy, '#c4eeff', 10, 4); _px(48, jy + 3, '#e6f7ff', 12, 3); _px(51, jy + 1, '#ffffff', 4, 2);
+      _px(49, jy + 6, '#d4c2ff', 2, 6 + (_bob > 0 ? 1 : 0)); _px(53, jy + 6, '#99e6ff', 2, 8); _px(57, jy + 6, '#d4c2ff', 2, 5 - (_bob > 0 ? 1 : 0));
+      // 左下迷你小水母
+      const my = 47 - _bob;
+      _px(5, my, '#d8ccff', 7, 3); _px(6, my + 1, '#ffffff', 2, 1);
+      _px(6, my + 3, '#b8e8ff', 1, 4); _px(9, my + 3, '#d8ccff', 1, 5);
+      // 上升水泡
+      _px(55, 46 - ((t * 2) % 24), '#ffffff', 2, 2); _px(7, 38 - ((t * 2 + 8) % 24), '#c4eeff', 2, 2);
+      return;
+    }
+    if (m === 'puddingcat') {
+      // 焦糖布丁框（丰富版）：右下Q弹焦糖樱桃布丁左右晃动 + 左上焦糖丝 + 柔和金点
+      const sw = Math.round(Math.sin(t * 0.25));
+      _px(46 + sw, 47, '#ffe082', 12, 8); _px(47 + sw, 45, '#b8682c', 10, 3); _px(48 + sw, 48, '#fff4bd', 3, 4);
+      _px(45, 55, '#ffffff', 14, 2); // 小白盘
+      _px(50 + sw, 42, '#f05a72', 4, 3); _px(51 + sw, 42, '#ffd6e2', 1, 1); // 顶部红樱桃
+      // 左上焦糖滴落
+      _px(8, 6, '#c97a38', 16, 3); _px(11, 9, '#b8682c', 4, 3 + (_bob > 0 ? 1 : 0)); _px(18, 9, '#c97a38', 3, 2);
+      if ((t % 10) < 5) { _px(42, 46, '#ffe082', 2, 2); }
+      return;
+    }
+    if (m === 'fish') {
+      // 小金鱼游呀游（丰富版）：橘白双色小金鱼绕框悠游摆尾 + 水波纹 + 左下摇曳小水草
+      const [fx, fy] = perimPt(t * 2);
+      _px(fx - 3, fy - 2, '#ff8c42', 7, 4); _px(fx - 1, fy - 1, '#ffffff', 3, 2);
+      _px(fx - 5, fy - 2 + (t % 2), '#ffb570', 2, 4); _px(fx + 2, fy - 1, '#231814', 1, 1);
+      // 左下摇曳水草
+      const sw = Math.round(Math.sin(t * 0.2));
+      _px(5 + sw, 44, '#66b578', 2, 12); _px(9 - sw, 47, '#84cc94', 2, 9);
+      _px(50, 54, '#b8e8ff', 8, 1); _px(52, 52, '#ffffff', 4, 1); // 柔和池水纹
+      return;
+    }
+    if (m === 'stamppost') {
+      // 邮票信笺框（丰富版）：四边复古邮票齿孔 + 右上红粉波浪邮戳 + 左下火漆小信封
+      for (let i = 10; i <= 52; i += 6) {
+        _px(i, 7, '#ffffff', 3, 2); _px(i, 55, '#ffffff', 3, 2);
+        _px(7, i, '#ffffff', 2, 3); _px(55, i, '#ffffff', 2, 3);
+      }
+      // 右上红粉邮戳圆章与波浪线
+      _px(48, 5, '#e8788a', 8, 8); _px(49, 6, '#fffdf7', 6, 6); _px(50, 8, '#e8788a', 4, 2);
+      _px(38 + (_bob > 0 ? 1 : 0), 7, '#e8788a', 8, 1); _px(39 - (_bob > 0 ? 1 : 0), 10, '#e8788a', 8, 1);
+      // 左下迷你火漆信封
+      _px(3, 48, '#fff7e6', 12, 8); _px(3, 48, '#c9a67d', 12, 1); _px(3, 55, '#c9a67d', 12, 1);
+      _px(4, 49, '#d9b892', 4, 2); _px(10, 49, '#d9b892', 4, 2);
+      _px(8, 51, '#d94858', 3, 3); _px(9, 52, '#ffadc4', 1, 1);
+      return;
+    }
+    if (m === 'halo') {
+      // 小天使翅膀（精确居中于 x=32！）：顶部光环呼吸 + 左右完全对称白羽轻扑
+      const fl = Math.round(Math.sin(t * 0.25) * 1.5);
+      _px(25, 3 + (_bob > 0 ? 0 : 1), '#ffe078', 14, 3); _px(27, 4 + (_bob > 0 ? 0 : 1), '#fffdf2', 10, 1);
+      // 左翼 x=1..9，右翼精确镜像 64 - x - w -> x=54..62
+      _px(2, 24 + fl, '#ffffff', 8, 11); _px(4, 21 + fl, '#ffffff', 6, 3); _px(1, 27 + fl, '#eef5fc', 6, 5);
+      _px(54, 24 + fl, '#ffffff', 8, 11); _px(54, 21 + fl, '#ffffff', 6, 3); _px(57, 27 + fl, '#eef5fc', 6, 5);
+      return;
+    }
+    if (m === 'catclaw') {
+      // 招财小猫耳（精确居中于 x=32！）：左右完全对称猫耳微动 + 顶心小金铃
+      const tw = (t % 16) < 2 ? 1 : 0;
+      // 左耳 x=12..21，右耳精确镜像 x=43..52
+      _px(13, 4 + tw, '#e6b88a', 8, 6); _px(15, 2 + tw, '#e6b88a', 4, 2); _px(15, 5 + tw, '#ffbfd4', 4, 4);
+      _px(43, 4, '#e6b88a', 8, 6); _px(45, 2, '#e6b88a', 4, 2); _px(45, 5, '#ffbfd4', 4, 4);
+      // 左右对称小胡须
+      _px(4, 30, '#8c6a4a', 5, 1); _px(4, 34, '#8c6a4a', 5, 1);
+      _px(55, 30, '#8c6a4a', 5, 1); _px(55, 34, '#8c6a4a', 5, 1);
+      return;
+    }
+    if (m === 'bunny') {
+      // 垂耳小兔兔（精确居中于 x=32！）：左右完全对称长兔耳轻晃 + 右下小胡萝卜
+      const sw = Math.round(Math.sin(t * 0.22));
+      // 左耳 x=14..20，右耳精确镜像 x=44..50
+      _px(14, 1 + sw, '#ffffff', 6, 9); _px(16, 3 + sw, '#ffbfd4', 2, 6);
+      _px(44, 1 - sw, '#ffffff', 6, 9); _px(46, 3 - sw, '#ffbfd4', 2, 6);
+      // 右下迷你胡萝卜
+      _px(53, 50, '#ff8c42', 5, 5); _px(54, 55, '#ff8c42', 3, 2); _px(54, 48, '#6eb878', 3, 2);
+      return;
+    }
+    if (m === 'lux_seraph') {
+      // [豪华] 星羽天使翼（精确居中于 x=32）：双层洁白金边大羽翼 + 鎏金圣光环 + 飘落羽屑
+      const fl = Math.round(Math.sin(t * 0.24) * 2);
+      _px(23, 2 + (_bob > 0 ? 0 : 1), '#e6bc5c', 18, 4); _px(25, 3 + (_bob > 0 ? 0 : 1), '#fff9d6', 14, 2);
+      _px(31, 1 + (_bob > 0 ? 0 : 1), '#ffffff', 2, 2);
+      // 豪华双层左翼 & 精确镜像右翼
+      _px(0, 20 + fl, '#ffffff', 10, 14); _px(2, 16 + fl, '#fff9e6', 8, 4); _px(1, 34 + fl, '#e8f2fc', 7, 5); _px(2, 23 + fl, '#f2d98d', 2, 10);
+      _px(54, 20 + fl, '#ffffff', 10, 14); _px(54, 16 + fl, '#fff9e6', 8, 4); _px(56, 34 + fl, '#e8f2fc', 7, 5); _px(60, 23 + fl, '#f2d98d', 2, 10);
+      _px(10, 50 + (_bob2 * 2), '#ffffff', 3, 2); _px(51, 48 - (_bob2 * 2), '#fff4c4', 3, 2);
+      return;
+    }
+    if (m === 'lux_royalcat') {
+      // [豪华] 鎏金招财猫（精确居中于 x=32）：金边粉绒大猫耳 + 红绳金铃 + 招财金光
+      const tw = (t % 18) < 2 ? 1 : 0;
+      _px(11, 2 + tw, '#e6bc5c', 10, 8); _px(13, 0 + tw, '#e6bc5c', 6, 2); _px(13, 3 + tw, '#fff5eb', 6, 6); _px(14, 4 + tw, '#ffadc8', 4, 4);
+      _px(43, 2, '#e6bc5c', 10, 8); _px(45, 0, '#e6bc5c', 6, 2); _px(45, 3, '#fff5eb', 6, 6); _px(46, 4, '#ffadc8', 4, 4);
+      // 顶心红绳金铃
+      _px(24, 7, '#d94858', 16, 2); _px(29, 6 + (_bob > 0 ? 0 : 1), '#ffe066', 6, 6); _px(30, 7 + (_bob > 0 ? 0 : 1), '#fff9d6', 2, 2);
+      _px(31, 10 + (_bob > 0 ? 0 : 1), '#b87a24', 2, 1);
+      if ((t % 10) < 5) { _px(6, 52, '#ffe066', 3, 3); _px(55, 52, '#ffe066', 3, 3); }
+      return;
+    }
+    if (m === 'lux_ribbunny') {
+      // [豪华] 缎带垂耳兔（精确居中于 x=32）：修长蕾丝白垂耳 + 顶心粉缎大蝴蝶结 + 飘落樱瓣
+      const sw = Math.round(Math.sin(t * 0.22));
+      _px(3, 14 + sw, '#ffffff', 7, 18); _px(5, 17 + sw, '#ffccd9', 3, 12); _px(4, 32 + sw, '#ffe8f0', 5, 3);
+      _px(54, 14 - sw, '#ffffff', 7, 18); _px(56, 17 - sw, '#ffccd9', 3, 12); _px(55, 32 - sw, '#ffe8f0', 5, 3);
+      // 顶心粉缎大蝴蝶结（居中 x=24..40）
+      _px(24, 4, '#f29cb8', 6, 6); _px(34, 4, '#f29cb8', 6, 6); _px(30, 5, '#ffd6e4', 4, 4);
+      _px(26, 5, '#ffe8f0', 2, 2); _px(36, 5, '#ffe8f0', 2, 2);
+      _px(18, 55, '#ffbfd4', 2, 2); _px(44, 54 + _bob, '#ffffff', 2, 2);
+      return;
+    }
+    if (m === 'lux_crownfox') {
+      // [豪华] 雪绒九尾狐（精确居中于 x=32）：雪白粉尖大狐耳 + 额心金纹花钿 + 右下雪白蓬松尾尖
+      _px(11, 2, '#ffffff', 10, 8); _px(13, 0, '#ffbfd4', 6, 3); _px(14, 4, '#ffe3ec', 4, 5);
+      _px(43, 2, '#ffffff', 10, 8); _px(45, 0, '#ffbfd4', 6, 3); _px(46, 4, '#ffe3ec', 4, 5);
+      // 额心鎏金花钿
+      _px(31, 4, '#ffe078', 2, 5); _px(29, 6, '#f0c458', 6, 2); _px(31, 6, '#ffffff', 2, 1);
+      // 右下轻摆雪白蓬松尾尖
+      const tw = Math.round(Math.sin(t * 0.2));
+      _px(49 + tw, 46, '#ffffff', 10, 9); _px(52 + tw, 43, '#ffbfd4', 6, 4); _px(51 + tw, 48, '#f0f4fc', 6, 5);
       return;
     }
     if (m === 'ufo') {
