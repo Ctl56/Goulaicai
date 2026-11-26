@@ -31590,7 +31590,10 @@
     { id: 'diy_plaid',   name: '格子纹',  diy: 2 },
     { id: 'diy_checker', name: '棋盘格',  diy: 2 },
     { id: 'diy_grad',    name: '双色渐变', diy: 2 },
-    { id: 'diy_hearts',  name: '爱心波点', diy: 2 },
+    { id: 'diy_wave',    name: '波浪纹',  diy: 2 },
+    { id: 'diy_chevron', name: '人字纹',  diy: 2 },
+    { id: 'diy_rings',   name: '同心圆',  diy: 2 },
+    { id: 'diy_rays',    name: '放射线',  diy: 2 },
     { id: 'meadow',      name: '晴空草地' },
     { id: 'sakura',      name: '樱花林道' },
     { id: 'night',       name: '夏夜萤火' },
@@ -31640,7 +31643,10 @@
     const bgSize = Math.max(1, Math.min(16, Number(opts.bgSize ?? 3) || 3));
     const bgDensity = Math.max(4, Math.min(28, Number(opts.bgDensity ?? 10) || 10));
     const bgDir = opts.bgDir || (bgId === 'diy_hstripe' ? 'h' : (bgId === 'diy_diag' ? 'diag' : 'v'));
-    const normBgId = (bgId === 'diy_vstripe' || bgId === 'diy_hstripe' || bgId === 'diy_diag') ? 'diy_stripe' : bgId;
+    const bgShape = bgId === 'diy_hearts' ? 'heart' : (opts.bgShape || 'dot');
+    const normBgId = (bgId === 'diy_vstripe' || bgId === 'diy_hstripe' || bgId === 'diy_diag')
+      ? 'diy_stripe'
+      : (bgId === 'diy_hearts' ? 'diy_dots' : bgId);
 
     if (normBgId === 'diy_solid') {
       ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H); return;
@@ -31648,17 +31654,76 @@
     if (normBgId === 'diy_dots') {
       ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = bgC2;
-      const step = Math.max(bgSize * 2 + 1, bgDensity);
-      const r = bgSize;
-      for (let row = 0, y = Math.floor(step / 2); y < H + step; row++, y += step) {
-        const xOff = (row % 2 === 0) ? Math.floor(step / 2) : Math.floor(step);
-        for (let x = xOff - step; x < W + step; x += step) {
+      const drawMotif = (cx, cy) => {
+        const sc = bgSize >= 5 ? 2 : 1;
+        if (bgShape === 'dot') {
+          const r = bgSize;
           for (let dy = -r; dy <= r; dy++) {
             for (let dx = -r; dx <= r; dx++) {
-              if (dx * dx + dy * dy <= r * r + 0.35) ctx.fillRect(x + dx, y + dy, 1, 1);
+              if (dx * dx + dy * dy <= r * r + 0.35) ctx.fillRect(cx + dx, cy + dy, 1, 1);
             }
           }
+        } else if (bgShape === 'ring') {
+          const r = Math.max(2, bgSize);
+          for (let dy = -r; dy <= r; dy++) {
+            for (let dx = -r; dx <= r; dx++) {
+              const d2 = dx * dx + dy * dy;
+              if (d2 <= r * r + 0.35 && d2 >= (r - 1.2) * (r - 1.2)) ctx.fillRect(cx + dx, cy + dy, 1, 1);
+            }
+          }
+        } else if (bgShape === 'heart') {
+          ctx.fillRect(cx - 2 * sc, cy - 1 * sc, 2 * sc, 2 * sc);
+          ctx.fillRect(cx + 1 * sc, cy - 1 * sc, 2 * sc, 2 * sc);
+          ctx.fillRect(cx - 1 * sc, cy, 3 * sc, 2 * sc);
+          ctx.fillRect(cx, cy + 2 * sc, 1 * sc, 1 * sc);
+        } else if (bgShape === 'flower') {
+          ctx.fillRect(cx, cy - 2 * sc, sc, sc);
+          ctx.fillRect(cx, cy + 2 * sc, sc, sc);
+          ctx.fillRect(cx - 2 * sc, cy, sc, sc);
+          ctx.fillRect(cx + 2 * sc, cy, sc, sc);
+          ctx.fillRect(cx - sc, cy - sc, 3 * sc, 3 * sc);
+          ctx.fillStyle = bgC1;
+          ctx.fillRect(cx, cy, sc, sc);
+          ctx.fillStyle = bgC2;
+        } else if (bgShape === 'paw') {
+          ctx.fillRect(cx - sc, cy, 3 * sc, 2 * sc);
+          ctx.fillRect(cx - 2 * sc, cy - 2 * sc, sc, sc);
+          ctx.fillRect(cx, cy - 2 * sc, sc, sc);
+          ctx.fillRect(cx + 2 * sc, cy - 2 * sc, sc, sc);
+        } else if (bgShape === 'bow') {
+          ctx.fillRect(cx - 2 * sc, cy - sc, sc, 3 * sc);
+          ctx.fillRect(cx + 2 * sc, cy - sc, sc, 3 * sc);
+          ctx.fillRect(cx - sc, cy, 3 * sc, sc);
+          ctx.fillRect(cx - sc, cy + sc, sc, sc);
+          ctx.fillRect(cx + sc, cy + sc, sc, sc);
+        } else if (bgShape === 'cherry') {
+          ctx.fillRect(cx - 2 * sc, cy + sc, 2 * sc, 2 * sc);
+          ctx.fillRect(cx + sc, cy + sc, 2 * sc, 2 * sc);
+          ctx.fillRect(cx - sc, cy - sc, sc, 2 * sc);
+          ctx.fillRect(cx + sc, cy - sc, sc, 2 * sc);
+          ctx.fillRect(cx, cy - 2 * sc, sc, sc);
+        } else if (bgShape === 'diamond') {
+          const r = Math.max(2, bgSize);
+          for (let dy = -r; dy <= r; dy++) {
+            for (let dx = -r; dx <= r; dx++) {
+              if (Math.abs(dx) + Math.abs(dy) <= r) ctx.fillRect(cx + dx, cy + dy, 1, 1);
+            }
+          }
+        } else if (bgShape === 'cloud') {
+          ctx.fillRect(cx - 2 * sc, cy, 5 * sc, 2 * sc);
+          ctx.fillRect(cx - sc, cy - sc, 3 * sc, sc);
+        } else if (bgShape === 'music') {
+          ctx.fillRect(cx - 2 * sc, cy + sc, 2 * sc, 2 * sc);
+          ctx.fillRect(cx, cy - 2 * sc, sc, 4 * sc);
+          ctx.fillRect(cx + sc, cy - 2 * sc, 2 * sc, sc);
+          ctx.fillRect(cx + 2 * sc, cy - sc, sc, sc);
         }
+      };
+      const minStep = (bgShape === 'dot' || bgShape === 'ring' || bgShape === 'diamond') ? (bgSize * 2 + 2) : (bgSize >= 5 ? 12 : 7);
+      const step = Math.max(minStep, bgDensity);
+      for (let row = 0, y = Math.floor(step / 2); y < H + step; row++, y += step) {
+        const xOff = (row % 2 === 0) ? Math.floor(step / 2) : Math.floor(step);
+        for (let x = xOff - step; x < W + step; x += step) drawMotif(x, y);
       }
       return;
     }
@@ -31746,18 +31811,54 @@
       }
       return;
     }
-    if (normBgId === 'diy_hearts') {
+    if (normBgId === 'diy_wave') {
       ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = bgC2;
-      const scH = bgSize >= 4 ? 2 : 1;
-      const step = Math.max(scH * 6 + 2, bgDensity);
-      for (let row = 0, y = Math.floor(step / 2); y < H + step; row++, y += step) {
-        const xOff = (row % 2 === 0) ? Math.floor(step / 2) : Math.floor(step);
-        for (let x = xOff - step; x < W + step; x += step) {
-          ctx.fillRect(x - 2 * scH, y - 1 * scH, 2 * scH, 2 * scH);
-          ctx.fillRect(x + 1 * scH, y - 1 * scH, 2 * scH, 2 * scH);
-          ctx.fillRect(x - 1 * scH, y, 3 * scH, 2 * scH);
-          ctx.fillRect(x, y + 2 * scH, 1 * scH, 1 * scH);
+      const gap = Math.max(bgW1 + 3, bgDensity);
+      const amp = Math.max(2, Math.min(6, bgSize));
+      for (let baseY = -gap; baseY < H + gap; baseY += gap) {
+        for (let x = 0; x < W; x++) {
+          const wy = Math.round(baseY + Math.sin(x * 0.35) * amp);
+          ctx.fillRect(x, wy, 1, bgW1);
+        }
+      }
+      return;
+    }
+    if (normBgId === 'diy_chevron') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bgC2;
+      const period = bgW1 + bgW2;
+      const zigW = Math.max(4, bgDensity);
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const m = x % (zigW * 2);
+          const off = m < zigW ? m : (zigW * 2 - m);
+          if (((y + off) % period) < bgW2) ctx.fillRect(x, y, 1, 1);
+        }
+      }
+      return;
+    }
+    if (normBgId === 'diy_rings') {
+      const cx = W / 2, cy = H / 2;
+      const period = bgW1 + bgW2;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const dist = Math.floor(Math.hypot(x - cx, y - cy));
+          ctx.fillStyle = ((dist % period) < bgW1) ? bgC1 : bgC2;
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+      return;
+    }
+    if (normBgId === 'diy_rays') {
+      const cx = W / 2, cy = H / 2;
+      const rays = Math.max(6, Math.min(28, bgDensity));
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          const ang = Math.atan2(y - cy, x - cx) + Math.PI;
+          const idx = Math.floor((ang / (Math.PI * 2)) * rays * 2);
+          ctx.fillStyle = (idx % 2 === 0) ? bgC1 : bgC2;
+          ctx.fillRect(x, y, 1, 1);
         }
       }
       return;
@@ -32695,10 +32796,17 @@
       const capY = padTop + 720 + Math.round(padBot * 0.44);
       const dtY = capY + 60;
       if (mode === 'postcard') {
-        eg.fillStyle = txtCol; eg.font = 'bold 44px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'left';
+        const pcTxt = st.pcTextCol || txtCol;
+        eg.fillStyle = pcTxt; eg.font = 'bold 44px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'left';
         eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), padX, capY + 12);
-        eg.fillStyle = st.borderCol || '#c9a690'; eg.font = '32px monospace'; eg.textAlign = 'right';
+        eg.fillStyle = pcTxt; eg.font = '32px monospace'; eg.textAlign = 'right';
         eg.fillText(`POST · ${dateStr}`, eW - padX, capY + 12);
+      } else if (mode === 'frame' || mode === 'tape' || mode === 'stamp') {
+        const fTxt = st.pcTextCol || txtCol;
+        eg.fillStyle = fTxt; eg.font = 'bold 46px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'center';
+        eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), eW / 2, capY);
+        eg.fillStyle = fTxt; eg.globalAlpha = 0.72; eg.font = '32px "PingFang SC","Microsoft YaHei",sans-serif';
+        eg.fillText(dateStr, eW / 2, dtY); eg.globalAlpha = 1;
       } else {
         eg.fillStyle = txtCol; eg.font = 'bold 48px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'center';
         eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), eW / 2, capY);
@@ -32706,12 +32814,9 @@
         eg.fillText(dateStr, eW / 2, dtY);
       }
       eg.restore();
-      if (mode === 'tape' || mode === 'stamp') {
-        const tc = (st.borderCol || '#e8a7b8') + 'cc';
-        eg.save(); eg.translate(150, 56); eg.rotate(-0.14); eg.fillStyle = tc; eg.fillRect(-90, -26, 180, 52); eg.restore();
-        eg.save(); eg.translate(eW - 150, 56); eg.rotate(0.14); eg.fillStyle = tc; eg.fillRect(-90, -26, 180, 52); eg.restore();
-      }
-      rr(eg, Math.ceil(fBw / 2), Math.ceil(fBw / 2), eW - fBw, eH - fBw, (mode === 'tape' || mode === 'stamp') ? 10 : rad * 3.8);
+      const isGalleryFrame = (mode === 'frame' || mode === 'tape' || mode === 'stamp');
+      const finalBw = isGalleryFrame ? 28 : fBw;
+      rr(eg, Math.ceil(finalBw / 2), Math.ceil(finalBw / 2), eW - finalBw, eH - finalBw, isGalleryFrame ? 4 : rad * 3.8);
       if (mode === 'postcard') {
         const ps = st.pcBorderStyle || 'dashed';
         if (ps === 'dashed') eg.setLineDash([24, 14]);
@@ -32721,7 +32826,11 @@
           eg.lineWidth = Math.max(4, Math.floor(fBw * 0.6)); eg.stroke();
         }
       } else {
-        eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = fBw; eg.stroke();
+        eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = finalBw; eg.stroke();
+        if (isGalleryFrame) {
+          eg.strokeStyle = 'rgba(0,0,0,0.16)'; eg.lineWidth = 6;
+          eg.strokeRect(finalBw + 2, finalBw + 2, eW - finalBw * 2 - 4, eH - finalBw * 2 - 4);
+        }
       }
       eg.setLineDash([]);
       const a = doc.createElement('a');
@@ -32838,6 +32947,7 @@
     } else if (mode === 'postcard') {
       const pcSty = st.pcBorderStyle || 'dashed';
       const pcBw = Math.max(1, Math.round((Number(st.pcBorderWidth ?? 2) || 2) * sc));
+      const pcTxt = st.pcTextCol || txtCol;
       cardEl.style.padding = isThumb ? '4px' : '7px';
       cardEl.style.backgroundColor = st.paperCol || '#fffdf8';
       cardEl.style.backgroundImage = 'none';
@@ -32846,24 +32956,23 @@
       cvEl.style.border = `1px solid ${st.borderCol || '#c9a690'}`;
       cvEl.style.borderRadius = `${Math.max(0, Math.round(((st.radius || 0) - 3) * sc))}px`;
       if (metaEl) { metaEl.style.display = 'flex'; metaEl.style.justifyContent = 'space-between'; metaEl.style.alignItems = 'center'; }
-      if (capEl) { capEl.style.textAlign = 'left'; capEl.style.color = txtCol; capEl.textContent = titleTxt; }
-      if (dateEl) { dateEl.style.textAlign = 'right'; dateEl.style.color = st.borderCol || '#c9a690'; dateEl.textContent = isThumb ? 'POST' : `POST · ${dateStr}`; }
-    } else if (mode === 'tape' || mode === 'stamp') {
-      // 手账胶带：卡纸底衬 + 顶部双色和纸胶带贴条
-      const tapeCol = st.borderCol || '#e8a7b8';
-      cardEl.style.padding = isThumb ? '6px 5px 4px' : '10px 9px 7px';
-      cardEl.style.backgroundColor = st.paperCol || '#fffbf2';
-      cardEl.style.backgroundImage = `repeating-linear-gradient(0deg, transparent, transparent ${isThumb ? 8 : 13}px, rgba(160,130,110,0.12) ${isThumb ? 9 : 14}px)`;
-      cardEl.style.border = `1.5px solid ${tapeCol}88`;
-      cardEl.style.borderRadius = '3px';
-      cvEl.style.border = `2px solid #ffffff`;
-      cvEl.style.borderRadius = '2px';
-      if (filmTopEl) {
-        filmTopEl.style.display = 'flex';
-        filmTopEl.innerHTML = `<span style="width:${isThumb ? 22 : 42}px;height:${isThumb ? 7 : 11}px;background:${tapeCol}cc;transform:rotate(-8deg);display:inline-block;margin-bottom:-4px;"></span><span style="width:${isThumb ? 22 : 42}px;height:${isThumb ? 7 : 11}px;background:${tapeCol}cc;transform:rotate(8deg);display:inline-block;margin-bottom:-4px;"></span>`;
-      }
-      if (capEl) { capEl.style.color = txtCol; capEl.textContent = titleTxt; }
-      if (dateEl) { dateEl.style.color = subCol; dateEl.textContent = dateStr; }
+      if (capEl) { capEl.style.textAlign = 'left'; capEl.style.color = pcTxt; capEl.textContent = titleTxt; }
+      if (dateEl) { dateEl.style.textAlign = 'right'; dateEl.style.color = pcTxt; dateEl.style.opacity = '0.82'; dateEl.textContent = isThumb ? 'POST' : `POST · ${dateStr}`; }
+    } else if (mode === 'frame' || mode === 'tape' || mode === 'stamp') {
+      // 像素画框：立体双层画廊外框 + 留白卡纸内衬 + 底部铭牌标题
+      const outerCol = st.borderCol || '#8c6b54';
+      const matCol = st.paperCol || '#faf5ec';
+      const fTxt = st.pcTextCol || txtCol;
+      cardEl.style.padding = isThumb ? '5px' : '9px 9px 7px';
+      cardEl.style.backgroundColor = matCol;
+      cardEl.style.backgroundImage = 'none';
+      cardEl.style.border = `${isThumb ? 4 : 6}px solid ${outerCol}`;
+      cardEl.style.boxShadow = `inset 0 0 0 ${isThumb ? 1 : 2}px rgba(0,0,0,0.14)`;
+      cardEl.style.borderRadius = '2px';
+      cvEl.style.border = `1.5px solid ${outerCol}88`;
+      cvEl.style.borderRadius = '0';
+      if (capEl) { capEl.style.color = fTxt; capEl.textContent = titleTxt; }
+      if (dateEl) { dateEl.style.color = fTxt; dateEl.style.opacity = '0.72'; dateEl.textContent = dateStr; }
     } else {
       const pX = Math.max(2, Math.round((Number(st.padX ?? 7) || 7) * sc));
       const pT = Math.max(2, Math.round((Number(st.padTop ?? 7) || 7) * sc));
@@ -32893,7 +33002,7 @@
       modal.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === modal) modal.style.display = 'none'; });
     }
     const list = Array.isArray(config.puppySnapAlbum) ? config.puppySnapAlbum : [];
-    const styleLabelMap = { polaroid: '拍立得', photo: '照片', film: '胶片', postcard: '明信片', tape: '手账', stamp: '手账' };
+    const styleLabelMap = { polaroid: '拍立得', photo: '照片', film: '胶片', postcard: '明信片', frame: '画框', tape: '画框', stamp: '画框' };
     modal.innerHTML = `<div style="width:296px;max-width:92vw;max-height:80vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;display:flex;flex-direction:column;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;flex-shrink:0;">
         <span style="font-size:12px;font-weight:700;">咔嚓相册 (${list.length}/64)</span>
@@ -32979,6 +33088,8 @@
       frameBw: typeof ph.frameBw === 'number' ? ph.frameBw : 3,
       pcBorderStyle: ph.pcBorderStyle || 'dashed',
       pcBorderWidth: typeof ph.pcBorderWidth === 'number' ? ph.pcBorderWidth : 2,
+      pcTextCol: ph.pcTextCol || '#4a342a',
+      bgShape: ph.bgShape || 'dot',
       bgW1: ph.bgW1 ?? 4,
       bgW2: ph.bgW2 ?? 4,
       bgSize: ph.bgSize ?? 3,
@@ -32988,7 +33099,7 @@
       filmInk: ph.filmInk || '#f0c975',
       radius: typeof ph.radius === 'number' ? ph.radius : 0,
     };
-    const styleNames = { polaroid: '拍立得', photo: '照片', film: '胶片底片', postcard: '明信片', tape: '手账胶带', stamp: '手账胶带' };
+    const styleNames = { polaroid: '拍立得', photo: '照片', film: '胶片底片', postcard: '明信片', frame: '像素画框', tape: '像素画框', stamp: '像素画框' };
     modal.innerHTML = `<div style="width:266px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:4px;">
         <span id="st-spv-head-txt" style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${styleNames[st.photoStyle] || '拍立得'} · ${escapeHtmlSimple(st.title)}</span>
@@ -33180,6 +33291,8 @@
       frameBw: typeof savedPhoto?.frameBw === 'number' ? savedPhoto.frameBw : (typeof config.photoFrameBw === 'number' ? config.photoFrameBw : 3),
       pcBorderStyle: savedPhoto?.pcBorderStyle || config.photoPcBorderStyle || 'dashed',
       pcBorderWidth: typeof savedPhoto?.pcBorderWidth === 'number' ? savedPhoto.pcBorderWidth : (typeof config.photoPcBorderWidth === 'number' ? config.photoPcBorderWidth : 2),
+      pcTextCol: savedPhoto?.pcTextCol || config.photoPcTextCol || '#4a342a',
+      bgShape: savedPhoto?.bgShape || 'dot',
       bgW1: savedPhoto?.bgW1 ?? 4,
       bgW2: savedPhoto?.bgW2 ?? 4,
       bgSize: savedPhoto?.bgSize ?? 3,
@@ -33249,7 +33362,6 @@
               <label style="display:flex;align-items:center;gap:3px;">下留白<input type="range" id="st-vph-padb" min="4" max="36" value="${st.padBot}" style="flex:1;min-width:42px;" /><span id="st-vph-padb-v">${st.padBot}</span></label>
               <label style="display:flex;align-items:center;gap:3px;">外框粗<input type="range" id="st-vph-fbw" min="1" max="8" value="${st.frameBw}" style="flex:1;min-width:42px;" /><span id="st-vph-fbw-v">${st.frameBw}</span></label>
             </div>
-            <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
           </div>
 
           <div id="st-vph-panel-photo" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
@@ -33306,21 +33418,23 @@
             </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;">
               <label style="display:inline-flex;align-items:center;gap:2px;">卡纸<input type="color" id="st-vph-pc-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:2px;">边线色<input type="color" id="st-vph-pc-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-pc-rad" min="0" max="18" value="${st.radius}" style="width:44px;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:2px;">边线<input type="color" id="st-vph-pc-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:2px;">字色<input type="color" id="st-vph-pc-txt" value="${st.pcTextCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-pc-rad" min="0" max="18" value="${st.radius}" style="width:42px;" /></label>
               <button type="button" id="st-vph-heart-pc" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
             </div>
           </div>
 
-          <div id="st-vph-panel-tape" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
+          <div id="st-vph-panel-frame" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-              <span style="font-size:9.5px;font-weight:700;">手账胶带设置</span>
-              <button type="button" id="st-vph-rst-tape" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
+              <span style="font-size:9.5px;font-weight:700;">像素画框设置</span>
+              <button type="button" id="st-vph-rst-frame" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
             </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;">
-              <label style="display:inline-flex;align-items:center;gap:2px;">手账纸<input type="color" id="st-vph-st-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:2px;">胶带色<input type="color" id="st-vph-st-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <button type="button" id="st-vph-heart-tape" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
+              <label style="display:inline-flex;align-items:center;gap:2px;">外框<input type="color" id="st-vph-st-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:2px;">卡纸<input type="color" id="st-vph-st-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:2px;">字色<input type="color" id="st-vph-fr-txt" value="${st.pcTextCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
+              <button type="button" id="st-vph-heart-frame" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
             </div>
           </div>
 
@@ -33337,6 +33451,19 @@
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
               <label style="display:inline-flex;align-items:center;gap:4px;font-weight:700;">色1<input type="color" id="st-vph-bgc1" class="st-vph-round-col" value="${st.bgCol1}" /></label>
               <label id="st-vph-bgc2-wrap" style="display:inline-flex;align-items:center;gap:4px;font-weight:700;">色2<input type="color" id="st-vph-bgc2" class="st-vph-round-col" value="${st.bgCol2}" /></label>
+            </div>
+            <div id="st-vph-diy-shape-row" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;">
+              <span>图案</span>
+              <button type="button" class="st-px-btn" data-bg-shape="dot" style="height:19px;padding:0 5px;font-size:9px;">圆点</button>
+              <button type="button" class="st-px-btn" data-bg-shape="ring" style="height:19px;padding:0 5px;font-size:9px;">圆环</button>
+              <button type="button" class="st-px-btn" data-bg-shape="heart" style="height:19px;padding:0 5px;font-size:9px;">爱心</button>
+              <button type="button" class="st-px-btn" data-bg-shape="flower" style="height:19px;padding:0 5px;font-size:9px;">小花</button>
+              <button type="button" class="st-px-btn" data-bg-shape="paw" style="height:19px;padding:0 5px;font-size:9px;">爪印</button>
+              <button type="button" class="st-px-btn" data-bg-shape="bow" style="height:19px;padding:0 5px;font-size:9px;">蝴蝶结</button>
+              <button type="button" class="st-px-btn" data-bg-shape="cherry" style="height:19px;padding:0 5px;font-size:9px;">樱桃</button>
+              <button type="button" class="st-px-btn" data-bg-shape="diamond" style="height:19px;padding:0 5px;font-size:9px;">菱形</button>
+              <button type="button" class="st-px-btn" data-bg-shape="cloud" style="height:19px;padding:0 5px;font-size:9px;">云朵</button>
+              <button type="button" class="st-px-btn" data-bg-shape="music" style="height:19px;padding:0 5px;font-size:9px;">音符</button>
             </div>
             <div id="st-vph-diy-dir-row" style="display:none;align-items:center;gap:3px;flex-wrap:wrap;">
               <span>方向</span>
@@ -33378,8 +33505,8 @@
     const filmBotEl = winEl.querySelector('#st-vph-film-bot');
     const syncCardStyle = () => {
       const mode = st.photoStyle || 'polaroid';
-      const normMode = mode === 'stamp' ? 'tape' : mode;
-      ['polaroid', 'photo', 'film', 'postcard', 'tape'].forEach(k => {
+      const normMode = (mode === 'stamp' || mode === 'tape') ? 'frame' : mode;
+      ['polaroid', 'photo', 'film', 'postcard', 'frame'].forEach(k => {
         const p = winEl.querySelector(`#st-vph-panel-${k}`);
         if (p) p.style.display = (k === normMode) ? 'block' : 'none';
       });
@@ -33405,7 +33532,7 @@
       if (dotsBtn) { dotsBtn.classList.toggle('active', st.dots); dotsBtn.textContent = `圆点:${st.dots ? '开' : '关'}`; }
       const rawBdBtn = winEl.querySelector('#st-vph-rawbd-btn');
       if (rawBdBtn) { rawBdBtn.classList.toggle('active', st.photoBorder); rawBdBtn.textContent = `细边:${st.photoBorder ? '开' : '关'}`; }
-      [heartBtn, winEl.querySelector('#st-vph-heart-photo'), winEl.querySelector('#st-vph-heart-film'), winEl.querySelector('#st-vph-heart-pc'), winEl.querySelector('#st-vph-heart-tape')].forEach(hb => {
+      [heartBtn, winEl.querySelector('#st-vph-heart-photo'), winEl.querySelector('#st-vph-heart-film'), winEl.querySelector('#st-vph-heart-pc'), winEl.querySelector('#st-vph-heart-frame')].forEach(hb => {
         if (hb) { hb.classList.toggle('active', st.showHeart); hb.textContent = `爱心:${st.showHeart ? '开' : '关'}`; }
       });
     };
@@ -33501,6 +33628,11 @@
         if (bgC2Wrap) bgC2Wrap.style.display = curBg?.diy === 2 ? 'inline-flex' : 'none';
         if (bgC1Inp) bgC1Inp.value = st.bgCol1;
         if (bgC2Inp) bgC2Inp.value = st.bgCol2;
+        const diyShapeRow = winEl.querySelector('#st-vph-diy-shape-row');
+        if (diyShapeRow) {
+          diyShapeRow.style.display = bid === 'diy_dots' ? 'flex' : 'none';
+          diyShapeRow.querySelectorAll('[data-bg-shape]').forEach(b => b.classList.toggle('active', b.dataset.bgShape === st.bgShape));
+        }
         const showDir = bid === 'diy_stripe' || bid === 'diy_grad';
         if (diyDirRow) {
           diyDirRow.style.display = showDir ? 'flex' : 'none';
@@ -33511,14 +33643,14 @@
         }
         const needSliders = curBg?.diy === 2;
         if (diySliders) diySliders.style.display = needSliders ? 'grid' : 'none';
-        if (w1Wrap) w1Wrap.style.display = (bid === 'diy_stripe' || bid === 'diy_plaid') ? 'flex' : 'none';
-        if (w2Wrap) w2Wrap.style.display = (bid === 'diy_stripe') ? 'flex' : 'none';
-        if (szWrap) szWrap.style.display = (bid === 'diy_dots' || bid === 'diy_checker' || bid === 'diy_hearts') ? 'flex' : 'none';
-        if (dnWrap) dnWrap.style.display = (bid === 'diy_dots' || bid === 'diy_plaid' || bid === 'diy_grad' || bid === 'diy_hearts') ? 'flex' : 'none';
+        if (w1Wrap) w1Wrap.style.display = (bid === 'diy_stripe' || bid === 'diy_plaid' || bid === 'diy_wave' || bid === 'diy_chevron' || bid === 'diy_rings') ? 'flex' : 'none';
+        if (w2Wrap) w2Wrap.style.display = (bid === 'diy_stripe' || bid === 'diy_chevron' || bid === 'diy_rings') ? 'flex' : 'none';
+        if (szWrap) szWrap.style.display = (bid === 'diy_dots' || bid === 'diy_checker' || bid === 'diy_wave') ? 'flex' : 'none';
+        if (dnWrap) dnWrap.style.display = (bid === 'diy_dots' || bid === 'diy_plaid' || bid === 'diy_grad' || bid === 'diy_wave' || bid === 'diy_chevron' || bid === 'diy_rays') ? 'flex' : 'none';
         const setLb = (id, t) => { const el = winEl.querySelector(id); if (el) el.textContent = t; };
-        setLb('#st-vph-bgw1-lb', bid === 'diy_plaid' ? '格线粗' : '色1粗');
-        setLb('#st-vph-bgsz-lb', bid === 'diy_checker' ? '格大小' : '大小');
-        setLb('#st-vph-bgdn-lb', bid === 'diy_grad' ? '细腻度' : '间距');
+        setLb('#st-vph-bgw1-lb', bid === 'diy_plaid' ? '格线粗' : (bid === 'diy_wave' ? '波浪粗' : '色1粗'));
+        setLb('#st-vph-bgsz-lb', bid === 'diy_checker' ? '格大小' : (bid === 'diy_wave' ? '振幅' : '大小'));
+        setLb('#st-vph-bgdn-lb', bid === 'diy_grad' ? '细腻度' : (bid === 'diy_rays' ? '射线数' : '间距'));
         setLb('#st-vph-bgw1-v', String(st.bgW1));
         setLb('#st-vph-bgw2-v', String(st.bgW2));
         setLb('#st-vph-bgsz-v', String(st.bgSize));
@@ -33526,6 +33658,9 @@
       };
       bgC1Inp?.addEventListener('input', () => { st.bgCol1 = bgC1Inp.value; redrawCv(); });
       bgC2Inp?.addEventListener('input', () => { st.bgCol2 = bgC2Inp.value; redrawCv(); });
+      winEl.querySelectorAll('[data-bg-shape]').forEach(b => {
+        b.addEventListener('click', () => { st.bgShape = b.dataset.bgShape; syncDiyColUI(); redrawCv(); });
+      });
       winEl.querySelectorAll('[data-bg-dir]').forEach(b => {
         b.addEventListener('click', () => { st.bgDir = b.dataset.bgDir; syncDiyColUI(); redrawCv(); });
       });
@@ -33621,22 +33756,6 @@
       });
       syncDogAndPoseBtns();
 
-      const qBox = winEl.querySelector('#st-vph-qcols');
-      POLAROID_QUICK_COLORS.forEach(qc => {
-        const b = doc.createElement('button');
-        b.type = 'button';
-        b.className = 'st-px-btn';
-        b.style.cssText = `height:20px;padding:0 6px;font-size:9.5px;background:${qc.bg};border-color:${qc.bd};color:${getTextCol(qc.bg)};`;
-        b.textContent = qc.name;
-        b.addEventListener('click', () => {
-          st.paperCol = qc.bg; st.borderCol = qc.bd;
-          if (paperInp) paperInp.value = qc.bg;
-          if (bdInp) bdInp.value = qc.bd;
-          syncCardStyle();
-        });
-        qBox.appendChild(b);
-      });
-
       winEl.querySelector('#st-vph-title-inp')?.addEventListener('input', (e) => { st.title = e.target.value; syncCardStyle(); });
       winEl.querySelector('#st-vph-flip')?.addEventListener('click', () => { const d0 = st.dogs[activeDogIdx]; if (d0) { d0.flip = !d0.flip; redrawCv(); } });
       paperInp?.addEventListener('input', (e) => { st.paperCol = e.target.value; syncCardStyle(); });
@@ -33649,7 +33768,7 @@
           { id: 'photo',    name: '直接照片' },
           { id: 'film',     name: '胶片底片' },
           { id: 'postcard', name: '明信片' },
-          { id: 'tape',     name: '手账胶带' },
+          { id: 'frame',    name: '像素画框' },
         ];
         const stBtns = [];
         STYLE_DEFS.forEach(sd => {
@@ -33676,7 +33795,11 @@
       winEl.querySelector('#st-vph-heart-photo')?.addEventListener('click', toggleHeartAll);
       winEl.querySelector('#st-vph-heart-film')?.addEventListener('click', toggleHeartAll);
       winEl.querySelector('#st-vph-heart-pc')?.addEventListener('click', toggleHeartAll);
-      winEl.querySelector('#st-vph-heart-tape')?.addEventListener('click', toggleHeartAll);
+      winEl.querySelector('#st-vph-heart-frame')?.addEventListener('click', toggleHeartAll);
+      const pcTxtInp = winEl.querySelector('#st-vph-pc-txt');
+      const frTxtInp = winEl.querySelector('#st-vph-fr-txt');
+      pcTxtInp?.addEventListener('input', (e) => { st.pcTextCol = e.target.value; config.photoPcTextCol = st.pcTextCol; if (frTxtInp) frTxtInp.value = st.pcTextCol; scheduleSaveConfig(); syncCardStyle(); });
+      frTxtInp?.addEventListener('input', (e) => { st.pcTextCol = e.target.value; config.photoPcTextCol = st.pcTextCol; if (pcTxtInp) pcTxtInp.value = st.pcTextCol; scheduleSaveConfig(); syncCardStyle(); });
       winEl.querySelectorAll('[data-pc-bsty]').forEach(b => {
         b.addEventListener('click', () => {
           st.pcBorderStyle = b.dataset.pcBsty;
@@ -33789,16 +33912,16 @@
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
       winEl.querySelector('#st-vph-rst-postcard')?.addEventListener('click', () => {
-        st.paperCol = '#fffdf8'; st.borderCol = '#c9a690'; st.radius = 0; st.showHeart = true;
+        st.paperCol = '#fffdf8'; st.borderCol = '#c9a690'; st.pcTextCol = '#4a342a'; st.radius = 0; st.showHeart = true;
         st.pcBorderStyle = 'dashed'; st.pcBorderWidth = 2;
-        config.photoRadius = 0; config.photoShowHeart = true; config.photoPcBorderStyle = 'dashed'; config.photoPcBorderWidth = 2;
-        setVal('#st-vph-pc-paper', st.paperCol); setVal('#st-vph-pc-bd', st.borderCol); setVal('#st-vph-pc-rad', 0); setVal('#st-vph-pc-bw', 2);
+        config.photoRadius = 0; config.photoShowHeart = true; config.photoPcBorderStyle = 'dashed'; config.photoPcBorderWidth = 2; config.photoPcTextCol = '#4a342a';
+        setVal('#st-vph-pc-paper', st.paperCol); setVal('#st-vph-pc-bd', st.borderCol); setVal('#st-vph-pc-txt', st.pcTextCol); setVal('#st-vph-pc-rad', 0); setVal('#st-vph-pc-bw', 2);
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
-      winEl.querySelector('#st-vph-rst-tape')?.addEventListener('click', () => {
-        st.paperCol = '#fffbf2'; st.borderCol = '#e8a7b8'; st.showHeart = true;
-        config.photoShowHeart = true;
-        setVal('#st-vph-st-paper', st.paperCol); setVal('#st-vph-st-bd', st.borderCol);
+      winEl.querySelector('#st-vph-rst-frame')?.addEventListener('click', () => {
+        st.paperCol = '#faf5ec'; st.borderCol = '#8c6b54'; st.pcTextCol = '#4a342a'; st.showHeart = true;
+        config.photoShowHeart = true; config.photoPcTextCol = '#4a342a';
+        setVal('#st-vph-st-paper', st.paperCol); setVal('#st-vph-st-bd', st.borderCol); setVal('#st-vph-fr-txt', st.pcTextCol);
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
 
