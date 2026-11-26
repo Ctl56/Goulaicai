@@ -86,6 +86,10 @@
     { id: 'ming_aoqun', name: '明制琵琶袄', price: 12, cat: 'trad' },
     { id: 'qipao_cyan', name: '青花旗袍', price: 11, cat: 'trad' },
     { id: 'qipao_red', name: '喜庆红旗袍', price: 11, cat: 'trad' },
+    { id: 'qipao_ivory_pearl', name: '月白旗袍', price: 12, cat: 'trad' },
+    { id: 'qipao_jade_lotus', name: '青瓷旗袍', price: 12, cat: 'trad' },
+    { id: 'qipao_velvet_plum', name: '梅红旗袍', price: 13, cat: 'trad' },
+    { id: 'qipao_ink_mist', name: '烟墨旗袍', price: 13, cat: 'trad' },
     { id: 'tang_suit', name: '织金唐装', price: 11, cat: 'trad' },
     { id: 'miao_silver', name: '苗银盛装', price: 13, cat: 'trad' },
     { id: 'sakura_kimono', name: '樱花振袖裙', price: 11, cat: 'trad' },
@@ -127,9 +131,9 @@
     { id: 'outfit_cocoa_vest', name: '可可格纹马甲', price: 13, cat: 'daily' },
     { id: 'outfit_matcha_cape', name: '抹茶小斗篷', price: 14, cat: 'daily' },
     { id: 'outfit_lilac_dress', name: '丁香花瓣裙', price: 14, cat: 'skirt' },
-    { id: 'lux_gold_camellia_gown', name: '鎏金山茶花礼裙', price: 22, cat: 'skirt' },
-    { id: 'lux_peacock_feather_gown', name: '孔雀翎羽拖尾裙', price: 26, cat: 'skirt' },
-    { id: 'lux_sunset_phoenix_gown', name: '霞光锦绣拖尾裙', price: 30, cat: 'skirt' },
+    { id: 'lux_gold_camellia_gown', name: '山茶花礼裙', price: 22, cat: 'skirt' },
+    { id: 'lux_peacock_feather_gown', name: '月白蕾丝裙', price: 26, cat: 'skirt' },
+    { id: 'lux_sunset_phoenix_gown', name: '玫瑰奶纱裙', price: 30, cat: 'skirt' },
     { id: 'outfit_sailor_mint', name: '海盐水手服', price: 13, cat: 'daily' },
     { id: 'outfit_peach_overalls', name: '杏仁针织开衫', price: 12, cat: 'daily' },
     { id: 'outfit_trad_lotus_ruqun', name: '青莲齐腰裙', price: 14, cat: 'trad' },
@@ -1609,16 +1613,16 @@
     { id: 'gacha_egg_plush', name: '荷包蛋卫衣', tier: 'SR' },
     { id: 'gacha_strawberry_cape', name: '草莓奶盖披风', tier: 'SR' },
     { id: 'gacha_star_raincoat', name: '透明小雨衣', tier: 'SSR' },
-    { id: 'gacha_stained_glass_cape', name: '彩窗琉璃裙', tier: 'SSR' },
-    { id: 'gacha_jellyfish_veil', name: '水母荧光纱', tier: 'SSR' },
-    { id: 'gacha_rose_velvet_train', name: '红丝绒宫廷拖尾裙', tier: 'SSR' },
-    { id: 'gacha_retro_vinyl_jacket', name: '复古唱片棒球服', tier: 'SR' },
-    { id: 'gacha_porcelain_teapot', name: '青釉茶壶蓬裙', tier: 'SR' },
-    { id: 'gacha_mushroom_poncho', name: '白点伞菇斗篷', tier: 'SR' },
-    { id: 'gacha_denim_jumper_skirt', name: '牛仔背带小短裙', tier: 'SR' },
-    { id: 'gacha_asym_tulip_skirt', name: '斜摆郁金香裙', tier: 'SR' },
-    { id: 'gacha_pleated_tennis_skirt', name: '奶霜百褶小裙', tier: 'SR' },
-    { id: 'gacha_daisy_slip_dress', name: '雏菊细带茶歇裙', tier: 'SR' },
+    { id: 'gacha_stained_glass_cape', name: '晚风银蓝裙', tier: 'SSR' },
+    { id: 'gacha_jellyfish_veil', name: '海盐水母裙', tier: 'SSR' },
+    { id: 'gacha_rose_velvet_train', name: '丝绒拖尾裙', tier: 'SSR' },
+    { id: 'gacha_retro_vinyl_jacket', name: '绿白棒球服', tier: 'SR' },
+    { id: 'gacha_porcelain_teapot', name: '青瓷小蓬裙', tier: 'SR' },
+    { id: 'gacha_mushroom_poncho', name: '红蘑菇斗篷', tier: 'SR' },
+    { id: 'gacha_denim_jumper_skirt', name: '牛仔背带裙', tier: 'SR' },
+    { id: 'gacha_asym_tulip_skirt', name: '郁金香斜裙', tier: 'SR' },
+    { id: 'gacha_pleated_tennis_skirt', name: '奶霜百褶裙', tier: 'SR' },
+    { id: 'gacha_daisy_slip_dress', name: '雏菊吊带裙', tier: 'SR' },
   ];
   const GACHA_ACCS = [
     { id: 'gacha_crystal_wings', name: '彩虹糖纸翅', tier: 'SSR' },
@@ -1673,12 +1677,12 @@
     { id: 'gacha_aura_tiny_planet', name: '迷你小星球环', tier: 'SSR' },
     { id: 'gacha_head_egg_tart', name: '头顶蛋挞', tier: 'SR' },
     { id: 'gacha_head_loading_bar', name: '大脑加载中', tier: 'SR' },
-    { id: 'gacha_acc_paper_umbrella', name: '手绘油纸小伞', tier: 'SSR' },
-    { id: 'gacha_acc_clockwork_key', name: '发条金钥匙', tier: 'SSR' },
-    { id: 'gacha_acc_floating_lantern', name: '提灯小萤笼', tier: 'SR' },
-    { id: 'gacha_acc_monocle_chain', name: '金丝单片眼镜', tier: 'SR' },
-    { id: 'gacha_acc_mini_skateboard', name: '背挂滑板', tier: 'SR' },
-    { id: 'gacha_acc_quill_scroll', name: '漂浮羽毛笔', tier: 'SR' },
+    { id: 'gacha_acc_paper_umbrella', name: '油纸小伞', tier: 'SSR' },
+    { id: 'gacha_acc_clockwork_key', name: '发条钥匙', tier: 'SSR' },
+    { id: 'gacha_acc_floating_lantern', name: '萤火提灯', tier: 'SR' },
+    { id: 'gacha_acc_monocle_chain', name: '单片眼镜', tier: 'SR' },
+    { id: 'gacha_acc_mini_skateboard', name: '迷你滑板', tier: 'SR' },
+    { id: 'gacha_acc_quill_scroll', name: '白羽毛笔', tier: 'SR' },
   ];
   const GACHA_COMPANIONS = [
     { id: 'gacha_mini_angel', name: '小天使灵', tier: 'SSR' },
@@ -2789,6 +2793,10 @@
     puppyBagBorder: '',
     puppyBagFg: '',
     puppyBagPalettes: [],
+    puppyDmHistory: {},
+    puppyDmUnread: {},
+    puppyDmUseMyBubble: false,
+    puppyDmRect: null,
     puppyBagFollowST: false,
     puppyReplyBell: true,
     puppyChatPeek: true,
@@ -7079,6 +7087,73 @@
     .st-px-gacha-card.tier-SR { background: #f8f2ff; border-color: #ad84e6; }
     .st-px-gacha-card.tier-SSR { background: linear-gradient(120deg,#fff7d1,#ffebf5,#eaf8ff); border-color: #e3a530; box-shadow: 0 0 8px rgba(244,200,66,0.45); }
     .st-px-gacha-card canvas { width: 38px; height: 38px; image-rendering: pixelated; flex-shrink: 0; background: #fffdf9; border: 1px solid rgba(0,0,0,0.1); }
+    .st-dm-msg-bub {
+      position: relative !important;
+      top: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      display: inline-block !important;
+      max-width: 192px !important;
+      min-width: 24px !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+      padding: 6px 9px !important;
+      font-size: 11px !important;
+      line-height: 1.48 !important;
+      border-radius: 8px !important;
+      border-width: 2px !important;
+      border-style: solid !important;
+      box-sizing: border-box !important;
+      text-align: left !important;
+      margin: 0 !important;
+    }
+    .st-dm-msg-bub::after,
+    .st-dm-msg-bub::before {
+      display: none !important;
+      content: none !important;
+    }
+    .st-dm-msg-bub.dm-def-them {
+      background: #ffffff !important;
+      border-color: var(--px-border, #bfa4ae) !important;
+      color: #4f3a43 !important;
+      box-shadow: 2px 2px 0 rgba(70, 50, 60, 0.12) !important;
+    }
+    .st-dm-msg-bub.dm-def-me {
+      background: #fff2f6 !important;
+      border-color: #d69eb0 !important;
+      color: #4f3a43 !important;
+      box-shadow: 2px 2px 0 rgba(140, 80, 100, 0.14) !important;
+    }
+    #st-tb-dm-panel {
+      position: fixed;
+      width: 292px;
+      max-width: calc(100vw - 16px);
+      height: 376px;
+      max-height: calc(100vh - 76px);
+      display: none;
+      flex-direction: column;
+      z-index: 9994;
+      pointer-events: auto;
+      box-sizing: border-box;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    #st-tb-dm-pill {
+      position: fixed;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px 4px 5px;
+      z-index: 9994;
+      pointer-events: auto;
+      cursor: pointer;
+      box-sizing: border-box;
+      user-select: none;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    }
     .st-px-gacha-bub-prev { width: 38px; height: 30px; flex-shrink: 0; border: 2px solid #bfa4ae; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; position: relative; box-sizing: border-box; }
     .st-px-gacha-badge { display: inline-block; padding: 0 4px; font-size: 9px; font-weight: 700; margin-right: 3px; border: 1px solid currentColor; }
     .st-px-gacha-badge.tier-R { color: #3d6291; background: #eaf2ff; }
@@ -15185,6 +15260,34 @@
       for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffbfd4' : '#b8232f');
       for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#f4c842' : '#a31c27');
       pxBody(bx + 4, by + 1, '#ffe478');
+    } else if (outfit === 'qipao_ivory_pearl') {
+      // 月白旗袍：象牙月白缎面立领旗袍 + 浅银灰斜襟盘扣与珍珠滚边
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#b8c4d4' : '#f7f8fb');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 5 ? '#9aa8bd' : '#eef1f7');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffffff' : '#e4e9f2');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#c6d0df');
+      pxBody(bx + 5, by + 1, '#8c9bb0');
+    } else if (outfit === 'qipao_jade_lotus') {
+      // 青瓷旗袍：温润淡青瓷立领旗袍 + 奶白斜襟盘扣与浅金细边
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fffdf7' : '#9cc9bc');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 5 ? '#fffdf7' : '#8bbfb0');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#d8efe8' : '#7eb3a3');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#eed9a4' : '#73a697');
+      pxBody(bx + 5, by + 1, '#fffdf7');
+    } else if (outfit === 'qipao_velvet_plum') {
+      // 梅红旗袍：复古梅子暗红丝绒旗袍 + 奶金斜襟盘扣与滚边
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#f2d99b' : '#8c3348');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 5 ? '#f2d99b' : '#7d2a3e');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#a3445a' : '#6e2335');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#e8c982' : '#5e1c2c');
+      pxBody(bx + 5, by + 1, '#f2d99b');
+    } else if (outfit === 'qipao_ink_mist') {
+      // 烟墨旗袍：宣纸白至烟灰渐变旗袍 + 墨黑斜襟盘扣
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#3d4047' : '#f4f4f2');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 5 ? '#3d4047' : '#e0e2e5');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#b8bdc4' : '#cdd1d6');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#6e737d' : '#9aa0a8');
+      pxBody(bx + 5, by + 1, '#2f3238');
     } else if (outfit === 'tang_suit') {
       // 织金唐装：暖金云纹对襟上衣 + 翠玉色下裳
       for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#f2b84b');
@@ -15488,30 +15591,30 @@
         px(hc + 1, hy - 2, '#ffe066');
       });
     } else if (outfit === 'gacha_stained_glass_cape') {
-      // [扭蛋SSR 豪华] 彩窗琉璃裙：鎏金立领+教堂彩绘玻璃马赛克层叠宽裙+星光拖尾
-      const panes = ['#e84a5f', '#f7b731', '#2bcbba', '#9b59b6', '#ff85a2', '#45aaf2'];
+      // [扭蛋SSR 豪华] 晚风银蓝裙：雾银蕾丝立领+午夜柔蓝缎面+浅蓝银纱拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffe066' : '#353d6b');
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#d2dff2');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fff4b8' : '#262b4a');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#d9a441' : panes[Math.abs(x) % panes.length]);
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#262b4a' : panes[Math.abs(x + 2) % panes.length]);
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffe066' : panes[Math.abs(x + 4) % panes.length]);
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffffff' : '#4a6085');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#dbe7f7' : '#5e769e');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#7994bf' : '#4a6085');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#eef4fc' : '#96aed4');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 1; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#d9a441' : '#353d6b');
-        px(bx + xMin - 2, by + 4, '#ffe066');
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#d2dff2' : '#6983ad');
+        px(bx + xMin - 2, by + 3, '#eef4fc');
+        px(bx + xMin - 3, by + 4, '#ffffff');
       }
     } else if (outfit === 'gacha_jellyfish_veil') {
-      // [扭蛋SSR 豪华] 水母荧光纱：珍珠肩领+半透水母伞形蓬裙+垂坠发光触须飘带
+      // [扭蛋SSR 豪华] 海盐水母裙：纯净奶白珍珠领+浅海盐冰蓝伞形纱裙+垂坠珠光丝带
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#b8f4ff');
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#e0f2fc');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#e6fbff' : '#99f0ff');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#d8c2ff' : '#7ae8ff');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#c4e0ff' : '#b294ff');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#78f7eb' : '#e6c8ff');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#f7fbff' : '#d6eefc');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#ffffff' : '#bfe3f7');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#e6f4fc' : '#a9d6f0');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#cfe9f7');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 1; x <= xMax + 1; x += 2) px(bx + x, by + 4, x % 4 === 0 ? '#8efbf0' : '#ead4ff');
+        for (let x = xMin - 1; x <= xMax + 1; x += 2) px(bx + x, by + 4, x % 4 === 0 ? '#ffffff' : '#bfe3f7');
         px(bx + xMin - 1, by + 3, '#ffffff');
         px(bx + xMax + 1, by + 3, '#ffffff');
       }
@@ -15573,34 +15676,33 @@
         px(bx + xMin - 3, by + 4, '#ffffff');
       }
     } else if (outfit === 'lux_peacock_feather_gown') {
-      // [商城豪华 26币] 孔雀翎羽拖尾裙：鎏金肩饰+孔雀蓝绿丝绒裙身+宝石翎眼渐变华丽大拖尾
+      // [商城豪华 26币] 月白蕾丝裙：银珠蕾丝立领+冰月白与雾霾灰蓝层叠缎面大拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#f0c975' : '#186a73');
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#cfdbe8');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffe066' : '#145863');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#2ec4b6' : '#1c7280');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 1 || x === 5 || x === 9) ? '#f5c84c' : (x % 2 === 0 ? '#1b4f72' : '#26a69a'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#48d1cc' : '#145863');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffffff' : '#dce6f2');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#f5f8fc' : '#c4d4e6');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffffff' : '#adc1d9');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#96aec9');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 3 === 0 ? '#ffe066' : (x % 2 === 0 ? '#1c7280' : '#2ec4b6'));
-        px(bx + xMin - 2, by + 3, '#2ec4b6');
-        px(bx + xMin - 3, by + 4, '#f5c84c');
-        px(bx + xMax + 1, by + 3, '#f5c84c');
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#e6eef7' : '#9eb5cf');
+        px(bx + xMin - 2, by + 3, '#f5f8fc');
+        px(bx + xMin - 3, by + 4, '#ffffff');
       }
     } else if (outfit === 'lux_sunset_phoenix_gown') {
-      // [商城豪华 30币] 霞光锦绣拖尾裙：珍珠金丝立领+珊瑚橘金暮紫渐变层裙+星辉锦绣超长拖尾
+      // [商城豪华 30币] 玫瑰奶纱裙：奶油白蕾丝立领+复古干枯玫瑰粉层叠纱裙与香槟柔粉长拖尾
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffe484' : '#ff9a8b');
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#fffdf9' : '#f2d5dc');
       }
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fff6cc' : '#f26a7e');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#ff9f68' : '#f7788a');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffe078' : (x % 2 === 0 ? '#d96ba8' : '#ff8c78'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#9c59a8' : '#ffbe6b');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fffdf9' : '#e6b8c4');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#f7e4e8' : '#d99fae');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#fff9fa' : '#cc8b9d');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#fffdf9' : '#bf7a8e');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 3; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#ffe078' : '#b85aa8');
-        px(bx + xMin - 2, by + 3, '#ff9f68');
-        px(bx + xMin - 3, by + 3, '#ffe484');
-        px(bx + xMax + 1, by + 3, '#fff6cc');
+        for (let x = xMin - 3; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#f5dfe5' : '#cc8b9d');
+        px(bx + xMin - 2, by + 3, '#f7e4e8');
+        px(bx + xMin - 3, by + 3, '#fffdf9');
+        px(bx + xMax + 1, by + 3, '#fffdf9');
       }
     } else if (outfit === 'gacha_retro_vinyl_jacket') {
       // [扭蛋SR] 复古唱片棒球服：森林绿羊毛衣身配奶油袖口与黑胶金徽章
@@ -17685,15 +17787,14 @@
       // 垂坠细金链
       px(mx + 2, my + 1, '#f0c975'); px(mx + 2, my + 2, '#d9a441'); px(mx + 1, my + 3, '#f0c975');
     } else if (acc === 'gacha_acc_mini_skateboard') {
-      // [扭蛋SR] 背挂滑板：斜背在身后的薄荷珊瑚条纹迷你滑板与小滚轮
+      // [扭蛋SR] 迷你滑板：斜背在身后的奶白雾蓝条纹迷你滑板与小滚轮
       const sx = ox + 4;
       const sy = oy + 7;
-      px(sx - 2, sy - 1, '#ff7f8a'); px(sx - 1, sy - 1, '#fffdf7');
-      px(sx - 1, sy, '#72d6c9'); px(sx, sy, '#ff7f8a');
-      px(sx, sy + 1, '#fffdf7'); px(sx + 1, sy + 1, '#72d6c9');
-      px(sx + 1, sy + 2, '#ff7f8a'); px(sx + 2, sy + 2, '#5cc2b5');
-      // 两个小滑板轮
-      px(sx - 2, sy, '#3b2a22'); px(sx + 2, sy + 1, '#3b2a22');
+      px(sx - 2, sy - 1, '#8aa8c7'); px(sx - 1, sy - 1, '#fffdf7');
+      px(sx - 1, sy, '#dce6f2'); px(sx, sy, '#8aa8c7');
+      px(sx, sy + 1, '#fffdf7'); px(sx + 1, sy + 1, '#dce6f2');
+      px(sx + 1, sy + 2, '#7393b5'); px(sx + 2, sy + 2, '#8aa8c7');
+      px(sx - 2, sy, '#4a3d38'); px(sx + 2, sy + 1, '#4a3d38');
     } else if (acc === 'gacha_acc_quill_scroll') {
       // [扭蛋SR] 漂浮羽毛笔：在身旁轻盈起伏并洒落星屑的雪白金尖羽毛笔
       const bob = Math.floor((pup.tick || 0) / 12) % 2;
@@ -32857,12 +32958,14 @@
           <button type="button" id="st-gp-cloud-water" class="st-px-btn">帮TA浇花</button>
           <button type="button" id="st-gp-cloud-note" class="st-px-btn">留小纸条</button>
         </div>
-        <div style="margin-bottom:4px;">
-          <button type="button" id="st-gp-coadv" class="st-px-btn care" style="width:100%;">双狗探险</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+          <button type="button" id="st-gp-coadv" class="st-px-btn care">双狗探险</button>
+          <button type="button" id="st-gp-dm" class="st-px-btn active">${(() => { const u = (config.puppyDmUnread && guest.cloudId) ? (config.puppyDmUnread[guest.cloudId] || 0) : 0; return u > 0 ? `私聊(${u})` : '私聊'; })()}</button>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-          <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}">${isPinned ? '已固定位置' : '固定位置'}</button>
-          <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;">礼貌送客</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;">
+          <button type="button" id="st-gp-pin" class="st-px-btn${isPinned ? ' active' : ''}" style="padding:0 2px;">${isPinned ? '已固定' : '固定位置'}</button>
+          <button type="button" id="st-gp-hide" class="st-px-btn" style="padding:0 2px;">隐藏</button>
+          <button type="button" id="st-gp-bye" class="st-px-btn" style="color:#a94442;padding:0 2px;">礼貌送客</button>
         </div>
       </div>
       <div id="st-gp-resize" class="st-gp-resize" title="按住拖动缩放大小"></div>`;
@@ -32999,6 +33102,24 @@
       guestPopEl.style.display = 'none';
       if (_gpFr) startCoopCloudAdventure(_gpFr);
       else openPixelPupNoticeModal('暂未绑定好友', '请先通过好友码添加对方为云端好友，即可一起双狗探险~');
+    });
+    guestPopEl.querySelector('#st-gp-dm')?.addEventListener('click', () => {
+      guestPopEl.style.display = 'none';
+      const targetFr = _gpFr || (guest.cloudId ? { cloudId: guest.cloudId, name: guest.name, look: guest.look || {} } : null);
+      if (targetFr && typeof openFriendDmPanel === 'function') openFriendDmPanel(targetFr);
+      else openPixelPupNoticeModal('暂未绑定好友', '请先通过好友码添加对方为云端好友，即可发起私聊~');
+    });
+    guestPopEl.querySelector('#st-gp-hide')?.addEventListener('click', () => {
+      guest.onDesktop = false;
+      saveConfig();
+      guestPopEl.style.display = 'none';
+      syncGuestDomNodes();
+      renderPupVisitPanel();
+      openPixelPupNoticeModal(
+        '已隐藏串门小狗',
+        `已将「${guest.name || '小伙伴'}」暂时从桌面隐藏（不会解除好友关系）。如需重新显示，可打开「小狗背包 → 设置 → 串门 → 好友列表」，点击对应好友的「请来桌面」即可重新开启！`,
+        '知道啦'
+      );
     });
     guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', () => dismissGuestPuppy(guestId));
   };
@@ -33466,6 +33587,51 @@
           // 收到好友申请
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__friend_req__') {
             openFriendRequestModal(g);
+            continue;
+          }
+          // 收到好友私聊消息
+          if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__dm_chat__') {
+            const meta = g.gifts[0];
+            const fid = String(g.fromId || '').trim();
+            if (fid) {
+              if (!config.puppyDmHistory || typeof config.puppyDmHistory !== 'object') config.puppyDmHistory = {};
+              if (!Array.isArray(config.puppyDmHistory[fid])) config.puppyDmHistory[fid] = [];
+              const msgId = String(meta.id || g.gid || `dm_${Date.now()}`);
+              if (!config.puppyDmHistory[fid].some(m => m.id === msgId)) {
+                config.puppyDmHistory[fid].push({
+                  id: msgId,
+                  dir: 'them',
+                  text: String(meta.text || '').slice(0, 300),
+                  sticker: String(meta.sticker || ''),
+                  bubbleId: String(meta.bubbleId || 'bub_default'),
+                  bubBg: String(meta.bubBg || ''),
+                  bubBd: String(meta.bubBd || ''),
+                  bubFg: String(meta.bubFg || ''),
+                  ts: Number(meta.ts || g.ts || Date.now()),
+                });
+                if (config.puppyDmHistory[fid].length > 80) {
+                  config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
+                }
+                const dmPanelEl = root.querySelector('#st-tb-dm-panel');
+                const isViewingThis = Boolean(dmPanelEl && dmPanelEl.style.display === 'flex' && dmPanelEl.dataset.fid === fid);
+                if (isViewingThis) {
+                  if (typeof renderFriendDmMessages === 'function') renderFriendDmMessages(fid);
+                } else {
+                  if (!config.puppyDmUnread || typeof config.puppyDmUnread !== 'object') config.puppyDmUnread = {};
+                  config.puppyDmUnread[fid] = Math.max(0, Number(config.puppyDmUnread[fid] || 0)) + 1;
+                  if (typeof syncDmPillBadge === 'function') syncDmPillBadge();
+                  if (config.puppyEnabled) {
+                    const fName = g.fromName || (getFriendList().find(x => x.cloudId === fid)?.name) || '好友';
+                    showPuppyBubble(`${fName} 发来一条私聊消息~`, 2400);
+                  }
+                }
+                saveConfig();
+              }
+            }
+            fetch(`${baseUrl}/ack`, {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ myId, myName: getPupName(), fromId: g.fromId, gid: g.gid, thankMsg: '', summary: '私聊已读' }),
+            }).catch(() => {});
             continue;
           }
           // 对方同意了好友申请
@@ -36228,14 +36394,16 @@
     topRow.appendChild(info);
     card.appendChild(topRow);
 
+    const dmUnreadCnt = Math.max(0, Number(config.puppyDmUnread?.[fr.cloudId] || 0));
     const actRow = doc.createElement('div');
-    actRow.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:4px;';
-    actRow.innerHTML = `<button type="button" class="st-px-btn${isOnDesk ? ' active' : ''} st-fr-desk" style="height:21px;font-size:9.5px;">${isOnDesk ? '送回家' : '请来桌面'}</button>
-      <button type="button" class="st-px-btn${canWater ? ' active' : ''} st-fr-water" style="height:21px;font-size:9.5px;${canWater ? '' : 'opacity:0.5;'}">帮TA浇花</button>
-      <button type="button" class="st-px-btn st-fr-note" style="height:21px;font-size:9.5px;">留纸条</button>
-      <button type="button" class="st-px-btn care st-fr-gift" style="height:21px;font-size:9.5px;">送礼</button>
-      <button type="button" class="st-px-btn st-fr-poke" style="height:21px;font-size:9.5px;">贴贴</button>
-      <button type="button" class="st-px-btn st-fr-coadv" style="height:21px;font-size:9.5px;">组队探险</button>`;
+    actRow.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:4px;';
+    actRow.innerHTML = `<button type="button" class="st-px-btn${isOnDesk ? ' active' : ''} st-fr-desk" style="height:21px;font-size:9.5px;padding:0 2px;">${isOnDesk ? '送回家' : '请来桌面'}</button>
+      <button type="button" class="st-px-btn${dmUnreadCnt > 0 ? ' active care' : ' active'} st-fr-dm" style="height:21px;font-size:9.5px;padding:0 2px;">${dmUnreadCnt > 0 ? `私聊(${dmUnreadCnt})` : '私聊'}</button>
+      <button type="button" class="st-px-btn${canWater ? ' active' : ''} st-fr-water" style="height:21px;font-size:9.5px;padding:0 2px;${canWater ? '' : 'opacity:0.5;'}">浇花</button>
+      <button type="button" class="st-px-btn st-fr-note" style="height:21px;font-size:9.5px;padding:0 2px;">留纸条</button>
+      <button type="button" class="st-px-btn care st-fr-gift" style="height:21px;font-size:9.5px;padding:0 2px;">送礼</button>
+      <button type="button" class="st-px-btn st-fr-poke" style="height:21px;font-size:9.5px;padding:0 2px;">贴贴</button>
+      <button type="button" class="st-px-btn st-fr-coadv" style="height:21px;font-size:9.5px;padding:0 2px;grid-column:span 2;">组队探险</button>`;
     info.querySelector('.st-fr-bond')?.addEventListener('click', () => openFriendBondModal(fr.cloudId));
     info.querySelector('.st-fr-star')?.addEventListener('click', () => {
       fr.starred = !fr.starred;
@@ -36247,6 +36415,7 @@
       inviteFriendToDesktop(fr);
       if (typeof onAfterChange === 'function') onAfterChange();
     });
+    actRow.querySelector('.st-fr-dm')?.addEventListener('click', () => { const fm = root.querySelector('#st-tb-friends-mask'); if (fm) fm.style.display = 'none'; if (typeof openFriendDmPanel === 'function') openFriendDmPanel(fr); });
     actRow.querySelector('.st-fr-water')?.addEventListener('click', () => sendCloudWaterToFriend(fr.cloudId, fr.name, fr.garden));
     actRow.querySelector('.st-fr-note')?.addEventListener('click', () => openCloudWriteNoteModal(fr.cloudId, fr.name));
     actRow.querySelector('.st-fr-gift')?.addEventListener('click', () => openCloudSendGiftModal(fr.cloudId));
@@ -36268,6 +36437,501 @@
     });
     card.appendChild(actRow);
     return card;
+  };
+
+  const PUP_DM_STICKERS = [
+    { id: 'happy', name: '开心' },
+    { id: 'love', name: '比心' },
+    { id: 'cry', name: '委屈' },
+    { id: 'sleep', name: '晚安' },
+    { id: 'angry', name: '气鼓鼓' },
+    { id: 'snack', name: '吃骨头' },
+    { id: 'good', name: '棒棒' },
+    { id: 'hug', name: '贴贴' },
+    { id: 'what', name: '问号' },
+    { id: 'party', name: '撒花' },
+    { id: 'tea', name: '喝奶茶' },
+    { id: 'shy', name: '害羞' },
+  ];
+
+  const drawPupStickerCanvas = (stickerId, pxSize = 52) => {
+    const c = doc.createElement('canvas');
+    c.width = 24;
+    c.height = 24;
+    c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+    const pal = typeof getPupPalette === 'function' ? getPupPalette() : { fur: '#f4d9b5', ear: '#c88c58', outline: '#3b2a22', collar: '#e06c88' };
+    const fur = pal.fur || '#f4d9b5';
+    const ear = pal.ear || '#c88c58';
+    const out = pal.outline || '#3b2a22';
+    // Base cute puppy head centered at (12, 13)
+    p(6, 7, out, 12, 1); p(5, 8, out, 1, 10); p(18, 8, out, 1, 10); p(6, 18, out, 12, 1);
+    p(6, 8, fur, 12, 10);
+    // Floppy ears
+    p(3, 8, out, 2, 7); p(4, 9, ear, 2, 6);
+    p(19, 8, out, 2, 7); p(18, 9, ear, 2, 6);
+    // Blush cheeks
+    p(7, 14, '#ffb5c8', 2, 1); p(15, 14, '#ffb5c8', 2, 1);
+    // Nose & default smile
+    p(11, 13, out, 2, 1);
+    // Eyes & emotion props by stickerId
+    if (stickerId === 'happy') {
+      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
+      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
+      p(10, 15, out, 4, 1); p(11, 16, '#ff8aa6', 2, 1);
+      p(2, 3, '#ffd24c', 1, 3); p(1, 4, '#ffd24c', 3, 1);
+      p(20, 4, '#ff8aa6', 2, 2);
+    } else if (stickerId === 'love') {
+      p(8, 11, '#e84a72', 2, 2); p(14, 11, '#e84a72', 2, 2);
+      p(10, 15, out, 4, 1);
+      // Floating heart top right
+      p(17, 2, '#f05a82', 2, 2); p(20, 2, '#f05a82', 2, 2); p(17, 3, '#f05a82', 5, 2); p(18, 5, '#f05a82', 3, 1); p(19, 6, '#f05a82', 1, 1);
+      p(18, 3, '#ffd6e2', 1, 1);
+    } else if (stickerId === 'cry') {
+      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2);
+      p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
+      p(8, 13, '#7cc6f7', 2, 5); p(14, 13, '#7cc6f7', 2, 5);
+      p(10, 16, out, 4, 1); p(9, 17, out, 1, 1); p(14, 17, out, 1, 1);
+    } else if (stickerId === 'sleep') {
+      p(8, 12, out, 3, 1); p(13, 12, out, 3, 1);
+      p(11, 15, out, 2, 1);
+      // Zzz
+      p(17, 2, '#7b99cc', 4, 1); p(19, 3, '#7b99cc', 1, 1); p(18, 4, '#7b99cc', 1, 1); p(17, 5, '#7b99cc', 4, 1);
+      p(13, 3, '#a8bee6', 3, 1); p(14, 4, '#a8bee6', 1, 1); p(13, 5, '#a8bee6', 3, 1);
+    } else if (stickerId === 'angry') {
+      p(8, 10, out, 1, 1); p(9, 11, out, 2, 1); p(15, 10, out, 1, 1); p(13, 11, out, 2, 1);
+      p(10, 15, out, 4, 1); p(10, 16, '#ff6b78', 4, 1);
+      // Anger cross top right
+      p(18, 2, '#e84858', 1, 4); p(17, 3, '#e84858', 3, 1); p(20, 4, '#e84858', 2, 1);
+    } else if (stickerId === 'snack') {
+      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
+      // Bone in mouth
+      p(8, 15, '#ffffff', 8, 2); p(7, 14, '#ffffff', 2, 4); p(15, 14, '#ffffff', 2, 4);
+      p(7, 15, '#d9cfc5', 1, 2); p(16, 15, '#d9cfc5', 1, 2);
+    } else if (stickerId === 'good') {
+      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
+      p(10, 15, out, 4, 1);
+      // Gold thumbs-up / star badge
+      p(19, 11, '#ffe066', 3, 4); p(20, 9, '#ffe066', 2, 2); p(18, 12, '#d9a441', 1, 3);
+      p(3, 3, '#ffe066', 1, 3); p(2, 4, '#ffe066', 3, 1);
+    } else if (stickerId === 'hug') {
+      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
+      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
+      p(10, 15, out, 4, 1);
+      // Open paws
+      p(4, 16, fur, 3, 3); p(5, 17, '#ffbfd4', 1, 1);
+      p(17, 16, fur, 3, 3); p(18, 17, '#ffbfd4', 1, 1);
+      p(10, 2, '#f05a82', 4, 2); p(11, 4, '#f05a82', 2, 1);
+    } else if (stickerId === 'what') {
+      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2);
+      p(11, 15, out, 2, 2);
+      // Big question mark
+      p(18, 1, '#5a78b5', 3, 1); p(20, 2, '#5a78b5', 1, 2); p(19, 3, '#5a78b5', 1, 1); p(19, 5, '#5a78b5', 1, 1);
+    } else if (stickerId === 'party') {
+      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
+      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
+      p(10, 15, out, 4, 1); p(11, 16, '#ff8aa6', 2, 1);
+      // Party hat + confetti
+      p(11, 2, '#ff8aa6', 2, 1); p(10, 3, '#ffe066', 4, 1); p(9, 4, '#8cc8f7', 6, 2); p(8, 6, '#ff8aa6', 8, 1);
+      p(2, 3, '#ffe066', 2, 2); p(20, 3, '#8be0b8', 2, 2); p(3, 19, '#ff8aa6', 2, 1); p(19, 19, '#8cc8f7', 2, 1);
+    } else if (stickerId === 'tea') {
+      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
+      p(10, 15, out, 4, 1);
+      // Milk tea cup on right
+      p(19, 10, '#6b4423', 1, 3); // straw
+      p(17, 13, '#ffffff', 5, 1); // lid
+      p(17, 14, '#e6c39c', 5, 5); // milk tea
+      p(18, 17, '#4a3222', 1, 1); p(20, 17, '#4a3222', 1, 1); // boba pearls
+    } else {
+      // shy
+      p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#ffffff', 1, 1); p(14, 11, '#ffffff', 1, 1);
+      p(6, 14, '#ff8ca8', 3, 2); p(15, 14, '#ff8ca8', 3, 2);
+      p(11, 15, out, 2, 1);
+    }
+    return c;
+  };
+
+  let activeDmFriendId = '';
+  const getMyCurrentLookObj = () => ({
+    fur: config.puppyFur || '',
+    ear: config.puppyEar || '',
+    collar: config.puppyCollar || '',
+    outline: config.puppyOutline || '',
+    outfit: config.puppyOutfit || 'none',
+    accs: Array.isArray(config.puppyAccs) ? config.puppyAccs : [],
+    accOffsets: config.puppyAccOffsets || {},
+    avatarFrame: config.puppyAvatarFrame || 'af_default',
+    afOverrideCol: Boolean(config.puppyAfOverrideCol),
+    afBorderCol: config.puppyAfBorderCol || '',
+    afBgCol: config.puppyAfBgCol || '',
+    bubble: config.puppyBubbleSkin || 'bub_default',
+  });
+
+  const applyDmBubbleSkin = (bubEl, dir, msg) => {
+    bubEl.className = 'st-tb-guest-bubble st-dm-msg-bub';
+    bubEl.style.background = '';
+    bubEl.style.borderColor = '';
+    bubEl.style.color = '';
+    if (!config.puppyDmUseMyBubble) {
+      bubEl.classList.add(dir === 'me' ? 'dm-def-me' : 'dm-def-them');
+      return;
+    }
+    let bubId = '';
+    if (dir === 'me') {
+      bubId = config.puppyBubbleSkin || 'bub_default';
+      if (bubId && bubId !== 'bub_default') {
+        bubEl.classList.add(bubId.replace(/_/g, '-'));
+        if (config.puppyBubOverrideCol) {
+          bubEl.style.borderColor = config.puppyBubBorderCol || '#bfa4ae';
+          bubEl.style.background = config.puppyBubBgCol || '#fffdf9';
+          bubEl.style.color = config.puppyBubTextCol || '#54444a';
+        }
+      } else {
+        bubEl.style.borderColor = config.puppyBubBorderCol || '#d69eb0';
+        bubEl.style.background = config.puppyBubBgCol || '#fff2f6';
+        bubEl.style.color = config.puppyBubTextCol || '#4f3a43';
+      }
+    } else {
+      const fr = getFriendList().find(x => x.cloudId === activeDmFriendId);
+      bubId = (msg && msg.bubbleId && msg.bubbleId !== 'bub_default') ? msg.bubbleId : (fr?.look?.bubble || 'bub_default');
+      if (bubId && bubId !== 'bub_default') {
+        bubEl.classList.add(bubId.replace(/_/g, '-'));
+        if (msg && msg.bubBg) bubEl.style.background = msg.bubBg;
+        if (msg && msg.bubBd) bubEl.style.borderColor = msg.bubBd;
+        if (msg && msg.bubFg) bubEl.style.color = msg.bubFg;
+      } else {
+        bubEl.classList.add('dm-def-them');
+      }
+    }
+  };
+
+  const syncDmPillBadge = () => {
+    const pill = root.querySelector('#st-tb-dm-pill');
+    if (!pill || pill.style.display === 'none') return;
+    const fid = pill.dataset.fid || activeDmFriendId;
+    const u = Math.max(0, Number(config.puppyDmUnread?.[fid] || 0));
+    const badge = pill.querySelector('#st-dm-pill-badge');
+    if (badge) {
+      badge.textContent = u > 99 ? '99+' : String(u);
+      badge.style.display = u > 0 ? 'inline-flex' : 'none';
+    }
+  };
+
+  const renderFriendDmMessages = (fid) => {
+    const panel = root.querySelector('#st-tb-dm-panel');
+    if (!panel || panel.style.display === 'none' || panel.dataset.fid !== fid) return;
+    const listEl = panel.querySelector('#st-dm-msg-list');
+    if (!listEl) return;
+    const fr = getFriendList().find(x => x.cloudId === fid) || getGuestList().find(x => x.cloudId === fid) || { cloudId: fid, name: panel.dataset.fname || '好友', look: {} };
+    const msgs = Array.isArray(config.puppyDmHistory?.[fid]) ? config.puppyDmHistory[fid] : [];
+    const myLook = getMyCurrentLookObj();
+    listEl.innerHTML = '';
+    if (!msgs.length) {
+      listEl.innerHTML = '<div style="text-align:center;font-size:10.5px;opacity:0.65;padding:24px 8px;">还没有聊天记录，发句话或小狗表情包打个招呼吧~</div>';
+      return;
+    }
+    msgs.forEach(m => {
+      const isMe = m.dir === 'me';
+      const row = doc.createElement('div');
+      row.style.cssText = `display:flex;align-items:flex-start;gap:6px;margin-bottom:8px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+      const avWrap = doc.createElement('div');
+      avWrap.style.cssText = 'flex-shrink:0;transform:scale(0.86);transform-origin:top center;';
+      avWrap.appendChild(makeFriendAvatarCanvas(isMe ? myLook : (fr.look || {})));
+      const bubCol = doc.createElement('div');
+      bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
+      const bub = doc.createElement('div');
+      applyDmBubbleSkin(bub, isMe ? 'me' : 'them', m);
+      if (m.sticker) {
+        bub.style.padding = '5px 7px';
+        const stWrap = doc.createElement('div');
+        stWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
+        stWrap.appendChild(drawPupStickerCanvas(m.sticker, 52));
+        if (m.text) {
+          const tx = doc.createElement('div');
+          tx.style.cssText = 'font-size:10.5px;margin-top:2px;';
+          tx.textContent = m.text;
+          stWrap.appendChild(tx);
+        }
+        bub.appendChild(stWrap);
+      } else {
+        bub.textContent = m.text || '';
+      }
+      const tm = doc.createElement('div');
+      tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;';
+      const dObj = new Date(m.ts || Date.now());
+      tm.textContent = `${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
+      bubCol.append(bub, tm);
+      row.append(avWrap, bubCol);
+      listEl.appendChild(row);
+    });
+    listEl.scrollTop = listEl.scrollHeight;
+  };
+
+  let dmSendBusy = false;
+  const sendFriendDmMessage = async (fid, fname, text, sticker = '') => {
+    if (dmSendBusy) return;
+    const cleanTxt = String(text || '').trim().slice(0, 300);
+    if (!cleanTxt && !sticker) return;
+    dmSendBusy = true;
+    try {
+      const nowTs = Date.now();
+      const msgId = `dm_${nowTs}_${Math.floor(Math.random() * 9999)}`;
+      if (!config.puppyDmHistory || typeof config.puppyDmHistory !== 'object') config.puppyDmHistory = {};
+      if (!Array.isArray(config.puppyDmHistory[fid])) config.puppyDmHistory[fid] = [];
+      const bubId = config.puppyBubbleSkin || 'bub_default';
+      const bubBg = config.puppyBubOverrideCol ? (config.puppyBubBgCol || '') : '';
+      const bubBd = config.puppyBubOverrideCol ? (config.puppyBubBorderCol || '') : '';
+      const bubFg = config.puppyBubOverrideCol ? (config.puppyBubTextCol || '') : '';
+      config.puppyDmHistory[fid].push({
+        id: msgId, dir: 'me', text: cleanTxt, sticker, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
+      });
+      if (config.puppyDmHistory[fid].length > 80) config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
+      saveConfig();
+      renderFriendDmMessages(fid);
+      const baseUrl = getCloudBaseUrl();
+      await fetchWithTimeout(`${baseUrl}/gift`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromId: ensureMyCloudId(),
+          fromName: getPupName(),
+          toId: fid,
+          gifts: [{ kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs }],
+          redPacket: 0,
+          msg: cleanTxt || `[${PUP_DM_STICKERS.find(s => s.id === sticker)?.name || '表情包'}]`,
+        }),
+      }, 9000);
+    } catch (_) {
+      openPixelPupNoticeModal('发送失败', '网络波动，消息未能送达，请稍后再试~');
+    } finally {
+      dmSendBusy = false;
+    }
+  };
+
+  const openFriendDmPanel = (fr) => {
+    if (!fr || !fr.cloudId) return;
+    const fid = fr.cloudId;
+    const fname = fr.name || '好友';
+    activeDmFriendId = fid;
+    if (config.puppyDmUnread && config.puppyDmUnread[fid]) {
+      config.puppyDmUnread[fid] = 0;
+      saveConfig();
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+
+    let pill = root.querySelector('#st-tb-dm-pill');
+    if (pill) pill.style.display = 'none';
+
+    let panel = root.querySelector('#st-tb-dm-panel');
+    if (!panel) {
+      panel = doc.createElement('div');
+      panel.id = 'st-tb-dm-panel';
+      root.appendChild(panel);
+    }
+    panel.dataset.fid = fid;
+    panel.dataset.fname = fname;
+    panel.style.background = pxBg;
+    panel.style.color = pxFg;
+    panel.style.border = `3px solid ${pxBd}`;
+    panel.style.boxShadow = '5px 5px 0 rgba(59,42,34,0.28)';
+
+    const savedRect = config.puppyDmRect || {};
+    const left = typeof savedRect.left === 'number'
+      ? clamp(savedRect.left, 8, Math.max(8, win.innerWidth - 300))
+      : Math.max(8, Math.round((win.innerWidth - 292) / 2));
+    const top = typeof savedRect.top === 'number'
+      ? clamp(savedRect.top, 8, Math.max(8, win.innerHeight - 384))
+      : Math.max(12, Math.round((win.innerHeight - 376) / 2));
+    panel.style.left = `${left}px`;
+    panel.style.top = `${top}px`;
+
+    panel.innerHTML = `
+      <div id="st-dm-head" style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:6px 8px;border-bottom:2px dashed ${pxBd};cursor:grab;user-select:none;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:5px;min-width:0;flex:1;">
+          <span id="st-dm-head-av" style="display:inline-flex;transform:scale(0.68);transform-origin:left center;width:24px;height:24px;flex-shrink:0;"></span>
+          <span style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+          <button type="button" id="st-dm-bub-toggle" class="st-px-btn${config.puppyDmUseMyBubble ? ' active' : ''}" style="height:20px;padding:0 5px;font-size:9px;" title="切换私聊气泡风格">${config.puppyDmUseMyBubble ? '气泡:当前' : '气泡:默认'}</button>
+          <button type="button" id="st-dm-min" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;" title="缩小放在一边">—</button>
+          <button type="button" id="st-dm-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;" title="关闭私聊">×</button>
+        </div>
+      </div>
+      <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:8px 8px 4px;box-sizing:border-box;background:rgba(255,255,255,0.45);"></div>
+      <div id="st-dm-sticker-box" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border-top:2px dashed ${pxBd};background:${pxBg};max-height:132px;overflow-y:auto;flex-shrink:0;"></div>
+      <div style="display:flex;align-items:center;gap:4px;padding:6px 7px;border-top:2px dashed ${pxBd};flex-shrink:0;">
+        <button type="button" id="st-dm-sticker-btn" class="st-px-btn" style="height:26px;padding:0 6px;font-size:10px;flex-shrink:0;">表情</button>
+        <input type="text" id="st-dm-inp" class="st-px-input" maxlength="300" placeholder="发条私聊消息..." style="flex:1;min-width:0;height:26px;font-size:11px;padding:0 7px;box-sizing:border-box;" />
+        <button type="button" id="st-dm-send" class="st-px-btn care" style="height:26px;padding:0 9px;font-size:10.5px;flex-shrink:0;">发送</button>
+      </div>`;
+
+    const headAvSlot = panel.querySelector('#st-dm-head-av');
+    if (headAvSlot) headAvSlot.appendChild(makeFriendAvatarCanvas(fr.look || {}));
+
+    // Populate sticker picker
+    const stBox = panel.querySelector('#st-dm-sticker-box');
+    if (stBox) {
+      PUP_DM_STICKERS.forEach(st => {
+        const b = doc.createElement('button');
+        b.type = 'button';
+        b.className = 'st-px-btn';
+        b.style.cssText = 'height:auto;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;';
+        b.appendChild(drawPupStickerCanvas(st.id, 36));
+        const lb = doc.createElement('span');
+        lb.style.cssText = 'font-size:9px;line-height:1.1;';
+        lb.textContent = st.name;
+        b.appendChild(lb);
+        b.addEventListener('click', () => {
+          stBox.style.display = 'none';
+          sendFriendDmMessage(fid, fname, '', st.id);
+        });
+        stBox.appendChild(b);
+      });
+    }
+
+    // Drag header
+    const headEl = panel.querySelector('#st-dm-head');
+    headEl?.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      try { headEl.setPointerCapture(e.pointerId); } catch (_) {}
+      const pid = e.pointerId;
+      const sx = e.clientX, sy = e.clientY;
+      const rect = panel.getBoundingClientRect();
+      const ox = rect.left, oy = rect.top;
+      const onMove = (ev) => {
+        if (ev.pointerId !== pid) return;
+        panel.style.left = `${Math.round(clamp(ox + (ev.clientX - sx), 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
+        panel.style.top = `${Math.round(clamp(oy + (ev.clientY - sy), 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
+      };
+      const onUp = (ev) => {
+        if (ev.pointerId !== pid) return;
+        win.removeEventListener('pointermove', onMove);
+        win.removeEventListener('pointerup', onUp);
+        win.removeEventListener('pointercancel', onUp);
+        try { headEl.releasePointerCapture(pid); } catch (_) {}
+        const r2 = panel.getBoundingClientRect();
+        config.puppyDmRect = { ...(config.puppyDmRect || {}), left: Math.round(r2.left), top: Math.round(r2.top) };
+        saveConfig();
+      };
+      win.addEventListener('pointermove', onMove);
+      win.addEventListener('pointerup', onUp);
+      win.addEventListener('pointercancel', onUp);
+    });
+
+    panel.querySelector('#st-dm-bub-toggle')?.addEventListener('click', (e) => {
+      config.puppyDmUseMyBubble = !config.puppyDmUseMyBubble;
+      saveConfig();
+      const btn = e.currentTarget;
+      btn.textContent = config.puppyDmUseMyBubble ? '气泡:当前' : '气泡:默认';
+      btn.classList.toggle('active', config.puppyDmUseMyBubble);
+      renderFriendDmMessages(fid);
+    });
+
+    panel.querySelector('#st-dm-close')?.addEventListener('click', () => {
+      panel.style.display = 'none';
+      const p2 = root.querySelector('#st-tb-dm-pill');
+      if (p2) p2.style.display = 'none';
+    });
+
+    panel.querySelector('#st-dm-min')?.addEventListener('click', () => {
+      panel.style.display = 'none';
+      let pEl = root.querySelector('#st-tb-dm-pill');
+      if (!pEl) {
+        pEl = doc.createElement('div');
+        pEl.id = 'st-tb-dm-pill';
+        root.appendChild(pEl);
+      }
+      pEl.dataset.fid = fid;
+      pEl.dataset.fname = fname;
+      pEl.style.background = pxBg;
+      pEl.style.color = pxFg;
+      pEl.style.border = `2px solid ${pxBd}`;
+      pEl.style.boxShadow = '3px 3px 0 rgba(59,42,34,0.25)';
+      const pr = config.puppyDmRect || {};
+      const pl = typeof pr.pillLeft === 'number' ? clamp(pr.pillLeft, 6, Math.max(6, win.innerWidth - 120)) : Math.max(8, win.innerWidth - 128);
+      const pt = typeof pr.pillTop === 'number' ? clamp(pr.pillTop, 6, Math.max(6, win.innerHeight - 54)) : Math.max(60, Math.round(win.innerHeight * 0.42));
+      pEl.style.left = `${pl}px`;
+      pEl.style.top = `${pt}px`;
+      pEl.innerHTML = `<span id="st-dm-pill-av" style="display:inline-flex;transform:scale(0.65);transform-origin:left center;width:24px;height:24px;flex-shrink:0;"></span>
+        <span style="font-size:10.5px;font-weight:700;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
+        <span id="st-dm-pill-badge" style="display:none;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:#e05263;color:#fff;font-size:9px;font-weight:700;align-items:center;justify-content:center;">0</span>
+        <button type="button" id="st-dm-pill-x" class="st-px-btn" style="height:18px;padding:0 4px;font-size:9px;margin-left:2px;" title="关闭">×</button>`;
+      const pav = pEl.querySelector('#st-dm-pill-av');
+      if (pav) pav.appendChild(makeFriendAvatarCanvas(fr.look || {}));
+      pEl.querySelector('#st-dm-pill-x')?.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        pEl.style.display = 'none';
+      });
+      // Drag or click pill
+      let moved = false;
+      pEl.onpointerdown = (ev) => {
+        if (ev.target.closest('button')) return;
+        moved = false;
+        const pid = ev.pointerId;
+        const sx = ev.clientX, sy = ev.clientY;
+        const rc = pEl.getBoundingClientRect();
+        const ox = rc.left, oy = rc.top;
+        try { pEl.setPointerCapture(pid); } catch (_) {}
+        const onM = (mv) => {
+          if (mv.pointerId !== pid) return;
+          if (Math.abs(mv.clientX - sx) > 5 || Math.abs(mv.clientY - sy) > 5) moved = true;
+          if (moved) {
+            pEl.style.left = `${Math.round(clamp(ox + (mv.clientX - sx), 4, Math.max(4, win.innerWidth - rc.width - 4)))}px`;
+            pEl.style.top = `${Math.round(clamp(oy + (mv.clientY - sy), 4, Math.max(4, win.innerHeight - rc.height - 4)))}px`;
+          }
+        };
+        const onU = (up) => {
+          if (up.pointerId !== pid) return;
+          win.removeEventListener('pointermove', onM);
+          win.removeEventListener('pointerup', onU);
+          win.removeEventListener('pointercancel', onU);
+          try { pEl.releasePointerCapture(pid); } catch (_) {}
+          if (moved) {
+            const r2 = pEl.getBoundingClientRect();
+            config.puppyDmRect = { ...(config.puppyDmRect || {}), pillLeft: Math.round(r2.left), pillTop: Math.round(r2.top) };
+            saveConfig();
+          } else {
+            const curFr = getFriendList().find(x => x.cloudId === fid) || fr;
+            openFriendDmPanel(curFr);
+          }
+        };
+        win.addEventListener('pointermove', onM);
+        win.addEventListener('pointerup', onU);
+        win.addEventListener('pointercancel', onU);
+      };
+      pEl.style.display = 'flex';
+      syncDmPillBadge();
+    });
+
+    panel.querySelector('#st-dm-sticker-btn')?.addEventListener('click', () => {
+      if (!stBox) return;
+      stBox.style.display = stBox.style.display === 'grid' ? 'none' : 'grid';
+    });
+
+    const inpEl = panel.querySelector('#st-dm-inp');
+    const doSend = () => {
+      const val = (inpEl?.value || '').trim();
+      if (!val) return;
+      if (inpEl) inpEl.value = '';
+      sendFriendDmMessage(fid, fname, val, '');
+    };
+    panel.querySelector('#st-dm-send')?.addEventListener('click', doSend);
+    inpEl?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        doSend();
+      }
+    });
+
+    panel.style.display = 'flex';
+    renderFriendDmMessages(fid);
   };
 
   let addFriendBusy = false;
