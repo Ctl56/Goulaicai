@@ -760,7 +760,7 @@
     { id: 'af_dec_moon', name: '小弯月框', price: 34, charms: [{ pos: 'tl', key: 'moon' }, { pos: 'br', key: 'cloud' }], desc: '烟紫雾灰边，左上奶黄小弯月配右下软云朵' },
     { id: 'af_dec_butterfly', name: '小蝴蝶框', price: 36, charms: [{ pos: 'tr', key: 'butterfly' }, { pos: 'bl', key: 'petal' }], desc: '丁香雾紫边，右上双翼小蝴蝶配左下粉花瓣' },
     // 24 款各具特色的独立动态像素头像框（零重复元素、零乱贴四芒星，每款都有专属动画！）
-    { id: 'af_dyn_sakura', name: '小樱花飘落', price: 58, dyn: 'sakura', charms: [{ pos: 'tl', key: 'sakura' }], desc: '[动态] 樱粉柔雾边，带缺口的樱花瓣随微风斜斜飘落' },
+    { id: 'af_dyn_sakura', name: '小樱花飘落', price: 58, dyn: 'sakura', charms: [], desc: '[动态] 樱粉柔雾边，带缺口的樱花瓣随微风斜斜飘落' },
     { id: 'af_dyn_starfall', name: '夜空流星', price: 62, dyn: 'starfall', charms: [], desc: '[动态] 静谧暮蓝边，带渐隐长尾的小流星划过夜空边角' },
     { id: 'af_dyn_bubble', name: '上升小泡泡', price: 62, dyn: 'bubble', charms: [], desc: '[动态] 冰透珍珠边，空心高光透明小泡泡袅袅升起' },
     { id: 'af_dyn_butterfly', name: '飞舞小蝴蝶', price: 66, dyn: 'butterfly', charms: [], desc: '[动态] 丁香雾紫边，两只像素小蝴蝶扑扇双翼绕框飞舞' },
@@ -43804,34 +43804,112 @@
       return;
     }
     if (m === 'greenhouse') {
-      // 玻璃温室框：白铁艺拱形顶棚 + 左右摇曳常春藤与小粉白花苞 + 柔和日光
-      _px(14, 4, '#ffffff', 36, 2); _px(10, 6, '#e6f0f5', 44, 2); _px(31, 4, '#d2e4ed', 2, 5);
-      // 左右摇曳绿藤蔓
-      for (let y = 10; y <= 48; y += 5) {
-        const sw = Math.round(Math.sin(t * 0.2 + y * 0.15));
-        _px(6 + sw, y, '#78b878', 3, 4); _px(5 + sw, y + 1, '#a6dba6', 2, 2);
-        _px(55 - sw, y, '#78b878', 3, 4); _px(57 - sw, y + 1, '#a6dba6', 2, 2);
-      }
-      // 点缀柔粉与奶白小花苞
-      _px(5, 18 + _bob, '#ffbfd4', 3, 3); _px(6, 19 + _bob, '#ffffff', 1, 1);
-      _px(56, 32 - _bob, '#fff6cc', 3, 3); _px(57, 33 - _bob, '#ffbfd4', 1, 1);
-      _px(6, 42 - _bob2, '#ffffff', 3, 3); _px(7, 43 - _bob2, '#ffe066', 1, 1);
+      // 玻璃温室框（不对称重做）：顶部白铁艺玻璃拱顶 + 左上斜垂一枝带粉蔷薇的常春藤 + 右下暖陶小花盆与柔光
+      _px(14, 4, '#ffffff', 36, 2); _px(10, 6, '#e0eff5', 44, 2); _px(26, 4, '#cfe3ed', 2, 4); _px(40, 4, '#cfe3ed', 2, 4);
+      // 左上单侧斜垂常春藤 + 粉白蔷薇
+      const sw = Math.round(Math.sin(t * 0.2));
+      _px(7, 8, '#6eb574', 3, 18); _px(5 + sw, 14, '#88cc8a', 4, 4); _px(8 - sw, 22, '#6eb574', 4, 4); _px(6 + sw, 28, '#9cd99e', 3, 5);
+      _px(4, 10 + (_bob > 0 ? 0 : 1), '#ffbfd4', 4, 4); _px(5, 11 + (_bob > 0 ? 0 : 1), '#ffffff', 2, 2);
+      // 右下暖陶小绿植盆栽
+      _px(49, 51, '#c97a54', 9, 6); _px(48, 50, '#d98c66', 11, 2);
+      _px(51, 45 + (_bob > 0 ? 0 : 1), '#72bd78', 5, 5); _px(53, 43 + (_bob > 0 ? 0 : 1), '#a6e0a8', 3, 3);
+      if ((t % 10) < 5) { _px(54, 14, '#fff9d6', 2, 2); _px(46, 54, '#fff9d6', 2, 2); }
       return;
     }
     if (m === 'lantern') {
-      // 暖光小纸灯：左右顶角两盏精致珊瑚红金纸灯轻摇 + 暖黄灯芯微闪 + 细红穗
+      // 暖光小纸灯（不对称重做）：右上角斜探细竹枝垂挂一盏暖红金小纸灯轻摇 + 左下飘起暖橘萤火微光
       const sw = Math.round(Math.sin(t * 0.22));
-      const drawLantern = (lx, ly) => {
-        _px(lx + 4, ly - 2, '#d9a441', 2, 2); // 挂绳
-        _px(lx + 2, ly, '#e6b85c', 6, 2); // 金顶盖
-        _px(lx, ly + 2, '#e35d6a', 10, 8); _px(lx + 1, ly + 2, '#f27986', 8, 8);
-        _px(lx + 3, ly + 3, (t % 8) < 4 ? '#fff6cc' : '#ffe082', 4, 6); // 暖光灯芯
-        _px(lx + 2, ly + 10, '#e6b85c', 6, 2); // 金底托
-        _px(lx + 4 + sw, ly + 12, '#d94858', 2, 4); // 摇摆细红穗
-      };
-      drawLantern(3 + sw, 7);
-      drawLantern(51 - sw, 7);
-      if ((t % 10) < 5) { _px(18, 55, '#ffe082', 2, 2); _px(44, 55, '#ffe082', 2, 2); }
+      _px(38, 5, '#7a9e68', 20, 2); _px(44, 3, '#96bd82', 6, 2);
+      const lx = 49 + sw, ly = 8;
+      _px(lx + 4, ly - 2, '#d9a441', 2, 2);
+      _px(lx + 2, ly, '#e6b85c', 6, 2);
+      _px(lx, ly + 2, '#e35d6a', 10, 9); _px(lx + 1, ly + 2, '#f27986', 8, 9);
+      _px(lx + 3, ly + 3, (t % 8) < 4 ? '#fff6cc' : '#ffe082', 4, 7);
+      _px(lx + 2, ly + 11, '#e6b85c', 6, 2);
+      _px(lx + 4 + sw, ly + 13, '#d94858', 2, 4);
+      // 左下飘起柔和暖橘萤火微光
+      _px(6, 50 - (t % 6), '#ffe082', 3, 3); _px(7, 51 - (t % 6), '#ffffff', 1, 1);
+      _px(13, 54 - ((t + 3) % 5), '#ffb86c', 2, 2);
+      return;
+    }
+    if (m === 'lanternnight') {
+      // 檐下灯笼框（不对称重做）：左上角青瓦飞檐斜挑一盏暖橘灯笼轻摇 + 右下暮夜星光与暖尘
+      const sw = Math.round(Math.sin(t * 0.2));
+      _px(3, 4, '#3d4c6b', 22, 3); _px(5, 2, '#54668a', 14, 2); _px(2, 6, '#2b364d', 6, 2); // 青瓦飞檐一角
+      const lx = 5 + sw, ly = 9;
+      _px(lx + 4, ly - 2, '#c99842', 2, 2);
+      _px(lx + 2, ly, '#8c4a2b', 6, 2);
+      _px(lx, ly + 2, '#f28c42', 10, 9); _px(lx + 1, ly + 2, '#ffad5c', 8, 9);
+      _px(lx + 3, ly + 4, (t % 8) < 4 ? '#fff9d6' : '#ffe484', 4, 5);
+      _px(lx + 2, ly + 11, '#8c4a2b', 6, 2); _px(lx + 4 + sw, ly + 13, '#d95b43', 2, 3);
+      // 右下夜空小星与漂浮暖光
+      _px(52, 49 - (t % 4), '#ffe484', 2, 2); _px(46, 54, '#fff6cc', 2, 2);
+      if ((t % 10) < 5) { _px(55, 14, '#ffffff', 2, 2); }
+      return;
+    }
+    if (m === 'cake') {
+      // 草莓奶油派（丰富版）：底边酥脆派皮与淡粉奶油层 + 左下斜切大红草莓配绿叶 + 右上摇曳小金烛火与糖霜碎
+      _px(10, 53, '#e6b87d', 44, 4); _px(10, 51, '#ffffff', 44, 3);
+      for (let x = 12; x <= 50; x += 6) _px(x, 50, '#fff5f8', 4, 2);
+      // 左下大颗红草莓配绿叶
+      _px(4, 45, '#6eb878', 6, 2); _px(3, 47, '#f05a72', 8, 6); _px(4, 53, '#f05a72', 6, 2);
+      _px(5, 49, '#ffe8ee', 1, 1); _px(8, 50, '#ffe8ee', 1, 1);
+      // 右上迷你生日小蜡烛摇曳火苗
+      _px(53, 8, '#ffadc8', 4, 8); _px(53, 11, '#ffffff', 4, 2);
+      _px(54 + (_bob > 0 ? 1 : 0), 4, '#ffe066', 2, 4); _px(54, 5, '#ffffff', 1, 2);
+      _px(22, 54, '#ff8aa6', 2, 1); _px(38, 54, '#ffe066', 2, 1);
+      return;
+    }
+    if (m === 'bunnytea') {
+      // 垂耳奶兔框（重做）：左上角不对称一高一低软萌奶白垂耳轻晃 + 右下圆滚滚小奶兔探头配浮起小爱心
+      const sw = Math.round(Math.sin(t * 0.22));
+      _px(5, 6 + sw, '#ffffff', 5, 11); _px(6, 9 + sw, '#ffccd9', 3, 6);
+      _px(12, 4 - sw, '#ffffff', 5, 9); _px(13, 6 - sw, '#ffccd9', 3, 5);
+      // 右下探头小奶兔
+      const rx = 47, ry = 46 + (_bob > 0 ? 0 : 1);
+      _px(rx + 2, ry - 4, '#ffffff', 3, 5); _px(rx + 7, ry - 4, '#ffffff', 3, 5);
+      _px(rx + 3, ry - 3, '#ffbfd4', 1, 3); _px(rx + 8, ry - 3, '#ffbfd4', 1, 3);
+      _px(rx, ry, '#ffffff', 12, 9); _px(rx + 3, ry + 3, '#3b2a22', 1, 2); _px(rx + 8, ry + 3, '#3b2a22', 1, 2);
+      _px(rx + 2, ry + 5, '#ffadc8', 2, 1); _px(rx + 8, ry + 5, '#ffadc8', 2, 1); _px(rx + 5, ry + 5, '#ff8aa6', 2, 1);
+      // 飘浮小爱心
+      const hy = 39 - (t % 5);
+      _px(52, hy, '#f26b92', 2, 2); _px(55, hy, '#f26b92', 2, 2); _px(53, hy + 1, '#f26b92', 3, 2);
+      return;
+    }
+    if (m === 'coffee') {
+      // 热拿铁拉花（重做）：右下暖陶拿铁杯（杯面奶白爱心拉花）+ 袅袅升腾的爱心白热气 + 左上两颗烘焙咖啡豆
+      _px(46, 47, '#fffdf7', 12, 9); _px(47, 48, '#b87a4b', 10, 4); _px(58, 49, '#fffdf7', 3, 5); _px(58, 50, '#d9c4b0', 2, 3); // 杯耳
+      _px(50, 49, '#fffdf7', 4, 2); _px(51, 51, '#fffdf7', 2, 1); // 杯面拉花小爱心
+      _px(44, 56, '#e6d8cc', 16, 2); // 杯托
+      // 袅袅白热气
+      const sy = 42 - (t % 5);
+      _px(50 + (_bob > 0 ? 1 : 0), sy, 'rgba(255,255,255,0.85)', 2, 4);
+      _px(54 - (_bob > 0 ? 1 : 0), sy - 2, 'rgba(255,255,255,0.75)', 2, 3);
+      // 左上两颗咖啡豆
+      _px(5, 5, '#6e452b', 5, 4); _px(6, 6, '#9c6644', 3, 1);
+      _px(12, 8, '#5c3822', 4, 4); _px(13, 9, '#8c5a38', 2, 1);
+      return;
+    }
+    if (m === 'ferriswheel') {
+      // 星空摩天轮框（丰富版）：右下精致旋转迷你摩天轮配彩色闪灯座舱 + 左上夜空流星与闪烁星辰
+      const cx = 50, cy = 48;
+      // 摩天轮支架与轮圈
+      _px(cx - 4, cy + 5, '#8c99bd', 2, 6); _px(cx + 3, cy + 5, '#8c99bd', 2, 6); _px(cx - 6, cy + 10, '#cfd8f0', 13, 2);
+      _px(cx - 7, cy - 7, '#dce4fa', 15, 1); _px(cx - 7, cy + 7, '#dce4fa', 15, 1);
+      _px(cx - 7, cy - 7, '#dce4fa', 1, 15); _px(cx + 7, cy - 7, '#dce4fa', 1, 15);
+      _px(cx - 1, cy - 1, '#ffe082', 3, 3);
+      // 6个旋转彩色座舱灯
+      const cabCols = ['#ff8aa6', '#ffe066', '#8cc8f7', '#a8e6b8', '#d4b8ff', '#ffbfa8'];
+      for (let i = 0; i < 6; i++) {
+        const ang = (t * 0.12) + (i * Math.PI / 3);
+        const gx = cx + Math.round(Math.cos(ang) * 7);
+        const gy = cy + Math.round(Math.sin(ang) * 7);
+        _px(gx - 1, gy - 1, cabCols[i], 3, 3); _px(gx, gy, '#ffffff', 1, 1);
+      }
+      // 左上闪烁流星与星点
+      const sx = 4 + ((t * 2) % 18);
+      _px(sx, 5, '#fff6cc', 3, 2); _px(sx - 3, 4, 'rgba(255,246,204,0.5)', 3, 1);
+      if ((t % 8) < 5) { _px(6, 48, '#b8d8ff', 2, 2); _px(55, 10, '#ffe082', 2, 2); }
       return;
     }
     if (m === 'windmill') {
