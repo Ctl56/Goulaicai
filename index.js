@@ -2997,7 +2997,7 @@
   }
   config.puppyAccs = config.puppyAccs
     .filter(id => id && id !== 'none' && !REMOVED_ACCS.has(id))
-    .slice(0, 3);
+    .slice(0, 4);
   if (config.maskStyle === 'dots') config.maskStyle = 'custom';
   if (config.fontSize === 0) config.fontSize = '';
   if (config.lineHeight === 0) config.lineHeight = '';
@@ -22417,6 +22417,7 @@
     }, 2200);
   };
 
+  const getMaxAccSlots = () => (typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8 ? 4 : 3);
   const toggleEquipAcc = (accId) => {
     if (!Array.isArray(config.puppyAccs)) config.puppyAccs = [];
     if (accId === 'none') {
@@ -22428,7 +22429,8 @@
       config.puppyAccs.splice(idx, 1);
       return false;
     }
-    if (config.puppyAccs.length >= 3) {
+    const maxSlots = getMaxAccSlots();
+    if (config.puppyAccs.length >= maxSlots) {
       config.puppyAccs.shift();
     }
     config.puppyAccs.push(accId);
@@ -22592,7 +22594,7 @@
   const applyWardDraftToPuppy = () => {
     const d = ensureWardDraft();
     config.puppyOutfit = d.outfit || 'none';
-    config.puppyAccs = Array.isArray(d.accs) ? d.accs.slice(0, 3) : [];
+    config.puppyAccs = Array.isArray(d.accs) ? d.accs.slice(0, getMaxAccSlots()) : [];
     config.puppyAcc = config.puppyAccs[0] || 'none';
     config.puppyCompanion = d.comp || 'none';
     config.puppyAccOffsets = d.accOffsets ? JSON.parse(JSON.stringify(d.accOffsets)) : {};
@@ -22709,7 +22711,7 @@
     const wornAccs = Array.isArray(wd.accs) ? wd.accs : [];
 
     pupWardTabBtns.forEach(b => b.classList.toggle('active', b.dataset.wardTab === wardTab));
-    if (pupAccSlotCntEl) pupAccSlotCntEl.textContent = wardTab === 'acc' ? `${wornAccs.length}/3` : '';
+    if (pupAccSlotCntEl) pupAccSlotCntEl.textContent = wardTab === 'acc' ? `${wornAccs.length}/${getMaxAccSlots()}` : '';
     if (presetAddBtn) presetAddBtn.style.display = wardTab === 'preset' ? 'inline-block' : 'none';
     if (wardTab !== 'preset') presetRenameRow.style.display = 'none';
 
@@ -22728,7 +22730,7 @@
     let totalPages = 1;
 
     if (wardTab === 'acc') {
-      pupWardHeadEl.textContent = '配饰（最多同时戴 3 个）';
+      pupWardHeadEl.textContent = getMaxAccSlots() >= 4 ? '配饰（Lv8特权 · 最多同时戴 4 个）' : '配饰（最多同时戴 3 个）';
       renderWardSubTabs('acc');
       const curSub = wardSubCat.acc || 'all';
       const LIM_ACC_REAL_CAT = {
@@ -22776,7 +22778,7 @@
             const idx = d.accs.indexOf(item.id);
             if (idx >= 0) d.accs.splice(idx, 1);
             else {
-              if (d.accs.length >= 3) d.accs.shift();
+              if (d.accs.length >= getMaxAccSlots()) d.accs.shift();
               d.accs.push(item.id);
             }
           }
@@ -23071,7 +23073,7 @@
           if (!saved) return;
           const d = ensureWardDraft();
           d.outfit = saved.outfit || 'none';
-          d.accs = Array.isArray(saved.accs) ? saved.accs.slice(0, 3) : [];
+          d.accs = Array.isArray(saved.accs) ? saved.accs.slice(0, getMaxAccSlots()) : [];
           d.comp = saved.comp || 'none';
           d.fur = saved.fur || config.puppyFur;
           d.ear = saved.ear || config.puppyEar;
@@ -31613,6 +31615,81 @@
     { id: 'camping',     name: '星空露营' },
     { id: 'rainbow',     name: '雨后彩虹' },
   ];
+  const PHOTO_FILTERS = [
+    { id: 'none',     name: '原图' },
+    { id: 'warm',     name: '柔光暖调' },
+    { id: 'cool',     name: '清冷盐汽水' },
+    { id: 'vintage',  name: '复古胶片' },
+    { id: 'pink',     name: '粉雾奶油' },
+    { id: 'vignette', name: '暗角氛围' },
+    { id: 'mono',     name: '复古黑白' },
+    { id: 'dream',    name: '梦幻柔焦' },
+  ];
+  const applyPolaroidFilter = (ctx, W, H, filterId) => {
+    if (!filterId || filterId === 'none') return;
+    ctx.save();
+    if (filterId === 'warm') {
+      ctx.globalCompositeOperation = 'source-atop';
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, 'rgba(255,212,140,0.22)');
+      g.addColorStop(1, 'rgba(255,158,122,0.16)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    } else if (filterId === 'cool') {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, 'rgba(155,215,255,0.22)');
+      g.addColorStop(1, 'rgba(180,235,245,0.14)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    } else if (filterId === 'vintage') {
+      ctx.fillStyle = 'rgba(218,176,118,0.24)';
+      ctx.fillRect(0, 0, W, H);
+      // 确定性轻胶片颗粒（保证预览与导出 100% 一致）
+      for (let i = 0; i < 95; i++) {
+        const gx = (i * 37 + 13) % W;
+        const gy = (i * 53 + 7) % H;
+        ctx.fillStyle = (i % 2 === 0) ? 'rgba(255,245,220,0.18)' : 'rgba(70,45,25,0.14)';
+        ctx.fillRect(gx, gy, 1, 1);
+      }
+      const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.3, W / 2, H / 2, Math.max(W, H) * 0.72);
+      vg.addColorStop(0, 'rgba(0,0,0,0)');
+      vg.addColorStop(1, 'rgba(55,34,18,0.26)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, W, H);
+    } else if (filterId === 'pink') {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, 'rgba(255,192,218,0.25)');
+      g.addColorStop(1, 'rgba(255,235,242,0.18)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    } else if (filterId === 'vignette') {
+      const vg = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.25, W / 2, H / 2, Math.max(W, H) * 0.68);
+      vg.addColorStop(0, 'rgba(255,250,242,0.06)');
+      vg.addColorStop(0.65, 'rgba(25,18,22,0.10)');
+      vg.addColorStop(1, 'rgba(20,14,22,0.42)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, W, H);
+    } else if (filterId === 'mono') {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const pw = ctx.canvas.width, ph = ctx.canvas.height;
+      const img = ctx.getImageData(0, 0, pw, ph);
+      const data = img.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const y = Math.round(data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+        const c = Math.max(0, Math.min(255, Math.round((y - 128) * 1.08 + 130)));
+        data[i] = c; data[i + 1] = c; data[i + 2] = c;
+      }
+      ctx.putImageData(img, 0, 0);
+    } else if (filterId === 'dream') {
+      const g = ctx.createRadialGradient(W / 2, H / 2, 4, W / 2, H / 2, Math.max(W, H) * 0.72);
+      g.addColorStop(0, 'rgba(255,248,255,0.18)');
+      g.addColorStop(0.6, 'rgba(220,198,255,0.16)');
+      g.addColorStop(1, 'rgba(255,195,220,0.22)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    ctx.restore();
+  };
   const POLAROID_DOG_POSES = [
     { id: 'happy',    name: '开心', frame: 'happy' },
     { id: 'sit',      name: '坐姿', frame: 'sit1' },
@@ -32696,6 +32773,9 @@
       const fr = (POLAROID_DOG_POSES.find(p => p.id === (d.pose || 'happy')) || POLAROID_DOG_POSES[0]).frame;
       renderPupSpriteToCtx(ctx, d.look || {}, Math.round(d.x || 0), Math.round(d.y || 0), Boolean(d.flip), fr);
     });
+    if (opts.photoFilter && opts.photoFilter !== 'none') {
+      applyPolaroidFilter(ctx, W, H, opts.photoFilter);
+    }
   };
 
   const getHostLookSnap = () => ({
@@ -33052,6 +33132,7 @@
     const st = {
       photoStyle: ph.photoStyle || 'polaroid',
       photoRatio: ph.photoRatio || '3:4',
+      photoFilter: ph.photoFilter || 'none',
       photoOrient: ph.photoOrient || 'land',
       bgId: ph.bgId || 'meadow',
       bgCol1: ph.bgCol1 || '#fff3f7',
@@ -33255,6 +33336,7 @@
     const st = {
       photoStyle: (['polaroid', 'photo', 'film', 'postcard'].includes(savedPhoto?.photoStyle || config.photoStyle) ? (savedPhoto?.photoStyle || config.photoStyle) : 'polaroid'),
       photoRatio: savedPhoto?.photoRatio || config.photoRatio || '3:4',
+      photoFilter: savedPhoto?.photoFilter || ((typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? (config.photoFilter || 'none') : 'none'),
       photoOrient: savedPhoto?.photoOrient || config.photoOrient || 'land',
       bgId: savedPhoto?.bgId || extraOpts?.bgId || 'meadow',
       bgCol1: savedPhoto?.bgCol1 || extraOpts?.bgCol1 || '#fff3f7',
@@ -33406,6 +33488,9 @@
             </div>
           </div>
 
+
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">滤镜${(typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8) ? '' : ' · Lv8解锁'}</div>
+          <div id="st-vph-filters" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
 
           <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">人物</div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
@@ -33728,6 +33813,31 @@
       paperInp?.addEventListener('input', (e) => { st.paperCol = e.target.value; syncCardStyle(); });
       bdInp?.addEventListener('input', (e) => { st.borderCol = e.target.value; syncCardStyle(); });
       winEl.querySelector('#st-vph-rad')?.addEventListener('input', (e) => { st.radius = Number(e.target.value) || 0; config.photoRadius = st.radius; scheduleSaveConfig(); syncCardStyle(); });
+      const filterBox = winEl.querySelector('#st-vph-filters');
+      if (filterBox) {
+        const canFilter = typeof getAffinityInfo === 'function' && getAffinityInfo().lv >= 8;
+        const fBtns = [];
+        PHOTO_FILTERS.forEach(fl => {
+          const b = doc.createElement('button');
+          b.type = 'button';
+          b.className = `st-px-btn${st.photoFilter === fl.id ? ' active' : ''}`;
+          b.style.cssText = `height:20px;padding:0 6px;font-size:9px;${(!canFilter && fl.id !== 'none') ? 'opacity:0.55;' : ''}`;
+          b.textContent = fl.name;
+          b.addEventListener('click', () => {
+            if (!canFilter && fl.id !== 'none') {
+              cmNotify('好感度达到 Lv.8 即可解锁专属拍照滤镜哦~');
+              return;
+            }
+            st.photoFilter = fl.id;
+            config.photoFilter = fl.id;
+            scheduleSaveConfig();
+            fBtns.forEach(x => x.b.classList.toggle('active', x.id === st.photoFilter));
+            redrawCv();
+          });
+          fBtns.push({ id: fl.id, b });
+          filterBox.appendChild(b);
+        });
+      }
       const styleBox = winEl.querySelector('#st-vph-styles');
       if (styleBox) {
         const STYLE_DEFS = [
@@ -33946,8 +34056,34 @@
           if (!Array.isArray(config.puppySnapAlbum)) config.puppySnapAlbum = [];
           config.puppySnapAlbum.unshift(entry);
           if (config.puppySnapAlbum.length > 64) config.puppySnapAlbum = config.puppySnapAlbum.slice(0, 64);
+          let firstSnapMsg = '成片已存入咔嚓相册！';
+          const todayS = getTodayStr();
+          const curLvS = typeof getAffinityInfo === 'function' ? getAffinityInfo().lv : 1;
+          if (curLvS >= 8 && (!config.puppySnapDailyReward || config.puppySnapDailyReward.date !== todayS || !config.puppySnapDailyReward.claimed)) {
+            config.puppySnapDailyReward = { date: todayS, claimed: true };
+            const coinGain = 6 + Math.floor(Math.random() * 5);
+            config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + coinGain;
+            config.puppyStats = config.puppyStats || {};
+            config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coinGain;
+            let extraTxt = '';
+            if (Math.random() < 0.35) {
+              config.puppyInventory = config.puppyInventory || {};
+              if (Math.random() < 0.45) {
+                config.puppyInventory.gacha_ticket = Math.floor(config.puppyInventory.gacha_ticket || 0) + 1;
+                extraTxt = ' + 扭蛋券×1';
+              } else {
+                const sn = pick([...SHOP_PUP_GOODS.filter(x => x.cat === 'snack'), ...GACHA_SNACKS]);
+                config.puppyInventory[sn.id] = Math.floor(config.puppyInventory[sn.id] || 0) + 1;
+                extraTxt = ` + ${sn.name}×1`;
+              }
+            }
+            updatePupStatBars();
+            for (let k = 0; k < 5; k++) spawnPupFx('sparkle', 6 + k * 3, 5);
+            firstSnapMsg = `已存入咔嚓相册！Lv8首拍有礼：小狗币 +${coinGain}${extraTxt}`;
+            if (config.puppyEnabled) showPuppyBubble(`Lv8每日首拍有礼! 获得 小狗币 +${coinGain}${extraTxt}~`, 3000);
+          }
           saveConfig();
-          cmNotify('成片已存入咔嚓相册！');
+          cmNotify(firstSnapMsg);
         } else {
           if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
           config.puppyVisitPhotos.unshift(entry);
@@ -39933,14 +40069,29 @@
               renderPupVisitPanel();
             });
           });
+          const innerCard = doc.createElement('div');
+          innerCard.style.boxSizing = 'border-box';
+          const fTop = doc.createElement('div');
+          fTop.style.cssText = 'display:none;justify-content:space-between;padding:1px 2px 2px;';
           const cv = doc.createElement('canvas');
-          cv.style.cssText = `width:96px;height:72px;margin:0 auto;display:block;image-rendering:pixelated;image-rendering:crisp-edges;border:1px solid ${pBd};border-radius:${Math.max(0, pRad - 2)}px;`;
-          drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, ph);
+          cv.style.cssText = 'display:block;box-sizing:border-box;image-rendering:pixelated;image-rendering:crisp-edges;';
+          const meta = doc.createElement('div');
+          meta.style.cssText = 'margin-top:2px;';
           const cap = doc.createElement('div');
-          cap.style.cssText = `font-size:9px;font-weight:700;margin-top:2px;color:${pBd};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
-          cap.textContent = ph.title || (Array.isArray(ph.dogs) && ph.dogs.length ? ph.dogs.map(x => x.name).join('&') : `${ph.hostName}&${ph.guestName}`);
+          cap.style.cssText = 'font-size:8.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+          const dt = doc.createElement('div');
+          dt.style.cssText = 'font-size:7px;';
+          meta.append(cap, dt);
+          const fBot = doc.createElement('div');
+          fBot.style.cssText = 'display:none;justify-content:space-between;align-items:center;padding:2px 2px 1px;';
+          innerCard.append(fTop, cv, meta, fBot);
+          applyStyledPhotoCard(innerCard, cv, meta, cap, dt, fTop, fBot, ph, ph.date || '', true);
+          drawDualPolaroidCanvas(cv, ph.hostName, ph.hostLook, ph.guestName, ph.guestLook, ph.date, ph);
+          card.style.background = 'transparent';
+          card.style.border = 'none';
+          card.style.padding = '0';
           card.addEventListener('click', () => openDualPhotoModal(ph));
-          card.append(delX, cv, cap);
+          card.append(delX, innerCard);
           vbBody.appendChild(card);
         });
         renderPager(visitPhotoPage, totalP, (np) => { visitPhotoPage = np; renderPupVisitPanel(); });
