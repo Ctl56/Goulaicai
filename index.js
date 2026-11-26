@@ -21209,9 +21209,7 @@
       if (Array.isArray(bespoke.ult)) {
         bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, fKey)));
       }
-      if (Array.isArray(bespoke.trim)) {
-        bespoke.trim.forEach(([side, vIdx]) => el.appendChild(makeCustomTrim(side, ach.bd, ach.fg, vIdx)));
-      }
+      // 已停用重复的居中波浪条 bespoke.trim
       if (Array.isArray(bespoke.pieces)) {
         bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
       }
@@ -21420,7 +21418,7 @@
           ]);
           const isSenior = seniorSet.has(ach.id);
           el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
-          // 18 款互不重复的小像素饰件池（供普通丰富、资深升级、最高级超豪华分层按哈希错位取用，绝不重复）
+          // 彻底取消重复的上下居中波浪条 makeCustomTrim！改用 24 款完全互不重复的独立像素小饰件，按档位错落点缀
           const EXTRA_ACCENTS = [
             ['..gg..','.gllg.','g..g..','..g...'], // 嫩叶芽
             ['.pp...','pwwp..','.pp...','..p...'], // 樱花瓣
@@ -21440,11 +21438,20 @@
             ['.p..p.','.pwwp.','..pp..','..yy..'], // 蝶翼小结
             ['..r...','.rwr..','.rgr..','..g...'], // 红浆果枝
             ['.y..y.','.ywwy.','..yy..','.y..y.'], // 流金穗结
+            ['y.y.y.','yyyyyy','.ywwy.','......'], // 迷你小皇冠
+            ['.rrrr.','rwwwwr','.rrrr.','..gg..'], // 小草莓
+            ['.bbbb.','bwwwwb','bwwwwb','.bbbb.'], // 迷你书本
+            ['..mm..','.mwwm.','mwwwwm','..bb..'], // 迷你茶杯
+            ['.yy...','yyyyyy','.yy..y','......'], // 小金钥匙
+            ['..pp..','.pwwp.','..gg..','.g..g.'], // 郁金香苞
           ];
-          const g3Idx = (h >> 2) % EXTRA_ACCENTS.length;
-          const g4Idx = (g3Idx + 7 + (h % 5)) % EXTRA_ACCENTS.length;
-          const g3 = EXTRA_ACCENTS[g3Idx];
-          const g4 = EXTRA_ACCENTS[g4Idx];
+          const idx3 = (h >> 2) % EXTRA_ACCENTS.length;
+          const idx4 = (idx3 + 5 + (h % 7)) % EXTRA_ACCENTS.length;
+          const idx5 = (idx4 + 7 + ((h >> 3) % 5)) % EXTRA_ACCENTS.length;
+          const g3 = EXTRA_ACCENTS[idx3];
+          const g4 = EXTRA_ACCENTS[idx4];
+          const g5 = EXTRA_ACCENTS[idx5];
+
           const mythicSet = new Set([
             'collector_max', 'soulmate', 'hidden_all_master', 'hidden_gacha_triple_ssr',
             'hidden_cloud_soulmate', 'hidden_cloud_gallery', 'hidden_fashion_sss',
@@ -21452,81 +21459,41 @@
           ]);
           const isMythic = (ach.tier >= 4) || mythicSet.has(ach.id);
 
-          if (isSenior || isMythic) {
-            // 高级(原3件升级为4~5件) & 最高级传说成就(超级丰富：3边高定雕边 + 主副饰件 + 2处不同方位独立不重复小饰件)
-            const trimSides = ['bottom', 'top', 'left', 'right'];
-            const uSide = trimSides[h % trimSides.length];
-            el.appendChild(makeCustomTrim(uSide, ach.bd, ach.fg, h));
-            const mainPos = uSide === 'right'
-              ? `left:-11px;top:${sideTopL}%;transform:translateY(-50%);`
-              : (uSide === 'left'
-                ? `right:-11px;top:${sideTopR}%;transform:translateY(-50%);`
-                : p1);
-            const subPos = uSide === 'right'
-              ? `left:${botPct}%;bottom:-7px;transform:translateX(-50%);`
-              : (uSide === 'left'
-                ? `left:${topPct}%;top:-8px;transform:translateX(-50%);`
-                : p2);
-            el.appendChild(renderBespokePiece({ pos: mainPos, w: isMythic ? 15 : 14, h: isMythic ? 13 : 12, anim: (h % 2 === 0 || isMythic ? 'b-bob' : ''), pal, grid: g1 }));
-            if (subG) {
-              el.appendChild(renderBespokePiece({ pos: subPos, w: isMythic ? 9 : 8, h: isMythic ? 8 : 7, pal, grid: subG }));
-            }
-            // 第2条非对称辅雕边（高级精选 & 全部最高级必带）
-            const secondTrim = trimSides[(h + 2) % 4];
-            if (isMythic || (h % 2 === 0)) {
-              el.appendChild(makeCustomTrim(secondTrim, ach.bd, ach.fg, h + 11));
-            }
-            // 第3处独立不重复小饰件（自动错开主/副与顶正中）
-            const offPct1 = (h % 2 === 0) ? (22 + ((h >> 4) % 14)) : (67 + ((h >> 4) % 15));
-            const extraPos3 = uSide === 'right'
-              ? `left:${offPct1}%;top:-7px;transform:translateX(-50%);`
-              : (uSide === 'left'
-                ? `left:${offPct1}%;bottom:-6px;transform:translateX(-50%);`
-                : `right:-9px;top:${sideTopR}%;transform:translateY(-50%);`);
-            el.appendChild(renderBespokePiece({ pos: extraPos3, w: 8, h: 7, anim: (h % 3 === 1 ? 'b-bob' : ''), pal, grid: g3 }));
+          // 找出 p1/p2 未占用的安全错落位置池（绝不压顶正中 40%~60%，绝不重复同一边）
+          const usedTop = /top:-/.test(p1) || /top:-/.test(p2);
+          const usedBot = /bottom:-/.test(p1) || /bottom:-/.test(p2);
+          const usedRight = /right:-/.test(p1) || /right:-/.test(p2);
+          const usedLeft = /left:-/.test(p1) || /left:-/.test(p2);
+          const leftBand = 18 + ((h >> 4) % 15);  // 18%..32%
+          const rightBand = 68 + ((h >> 5) % 16); // 68%..83%
+          const freeSlots = [];
+          if (!usedRight) freeSlots.push(`right:-9px;top:${sideTopR}%;transform:translateY(-50%);`);
+          if (!usedBot) freeSlots.push(`left:${(h % 2 === 0) ? rightBand : leftBand}%;bottom:-6px;transform:translateX(-50%);`);
+          if (!usedTop) freeSlots.push(`left:${(h % 2 === 0) ? leftBand : rightBand}%;top:-7px;transform:translateX(-50%);`);
+          if (!usedLeft) freeSlots.push(`left:-9px;top:${sideTopL}%;transform:translateY(-50%);`);
+          // 额外对角错位备选（仅在最高级需要第5件饰品时补充）
+          freeSlots.push(`right:${5 + ((h >> 6) % 10)}px;bottom:-6px;`);
+          freeSlots.push(`right:${6 + ((h >> 3) % 10)}px;top:-7px;`);
 
-            // 最高级传说成就：再叠加第3条高定雕边 + 第4处完全不重复的精巧小饰件！
-            if (isMythic) {
-              const thirdTrim = trimSides[(h + 1) % 4];
-              el.appendChild(makeCustomTrim(thirdTrim, ach.bd, ach.fg, h + 19));
-              const offPct2 = (h % 2 === 0) ? (68 + ((h >> 5) % 14)) : (20 + ((h >> 5) % 14));
-              const extraPos4 = (uSide === 'top' || uSide === 'bottom')
-                ? `left:-9px;top:${sideTopL}%;transform:translateY(-50%);`
-                : `left:${offPct2}%;${uSide === 'right' ? 'top:-7px;' : 'bottom:-6px;'}transform:translateX(-50%);`;
-              el.appendChild(renderBespokePiece({ pos: extraPos4, w: 7, h: 6, anim: 'b-bob', pal, grid: g4 }));
-            }
+          if (isMythic) {
+            // 最高级传说/神迹成就：5件完全不重复独立像素饰件（主+副+3处错落小饰件，零波浪条重复）
+            el.appendChild(renderBespokePiece({ pos: p1, w: 15, h: 13, anim: 'b-bob', pal, grid: g1 }));
+            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, pal, grid: subG }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 8, h: 7, anim: 'b-bob', pal, grid: g3 }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[1], w: 8, h: 7, pal, grid: g4 }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[2], w: 7, h: 6, anim: 'b-bob', pal, grid: g5 }));
+          } else if (isSenior) {
+            // 高级成就：4件完全不重复独立像素饰件（主+副+2处错落小饰件，零波浪条重复）
+            el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 8, h: 7, anim: (h % 3 === 1 ? 'b-bob' : ''), pal, grid: g3 }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[1], w: 7, h: 6, pal, grid: g4 }));
           } else {
             if (h % 3 === 0) el.classList.add('bespoke-static');
             el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
-            if (subG) {
-              el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
-            }
-            const enrichBadge = (ach.tier >= 2) || (h % 2 === 0);
-            if (enrichBadge) {
-              const usedTop = /top:-/.test(p1) || /top:-/.test(p2);
-              const usedBot = /bottom:-/.test(p1) || /bottom:-/.test(p2);
-              const usedRight = /right:-/.test(p1) || /right:-/.test(p2);
-              const usedLeft = /left:-/.test(p1) || /left:-/.test(p2);
-              const altPct = (h % 2 === 0) ? (22 + ((h >> 4) % 14)) : (66 + ((h >> 4) % 16));
-              let p3 = `right:${4 + ((h >> 6) % 12)}px;bottom:-6px;`;
-              let trimSide = '';
-              if (!usedRight) {
-                p3 = `right:-9px;top:${sideTopR}%;transform:translateY(-50%);`;
-                if (!usedBot) trimSide = 'bottom';
-                else if (!usedTop) trimSide = 'top';
-              } else if (!usedBot) {
-                p3 = `left:${altPct}%;bottom:-6px;transform:translateX(-50%);`;
-                if (!usedTop) trimSide = 'top';
-              } else if (!usedTop) {
-                p3 = `left:${altPct}%;top:-7px;transform:translateX(-50%);`;
-                if (!usedLeft) trimSide = 'left';
-              } else if (!usedLeft) {
-                p3 = `left:-9px;top:${sideTopL}%;transform:translateY(-50%);`;
-              }
-              el.appendChild(renderBespokePiece({ pos: p3, w: 7, h: 6, anim: (h % 4 === 0 ? 'b-bob' : ''), pal, grid: g3 }));
-              if (ach.tier >= 2 && trimSide) {
-                el.appendChild(makeCustomTrim(trimSide, ach.bd, ach.fg, h + 7));
-              }
+            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
+            if (ach.tier >= 2 || (h % 2 === 0)) {
+              el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 7, h: 6, anim: (h % 4 === 0 ? 'b-bob' : ''), pal, grid: g3 }));
             }
           }
         }
