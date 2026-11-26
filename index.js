@@ -20761,15 +20761,15 @@
     hidden_job_wrecker: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 15, pal: { w: '#f5ecec', k: '#734a4a', r: '#db6c6c', y: '#f5cc58', o: '#c48658' },
+        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 16, pal: { w: '#f5ecec', k: '#5e3c3c', r: '#db6c6c', y: '#ffe078', o: '#c48658' },
           frames: [
-            ['..w...w....','...w...w...','.kkkkkkkk..','kkwwwwwwkk.','.kkkkkkkk..','...o..o....','..o....o...'],
-            ['...w...w...','..w...w....','.kkkkkkkk..','kkwwwwwwkk.','.kkkkkkkk..','...o..o....','..o....o...'],
+            ['..w...w....','...w...w...','.kkkkkkkk..','kkwrrwwrkk.','.kkkkkkkk..','...o..o....','..o....o...'],
+            ['...w...w...','..w...w....','.kkkkkkkk..','kkwyywwykk.','.kkkkkkkk..','...o..o....','..o....o...'],
           ] },
-        { pos: 'right:8px;top:-9px;', w: 11, h: 10, anim: 'b-tilt', pal: { r: '#e06c6c', y: '#ffe078', w: '#ffffff' },
-          grid: ['...rrr...','..ryyyr..','.rywwwyr.','..ryyyr..','...rrr...'] },
-        { pos: 'right:-9px;bottom:-6px;', w: 10, h: 9, anim: 'b-breathe', pal: { a: '#db6c6c', b: '#ffd0d0', w: '#ffffff' },
-          grid: ['.aaaaa..','abwwwba.','abaaaba.','abwwwba.','.aaaaa..'] },
+        { pos: 'right:-11px;top:-9px;', w: 14, h: 12, anim: 'b-wiggle', pal: { r: '#db6c6c', w: '#ffffff', y: '#ffe078', k: '#733838' },
+          grid: ['..wwww.www..','.wwkkw.wkw..','wwkwww.wwww.','.wwwww.www..','...rrr.rr...'] },
+        { pos: 'left:24%;bottom:-8px;', w: 11, h: 12, anim: 'b-breathe', pal: { r: '#db6c6c', w: '#ffffff', k: '#5e3c3c', y: '#ffe078' },
+          grid: ['..kkk...','...k.kk.','.rrrrrr.','rrwwwwrr','rryyyyrr','.rrrrrr.'] },
       ],
     },
     hidden_adv_rest_8: {
@@ -20789,12 +20789,10 @@
     cloud_coadv_5: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-10px;top:-8px;', w: 13, h: 13, anim: 'b-wiggle', pal: { b: '#6ea2e0', l: '#dceeff', y: '#f5cc58', w: '#ffffff', r: '#eb6c78' },
-          grid: ['...bbbb...','..bwwwwb..','.bwrrwyyb.','bbwwwwwwbb','.bwwwwwwb.','..bbbbbb..'] },
-        { pos: 'right:-12px;bottom:-7px;', w: 13, h: 14, anim: 'b-breathe', pal: { b: '#6ea2e0', l: '#e2f0ff', y: '#f5cc58', w: '#ffffff' },
-          grid: ['...bbbb...','.bbbbbbbb.','bllwwwwllb','blwyyyywlb','bllllllllb','.bbbbbbbb.'] },
-        { pos: 'left:64%;top:-8px;', w: 11, h: 8, pal: { b: '#6ea2e0', w: '#ffffff' },
-          grid: ['.....bbbb','..bbbwwwb','bbwwwbb..','...bb....'] },
+        { pos: 'left:-11px;top:-8px;', w: 14, h: 11, anim: 'b-nod', pal: { b: '#6ea2e0', l: '#dceeff', o: '#8c6038', w: '#ffffff' },
+          grid: ['.bb...bb..','.bwb..bwb.','bbwbb.bbwb','ooooo.oooo'] },
+        { pos: 'right:-12px;bottom:-7px;', w: 14, h: 11, anim: 'b-shimmer', pal: { b: '#6ea2e0', l: '#e8f4ff', g: '#7fd9a8', w: '#ffffff' },
+          grid: ['.bbb.bbb.bb','bwgwbwgwbwb','bwwgbgwwbwb','.bbb.bbb.bb'] },
       ],
     },
     cloud_coadv_20: {
@@ -20863,12 +20861,10 @@
     cloud_bond_lv5: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 14, anim: 'b-pulse', pal: { p: '#e07ca0', l: '#ffe0ec', y: '#ffe078', w: '#ffffff' },
-          grid: ['...yy...','..ywwy..','.ppyypp.','pwwppwwp','.pppppp.','...pp...'] },
-        { pos: 'right:-11px;bottom:-7px;', w: 10, h: 10, anim: 'b-shimmer', pal: { a: '#f5cc58', b: '#f298b8', w: '#ffffff' },
-          grid: ['...bb...','.aaaaaa.','abwwwwba','.aaaaaa.','...bb...'] },
-        { pos: 'right:18px;bottom:-7px;', w: 12, h: 8, pal: { a: '#e07ca0', b: '#ffe078', w: '#ffffff' },
-          grid: ['...aaaa...','.aabbbbaa.','abwwwwwwba','.aaaaaaaa.'] },
+        { pos: 'right:-13px;top:46%;transform:translateY(-50%);', w: 13, h: 16, anim: 'b-shimmer', pal: { y: '#ffe078', p: '#e07ca0', w: '#ffffff', o: '#a86852' },
+          grid: ['..y..y..y.','.ypwwwwwpy','..ywwwwy..','...yppy...','....oo....','....oo....','....oo....'] },
+        { pos: 'left:-11px;bottom:-7px;', w: 14, h: 10, pal: { p: '#e07ca0', l: '#ffe4ec', y: '#ffe078', w: '#ffffff' },
+          grid: ['.pppppppp..','pwwyyyywwpp','pwwywwywwpp','.pppppppp..'] },
       ],
     },
     hidden_cloud_bond_lv10: {
@@ -21220,12 +21216,10 @@
     pet_legend_300: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-10px;top:-9px;', w: 14, h: 12, anim: 'b-breathe', pal: { p: '#de95b0', l: '#ffe4ef', w: '#ffffff', y: '#f5cc58' },
-          grid: ['.pp..pp..pp.','pwwppwwppwwp','.pppppppppp.','..ppyyyypp..','...pwwwwp...'] },
-        { pos: 'right:-13px;top:54%;transform:translateY(-50%);', w: 13, h: 15, anim: 'b-nod', pal: { y: '#f2c44c', p: '#f5a8c4', w: '#ffffff' },
-          grid: ['..yyyyyy..','.ywwwwwwy.','ywppppppwy','.yyyyyyyy.','..pp..pp..','.pp....pp.'] },
-        { pos: 'left:16px;bottom:-7px;', w: 11, h: 7, pal: { p: '#eb8cb0', w: '#ffffff' },
-          grid: ['ppppppppp','p.p.p.p.p'] },
+        { pos: 'left:-12px;top:-8px;', w: 14, h: 11, anim: 'b-wiggle', pal: { p: '#de95b0', l: '#ffe4ef', o: '#b87a68', w: '#ffffff' },
+          grid: ['.ppppppp...','pwwwwwwwpoo','pwpwpwpwpoo','.ppppppp...'] },
+        { pos: 'right:-12px;bottom:-7px;', w: 14, h: 13, anim: 'b-shimmer', pal: { y: '#f5cc58', p: '#de95b0', w: '#ffffff' },
+          grid: ['y..yy..y..','yyyyyyyy..','.ppwwwwpp.','ppwppppwpp','.pppppppp.'] },
       ],
     },
     fun_bday_twin: {
@@ -21315,12 +21309,10 @@
     fun_coin_saver: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'right:-13px;bottom:-7px;', w: 15, h: 13, anim: 'b-breathe', pal: { y: '#deb44b', l: '#fff4c4', p: '#ffb8cc', w: '#ffffff', k: '#6b4908' },
-          grid: ['...yyyyyy...','..ywwwwwwy..','.ywkwwwwpwy.','ywwwwwwwwwwy','.yyyyyyyyyy.','..yy....yy..'] },
-        { pos: 'left:-9px;top:-8px;', w: 11, h: 12, anim: 'b-wiggle', pal: { y: '#e6b840', l: '#fff6cc', w: '#ffffff' },
-          grid: ['..yyyy..','.ywwwwy.','..yyyy..','...yy...','...yyy..','...yy...'] },
-        { pos: 'left:24%;bottom:-7px;', w: 11, h: 7, pal: { y: '#deb44b', l: '#fff4c4', w: '#ffffff' },
-          grid: ['...yyyy...','.yywwwwyy.','yyyyyyyyyy'] },
+        { pos: 'right:-14px;top:48%;transform:translateY(-50%);', w: 14, h: 14, anim: 'b-breathe', pal: { y: '#deb44b', l: '#fff4c4', k: '#6b4908', w: '#ffffff' },
+          grid: ['.yyyyyyyy.','yywwwwwwyy','ywyykkyywy','ywykwwkywy','ywyykkyywy','.yyyyyyyy.','..kk..kk..'] },
+        { pos: 'left:-10px;bottom:-7px;', w: 12, h: 11, pal: { y: '#e6b840', l: '#fff6cc', o: '#a87422', w: '#ffffff' },
+          grid: ['...oooo...','..yyyyyy..','.ywwwwwwy.','ywywywywyw','.ywwwwwwy.','..yyyyyy..'] },
       ],
     },
     toy_marathon_100: {
@@ -21357,23 +21349,19 @@
     adv_hidden_curio: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-tilt', pal: { p: '#9e82e6', l: '#eae0ff', y: '#f5cc58', w: '#ffffff' },
-          grid: ['..yyyy..','.ywwwwy.','.yppppy.','...yy...','...yy...','...yyy..','...yy...'] },
-        { pos: 'right:-10px;bottom:-6px;', w: 10, h: 10, anim: 'b-pulse', pal: { a: '#9e82e6', b: '#94dcff', w: '#ffffff' },
-          grid: ['....aa..','...abba.','.aabwwa.','abwwba..','.aaaa...'] },
-        { pos: 'left:22px;top:-8px;', w: 10, h: 10, pal: { a: '#f5cc58', b: '#c4a8ff', w: '#ffffff' },
-          grid: ['.aaaaaa.','abwbbwba','abwwwwba','..aaaa..','...bb...'] },
+        { pos: 'left:-14px;top:52%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-wiggle', pal: { p: '#9e82e6', y: '#f5cc58', l: '#efe6ff', w: '#ffffff' },
+          grid: ['..yyyyy...','.ywpppwy..','.ywpwwpy..','..yyyyy...','....yy....','....yyyy..','....yy.y..'] },
+        { pos: 'right:-11px;bottom:-7px;', w: 13, h: 13, anim: 'b-shimmer', pal: { p: '#9e82e6', c: '#94dcff', l: '#f0e6ff', w: '#ffffff', y: '#f5cc58' },
+          grid: ['...pppp...','..pwwwwp..','.pwcllcwp.','..pwwwwp..','..yyyyyy..'] },
       ],
     },
     ach_dig_lucky_3: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'right:-13px;top:52%;transform:translateY(-50%);', w: 14, h: 15, anim: 'b-wiggle', pal: { y: '#e0a63e', l: '#fff2be', o: '#9c6622', w: '#ffffff' },
-          grid: ['.....oo..','....oo...','...oo....','..yyyy...','.ywwwwy..','ywwwwwwy.','.yyyyyy..'] },
-        { pos: 'left:-10px;bottom:-7px;', w: 13, h: 10, anim: 'b-shimmer', pal: { y: '#e6b23c', c: '#8ce0ff', w: '#ffffff', o: '#a87032' },
-          grid: ['....cc....','...cwwc...','.ooyccyoo.','oowwwwwwoo','.oooooooo.'] },
-        { pos: 'left:26%;top:-8px;', w: 10, h: 10, pal: { y: '#e0a63e', w: '#ffffff' },
-          grid: ['..yyyy..','.y....y.','yyyyyyyy','.ywwwwy.','..yyyy..'] },
+        { pos: 'right:-13px;top:50%;transform:translateY(-50%);', w: 13, h: 16, anim: 'b-nod', pal: { y: '#e0a63e', l: '#fff4c4', o: '#8c5a1c', w: '#ffffff' },
+          grid: ['...oooo...','....oo....','....oo....','.yyyyyyyy.','yywwwwwwyy','.yyyyyyyy.','..yyyyyy..','....yy....'] },
+        { pos: 'left:-10px;top:-8px;', w: 12, h: 12, anim: 'b-shimmer', pal: { o: '#b87842', y: '#ffe078', c: '#8ce0ff', w: '#ffffff' },
+          grid: ['..yyccyy..','..oooooo..','o.owwwwo.o','oowlyylwoo','..oooooo..','...oooo...'] },
       ],
     },
     adv_legend_50: {
@@ -21428,12 +21416,10 @@
     hidden_toy_rally_king: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-11px;top:-8px;', w: 15, h: 10, anim: 'b-orbit', pal: { b: '#6cb8e6', w: '#ffffff', y: '#ffe078' },
-          grid: ['...bbbbbbb...','.bbwwwwwwwbb.','bbwyyyyyyywbb','.bbbbbbbbbbb.'] },
-        { pos: 'right:-13px;bottom:-7px;', w: 15, h: 15, anim: 'b-shimmer', pal: { b: '#6cb8e6', y: '#f5cc58', l: '#fff6cc', w: '#ffffff' },
-          grid: ['.yyyyyyyyyy.','y.ywwwwwwy.y','y.ywbbbbwy.y','..yyyyyyyy..','....yyyy....','..yyyyyyyy..'] },
-        { pos: 'left:24%;bottom:-7px;', w: 12, h: 9, pal: { b: '#6cb8e6', w: '#ffffff', o: '#8c6038' },
-          grid: ['o.bwbwbw.','o.wbwbwb.','o.bwbwbw.','o........','o........'] },
+        { pos: 'right:-14px;top:48%;transform:translateY(-50%);', w: 15, h: 12, anim: 'b-wiggle', pal: { y: '#f5cc58', b: '#6cb8e6', w: '#ffffff', o: '#9c6c18' },
+          grid: ['....yyyyyyy.','..yywwwwwwyy','bbwwwwwwwwyy','.bbbyyyyyyy.','....yyyyy...'] },
+        { pos: 'left:-12px;bottom:-7px;', w: 16, h: 10, anim: 'b-orbit', pal: { b: '#6cb8e6', w: '#ffffff', y: '#ffe078' },
+          grid: ['ww..bbbbbb..ww','.wwbwwwwwwbww.','..bbwyyyywbb..','...bbbbbbbb...'] },
       ],
     },
     hidden_job_boss: {
@@ -21505,7 +21491,7 @@
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
         { pos: 'left:-12px;bottom:-7px;', w: 15, h: 12, anim: 'b-nod', pal: { p: '#d982b8', l: '#fce6f4', r: '#e05878', w: '#ffffff' },
-          grid: ['.pppppppp.','ppwwwwwwpp','pwwprrpwwp','pwwwrrwwwp','ppwwwwwwpp','.pppppppp.'] },
+          grid: ['.pppppppp.','pwwwwwwyyp','pwwprrpwwp','pwwwrrwwwp','pwwwwwwwwp','.pppppppp.','...pppp...'] },
         { pos: 'left:68%;top:-9px;', w: 13, h: 10, anim: 'b-orbit', pal: { w: '#ffffff', p: '#d982b8', y: '#ffe078' },
           grid: ['..pp....','..pwwp..','pwwwwwwy','.pwwwwp.','..pppp..'] },
         { pos: 'right:-12px;top:46%;transform:translateY(-50%);', w: 11, h: 15, pal: { p: '#d982b8', l: '#ffe4f2', w: '#ffffff' },
@@ -21850,6 +21836,9 @@
       'gacha_count_300', 'hidden_dress_master', 'hidden_early_bird',
       // v138 新增 4 款各不相同的创意包裹（绝不动已有 53 款）
       'lt_toy_100', 'ach_ck_52', 'hidden_ancient_poet', 'hidden_job_boss',
+      // v140 新增 8 款各不相同的创意包裹（绝不动已有 57 款）
+      'pet_legend_300', 'fun_coin_saver', 'cloud_coadv_5', 'cloud_bond_lv5',
+      'adv_hidden_curio', 'ach_dig_lucky_3', 'hidden_toy_rally_king', 'hidden_job_wrecker',
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
     const cv = doc.createElement('canvas');
@@ -22195,6 +22184,49 @@
         px(x + 1, 8, (x % 12 === 10) ? '#f2c464' : '#ffe8b8', 4, 1);
       }
       px(8, 26, '#e09e38', 28, 3); px(11, 27, '#fff4cc', 22, 1);
+
+    // ==================== v140 新增 8 款全新创意包裹（绝不动已有 57 款） ====================
+    } else if (id === 'pet_legend_300') {
+      // 撸狗界泰斗：右上丝绒缎带项圈环 + 左下小肉垫挂坠角
+      px(64, 5, '#de95b0', 22, 3); px(68, 6, '#ffe4ef', 14, 1); px(84, 8, '#de95b0', 3, 9);
+      px(6, 25, '#de95b0', 8, 3); px(8, 23, '#f5b8ce', 4, 2); px(9, 26, '#ffffff', 2, 1);
+    } else if (id === 'fun_coin_saver') {
+      // 小小守财汪：左上金口零钱包金属拱扣 + 右下小铜锁挂扣
+      px(8, 5, '#deb44b', 26, 2); px(14, 3, '#ffe894', 5, 2); px(23, 3, '#ffe894', 5, 2);
+      px(6, 7, '#deb44b', 2, 7);
+      px(80, 24, '#deb44b', 7, 5); px(82, 22, '#ffe894', 3, 2); px(83, 26, '#6b4908', 1, 2);
+    } else if (id === 'cloud_coadv_5') {
+      // 双爪启程：左下虚线徒步路线足迹 + 右上木质指路牌箭头
+      for (let x = 10; x <= 44; x += 7) px(x, 27, '#6ea2e0', 4, 1);
+      px(6, 23, '#6ea2e0', 2, 5);
+      px(72, 4, '#c48a58', 14, 4); px(86, 5, '#c48a58', 2, 2); px(75, 5, '#fff4e0', 8, 1);
+    } else if (id === 'cloud_bond_lv5') {
+      // 默契星火：左上与右下斜跃星火流光轨迹折线
+      px(6, 6, '#e07ca0', 8, 2); px(14, 4, '#ffe078', 6, 2); px(20, 6, '#f5a8c4', 5, 1);
+      px(72, 26, '#e07ca0', 8, 2); px(80, 24, '#ffe078', 6, 2); px(86, 20, '#f5a8c4', 2, 5);
+    } else if (id === 'adv_hidden_curio') {
+      // 秘境寻奇汪：右上秘境符文石拱角 + 左下晶簇棱角
+      px(72, 5, '#9e82e6', 16, 2); px(86, 5, '#9e82e6', 2, 13); px(76, 7, '#dcd0ff', 8, 1); px(84, 9, '#ffe078', 2, 3);
+      px(6, 23, '#9e82e6', 4, 5); px(10, 25, '#c4b4ff', 6, 3); px(16, 27, '#94dcff', 6, 2);
+    } else if (id === 'ach_dig_lucky_3') {
+      // 黄金铲土官：底边帆布园艺工具袋缝线边 + 左上小嫩芽
+      px(12, 26, '#e0a63e', 70, 3); px(16, 27, '#fff2c4', 6, 1); px(32, 27, '#fff2c4', 6, 1); px(52, 27, '#fff2c4', 6, 1); px(70, 27, '#fff2c4', 6, 1);
+      leaf(6, 5, '#68c284', '#d6f7e0'); leaf(11, 4, '#8ee0a4', '#ffffff');
+    } else if (id === 'hidden_toy_rally_king') {
+      // 人狗默契巅峰：左上赛场三角小旗串 + 右下斜飘金蓝绶带尾
+      px(6, 5, '#6cb8e6', 32, 1);
+      px(8, 6, '#6cb8e6', 5, 2); px(9, 8, '#6cb8e6', 3, 1);
+      px(16, 6, '#ffe078', 5, 2); px(17, 8, '#ffe078', 3, 1);
+      px(24, 6, '#6cb8e6', 5, 2); px(25, 8, '#6cb8e6', 3, 1);
+      px(74, 26, '#6cb8e6', 12, 2); px(80, 24, '#ffe078', 8, 2); px(86, 21, '#6cb8e6', 2, 5);
+    } else if (id === 'hidden_job_wrecker') {
+      // 无敌破坏王：左上与右下红白斜纹警戒胶带包角 + 裂纹折线
+      for (let i = 0; i < 4; i++) {
+        px(6 + i * 5, 5, i % 2 === 0 ? '#db6c6c' : '#ffe078', 5, 3);
+        px(68 + i * 5, 26, i % 2 === 0 ? '#db6c6c' : '#ffe078', 5, 3);
+      }
+      px(5, 8, '#db6c6c', 2, 7); px(87, 19, '#db6c6c', 2, 7);
+      px(82, 5, '#db6c6c', 2, 2); px(84, 7, '#db6c6c', 2, 2); px(82, 9, '#db6c6c', 2, 2);
     }
     return cv;
   };
@@ -48673,6 +48705,13 @@
         pupBagEl.style.setProperty('--px-fg', stFg);
         pupBagEl.style.setProperty('--px-custom-fg', stFg);
       }
+      if (stBd) {
+        pupBagEl.style.setProperty('--px-bar-track', stBg || '#f0e6e9');
+        pupBagEl.style.setProperty('--px-bar-hunger', `color-mix(in srgb, ${stBd} 88%, #ffffff)`);
+        pupBagEl.style.setProperty('--px-bar-thirst', `color-mix(in srgb, ${stBd} 76%, #ffffff)`);
+        pupBagEl.style.setProperty('--px-bar-mood', `color-mix(in srgb, ${stBd} 94%, #ffffff)`);
+        pupBagEl.style.setProperty('--px-bar-aff', stBd);
+      }
       if (headEl) {
         headEl.style.background = stBg || '';
         headEl.style.color = stFg || '';
@@ -48733,12 +48772,21 @@
         return `#${c(0)}${c(1)}${c(2)}`;
       };
       const accentBase = config.puppyBagHead1 || bdCol || '#bfa4ae';
-      const accentSec = config.puppyBagHead2 || bdCol || '#dfd0d8';
+      const accentSec = config.puppyBagHead2 || bdCol || accentBase;
+      const hasCustom = Boolean(config.puppyBagHead1 || config.puppyBagHead2 || bdCol || bgCol);
       pupBagEl.style.setProperty('--px-bar-track', bgCol ? shadeHex(bgCol, 0.93) : '#f0e6e9');
-      pupBagEl.style.setProperty('--px-bar-hunger', mixHex(accentBase, '#d49a89', 0.45));
-      pupBagEl.style.setProperty('--px-bar-thirst', mixHex(accentSec, '#8eaec9', 0.45));
-      pupBagEl.style.setProperty('--px-bar-mood', mixHex(accentBase, '#cf8fa8', 0.40));
-      pupBagEl.style.setProperty('--px-bar-aff', mixHex(accentSec, '#a892c4', 0.42));
+      if (hasCustom) {
+        // 全部 4 条进度条（饱食/水分/心情/好感）均以用户自定义主题色为主色调，只保留轻柔明暗层次区分
+        pupBagEl.style.setProperty('--px-bar-hunger', mixHex(accentBase, '#ffffff', 0.10));
+        pupBagEl.style.setProperty('--px-bar-thirst', mixHex(accentSec, accentBase, 0.25));
+        pupBagEl.style.setProperty('--px-bar-mood', mixHex(accentBase, accentSec, 0.42));
+        pupBagEl.style.setProperty('--px-bar-aff', shadeHex(accentSec, 0.90));
+      } else {
+        pupBagEl.style.setProperty('--px-bar-hunger', '#d4a69e');
+        pupBagEl.style.setProperty('--px-bar-thirst', '#9fb5c9');
+        pupBagEl.style.setProperty('--px-bar-mood', '#cf99ad');
+        pupBagEl.style.setProperty('--px-bar-aff', '#b39ec4');
+      }
       if (config.puppyBagHead1 || config.puppyBagHead2) {
         const c1 = config.puppyBagHead1 || '#e8d5db';
         const c2 = config.puppyBagHead2 || '#dfd0d8';
