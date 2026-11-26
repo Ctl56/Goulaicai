@@ -22373,7 +22373,13 @@
         saveMemBtn.textContent = '保存此配饰位置';
         saveMemBtn.addEventListener('click', () => {
           applyLiveOffset();
-          applyWardDraftToPuppy();
+          config.puppyAccOffsets = config.puppyAccOffsets || {};
+          config.puppyAccOffsets[editId] = { dx: Number(dx.toFixed(2)), dy: Number(dy.toFixed(2)) };
+          saveConfig();
+          if (typeof pup !== 'undefined' && pup) pup._lastRenderKey = '';
+          if (config.puppyEnabled) drawPuppyScene();
+          redrawWardStickyPreview();
+          showPuppyBubble('已保存这个配饰的位置（未改动当前装扮）~', 1800);
         });
         const rstMemBtn = doc.createElement('button');
         rstMemBtn.type = 'button';
@@ -23669,21 +23675,17 @@
       const _nowT = Date.now();
       const _moodMult = Number(_ve.dailyMoodMult || 1);
       const _pokeMult = (_ve.sellRateUntil && _nowT < _ve.sellRateUntil) ? (_ve.sellRateMult || 1) : 1;
-      const calcSellPrice = (baseP) => {
+      const calcDailyBasePrice = (baseP) => {
         const bp = Math.max(1, Math.round(baseP));
-        let dailyP = bp;
-        if (_moodMult > 1) {
-          dailyP = Math.max(bp + 1, Math.round(bp * _moodMult));
-        } else if (_moodMult < 1 && bp > 1) {
-          dailyP = Math.max(1, Math.min(bp - 1, Math.round(bp * _moodMult)));
-        }
-        let finalP = dailyP;
-        if (_pokeMult > 1) {
-          finalP = Math.max(dailyP + 1, Math.round(dailyP * _pokeMult));
-        } else if (_pokeMult < 1 && dailyP > 1) {
-          finalP = Math.max(1, Math.min(dailyP - 1, Math.round(dailyP * _pokeMult)));
-        }
-        return finalP;
+        if (_moodMult > 1) return Math.max(bp + 1, Math.round(bp * _moodMult));
+        if (_moodMult < 1 && bp > 1) return Math.max(1, Math.min(bp - 1, Math.round(bp * _moodMult)));
+        return bp;
+      };
+      const calcSellPrice = (baseP) => {
+        const dailyP = calcDailyBasePrice(baseP);
+        if (_pokeMult > 1) return Math.max(dailyP + 1, Math.round(dailyP * _pokeMult));
+        if (_pokeMult < 1 && dailyP > 1) return Math.max(1, Math.min(dailyP - 1, Math.floor(dailyP * _pokeMult)));
+        return dailyP;
       };
       const _darkLocked = Boolean(_ve.sellDarkLockUntil && _nowT < _ve.sellDarkLockUntil);
       const _vMsgInit = root.querySelector('#st-px-sell-vendor-msg');
@@ -23847,14 +23849,17 @@
           const iconEl = makeItemIcon(it);
           const meta = doc.createElement('div');
           meta.style.cssText = 'flex:1;min-width:0;';
+          const _dailyP = calcDailyBasePrice(it.sellPrice);
           const _unitP = calcSellPrice(it.sellPrice);
-          const _priceColor = _unitP > it.sellPrice ? '#2b8a3e' : (_unitP < it.sellPrice ? '#c92a2a' : 'inherit');
-          const _priceTag = _unitP > it.sellPrice ? '↑' : (_unitP < it.sellPrice ? '↓' : '');
+          const _cmpRef = _pokeMult !== 1 ? _dailyP : it.sellPrice;
+          const _priceColor = _unitP > _cmpRef ? '#c92a2a' : (_unitP < _cmpRef ? '#2b8a3e' : 'inherit');
+          const _priceTag = _unitP > _cmpRef ? '↑' : (_unitP < _cmpRef ? '↓' : '');
+          const _strikeHtml = (_pokeMult !== 1 && _unitP !== _dailyP) ? `<span style="text-decoration:line-through;opacity:0.55;margin-right:2px;">${_dailyP}</span>` : '';
           meta.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0;">
             <span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;">${it.name}</span>
             <span style="font-size:9px;opacity:0.75;flex-shrink:0;">x${it.qty}</span>
           </div>
-          <div style="font-size:9px;opacity:0.85;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">[${it.catLabel}] <span style="color:${_priceColor};font-weight:700;">${_unitP}币${_priceTag}</span>/个</div>`;
+          <div style="font-size:9px;opacity:0.85;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">[${it.catLabel}] ${_strikeHtml}<span style="color:${_priceColor};font-weight:700;">${_unitP}币${_priceTag}</span>/个</div>`;
           top.append(iconEl, meta);
 
           const btns = doc.createElement('div');
