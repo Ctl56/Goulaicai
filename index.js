@@ -2801,6 +2801,7 @@
     puppyDmUseMyBubble: true,
     puppyDmBubDefaultOnV1: false,
     puppyFriendRemarks: {},
+    puppyDmFavStickers: [],
     puppyDmRect: null,
     puppyBagFollowST: false,
     puppyReplyBell: true,
@@ -5322,51 +5323,51 @@
       0% { opacity: 0.98; transform: translateY(10px) scale(0.98); }
       100% { opacity: 0.92; transform: translateY(0) scale(1); }
     }
-    #st-tb-puppy-bubble.bub-gacha-soda-popNone, .st-tb-guest-bubble.bub-gacha-soda-popNone { background: linear-gradient(135deg,#ebf8ff,#dff5ff,#f5fbff); border-color: #6ab8e8; color: #224d6e; box-shadow: 0 2px 8px rgba(106,184,232,0.36); }
+    #st-tb-puppy-bubble.bub-gacha-soda-pop, .st-tb-guest-bubble.bub-gacha-soda-pop { background: linear-gradient(135deg,#ebf8ff,#dff5ff,#f5fbff); border-color: #6ab8e8; color: #224d6e; box-shadow: 0 2px 8px rgba(106,184,232,0.36); }
     #st-tb-puppy-bubble.bub-gacha-soda-pop::after, .st-tb-guest-bubble.bub-gacha-soda-pop::after { background: #e6f6ff; border-color: #6ab8e8; }
-    #st-tb-puppy-bubble.bub-gacha-aurora-glassNone, .st-tb-guest-bubble.bub-gacha-aurora-glassNone { background: linear-gradient(120deg,#e4fff5,#e8f3ff,#f4eaff,#e4fff5); background-size: 260% 260%; animation: stBubSheen 3.8s ease infinite; border-color: #7cc9c4; color: #234c54; box-shadow: 0 2px 11px rgba(124,201,196,0.44), inset 0 0 0 1px #ffffff; }
+    #st-tb-puppy-bubble.bub-gacha-aurora-glass, .st-tb-guest-bubble.bub-gacha-aurora-glass { background: linear-gradient(120deg,#e4fff5,#e8f3ff,#f4eaff,#e4fff5); background-size: 260% 260%; animation: stBubSheen 3.8s ease infinite; border-color: #7cc9c4; color: #234c54; box-shadow: 0 2px 11px rgba(124,201,196,0.44), inset 0 0 0 1px #ffffff; }
     #st-tb-puppy-bubble.bub-gacha-aurora-glass::after, .st-tb-guest-bubble.bub-gacha-aurora-glass::after { background: #eaf9f6; border-color: #7cc9c4; }
-    #st-tb-puppy-bubble.bub-dyn-strawberryNone, .st-tb-guest-bubble.bub-dyn-strawberryNone { background: linear-gradient(125deg,#fff5f8,#ffe6ef,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #e08fa8; color: #633042; box-shadow: 0 2px 9px rgba(224,143,168,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-strawberry, .st-tb-guest-bubble.bub-dyn-strawberry { background: linear-gradient(125deg,#fff5f8,#ffe6ef,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #e08fa8; color: #633042; box-shadow: 0 2px 9px rgba(224,143,168,0.34); }
     #st-tb-puppy-bubble.bub-dyn-strawberry::after, .st-tb-guest-bubble.bub-dyn-strawberry::after { background: #ffeff5; border-color: #e08fa8; }
-    #st-tb-puppy-bubble.bub-dyn-koipondNone, .st-tb-guest-bubble.bub-dyn-koipondNone { background: linear-gradient(125deg,#eefaf8,#e0f4f2,#f5fcfb); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #78b8b2; color: #225450; box-shadow: 0 2px 9px rgba(120,184,178,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-koipond, .st-tb-guest-bubble.bub-dyn-koipond { background: linear-gradient(125deg,#eefaf8,#e0f4f2,#f5fcfb); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #78b8b2; color: #225450; box-shadow: 0 2px 9px rgba(120,184,178,0.34); }
     #st-tb-puppy-bubble.bub-dyn-koipond::after, .st-tb-guest-bubble.bub-dyn-koipond::after { background: #e8f7f5; border-color: #78b8b2; }
-    #st-tb-puppy-bubble.bub-dyn-lemon-teaNone, .st-tb-guest-bubble.bub-dyn-lemon-teaNone { background: linear-gradient(125deg,#fffdf0,#fdf6cc,#fffef5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d9bd59; color: #5c4a14; box-shadow: 0 2px 9px rgba(217,189,89,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-lemon-tea, .st-tb-guest-bubble.bub-dyn-lemon-tea { background: linear-gradient(125deg,#fffdf0,#fdf6cc,#fffef5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d9bd59; color: #5c4a14; box-shadow: 0 2px 9px rgba(217,189,89,0.34); }
     #st-tb-puppy-bubble.bub-dyn-lemon-tea::after, .st-tb-guest-bubble.bub-dyn-lemon-tea::after { background: #fef9dd; border-color: #d9bd59; }
-    #st-tb-puppy-bubble.bub-dyn-cat-pawNone, .st-tb-guest-bubble.bub-dyn-cat-pawNone { background: linear-gradient(125deg,#fff6f8,#fce8ee,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d99ab0; color: #633446; box-shadow: 0 2px 9px rgba(217,154,176,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-cat-paw, .st-tb-guest-bubble.bub-dyn-cat-paw { background: linear-gradient(125deg,#fff6f8,#fce8ee,#fffaf5); background-size: 240% 240%; animation: stBubSheen 4.2s ease infinite; border-color: #d99ab0; color: #633446; box-shadow: 0 2px 9px rgba(217,154,176,0.34); }
     #st-tb-puppy-bubble.bub-dyn-cat-paw::after, .st-tb-guest-bubble.bub-dyn-cat-paw::after { background: #fdf0f4; border-color: #d99ab0; }
-    #st-tb-puppy-bubble.bub-dyn-paper-planeNone, .st-tb-guest-bubble.bub-dyn-paper-planeNone { background: linear-gradient(125deg,#f5faff,#eef5fc,#fffdf7); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #8cb2d9; color: #2b4c6e; box-shadow: 0 2px 9px rgba(140,178,217,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-paper-plane, .st-tb-guest-bubble.bub-dyn-paper-plane { background: linear-gradient(125deg,#f5faff,#eef5fc,#fffdf7); background-size: 240% 240%; animation: stBubSheen 4.5s ease infinite; border-color: #8cb2d9; color: #2b4c6e; box-shadow: 0 2px 9px rgba(140,178,217,0.34); }
     #st-tb-puppy-bubble.bub-dyn-paper-plane::after, .st-tb-guest-bubble.bub-dyn-paper-plane::after { background: #f2f7fd; border-color: #8cb2d9; }
-    #st-tb-puppy-bubble.bub-dyn-train-ticketNone, .st-tb-guest-bubble.bub-dyn-train-ticketNone { background: linear-gradient(135deg,#fffaf0,#f7ecd6); border-color: #c29a6b; color: #5c4022; box-shadow: 0 2px 8px rgba(194,154,107,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-train-ticket, .st-tb-guest-bubble.bub-dyn-train-ticket { background: linear-gradient(135deg,#fffaf0,#f7ecd6); border-color: #c29a6b; color: #5c4022; box-shadow: 0 2px 8px rgba(194,154,107,0.3); }
     #st-tb-puppy-bubble.bub-dyn-train-ticket::after, .st-tb-guest-bubble.bub-dyn-train-ticket::after { background: #fbf3e3; border-color: #c29a6b; }
-    #st-tb-puppy-bubble.bub-dyn-washi-noteNone, .st-tb-guest-bubble.bub-dyn-washi-noteNone { background: linear-gradient(135deg,#fffdf8,#fcf5eb); border-color: #d4a6b4; color: #593b44; box-shadow: 0 2px 8px rgba(212,166,180,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-washi-note, .st-tb-guest-bubble.bub-dyn-washi-note { background: linear-gradient(135deg,#fffdf8,#fcf5eb); border-color: #d4a6b4; color: #593b44; box-shadow: 0 2px 8px rgba(212,166,180,0.3); }
     #st-tb-puppy-bubble.bub-dyn-washi-note::after, .st-tb-guest-bubble.bub-dyn-washi-note::after { background: #fdf8f0; border-color: #d4a6b4; }
-    #st-tb-puppy-bubble.bub-dyn-rain-windowNone, .st-tb-guest-bubble.bub-dyn-rain-windowNone { background: linear-gradient(135deg,#eef6fc,#e0eef8); border-color: #8ab0cc; color: #2d4c66; box-shadow: 0 2px 8px rgba(138,176,204,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-rain-window, .st-tb-guest-bubble.bub-dyn-rain-window { background: linear-gradient(135deg,#eef6fc,#e0eef8); border-color: #8ab0cc; color: #2d4c66; box-shadow: 0 2px 8px rgba(138,176,204,0.32); }
     #st-tb-puppy-bubble.bub-dyn-rain-window::after, .st-tb-guest-bubble.bub-dyn-rain-window::after { background: #e8f2fa; border-color: #8ab0cc; }
-    #st-tb-puppy-bubble.bub-dyn-cassetteNone, .st-tb-guest-bubble.bub-dyn-cassetteNone { background: linear-gradient(135deg,#fff5f0,#fae4dc); border-color: #cf8474; color: #5e3128; box-shadow: 0 2px 8px rgba(207,132,116,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-cassette, .st-tb-guest-bubble.bub-dyn-cassette { background: linear-gradient(135deg,#fff5f0,#fae4dc); border-color: #cf8474; color: #5e3128; box-shadow: 0 2px 8px rgba(207,132,116,0.32); }
     #st-tb-puppy-bubble.bub-dyn-cassette::after, .st-tb-guest-bubble.bub-dyn-cassette::after { background: #fcede6; border-color: #cf8474; }
-    #st-tb-puppy-bubble.bub-dyn-snowfallNone, .st-tb-guest-bubble.bub-dyn-snowfallNone { background: linear-gradient(135deg,#eef7ff,#e2f0fc,#f7fbff); border-color: #8cbce0; color: #264a6b; box-shadow: 0 2px 9px rgba(140,188,224,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-snowfall, .st-tb-guest-bubble.bub-dyn-snowfall { background: linear-gradient(135deg,#eef7ff,#e2f0fc,#f7fbff); border-color: #8cbce0; color: #264a6b; box-shadow: 0 2px 9px rgba(140,188,224,0.34); }
     #st-tb-puppy-bubble.bub-dyn-snowfall::after, .st-tb-guest-bubble.bub-dyn-snowfall::after { background: #eaf4fd; border-color: #8cbce0; }
-    #st-tb-puppy-bubble.bub-dyn-matcha-whirlNone, .st-tb-guest-bubble.bub-dyn-matcha-whirlNone { background: linear-gradient(135deg,#f2faf0,#e3f2e0,#f7fcf6); border-color: #7eb07a; color: #2b5428; box-shadow: 0 2px 9px rgba(126,176,122,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-matcha-whirl, .st-tb-guest-bubble.bub-dyn-matcha-whirl { background: linear-gradient(135deg,#f2faf0,#e3f2e0,#f7fcf6); border-color: #7eb07a; color: #2b5428; box-shadow: 0 2px 9px rgba(126,176,122,0.32); }
     #st-tb-puppy-bubble.bub-dyn-matcha-whirl::after, .st-tb-guest-bubble.bub-dyn-matcha-whirl::after { background: #ebf6e8; border-color: #7eb07a; }
-    #st-tb-puppy-bubble.bub-dyn-ocean-tideNone, .st-tb-guest-bubble.bub-dyn-ocean-tideNone { background: linear-gradient(135deg,#ebf8fc,#daf1fa,#f2fbff); border-color: #74b4d4; color: #204d66; box-shadow: 0 2px 9px rgba(116,180,212,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-ocean-tide, .st-tb-guest-bubble.bub-dyn-ocean-tide { background: linear-gradient(135deg,#ebf8fc,#daf1fa,#f2fbff); border-color: #74b4d4; color: #204d66; box-shadow: 0 2px 9px rgba(116,180,212,0.34); }
     #st-tb-puppy-bubble.bub-dyn-ocean-tide::after, .st-tb-guest-bubble.bub-dyn-ocean-tide::after { background: #e4f5fc; border-color: #74b4d4; }
-    #st-tb-puppy-bubble.bub-dyn-lantern-glowNone, .st-tb-guest-bubble.bub-dyn-lantern-glowNone { background: linear-gradient(135deg,#383452,#4f4566,#3d3654); border-color: #e0b36e; color: #fff5de; box-shadow: 0 2px 10px rgba(224,179,110,0.36); }
+    #st-tb-puppy-bubble.bub-dyn-lantern-glow, .st-tb-guest-bubble.bub-dyn-lantern-glow { background: linear-gradient(135deg,#383452,#4f4566,#3d3654); border-color: #e0b36e; color: #fff5de; box-shadow: 0 2px 10px rgba(224,179,110,0.36); }
     #st-tb-puppy-bubble.bub-dyn-lantern-glow::after, .st-tb-guest-bubble.bub-dyn-lantern-glow::after { background: #433c5c; border-color: #e0b36e; }
-    #st-tb-puppy-bubble.bub-dyn-peach-sodaNone, .st-tb-guest-bubble.bub-dyn-peach-sodaNone { background: linear-gradient(135deg,#fff5f0,#ffe3d6,#fffaf5); border-color: #e39a84; color: #663526; box-shadow: 0 2px 9px rgba(227,154,132,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-peach-soda, .st-tb-guest-bubble.bub-dyn-peach-soda { background: linear-gradient(135deg,#fff5f0,#ffe3d6,#fffaf5); border-color: #e39a84; color: #663526; box-shadow: 0 2px 9px rgba(227,154,132,0.34); }
     #st-tb-puppy-bubble.bub-dyn-peach-soda::after, .st-tb-guest-bubble.bub-dyn-peach-soda::after { background: #ffece3; border-color: #e39a84; }
-    #st-tb-puppy-bubble.bub-dyn-sakura-teaNone, .st-tb-guest-bubble.bub-dyn-sakura-teaNone { background: linear-gradient(135deg,#fff5f8,#fbe4ec,#fffaf5); border-color: #db9ab0; color: #633344; box-shadow: 0 2px 9px rgba(219,154,176,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-sakura-tea, .st-tb-guest-bubble.bub-dyn-sakura-tea { background: linear-gradient(135deg,#fff5f8,#fbe4ec,#fffaf5); border-color: #db9ab0; color: #633344; box-shadow: 0 2px 9px rgba(219,154,176,0.34); }
     #st-tb-puppy-bubble.bub-dyn-sakura-tea::after, .st-tb-guest-bubble.bub-dyn-sakura-tea::after { background: #fdeef3; border-color: #db9ab0; }
-    #st-tb-puppy-bubble.bub-dyn-maple-windNone, .st-tb-guest-bubble.bub-dyn-maple-windNone { background: linear-gradient(135deg,#fff8ef,#fae8d2,#fffdf7); border-color: #cf8a58; color: #5e3618; box-shadow: 0 2px 9px rgba(207,138,88,0.34); }
+    #st-tb-puppy-bubble.bub-dyn-maple-wind, .st-tb-guest-bubble.bub-dyn-maple-wind { background: linear-gradient(135deg,#fff8ef,#fae8d2,#fffdf7); border-color: #cf8a58; color: #5e3618; box-shadow: 0 2px 9px rgba(207,138,88,0.34); }
     #st-tb-puppy-bubble.bub-dyn-maple-wind::after, .st-tb-guest-bubble.bub-dyn-maple-wind::after { background: #fcf0e0; border-color: #cf8a58; }
-    #st-tb-puppy-bubble.bub-dyn-wish-jarNone, .st-tb-guest-bubble.bub-dyn-wish-jarNone { background: linear-gradient(135deg,#2e3959,#424e75,#303b5c); border-color: #9ec4e8; color: #f2f7ff; box-shadow: 0 2px 10px rgba(158,196,232,0.38); }
+    #st-tb-puppy-bubble.bub-dyn-wish-jar, .st-tb-guest-bubble.bub-dyn-wish-jar { background: linear-gradient(135deg,#2e3959,#424e75,#303b5c); border-color: #9ec4e8; color: #f2f7ff; box-shadow: 0 2px 10px rgba(158,196,232,0.38); }
     #st-tb-puppy-bubble.bub-dyn-wish-jar::after, .st-tb-guest-bubble.bub-dyn-wish-jar::after { background: #384469; border-color: #9ec4e8; }
-    #st-tb-puppy-bubble.bub-dyn-dandelionNone, .st-tb-guest-bubble.bub-dyn-dandelionNone { background: linear-gradient(135deg,#f7fbf2,#eef7eb,#fbfdf8); border-color: #96bf8e; color: #365232; box-shadow: 0 2px 9px rgba(150,191,142,0.3); }
+    #st-tb-puppy-bubble.bub-dyn-dandelion, .st-tb-guest-bubble.bub-dyn-dandelion { background: linear-gradient(135deg,#f7fbf2,#eef7eb,#fbfdf8); border-color: #96bf8e; color: #365232; box-shadow: 0 2px 9px rgba(150,191,142,0.3); }
     #st-tb-puppy-bubble.bub-dyn-dandelion::after, .st-tb-guest-bubble.bub-dyn-dandelion::after { background: #f3f9ee; border-color: #96bf8e; }
-    #st-tb-puppy-bubble.bub-dyn-honeybeeNone, .st-tb-guest-bubble.bub-dyn-honeybeeNone { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
+    #st-tb-puppy-bubble.bub-dyn-honeybee, .st-tb-guest-bubble.bub-dyn-honeybee { background: linear-gradient(135deg,#fffbe8,#fff3cc,#fff9e0); border-color: #e0ad48; color: #5e400a; box-shadow: 0 2px 9px rgba(224,173,72,0.32); }
     #st-tb-puppy-bubble.bub-dyn-honeybee::after, .st-tb-guest-bubble.bub-dyn-honeybee::after { background: #fff7d9; border-color: #e0ad48; }
     #st-tb-puppy-bubble.bub-spend-5k-vinyl, .st-tb-guest-bubble.bub-spend-5k-vinyl { background: linear-gradient(135deg,#fff8ef,#f7e8d8,#fdf1e4); border-color: #8c5a3c; color: #4a2c1c; box-shadow: 0 2px 10px rgba(140,90,60,0.34); }
     #st-tb-puppy-bubble.bub-spend-5k-vinyl::after, .st-tb-guest-bubble.bub-spend-5k-vinyl::after { background: #f8ebdc; border-color: #8c5a3c; }
-    #st-tb-puppy-bubble.bub-gacha-milk-strawberryNone, .st-tb-guest-bubble.bub-gacha-milk-strawberryNone { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
+    #st-tb-puppy-bubble.bub-gacha-milk-strawberry, .st-tb-guest-bubble.bub-gacha-milk-strawberry { background: linear-gradient(135deg,#fff4f7,#ffe4ee,#fff9fb); border-color: #e68aa8; color: #6e2942; box-shadow: 0 2px 9px rgba(230,138,168,0.34); }
     #st-tb-puppy-bubble.bub-gacha-milk-strawberry::after, .st-tb-guest-bubble.bub-gacha-milk-strawberry::after { background: #ffedf3; border-color: #e68aa8; }
 
     #st-tb-puppy-bubble::after {
@@ -35996,13 +35997,15 @@
     const timeEl = mask.querySelector('#st-cap-time');
     const barEl = mask.querySelector('#st-cap-bar');
     const tipEl = mask.querySelector('#st-cap-tip');
-    const walkTips = [
-      '两只小狗正背着小包四处张望寻宝中...',
-      '沿路闻到了草地和烤面包的香味~',
-      '发现了一块闪闪发亮的小路牌！',
-      '一前一后小跑着，尾巴摇得可欢啦~',
-      '好像听见前面有好玩的声音，快去看看！',
+    const coAdvSceneIdx = Math.floor(Math.random() * 5);
+    const sceneTipSets = [
+      ['两只小狗正背着小包在阳光草地寻宝中...', '沿路闻到了青草和野花的香味~', '一前一后小跑着，尾巴摇得可欢啦~'],
+      ['两只小狗正在海边踩着浪花捡贝壳~', '海风吹得耳朵一晃一晃的！', '沙子里好像埋着闪闪发亮的小宝贝！'],
+      ['两只小狗提着小灯在星夜营地探险~', '周围飞来了好多亮晶晶的小萤火虫！', '仰头数着星星，一步一步往前走~'],
+      ['两只小狗漫步在飘落花瓣的樱花小径~', '粉粉的花瓣落在了小狗头顶上！', '顺着木牌往前走，前面有神秘小店~'],
+      ['两只小狗在雪地里撒欢踩出一串小爪印~', '呼出的白气一团一团的，好暖呼呼！', '发现路边有个圆滚滚的小雪人！'],
     ];
+    const walkTips = sceneTipSets[coAdvSceneIdx] || sceneTipSets[0];
     let tick = 0;
 
     const drawWalkPup = (lk, poseKey, x, y) => {
@@ -36058,34 +36061,115 @@
       if (!c2) return;
       c2.setTransform(2, 0, 0, 2, 0, 0);
       c2.imageSmoothingEnabled = false;
-      // 清晰分层像素天空（告别渐变模糊）
-      c2.fillStyle = '#9cd8ff'; c2.fillRect(0, 0, 120, 12);
-      c2.fillStyle = '#bfe6ff'; c2.fillRect(0, 12, 120, 11);
-      c2.fillStyle = '#e8f5ff'; c2.fillRect(0, 23, 120, 10);
-      // 滚动清晰像素云朵
-      c2.fillStyle = '#ffffff';
-      const cx1 = 120 - ((tick * 2) % 140);
-      const cx2 = 120 - (((tick * 2) + 68) % 140);
-      c2.fillRect(cx1, 5, 16, 4); c2.fillRect(cx1 + 3, 3, 10, 2);
-      c2.fillRect(cx2, 11, 14, 3); c2.fillRect(cx2 + 3, 9, 8, 2);
-      // 远山剪影
-      c2.fillStyle = '#a8d9ab';
-      c2.fillRect(0, 29, 120, 6);
-      for (let i = 0; i < 4; i++) {
-        const hx = 130 - (((tick * 1) + i * 36) % 150);
-        c2.fillRect(hx, 26, 20, 4); c2.fillRect(hx + 4, 24, 12, 2);
-      }
-      // 草地与暖色小路
-      c2.fillStyle = '#78bf6e'; c2.fillRect(0, 34, 120, 18);
-      c2.fillStyle = '#edd8b4'; c2.fillRect(0, 40, 120, 8);
-      c2.fillStyle = '#dec49a'; c2.fillRect(0, 40, 120, 1); c2.fillRect(0, 47, 120, 1);
-      // 滚动路边小花与石子
-      for (let i = 0; i < 5; i++) {
-        const fx = 124 - (((tick * 3) + i * 25) % 136);
-        c2.fillStyle = i % 2 ? '#ff8aa8' : '#ffe066';
-        c2.fillRect(fx, 36, 2, 2);
-        c2.fillStyle = '#cbb086';
-        c2.fillRect((fx + 10) % 120, 44, 3, 1);
+      if (coAdvSceneIdx === 0) {
+        // 场景0：阳光草地漫步
+        c2.fillStyle = '#9cd8ff'; c2.fillRect(0, 0, 120, 12);
+        c2.fillStyle = '#bfe6ff'; c2.fillRect(0, 12, 120, 11);
+        c2.fillStyle = '#e8f5ff'; c2.fillRect(0, 23, 120, 10);
+        c2.fillStyle = '#ffffff';
+        const cx1 = 120 - ((tick * 2) % 140), cx2 = 120 - (((tick * 2) + 68) % 140);
+        c2.fillRect(cx1, 5, 16, 4); c2.fillRect(cx1 + 3, 3, 10, 2);
+        c2.fillRect(cx2, 11, 14, 3); c2.fillRect(cx2 + 3, 9, 8, 2);
+        c2.fillStyle = '#a8d9ab'; c2.fillRect(0, 29, 120, 6);
+        for (let i = 0; i < 4; i++) {
+          const hx = 130 - (((tick * 1) + i * 36) % 150);
+          c2.fillRect(hx, 26, 20, 4); c2.fillRect(hx + 4, 24, 12, 2);
+        }
+        c2.fillStyle = '#78bf6e'; c2.fillRect(0, 34, 120, 18);
+        c2.fillStyle = '#edd8b4'; c2.fillRect(0, 40, 120, 8);
+        c2.fillStyle = '#dec49a'; c2.fillRect(0, 40, 120, 1); c2.fillRect(0, 47, 120, 1);
+        for (let i = 0; i < 5; i++) {
+          const fx = 124 - (((tick * 3) + i * 25) % 136);
+          c2.fillStyle = i % 2 ? '#ff8aa8' : '#ffe066'; c2.fillRect(fx, 36, 2, 2);
+          c2.fillStyle = '#cbb086'; c2.fillRect((fx + 10) % 120, 44, 3, 1);
+        }
+      } else if (coAdvSceneIdx === 1) {
+        // 场景1：海边踏浪捡贝壳
+        c2.fillStyle = '#8ccdf7'; c2.fillRect(0, 0, 120, 14);
+        c2.fillStyle = '#bce3fc'; c2.fillRect(0, 14, 120, 10);
+        c2.fillStyle = '#ffe885'; c2.fillRect(100, 4, 8, 8); c2.fillStyle = '#fff7cc'; c2.fillRect(102, 6, 4, 4);
+        // 飞翔小海鸥
+        const bx = 122 - ((tick * 2) % 136);
+        c2.fillStyle = '#ffffff'; c2.fillRect(bx, 8 + (tick % 2), 2, 1); c2.fillRect(bx + 2, 9, 2, 1); c2.fillRect(bx + 4, 8 + (tick % 2), 2, 1);
+        // 滚动海面与浪花
+        c2.fillStyle = '#4ea3d9'; c2.fillRect(0, 24, 120, 11);
+        c2.fillStyle = '#7ac5f0'; c2.fillRect(0, 32, 120, 3);
+        c2.fillStyle = '#ffffff';
+        for (let i = 0; i < 6; i++) {
+          const wx = 124 - (((tick * 3) + i * 22) % 132);
+          c2.fillRect(wx, 34 + (i % 2), 9, 1);
+        }
+        // 暖金沙滩与贝壳
+        c2.fillStyle = '#f5dfb8'; c2.fillRect(0, 36, 120, 16);
+        c2.fillStyle = '#e8cc9e'; c2.fillRect(0, 46, 120, 6);
+        for (let i = 0; i < 4; i++) {
+          const sx = 124 - (((tick * 3) + i * 31) % 136);
+          c2.fillStyle = i % 2 ? '#ffadc4' : '#ffffff'; c2.fillRect(sx, 42 + (i % 2) * 3, 3, 2);
+        }
+      } else if (coAdvSceneIdx === 2) {
+        // 场景2：星夜萤火营地
+        c2.fillStyle = '#232b4a'; c2.fillRect(0, 0, 120, 16);
+        c2.fillStyle = '#313c66'; c2.fillRect(0, 16, 120, 16);
+        // 弯月与闪烁星辰
+        c2.fillStyle = '#fff2b2'; c2.fillRect(96, 4, 6, 7); c2.fillStyle = '#232b4a'; c2.fillRect(99, 5, 4, 5);
+        for (let i = 0; i < 9; i++) {
+          c2.fillStyle = ((tick + i) % 3 === 0) ? '#ffffff' : '#ffe484';
+          c2.fillRect((i * 15 + 6) % 90, 3 + ((i * 7) % 16), 1, 1);
+        }
+        // 暗绿草坡与帐篷剪影
+        c2.fillStyle = '#334d47'; c2.fillRect(0, 32, 120, 20);
+        c2.fillStyle = '#4a6b5e'; c2.fillRect(0, 38, 120, 10);
+        const tx = 126 - ((tick * 1) % 146);
+        c2.fillStyle = '#d98a5b'; c2.fillRect(tx, 26, 14, 7); c2.fillRect(tx + 3, 23, 8, 3);
+        c2.fillStyle = '#ffe082'; c2.fillRect(tx + 5, 28, 4, 5);
+        // 飞舞萤火虫
+        for (let i = 0; i < 5; i++) {
+          const fx = (120 - ((tick * 2 + i * 26) % 124));
+          const fy = 20 + ((i * 5 + (tick % 4)) % 14);
+          c2.fillStyle = (tick + i) % 2 === 0 ? '#e6ff8a' : '#fff7b8';
+          c2.fillRect(fx, fy, 2, 2);
+        }
+      } else if (coAdvSceneIdx === 3) {
+        // 场景3：樱花小径
+        c2.fillStyle = '#ffe3ec'; c2.fillRect(0, 0, 120, 14);
+        c2.fillStyle = '#fff0f5'; c2.fillRect(0, 14, 120, 16);
+        // 远景樱花树冠
+        for (let i = 0; i < 4; i++) {
+          const px0 = 126 - (((tick * 1) + i * 34) % 146);
+          c2.fillStyle = '#9c6e58'; c2.fillRect(px0 + 5, 25, 3, 9);
+          c2.fillStyle = '#ffb5cc'; c2.fillRect(px0, 18, 14, 8);
+          c2.fillStyle = '#ffd4e2'; c2.fillRect(px0 + 2, 15, 10, 4);
+        }
+        c2.fillStyle = '#97c78b'; c2.fillRect(0, 33, 120, 19);
+        c2.fillStyle = '#f5e4d4'; c2.fillRect(0, 39, 120, 9);
+        // 飘落樱花瓣
+        for (let i = 0; i < 8; i++) {
+          const sx = (120 - ((tick * 3 + i * 17) % 124));
+          const sy = (tick * 2 + i * 9) % 44;
+          c2.fillStyle = i % 2 ? '#ff9eb8' : '#ffffff';
+          c2.fillRect(sx, sy, 2, 1);
+        }
+      } else {
+        // 场景4：雪地撒欢
+        c2.fillStyle = '#b8d8f0'; c2.fillRect(0, 0, 120, 15);
+        c2.fillStyle = '#d9ecf8'; c2.fillRect(0, 15, 120, 16);
+        // 松树与小雪人
+        for (let i = 0; i < 3; i++) {
+          const mx = 128 - (((tick * 1) + i * 44) % 148);
+          c2.fillStyle = '#5a8572'; c2.fillRect(mx + 2, 22, 8, 10); c2.fillRect(mx + 4, 18, 4, 4);
+          c2.fillStyle = '#ffffff'; c2.fillRect(mx + 3, 21, 6, 2);
+        }
+        const snx = 126 - (((tick * 2) + 40) % 146);
+        c2.fillStyle = '#ffffff'; c2.fillRect(snx, 28, 6, 6); c2.fillRect(snx + 1, 24, 4, 4);
+        c2.fillStyle = '#e85d5d'; c2.fillRect(snx + 1, 28, 4, 1);
+        c2.fillStyle = '#f2f7fc'; c2.fillRect(0, 33, 120, 19);
+        c2.fillStyle = '#ddeaf5'; c2.fillRect(0, 41, 120, 7);
+        // 飘雪
+        for (let i = 0; i < 10; i++) {
+          const fx = (120 - ((tick * 2 + i * 13) % 124));
+          const fy = (tick * 2 + i * 7) % 46;
+          c2.fillStyle = '#ffffff'; c2.fillRect(fx, fy, 2, 2);
+        }
       }
       // 两只并肩前进的超清晰像素小狗（精确 2x 整数像素）
       const bounce1 = tick % 2 === 0 ? 0 : -1;
@@ -36666,34 +36750,48 @@
   };
 
   const PUP_DM_STICKERS = [
-    { id: 'happy', name: '开心' },
-    { id: 'love', name: '比心' },
-    { id: 'cry', name: '委屈' },
-    { id: 'sleep', name: '晚安' },
-    { id: 'angry', name: '气鼓鼓' },
-    { id: 'snack', name: '吃骨头' },
-    { id: 'good', name: '棒棒' },
-    { id: 'hug', name: '贴贴' },
-    { id: 'what', name: '问号' },
-    { id: 'party', name: '撒花' },
-    { id: 'tea', name: '喝奶茶' },
-    { id: 'shy', name: '害羞' },
-    { id: 'shock', name: '震惊' },
-    { id: 'cool', name: '耍酷' },
-    { id: 'dizzy', name: '晕了' },
-    { id: 'rich', name: '财迷' },
-    { id: 'sweat', name: '无语' },
-    { id: 'kiss', name: '么么' },
-    { id: 'cheer', name: '加油' },
-    { id: 'ghost', name: '灵魂出窍' },
-    { id: 'anim_nod', name: '狂点头', anim: true },
-    { id: 'anim_wag', name: '摇摆', anim: true },
-    { id: 'anim_heart_pop', name: '冒爱心', anim: true },
-    { id: 'anim_cry_flood', name: '泪奔', anim: true },
-    { id: 'anim_zzz', name: '打呼噜', anim: true },
-    { id: 'anim_sparkle', name: '亮晶晶', anim: true },
-    { id: 'anim_spin_star', name: '转圈星', anim: true },
-    { id: 'anim_eat', name: '吧唧干饭', anim: true },
+    // 可爱分类 (28款：20静态 + 8动态，真实小狗大头)
+    { id: 'happy', name: '开心', cat: 'cute' },
+    { id: 'love', name: '比心', cat: 'cute' },
+    { id: 'cry', name: '委屈', cat: 'cute' },
+    { id: 'sleep', name: '晚安', cat: 'cute' },
+    { id: 'angry', name: '气鼓鼓', cat: 'cute' },
+    { id: 'snack', name: '吃骨头', cat: 'cute' },
+    { id: 'good', name: '棒棒', cat: 'cute' },
+    { id: 'hug', name: '贴贴', cat: 'cute' },
+    { id: 'what', name: '问号', cat: 'cute' },
+    { id: 'party', name: '撒花', cat: 'cute' },
+    { id: 'tea', name: '喝奶茶', cat: 'cute' },
+    { id: 'shy', name: '害羞', cat: 'cute' },
+    { id: 'shock', name: '震惊', cat: 'cute' },
+    { id: 'cool', name: '耍酷', cat: 'cute' },
+    { id: 'dizzy', name: '晕了', cat: 'cute' },
+    { id: 'rich', name: '财迷', cat: 'cute' },
+    { id: 'sweat', name: '无语', cat: 'cute' },
+    { id: 'kiss', name: '么么', cat: 'cute' },
+    { id: 'cheer', name: '加油', cat: 'cute' },
+    { id: 'ghost', name: '灵魂出窍', cat: 'cute' },
+    { id: 'anim_nod', name: '狂点头', cat: 'cute', anim: true },
+    { id: 'anim_wag', name: '摇摆', cat: 'cute', anim: true },
+    { id: 'anim_heart_pop', name: '冒爱心', cat: 'cute', anim: true },
+    { id: 'anim_cry_flood', name: '泪奔', cat: 'cute', anim: true },
+    { id: 'anim_zzz', name: '打呼噜', cat: 'cute', anim: true },
+    { id: 'anim_sparkle', name: '亮晶晶', cat: 'cute', anim: true },
+    { id: 'anim_spin_star', name: '转圈星', cat: 'cute', anim: true },
+    { id: 'anim_eat', name: '吧唧干饭', cat: 'cute', anim: true },
+    // 搞怪分类 (12款：经典方脸大头搞怪漫画版，无脖子，跟随毛色/耳色)
+    { id: 'funny_happy', name: '咧嘴笑', cat: 'funny' },
+    { id: 'funny_love', name: '花痴眼', cat: 'funny' },
+    { id: 'funny_cry', name: '瀑布泪', cat: 'funny' },
+    { id: 'funny_sleep', name: '流口水', cat: 'funny' },
+    { id: 'funny_angry', name: '红温了', cat: 'funny' },
+    { id: 'funny_snack', name: '叼大骨', cat: 'funny' },
+    { id: 'funny_good', name: '真不错', cat: 'funny' },
+    { id: 'funny_hug', name: '求贴贴', cat: 'funny' },
+    { id: 'funny_what', name: '懵圈', cat: 'funny' },
+    { id: 'funny_party', name: '狂欢', cat: 'funny' },
+    { id: 'funny_tea', name: '喝波霸', cat: 'funny' },
+    { id: 'funny_shy', name: '大脸红', cat: 'funny' },
   ];
 
   const isHeadAccessoryId = (accId) => {
@@ -36708,6 +36806,68 @@
   };
 
   const drawPupHeadPortrait = (canvas, lookObj, stickerId = '', animFrame = 0) => {
+    if (stickerId && String(stickerId).startsWith('funny_')) {
+      // 搞怪分类：经典 24x24 方脸大头搞怪版（无脖子，完全跟随毛色/耳色/轮廓色！）
+      canvas.width = 24;
+      canvas.height = 24;
+      const g = canvas.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      g.clearRect(0, 0, 24, 24);
+      const pal = typeof getPupPalette === 'function' ? getPupPalette(lookObj || {}) : { w: '#fffdf7', s: '#ece5da', e: '#e2ae74', o: '#3b2a22' };
+      const fur = pal.w || '#fffdf7';
+      const ear = pal.e || '#e2ae74';
+      const out = pal.o || '#3b2a22';
+      const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+      p(6, 7, out, 12, 1); p(5, 8, out, 1, 10); p(18, 8, out, 1, 10); p(6, 18, out, 12, 1);
+      p(6, 8, fur, 12, 10);
+      p(3, 8, out, 2, 7); p(4, 9, ear, 2, 6);
+      p(19, 8, out, 2, 7); p(18, 9, ear, 2, 6);
+      p(7, 14, '#ffb5c8', 2, 1); p(15, 14, '#ffb5c8', 2, 1);
+      p(11, 13, out, 2, 1);
+      const sub = stickerId.slice(6);
+      if (sub === 'happy') {
+        p(8, 11, out); p(9, 10, out); p(10, 11, out); p(14, 11, out); p(15, 10, out); p(16, 11, out);
+        p(10, 15, out, 4, 1); p(11, 16, '#ff8aa6', 2, 2);
+        p(2, 3, '#ffd24c', 1, 3); p(1, 4, '#ffd24c', 3, 1); p(20, 4, '#ff8aa6', 2, 2);
+      } else if (sub === 'love') {
+        p(8, 11, '#e84a72', 2, 2); p(14, 11, '#e84a72', 2, 2); p(10, 15, out, 4, 1);
+        p(17, 2, '#f05a82', 2, 2); p(20, 2, '#f05a82', 2, 2); p(17, 3, '#f05a82', 5, 2); p(18, 5, '#f05a82', 3, 1); p(19, 6, '#f05a82', 1, 1);
+      } else if (sub === 'cry') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1);
+        p(8, 13, '#7cc6f7', 2, 7); p(14, 13, '#7cc6f7', 2, 7); p(10, 16, out, 4, 1);
+      } else if (sub === 'sleep') {
+        p(8, 12, out, 3, 1); p(13, 12, out, 3, 1); p(11, 15, out, 2, 1); p(12, 16, '#99d6ff', 1, 3);
+        p(17, 2, '#7b99cc', 4, 1); p(19, 3, '#7b99cc', 1, 1); p(18, 4, '#7b99cc', 1, 1); p(17, 5, '#7b99cc', 4, 1);
+      } else if (sub === 'angry') {
+        p(8, 10, out); p(9, 11, out, 2, 1); p(15, 10, out); p(13, 11, out, 2, 1);
+        p(10, 15, out, 4, 1); p(10, 16, '#ff6b78', 4, 2);
+        p(18, 2, '#e84858', 1, 4); p(17, 3, '#e84858', 3, 1); p(20, 4, '#e84858', 2, 1);
+      } else if (sub === 'snack') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1);
+        p(8, 15, '#fff', 8, 2); p(7, 14, '#fff', 2, 4); p(15, 14, '#fff', 2, 4);
+      } else if (sub === 'good') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1); p(10, 15, out, 4, 1);
+        p(19, 12, '#ffe066', 3, 4); p(20, 10, '#ffe066', 2, 2); p(18, 13, '#d9a441', 1, 3);
+      } else if (sub === 'hug') {
+        p(8, 11, out); p(9, 10, out); p(10, 11, out); p(14, 11, out); p(15, 10, out); p(16, 11, out); p(10, 15, out, 4, 1);
+        p(4, 16, fur, 3, 3); p(5, 17, '#ffbfd4', 1, 1); p(17, 16, fur, 3, 3); p(18, 17, '#ffbfd4', 1, 1);
+        p(10, 2, '#f05a82', 4, 2); p(11, 4, '#f05a82', 2, 1);
+      } else if (sub === 'what') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(11, 15, out, 2, 2);
+        p(18, 1, '#5a78b5', 3, 1); p(20, 2, '#5a78b5', 1, 2); p(19, 3, '#5a78b5', 1, 1); p(19, 5, '#5a78b5', 1, 1);
+      } else if (sub === 'party') {
+        p(8, 11, out); p(9, 10, out); p(10, 11, out); p(14, 11, out); p(15, 10, out); p(16, 11, out); p(10, 15, out, 4, 1);
+        p(11, 2, '#ff8aa6', 2, 1); p(10, 3, '#ffe066', 4, 1); p(9, 4, '#8cc8f7', 6, 2); p(8, 6, '#ff8aa6', 8, 1);
+        p(2, 3, '#ffe066', 2, 2); p(20, 3, '#8be0b8', 2, 2);
+      } else if (sub === 'tea') {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1); p(10, 15, out, 4, 1);
+        p(19, 10, '#6b4423', 1, 3); p(17, 13, '#fff', 5, 1); p(17, 14, '#e6c39c', 5, 5); p(18, 17, '#4a3222', 1, 1); p(20, 17, '#4a3222', 1, 1);
+      } else {
+        p(8, 11, out, 2, 2); p(14, 11, out, 2, 2); p(8, 11, '#fff', 1, 1); p(14, 11, '#fff', 1, 1);
+        p(6, 14, '#ff8ca8', 3, 2); p(15, 14, '#ff8ca8', 3, 2); p(11, 15, out, 2, 1);
+      }
+      return;
+    }
     // 15x15 logical grid (scaled 10x -> 150x150 crisp pixel canvas)
     // Head slice is 11px wide (cols 5..15) -> ox = 2 gives exact 2px left & 2px right symmetry!
     canvas.width = 150;
@@ -37057,6 +37217,7 @@
         if (mEl) syncBagThemeToEl(mEl);
       });
     }
+    if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack();
     ['#st-tb-dm-panel', '#st-tb-dm-pill'].forEach(sel => {
       const el = root.querySelector(sel);
       if (!el) return;
@@ -37146,16 +37307,64 @@
     }
   };
 
+  const syncDeskDmNoticeStack = () => {
+    let stack = root.querySelector('#st-tb-desk-dm-stack');
+    const unreadMap = (config.puppyDmUnread && typeof config.puppyDmUnread === 'object') ? config.puppyDmUnread : {};
+    const panelEl = root.querySelector('#st-tb-dm-panel');
+    const openFid = (panelEl && panelEl.style.display === 'flex') ? (panelEl.dataset.fid || '') : '';
+    const pillEl = root.querySelector('#st-tb-dm-pill');
+    const pillFid = (pillEl && pillEl.style.display === 'flex') ? (pillEl.dataset.fid || '') : '';
+    const entries = Object.entries(unreadMap)
+      .filter(([fid, cnt]) => Number(cnt) > 0 && fid !== openFid && fid !== pillFid);
+    if (!entries.length) {
+      if (stack) stack.style.display = 'none';
+      return;
+    }
+    if (!stack) {
+      stack = doc.createElement('div');
+      stack.id = 'st-tb-desk-dm-stack';
+      stack.style.cssText = 'position:fixed;right:14px;bottom:206px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;z-index:9993;pointer-events:none;max-height:220px;overflow-y:auto;';
+      root.appendChild(stack);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const bg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const bd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const fg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    stack.innerHTML = '';
+    entries.forEach(([fid, cnt]) => {
+      const fr = getFriendList().find(x => x.cloudId === fid) || getGuestList().find(x => x.cloudId === fid) || { cloudId: fid, name: '好友', look: {} };
+      const dispN = getFriendDisplayName(fid, fr.name || '好友');
+      const card = doc.createElement('div');
+      card.style.cssText = `pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 8px 4px 5px;background:${bg};color:${fg};border:2px solid ${bd};box-shadow:3px 3px 0 rgba(59,42,34,0.25);user-select:none;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;`;
+      card.appendChild(makeDmHeadAvatar(fr.look || {}, 28));
+      const tx = doc.createElement('div');
+      tx.style.cssText = 'display:flex;flex-direction:column;min-width:0;';
+      tx.innerHTML = `<span style="font-size:10px;font-weight:700;max-width:74px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(dispN)}</span><span style="font-size:8.5px;opacity:0.75;">发来新私聊</span>`;
+      const bdg = doc.createElement('span');
+      bdg.style.cssText = 'min-width:16px;height:16px;padding:0 4px;background:#e04854;color:#fff;font-size:9.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:1.5px solid #fff;box-sizing:border-box;';
+      bdg.textContent = Number(cnt) > 99 ? '99+' : String(cnt);
+      card.append(tx, bdg);
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openFriendDmPanel(fr);
+      });
+      stack.appendChild(card);
+    });
+    stack.style.display = 'flex';
+  };
+
   const syncDmPillBadge = () => {
     const pill = root.querySelector('#st-tb-dm-pill');
-    if (!pill || pill.style.display === 'none') return;
-    const fid = pill.dataset.fid || activeDmFriendId;
-    const u = Math.max(0, Number(config.puppyDmUnread?.[fid] || 0));
-    const badge = pill.querySelector('#st-dm-pill-badge');
-    if (badge) {
-      badge.textContent = u > 99 ? '99+' : String(u);
-      badge.style.display = u > 0 ? 'inline-flex' : 'none';
+    if (pill && pill.style.display !== 'none') {
+      const fid = pill.dataset.fid || activeDmFriendId;
+      const u = Math.max(0, Number(config.puppyDmUnread?.[fid] || 0));
+      const badge = pill.querySelector('#st-dm-pill-badge');
+      if (badge) {
+        badge.textContent = u > 99 ? '99+' : String(u);
+        badge.style.display = u > 0 ? 'inline-flex' : 'none';
+      }
     }
+    syncDeskDmNoticeStack();
   };
 
   let dmSearchQuery = '';
@@ -37273,6 +37482,7 @@
       config.puppyDmUnread[fid] = 0;
       saveConfig();
     }
+    if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack();
 
     let pill = root.querySelector('#st-tb-dm-pill');
     if (pill) pill.style.display = 'none';
@@ -37342,11 +37552,16 @@
       </div>
       <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:10px 10px 6px;box-sizing:border-box;background:var(--px-bg-soft,rgba(255,255,255,0.45));"></div>
       <div id="st-dm-sticker-wrap" style="display:none;flex-direction:column;border-top:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);flex-shrink:0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 7px 2px;font-size:9.5px;">
-          <span style="font-weight:700;">小狗表情包</span>
-          <button type="button" id="st-dm-st-who" class="st-px-btn${dmStickerUseFriendLook ? ' active' : ''}" style="height:18px;padding:0 6px;font-size:9px;">${dmStickerUseFriendLook ? '外观:对方小狗' : '外观:我的小狗'}</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;padding:4px 6px 2px;font-size:9.5px;">
+          <div style="display:flex;align-items:center;gap:3px;">
+            <button type="button" class="st-px-btn active st-dm-st-tab" data-st-cat="cute" style="height:18px;padding:0 6px;font-size:9px;">可爱</button>
+            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="funny" style="height:18px;padding:0 6px;font-size:9px;">搞怪</button>
+            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="fav" style="height:18px;padding:0 6px;font-size:9px;">收藏</button>
+          </div>
+          <button type="button" id="st-dm-st-who" class="st-px-btn${dmStickerUseFriendLook ? ' active' : ''}" style="height:18px;padding:0 5px;font-size:9px;">${dmStickerUseFriendLook ? '对方小狗' : '我的小狗'}</button>
         </div>
-        <div id="st-dm-sticker-box" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px 6px 6px;max-height:152px;overflow-y:auto;"></div>
+        <div id="st-dm-st-toast" style="display:none;font-size:9px;text-align:center;padding:1px 6px;opacity:0.85;"></div>
+        <div id="st-dm-sticker-box" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px 6px 6px;max-height:156px;overflow-y:auto;"></div>
       </div>
       <div style="display:flex;align-items:center;gap:4px;padding:6px 7px;border-top:2px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
         <button type="button" id="st-dm-sticker-btn" class="st-px-btn" style="height:26px;padding:0 6px;font-size:10px;flex-shrink:0;">表情</button>
@@ -37367,21 +37582,72 @@
 
     const stWrap = panel.querySelector('#st-dm-sticker-wrap');
     const stBox = panel.querySelector('#st-dm-sticker-box');
+    const stToast = panel.querySelector('#st-dm-st-toast');
+    let activeStCat = 'cute';
+    let stToastTimer = null;
+    const showStToast = (msg) => {
+      if (!stToast) return;
+      stToast.textContent = msg;
+      stToast.style.display = 'block';
+      clearTimeout(stToastTimer);
+      stToastTimer = setTimeout(() => { stToast.style.display = 'none'; }, 1600);
+    };
     const renderStickerGrid = () => {
       if (!stBox) return;
       stBox.innerHTML = '';
+      if (!Array.isArray(config.puppyDmFavStickers)) config.puppyDmFavStickers = [];
+      const favSet = new Set(config.puppyDmFavStickers);
+      const list = activeStCat === 'fav'
+        ? PUP_DM_STICKERS.filter(s => favSet.has(s.id))
+        : PUP_DM_STICKERS.filter(s => (s.cat || 'cute') === activeStCat);
+      if (!list.length) {
+        stBox.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-size:10px;opacity:0.65;padding:18px 4px;">长按任意表情包即可加入收藏~</div>';
+        return;
+      }
       const useLk = dmStickerUseFriendLook ? (fullFr.look || {}) : getMyCurrentLookObj();
-      PUP_DM_STICKERS.forEach(st => {
+      list.forEach(st => {
         const b = doc.createElement('button');
         b.type = 'button';
         b.className = 'st-px-btn st-dm-st-btn';
+        b.style.position = 'relative';
+        if (favSet.has(st.id)) {
+          const favMark = doc.createElement('span');
+          favMark.style.cssText = 'position:absolute;top:2px;right:3px;font-size:8px;color:#d94c7a;line-height:1;';
+          favMark.innerHTML = PX_ICO_HEART;
+          b.appendChild(favMark);
+        }
         b.appendChild(drawPupStickerCanvas(st.id, 32, useLk));
         const lb = doc.createElement('span');
         lb.style.cssText = 'font-size:9.5px;font-weight:700;line-height:1.15;display:block;white-space:nowrap;';
         lb.textContent = st.name;
         b.appendChild(lb);
+        let lpTimer = null;
+        let didLongPress = false;
+        b.addEventListener('pointerdown', (ev) => {
+          ev.stopPropagation();
+          didLongPress = false;
+          lpTimer = setTimeout(() => {
+            didLongPress = true;
+            if (!Array.isArray(config.puppyDmFavStickers)) config.puppyDmFavStickers = [];
+            const idx = config.puppyDmFavStickers.indexOf(st.id);
+            if (idx >= 0) {
+              config.puppyDmFavStickers.splice(idx, 1);
+              showStToast(`已取消收藏「${st.name}」`);
+            } else {
+              config.puppyDmFavStickers.push(st.id);
+              showStToast(`已收藏「${st.name}」到收藏夹`);
+            }
+            saveConfig();
+            renderStickerGrid();
+          }, 450);
+        });
+        const cancelLp = () => { if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; } };
+        b.addEventListener('pointerup', cancelLp);
+        b.addEventListener('pointerleave', cancelLp);
+        b.addEventListener('pointercancel', cancelLp);
         b.addEventListener('click', (ev) => {
           ev.stopPropagation();
+          if (didLongPress) { didLongPress = false; return; }
           if (stWrap) stWrap.style.display = 'none';
           sendFriendDmMessage(fid, fname, '', st.id, useLk);
         });
@@ -37390,11 +37656,20 @@
     };
     renderStickerGrid();
 
+    panel.querySelectorAll('.st-dm-st-tab').forEach(tabBtn => {
+      tabBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeStCat = tabBtn.dataset.stCat || 'cute';
+        panel.querySelectorAll('.st-dm-st-tab').forEach(x => x.classList.toggle('active', x === tabBtn));
+        renderStickerGrid();
+      });
+    });
+
     panel.querySelector('#st-dm-st-who')?.addEventListener('click', (e) => {
       e.stopPropagation();
       dmStickerUseFriendLook = !dmStickerUseFriendLook;
       const btn = e.currentTarget;
-      btn.textContent = dmStickerUseFriendLook ? '外观:对方小狗' : '外观:我的小狗';
+      btn.textContent = dmStickerUseFriendLook ? '对方小狗' : '我的小狗';
       btn.classList.toggle('active', dmStickerUseFriendLook);
       renderStickerGrid();
     });
@@ -37556,6 +37831,7 @@
       panel.style.display = 'none';
       const p2 = root.querySelector('#st-tb-dm-pill');
       if (p2) p2.style.display = 'none';
+      if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack();
     });
 
     panel.querySelector('#st-dm-min')?.addEventListener('click', (e) => {
@@ -37634,7 +37910,11 @@
     panel.querySelector('#st-dm-sticker-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!stWrap) return;
-      stWrap.style.display = stWrap.style.display === 'flex' ? 'none' : 'flex';
+      const willOpen = stWrap.style.display !== 'flex';
+      stWrap.style.display = willOpen ? 'flex' : 'none';
+      if (willOpen && typeof showOneTimePanelTip === 'function') {
+        showOneTimePanelTip('seenDmStickerFavTip', '表情包小提示', '表情包已分为「可爱 / 搞怪 / 收藏」三类！长按任意表情包即可收藏或取消收藏，右上角还可以切换我的或对方小狗外观~');
+      }
     });
 
     const inpEl = panel.querySelector('#st-dm-inp');
@@ -44478,6 +44758,7 @@
     renderBagSkinCustomizer();
   });
   applyPupCosmeticSkins();
+  setTimeout(() => { if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack(); }, 600);
 
   const TRAIL_PX_SHAPES = {
     // 11x11 精修可爱肉垫爪印（圆润四趾+爱心掌垫+高光）
@@ -52520,7 +52801,7 @@
   let outsideTapStart = null;
   const isOutsideCloseBlocked = (target) => {
     if (!target) return true;
-    if (typeof target.closest === 'function' && target.closest('#st-tb-pup-ask, #st-tb-pup-signboard, #st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask, #st-tb-dm-panel, #st-tb-dm-pill, [id^="st-tb-"][id$="-mask"], [id^="st-tb-"][id$="-modal"]')) return true;
+    if (typeof target.closest === 'function' && target.closest('#st-tb-pup-ask, #st-tb-pup-signboard, #st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask, #st-tb-dm-panel, #st-tb-dm-pill, #st-tb-desk-dm-stack, [id^="st-tb-"][id$="-mask"], [id^="st-tb-"][id$="-modal"]')) return true;
     if (askEl && (askEl.contains(target) || askEl.style.display === 'block' || askEl.style.display === 'flex')) return true;
     if (signboardEl && (signboardEl.contains(target) || signboardEl.style.display === 'block' || signboardEl.style.display === 'flex')) return true;
     if (gachaModalEl && (gachaModalEl.contains(target) || gachaModalEl.classList.contains('open'))) return true;
