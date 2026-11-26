@@ -959,6 +959,7 @@
     { id: 'gacha_count_100', title: '扭蛋大股东', desc: '在像素扭蛋机累计抽奖 100 次', reward: 8, tier: 2, frame: 'stars', bg: '#fff5e0', bd: '#e3a544', fg: '#6e400e', icon: 'trophy' },
     { id: 'hidden_gacha_lucky', title: '扭蛋锦鲤汪', desc: '在像素扭蛋机集齐 6 件扭蛋限定好物', reward: 8, tier: 3, hidden: true, frame: 'gems', bg: 'linear-gradient(120deg,#ffeaf5,#e6faff,#fff6cc,#ffeaf5)', bd: '#c482e0', fg: '#572073', icon: 'diamond' },
     { id: 'hidden_gacha_ssr_lucky', title: '天选欧皇汪', desc: '单次十连扭蛋同时抽出 2 件及以上 SSR 传说限定', reward: 10, tier: 3, hidden: true, frame: 'crown', bg: 'linear-gradient(120deg,#fff6cc,#ffe6f2,#e6f8ff,#fff6cc)', bd: '#e6b23c', fg: '#6e4406', icon: 'crown' },
+    { id: 'hidden_gacha_triple_ssr', title: '天选三金神迹', desc: '单次十连扭蛋触发 0.001% 神迹同时抽出 3 件及以上 SSR，赠扭蛋券 ×5 与绝版「三金神迹圣冕框」动态头像框', reward: 50, tier: 4, hidden: true, frame: 'gframe_triple_ssr_mythic', bonus: { tickets: 5, avatarframe: 'af_ach_triple_ssr' }, bg: 'linear-gradient(115deg,#fff4b8,#ffd6ec,#d6f4ff,#f0dcff,#fff4b8)', bd: '#e6a825', fg: '#5c3300', icon: 'diamond_cup' },
     { id: 'hidden_gacha_unlucky', title: '纯正非酋认证', desc: '吃满 70 抽硬保底才扭出 SSR 传说限定', reward: 6, tier: 2, hidden: true, frame: 'bolts', bg: 'linear-gradient(120deg,#eceef5,#e3dff0,#eceef5)', bd: '#9a95b8', fg: '#3d395c', icon: 'bolt' },
     { id: 'job_worker', title: '打工小能手', desc: '让小狗完成第 1 次兼职打工小剧场', reward: 3, tier: 1, bg: '#fff5e4', bd: '#e0b06e', fg: '#6b4214', icon: 'coin' },
     { id: 'hidden_job_star', title: '金牌员工汪', desc: '兼职打工累计触发 3 次金牌好评事件', reward: 8, tier: 3, hidden: true, frame: 'stars', bg: 'linear-gradient(120deg,#fff6d6,#ffe8f0,#e6f7ff,#fff6d6)', bd: '#e3a544', fg: '#6b3e0d', icon: 'trophy' },
@@ -2707,9 +2708,11 @@
   const SPECIAL_EVENT_BUBBLES = [
     { id: 'bub_ach_fluff', name: '[成就] 暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
-    { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞框', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日当天专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
+    { id: 'bub_bday_cake', name: '[生日·第1年] 蜡烛礼赞泡', dyn: 'gdyn_bday_celebrate', charms: [], desc: '第 1 个生日专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
+    { id: 'bub_bday_yr2', name: '[生日·第2年] 星愿气球泡', dyn: 'gdyn_bday_yr2', charms: [], desc: '第 2 个生日专属动态限定：浮升马卡龙心形气球配彩带飘摇与香槟流光气泡框' },
+    { id: 'bub_bday_yr3', name: '[生日·第3年] 礼花糖纸泡', dyn: 'gdyn_bday_yr3', charms: [], desc: '第 3 个生日专属动态限定：绽放彩纸礼花配糖霜微光与丝带礼盒纪念气泡框' },
     { id: 'bub_ck_vintage_post', name: '[签到] 邮戳明信片泡', dyn: 'poststamp', desc: '连续签到 60 天专属动态限定：米白复古明信片边框配红蓝航空条纹与飘动邮戳' },
-    { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'lanternglow', charms: [], desc: '佳节限定动态气泡：暖杏绯金丝绸底色配细金内框与缓缓升起的暖光花灯' },
+    { id: 'bub_fest_lantern', name: '[节日] 佳节花灯框', dyn: 'gdyn_fest_lantern', charms: [], desc: '佳节限定动态气泡：暖杏绯金双层灯笼轻晃配底边祥云金波与暖光花火星点' },
     { id: 'bub_spend_5k_vinyl', name: '[成就] 黑胶咖啡馆泡', dyn: 'spend_vinyl_cafe', charms: [], desc: '消费满 5000 币成就专属动态限定：暖咖手冲拿铁蒸汽配旋转复古黑胶唱片气泡' },
     { id: 'bub_cloud_memo', name: '[成就] 手账纸条泡', dyn: 'poststamp', charms: [{ pos: 'tr', key: 'dot_heart' }], desc: '软木板笔友成就专属动态限定：奶油手账便签框配樱红小图钉与飘动邮戳' },
     { id: 'bub_cloud_compass', name: '[成就] 双星罗盘泡', dyn: 'gdyn_cloudsea_roll', charms: [{ pos: 'tl', key: 'bow' }], desc: '传说双子旅人成就专属动态限定：蓝金星航罗盘配云海流光气泡框' },
@@ -2720,8 +2723,11 @@
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
     { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'ach_velvet_gold', charms: [], desc: '衣橱主理人成就专属动态限定：酒红丝绒与香槟鎏金雕花冠冕流光头像框' },
+    { id: 'af_ach_triple_ssr', name: '[神迹成就] 三金神迹圣冕框', dyn: 'ach_triple_ssr_mythic', charms: [], desc: '十连三金隐藏成就专属绝版动态限定：三峰宝石圣冕配双侧鎏金羽翼与八颗虹彩晶钻绕框流光' },
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'bond_lv9_guard', charms: [], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
-    { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日当天专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
+    { id: 'af_bday_candle', name: '[生日·第1年] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '第 1 个生日专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
+    { id: 'af_bday_yr2', name: '[生日·第2年] 鎏金礼炮框', dyn: 'bday_yr2_confetti', charms: [], desc: '第 2 个生日专属动态限定：顶边彩带礼炮绽放配飘落马卡龙彩纸与香槟金杯头像框' },
+    { id: 'af_bday_yr3', name: '[生日·第3年] 丝带礼盒皇冠框', dyn: 'bday_yr3_crown', charms: [], desc: '第 3 个生日专属动态限定：顶边丝带皇冠配三层纪念礼盒与绽放礼花流光头像框' },
     { id: 'af_ck_amber_press', name: '[签到] 琥珀标本框', dyn: 'amberleaf', charms: [], desc: '连续签到 99 天专属动态限定：温润琥珀标本边框配压花小银杏叶浮光' },
     { id: 'af_fest_lantern', name: '[节日] 花灯喜庆框', dyn: 'fest_lantern_new', charms: [], desc: '佳节限定动态头像框：绯红鎏金双线边框配轻晃迷你小花灯与金穗光点' },
     { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
@@ -6610,6 +6616,11 @@
       height: auto;
       aspect-ratio: 144 / 195;
     }
+    .st-px-avatar-wrap.af-bday-yr2 { border: 2px solid #e6b44c !important; background: linear-gradient(135deg,#fff9e6,#ffeef6,#eef6ff) !important; box-shadow: 0 0 0 2px #fffdf8, 0 2px 6px rgba(230,180,76,0.32) !important; }
+    .st-px-avatar-wrap.af-bday-yr3 { border: 2px solid #d97aa6 !important; background: linear-gradient(135deg,#fff0f6,#f3ecff,#fff8e0) !important; box-shadow: 0 0 0 2px #f5d26b, 0 2px 7px rgba(217,122,166,0.35) !important; }
+    .st-tb-pup-bubble.bub-bday-yr2, .st-tb-dm-bub.bub-bday-yr2 { background: linear-gradient(135deg,#fff9eb,#fff0f7,#eef7ff) !important; border-color: #e6b44c !important; color: #5c3e18 !important; }
+    .st-tb-pup-bubble.bub-bday-yr3, .st-tb-dm-bub.bub-bday-yr3 { background: linear-gradient(135deg,#fff0f7,#f5ecff,#fff9e6) !important; border-color: #d97aa6 !important; color: #5c2240 !important; }
+    .st-px-avatar-wrap.af-ach-triple-ssr { border: 2px solid #e6a825 !important; background: linear-gradient(135deg,#fff7cc,#ffe6f4,#e0f4ff,#f0e6ff) !important; box-shadow: 0 0 0 2px #fffdf5, 0 0 10px rgba(230,168,37,0.55) !important; }
     .st-vph-round-col {
       -webkit-appearance: none;
       appearance: none;
@@ -19687,6 +19698,18 @@
         c.width = 17; c.height = 5;
         grid = ['.p..m..y..m..p...','pwp.m.ywy.m.pwp..','.p..m..y..m..p...','.....ppwpp.......','.......p.........'];
       }
+    } else if (styleKey === 'gframe_triple_ssr_mythic') {
+      // 天选三金神迹专属：三峰宝石大皇冠 + 双侧三钻鎏金权杖 + 底边虹彩流金桂冠四向超豪华雕框
+      if (pos === 'left' || pos === 'right') {
+        c.width = 9; c.height = 13;
+        grid = ['...yyy...','..ywwcy..','.ywwcwwy.','..ypppy..','...yyy...','..ycccy..','.ycwwwcy.','..ypppy..','...yyy...','..ywwwy..','.ywwywwy.','..yyyyy..','.........'];
+      } else if (pos === 'top') {
+        c.width = 17; c.height = 6;
+        grid = ['..y....yyy....y..','.ywy..ywcwy..ywy.','.ypy.ywwcwwy.ypy.','yywyyyywwwyyyywyy','.yycppywwwyppcyy.','..yyyyyyyyyyyyy..'];
+      } else {
+        c.width = 17; c.height = 5;
+        grid = ['.y..p..ccc..p..y.','ywy.pyccwccyp.ywy','.yy..ywwwwwy..yy.','...yyyyyyyyyyy...','.................'];
+      }
     } else if (styleKey === 'gframe_lucky_dice') {
       // 欧气小狗王专属：转运金骰 + 彩虹金币环四向高定装饰
       if (pos === 'left' || pos === 'right') {
@@ -21393,7 +21416,7 @@
             'adv_album_all', 'adv_curio_all', 'garden_collector_30', 'garden_bloom_100',
             'kitchen_lv10_master', 'rich_tycoon_500', 'adv_legend_50', 'gacha_count_300',
             'pet_legend_300', 'care_legend_200', 'game_legend_100', 'hidden_fashion_sss',
-            'hidden_adv_miracle', 'hidden_adv_legend', 'hidden_gacha_ssr_lucky'
+            'hidden_adv_miracle', 'hidden_adv_legend', 'hidden_gacha_ssr_lucky', 'hidden_gacha_triple_ssr'
           ]);
           const isSenior = seniorSet.has(ach.id);
           el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
@@ -21658,6 +21681,7 @@
                       : (config.puppyOwnedTrails || []).includes(item.id)
       ).length >= 6,
       hidden_gacha_ssr_lucky: Boolean(config.puppyStats?.gachaLuckyHit),
+      hidden_gacha_triple_ssr: Boolean(config.puppyStats?.gachaTripleSsrHit),
       hidden_gacha_unlucky: Boolean(config.puppyStats?.gachaUnluckyHit),
       job_worker: (config.puppyStats?.jobsDone || 0) >= 1,
       hidden_job_star: (config.puppyStats?.jobStars || 0) >= 3,
@@ -21913,6 +21937,7 @@
     hidden_visitor_robbed: ['有些调皮的访客手脚不太老实', '被爱顺东西的调皮小访客摸走小狗币累计 3 次'],
     hidden_gacha_lucky: ['去商城里的像素扭蛋机试试手气', '从扭蛋机里累计集齐 6 件不同的限定物品'],
     hidden_gacha_ssr_lucky: ['十连抽时才可能出现的欧皇时刻', '在一次十连扭蛋中同时抽出 2 件以上 SSR'],
+    hidden_gacha_triple_ssr: ['十连扭蛋中万中无一的传世神迹', '在单次十连扭蛋中触发 0.001% 奇迹同时抽出 3 件及以上 SSR'],
     hidden_gacha_unlucky: ['非到极致也是一种特别的运气', '扭蛋一直没出金，直到吃满 70 抽硬保底出 SSR'],
     hidden_job_star: ['在兼职打工里追求最高评价', '让小狗打工累计触发 3 次金牌好评小剧场'],
     hidden_ask_refuse: ['偶尔铁石心肠一次也会触发彩蛋', '对小狗弹出的撒娇小请求连续或累计拒绝 3 次'],
@@ -22285,18 +22310,33 @@
     config.puppyOwnedBubbles = config.puppyOwnedBubbles || [];
     config.puppyInventory = config.puppyInventory || {};
     if (kind === 'bday') {
-      if (!config.puppyOwnedOutfits.includes('bday_cake_dress')) {
-        config.puppyOwnedOutfits.push('bday_cake_dress');
-        got.push('限定礼服【奶油生日礼裙】');
-      }
-      if (!config.puppyOwnedBubbles.includes('bub_bday_cake')) {
-        config.puppyOwnedBubbles.push('bub_bday_cake'); markWardItemNew('bub_bday_cake');
-        got.push('限定气泡【蜡烛礼赞框】');
-      }
+      const curYr = String(new Date().getFullYear());
+      if (!Array.isArray(config.puppyBirthdayYears)) config.puppyBirthdayYears = [];
+      if (!config.puppyBirthdayYears.includes(curYr)) config.puppyBirthdayYears.push(curYr);
+      const bdayYrNum = config.puppyBirthdayYears.length;
       config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || [];
-      if (!config.puppyOwnedAvatarFrames.includes('af_bday_candle')) { config.puppyOwnedAvatarFrames.push('af_bday_candle'); markWardItemNew('af_bday_candle'); got.push('限定头像框【奶油蛋糕框】'); }
-      config.puppyInventory.snack_cake = (config.puppyInventory.snack_cake || 0) + 2;
-      got.push('草莓小蛋糕x2');
+      config.puppyOwnedBubbles = config.puppyOwnedBubbles || [];
+      config.puppyOwnedOutfits = config.puppyOwnedOutfits || [];
+      if (bdayYrNum === 1 || !config.puppyOwnedAvatarFrames.includes('af_bday_candle')) {
+        if (!config.puppyOwnedOutfits.includes('bday_cake_dress')) { config.puppyOwnedOutfits.push('bday_cake_dress'); markWardItemNew('bday_cake_dress'); got.push('第1年生日礼服【奶油生日礼裙】'); }
+        if (!config.puppyOwnedBubbles.includes('bub_bday_cake')) { config.puppyOwnedBubbles.push('bub_bday_cake'); markWardItemNew('bub_bday_cake'); got.push('第1年生日气泡【蜡烛礼赞泡】'); }
+        if (!config.puppyOwnedAvatarFrames.includes('af_bday_candle')) { config.puppyOwnedAvatarFrames.push('af_bday_candle'); markWardItemNew('af_bday_candle'); got.push('第1年生日头像框【奶油蛋糕框】'); }
+        config.puppyInventory.snack_cake = (config.puppyInventory.snack_cake || 0) + 2;
+        got.push('草莓小蛋糕x2');
+      } else if (bdayYrNum === 2 || !config.puppyOwnedAvatarFrames.includes('af_bday_yr2')) {
+        if (!config.puppyOwnedAvatarFrames.includes('af_bday_yr2')) { config.puppyOwnedAvatarFrames.push('af_bday_yr2'); markWardItemNew('af_bday_yr2'); got.push('第2年生日头像框【鎏金礼炮框】'); }
+        if (!config.puppyOwnedBubbles.includes('bub_bday_yr2')) { config.puppyOwnedBubbles.push('bub_bday_yr2'); markWardItemNew('bub_bday_yr2'); got.push('第2年生日气泡【星愿气球泡】'); }
+        config.puppyInventory.gacha_ticket = Math.floor(config.puppyInventory.gacha_ticket || 0) + 2;
+        config.puppyCoins = Math.floor(config.puppyCoins || 0) + 20;
+        got.push('扭蛋券x2', '生日礼金+20币');
+      } else {
+        if (!config.puppyOwnedAvatarFrames.includes('af_bday_yr3')) { config.puppyOwnedAvatarFrames.push('af_bday_yr3'); markWardItemNew('af_bday_yr3'); got.push('第3年生日头像框【丝带礼盒皇冠框】'); }
+        if (!config.puppyOwnedBubbles.includes('bub_bday_yr3')) { config.puppyOwnedBubbles.push('bub_bday_yr3'); markWardItemNew('bub_bday_yr3'); got.push('第3年生日气泡【礼花糖纸泡】'); }
+        config.puppyInventory.gacha_ticket = Math.floor(config.puppyInventory.gacha_ticket || 0) + 3;
+        config.puppyInventory.snack_cake = (config.puppyInventory.snack_cake || 0) + 3;
+        config.puppyCoins = Math.floor(config.puppyCoins || 0) + 30;
+        got.push('扭蛋券x3', '草莓小蛋糕x3', '生日礼金+30币');
+      }
     } else {
       if (!config.puppyOwnedOutfits.includes('fest_lucky_cape')) {
         config.puppyOwnedOutfits.push('fest_lucky_cape');
@@ -24847,7 +24887,7 @@
         card.innerHTML = `<span style="display:flex;align-items:center;justify-content:flex-start;gap:3px;width:100%;overflow:hidden;">${isNewC ? '<span class="st-px-new-tag" style="flex-shrink:0;margin:0;">NEW</span>' : ''}<span class="st-px-shop-name" style="min-width:0;flex:1;text-align:left;">${item.name}</span></span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: shopSubCat, item };
-          const clearedCosNew = clearWardItemNew(item.id);
+          clearWardItemNew(item.id);
           if (shopSubCat === 'bagskin') {
             applyPupCosmeticSkins(item.id, null);
           } else if (shopSubCat === 'bubskin') {
@@ -24900,10 +24940,6 @@
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: 'badge', item };
           if (clearWardItemNew(item.id)) {
-            renderPupShop();
-            return;
-          }
-          if (clearedCosNew) {
             renderPupShop();
             return;
           }
@@ -45401,15 +45437,38 @@
         px(fx, fy, i % 2 === 0 ? '#ffc2d6' : '#ffffff', 2, 2);
       }
     } else if (m === 'gdyn_lunar_tide') {
-      // 月华流光框：左上银蓝弯月枕柔云 + 右下发光小水母灯笼轻游
-      const mx = 2, my = 2 + bob1;
+      // [SSR升级] 月华流光框：左上银金弯月枕柔云 + 底边流动银蓝月汐波纹 + 漂浮珍珠贝壳（与水母框零重复！）
+      const mx = 2, my = 1 + bob1;
       px(mx + 2, my, '#fff4b8', 3, 1); px(mx + 1, my + 1, '#ffe68c', 2, 3); px(mx + 2, my + 4, '#fff4b8', 3, 1);
       px(mx + 3, my + 3, '#ffffff', 6, 2); px(mx + 4, my + 2, '#e6f2ff', 4, 1);
-      const jx = W - 10, jy = H - 9 + bob2;
-      px(jx + 1, jy, '#9cd4ff', 5, 2); px(jx, jy + 2, '#c8ebff', 7, 2); px(jx + 2, jy + 1, '#ffffff', 2, 1);
-      px(jx + 1, jy + 4, 'rgba(164,218,255,0.75)', 1, 2 + (t % 2));
-      px(jx + 3, jy + 4, 'rgba(220,242,255,0.85)', 1, 3 - (t % 2));
-      px(jx + 5, jy + 4, 'rgba(164,218,255,0.75)', 1, 2 + (t % 2));
+      for (let x = 4; x < W - 4; x += 2) {
+        const wy = H - 3 + Math.round(Math.sin(t * 0.22 + x * 0.28) * 1.1);
+        px(x, wy, (x % 4 === 0) ? '#d6ecff' : '#8cb8f2', 2, 1);
+      }
+      const bx = W - 9, by = H - 7 + bob2;
+      px(bx, by + 1, '#d6ecff', 6, 3); px(bx + 1, by, '#ffffff', 4, 1); px(bx + 2, by + 2, '#ffe694', 2, 1);
+    } else if (m === 'gdyn_fest_lantern') {
+      // [节日限定升级] 佳节花灯框：顶部错落双红灯笼轻晃 + 底边祥云金波 + 暖光花火星点
+      const sw = Math.round(Math.sin(t * 0.18));
+      px(4 + sw, 1, '#e04858', 5, 4); px(5 + sw, 2, '#fff5c8', 3, 2); px(6 + sw, 5, '#f7c852', 1, 2);
+      px(W - 10 - sw, 2, '#e04858', 4, 3); px(W - 9 - sw, 3, '#fff5c8', 2, 1); px(W - 8 - sw, 5, '#f7c852', 1, 2);
+      for (let x = 6; x < W - 6; x += 4) px(x, H - 2, (x % 8 === 0) ? '#f7c852' : '#e04858', 3, 1);
+      if ((t % 6) < 4) { px(Math.floor(W / 2) - 4, 2, '#ffe680', 1, 1); px(Math.floor(W / 2) + 5, H - 4, '#fff5c8', 1, 1); }
+    } else if (m === 'gdyn_bday_yr2') {
+      // [生日第2年] 星愿气球泡：浮升马卡龙双色气球 + 飘摇彩带
+      const b1 = Math.round(Math.sin(t * 0.2) * 1.5);
+      px(3, 2 + b1, '#ff9ec2', 4, 4); px(4, 3 + b1, '#ffffff', 1, 1); px(4, 6 + b1, '#e6b44c', 1, 3);
+      px(W - 8, 1 - b1, '#8cd6ff', 4, 4); px(W - 7, 2 - b1, '#ffffff', 1, 1); px(W - 6, 5 - b1, '#e6b44c', 1, 3);
+      for (let i = 0; i < 4; i++) px(10 + ((i * 9 + t) % Math.max(8, W - 20)), H - 3 - ((i + t) % 3), ['#ff9ec2', '#ffe066', '#8cd6ff', '#c9adff'][i], 2, 1);
+    } else if (m === 'gdyn_bday_yr3') {
+      // [生日第3年] 礼花糖纸泡：顶边绽放彩纸礼花 + 右下纪念小礼盒
+      const cols = ['#ff8cb0', '#ffe066', '#b89eff', '#8ce0ff'];
+      for (let i = 0; i < 6; i++) {
+        const fx = 4 + ((i * 7 + t * 2) % Math.max(8, W - 8));
+        const fy = 1 + ((i * 3 + Math.floor(t / 2)) % 5);
+        px(fx, fy, cols[i % 4], 2, 1);
+      }
+      px(W - 9, H - 7, '#ff8cb0', 6, 5); px(W - 7, H - 7, '#ffe066', 2, 5); px(W - 9, H - 5, '#ffe066', 6, 1);
     } else if (m === 'gdyn_nebula_constel') {
       // 碎星丝绒框：左上迷你土星环行星轻晃 + 右下星云光球 + 弧线流光微点
       const sx = 3, sy = 2 + bob1;
@@ -47407,25 +47466,76 @@
         g.fillRect(bx, by, 2, 2);
       }
     } else if (m === 'fest_lantern_new') {
-      // 精致迷你绯金像素小花灯 + 轻晃金穗 + 细碎暖金光点
+      // [节日限定升级版] 非对角构图：右上双层绯金花灯轻晃 + 左侧红梅枝与飘瓣 + 底边祥云金波与微火花
       const sway = Math.round(Math.sin(t * 0.16));
-      // 右上角迷你像素小红灯笼
-      drawGridAt(51 + sway, 2, [
-        '..yy..',
-        '.rrrr.',
-        'rryyrr',
-        'rrwwrr',
-        '.rrrr.',
-        '..yy..',
-        '..y...',
+      drawGridAt(49 + sway, 2, [
+        '...yy...',
+        '..rrrr..',
+        '.rryyrr.',
+        'rrwwwwrr',
+        'rryyyyrr',
+        '.rrrrrr.',
+        '..yyyy..',
+        '...yy...',
+        '...y....',
       ], { r: '#e04858', y: '#f7c852', w: '#fff5c8' });
-      // 左下角精致小祥云金结
-      drawGridAt(2, 52 - sway, [
-        '..yy..',
-        '.yrry.',
-        '..yy..',
-        '.y..y.',
-      ], { r: '#e04858', y: '#f7c852' });
+      // 左侧垂枝红梅与飘落花瓣
+      _px(4, 14, '#7a4b3a', 2, 18); _px(6, 18, '#7a4b3a', 3, 2); _px(6, 26, '#7a4b3a', 4, 2);
+      _px(3, 14, '#ff9eb8', 3, 3); _px(8, 16, '#ffb8cc', 3, 3); _px(9, 24, '#ff9eb8', 3, 3);
+      _px(4, 15, '#fff5c8', 1, 1); _px(9, 17, '#fff5c8', 1, 1);
+      // 底边金色祥云波浪与节日烟花微光
+      _px(14, 54, '#f7c852', 36, 3); _px(18, 52, '#e04858', 28, 2); _px(24, 53, '#fff5c8', 16, 2);
+      if ((t % 6) < 4) { _px(12, 49, '#ffe680', 2, 2); _px(51, 49, '#ff9eb8', 2, 2); }
+    } else if (m === 'ach_triple_ssr_mythic') {
+      // [绝版神迹成就] 三金神迹圣冕框：三峰宝石圣冕 + 双侧鎏金羽翼 + 8颗虹彩晶钻绕框流光 + 底边香槟桂冠
+      const cy = 1 + (_bob > 0 ? 0 : 1);
+      // 顶部三峰宝石大圣冕
+      _px(19, cy + 4, '#d99824', 26, 4); _px(21, cy + 3, '#ffe078', 22, 2);
+      _px(19, cy + 1, '#ffe078', 3, 3); _px(25, cy + 1, '#fff4bd', 2, 3); _px(30, cy, '#ffffff', 4, 4); _px(37, cy + 1, '#fff4bd', 2, 3); _px(42, cy + 1, '#ffe078', 3, 3);
+      _px(31, cy + 5, '#8ce6ff', 2, 2); _px(23, cy + 5, '#ff8cb8', 2, 2); _px(39, cy + 5, '#c7a6ff', 2, 2);
+      // 左右鎏金小羽翼
+      const wy = 22 + (_bob > 0 ? 0 : 1);
+      _px(1, wy, '#ffe078', 5, 3); _px(2, wy + 3, '#fff6cc', 5, 3); _px(4, wy + 6, '#f0c975', 4, 3);
+      _px(58, wy, '#ffe078', 5, 3); _px(57, wy + 3, '#fff6cc', 5, 3); _px(56, wy + 6, '#f0c975', 4, 3);
+      // 底边香槟桂冠 + 三连星钻
+      _px(14, 55, '#e6a825', 36, 3); _px(18, 57, '#ffe078', 28, 2);
+      _px(24, 54, '#ff8cb8', 3, 3); _px(30, 53, '#8ce6ff', 4, 4); _px(31, 54, '#ffffff', 2, 2); _px(37, 54, '#c7a6ff', 3, 3);
+      // 8颗虹彩金钻高速巡游
+      const cols = ['#ffe078', '#ff8cb8', '#8ce6ff', '#c7a6ff', '#9bf2d8', '#ffffff', '#ffd180', '#ffa8d8'];
+      for (let i = 0; i < 8; i++) {
+        const [px0, py0] = perimPt(t * 2 + i * 23);
+        _px(px0, py0, cols[i], 3, 3);
+        _px(px0 + 1, py0 + 1, '#ffffff', 1, 1);
+      }
+      return;
+    } else if (m === 'bday_yr2_confetti') {
+      // [生日第2年] 鎏金礼炮框：顶边彩带礼炮绽放 + 飘落马卡龙彩纸 + 左下香槟金杯微光
+      const cy = 2 + (_bob > 0 ? 0 : 1);
+      _px(18, cy, '#f5c852', 28, 3); _px(22, cy + 2, '#ff8cb0', 20, 2);
+      const cfCols = ['#ff8cb0', '#8ce0ff', '#ffe066', '#b89eff', '#94e6b8'];
+      for (let i = 0; i < 6; i++) {
+        const fx = 10 + ((i * 9 + t * 2) % 44);
+        const fy = 4 + ((i * 7 + t) % 12);
+        _px(fx, fy, cfCols[i % cfCols.length], 2, 2);
+      }
+      // 左下香槟金杯 + 升腾气泡
+      _px(5, 45, '#f5c852', 7, 5); _px(6, 46, '#fff6cc', 5, 3); _px(8, 50, '#d9a441', 1, 5); _px(6, 55, '#f5c852', 5, 2);
+      _px(7, 42 - (t % 4), '#ffffff', 2, 2);
+      for (let i = 0; i < 4; i++) { const [px0, py0] = perimPt(t * 2 + i * 46); _px(px0, py0, cfCols[i], 2, 2); }
+      return;
+    } else if (m === 'bday_yr3_crown') {
+      // [生日第3年] 丝带礼盒皇冠框：顶边丝带皇冠 + 右下三层纪念礼盒 + 旋转礼花流光
+      const cy = 1 + (_bob > 0 ? 0 : 1);
+      _px(22, cy + 3, '#f5c852', 20, 4); _px(22, cy + 1, '#ffe078', 2, 2); _px(31, cy, '#ffffff', 2, 3); _px(40, cy + 1, '#ffe078', 2, 2);
+      _px(26, cy + 4, '#ff7ca8', 3, 2); _px(35, cy + 4, '#ff7ca8', 3, 2);
+      // 右下精致礼盒 + 丝带蝴蝶结
+      _px(46, 46, '#ff8cb0', 12, 11); _px(51, 46, '#ffe078', 2, 11); _px(46, 50, '#ffe078', 12, 2);
+      _px(48, 43, '#ffe078', 3, 3); _px(53, 43, '#ffe078', 3, 3);
+      for (let i = 0; i < 6; i++) {
+        const [px0, py0] = perimPt(t * 2 + i * 31);
+        _px(px0, py0, ['#ff8cb0', '#ffe078', '#b89eff', '#8ce0ff'][i % 4], 2, 2);
+      }
+      return;
       // 沿外框缓缓飘升的暖金小光点
       for (let i = 0; i < 4; i++) {
         const [px, py] = perimPt(t * 2 + i * 45);
@@ -50625,7 +50735,7 @@
     win.__stGachaPrevAnimTimer = setInterval(drawGachaPrevFrame, 160);
   };
 
-  const rollOneGacha = (forceAtLeastSR, srInBatch = 0) => {
+  const rollOneGacha = (forceAtLeastSR, srInBatch = 0, forceSsr = false) => {
     config.puppyStats = config.puppyStats || {};
     config.puppyStats.gachaPulls = (config.puppyStats.gachaPulls || 0) + 1;
     config.puppyGachaSsrPity = (config.puppyGachaSsrPity || 0) + 1;
@@ -50641,10 +50751,10 @@
     // SSR：基础 1.2%（提前出金真实可感），第 47 抽起软保底递增（平均约 47~55 抽稳出），第 70 抽硬保底；双金概率低于提前金但真实可触发
     const ssrRate = isHardPitySsr ? 1 : (pity >= 49 ? Math.min(0.55, 0.0065 + (pity - 48) * 0.024) : 0.0065);
     // SR：首张 11.5% 随时随机出，第 2 张 5.5% 偶有双紫惊喜，第 3 张起 1.2% 防止每把扎堆三四个
-    const srRate = srInBatch === 0 ? 0.155 : (srInBatch === 1 ? 0.110 : 0.020);
+    const srRate = srInBatch === 0 ? 0.155 : (srInBatch === 1 ? 0.110 : (srInBatch === 2 ? 0.020 : (srInBatch === 3 ? 0.004 : 0.0008)));
 
     const rRoll = Math.random();
-    const hitSsr = isHardPitySsr || rRoll < ssrRate;
+    const hitSsr = forceSsr || isHardPitySsr || rRoll < ssrRate;
     const hitSr = !hitSsr && (forceAtLeastSR || rRoll < (ssrRate + srRate));
 
     if (hitSsr) {
@@ -50783,9 +50893,12 @@
         const results = [];
         let gotHigh = false;
         let srInBatch = 0;
+        // 十连 0.001% (0.00001) 史诗欧皇三金概率！
+        const hitTripleSsr = (count === 10 && Math.random() < 0.00001);
         for (let i = 0; i < count; i++) {
           const forceSR = (count === 10 && i === 9 && !gotHigh);
-          const res = rollOneGacha(forceSR, srInBatch);
+          const forceSsrNow = hitTripleSsr && i < 3;
+          const res = rollOneGacha(forceSR, srInBatch, forceSsrNow);
           if (res.tier === 'SR') { gotHigh = true; srInBatch += 1; }
           else if (res.tier === 'SSR') { gotHigh = true; }
           results.push(res);
@@ -50800,6 +50913,7 @@
         const ssrCnt = results.filter(r => r.tier === 'SSR').length;
         const srCnt = results.filter(r => r.tier === 'SR').length;
         if (ssrCnt >= 2) config.puppyStats.gachaLuckyHit = true;
+        if (ssrCnt >= 3) config.puppyStats.gachaTripleSsrHit = true;
 
         saveConfig();
         updatePupStatBars();
