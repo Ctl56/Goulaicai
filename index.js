@@ -8773,8 +8773,13 @@
               </div>
             </div>
             <input id="st-tb-pup-bark-url" type="text" class="st-px-in" placeholder="Bark 推送链接，如 https://api.day.app/你的Key/" style="width:100%;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
-            <input id="st-tb-pup-bark-icon" type="text" class="st-px-in" placeholder="小狗头像图床链接（可选，https://...png）" style="width:100%;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
-            <div style="font-size:9px;opacity:0.75;line-height:1.4;">填好后切屏回复自动走 Bark 弹原生 iOS 通知；把上面导出的小狗方图传到图床贴进第二栏，横幅就会带小狗头像。</div>
+            <div style="display:flex;align-items:center;gap:3px;">
+              <input id="st-tb-pup-bark-icon" type="text" class="st-px-in" placeholder="弹窗图标链接（点右侧直接上传本地图或小狗图）" style="flex:1;min-width:0;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
+              <button class="st-px-btn" id="st-tb-pup-bark-pick" type="button" style="height:24px;padding:0 6px;font-size:9.5px;flex-shrink:0;">本地选图</button>
+              <button class="st-px-btn" id="st-tb-pup-bark-usepup" type="button" style="height:24px;padding:0 6px;font-size:9.5px;flex-shrink:0;">用小狗图</button>
+              <input id="st-tb-pup-bark-file" type="file" accept="image/*" style="display:none;" />
+            </div>
+            <div style="font-size:9px;opacity:0.75;line-height:1.4;">开着小狗时按小狗性格台词和标题推送，关掉小狗则按普通提醒推送；可直接选本地照片或一键上传当前小狗作为弹窗图。</div>
           </div>
           <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
             <span style="width:auto;">小狗自主说话频率</span>
@@ -43556,7 +43561,7 @@
     try {
       if (!win.navigator?.mediaSession) return;
       if (!config.keepAlive || config.keepAlivePolicy !== 'exclusive') return;
-      if (config.puppyIslandArtwork === false) {
+      if (!config.puppyEnabled || config.puppyIslandArtwork === false) {
         win.navigator.mediaSession.metadata = null;
         win.navigator.mediaSession.playbackState = 'none';
         return;
@@ -43650,15 +43655,40 @@
     });
   }
 
-  const sendBarkPuppyNotify = async (title, body) => {
+  const BG_NOTIFY_TITLE_BY_PERS_SHARED = {
+    sleepyhead: ['{name} 迷迷糊糊在喊你', '{name} 蹭着屏幕等你回来', '{name} 轻轻晃了晃小铃铛'],
+    clingy: ['{name} 在呼唤你回去贴贴', '{name} 超级想你快回来', '{name} 摇着铃铛找你啦'],
+    tsundere: ['{name} 催你快点回来', '{name} 很不耐烦地喊你', '{name} 敲了敲屏幕叫你'],
+    foodie: ['{name} 跑来提醒你回去啦', '{name} 突然想起来要喊你', '{name} 晃着铃铛找你啦'],
+    explorer: ['{name} 开心地喊你回来', '{name} 在屏幕里向你招手', '{name} 摇着铃铛呼唤你'],
+    fashionista: ['{name} 顺手叫你回来', '{name} 提醒你该回去了', '{name} 轻敲了一下屏幕'],
+    gamer: ['{name} 喊你火速回来', '{name} 发来紧急呼叫', '{name} 在屏幕里召唤你'],
+    philosopher: ['{name} 提醒你可以回来了', '{name} 在页面里等你回来', '{name} 轻声喊你回来看看'],
+  };
+
+  const getPersonalityNotifyPair = () => {
+    if (!config.puppyEnabled) {
+      return { title: 'SillyTavern 回复完成', body: '新的回复已经生成完毕，快切回来看看吧~', useIcon: false };
+    }
+    const curP = config.puppyPersonality || 'sleepyhead';
+    const tPool = BG_NOTIFY_TITLE_BY_PERS_SHARED[curP] || BG_NOTIFY_TITLE_BY_PERS_SHARED.sleepyhead;
+    const bPool = (typeof BG_NOTIFY_BY_PERS !== 'undefined' && BG_NOTIFY_BY_PERS[curP]) || (typeof BG_NOTIFY_BY_PERS !== 'undefined' && BG_NOTIFY_BY_PERS.sleepyhead) || ['新回复写好啦，快切回来看看吧~'];
+    return {
+      title: pick(tPool).replace(/\{name\}/g, getPupName()),
+      body: formatPupText(pick(bPool)),
+      useIcon: true,
+    };
+  };
+
+  const sendBarkPuppyNotify = async (title, body, withIcon = true) => {
     const rawUrl = String(config.puppyBarkUrl || '').trim().replace(/\/+$/, '');
     if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) return false;
-    const iconParam = String(config.puppyBarkIconUrl || '').trim();
+    const iconParam = withIcon ? String(config.puppyBarkIconUrl || '').trim() : '';
     const qs = new URLSearchParams();
-    qs.set('group', '狗来财');
+    qs.set('group', config.puppyEnabled ? '狗来财' : 'SillyTavern');
     qs.set('sound', 'bell');
     if (iconParam && /^https?:\/\//i.test(iconParam)) qs.set('icon', iconParam);
-    const getUrl = `${rawUrl}/${encodeURIComponent(String(title || getPupName()))}/${encodeURIComponent(String(body || '新回复已送达'))}?${qs.toString()}`;
+    const getUrl = `${rawUrl}/${encodeURIComponent(String(title || 'SillyTavern 回复完成'))}/${encodeURIComponent(String(body || '新回复已送达'))}?${qs.toString()}`;
     try {
       await fetch(getUrl, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
       return true;
@@ -43667,12 +43697,75 @@
     }
   };
 
+  const uploadBarkIconDataUrl = async (dataUrl, triggerBtn) => {
+    if (!dataUrl) return;
+    const baseUrl = getCloudBaseUrl();
+    const myId = ensureMyCloudId();
+    const prevTxt = triggerBtn ? triggerBtn.textContent : '';
+    if (triggerBtn) { triggerBtn.disabled = true; triggerBtn.textContent = '上传中…'; }
+    try {
+      const resp = await fetchWithTimeout(`${baseUrl}/icon`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: myId, dataUrl }),
+      }, 12000);
+      if (!resp.ok) {
+        openPixelPupNoticeModal('云端图床未开启', '你的云端 Worker 还没加上 /icon 图床接口哦！把聊天里给你的 /icon 代码粘贴到 Cloudflare Worker 部署一下，就能一键直传本地图和小狗图啦~');
+        return;
+      }
+      const resData = await resp.json().catch(() => null);
+      const pubUrl = (resData && resData.url) ? String(resData.url) : `${baseUrl}/icon?id=${encodeURIComponent(myId)}&t=${Date.now()}`;
+      config.puppyBarkIconUrl = pubUrl;
+      saveConfig();
+      if (pupBarkIconIn) pupBarkIconIn.value = pubUrl;
+      openPixelPupNoticeModal('上传成功！', '弹窗图标已上传到你的云端并自动填好啦，现在点「测推送」就能看到带图标的 iOS 横幅~', '太棒了');
+    } catch (_) {
+      openPixelPupNoticeModal('上传超时', '网络开小差了，请稍后再试，或直接粘贴任意 https 图床链接~');
+    } finally {
+      if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.textContent = prevTxt; }
+    }
+  };
+
   const pupBarkUrlIn = root.querySelector('#st-tb-pup-bark-url');
   const pupBarkIconIn = root.querySelector('#st-tb-pup-bark-icon');
   const pupBarkSaveBtn = root.querySelector('#st-tb-pup-bark-save');
   const pupBarkTestBtn = root.querySelector('#st-tb-pup-bark-test');
+  const pupBarkPickBtn = root.querySelector('#st-tb-pup-bark-pick');
+  const pupBarkFileIn = root.querySelector('#st-tb-pup-bark-file');
+  const pupBarkUsePupBtn = root.querySelector('#st-tb-pup-bark-usepup');
   if (pupBarkUrlIn) pupBarkUrlIn.value = config.puppyBarkUrl || '';
   if (pupBarkIconIn) pupBarkIconIn.value = config.puppyBarkIconUrl || '';
+  if (pupBarkPickBtn && pupBarkFileIn) {
+    pupBarkPickBtn.addEventListener('click', () => { pupBarkFileIn.value = ''; pupBarkFileIn.click(); });
+    pupBarkFileIn.addEventListener('change', () => {
+      const f = pupBarkFileIn.files && pupBarkFileIn.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          const cv = doc.createElement('canvas');
+          cv.width = 256; cv.height = 256;
+          const g = cv.getContext('2d');
+          const side = Math.min(img.width, img.height);
+          const sx = Math.floor((img.width - side) / 2);
+          const sy = Math.floor((img.height - side) / 2);
+          g.drawImage(img, sx, sy, side, side, 0, 0, 256, 256);
+          const outUrl = cv.toDataURL('image/png');
+          uploadBarkIconDataUrl(outUrl, pupBarkPickBtn);
+        };
+        img.src = String(reader.result || '');
+      };
+      reader.readAsDataURL(f);
+    });
+  }
+  if (pupBarkUsePupBtn) {
+    pupBarkUsePupBtn.addEventListener('click', () => {
+      const artUrl = buildPuppyIslandArtworkUrl();
+      if (!artUrl) return;
+      uploadBarkIconDataUrl(artUrl, pupBarkUsePupBtn);
+    });
+  }
   if (pupBarkSaveBtn) {
     pupBarkSaveBtn.addEventListener('click', () => {
       config.puppyBarkUrl = String(pupBarkUrlIn?.value || '').trim();
@@ -43691,8 +43784,9 @@
       config.puppyBarkUrl = u;
       config.puppyBarkIconUrl = String(pupBarkIconIn?.value || '').trim();
       saveConfig();
-      const ok = await sendBarkPuppyNotify(`${getPupName()} 敲了敲你的屏幕`, 'Bark 推送测试成功！以后切屏等回复就会这样喊你回来啦~');
-      openPixelPupNoticeModal(ok ? '已发出测试推送' : '发送失败', ok ? '已向 Bark 发送测试通知，请留意手机顶部横幅！' : '网络请求失败，请检查 Bark 链接是否正确。', '知道了');
+      const pair = getPersonalityNotifyPair();
+      const ok = await sendBarkPuppyNotify(pair.title, pair.body, pair.useIcon);
+      openPixelPupNoticeModal(ok ? '已发出测试推送' : '发送失败', ok ? '已按当前状态向 Bark 发送测试通知，请留意手机顶部横幅！' : '网络请求失败，请检查 Bark 链接是否正确。', '知道了');
     });
   }
   if (pupBgNotifyBtn) {
@@ -43866,9 +43960,8 @@
 
     if ((isTest || doc.hidden) && config.puppyBarkUrl) {
       try {
-        const _bp = BG_NOTIFY_BY_PERS[curBellP] || BG_NOTIFY_BY_PERS.sleepyhead;
-        const _bBody = formatPupText(pick(_bp));
-        sendBarkPuppyNotify(`${getPupName()} 喊你回来看回复`, _bBody);
+        const _pair = getPersonalityNotifyPair();
+        sendBarkPuppyNotify(_pair.title, _pair.body, _pair.useIcon);
       } catch (_) {}
     }
 
@@ -51389,6 +51482,7 @@
     syncUI();
     if (config.puppyEnabled) startPuppy();
     else stopPuppy();
+    try { if (typeof syncDynamicIslandArtwork === 'function') syncDynamicIslandArtwork(); } catch (_) {}
   });
 
   densityRange.addEventListener('input', () => {
