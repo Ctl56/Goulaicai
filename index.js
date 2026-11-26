@@ -329,6 +329,19 @@
     { id: 'cape_sea_jelly', name: '海盐泡泡斗篷', price: 15, cat: 'cape' },
     { id: 'cape_caramel_bear', name: '焦糖毛绒斗篷', price: 14, cat: 'cape' },
     { id: 'cape_lavender_bell', name: '丁香铃兰斗篷', price: 16, cat: 'cape' },
+    // 再加 12 款全新斗篷（含超长拖地款、毛领、流苏、叶形、冰晶等不雷同款式）
+    { id: 'cape_long_bridal', name: '拖地白纱披风', price: 24, cat: 'cape' },
+    { id: 'cape_long_obsidian', name: '暗夜拖地长披风', price: 24, cat: 'cape' },
+    { id: 'cape_long_celeste', name: '银蓝拖地星披风', price: 25, cat: 'cape' },
+    { id: 'cape_mint_ribbon', name: '薄荷缎带披肩', price: 15, cat: 'cape' },
+    { id: 'cape_honey_bee', name: '蜂蜜小熊披风', price: 15, cat: 'cape' },
+    { id: 'cape_cloud_fluff', name: '云朵羊羔绒斗篷', price: 16, cat: 'cape' },
+    { id: 'cape_rose_tassel', name: '玫瑰流苏披肩', price: 17, cat: 'cape' },
+    { id: 'cape_denim_hood', name: '牛仔学院披肩', price: 14, cat: 'cape' },
+    { id: 'cape_peach_cream', name: '蜜桃奶霜披风', price: 15, cat: 'cape' },
+    { id: 'cape_forest_elf', name: '森系绿叶披风', price: 17, cat: 'cape' },
+    { id: 'cape_snow_crystal', name: '雪绒冰晶披风', price: 18, cat: 'cape' },
+    { id: 'cape_sunset_gold', name: '晚霞流金披风', price: 19, cat: 'cape' },
   ];
 
   // 独立分类：24 款漂浮像素小跟班
@@ -1718,6 +1731,13 @@
     { id: 'gacha_acc_monocle_chain', name: '单片眼镜', tier: 'SR' },
     { id: 'gacha_acc_mini_skateboard', name: '迷你滑板', tier: 'SR' },
     { id: 'gacha_acc_quill_scroll', name: '白羽毛笔', tier: 'SR' },
+    // 扭蛋限定 6 款镂空叠穿斗篷（3 SSR 拖地华丽款 + 3 SR 特别款）
+    { id: 'gacha_cape_aurora_train', name: '极光拖地纱披风', tier: 'SSR' },
+    { id: 'gacha_cape_angel_feather', name: '圣羽拖地长披风', tier: 'SSR' },
+    { id: 'gacha_cape_ruby_empress', name: '绯红女皇拖尾披风', tier: 'SSR' },
+    { id: 'gacha_cape_butterfly_shawl', name: '蝶翼轻纱披肩', tier: 'SR' },
+    { id: 'gacha_cape_strawberry_cream', name: '草莓奶油披肩', tier: 'SR' },
+    { id: 'gacha_cape_moon_moth', name: '月影轻纱斗篷', tier: 'SR' },
   ];
   const GACHA_COMPANIONS = [
     { id: 'gacha_mini_angel', name: '小天使灵', tier: 'SSR' },
@@ -17513,7 +17533,7 @@
       for (let x = -2; x <= 2; x++) px(hc + x, hy + 4, '#ffffff');
       for (let x = -2; x <= 2; x++) px(hc + x, hy + 5, (x === 0 || x === 1) ? '#ffae33' : '#fffdf7');
       for (let x = -1; x <= 1; x++) px(hc + x, hy + 6, x === 0 ? '#ffd257' : '#ffffff');
-    } else if (acc && acc.startsWith('cape_')) {
+    } else if (acc && (acc.startsWith('cape_') || acc.startsWith('gacha_cape_'))) {
       // 镂空前襟斗篷：左右披肩外扩垂坠，中间身子(ox+4..ox+10)完全留空，可与任意裙子/衣服叠穿！
       if (isFlatPose) return;
       const cy = oy + 8;
@@ -17586,6 +17606,102 @@
         drawOpenCapeBase('#b59be3', '#d7c4f7', '#a6d6b0', '#b59be3', '#e8f5eb');
         px(ox + 1, cy + 4, '#ffffff'); px(ox + 3, cy + 4, '#ffffff');
         px(ox + 11, cy + 4, '#ffffff'); px(ox + 13, cy + 4, '#ffffff');
+      } else if (acc === 'cape_long_bridal') {
+        // 超长拖地白纱披风：向外拖曳 2px 轻透白纱长拖尾 + 珍珠蕾丝边
+        drawOpenCapeBase('#fffdf9', '#f2edf7', '#ffffff', '#e6dff0', '#f5d98c');
+        px(ox - 1, cy + 3, '#fffdf9'); px(ox - 2, cy + 4, '#ffffff'); px(ox - 1, cy + 4, '#f2edf7'); px(ox, cy + 4, '#ffffff'); px(ox + 2, cy + 4, '#ffffff');
+        px(ox + 15, cy + 3, '#fffdf9'); px(ox + 16, cy + 4, '#ffffff'); px(ox + 15, cy + 4, '#f2edf7'); px(ox + 14, cy + 4, '#ffffff'); px(ox + 12, cy + 4, '#ffffff');
+        px(ox + 7, cy, '#f5d98c');
+      } else if (acc === 'cape_long_obsidian') {
+        // 暗夜拖地长披风：玄黑外摆 + 暗红内衬 + 超长拖地尾翼
+        drawOpenCapeBase('#1d1b24', '#2e2a38', '#1d1b24', '#8f1d32', '#d4af5a');
+        px(ox + 3, cy + 1, '#8f1d32'); px(ox + 11, cy + 1, '#8f1d32');
+        px(ox + 3, cy + 2, '#8f1d32'); px(ox + 11, cy + 2, '#8f1d32');
+        px(ox - 1, cy + 3, '#1d1b24'); px(ox - 2, cy + 4, '#1d1b24'); px(ox - 1, cy + 4, '#2e2a38'); px(ox, cy + 4, '#8f1d32');
+        px(ox + 15, cy + 3, '#1d1b24'); px(ox + 16, cy + 4, '#1d1b24'); px(ox + 15, cy + 4, '#2e2a38'); px(ox + 14, cy + 4, '#8f1d32');
+      } else if (acc === 'cape_long_celeste') {
+        // 银蓝拖地星披风：月光银蓝渐变 + 超长星河拖尾
+        drawOpenCapeBase('#5673a8', '#83a4db', '#b8d2f7', '#ffffff', '#e6f0ff');
+        px(ox - 1, cy + 3, '#83a4db'); px(ox - 2, cy + 4, '#ffffff'); px(ox - 1, cy + 4, '#b8d2f7'); px(ox, cy + 4, '#83a4db');
+        px(ox + 15, cy + 3, '#83a4db'); px(ox + 16, cy + 4, '#ffffff'); px(ox + 15, cy + 4, '#b8d2f7'); px(ox + 14, cy + 4, '#83a4db');
+        px(ox + 1, cy + 2, '#ffffff'); px(ox + 13, cy + 2, '#ffffff');
+      } else if (acc === 'cape_mint_ribbon') {
+        // 薄荷缎带披肩：清爽薄荷绿短披肩 + 两侧奶白蝴蝶结装饰
+        drawOpenCapeBase('#9be0c4', '#c9f5e3', '#ffffff', '#9be0c4', '#fffdf7');
+        px(ox + 1, cy + 2, '#fffdf7'); px(ox + 2, cy + 2, '#f5c2d1'); px(ox + 13, cy + 2, '#fffdf7'); px(ox + 12, cy + 2, '#f5c2d1');
+      } else if (acc === 'cape_honey_bee') {
+        // 蜂蜜小熊披风：暖黄蜂蜜滴胶下摆 + 奶油蕾丝领
+        drawOpenCapeBase('#f2c252', '#ffe08a', '#d98c2b', '#f2c252', '#fffbf0');
+        px(ox + 3, cy, '#fffbf0'); px(ox + 4, cy, '#fffbf0'); px(ox + 10, cy, '#fffbf0'); px(ox + 11, cy, '#fffbf0');
+        px(ox + 1, cy + 4, '#e69d35'); px(ox + 13, cy + 4, '#e69d35');
+      } else if (acc === 'cape_cloud_fluff') {
+        // 云朵羊羔绒斗篷：蓬松云白羊羔绒 + 浅天蓝柔影 + 边角毛球
+        drawOpenCapeBase('#ffffff', '#edf6ff', '#ffffff', '#d8ebff', '#a8d1f7');
+        px(ox - 1, cy + 2, '#ffffff'); px(ox + 15, cy + 2, '#ffffff');
+        px(ox + 0, cy + 4, '#edf6ff'); px(ox + 14, cy + 4, '#edf6ff');
+      } else if (acc === 'cape_rose_tassel') {
+        // 玫瑰流苏披肩：干枯玫瑰粉织纹 + 长垂坠金色流苏穗
+        drawOpenCapeBase('#d48396', '#ebadc0', '#f2cc74', '#d48396', '#f2cc74');
+        px(ox + 0, cy + 4, '#f2cc74'); px(ox + 2, cy + 4, '#f2cc74'); px(ox + 12, cy + 4, '#f2cc74'); px(ox + 14, cy + 4, '#f2cc74');
+        px(ox + 0, cy + 5, '#ffe599'); px(ox + 14, cy + 5, '#ffe599');
+      } else if (acc === 'cape_denim_hood') {
+        // 牛仔学院披肩：丹宁蓝 + 明黄车线 + 藏青水手条纹边
+        drawOpenCapeBase('#4d73a6', '#6b91c4', '#2b4266', '#ffffff', '#f0c458');
+        px(ox + 3, cy + 1, '#f0c458'); px(ox + 11, cy + 1, '#f0c458');
+        px(ox + 3, cy + 2, '#f0c458'); px(ox + 11, cy + 2, '#f0c458');
+      } else if (acc === 'cape_peach_cream') {
+        // 蜜桃奶霜披风：粉橘蜜桃渐变 + 奶油波浪边 + 珊瑚领扣
+        drawOpenCapeBase('#ffb8a3', '#ffd9cc', '#fffaf5', '#ffd9cc', '#ff7a6b');
+        px(ox + 1, cy + 4, '#fffaf5'); px(ox + 3, cy + 4, '#fffaf5'); px(ox + 11, cy + 4, '#fffaf5'); px(ox + 13, cy + 4, '#fffaf5');
+      } else if (acc === 'cape_forest_elf') {
+        // 森系绿叶披风：锯齿尖叶精灵轮廓 + 金藤扣
+        drawOpenCapeBase('#48875a', '#6eb37e', '#366945', '#8cd496', '#f0cf6e');
+        px(ox - 1, cy + 3, '#6eb37e'); px(ox + 1, cy + 4, '#48875a'); px(ox + 3, cy + 4, '#6eb37e');
+        px(ox + 15, cy + 3, '#6eb37e'); px(ox + 13, cy + 4, '#48875a'); px(ox + 11, cy + 4, '#6eb37e');
+      } else if (acc === 'cape_snow_crystal') {
+        // 雪绒冰晶披风：冰川浅蓝 + 雪白毛领 + 悬垂冰晶尖坠
+        drawOpenCapeBase('#a8d8f5', '#ddf2ff', '#ffffff', '#c7e9ff', '#ffffff');
+        px(ox + 2, cy, '#ffffff'); px(ox + 3, cy, '#ffffff'); px(ox + 11, cy, '#ffffff'); px(ox + 12, cy, '#ffffff');
+        px(ox + 0, cy + 4, '#ffffff'); px(ox + 2, cy + 4, '#88c4eb'); px(ox + 12, cy + 4, '#88c4eb'); px(ox + 14, cy + 4, '#ffffff');
+      } else if (acc === 'cape_sunset_gold') {
+        // 晚霞流金披风：暮紫橘霞渐变长摆 + 流金镶边
+        drawOpenCapeBase('#8f5d9e', '#e88b76', '#ffe078', '#f5a962', '#ffe078');
+        px(ox - 1, cy + 3, '#e88b76'); px(ox - 2, cy + 4, '#ffe078'); px(ox - 1, cy + 4, '#f5a962');
+        px(ox + 15, cy + 3, '#e88b76'); px(ox + 16, cy + 4, '#ffe078'); px(ox + 15, cy + 4, '#f5a962');
+      } else if (acc === 'gacha_cape_aurora_train') {
+        // [扭蛋SSR] 极光拖地纱披风：流光极光青紫渐变超长拖尾 + 轻闪星点
+        const sh = Math.floor(pup.tick / 12) % 2;
+        drawOpenCapeBase('#65d6c6', '#9e9bf5', '#c9f7ff', '#d6b8ff', '#ffffff');
+        px(ox - 1, cy + 3, '#88c9f5'); px(ox - 2, cy + 4, sh ? '#ffffff' : '#c9f7ff'); px(ox - 1, cy + 4, '#9e9bf5'); px(ox, cy + 4, '#65d6c6');
+        px(ox + 15, cy + 3, '#88c9f5'); px(ox + 16, cy + 4, sh ? '#c9f7ff' : '#ffffff'); px(ox + 15, cy + 4, '#9e9bf5'); px(ox + 14, cy + 4, '#65d6c6');
+        px(ox + 1, cy + 1, sh ? '#ffffff' : '#c9f7ff'); px(ox + 13, cy + 2, sh ? '#c9f7ff' : '#ffffff');
+      } else if (acc === 'gacha_cape_angel_feather') {
+        // [扭蛋SSR] 圣羽拖地长披风：纯白叠层羽翼拖地披风 + 淡金圣辉边
+        drawOpenCapeBase('#ffffff', '#f5f2fa', '#fff8e0', '#ffffff', '#f5d26b');
+        px(ox - 1, cy + 2, '#ffffff'); px(ox - 1, cy + 3, '#f5f2fa'); px(ox - 2, cy + 4, '#ffffff'); px(ox - 1, cy + 4, '#f5d26b'); px(ox + 1, cy + 4, '#ffffff');
+        px(ox + 15, cy + 2, '#ffffff'); px(ox + 15, cy + 3, '#f5f2fa'); px(ox + 16, cy + 4, '#ffffff'); px(ox + 15, cy + 4, '#f5d26b'); px(ox + 13, cy + 4, '#ffffff');
+        px(ox + 7, cy, '#f5d26b');
+      } else if (acc === 'gacha_cape_ruby_empress') {
+        // [扭蛋SSR] 绯红女皇拖尾披风：华丽丝绒绯红超长拖地 + 织金滚边 + 奢华白毛肩
+        drawOpenCapeBase('#a81932', '#cc2945', '#f5ce69', '#a81932', '#ffe38a');
+        px(ox + 2, cy, '#fffdf8'); px(ox + 3, cy, '#fffdf8'); px(ox + 11, cy, '#fffdf8'); px(ox + 12, cy, '#fffdf8');
+        px(ox - 1, cy + 3, '#a81932'); px(ox - 2, cy + 4, '#f5ce69'); px(ox - 1, cy + 4, '#a81932'); px(ox, cy + 4, '#f5ce69');
+        px(ox + 15, cy + 3, '#a81932'); px(ox + 16, cy + 4, '#f5ce69'); px(ox + 15, cy + 4, '#a81932'); px(ox + 14, cy + 4, '#f5ce69');
+      } else if (acc === 'gacha_cape_butterfly_shawl') {
+        // [扭蛋SR] 蝶翼轻纱披肩：紫蓝蝶翅剪影披肩 + 墨紫翅尖点白
+        drawOpenCapeBase('#8f85e6', '#a8d4ff', '#4b3b82', '#ffffff', '#d6c8ff');
+        px(ox - 1, cy + 1, '#a8d4ff'); px(ox - 1, cy + 2, '#4b3b82'); px(ox, cy + 2, '#ffffff');
+        px(ox + 15, cy + 1, '#a8d4ff'); px(ox + 15, cy + 2, '#4b3b82'); px(ox + 14, cy + 2, '#ffffff');
+      } else if (acc === 'gacha_cape_strawberry_cream') {
+        // [扭蛋SR] 草莓奶油披肩：甜莓粉披肩 + 奶白奶油波浪滴边 + 小草莓籽点
+        drawOpenCapeBase('#f78da7', '#ffb8c9', '#fffdf9', '#fffdf9', '#7dc478');
+        px(ox + 1, cy + 2, '#d93b58'); px(ox + 13, cy + 2, '#d93b58');
+        px(ox + 0, cy + 4, '#fffdf9'); px(ox + 2, cy + 4, '#fffdf9'); px(ox + 12, cy + 4, '#fffdf9'); px(ox + 14, cy + 4, '#fffdf9');
+      } else if (acc === 'gacha_cape_moon_moth') {
+        // [扭蛋SR] 月影轻纱斗篷：月白青瓷轻纱 + 尖尾月蛾双尾垂坠
+        drawOpenCapeBase('#d9f2eb', '#f5fffc', '#a8d9cc', '#ffffff', '#b8e6d9');
+        px(ox - 1, cy + 3, '#d9f2eb'); px(ox - 1, cy + 4, '#ffffff'); px(ox - 1, cy + 5, '#a8d9cc');
+        px(ox + 15, cy + 3, '#d9f2eb'); px(ox + 15, cy + 4, '#ffffff'); px(ox + 15, cy + 5, '#a8d9cc');
       }
     } else if (acc === 'gacha_neck_star_cape') {
       // [扭蛋SSR 好看] 星纱小披风：暮蓝金星透明流光小披风
@@ -22842,6 +22958,8 @@
         gacha_magic_aura: 'aura', gacha_aura_aurora_ring: 'aura', gacha_star_orbit: 'aura',
         gacha_angel_halo: 'aura', gacha_aura_sushi: 'aura', gacha_aura_tiny_planet: 'aura',
         gacha_acc_floating_lantern: 'aura', gacha_acc_quill_scroll: 'aura',
+        gacha_cape_aurora_train: 'cape', gacha_cape_angel_feather: 'cape', gacha_cape_ruby_empress: 'cape',
+        gacha_cape_butterfly_shawl: 'cape', gacha_cape_strawberry_cream: 'cape', gacha_cape_moon_moth: 'cape',
         gacha_crystal_wings: 'wing', gacha_wing_jellyfish: 'wing', gacha_wing_rainbow_ribbon: 'wing',
         gacha_wing_cardboard: 'wing', gacha_bowtie_wing: 'wing', gacha_bow_ribbon_tail: 'wing', gacha_wing_candy_cloud: 'wing',
         gacha_acc_paper_umbrella: 'wing', gacha_acc_clockwork_key: 'wing',
@@ -49965,6 +50083,7 @@
   const renderGachaView = () => {
     if (!gachaViewEl) return;
     drawGachaMachine(0, null);
+    if (typeof syncGachaLockButtons === 'function') syncGachaLockButtons();
     const gotCnt = ALL_GACHA_EXCLUSIVES.filter(isGachaOwned).length;
     const ssrPityLeft = Math.max(1, 70 - (config.puppyGachaSsrPity || 0));
     const totalPulls = config.puppyStats?.gachaPulls || 0;
@@ -50444,6 +50563,7 @@
   };
 
   const runGachaPull = (count, cost) => {
+    if (checkGachaLock()) return;
     if (gachaBusy) return;
     const curCoins = Math.max(0, Math.floor(config.puppyCoins || 0));
     const { useTickets, coinCost } = calcGachaCostWithTickets(count, cost);
@@ -50560,15 +50680,53 @@
     }, 110);
   };
 
-  const checkGachaLock = () => {
+  let gachaLockTimer = null;
+  const syncGachaLockButtons = () => {
     const ve = config.puppyVendorEgg || {};
-    if (ve.gachaLockUntil && Date.now() < ve.gachaLockUntil) {
-      const leftMin = Math.max(1, Math.ceil((ve.gachaLockUntil - Date.now()) / 60000));
-      if (gachaVendorMsg) gachaVendorMsg.textContent = `「喵呜还在生气中！卷帘门大约 ${leftMin} 分钟后再开~」`;
-      return true;
+    const now = Date.now();
+    const locked = Boolean(ve.gachaLockUntil && now < ve.gachaLockUntil);
+    if (locked) {
+      const remSec = Math.max(1, Math.ceil((ve.gachaLockUntil - now) / 1000));
+      const m = Math.floor(remSec / 60);
+      const s = remSec % 60;
+      const clock = `${m}:${String(s).padStart(2, '0')}`;
+      if (gachaPullBtn) {
+        if (!gachaPullBtn.dataset.origTxt) gachaPullBtn.dataset.origTxt = gachaPullBtn.textContent || '单抽';
+        gachaPullBtn.disabled = true;
+        gachaPullBtn.textContent = `卷帘门已关 ${clock}`;
+      }
+      if (gachaPull10Btn) {
+        if (!gachaPull10Btn.dataset.origTxt) gachaPull10Btn.dataset.origTxt = gachaPull10Btn.textContent || '十连';
+        gachaPull10Btn.disabled = true;
+        gachaPull10Btn.textContent = `冷静中 ${clock}`;
+      }
+      if (gachaVendorMsg) gachaVendorMsg.textContent = `「喵呜还在生气中！卷帘门剩余 ${m} 分 ${String(s).padStart(2, '0')} 秒后再开~」`;
+      if (!gachaLockTimer) {
+        gachaLockTimer = setInterval(() => {
+          const v2 = config.puppyVendorEgg || {};
+          if (!v2.gachaLockUntil || Date.now() >= v2.gachaLockUntil) {
+            clearInterval(gachaLockTimer);
+            gachaLockTimer = null;
+            syncGachaLockButtons();
+          } else {
+            syncGachaLockButtons();
+          }
+        }, 1000);
+      }
+    } else {
+      if (gachaLockTimer) { clearInterval(gachaLockTimer); gachaLockTimer = null; }
+      if (gachaPullBtn && gachaPullBtn.dataset.origTxt) {
+        gachaPullBtn.textContent = gachaPullBtn.dataset.origTxt;
+        gachaPullBtn.disabled = false;
+      }
+      if (gachaPull10Btn && gachaPull10Btn.dataset.origTxt) {
+        gachaPull10Btn.textContent = gachaPull10Btn.dataset.origTxt;
+        gachaPull10Btn.disabled = false;
+      }
     }
-    return false;
+    return locked;
   };
+  const checkGachaLock = () => syncGachaLockButtons();
   if (gachaPullBtn) gachaPullBtn.addEventListener('click', () => {
     if (checkGachaLock()) return;
     const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
