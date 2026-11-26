@@ -21189,6 +21189,198 @@
     return cv;
   };
 
+
+  // 原创非模板化铭牌一体式包裹画布（96x36 逻辑像素，徽章主体位于 x:10..86, y:10..26，四周各留 10px 创作空间）
+  // 每一款均按标题与主题独立手绘左+上包裹、顶篷、底托、环抱等原创组合构图，绝不复用模板或零碎散点！
+  const renderOriginalBadgeWrap = (id, bdCol, fgCol) => {
+    const HANDCRAFTED_WRAPS = new Set([
+      'sb_sakura_dream', 'sb_star_ocean', 'sb_cloud_candy', 'sb_sweet_berry', 'sb_angel_whisper',
+      'sb_moon_lullaby', 'sb_pearl_lady', 'sb_royal_pup', 'sb_clover_luck', 'sb_ribbon_idol',
+      'sb_lantern_night', 'sb_crystal_prism', 'sb_paw_guardian', 'sb_golden_bell', 'sb_music_star',
+      'sb_arcade_god', 'sb_ancient_fan', 'sb_heart_devotion', 'sb_aurora_halo', 'sb_mid_cuddle_pro',
+      'sb_mid_nap_master', 'sb_mid_snack_boss', 'sb_mid_good_mood', 'sb_mid_lucky_paw', 'sb_milk_cloud_pup',
+      'sb_lazy_sunshine', 'sb_milk_tea_boss', 'sb_ult_candy_queen', 'sb_ult_sakura_empress', 'sb_ult_ancient_jade',
+      'sb_ult_star_emperor', 'sb_ult_angel_seraph', 'sb_ult_meow_dog_god', 'sb_ult_moon_valkyrie', 'sb_supreme_rainbow',
+      'collector_max', 'soulmate', 'hidden_all_master', 'hidden_gacha_triple_ssr', 'hidden_cloud_soulmate',
+      'hidden_cloud_gallery', 'hidden_fashion_sss', 'hidden_gacha_ssr_lucky', 'adv_album_all', 'adv_curio_all'
+    ]);
+    if (!HANDCRAFTED_WRAPS.has(id)) return null;
+    const cv = doc.createElement('canvas');
+    cv.width = 96; cv.height = 36;
+    cv.className = 'st-px-bsp-piece';
+    cv.style.cssText = 'position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);pointer-events:none;image-rendering:pixelated;z-index:2;';
+    const g = cv.getContext('2d');
+    const px = (x, y, c, w = 1, h = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); };
+
+    if (id === 'sb_sakura_dream') {
+      // 爱狗人士：左+上蜿蜒樱花枝包裹 + 枝头粉白花簇 + 右下飘落单瓣
+      px(6, 26, '#7a4b3a', 3, 2); px(5, 13, '#7a4b3a', 3, 14); px(6, 8, '#7a4b3a', 32, 2); px(36, 7, '#7a4b3a', 14, 2);
+      px(3, 11, '#ff9eb8', 6, 5); px(5, 12, '#fff5f8', 2, 2);
+      px(18, 5, '#ffb8cc', 7, 5); px(20, 7, '#ffffff', 3, 2);
+      px(42, 5, '#ff9eb8', 6, 4); px(44, 6, '#ffe680', 2, 1);
+      px(82, 27, '#ffb8cc', 5, 3); px(84, 28, '#ffffff', 2, 1);
+    } else if (id === 'sb_star_ocean') {
+      // 超级狗力：左+下闪电能量弧包裹 + 右上跃起红金超人披风角
+      px(5, 14, '#54a8ff', 3, 14); px(7, 26, '#54a8ff', 42, 3); px(14, 27, '#ffe066', 18, 2); px(46, 25, '#8ce0ff', 10, 3);
+      px(78, 5, '#e84858', 12, 4); px(83, 9, '#e84858', 7, 8); px(80, 6, '#ffe066', 4, 2);
+    } else if (id === 'sb_cloud_candy') {
+      // 黄金左脸：左+上复古金色相机取景框包角 + 右上柔光灯弧 + 底部胶片刻度
+      px(5, 6, '#e0a22e', 16, 3); px(5, 6, '#e0a22e', 3, 14); px(7, 8, '#fff4bd', 10, 1);
+      px(75, 5, '#fff4bd', 13, 3); px(85, 6, '#e0a22e', 3, 10); px(80, 3, '#ffffff', 5, 2);
+      for (let x = 22; x <= 74; x += 6) px(x, 27, '#e0a22e', 3, 2);
+    } else if (id === 'sb_sweet_berry') {
+      // 妈妈咪呀：整条顶边厚实草莓奶油淋面垂滴 + 左上带叶大草莓
+      px(9, 6, '#fffdf9', 78, 4); px(14, 10, '#fffdf9', 6, 3); px(30, 10, '#fffdf9', 8, 4); px(54, 10, '#fffdf9', 6, 3); px(72, 10, '#fffdf9', 7, 4);
+      px(5, 4, '#eb4c6a', 8, 7); px(7, 3, '#68c274', 5, 2); px(7, 6, '#ffe694', 1, 1); px(10, 8, '#ffe694', 1, 1);
+      px(82, 24, '#ffb5c8', 6, 5); px(84, 25, '#fffdf9', 2, 2);
+    } else if (id === 'sb_angel_whisper') {
+      // 真龙天狗：左+上青金龙鳞云纹缠绕 + 右侧盘旋金龙尾与祥云
+      px(5, 8, '#e09a38', 3, 18); px(5, 7, '#e09a38', 46, 3); px(10, 6, '#ffe680', 12, 2); px(28, 6, '#64c2a8', 14, 2);
+      px(85, 11, '#e09a38', 5, 15); px(81, 24, '#ffe680', 9, 4); px(87, 8, '#64c2a8', 4, 4);
+    } else if (id === 'sb_moon_lullaby') {
+      // 吸狗狂魔：左+下毛绒软爪拥抱包裹 + 顶边冒出双爱心雾
+      px(4, 15, '#d6dcff', 5, 13); px(6, 25, '#d6dcff', 38, 4); px(4, 13, '#8f96e8', 5, 2);
+      px(10, 26, '#ffb5cc', 4, 2); px(18, 26, '#ffb5cc', 4, 2); px(26, 26, '#ffb5cc', 4, 2);
+      px(66, 4, '#ff8eb0', 5, 4); px(68, 5, '#ffffff', 1, 1); px(75, 6, '#c4a8ff', 4, 3);
+    } else if (id === 'sb_pearl_lady') {
+      // 摸鱼大王：底边整片晃动浅蓝水波包裹 + 右下摆尾小咸鱼 + 左上懒云
+      for (let x = 8; x <= 84; x += 6) { px(x, 26, '#8cc8f5', 5, 3); px(x + 2, 25, '#dff3ff', 3, 2); }
+      px(78, 23, '#9aa8bd', 10, 5); px(88, 22, '#9aa8bd', 3, 7); px(80, 24, '#3b2a22', 1, 1);
+      px(6, 4, '#ffffff', 18, 4); px(9, 2, '#f0e6ff', 12, 3);
+    } else if (id === 'sb_royal_pup') {
+      // 天选干饭狗：左+下金边小饭碗托起 + 右上交叉像素筷子与热饭香雾
+      px(6, 18, '#dfa838', 3, 10); px(8, 26, '#dfa838', 56, 3); px(12, 28, '#f7d87c', 48, 2);
+      px(76, 4, '#b87a4b', 14, 2); px(78, 8, '#b87a4b', 12, 2);
+      px(80, 12, '#ffffff', 2, 5); px(85, 10, '#fff5d6', 2, 6);
+    } else if (id === 'sb_clover_luck') {
+      // 欧气爆棚：左+上青翠四叶草藤蔓紧紧缠绕 + 右下冒出双嫩芽
+      px(5, 9, '#5cb874', 3, 18); px(5, 7, '#5cb874', 44, 3); px(12, 5, '#8ee09e', 6, 4); px(30, 5, '#64bf84', 7, 4);
+      px(3, 15, '#8ee09e', 5, 5); px(5, 17, '#ffffff', 1, 1);
+      px(82, 24, '#64bf84', 6, 5); px(84, 22, '#a8f0b4', 4, 3);
+    } else if (id === 'sb_ribbon_idol') {
+      // 汪界顶流：左+上+下绯粉缎带斜绕 + 左上立体蝴蝶结 + 右上聚光灯束
+      px(4, 9, '#e082b8', 4, 19); px(6, 7, '#f5a8d4', 36, 3); px(6, 26, '#e082b8', 28, 3);
+      px(3, 5, '#ff9ec9', 9, 5); px(6, 6, '#ffffff', 3, 2);
+      px(74, 4, '#fff4b8', 14, 3); px(80, 7, '#ffe078', 8, 4);
+    } else if (id === 'sb_lantern_night') {
+      // 暴富小狗：右+下堆叠小金元宝与红绳铜钱串包裹 + 左上暖红小灯笼
+      px(84, 14, '#e04858', 4, 14); px(46, 26, '#f2c249', 42, 4); px(54, 24, '#ffe680', 10, 3); px(70, 24, '#ffe680', 10, 3);
+      px(5, 4, '#e04858', 8, 7); px(7, 5, '#fff5c8', 4, 4); px(8, 11, '#f2c249', 2, 4);
+    } else if (id === 'sb_crystal_prism') {
+      // 绝世小甜心：左+上冰蓝粉紫透明糖纸包裹 + 底边珍珠串链
+      px(4, 7, '#8ce0ff', 4, 16); px(6, 6, '#e6b8ff', 40, 3); px(14, 4, '#ffffff', 10, 2); px(32, 4, '#ffb8e0', 10, 2);
+      for (let x = 22; x <= 84; x += 5) { px(x, 26, '#ffffff', 3, 3); px(x + 1, 27, '#c7e9ff', 1, 1); }
+    } else if (id === 'sb_paw_guardian') {
+      // 十级顺毛师：右+上木柄圆梳弧形包裹 + 左边飞起的奶油软毛球
+      px(52, 6, '#c78d5a', 36, 3); px(85, 6, '#c78d5a', 4, 18); px(56, 4, '#f5d29c', 26, 2);
+      px(3, 12, '#fffdf7', 7, 6); px(4, 20, '#ffdfea', 6, 5); px(6, 14, '#ffffff', 2, 2);
+    } else if (id === 'sb_golden_bell') {
+      // 宇宙第一乖：顶边淡金光环弧托起 + 左+下系带小铃铛蝴蝶结
+      px(18, 4, '#ffe078', 60, 2); px(26, 2, '#fff6cc', 44, 2);
+      px(5, 16, '#f2c249', 4, 12); px(7, 26, '#f2c249', 30, 3); px(4, 22, '#ffe078', 7, 6); px(6, 24, '#6b4906', 3, 2);
+    } else if (id === 'sb_music_star') {
+      // 熬夜冠军：左+上深蓝夜空弯月垂挂小夜灯 + 右下热咖啡杯
+      px(5, 6, '#5c6eb8', 3, 16); px(5, 6, '#5c6eb8', 42, 3);
+      px(4, 4, '#ffe680', 8, 8); px(8, 5, '#2f3d7a', 5, 6);
+      px(79, 21, '#ffffff', 9, 7); px(88, 22, '#ffffff', 2, 4); px(81, 17, '#c9d6ff', 2, 3); px(85, 16, '#c9d6ff', 2, 4);
+    } else if (id === 'sb_arcade_god') {
+      // 毛茸茸教主：左+上+右一整圈蓬松奶油云朵绒领包裹
+      for (let x = 6; x <= 84; x += 8) { px(x, 5, '#ffffff', 7, 5); px(x + 2, 4, '#eef5ff', 4, 2); }
+      px(4, 10, '#ffffff', 5, 14); px(87, 10, '#ffffff', 5, 14); px(3, 14, '#e6f0ff', 2, 6); px(91, 14, '#e6f0ff', 2, 6);
+    } else if (id === 'sb_ancient_fan') {
+      // 大宋第一汪：右+下青瓷展开折扇托底包裹 + 左上斜垂玉佩流苏
+      px(44, 26, '#7dc4a8', 44, 4); px(52, 24, '#d9f5eb', 34, 3); px(84, 14, '#64b898', 5, 14); px(86, 16, '#fff4d6', 2, 10);
+      px(5, 6, '#64b898', 6, 6); px(7, 8, '#ffffff', 2, 2); px(7, 12, '#e07a6c', 2, 8);
+    } else if (id === 'sb_heart_devotion') {
+      // 人间富贵狗：左+上丝绒金链包裹 + 右下大颗红宝石胸针
+      px(5, 8, '#f0c458', 3, 16); px(5, 7, '#f0c458', 50, 3);
+      for (let x = 10; x <= 50; x += 6) px(x, 6, '#ff8cb0', 3, 3);
+      px(79, 22, '#e03c68', 9, 7); px(81, 24, '#ffb8cc', 4, 3); px(78, 21, '#f0c458', 11, 1);
+    } else if (id === 'sb_aurora_halo') {
+      // 满级宠狗狂：顶边一整道流动青紫极光幕帘垂落 + 左+下双色丝带环抱
+      px(8, 5, '#7af0d4', 28, 3); px(34, 4, '#8cc8ff', 28, 3); px(60, 5, '#c9a6ff', 26, 3);
+      px(5, 12, '#8cc8ff', 3, 16); px(6, 26, '#c9a6ff', 38, 3); px(16, 27, '#7af0d4', 18, 2);
+    } else if (id === 'sb_mid_cuddle_pro') {
+      // 贴贴小天才：左右两只软乎乎小毛爪从两侧探出环抱铭牌
+      px(2, 12, '#fff5f8', 7, 12); px(4, 14, '#ffb5cc', 3, 3); px(4, 19, '#ffb5cc', 3, 3);
+      px(87, 12, '#fff5f8', 7, 12); px(89, 14, '#ffb5cc', 3, 3); px(89, 19, '#ffb5cc', 3, 3);
+    } else if (id === 'sb_mid_nap_master') {
+      // 带薪打盹王：底部整块格纹软枕头托住铭牌 + 左上耷拉一角小棉被
+      px(10, 26, '#c9e0ff', 76, 4); px(16, 27, '#ffffff', 12, 2); px(42, 27, '#ffffff', 12, 2); px(68, 27, '#ffffff', 12, 2);
+      px(5, 6, '#b8a8f0', 18, 5); px(5, 11, '#d9d0ff', 6, 8);
+    } else if (id === 'sb_mid_snack_boss') {
+      // 零食大户：左+上彩色波板糖与曲奇饼干拼盘包裹
+      px(4, 6, '#ff8cb0', 8, 8); px(6, 8, '#ffffff', 4, 4); px(7, 14, '#ffffff', 2, 10);
+      px(14, 5, '#d99858', 10, 5); px(17, 6, '#5c3418', 2, 2); px(21, 7, '#5c3418', 1, 1);
+      px(26, 6, '#ffe078', 16, 3);
+    } else if (id === 'sb_mid_good_mood') {
+      // 快乐小狗勾：顶边整道马卡龙彩虹拱桥跨越 + 左下向日葵小花
+      px(14, 4, '#ff9eb8', 68, 2); px(18, 6, '#ffe078', 60, 2); px(22, 8, '#8ce6b8', 52, 1);
+      px(4, 21, '#ffe066', 8, 7); px(6, 23, '#9c6228', 4, 3);
+    } else if (id === 'sb_mid_lucky_paw') {
+      // 招财小肉垫：左+上招财红绳金铃项圈包裹 + 右下抬起的粉嫩招财肉垫
+      px(5, 8, '#e04858', 3, 16); px(5, 7, '#e04858', 46, 3); px(16, 5, '#f2c249', 7, 5); px(18, 7, '#6b4208', 3, 1);
+      px(81, 21, '#fff5e6', 9, 8); px(83, 24, '#ff9eb8', 5, 3); px(82, 22, '#ff9eb8', 2, 2); px(87, 22, '#ff9eb8', 2, 2);
+    } else if (id === 'sb_milk_cloud_pup') {
+      // 云端软糖汪：左+下双色透明小熊软糖与绵密奶泡包裹
+      px(4, 14, '#9ad8ff', 6, 12); px(5, 16, '#ffffff', 2, 2);
+      px(8, 25, '#ffffff', 52, 4); px(14, 24, '#ffd6e8', 12, 3); px(36, 24, '#d6f0ff', 14, 3);
+    } else if (id === 'sb_lazy_sunshine') {
+      // 晒太阳冠军：右+上暖橘半轮大太阳光芒包裹 + 底部青青草坡
+      px(72, 3, '#ffbd4a', 16, 7); px(76, 5, '#fff4b8', 8, 4); px(86, 10, '#ffbd4a', 4, 10);
+      px(12, 26, '#8cd488', 68, 3); px(24, 25, '#b8eb9e', 24, 2);
+    } else if (id === 'sb_milk_tea_boss') {
+      // 全糖去冰汪：底部奶茶液面与颗颗Q弹黑糖珍珠包裹 + 右上斜插粗吸管
+      px(8, 25, '#e8c29b', 78, 4);
+      for (let x = 14; x <= 78; x += 9) px(x, 26, '#4a2e1f', 4, 3);
+      px(78, 2, '#f294a8', 4, 9); px(80, 4, '#ffffff', 1, 5);
+    } else if (id === 'sb_ult_candy_queen') {
+      // 甜心教主：顶边童话糖果城堡尖顶华盖 + 左+下马卡龙缎带全包
+      px(18, 5, '#ff9ec9', 60, 4); px(24, 2, '#ffe078', 8, 4); px(44, 1, '#8ce6ff', 8, 5); px(64, 2, '#c9a6ff', 8, 4);
+      px(4, 10, '#ff9ec9', 4, 18); px(6, 26, '#9bf2d8', 56, 4); px(20, 27, '#ffe078', 22, 2);
+    } else if (id === 'sb_ult_sakura_empress') {
+      // 樱花公主汪：左+上+右拱形垂枝樱花廊包裹 + 顶边迷你珍珠皇冠
+      px(5, 8, '#7a4b3a', 3, 18); px(88, 8, '#7a4b3a', 3, 18); px(5, 6, '#ffb8cc', 86, 3);
+      px(38, 2, '#f2c249', 20, 4); px(42, 1, '#ffffff', 3, 2); px(51, 1, '#ffffff', 3, 2);
+      px(3, 12, '#ff9eb8', 6, 5); px(87, 14, '#ff9eb8', 6, 5);
+    } else if (id === 'sb_ult_ancient_jade') {
+      // 大明第一萌：左+上碧玉如意卷云雕框包裹 + 右下朱红金丝宫绦流苏
+      px(5, 6, '#5cb896', 4, 20); px(5, 6, '#5cb896', 54, 3); px(9, 4, '#d9fff0', 14, 2); px(34, 4, '#ffe078', 16, 2);
+      px(84, 18, '#e04858', 5, 11); px(85, 22, '#ffe078', 3, 6); px(76, 26, '#5cb896', 12, 3);
+    } else if (id === 'sb_ult_star_emperor') {
+      // 发财小锦鲤：底部碧波水浪包裹 + 左下跃出橘白大锦鲤划过顶边水花
+      for (let x = 8; x <= 84; x += 6) { px(x, 26, '#7ec8eb', 5, 3); px(x + 2, 25, '#ffffff', 3, 2); }
+      px(4, 12, '#ff7a45', 10, 6); px(7, 13, '#ffffff', 4, 3); px(2, 14, '#ff9e66', 3, 4);
+      px(16, 5, '#d6f4ff', 28, 3); px(24, 3, '#ffe078', 10, 2);
+    } else if (id === 'sb_ult_angel_seraph') {
+      // 炽天使汪：左右不对称舒展纯白金边多层大羽翼包裹 + 顶边微斜暖金光环
+      px(1, 9, '#ffffff', 8, 5); px(2, 14, '#e6f4ff', 7, 5); px(4, 19, '#ffffff', 5, 5);
+      px(87, 11, '#ffffff', 8, 5); px(87, 16, '#e6f4ff', 7, 5); px(87, 21, '#ffffff', 5, 5);
+      px(26, 3, '#ffe078', 44, 2); px(34, 5, '#fff6cc', 28, 1);
+    } else if (id === 'sb_ult_meow_dog_god') {
+      // 宇宙无敌狗：左+下深邃星云与倾斜土星光环环绕 + 右上悬浮棱镜行星
+      px(4, 10, '#7c62d9', 4, 18); px(6, 26, '#6298e6', 54, 4); px(16, 27, '#ffe078', 24, 2);
+      px(78, 4, '#c9a6ff', 10, 7); px(74, 7, '#ffe078', 18, 2); px(82, 5, '#ffffff', 2, 2);
+    } else if (id === 'sb_ult_moon_valkyrie') {
+      // 天选小可爱：左+下柔粉细蕾丝花边包裹 + 右上超大立体丝绒蝴蝶结
+      for (let y = 10; y <= 24; y += 4) px(5, y, '#ffffff', 3, 3);
+      for (let x = 8; x <= 74; x += 5) { px(x, 26, '#ffffff', 4, 3); px(x + 1, 27, '#ffbfd4', 2, 2); }
+      px(74, 4, '#eb7ca4', 15, 6); px(79, 5, '#ffffff', 5, 3); px(77, 10, '#f7a8c4', 3, 4); px(84, 10, '#f7a8c4', 3, 4);
+    } else if (id === 'sb_supreme_rainbow') {
+      // 绝版七彩萌主：顶边七彩棱镜王冠华盖 + 左+下双层虹彩丝绸飘带环抱
+      px(14, 4, '#ff8cb8', 14, 3); px(28, 3, '#ffe078', 14, 4); px(42, 2, '#8ce6ff', 14, 5); px(56, 3, '#c9a6ff', 14, 4); px(70, 4, '#9bf2d8', 12, 3);
+      px(4, 10, '#c9a6ff', 4, 18); px(6, 26, '#ff8cb8', 32, 3); px(38, 26, '#8ce6ff', 32, 3); px(70, 26, '#ffe078', 16, 3);
+    } else {
+      // 最高级传说/神迹成就：专属原创左+上+右金辉锦缎包裹（按各自配色独立演绎，零零碎碎彻底消失！）
+      const M = bdCol || '#e0a238', D = fgCol || '#5c3300';
+      px(5, 7, M, 3, 19); px(5, 6, M, 48, 3); px(12, 4, '#ffe078', 20, 2); px(38, 5, '#ffffff', 12, 2);
+      px(88, 10, M, 3, 16); px(52, 26, M, 38, 3); px(60, 27, '#ffe078', 20, 2);
+      px(4, 5, D, 4, 4); px(5, 6, '#fff6cc', 2, 2);
+      px(87, 24, D, 4, 4); px(88, 25, '#fff6cc', 2, 2);
+    }
+    return cv;
+  };
+
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
     const tier = isMystery ? 1 : (ach.tier || 1);
     const fKey = ach.frame || 'stars';
@@ -21206,12 +21398,16 @@
     el.style.borderColor = isMystery ? '#b8a894' : (ach.bd || '#e0b860');
     el.style.color = isMystery ? '#7c6b58' : (ach.fg || '#6b4d18');
     if (bespoke) {
-      if (Array.isArray(bespoke.ult)) {
-        bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, fKey)));
-      }
-      // 已停用重复的居中波浪条 bespoke.trim
-      if (Array.isArray(bespoke.pieces)) {
-        bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
+      const origWrap = renderOriginalBadgeWrap(ach.id, ach.bd, ach.fg);
+      if (origWrap) {
+        el.appendChild(origWrap);
+      } else {
+        if (Array.isArray(bespoke.ult)) {
+          bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, fKey)));
+        }
+        if (Array.isArray(bespoke.pieces)) {
+          bespoke.pieces.forEach(pc => el.appendChild(renderBespokePiece(pc)));
+        }
       }
     } else if (tier >= 4 && !isMystery) {
       el.appendChild(makeUltOrn('top', fKey));
@@ -21476,18 +21672,16 @@
           freeSlots.push(`right:${6 + ((h >> 3) % 10)}px;top:-7px;`);
 
           if (isMythic) {
-            // 最高级传说/神迹成就：5件完全不重复独立像素饰件（主+副+3处错落小饰件，零波浪条重复）
+            // 最高级传说/神迹成就：原创一体式金辉包裹画布 + 主饰件 + 副饰件（不再堆零碎散点！）
+            const mWrap = renderOriginalBadgeWrap(ach.id, ach.bd, ach.fg);
+            if (mWrap) el.appendChild(mWrap);
             el.appendChild(renderBespokePiece({ pos: p1, w: 15, h: 13, anim: 'b-bob', pal, grid: g1 }));
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, pal, grid: subG }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 8, h: 7, anim: 'b-bob', pal, grid: g3 }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[1], w: 8, h: 7, pal, grid: g4 }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[2], w: 7, h: 6, anim: 'b-bob', pal, grid: g5 }));
           } else if (isSenior) {
-            // 高级成就：4件完全不重复独立像素饰件（主+副+2处错落小饰件，零波浪条重复）
+            // 高级成就：主饰件 + 副饰件 + 仅1处错落大尺寸饰件（清爽成组不零碎）
             el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 8, h: 7, anim: (h % 3 === 1 ? 'b-bob' : ''), pal, grid: g3 }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[1], w: 7, h: 6, pal, grid: g4 }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 9, h: 8, anim: (h % 3 === 1 ? 'b-bob' : ''), pal, grid: g3 }));
           } else {
             if (h % 3 === 0) el.classList.add('bespoke-static');
             el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
