@@ -8514,7 +8514,7 @@
             <button class="st-px-btn" data-pup-act="star_wish" data-req-lv="4" type="button" style="height:22px;font-size:10px;">流星愿 Lv4</button>
             <button class="st-px-btn" data-pup-act="love_firework" data-req-lv="5" type="button" style="height:22px;font-size:10px;">满心告白 Lv5</button>
             <button class="st-px-btn" data-pup-act="listen_music" data-req-lv="6" type="button" style="height:22px;font-size:10px;">一起听歌 Lv6</button>
-            <button class="st-px-btn" data-pup-act="snap_photo" data-req-lv="8" type="button" style="height:22px;font-size:10px;">咔嚓合影 Lv8</button>
+            <button class="st-px-btn" data-pup-act="snap_photo" data-req-lv="8" type="button" style="height:22px;font-size:10px;">咔嚓合影 Lv8</button><button class="st-px-btn" id="st-px-snap-album-btn" type="button" style="height:22px;font-size:10px;">咔嚓相册</button>
           </div>
           <div class="st-px-subhead mt">
             <span>每日心情签筒</span>
@@ -10703,6 +10703,7 @@
   const advGearListEl = root.querySelector('#st-px-adv-gear-list');
   const advGearTipEl = root.querySelector('#st-px-adv-gear-tip');
   const fortuneDrawBtn = root.querySelector('#st-px-fortune-draw');
+  root.querySelector('#st-px-snap-album-btn')?.addEventListener('click', () => openSnapAlbumModal());
   const fortuneBoxEl = root.querySelector('#st-px-fortune-box');
   const snackBarEl = root.querySelector('#st-px-snack-bar');
   const actSubTabBtns = Array.from(root.querySelectorAll('[data-act-tab]'));
@@ -26550,7 +26551,7 @@
             const defTitle = snapped.length > 1
               ? `${snapped.map(x => x.name).join(' & ')}`
               : `${getPupName()}的咔嚓纪念`;
-            openDualPhotoModal(null, snapped, { bgId: 'diy_dots', bgCol1: '#fff3f7', bgCol2: '#f2b8c9', title: defTitle });
+            openDualPhotoModal(null, snapped, { bgId: 'diy_dots', bgCol1: '#fff3f7', bgCol2: '#f2b8c9', title: defTitle, albumTarget: 'snap' });
           }, 860);
         };
         const triggerSnapPhotoStudio = () => {
@@ -32473,9 +32474,20 @@
     }
   };
 
+  const getPolaroidDims = (opts = {}) => {
+    if (opts.photoStyle === 'photo') {
+      const r = opts.photoRatio || '3:4';
+      const port = opts.photoOrient === 'port';
+      if (r === '1:1') return { W: 84, H: 84 };
+      if (r === '2:3') return port ? { W: 64, H: 96 } : { W: 96, H: 64 };
+      return port ? { W: 72, H: 96 } : { W: 96, H: 72 };
+    }
+    return { W: 96, H: 72 };
+  };
+
   const drawDualPolaroidCanvas = (cv, hostName, hostLook, guestName, guestLook, dateStr, opts = {}) => {
     const ctx = cv.getContext('2d');
-    const W = 96, H = 72;
+    const { W, H } = getPolaroidDims(opts);
     if (cv.width !== W * 10 || cv.height !== H * 10) { cv.width = W * 10; cv.height = H * 10; }
     ctx.setTransform(10, 0, 0, 10, 0, 0);
     ctx.imageSmoothingEnabled = false;
@@ -32534,16 +32546,18 @@
         egCtx.closePath();
       };
       if (mode === 'photo') {
-        exp.width = 960; exp.height = 720;
+        const { W: pW, H: pH } = getPolaroidDims(st);
+        const ew = pW * 10, eh = pH * 10;
+        exp.width = ew; exp.height = eh;
         const eg = exp.getContext('2d');
         eg.save();
-        rr(eg, 0, 0, 960, 720, rad * 3.6);
+        rr(eg, 0, 0, ew, eh, rad * 3.6);
         eg.clip();
         eg.imageSmoothingEnabled = false;
-        eg.drawImage(src, 0, 0, src.width, src.height, 0, 0, 960, 720);
+        eg.drawImage(src, 0, 0, src.width, src.height, 0, 0, ew, eh);
         eg.restore();
         if (st.photoBorder) {
-          rr(eg, 5, 5, 950, 710, Math.max(0, rad * 3.6 - 4));
+          rr(eg, 5, 5, ew - 10, eh - 10, Math.max(0, rad * 3.6 - 4));
           eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = 10; eg.stroke();
         }
         const a = doc.createElement('a');
@@ -32573,37 +32587,54 @@
         a.click();
         return;
       }
-      // 96*10 = 960, 72*10 = 720 -> 1080x990 超高清 10x 严格逐像素近邻放大，手机相册绝对锐利零发糊！
-      exp.width = 1080; exp.height = 990;
+      // 支持拍立得自定义左右/上/下留白与外框粗细，以及明信片/邮票的高清 10x 导出
+      const padX = mode === 'polaroid' ? Math.round((Number(st.padX ?? 7) || 7) * 8) : 60;
+      const padTop = mode === 'polaroid' ? Math.round((Number(st.padTop ?? 7) || 7) * 8) : 60;
+      const padBot = mode === 'polaroid' ? Math.round((Number(st.padBot ?? 10) || 10) * 8) + 150 : 210;
+      const fBw = mode === 'polaroid' ? Math.round((Number(st.frameBw ?? 3) || 3) * 4) : 12;
+      const eW = 960 + padX * 2;
+      const eH = 720 + padTop + padBot;
+      exp.width = eW; exp.height = eH;
       const eg = exp.getContext('2d');
       eg.save();
-      rr(eg, 0, 0, 1080, 990, mode === 'stamp' ? 0 : rad * 3.8);
+      rr(eg, 0, 0, eW, eH, mode === 'stamp' ? 0 : rad * 3.8);
       eg.clip();
-      eg.fillStyle = st.paperCol || '#ffffff'; eg.fillRect(0, 0, 1080, 990);
-      if (st.dots) {
+      eg.fillStyle = st.paperCol || '#ffffff'; eg.fillRect(0, 0, eW, eH);
+      if (mode === 'polaroid' && st.dots) {
         eg.fillStyle = (st.borderCol || '#d6ccc8') + '44';
-        for (let dy = 26; dy < 974; dy += 54) {
-          for (let dx = 26; dx < 1064; dx += 54) {
+        for (let dy = 26; dy < eH - 16; dy += 54) {
+          for (let dx = 26; dx < eW - 16; dx += 54) {
             eg.beginPath(); eg.arc(dx, dy, 9, 0, Math.PI * 2); eg.fill();
           }
         }
       }
-      // 手动逐像素 10x 绘制，彻底杜绝任何浏览器缩放插值模糊！
       eg.save();
-      rr(eg, 60, 60, 960, 720, mode === 'stamp' ? 0 : Math.max(0, (rad - 4) * 3.4));
+      rr(eg, padX, padTop, 960, 720, mode === 'stamp' ? 0 : Math.max(0, (rad - 4) * 3.4));
       eg.clip();
       eg.imageSmoothingEnabled = false;
-      eg.drawImage(src, 0, 0, src.width, src.height, 60, 60, 960, 720);
+      eg.drawImage(src, 0, 0, src.width, src.height, padX, padTop, 960, 720);
       eg.restore();
-      rr(eg, 60, 60, 960, 720, mode === 'stamp' ? 0 : Math.max(0, (rad - 4) * 3.4));
-      eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = 10; eg.stroke();
-      eg.fillStyle = txtCol; eg.font = 'bold 48px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'center';
-      eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), 540, 868);
-      eg.fillStyle = subCol; eg.font = '32px "PingFang SC","Microsoft YaHei",sans-serif';
-      eg.fillText(dateStr, 540, 926);
-      rr(7, 7, 1066, 976, Math.max(0, rad * 3.8 - 4));
-      eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = 14; eg.stroke();
+      rr(eg, padX, padTop, 960, 720, mode === 'stamp' ? 0 : Math.max(0, (rad - 4) * 3.4));
+      eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = 8; eg.stroke();
+      const capY = padTop + 720 + Math.round(padBot * 0.44);
+      const dtY = capY + 60;
+      if (mode === 'postcard') {
+        eg.fillStyle = txtCol; eg.font = 'bold 44px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'left';
+        eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), padX, capY + 12);
+        eg.fillStyle = st.borderCol || '#c9a690'; eg.font = '32px monospace'; eg.textAlign = 'right';
+        eg.fillText(`POST · ${dateStr}`, eW - padX, capY + 12);
+      } else {
+        eg.fillStyle = txtCol; eg.font = 'bold 48px "PingFang SC","Microsoft YaHei",sans-serif'; eg.textAlign = 'center';
+        eg.fillText(titleStr || st.dogs.map(x => x.name).join(' & '), eW / 2, capY);
+        eg.fillStyle = subCol; eg.font = '34px "PingFang SC","Microsoft YaHei",sans-serif';
+        eg.fillText(dateStr, eW / 2, dtY);
+      }
       eg.restore();
+      rr(eg, Math.ceil(fBw / 2), Math.ceil(fBw / 2), eW - fBw, eH - fBw, mode === 'stamp' ? 0 : rad * 3.8);
+      if (mode === 'postcard') eg.setLineDash([24, 14]);
+      else if (mode === 'stamp') eg.setLineDash([12, 12]);
+      eg.strokeStyle = st.borderCol || '#d6ccc8'; eg.lineWidth = fBw; eg.stroke();
+      eg.setLineDash([]);
       const a = doc.createElement('a');
       a.href = exp.toDataURL('image/png');
       a.download = `puppy_photo_${Date.now()}.png`;
@@ -32645,8 +32676,165 @@
     cm.style.display = 'flex';
   };
 
-  // 轻巧紧凑的已存拍立得大图查看窗（直接在背包上弹出，关闭只回上一级相册，绝不关背包！）
-  const openSavedPhotoViewerModal = (ph) => {
+  // 通用成片形态样式渲染（保证相册缩略图、大图查看窗与编辑区 100% 形态一致）
+  const applyStyledPhotoCard = (cardEl, cvEl, metaEl, capEl, dateEl, filmTopEl, filmBotEl, st, dateStr, isThumb = false) => {
+    const mode = st.photoStyle || 'polaroid';
+    const [r, g, b] = hexToRgbBytes(st.paperCol || '#ffffff', '#ffffff');
+    const txtCol = (r * 0.299 + g * 0.587 + b * 0.114) < 130 ? '#fff6e0' : '#4a342a';
+    const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
+    const titleTxt = st.title || (st.dogs || []).map(x => x.name).join(' & ');
+    const sc = isThumb ? 0.55 : 1;
+    const { W, H } = getPolaroidDims(st);
+
+    if (filmTopEl) filmTopEl.style.display = 'none';
+    if (filmBotEl) filmBotEl.style.display = 'none';
+    cardEl.style.boxShadow = 'none';
+    if (metaEl) { metaEl.style.display = 'block'; metaEl.style.textAlign = 'center'; }
+    if (capEl) capEl.style.textAlign = 'center';
+    if (dateEl) dateEl.style.textAlign = 'center';
+
+    cvEl.style.aspectRatio = `${W} / ${H}`;
+    if (mode === 'photo' && H >= W) {
+      cvEl.style.width = 'auto';
+      cvEl.style.maxWidth = '100%';
+      cvEl.style.maxHeight = isThumb ? '110px' : '210px';
+      cvEl.style.height = isThumb ? '110px' : '210px';
+      cvEl.style.margin = '0 auto';
+    } else {
+      cvEl.style.width = '100%';
+      cvEl.style.maxWidth = '100%';
+      cvEl.style.maxHeight = 'none';
+      cvEl.style.height = 'auto';
+      cvEl.style.margin = '0';
+    }
+
+    if (mode === 'photo') {
+      cardEl.style.padding = '0';
+      cardEl.style.backgroundColor = 'transparent';
+      cardEl.style.backgroundImage = 'none';
+      cardEl.style.border = 'none';
+      cardEl.style.borderRadius = `${Math.round((st.radius || 0) * sc)}px`;
+      cvEl.style.border = st.photoBorder ? `${isThumb ? 1.5 : 2}px solid ${st.borderCol || '#d6ccc8'}` : 'none';
+      cvEl.style.borderRadius = `${Math.round((st.radius || 0) * sc)}px`;
+      if (metaEl) metaEl.style.display = 'none';
+    } else if (mode === 'film') {
+      const fc = st.filmCol || '#1f1d24';
+      const fi = st.filmInk || '#f0c975';
+      cardEl.style.padding = isThumb ? '3px 4px' : '4px 6px 5px';
+      cardEl.style.backgroundColor = fc;
+      cardEl.style.backgroundImage = 'none';
+      cardEl.style.border = `2px solid ${fc}`;
+      cardEl.style.borderRadius = '2px';
+      cvEl.style.border = `1px solid ${fi}55`;
+      cvEl.style.borderRadius = '0';
+      if (metaEl) metaEl.style.display = 'none';
+      const hCnt = isThumb ? 6 : 10;
+      const holesHtml = Array.from({ length: hCnt }).map(() => `<span style="width:${isThumb ? 6 : 10}px;height:${isThumb ? 4 : 6}px;background:rgba(255,255,255,0.88);border-radius:1px;display:inline-block;"></span>`).join('');
+      if (filmTopEl) { filmTopEl.style.display = 'flex'; filmTopEl.innerHTML = holesHtml; }
+      if (filmBotEl) {
+        filmBotEl.style.display = 'flex';
+        filmBotEl.innerHTML = isThumb
+          ? `<span style="font-size:8px;font-weight:700;color:${fi};font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">01A · ${escapeHtmlSimple(titleTxt)}</span>`
+          : `<span style="font-size:9px;font-weight:700;color:${fi};font-family:monospace;">01A · ${escapeHtmlSimple(titleTxt)}</span><span style="font-size:8.5px;color:${fi};opacity:0.85;font-family:monospace;">${dateStr}</span>`;
+      }
+    } else if (mode === 'postcard') {
+      cardEl.style.padding = isThumb ? '4px' : '7px';
+      cardEl.style.backgroundColor = st.paperCol || '#fffdf8';
+      cardEl.style.backgroundImage = 'none';
+      cardEl.style.border = `2px dashed ${st.borderCol || '#c9a690'}`;
+      cardEl.style.borderRadius = `${Math.round((st.radius || 0) * sc)}px`;
+      cvEl.style.border = `1px solid ${st.borderCol || '#c9a690'}`;
+      cvEl.style.borderRadius = `${Math.max(0, Math.round(((st.radius || 0) - 3) * sc))}px`;
+      if (metaEl) { metaEl.style.display = 'flex'; metaEl.style.justifyContent = 'space-between'; metaEl.style.alignItems = 'center'; }
+      if (capEl) { capEl.style.textAlign = 'left'; capEl.style.color = txtCol; capEl.textContent = titleTxt; }
+      if (dateEl) { dateEl.style.textAlign = 'right'; dateEl.style.color = st.borderCol || '#c9a690'; dateEl.textContent = isThumb ? 'POST' : `POST · ${dateStr}`; }
+    } else if (mode === 'stamp') {
+      cardEl.style.padding = isThumb ? '4px' : '8px 8px 6px';
+      cardEl.style.backgroundColor = st.paperCol || '#fffdf8';
+      cardEl.style.backgroundImage = 'none';
+      cardEl.style.border = `${isThumb ? 2 : 3}px dotted ${st.borderCol || '#b89b8c'}`;
+      cardEl.style.borderRadius = '0';
+      cvEl.style.border = `1.5px solid ${st.borderCol || '#b89b8c'}`;
+      cvEl.style.borderRadius = '0';
+      if (capEl) { capEl.style.color = txtCol; capEl.textContent = titleTxt; }
+      if (dateEl) { dateEl.style.color = subCol; dateEl.textContent = dateStr; }
+    } else {
+      const pX = Math.max(2, Math.round((Number(st.padX ?? 7) || 7) * sc));
+      const pT = Math.max(2, Math.round((Number(st.padTop ?? 7) || 7) * sc));
+      const pB = Math.max(3, Math.round((Number(st.padBot ?? 10) || 10) * sc));
+      const fB = Math.max(1, Math.round((Number(st.frameBw ?? 3) || 3) * sc));
+      cardEl.style.padding = `${pT}px ${pX}px ${pB}px`;
+      cardEl.style.backgroundColor = st.paperCol || '#ffffff';
+      cardEl.style.backgroundImage = st.dots ? `radial-gradient(circle, ${(st.borderCol || '#d6ccc8')}44 ${isThumb ? 1.8 : 2.5}px, transparent ${isThumb ? 2 : 2.8}px)` : 'none';
+      cardEl.style.backgroundSize = isThumb ? '10px 10px' : '16px 16px';
+      cardEl.style.border = `${fB}px solid ${st.borderCol || '#d6ccc8'}`;
+      cardEl.style.borderRadius = `${Math.round((st.radius || 0) * sc)}px`;
+      cvEl.style.border = `${isThumb ? 1.5 : 2}px solid ${st.borderCol || '#d6ccc8'}`;
+      cvEl.style.borderRadius = `${Math.max(0, Math.round(((st.radius || 0) - 4) * sc))}px`;
+      if (capEl) { capEl.style.color = txtCol; capEl.textContent = titleTxt; }
+      if (dateEl) { dateEl.style.color = subCol; dateEl.textContent = dateStr; }
+    }
+  };
+
+  // 专属「咔嚓相册」弹窗：保存 Lv8 咔嚓合影的各种成片形态（拍立得/直接照片/胶片/明信片/邮票）
+  const openSnapAlbumModal = () => {
+    let modal = root.querySelector('#st-tb-snap-album-modal');
+    if (!modal) {
+      modal = doc.createElement('div');
+      modal.id = 'st-tb-snap-album-modal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:10030;pointer-events:auto;';
+      root.appendChild(modal);
+      modal.addEventListener('click', (e) => { e.stopPropagation(); if (e.target === modal) modal.style.display = 'none'; });
+    }
+    const list = Array.isArray(config.puppySnapAlbum) ? config.puppySnapAlbum : [];
+    const styleLabelMap = { polaroid: '拍立得', photo: '照片', film: '胶片', postcard: '明信片', stamp: '邮票' };
+    modal.innerHTML = `<div style="width:296px;max-width:92vw;max-height:80vh;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;display:flex;flex-direction:column;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;flex-shrink:0;">
+        <span style="font-size:12px;font-weight:700;">咔嚓相册 (${list.length}/64)</span>
+        <button type="button" id="st-sna-alb-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div id="st-sna-alb-grid" style="flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(2,1fr);gap:7px;padding-right:2px;"></div>
+    </div>`;
+    modal.querySelector('#st-sna-alb-x')?.addEventListener('click', () => { modal.style.display = 'none'; });
+    const grid = modal.querySelector('#st-sna-alb-grid');
+    if (!list.length) {
+      grid.style.display = 'block';
+      grid.innerHTML = '<div style="text-align:center;font-size:10.5px;opacity:0.75;padding:24px 6px;">还没有咔嚓成片哦，点「咔嚓合影 Lv8」拍一张存进来吧~</div>';
+    } else {
+      list.forEach(ph => {
+        const wrap = doc.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;gap:3px;cursor:pointer;';
+        const card = doc.createElement('div');
+        card.style.boxSizing = 'border-box';
+        const fTop = doc.createElement('div');
+        fTop.style.cssText = 'display:none;justify-content:space-between;padding:1px 2px 2px;';
+        const cv = doc.createElement('canvas');
+        cv.style.cssText = 'display:block;box-sizing:border-box;image-rendering:pixelated;';
+        const meta = doc.createElement('div');
+        meta.style.cssText = 'margin-top:3px;';
+        const cap = doc.createElement('div');
+        cap.style.cssText = 'font-size:9px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+        const dt = doc.createElement('div');
+        dt.style.cssText = 'font-size:7.5px;';
+        meta.append(cap, dt);
+        const fBot = doc.createElement('div');
+        fBot.style.cssText = 'display:none;justify-content:space-between;align-items:center;padding:2px 2px 1px;';
+        card.append(fTop, cv, meta, fBot);
+        applyStyledPhotoCard(card, cv, meta, cap, dt, fTop, fBot, ph, ph.date || '', true);
+        drawDualPolaroidCanvas(cv, ph.hostName || '', ph.hostLook || {}, ph.guestName || '', ph.guestLook || {}, ph.date || '', ph);
+        const subRow = doc.createElement('div');
+        subRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;font-size:8.5px;opacity:0.8;';
+        subRow.innerHTML = `<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:84px;">${escapeHtmlSimple(ph.title || '咔嚓照片')}</span><span>${styleLabelMap[ph.photoStyle || 'polaroid'] || '拍立得'}</span>`;
+        wrap.append(card, subRow);
+        wrap.addEventListener('click', () => openSavedPhotoViewerModal(ph, 'snap'));
+        grid.appendChild(wrap);
+      });
+    }
+    modal.style.display = 'flex';
+  };
+
+  // 轻巧紧凑的已存成片大图查看窗（按保存时的成片形态原样呈现）
+  const openSavedPhotoViewerModal = (ph, albumSrc = 'visit') => {
     if (!ph) return;
     let modal = root.querySelector('#st-tb-saved-photo-viewer');
     if (!modal) {
@@ -32667,6 +32855,8 @@
         ];
     const st = {
       photoStyle: ph.photoStyle || 'polaroid',
+      photoRatio: ph.photoRatio || '3:4',
+      photoOrient: ph.photoOrient || 'land',
       bgId: ph.bgId || 'meadow',
       bgCol1: ph.bgCol1 || '#fff3f7',
       bgCol2: ph.bgCol2 || '#f2b8c9',
@@ -32677,41 +32867,59 @@
       borderCol: ph.borderCol || '#d6ccc8',
       dots: ph.dots !== false,
       photoBorder: ph.photoBorder === true,
+      padX: typeof ph.padX === 'number' ? ph.padX : 7,
+      padTop: typeof ph.padTop === 'number' ? ph.padTop : 7,
+      padBot: typeof ph.padBot === 'number' ? ph.padBot : 10,
+      frameBw: typeof ph.frameBw === 'number' ? ph.frameBw : 3,
       filmCol: ph.filmCol || '#1f1d24',
       filmInk: ph.filmInk || '#f0c975',
       radius: typeof ph.radius === 'number' ? ph.radius : 0,
     };
-    const [r, g, b] = hexToRgbBytes(st.paperCol, '#ffffff');
-    const txtCol = (r * 0.299 + g * 0.587 + b * 0.114) < 130 ? '#fff6e0' : '#4a342a';
-    const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
-    const dotBg = st.dots ? `background-image:radial-gradient(circle, ${st.borderCol}44 2.5px, transparent 2.8px);background-size:16px 16px;` : '';
-
-    modal.innerHTML = `<div style="width:254px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
+    const styleNames = { polaroid: '拍立得', photo: '照片', film: '胶片底片', postcard: '明信片', stamp: '邮票相框' };
+    modal.innerHTML = `<div style="width:262px;background:var(--px-bg,#fff9fb);border:3px solid var(--px-border,#bfa4ae);box-shadow:5px 5px 0 rgba(59,42,34,0.28);padding:10px;color:var(--px-fg,#54444a);font-family:inherit;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-        <span style="font-size:11.5px;font-weight:700;">拍立得合照</span>
+        <span style="font-size:11.5px;font-weight:700;">${styleNames[st.photoStyle] || '拍立得'} · ${escapeHtmlSimple(st.title)}</span>
         <button type="button" id="st-spv-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
       </div>
-      <div style="background-color:${st.paperCol};${dotBg}border:3px solid ${st.borderCol};border-radius:${st.radius}px;padding:7px 7px 9px;margin-bottom:8px;">
-        <canvas id="st-spv-cv" width="96" height="72" style="width:192px;height:144px;margin:0 auto;display:block;image-rendering:pixelated;image-rendering:crisp-edges;border:2px solid ${st.borderCol};border-radius:${Math.max(0, st.radius - 4)}px;"></canvas>
-        <div style="margin-top:6px;text-align:center;font-size:11px;font-weight:700;color:${txtCol};">${st.title}</div>
-        <div style="text-align:center;font-size:9.5px;color:${subCol};">${ph.date || ''}</div>
+      <div id="st-spv-card" style="margin-bottom:8px;box-sizing:border-box;">
+        <div id="st-spv-ftop" style="display:none;justify-content:space-between;padding:2px 4px 4px;"></div>
+        <canvas id="st-spv-cv" width="96" height="72" style="display:block;box-sizing:border-box;image-rendering:pixelated;image-rendering:crisp-edges;"></canvas>
+        <div id="st-spv-meta" style="margin-top:5px;">
+          <div id="st-spv-cap" style="font-size:11px;font-weight:700;"></div>
+          <div id="st-spv-date" style="font-size:9.5px;"></div>
+        </div>
+        <div id="st-spv-fbot" style="display:none;justify-content:space-between;align-items:center;padding:4px 4px 2px;"></div>
       </div>
       <div style="display:flex;gap:5px;">
-        <button type="button" id="st-spv-del" class="st-px-btn" style="flex:1;color:#a94442;">删除合照</button>
+        <button type="button" id="st-spv-del" class="st-px-btn" style="flex:1;color:#a94442;">删除照片</button>
         <button type="button" id="st-spv-dl" class="st-px-btn active" style="flex:1;">高清下载</button>
       </div>
     </div>`;
     const cv = modal.querySelector('#st-spv-cv');
+    applyStyledPhotoCard(
+      modal.querySelector('#st-spv-card'), cv,
+      modal.querySelector('#st-spv-meta'), modal.querySelector('#st-spv-cap'), modal.querySelector('#st-spv-date'),
+      modal.querySelector('#st-spv-ftop'), modal.querySelector('#st-spv-fbot'),
+      st, ph.date || '', false
+    );
     drawDualPolaroidCanvas(cv, dogs[0]?.name || '', dogs[0]?.look || {}, dogs[1]?.name || '', dogs[1]?.look || {}, ph.date || '', st);
     modal.querySelector('#st-spv-x')?.addEventListener('click', (e) => { e.stopPropagation(); modal.style.display = 'none'; });
     modal.querySelector('#st-spv-del')?.addEventListener('click', (e) => {
       e.stopPropagation();
       confirmDeletePolaroid(st.title, () => {
-        config.puppyVisitPhotos = (config.puppyVisitPhotos || []).filter(x => x.id !== ph.id);
-        saveConfig();
-        modal.style.display = 'none';
-        cmNotify('已删除该合照');
-        if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+        if (albumSrc === 'snap') {
+          config.puppySnapAlbum = (config.puppySnapAlbum || []).filter(x => x.id !== ph.id);
+          saveConfig();
+          modal.style.display = 'none';
+          cmNotify('已从咔嚓相册删除');
+          openSnapAlbumModal();
+        } else {
+          config.puppyVisitPhotos = (config.puppyVisitPhotos || []).filter(x => x.id !== ph.id);
+          saveConfig();
+          modal.style.display = 'none';
+          cmNotify('已删除该合照');
+          if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+        }
       });
     });
     modal.querySelector('#st-spv-dl')?.addEventListener('click', (e) => {
@@ -32808,6 +33016,8 @@
 
     const st = {
       photoStyle: savedPhoto?.photoStyle || config.photoStyle || 'polaroid',
+      photoRatio: savedPhoto?.photoRatio || config.photoRatio || '3:4',
+      photoOrient: savedPhoto?.photoOrient || config.photoOrient || 'land',
       bgId: savedPhoto?.bgId || extraOpts?.bgId || 'meadow',
       bgCol1: savedPhoto?.bgCol1 || extraOpts?.bgCol1 || '#fff3f7',
       bgCol2: savedPhoto?.bgCol2 || extraOpts?.bgCol2 || '#f2b8c9',
@@ -32818,6 +33028,10 @@
       borderCol: savedPhoto?.borderCol || '#d6ccc8',
       dots: savedPhoto ? (savedPhoto.dots !== false) : (config.photoDots !== false),
       photoBorder: savedPhoto ? (savedPhoto.photoBorder === true) : (config.photoRawBorder === true),
+      padX: typeof savedPhoto?.padX === 'number' ? savedPhoto.padX : (typeof config.photoPadX === 'number' ? config.photoPadX : 7),
+      padTop: typeof savedPhoto?.padTop === 'number' ? savedPhoto.padTop : (typeof config.photoPadTop === 'number' ? config.photoPadTop : 7),
+      padBot: typeof savedPhoto?.padBot === 'number' ? savedPhoto.padBot : (typeof config.photoPadBot === 'number' ? config.photoPadBot : 10),
+      frameBw: typeof savedPhoto?.frameBw === 'number' ? savedPhoto.frameBw : (typeof config.photoFrameBw === 'number' ? config.photoFrameBw : 3),
       filmCol: savedPhoto?.filmCol || config.photoFilmCol || '#1f1d24',
       filmInk: savedPhoto?.filmInk || config.photoFilmInk || '#f0c975',
       radius: typeof savedPhoto?.radius === 'number' ? savedPhoto.radius : (typeof config.photoRadius === 'number' ? config.photoRadius : 0),
@@ -32858,50 +33072,60 @@
       </div>
       <div id="st-vph-scroll" style="flex:1;min-height:0;overflow-y:auto;padding-right:2px;">
         ${savedPhoto ? '' : `
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">成片形态（选不同样式切换专属面板）</div>
-          <div id="st-vph-styles" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
           <div style="margin-bottom:6px;">
             <input type="text" id="st-vph-title-inp" class="st-tb-input" value="${st.title.replace(/"/g, '&quot;')}" placeholder="给这张照片取个名字~" style="width:100%;font-size:10px;padding:4px 6px;box-sizing:border-box;" />
           </div>
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景样式 (${POLAROID_BGS.length}种 · 含自定义调色)</div>
-          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
-          <div id="st-vph-diy-cols" style="display:none;flex-direction:column;gap:4px;padding:5px 6px;margin-bottom:6px;background:rgba(255,255,255,0.65);border:1px dashed var(--px-border,#bfa4ae);font-size:9.5px;">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <label style="display:inline-flex;align-items:center;gap:3px;font-weight:700;">背景色<input type="color" id="st-vph-bgc1" value="${st.bgCol1}" style="width:22px;height:18px;border:none;padding:0;background:none;cursor:pointer;" /></label>
-              <label id="st-vph-bgc2-wrap" style="display:inline-flex;align-items:center;gap:3px;font-weight:700;">图案色<input type="color" id="st-vph-bgc2" value="${st.bgCol2}" style="width:22px;height:18px;border:none;padding:0;background:none;cursor:pointer;" /></label>
-            </div>
-            <div id="st-vph-bg-swatches" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
-            <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
-            <button type="button" id="st-vph-flip" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;flex-shrink:0;">翻转朝向</button>
-          </div>
-          <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">成片形态</div>
+          <div id="st-vph-styles" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
 
-          <div id="st-vph-panel-polaroid">
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">拍立得 · 相纸、边框与圆角</div>
+          <div id="st-vph-panel-polaroid" style="padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:9.5px;font-weight:700;">拍立得设置</span>
+              <button type="button" id="st-vph-rst-polaroid" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
+            </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
               <label style="display:inline-flex;align-items:center;gap:2px;">相纸<input type="color" id="st-vph-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
               <label style="display:inline-flex;align-items:center;gap:2px;">边框<input type="color" id="st-vph-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-rad" min="0" max="22" value="${st.radius}" style="width:52px;" /><span id="st-vph-rad-v">${st.radius}</span></label>
+              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-rad" min="0" max="22" value="${st.radius}" style="width:48px;" /><span id="st-vph-rad-v">${st.radius}</span></label>
               <button type="button" id="st-vph-dots" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
               <button type="button" id="st-vph-heart" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
             </div>
-            <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-bottom:5px;font-size:9.5px;">
+              <label style="display:flex;align-items:center;gap:3px;">左右边<input type="range" id="st-vph-padx" min="2" max="24" value="${st.padX}" style="flex:1;min-width:42px;" /><span id="st-vph-padx-v">${st.padX}</span></label>
+              <label style="display:flex;align-items:center;gap:3px;">上边距<input type="range" id="st-vph-padt" min="2" max="24" value="${st.padTop}" style="flex:1;min-width:42px;" /><span id="st-vph-padt-v">${st.padTop}</span></label>
+              <label style="display:flex;align-items:center;gap:3px;">下留白<input type="range" id="st-vph-padb" min="4" max="36" value="${st.padBot}" style="flex:1;min-width:42px;" /><span id="st-vph-padb-v">${st.padBot}</span></label>
+              <label style="display:flex;align-items:center;gap:3px;">外框粗<input type="range" id="st-vph-fbw" min="1" max="8" value="${st.frameBw}" style="flex:1;min-width:42px;" /><span id="st-vph-fbw-v">${st.frameBw}</span></label>
+            </div>
+            <div id="st-vph-qcols" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
           </div>
 
-          <div id="st-vph-panel-photo" style="display:none;margin-bottom:7px;">
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">直接照片 · 边框与圆角</div>
+          <div id="st-vph-panel-photo" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:9.5px;font-weight:700;">直接照片设置</span>
+              <button type="button" id="st-vph-rst-photo" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:5px;font-size:9.5px;">
+              <span>尺寸</span>
+              <button type="button" class="st-px-btn" data-ph-ratio="1:1" style="height:19px;padding:0 6px;font-size:9px;">1:1</button>
+              <button type="button" class="st-px-btn" data-ph-ratio="3:4" style="height:19px;padding:0 6px;font-size:9px;">3:4</button>
+              <button type="button" class="st-px-btn" data-ph-ratio="2:3" style="height:19px;padding:0 6px;font-size:9px;">2:3</button>
+              <span style="margin-left:3px;">方向</span>
+              <button type="button" class="st-px-btn" data-ph-orient="land" style="height:19px;padding:0 6px;font-size:9px;">横</button>
+              <button type="button" class="st-px-btn" data-ph-orient="port" style="height:19px;padding:0 6px;font-size:9px;">竖</button>
+            </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;">
               <button type="button" id="st-vph-rawbd-btn" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
               <label style="display:inline-flex;align-items:center;gap:2px;">细边色<input type="color" id="st-vph-rawbd-col" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-raw-rad" min="0" max="22" value="${st.radius}" style="width:52px;" /><span id="st-vph-raw-rad-v">${st.radius}</span></label>
+              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-raw-rad" min="0" max="22" value="${st.radius}" style="width:48px;" /><span id="st-vph-raw-rad-v">${st.radius}</span></label>
               <button type="button" id="st-vph-heart-photo" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
             </div>
           </div>
 
-          <div id="st-vph-panel-film" style="display:none;margin-bottom:7px;">
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">胶片底片 · 底色与字色</div>
+          <div id="st-vph-panel-film" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:9.5px;font-weight:700;">胶片底片设置</span>
+              <button type="button" id="st-vph-rst-film" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
+            </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;font-size:10px;">
               <label style="display:inline-flex;align-items:center;gap:2px;">胶片底色<input type="color" id="st-vph-film-col" value="${st.filmCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
               <label style="display:inline-flex;align-items:center;gap:2px;">字色<input type="color" id="st-vph-film-ink" value="${st.filmInk}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
@@ -32910,23 +33134,46 @@
             <div id="st-vph-film-swatches" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
           </div>
 
-          <div id="st-vph-panel-postcard" style="display:none;margin-bottom:7px;">
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">明信片 · 卡纸、邮戳与圆角</div>
+          <div id="st-vph-panel-postcard" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:9.5px;font-weight:700;">明信片设置</span>
+              <button type="button" id="st-vph-rst-postcard" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
+            </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;">
               <label style="display:inline-flex;align-items:center;gap:2px;">卡纸<input type="color" id="st-vph-pc-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
               <label style="display:inline-flex;align-items:center;gap:2px;">邮戳线<input type="color" id="st-vph-pc-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
-              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-pc-rad" min="0" max="18" value="${st.radius}" style="width:52px;" /></label>
+              <label style="display:inline-flex;align-items:center;gap:3px;">圆角<input type="range" id="st-vph-pc-rad" min="0" max="18" value="${st.radius}" style="width:48px;" /></label>
               <button type="button" id="st-vph-heart-pc" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
             </div>
           </div>
 
-          <div id="st-vph-panel-stamp" style="display:none;margin-bottom:7px;">
-            <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">邮票相框 · 纸色与齿边色</div>
+          <div id="st-vph-panel-stamp" style="display:none;padding:5px 6px;margin-bottom:7px;background:rgba(255,255,255,0.55);border:1px dashed var(--px-border,#bfa4ae);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:9.5px;font-weight:700;">邮票相框设置</span>
+              <button type="button" id="st-vph-rst-stamp" class="st-px-btn" style="height:18px;padding:0 5px;font-size:8.5px;">恢复默认</button>
+            </div>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:10px;">
               <label style="display:inline-flex;align-items:center;gap:2px;">邮票纸<input type="color" id="st-vph-st-paper" value="${st.paperCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
               <label style="display:inline-flex;align-items:center;gap:2px;">齿边色<input type="color" id="st-vph-st-bd" value="${st.borderCol}" style="width:20px;height:18px;border:none;padding:0;background:none;" /></label>
               <button type="button" id="st-vph-heart-stamp" class="st-px-btn" style="height:20px;padding:0 5px;font-size:9.5px;"></button>
             </div>
+          </div>
+
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">人物</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
+            <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+            <button type="button" id="st-vph-flip" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;flex-shrink:0;">翻转朝向</button>
+          </div>
+          <div id="st-vph-poses" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景样式</div>
+          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div id="st-vph-diy-cols" style="display:none;flex-direction:column;gap:4px;padding:5px 6px;margin-bottom:6px;background:rgba(255,255,255,0.65);border:1px dashed var(--px-border,#bfa4ae);font-size:9.5px;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <label style="display:inline-flex;align-items:center;gap:3px;font-weight:700;">背景色<input type="color" id="st-vph-bgc1" value="${st.bgCol1}" style="width:22px;height:18px;border:none;padding:0;background:none;cursor:pointer;" /></label>
+              <label id="st-vph-bgc2-wrap" style="display:inline-flex;align-items:center;gap:3px;font-weight:700;">图案色<input type="color" id="st-vph-bgc2" value="${st.bgCol2}" style="width:22px;height:18px;border:none;padding:0;background:none;cursor:pointer;" /></label>
+            </div>
+            <div id="st-vph-bg-swatches" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
           </div>
         `}
       </div>
@@ -32953,96 +33200,26 @@
     const filmBotEl = winEl.querySelector('#st-vph-film-bot');
     const syncCardStyle = () => {
       const mode = st.photoStyle || 'polaroid';
-      const txtCol = getTextCol(st.paperCol);
-      const subCol = txtCol === '#fff6e0' ? 'rgba(255,246,224,0.75)' : 'rgba(74,52,42,0.68)';
-      const titleTxt = st.title || st.dogs.map(x => x.name).join(' & ');
-
-      // Switch visible style-specific control panel
       ['polaroid', 'photo', 'film', 'postcard', 'stamp'].forEach(k => {
         const p = winEl.querySelector(`#st-vph-panel-${k}`);
         if (p) p.style.display = (k === mode) ? 'block' : 'none';
       });
-      if (filmTopEl) filmTopEl.style.display = 'none';
-      if (filmBotEl) filmBotEl.style.display = 'none';
-      cardEl.style.boxShadow = 'none';
-      cardEl.style.outline = 'none';
-      metaEl.style.display = 'block';
-      metaEl.style.textAlign = 'center';
-      capEl.style.textAlign = 'center';
-      dateEl.style.textAlign = 'center';
-
-      if (mode === 'photo') {
-        cardEl.style.padding = '0';
-        cardEl.style.backgroundColor = 'transparent';
-        cardEl.style.backgroundImage = 'none';
-        cardEl.style.border = 'none';
-        cardEl.style.borderRadius = `${st.radius}px`;
-        cv.style.border = st.photoBorder ? `2px solid ${st.borderCol}` : 'none';
-        cv.style.borderRadius = `${st.radius}px`;
-        metaEl.style.display = 'none';
-      } else if (mode === 'film') {
-        cardEl.style.padding = '4px 6px 5px';
-        cardEl.style.backgroundColor = st.filmCol;
-        cardEl.style.backgroundImage = 'none';
-        cardEl.style.border = `2px solid ${st.filmCol}`;
-        cardEl.style.borderRadius = '2px';
-        cv.style.border = `1px solid ${st.filmInk}55`;
-        cv.style.borderRadius = '0';
-        metaEl.style.display = 'none';
-        const holesHtml = Array.from({ length: 10 }).map(() => `<span style="width:10px;height:6px;background:rgba(255,255,255,0.88);border-radius:1px;display:inline-block;"></span>`).join('');
-        if (filmTopEl) { filmTopEl.style.display = 'flex'; filmTopEl.innerHTML = holesHtml; }
-        if (filmBotEl) {
-          filmBotEl.style.display = 'flex';
-          filmBotEl.innerHTML = `<span style="font-size:9px;font-weight:700;color:${st.filmInk};font-family:monospace;">01A · ${escapeHtmlSimple(titleTxt)}</span><span style="font-size:8.5px;color:${st.filmInk};opacity:0.85;font-family:monospace;">${dateStr}</span>`;
-        }
-      } else if (mode === 'postcard') {
-        cardEl.style.padding = '7px 7px 7px';
-        cardEl.style.backgroundColor = st.paperCol;
-        cardEl.style.backgroundImage = 'none';
-        cardEl.style.border = `2px dashed ${st.borderCol}`;
-        cardEl.style.borderRadius = `${st.radius}px`;
-        cv.style.border = `1px solid ${st.borderCol}`;
-        cv.style.borderRadius = `${Math.max(0, st.radius - 3)}px`;
-        metaEl.style.display = 'flex';
-        metaEl.style.justifyContent = 'space-between';
-        metaEl.style.alignItems = 'center';
-        capEl.style.textAlign = 'left';
-        capEl.style.color = txtCol;
-        capEl.textContent = titleTxt;
-        dateEl.style.textAlign = 'right';
-        dateEl.style.color = st.borderCol;
-        dateEl.textContent = `POST · ${dateStr}`;
-      } else if (mode === 'stamp') {
-        cardEl.style.padding = '8px 8px 6px';
-        cardEl.style.backgroundColor = st.paperCol;
-        cardEl.style.backgroundImage = 'none';
-        cardEl.style.border = `3px dotted ${st.borderCol}`;
-        cardEl.style.borderRadius = '0';
-        cv.style.border = `1.5px solid ${st.borderCol}`;
-        cv.style.borderRadius = '0';
-        capEl.style.color = txtCol;
-        capEl.textContent = titleTxt;
-        dateEl.style.color = subCol;
-        dateEl.textContent = dateStr;
-      } else {
-        // 经典拍立得 (polaroid) - 100% 保留原有样式！
-        cardEl.style.padding = '7px 7px 8px';
-        cardEl.style.backgroundColor = st.paperCol;
-        cardEl.style.backgroundImage = st.dots ? `radial-gradient(circle, ${st.borderCol}44 2.5px, transparent 2.8px)` : 'none';
-        cardEl.style.backgroundSize = '16px 16px';
-        cardEl.style.border = `3px solid ${st.borderCol}`;
-        cardEl.style.borderRadius = `${st.radius}px`;
-        cv.style.border = `2px solid ${st.borderCol}`;
-        cv.style.borderRadius = `${Math.max(0, st.radius - 4)}px`;
-        capEl.style.color = txtCol;
-        capEl.textContent = titleTxt;
-        dateEl.style.color = subCol;
-        dateEl.textContent = dateStr;
-      }
+      applyStyledPhotoCard(cardEl, cv, metaEl, capEl, dateEl, filmTopEl, filmBotEl, st, dateStr, false);
 
       if (radValEl) radValEl.textContent = String(st.radius);
       const rawRadVal = winEl.querySelector('#st-vph-raw-rad-v');
       if (rawRadVal) rawRadVal.textContent = String(st.radius);
+      const setTxt = (id, v) => { const el = winEl.querySelector(id); if (el) el.textContent = String(v); };
+      setTxt('#st-vph-padx-v', st.padX);
+      setTxt('#st-vph-padt-v', st.padTop);
+      setTxt('#st-vph-padb-v', st.padBot);
+      setTxt('#st-vph-fbw-v', st.frameBw);
+      winEl.querySelectorAll('[data-ph-ratio]').forEach(b => b.classList.toggle('active', b.dataset.phRatio === st.photoRatio));
+      winEl.querySelectorAll('[data-ph-orient]').forEach(b => {
+        b.classList.toggle('active', b.dataset.phOrient === st.photoOrient);
+        b.disabled = st.photoRatio === '1:1';
+        b.style.opacity = st.photoRatio === '1:1' ? '0.45' : '1';
+      });
       if (dotsBtn) { dotsBtn.classList.toggle('active', st.dots); dotsBtn.textContent = `圆点:${st.dots ? '开' : '关'}`; }
       const rawBdBtn = winEl.querySelector('#st-vph-rawbd-btn');
       if (rawBdBtn) { rawBdBtn.classList.toggle('active', st.photoBorder); rawBdBtn.textContent = `细边:${st.photoBorder ? '开' : '关'}`; }
@@ -33266,6 +33443,7 @@
             scheduleSaveConfig();
             stBtns.forEach(x => x.b.classList.toggle('active', x.id === st.photoStyle));
             syncCardStyle();
+            redrawCv();
           });
           stBtns.push({ id: sd.id, b });
           styleBox.appendChild(b);
@@ -33318,11 +33496,82 @@
       winEl.querySelector('#st-vph-st-paper')?.addEventListener('input', (e) => { st.paperCol = e.target.value; if (paperInp) paperInp.value = st.paperCol; syncCardStyle(); });
       winEl.querySelector('#st-vph-st-bd')?.addEventListener('input', (e) => { st.borderCol = e.target.value; if (bdInp) bdInp.value = st.borderCol; syncCardStyle(); });
 
+      // 拍立得边框粗细 & 留白滑块
+      const bindRange = (id, key, cfgKey) => {
+        winEl.querySelector(id)?.addEventListener('input', (e) => {
+          st[key] = Number(e.target.value) || 0;
+          config[cfgKey] = st[key];
+          scheduleSaveConfig();
+          syncCardStyle();
+        });
+      };
+      bindRange('#st-vph-padx', 'padX', 'photoPadX');
+      bindRange('#st-vph-padt', 'padTop', 'photoPadTop');
+      bindRange('#st-vph-padb', 'padBot', 'photoPadBot');
+      bindRange('#st-vph-fbw', 'frameBw', 'photoFrameBw');
+
+      // 直接照片尺寸比例 & 横竖切换
+      winEl.querySelectorAll('[data-ph-ratio]').forEach(b => {
+        b.addEventListener('click', () => {
+          st.photoRatio = b.dataset.phRatio;
+          config.photoRatio = st.photoRatio;
+          scheduleSaveConfig();
+          syncCardStyle();
+          redrawCv();
+        });
+      });
+      winEl.querySelectorAll('[data-ph-orient]').forEach(b => {
+        b.addEventListener('click', () => {
+          st.photoOrient = b.dataset.phOrient;
+          config.photoOrient = st.photoOrient;
+          scheduleSaveConfig();
+          syncCardStyle();
+          redrawCv();
+        });
+      });
+
+      // 5 种成片形态各自的「恢复默认」
+      const setVal = (id, v) => { const el = winEl.querySelector(id); if (el) el.value = v; };
+      winEl.querySelector('#st-vph-rst-polaroid')?.addEventListener('click', () => {
+        st.paperCol = '#ffffff'; st.borderCol = '#d6ccc8'; st.radius = 0; st.dots = true; st.showHeart = true;
+        st.padX = 7; st.padTop = 7; st.padBot = 10; st.frameBw = 3;
+        config.photoRadius = 0; config.photoDots = true; config.photoShowHeart = true;
+        config.photoPadX = 7; config.photoPadTop = 7; config.photoPadBot = 10; config.photoFrameBw = 3;
+        setVal('#st-vph-paper', st.paperCol); setVal('#st-vph-bd', st.borderCol); setVal('#st-vph-rad', 0);
+        setVal('#st-vph-padx', 7); setVal('#st-vph-padt', 7); setVal('#st-vph-padb', 10); setVal('#st-vph-fbw', 3);
+        scheduleSaveConfig(); syncCardStyle(); redrawCv();
+      });
+      winEl.querySelector('#st-vph-rst-photo')?.addEventListener('click', () => {
+        st.photoRatio = '3:4'; st.photoOrient = 'land'; st.photoBorder = false; st.borderCol = '#d6ccc8'; st.radius = 0; st.showHeart = true;
+        config.photoRatio = '3:4'; config.photoOrient = 'land'; config.photoRawBorder = false; config.photoRadius = 0; config.photoShowHeart = true;
+        setVal('#st-vph-rawbd-col', st.borderCol); setVal('#st-vph-raw-rad', 0);
+        scheduleSaveConfig(); syncCardStyle(); redrawCv();
+      });
+      winEl.querySelector('#st-vph-rst-film')?.addEventListener('click', () => {
+        st.filmCol = '#1f1d24'; st.filmInk = '#f0c975'; st.showHeart = true;
+        config.photoFilmCol = st.filmCol; config.photoFilmInk = st.filmInk; config.photoShowHeart = true;
+        setVal('#st-vph-film-col', st.filmCol); setVal('#st-vph-film-ink', st.filmInk);
+        scheduleSaveConfig(); syncCardStyle(); redrawCv();
+      });
+      winEl.querySelector('#st-vph-rst-postcard')?.addEventListener('click', () => {
+        st.paperCol = '#fffdf8'; st.borderCol = '#c9a690'; st.radius = 0; st.showHeart = true;
+        config.photoRadius = 0; config.photoShowHeart = true;
+        setVal('#st-vph-pc-paper', st.paperCol); setVal('#st-vph-pc-bd', st.borderCol); setVal('#st-vph-pc-rad', 0);
+        scheduleSaveConfig(); syncCardStyle(); redrawCv();
+      });
+      winEl.querySelector('#st-vph-rst-stamp')?.addEventListener('click', () => {
+        st.paperCol = '#fffdf8'; st.borderCol = '#b89b8c'; st.showHeart = true;
+        config.photoShowHeart = true;
+        setVal('#st-vph-st-paper', st.paperCol); setVal('#st-vph-st-bd', st.borderCol);
+        scheduleSaveConfig(); syncCardStyle(); redrawCv();
+      });
+
       // 画布内无死角拖动小狗
       let dragIdx = -1, dragOffX = 0, dragOffY = 0;
       const toCvCoord = (e) => {
         const r = cv.getBoundingClientRect();
-        return { x: ((e.clientX - r.left) / r.width) * 96, y: ((e.clientY - r.top) / r.height) * 72 };
+        const { W, H } = getPolaroidDims(st);
+        return { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * H };
       };
       cv.addEventListener('pointerdown', (e) => {
         const pt = toCvCoord(e);
@@ -33358,9 +33607,8 @@
       cv.addEventListener('pointercancel', endCvDrag);
 
       winEl.querySelector('#st-vph-save')?.addEventListener('click', () => {
-        if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
-        config.puppyVisitPhotos.unshift({
-          id: `vp_${Date.now()}`,
+        const entry = {
+          id: `${extraOpts?.albumTarget === 'snap' ? 'sp' : 'vp'}_${Date.now()}`,
           hostName: st.dogs[0]?.name || getPupName(),
           hostLook: st.dogs[0]?.look || getHostLookSnap(),
           guestName: st.dogs[1]?.name || '',
@@ -33368,11 +33616,21 @@
           date: dateStr,
           ...st,
           dogs: st.dogs.map(x => ({ ...x })),
-        });
-        if (config.puppyVisitPhotos.length > 64) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 64);
-        saveConfig();
-        cmNotify('合照已存入串门相册！');
-        if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+        };
+        if (extraOpts?.albumTarget === 'snap') {
+          if (!Array.isArray(config.puppySnapAlbum)) config.puppySnapAlbum = [];
+          config.puppySnapAlbum.unshift(entry);
+          if (config.puppySnapAlbum.length > 64) config.puppySnapAlbum = config.puppySnapAlbum.slice(0, 64);
+          saveConfig();
+          cmNotify('成片已存入咔嚓相册！');
+        } else {
+          if (!Array.isArray(config.puppyVisitPhotos)) config.puppyVisitPhotos = [];
+          config.puppyVisitPhotos.unshift(entry);
+          if (config.puppyVisitPhotos.length > 64) config.puppyVisitPhotos = config.puppyVisitPhotos.slice(0, 64);
+          saveConfig();
+          cmNotify('合照已存入串门相册！');
+          if (typeof renderPupVisitPanel === 'function') renderPupVisitPanel();
+        }
         winEl.remove();
         if (config.puppyEnabled && puppyEl) { puppyEl.classList.add('active'); pup._lastRenderKey = ''; drawPuppyScene(); }
       });
