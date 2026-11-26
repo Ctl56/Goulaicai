@@ -2776,6 +2776,7 @@
     puppyIslandArtwork: true,
     puppyBarkUrl: '',
     puppyBarkIconUrl: '',
+    streamDraftRescue: true,
     puppyBellSound: true,
     puppyBellTone: 'ios_tri',
     puppyShowPersTag: false,
@@ -9373,10 +9374,11 @@
         <!-- 聊天管理（含聊天文件与一键打码） -->
         <div class="st-tb-pane" data-pane="chats">
           <div class="st-tb-section">
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;">
               <button class="st-tb-btn" id="st-tb-chat-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
               <button class="st-tb-btn" id="st-tb-chat-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
               <button class="st-tb-btn" id="st-tb-chat-jumpfloor-btn" type="button" title="输入楼层号，或一键去顶部/回底部">跳转楼层</button>
+              <button class="st-tb-btn" id="st-tb-chat-draftrescue-btn" type="button" title="流式生成回复时实时暂存草稿，刷新卡死重进可一键恢复">防丢草稿</button>
             </div>
           </div>
 
@@ -32652,6 +32654,7 @@
     'st-tb-merchant-preview-mask',
     'st-tb-dark-buff-mask',
     'st-tb-pup-icon-export-mask',
+    'st-tb-draftrescue-mask',
   ];
   const bringModalFront = (maskEl) => {
     if (!maskEl) return;
@@ -44638,14 +44641,16 @@
           stRegexPausedByGenEvent = true;
           beginReplyTrack();
           pauseStRegexDuringStream();
+          try { if (typeof onDraftRescueGenStart === 'function') onDraftRescueGenStart(); } catch (_) {}
         });
       }
       if (ctxEv.eventTypes.STREAM_TOKEN_RECEIVED) {
-        ctxEv.eventSource.on(ctxEv.eventTypes.STREAM_TOKEN_RECEIVED, () => {
+        ctxEv.eventSource.on(ctxEv.eventTypes.STREAM_TOKEN_RECEIVED, (streamText) => {
           if (config.perfStreamAdapt !== false) {
             stRegexPausedByGenEvent = true;
             if (!pausedRegexRefs.length) pauseStRegexDuringStream();
           }
+          try { if (typeof onDraftRescueStreamToken === 'function') onDraftRescueStreamToken(streamText); } catch (_) {}
         });
       }
       if (ctxEv.eventTypes.MESSAGE_RECEIVED) {
@@ -44653,11 +44658,13 @@
           if (stWasGenerating) stGenGotMessage = true;
           restoreStRegexAfterStream(true);
           setTimeout(applyLazyChatImages, 200);
+          try { if (typeof onDraftRescueGenDone === 'function') onDraftRescueGenDone(); } catch (_) {}
         });
       }
       if (ctxEv.eventTypes.GENERATION_ENDED) {
         ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_ENDED, async () => {
           restoreStRegexAfterStream(true);
+          try { if (typeof onDraftRescueGenDone === 'function') onDraftRescueGenDone(); } catch (_) {}
           if (typeof finalizePendingSingleSwipeReroll === 'function') {
             await finalizePendingSingleSwipeReroll();
           }
@@ -59120,6 +59127,261 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     readerMiniPill.addEventListener('pointercancel', endMpDrag);
   }
 
+  // ==================== 防丢草稿（流式中断实时暂存与一键恢复） ====================
+  const STREAM_RESCUE_LS_KEY = 'st_glc_stream_rescue_v1';
+  let drLiveText = '';
+  let drGenerating = false;
+  let drLastSaveTs = 0;
+  let drAutoPromptedKey = '';
+
+  const getDraftRescueChatMeta = () => {
+    try {
+      const ctx = getContext();
+      const chatId = String(ctx?.chatId || ctx?.chat_metadata?.main_chat || '').trim();
+      const charName = String(ctx?.name2 || (ctx?.characters && ctx.characters[ctx.characterId]?.name) || 'AI').trim();
+      const chatKey = `${charName}::${chatId || 'default'}`;
+      return { chatKey, chatId, charName, ctx };
+    } catch (_) {
+      return { chatKey: 'default', chatId: '', charName: 'AI', ctx: null };
+    }
+  };
+
+  const readSavedRescueDraft = () => {
+    try {
+      const raw = win.localStorage.getItem(STREAM_RESCUE_LS_KEY);
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      if (!obj || typeof obj.text !== 'string' || !obj.text.trim()) return null;
+      if (Date.now() - Number(obj.updatedAt || 0) > 24 * 3600 * 1000) {
+        win.localStorage.removeItem(STREAM_RESCUE_LS_KEY);
+        return null;
+      }
+      return obj;
+    } catch (_) {
+      return null;
+    }
+  };
+
+  const clearSavedRescueDraft = () => {
+    drLiveText = '';
+    try { win.localStorage.removeItem(STREAM_RESCUE_LS_KEY); } catch (_) {}
+  };
+
+  const persistRescueDraftNow = (force = false) => {
+    if (config.streamDraftRescue === false) return;
+    const now = Date.now();
+    if (!force && now - drLastSaveTs < 900) return;
+    let txt = String(drLiveText || '');
+    const meta = getDraftRescueChatMeta();
+    if (!txt && meta.ctx && Array.isArray(meta.ctx.chat) && meta.ctx.chat.length) {
+      const lastM = meta.ctx.chat[meta.ctx.chat.length - 1];
+      if (lastM && !lastM.is_user && typeof lastM.mes === 'string' && lastM.mes.trim()) {
+        txt = lastM.mes;
+      }
+    }
+    if (!txt) {
+      const lastDom = doc.querySelector('#chat .mes[is_user="false"]:last-of-type .mes_text');
+      if (lastDom && lastDom.innerText && lastDom.innerText.trim()) txt = lastDom.innerText.trim();
+    }
+    if (!txt || txt.trim().length < 8) return;
+    drLastSaveTs = now;
+    try {
+      win.localStorage.setItem(STREAM_RESCUE_LS_KEY, JSON.stringify({
+        chatKey: meta.chatKey,
+        chatId: meta.chatId,
+        charName: meta.charName,
+        text: txt,
+        len: txt.length,
+        updatedAt: now,
+      }));
+    } catch (_) {}
+  };
+
+  var onDraftRescueGenStart = () => {
+    if (config.streamDraftRescue === false) return;
+    drGenerating = true;
+    drLiveText = '';
+    drLastSaveTs = 0;
+  };
+
+  var onDraftRescueStreamToken = (streamText) => {
+    if (config.streamDraftRescue === false) return;
+    drGenerating = true;
+    if (typeof streamText === 'string' && streamText.length >= drLiveText.length) {
+      drLiveText = streamText;
+    }
+    persistRescueDraftNow(false);
+  };
+
+  var onDraftRescueGenDone = () => {
+    if (!drGenerating) return;
+    drGenerating = false;
+    setTimeout(() => {
+      try {
+        const saved = readSavedRescueDraft();
+        if (!saved) return;
+        const meta = getDraftRescueChatMeta();
+        const chatArr = meta.ctx && Array.isArray(meta.ctx.chat) ? meta.ctx.chat : [];
+        const lastM = chatArr.length ? chatArr[chatArr.length - 1] : null;
+        if (lastM && !lastM.is_user && typeof lastM.mes === 'string') {
+          const curLen = lastM.mes.trim().length;
+          if (curLen >= Math.max(12, Math.floor(saved.text.trim().length * 0.85))) {
+            clearSavedRescueDraft();
+          }
+        }
+      } catch (_) {}
+    }, 1500);
+  };
+
+  const flushRescueOnLeave = () => {
+    if (drGenerating || (doc.querySelector('#mes_stop') && win.getComputedStyle(doc.querySelector('#mes_stop')).display !== 'none')) {
+      persistRescueDraftNow(true);
+    }
+  };
+  win.addEventListener('pagehide', flushRescueOnLeave);
+  win.addEventListener('beforeunload', flushRescueOnLeave);
+  doc.addEventListener('visibilitychange', () => { if (doc.hidden) flushRescueOnLeave(); });
+
+  const restoreDraftToChatEnd = async (draft) => {
+    if (!draft || !draft.text) return false;
+    try {
+      const ctx = getContext();
+      if (!ctx || !Array.isArray(ctx.chat)) return false;
+      const charName = draft.charName || ctx.name2 || 'Assistant';
+      const nowStr = new Date().toLocaleString();
+      const msgObj = {
+        name: charName,
+        is_user: false,
+        is_system: false,
+        send_date: nowStr,
+        mes: draft.text,
+        swipes: [draft.text],
+        swipe_id: 0,
+      };
+      ctx.chat.push(msgObj);
+      if (typeof ctx.addOneMessage === 'function') {
+        ctx.addOneMessage(msgObj);
+      } else if (typeof win.addOneMessage === 'function') {
+        win.addOneMessage(msgObj);
+      }
+      if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+      else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+      if (typeof ctx.addOneMessage !== 'function' && typeof win.addOneMessage !== 'function' && typeof ctx.reloadCurrentChat === 'function') {
+        await ctx.reloadCurrentChat();
+      }
+      clearSavedRescueDraft();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  var openDraftRescueModal = (autoPopup = false) => {
+    let mask = root.querySelector('#st-tb-draftrescue-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-draftrescue-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const draft = readSavedRescueDraft();
+    const isOn = config.streamDraftRescue !== false;
+    const fmtAgo = (ts) => {
+      const sec = Math.max(1, Math.floor((Date.now() - Number(ts || 0)) / 1000));
+      if (sec < 60) return `${sec}秒前`;
+      const min = Math.floor(sec / 60);
+      if (min < 60) return `${min}分钟前`;
+      return `${Math.floor(min / 60)}小时前`;
+    };
+    const draftBodyHtml = draft
+      ? `<div style="font-size:11px;opacity:0.85;margin-bottom:6px;line-height:1.45;">检测到中断回复：<b>${escapeHtmlSimple(draft.charName || 'AI')}</b> · ${draft.text.length} 字 · ${fmtAgo(draft.updatedAt)}</div>
+         <div style="max-height:190px;overflow-y:auto;padding:8px 9px;background:var(--tb-surface,#fff);border:1px solid var(--tb-border,#ccc);border-radius:6px;font-size:11.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin-bottom:9px;">${escapeHtmlSimple(draft.text)}</div>
+         <div style="display:flex;gap:6px;margin-bottom:6px;">
+           <button type="button" id="st-dr-restore" class="st-tb-btn active" style="flex:1.4;">恢复到聊天末尾</button>
+           <button type="button" id="st-dr-copy" class="st-tb-btn" style="flex:1;">复制全文</button>
+         </div>
+         <button type="button" id="st-dr-clear" class="st-tb-btn" style="width:100%;opacity:0.8;">清空草稿</button>`
+      : `<div style="padding:16px 10px;text-align:center;font-size:11.5px;opacity:0.78;line-height:1.55;background:var(--tb-surface,#fff);border:1px dashed var(--tb-border,#ccc);border-radius:6px;margin-bottom:6px;">当前没有未恢复的中断草稿。<br/>开启后，AI 生成回复期间会自动实时暂存，遇到卡死或刷新重进即可一键找回。</div>`;
+
+    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,0.22);box-sizing:border-box;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:700;">防丢草稿</span>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button type="button" id="st-dr-toggle" class="st-tb-mini-btn${isOn ? ' active' : ''}">${isOn ? '已开启' : '已关闭'}</button>
+          <button type="button" id="st-dr-close" class="st-tb-mini-btn">×</button>
+        </div>
+      </div>
+      ${draftBodyHtml}
+    </div>`;
+
+    const closeDr = () => { mask.style.display = 'none'; };
+    mask.onclick = (e) => { e.stopPropagation(); if (!autoPopup && e.target === mask) closeDr(); };
+    mask.querySelector('#st-dr-close')?.addEventListener('click', closeDr);
+    mask.querySelector('#st-dr-toggle')?.addEventListener('click', () => {
+      config.streamDraftRescue = !(config.streamDraftRescue !== false);
+      saveConfig();
+      syncDraftRescueBtnUI();
+      openDraftRescueModal(false);
+    });
+    mask.querySelector('#st-dr-restore')?.addEventListener('click', async () => {
+      const ok = await restoreDraftToChatEnd(draft);
+      if (ok) {
+        closeDr();
+        showImmNotice('已恢复中断回复并存盘，可直接点继续续写');
+      } else {
+        showImmNotice('恢复失败，请先点复制全文手动粘贴');
+      }
+    });
+    mask.querySelector('#st-dr-copy')?.addEventListener('click', () => {
+      if (draft && draft.text) {
+        copyVisitCodeReliable(draft.text);
+        showImmNotice('已复制中断草稿全文');
+      }
+    });
+    mask.querySelector('#st-dr-clear')?.addEventListener('click', () => {
+      openGuardConfirm('清空防丢草稿？', '确定丢弃这份暂存的中断回复草稿吗？', () => {
+        clearSavedRescueDraft();
+        openDraftRescueModal(false);
+      }, '确认清空', true);
+    });
+    bringModalFront(mask);
+    mask.style.display = 'flex';
+  };
+
+  const chatDraftRescueBtn = root.querySelector('#st-tb-chat-draftrescue-btn');
+  const syncDraftRescueBtnUI = () => {
+    if (chatDraftRescueBtn) chatDraftRescueBtn.classList.toggle('active', config.streamDraftRescue !== false);
+  };
+  if (chatDraftRescueBtn) {
+    chatDraftRescueBtn.addEventListener('click', () => openDraftRescueModal(false));
+  }
+  syncDraftRescueBtnUI();
+
+  const checkAutoPromptRescueDraft = () => {
+    if (config.streamDraftRescue === false) return;
+    const draft = readSavedRescueDraft();
+    if (!draft || !draft.text || draft.text.trim().length < 15) return;
+    const meta = getDraftRescueChatMeta();
+    if (draft.chatKey && meta.chatKey && draft.chatKey !== meta.chatKey) return;
+    const chatArr = meta.ctx && Array.isArray(meta.ctx.chat) ? meta.ctx.chat : [];
+    const lastM = chatArr.length ? chatArr[chatArr.length - 1] : null;
+    if (lastM && !lastM.is_user && typeof lastM.mes === 'string' && lastM.mes.trim().includes(draft.text.trim().slice(0, 40))) {
+      clearSavedRescueDraft();
+      return;
+    }
+    const promptSig = `${draft.chatKey}:${draft.updatedAt}`;
+    if (drAutoPromptedKey === promptSig) return;
+    drAutoPromptedKey = promptSig;
+    openDraftRescueModal(true);
+  };
+  setTimeout(checkAutoPromptRescueDraft, 3200);
+  try {
+    const ctxDr = getContext();
+    if (ctxDr?.eventSource && ctxDr?.eventTypes?.CHAT_CHANGED) {
+      ctxDr.eventSource.on(ctxDr.eventTypes.CHAT_CHANGED, () => setTimeout(checkAutoPromptRescueDraft, 800));
+    }
+  } catch (_) {}
+
   const QUICK_DOCK_CATALOG = [
     { id: 'imm',       name: '沉浸模式',   defLabel: '沉浸' },
     { id: 'mask',      name: '一键打码',   defLabel: '打码' },
@@ -59131,6 +59393,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'partialreroll', name: '局部重roll', defLabel: '局部重roll' },
     { id: 'jumptop', name: '生成完回开头', defLabel: '回开头' },
     { id: 'jumpfloor', name: '跳转楼层', defLabel: '跳楼层' },
+    { id: 'draftrescue', name: '防丢草稿', defLabel: '防丢草稿' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
     { id: 'fold',      name: '折叠楼层',   defLabel: '折楼' },
@@ -59692,6 +59955,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       } else if (act === 'jumpfloor') {
         toggleQuickDock(false);
         openJumpFloorModal();
+      } else if (act === 'draftrescue') {
+        toggleQuickDock(false);
+        if (typeof openDraftRescueModal === 'function') openDraftRescueModal();
       } else if (act === 'storyedit') {
         config.storyQuickBarEnabled = !(config.storyQuickBarEnabled !== false);
         saveConfig();
