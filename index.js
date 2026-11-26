@@ -6065,10 +6065,10 @@
       border: 1px solid var(--tb-border, rgba(0,0,0,0.12)); border-radius: 14px;
       box-shadow: 0 12px 34px rgba(0,0,0,0.24); padding: 14px;
       display: flex; flex-direction: column; gap: 10px; overflow: hidden;
-      font-size: 12.5px; line-height: 1.5;
+      font-size: var(--tb-fs, 12px); line-height: 1.55;
       pointer-events: auto !important; touch-action: auto;
     }
-    .st-tb-qd-modal-title { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .st-tb-qd-modal-title { font-weight: 700; font-size: calc(var(--tb-fs, 12px) + 1.5px); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .st-tb-qd-list {
       overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
       max-height: 210px; min-height: 44px; padding-right: 2px;
@@ -59466,7 +59466,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
          <button type="button" id="st-dr-clear" class="st-tb-btn" style="width:100%;opacity:0.8;">清空草稿</button>`
       : `<div style="padding:16px 10px;text-align:center;font-size:11.5px;opacity:0.78;line-height:1.55;background:var(--tb-surface,#fff);border:1px dashed var(--tb-border,#ccc);border-radius:6px;margin-bottom:6px;">当前没有未恢复的中断草稿。<br/>开启后，AI 生成回复期间会自动实时暂存，遇到卡死或刷新重进即可一键找回。</div>`;
 
-    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,0.22);box-sizing:border-box;">
+    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,0.22);box-sizing:border-box;font-size:var(--tb-fs,12px);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-size:13px;font-weight:700;">防丢草稿</span>
         <div style="display:flex;align-items:center;gap:6px;">
@@ -59658,10 +59658,10 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdCfgMask.innerHTML = `<div class="st-tb-qd-modal">
         <div class="st-tb-qd-modal-title"><span>自定义快捷面板与悬浮球手势</span><button class="st-tb-mini-btn" id="st-tb-qd-cfg-close" type="button">关闭</button></div>
         <div style="padding:7px 8px;border:1px solid var(--tb-border,#ccc);border-radius:8px;background:var(--tb-surface,#fff);margin-bottom:4px;display:flex;flex-direction:column;gap:6px;">
-          <div style="font-size:11.5px;font-weight:700;">悬浮球打开方式</div>
+          <div style="font-size:0.96em;font-weight:700;">悬浮球打开方式</div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <span style="font-size:11.5px;">打开工具箱</span>
-            <select id="st-tb-qd-gest-panel" class="st-tb-select" style="flex:0 0 130px;height:26px;font-size:11px;padding:0 6px;">
+            <span style="font-size:0.96em;">打开工具箱</span>
+            <select id="st-tb-qd-gest-panel" class="st-tb-select" style="flex:0 0 136px;height:26px;font-size:0.92em;padding:0 6px;">
               <option value="tap">单击悬浮球</option>
               <option value="hold">长按悬浮球</option>
               <option value="dbl">双击悬浮球</option>
@@ -59671,8 +59671,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             </select>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-            <span style="font-size:11.5px;">打开快捷面板</span>
-            <select id="st-tb-qd-gest-qd" class="st-tb-select" style="flex:0 0 130px;height:26px;font-size:11px;padding:0 6px;">
+            <span style="font-size:0.96em;">打开快捷面板</span>
+            <select id="st-tb-qd-gest-qd" class="st-tb-select" style="flex:0 0 136px;height:26px;font-size:0.92em;padding:0 6px;">
               <option value="tap">单击悬浮球</option>
               <option value="hold">长按悬浮球</option>
               <option value="dbl">双击悬浮球</option>
@@ -59682,11 +59682,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             </select>
           </div>
         </div>
-        <div style="font-size:11.5px;opacity:0.78;">已启用的快捷按钮，可按住左侧横杠拖动或点上下排序，也能改名或移除：</div>
+        <div style="font-size:0.94em;opacity:0.78;">已启用的快捷按钮，可按住左侧横杠拖动或点上下排序，也能改名或移除：</div>
         <div class="st-tb-qd-list" id="st-tb-qd-active-list"></div>
-        <div style="font-size:11.5px;opacity:0.78;">点击下方功能即可加入快捷面板：</div>
+        <div style="font-size:0.94em;opacity:0.78;">点击下方功能即可加入快捷面板：</div>
         <div class="st-tb-qd-pool" id="st-tb-qd-pool-list"></div>
-        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:15px;">
+        <label style="display:flex;align-items:center;gap:7px;font-size:0.98em;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:1.3;">
           <input type="checkbox" id="st-tb-qd-cfg-tip-toggle" style="margin:0 !important;padding:0 !important;width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;transform:none !important;position:static !important;vertical-align:middle !important;accent-color:var(--tb-accent, #6b8cff);" />
           <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">显示自定义提醒</span>
         </label>
@@ -59893,8 +59893,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdTipMask.className = 'st-tb-qd-modal-mask';
       qdTipMask.innerHTML = `<div class="st-tb-qd-modal" style="max-width:326px;">
         <div class="st-tb-qd-modal-title"><span>快捷面板支持自定义</span></div>
-        <div style="font-size:14px;font-weight:700;line-height:1.6;">你可以在「工具箱 - 外观 - 快捷栏自定义」，或直接点快捷面板末尾的「编辑」，自由增删功能、调整排序、按钮改名，还可以自选悬浮球打开方式。</div>
-        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:15px;">
+        <div style="font-size:1em;font-weight:400;line-height:1.6;opacity:0.92;">你可以在 <b style="font-size:1.15em;font-weight:700;">「工具箱 - 外观 - 快捷栏自定义」</b>，或直接点 <b style="font-size:1.15em;font-weight:700;">快捷面板末尾的「编辑」</b>，自由增删功能、调整排序、按钮改名，还可以自选悬浮球打开方式。</div>
+        <label style="display:flex;align-items:center;gap:7px;font-size:0.96em;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:1.3;">
           <input type="checkbox" id="st-tb-qd-tip-never" style="margin:0 !important;padding:0 !important;width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;transform:none !important;position:static !important;vertical-align:middle !important;accent-color:var(--tb-accent, #6b8cff);" />
           <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">下次不再出现</span>
         </label>
