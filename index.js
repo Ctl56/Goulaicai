@@ -5275,7 +5275,7 @@
       border: 3px solid var(--px-border, #bfa4ae);
       box-shadow: 4px 4px 0 rgba(59,42,34,0.24);
       padding: 8px;
-      color: var(--px-fg, #54444a);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
       z-index: 9991;
       display: none;
       flex-direction: column;
@@ -5283,6 +5283,28 @@
       pointer-events: auto;
       font-size: 11px;
       box-sizing: border-box;
+    }
+    #st-tb-guest-pop .st-px-btn {
+      background: var(--px-card, #ffffff);
+      border-color: var(--px-border, #bfa4ae);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
+    }
+    #st-tb-guest-pop .st-px-btn.care {
+      background: var(--px-bg-soft, #f6eaf0);
+    }
+    #st-tb-guest-pop .st-px-btn.active {
+      background: var(--px-bg-soft, #f0e4ea);
+      border-color: var(--px-border, #bfa4ae);
+    }
+    #st-tb-guest-pop #st-gp-drag-head {
+      background: var(--px-head-bg, transparent);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
+      border-bottom: 1.5px dashed var(--px-border, #bfa4ae);
+    }
+    #st-tb-guest-pop #st-gp-quote-box {
+      background: var(--px-card, #ffffff);
+      border: 1px solid var(--px-border, #bfa4ae);
+      color: var(--px-custom-fg, var(--px-fg, #54444a));
     }
     .st-gp-resize {
       position: absolute;
@@ -21318,12 +21340,10 @@
     lt_toy_100: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-13px;top:50%;transform:translateY(-50%);', w: 15, h: 13, anim: 'b-tilt', pal: { b: '#7faee0', l: '#e0f0ff', w: '#ffffff', y: '#ffe078' },
-          grid: ['.bb....bb.','bwwbbbbwwb','bwwwwwwwwb','bwwbbbbwwb','.bb....bb.'] },
-        { pos: 'right:-10px;top:-8px;', w: 10, h: 10, pal: { a: '#7faee0', b: '#ff9ec2', w: '#ffffff' },
-          grid: ['...aa...','..abba..','.abwwba.','abwwwwba','.aaaaaa.'] },
-        { pos: 'right:20px;bottom:-7px;', w: 10, h: 10, anim: 'b-tilt', pal: { a: '#7faee0', b: '#ffe078', w: '#ffffff' },
-          grid: ['..aaa...','.abwba..','..abwba.','...abwba','....aaa.'] },
+        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 12, anim: 'b-wiggle', pal: { b: '#7faee0', l: '#e2f2ff', w: '#ffffff', r: '#ff94b4' },
+          grid: ['.bb....rr....bb.','bwwbbbbwwbbbbwwb','bwwwwwwrrwwwwwwb','bwwbbbbwwbbbbwwb','.bb..........bb.'] },
+        { pos: 'right:-10px;top:-8px;', w: 12, h: 11, pal: { b: '#7faee0', l: '#d6ecff', y: '#ffe078', w: '#ffffff' },
+          grid: ['..bbbbbb....','.bllwwybb...','blwwbbwylb..','bwwyllwwbby.','.bbbbbbbb.yy'] },
       ],
     },
     visitor_host_30: {
@@ -21382,12 +21402,10 @@
     ach_ck_52: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 14, h: 16, anim: 'b-breathe', pal: { r: '#e07a94', l: '#ffe4ec', y: '#f5cc58', w: '#ffffff' },
-          grid: ['..yyyy..','.yy..yy.','.rrrrrr.','rrwwwwrr','rrwyywrr','.rrrrrr.','..rrrr..'] },
-        { pos: 'right:-11px;top:-8px;', w: 13, h: 13, anim: 'b-nod', pal: { r: '#e07a94', g: '#6ec488', w: '#ffffff' },
-          grid: ['..rrrr..','.rwwwwr.','.rrwwrr.','...gg...','..gggg..','...gg...'] },
-        { pos: 'left:22px;bottom:-7px;', w: 13, h: 8, pal: { r: '#f298b0', w: '#ffffff', y: '#ffe078' },
-          grid: ['.rrrrrrrrr.','rwwywwwywwr','.rrrrrrrrr.'] },
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 13, h: 16, anim: 'b-shimmer', pal: { r: '#e07a94', l: '#ffe4ec', y: '#f5cc58', w: '#ffffff' },
+          grid: ['..rr..rr..','...rrrr...','...yyyy...','.rrrrrrrr.','rrwwwwwwrr','rrwllllwrr','.rrrrrrrr.','..rrrrrr..'] },
+        { pos: 'right:-11px;top:-8px;', w: 13, h: 11, anim: 'b-nod', pal: { r: '#e07a94', l: '#ffd6e4', y: '#ffe078', w: '#ffffff' },
+          grid: ['..rr....rr..','.rwwr..rwwr.','..rrryyrrr..','....rwwr....','...rr..rr...'] },
       ],
     },
     hidden_dress_master: {
@@ -21413,23 +21431,21 @@
     hidden_toy_rally_king: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 12, anim: 'b-orbit', pal: { b: '#6cb8e6', l: '#dcf4ff', y: '#f5cc58', w: '#ffffff' },
-          grid: ['...bbbbbbbb...','.bbwwwwwwwwbb.','bllwyyyyyywllb','.bbbbbbbbbbbb.'] },
-        { pos: 'right:-11px;top:-8px;', w: 13, h: 11, anim: 'b-wiggle', pal: { y: '#f5cc58', b: '#6cb8e6', w: '#ffffff' },
-          grid: ['..yyyyyy..','yywwwwwwyy','ywwbbbbwwy','.yyyyyyyy.','....yy....'] },
-        { pos: 'right:16px;bottom:-7px;', w: 12, h: 9, pal: { b: '#6cb8e6', l: '#e0f4ff', w: '#ffffff' },
-          grid: ['..bbbbbb..','bbwwwwwwbb','bbbbbbbb..','..bbbb....'] },
+        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 15, h: 16, anim: 'b-shimmer', pal: { b: '#6cb8e6', y: '#f5cc58', l: '#fff6cc', w: '#ffffff' },
+          grid: ['.yyyyyyyyyy.','y.ywwwwwwy.y','y.ywbbbbwy.y','..yyyyyyyy..','....yyyy....','..yyyyyyyy..'] },
+        { pos: 'right:-11px;top:-9px;', w: 13, h: 13, anim: 'b-wiggle', pal: { b: '#6cb8e6', w: '#ffffff', y: '#ffe078', o: '#b87c4a' },
+          grid: ['..bbbbb...','.bwbwbwb..','.bwbwbwb.y','..bbbbb.yw','....oo....','....oo....'] },
+        { pos: 'left:22px;bottom:-7px;', w: 12, h: 9, pal: { b: '#6cb8e6', w: '#ffffff', o: '#8c6038' },
+          grid: ['o.bwbwbw.','o.wbwbwb.','o.bwbwbw.','o........','o........'] },
       ],
     },
     hidden_job_boss: {
       cls: 'bespoke-lux bespoke-glow',
       pieces: [
-        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 15, anim: 'b-breathe', pal: { y: '#e09e38', r: '#eb6c78', l: '#fff4d6', w: '#ffffff', o: '#8c5214' },
-          grid: ['ryryryryry','ryryryryry','.oooooooo.','owwwwwwwwo','owlyyyylwo','.oooooooo.'] },
-        { pos: 'right:-11px;top:-8px;', w: 13, h: 12, pal: { y: '#e09e38', l: '#fff4c4', k: '#633408', w: '#ffffff' },
-          grid: ['...yyyy...','..ykkkky..','.yyyyyyyy.','ywwyyyywwy','.yyyyyyyy.'] },
-        { pos: 'left:22px;bottom:-7px;', w: 12, h: 9, anim: 'b-nod', pal: { o: '#b87432', y: '#ffe078', w: '#ffffff' },
-          grid: ['....yy....','...y..y...','.oooooooo.','owwywwywwo','owwwwwwwwo','.oooooooo.'] },
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 15, h: 13, anim: 'b-wiggle', pal: { y: '#e09e38', l: '#fff6cc', w: '#ffffff', o: '#784610' },
+          grid: ['.....yy.....','...yyyyyy...','.yywwwwwwyy.','yyyyyyyyyyyy','.oooooooooo.'] },
+        { pos: 'right:-11px;bottom:-6px;', w: 14, h: 11, anim: 'b-breathe', pal: { o: '#a86b38', y: '#e09e38', w: '#ffffff', g: '#8ad49c' },
+          grid: ['....w..w....','...gggggg...','..gwwwwwwg..','.oooooooooo.','oooooooooooo'] },
       ],
     },
     hidden_early_bird: {
@@ -21482,12 +21498,10 @@
     hidden_ancient_poet: {
       cls: 'bespoke-lux bespoke-sheen',
       pieces: [
-        { pos: 'left:-15px;top:50%;transform:translateY(-50%);', w: 16, h: 14, anim: 'b-wiggle', pal: { o: '#e08a6c', l: '#fff4e4', k: '#78321c', y: '#f2c864', w: '#ffffff' },
-          grid: ['...oooooo...','.oolllllloo.','olwkyykywlo.','.oolllllloo.','....kkkk....'] },
-        { pos: 'right:-11px;top:-8px;', w: 13, h: 12, pal: { o: '#c97858', l: '#fff6ea', w: '#ffffff', y: '#f2c864' },
-          grid: ['.oooooooo.','ooowwwwwwo','ooywwwwwwo','ooowwwwwwo','.oooooooo.','....yy....','....y.....'] },
-        { pos: 'right:16px;bottom:-7px;', w: 11, h: 9, anim: 'b-shimmer', pal: { g: '#7fd9b8', l: '#e0faf0', w: '#ffffff' },
-          grid: ['..w...w..','.ggggggg.','glwwwwwlg','..ggggg..'] },
+        { pos: 'left:-14px;top:50%;transform:translateY(-50%);', w: 13, h: 16, anim: 'b-breathe', pal: { o: '#e08a6c', l: '#fff2e4', k: '#6e3622', g: '#7fd9b0', w: '#ffffff' },
+          grid: ['..kk..oo..','..kk..oo..','.gggggggg.','gwwwwwwwwg','gwwggggwwg','gwwwwwwwwg','.gggggggg.'] },
+        { pos: 'right:-10px;top:-8px;', w: 11, h: 13, anim: 'b-nod', pal: { o: '#e08a6c', y: '#f2c864', w: '#ffffff', r: '#e0646c' },
+          grid: ['...yy...','..rrrr..','.oowwoo.','oowyywoo','.oooooo.','..y..y..'] },
       ],
     },
     hidden_secret_mail: {
@@ -21824,6 +21838,8 @@
       // v137 新增 6 款各不相同的创意包裹（绝不动已有 47 款）
       'job_legend_50', 'cloud_poke_15', 'fun_aura_glow',
       'gacha_count_300', 'hidden_dress_master', 'hidden_early_bird',
+      // v138 新增 4 款各不相同的创意包裹（绝不动已有 53 款）
+      'lt_toy_100', 'ach_ck_52', 'hidden_ancient_poet', 'hidden_job_boss',
     ]);
     if (!HANDCRAFTED_WRAPS.has(id)) return null;
     const cv = doc.createElement('canvas');
@@ -22143,6 +22159,32 @@
       px(76, 5, '#ffe08a', 10, 2); px(80, 3, '#fff2be', 6, 2); px(86, 7, '#e6a852', 3, 6);
       px(72, 3, '#e6a852', 2, 2); px(88, 3, '#ffe08a', 2, 2);
       px(6, 22, '#ffe8c4', 12, 6); px(6, 22, '#e6a852', 12, 2); px(12, 24, '#ffb8a8', 4, 2);
+
+    // ==================== v138 新增 4 款全新创意包裹（绝不动已有 53 款） ====================
+    } else if (id === 'lt_toy_100') {
+      // 桌面陪玩老搭档：底边晴蓝奶油小格纹野餐垫边 + 左上毛线球拖尾细线
+      for (let x = 12; x <= 78; x += 6) {
+        px(x, 26, (x % 12 === 0) ? '#7faee0' : '#dceeff', 6, 3);
+        px(x + 2, 27, '#ffffff', 2, 1);
+      }
+      px(6, 6, '#7faee0', 8, 1); px(13, 5, '#a8d0ff', 6, 1); px(18, 6, '#7faee0', 5, 1);
+    } else if (id === 'ach_ck_52') {
+      // 五十二天心动：左上与右下玫瑰粉心电折线花边 + 细金边折角
+      px(6, 5, '#e07a94', 10, 1); px(16, 3, '#e07a94', 2, 4); px(18, 6, '#e07a94', 2, 2); px(20, 5, '#e07a94', 8, 1);
+      px(6, 5, '#e07a94', 2, 9); px(8, 7, '#ffd6e2', 4, 1);
+      px(70, 27, '#e07a94', 16, 1); px(86, 19, '#e07a94', 2, 9); px(66, 25, '#f5a8be', 2, 3); px(68, 27, '#f5a8be', 2, 2);
+    } else if (id === 'hidden_ancient_poet') {
+      // 古风小书童：左上暖杏木雕中式回纹花窗角 + 右下水墨宣纸飞白弧
+      px(5, 5, '#e08a6c', 13, 2); px(5, 5, '#e08a6c', 2, 11); px(9, 8, '#f5c4a8', 6, 1); px(9, 8, '#f5c4a8', 1, 5);
+      px(12, 10, '#e08a6c', 3, 1);
+      px(68, 27, '#c97858', 14, 2); px(80, 26, '#e08a6c', 6, 2); px(84, 24, '#f5c4a8', 4, 2);
+    } else if (id === 'hidden_job_boss') {
+      // 金牌老店长：右上咖啡馆暖金白条纹遮阳小棚角 + 左下黄铜门牌底边
+      for (let x = 58; x <= 82; x += 6) {
+        px(x, 4, (x % 12 === 10) ? '#e09e38' : '#fff6dc', 6, 4);
+        px(x + 1, 8, (x % 12 === 10) ? '#f2c464' : '#ffe8b8', 4, 1);
+      }
+      px(8, 26, '#e09e38', 28, 3); px(11, 27, '#fff4cc', 22, 1);
     }
     return cv;
   };
@@ -35669,7 +35711,7 @@
     const hideName = Boolean(guest.hideName);
     const _gpFr = guest.cloudId ? getFriendList().find(f => f && f.cloudId === guest.cloudId) : null;
     const _gpBondLv = _gpFr ? getFriendBondInfo(_gpFr).lv : 1;
-    guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:5px;cursor:move;user-select:none;touch-action:none;padding:2px 0 5px;border-bottom:1px dashed var(--px-border,#bfa4ae);">
+    guestPopEl.innerHTML = `<div id="st-gp-drag-head" style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;gap:4px;margin:-8px -8px 6px -8px;cursor:move;user-select:none;touch-action:none;padding:6px 8px;">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;">
           <span style="font-weight:700;pointer-events:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(guest.name)}</span>
           ${_gpFr ? `<button type="button" id="st-gp-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(-1px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${_gpBondLv}</span></button>` : ''}
@@ -35677,7 +35719,7 @@
         <button type="button" id="st-gp-close" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;flex-shrink:0;">×</button>
       </div>
       <div id="st-gp-body" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px;">
-        <div style="font-size:10px;background:#fff;border:1px solid var(--px-border,#bfa4ae);padding:4px 6px;margin-bottom:6px;">「${guest.msg || '来找你们玩啦~'}」${guest.cloudUpdatedAt ? `<div style="margin-top:3px;font-size:9px;opacity:0.65;">最近活跃：${formatCloudAgo(guest.cloudUpdatedAt)}</div>` : ''}</div>
+        <div id="st-gp-quote-box" style="font-size:10px;padding:4px 6px;margin-bottom:6px;">「${guest.msg || '来找你们玩啦~'}」${guest.cloudUpdatedAt ? `<div style="margin-top:3px;font-size:9px;opacity:0.65;">最近活跃：${formatCloudAgo(guest.cloudUpdatedAt)}</div>` : ''}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:5px;">
           <button type="button" id="st-gp-pet" class="st-px-btn care">摸摸头</button>
           <button type="button" id="st-gp-nuzzle" class="st-px-btn care">贴贴蹭蹭</button>
@@ -35728,6 +35770,8 @@
       : clamp(Math.round((rt.y || defaultPupY()) - 215), 10, Math.max(10, win.innerHeight - 230));
     guestPopEl.style.left = `${left}px`;
     guestPopEl.style.top = `${top}px`;
+    if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(guestPopEl);
+    if (typeof syncDmPanelTheme === 'function') syncDmPanelTheme();
     guestPopEl.style.display = 'flex';
     if (typeof bringFloatFront === 'function') bringFloatFront(guestPopEl);
     showOneTimePanelTip('seenGuestPopTip', '做客面板小提示', '按住面板顶部标题栏可以自由拖动位置，按住右下角边缘可以缩放面板大小哦~');
@@ -35888,11 +35932,20 @@
   ];
   const syncBagThemeToEl = (el) => {
     if (!el || !pupBagEl) return;
-    ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+    ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg',
+     '--px-bar-track', '--px-bar-hunger', '--px-bar-thirst', '--px-bar-mood', '--px-bar-aff'].forEach(v => {
       const val = pupBagEl.style.getPropertyValue(v);
       if (val) el.style.setProperty(v, val);
       else el.style.removeProperty(v);
     });
+    const bagHead = pupBagEl.querySelector('.st-px-bag-head');
+    const headBg = (bagHead && bagHead.style.background)
+      ? bagHead.style.background
+      : ((config.puppyBagHead1 || config.puppyBagHead2)
+        ? `linear-gradient(90deg, ${config.puppyBagHead1 || '#e8d5db'}, ${config.puppyBagHead2 || '#dfd0d8'})`
+        : '');
+    if (headBg) el.style.setProperty('--px-head-bg', headBg);
+    else el.style.removeProperty('--px-head-bg');
   };
   const bringModalFront = (maskEl) => {
     if (!maskEl) return;
@@ -40183,7 +40236,7 @@
       });
     }
     if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack();
-    ['#st-tb-dm-panel', '#st-tb-dm-pill'].forEach(sel => {
+    ['#st-tb-dm-panel', '#st-tb-dm-pill', '#st-tb-guest-pop'].forEach(sel => {
       const el = root.querySelector(sel);
       if (!el) return;
       vars.forEach(v => {
@@ -40194,6 +40247,7 @@
       el.style.background = bg;
       el.style.borderColor = bd;
       el.style.color = fg;
+      if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(el);
     });
   };
 
@@ -48684,6 +48738,7 @@
       }
       headEl.style.borderBottomColor = bdCol;
     }
+    if (typeof syncDmPanelTheme === 'function') syncDmPanelTheme();
     }
 
     const BUB_CHARM_GRIDS = {
