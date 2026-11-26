@@ -33007,6 +33007,7 @@
               friendName: g.fromName || frMatch?.name || '好友',
               friendLook: frMatch?.look ? JSON.parse(JSON.stringify(frMatch.look)) : {},
               photoId: ph.id,
+              gotPhoto: typeof meta.gotPhoto === 'boolean' ? meta.gotPhoto : ((Number(meta.variant?.seed || 0) % 10) < 7),
               variant: meta.variant || null,
               startAt: stAt,
               endAt: edAt,
@@ -34422,8 +34423,7 @@
       p1: pick(poses),
       p2: pick(poses),
       fx: pick(fxs),
-      styleIdx: pick([0, 1, 2]),
-      seed: randInt(1, 9999),
+      seed: randInt(1, 999999),
     };
   };
 
@@ -34519,12 +34519,25 @@
       return `#${c(0)}${c(1)}${c(2)}`;
     };
 
-    // 读取本次照片的同场景微变化风格（0经典 / 1暖光加小物件 / 2梦幻异色天空+微光）
+    // 基于共享 seed 的完全随机像素微变化（同趟双人完全同步，每次拍到都独一无二：随机天色微调、随机云/星/月/流星位置、随机景物偏移与随机小物件）
     const _shotPreview = overrideShot || (Array.isArray(rec?.history) && rec.history[rec.coverShotIdx || 0]) || rec || {};
     const _vStyle = _shotPreview.variant || {};
-    const _sIdx = typeof _vStyle.styleIdx === 'number' ? _vStyle.styleIdx : (Number(_vStyle.seed || 0) % 3);
-    const _skyTop = _sIdx === 1 ? mixHex(ph.sky[0], '#ffcfb8', 0.24) : (_sIdx === 2 ? mixHex(ph.sky[0], '#5a4e9c', 0.28) : ph.sky[0]);
-    const _skyBot = _sIdx === 1 ? mixHex(ph.sky[1], '#fff0c8', 0.28) : (_sIdx === 2 ? mixHex(ph.sky[1], '#d9c4ff', 0.22) : ph.sky[1]);
+    let _rngState = (Number(_vStyle.seed || 13579) ^ 0x9e3779b9) >>> 0;
+    const _rand = () => {
+      _rngState = (_rngState + 0x6d2b79f5) >>> 0;
+      let t = Math.imul(_rngState ^ (_rngState >>> 15), 1 | _rngState);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const _rInt = (lo, hi) => lo + Math.floor(_rand() * (hi - lo + 1));
+    const _tintPool = ['#ffcfb8', '#ffe7a8', '#c8e8ff', '#d8c2ff', '#ffc8de', '#bfeede', '#5c529e'];
+    const _tCol1 = _tintPool[_rInt(0, _tintPool.length - 1)];
+    const _tCol2 = _tintPool[_rInt(0, _tintPool.length - 1)];
+    const _tAmt1 = _rand() < 0.22 ? 0 : (0.08 + _rand() * 0.26);
+    const _tAmt2 = _rand() < 0.22 ? 0 : (0.08 + _rand() * 0.26);
+    const _skyTop = _tAmt1 > 0 ? mixHex(ph.sky[0], _tCol1, _tAmt1) : ph.sky[0];
+    const _skyBot = _tAmt2 > 0 ? mixHex(ph.sky[1], _tCol2, _tAmt2) : ph.sky[1];
+    const _propShiftX = _rInt(-3, 3);
 
     // 清晰四段分层像素天空
     aDot(0, 0, _skyTop, 54, 6);
@@ -34602,7 +34615,8 @@
       aDot(0, 24, '#273847', 54, 12); aDot(0, 24, '#334a5c', 54, 2);
       aDot(10, 29, '#e86882', 34, 6);
       for (let rx = 12; rx < 42; rx += 6) aDot(rx, 30, '#fff0f4', 3, 4);
-      aDot(12, 28, '#e84858', 4, 4); aDot(13, 28, '#ffffff', 2, 4); aDot(12, 26, '#fff0a6', 4, 2);
+      const _pxPop = _rand() < 0.5 ? (11 + Math.max(0, _propShiftX)) : (38 + Math.min(0, _propShiftX));
+      aDot(_pxPop, 28, '#e84858', 4, 4); aDot(_pxPop + 1, 28, '#ffffff', 2, 4); aDot(_pxPop, 26, '#fff0a6', 4, 2);
     } else if (m === 'cablecar') {
       // 雪顶高山缆车：晴空白云 + 像素雪峰（阳面雪白/阴面冰蓝）+ 积雪冷杉 + 铁塔钢缆 + 红白缆车厢
       aDot(4, 3, '#ffffff', 9, 2); aDot(6, 2, '#ffffff', 5, 2);
@@ -34920,14 +34934,55 @@
       aDot(0, 24, '#404c6e', 54, 12); aDot(0, 24, '#5a6a91', 54, 2);
     }
 
-    // 同场景微变化小物件（1=暖光飘浮花瓣/飞鸟/气泡；2=星光弯月/小流星/微光萤火）
-    if (_sIdx === 1) {
-      aDot(7, 5, '#fff5b8', 2, 1); aDot(8, 4, '#fff5b8', 1, 1);
-      aDot(43, 8, '#ffc4da', 2, 1); aDot(39, 6, '#ffe594', 1, 1);
-      aDot(16, 12, '#ffffff', 1, 1);
-    } else if (_sIdx === 2) {
-      [[6,3],[18,5],[31,3],[47,6],[24,8]].forEach(([sx0,sy0]) => aDot(sx0, sy0, '#fff7cc', 1, 1));
-      aLine(36, 3, 41, 6, '#ffe994'); aDot(41, 6, '#ffffff', 1, 1);
+    // 完全随机的像素景色与小物件变化（云朵/星月/流星/飞鸟/蝴蝶/花草/气球/萤火虫随机组合与随机落点）
+    if (!isNight && _rand() < 0.65) {
+      const cCnt = _rInt(1, 2);
+      for (let ci = 0; ci < cCnt; ci++) {
+        const cx = _rInt(3, 42), cy = _rInt(2, 9), cw = _rInt(6, 10);
+        aDot(cx, cy, '#ffffff', cw, 2); aDot(cx + 2, cy - 1, '#ffffff', Math.max(3, cw - 4), 1);
+      }
+    }
+    if (_rand() < 0.45) {
+      // 随机位置小飞鸟或彩色小蝴蝶
+      const bx = _rInt(5, 46), by = _rInt(4, 14);
+      if (_rand() < 0.5) {
+        aDot(bx, by, '#594b5c', 1, 1); aDot(bx + 1, by + 1, '#594b5c', 1, 1); aDot(bx + 2, by, '#594b5c', 1, 1);
+      } else {
+        const bc = _tintPool[_rInt(0, 5)];
+        aDot(bx, by, bc, 1, 2); aDot(bx + 2, by, bc, 1, 2); aDot(bx + 1, by + 1, '#5c463c', 1, 1);
+      }
+    }
+    if (_rand() < 0.40) {
+      // 随机位置小气球或飘浮花瓣/泡泡/萤火虫
+      if (_rand() < 0.35 && !isNight) {
+        const ax = _rInt(4, 48), ay = _rInt(4, 12);
+        const ac = ['#ff85a8', '#82d8ff', '#ffe066', '#b894ff'][_rInt(0, 3)];
+        aBlob(ax, ay, 2, 2, ac); aDot(ax, ay + 3, '#7a6872', 1, 3);
+      } else {
+        const pCnt = _rInt(2, 5);
+        const pc = isNight ? '#fff5a6' : ['#ffd1e3', '#fff4b8', '#d9f5ff', '#ffffff'][_rInt(0, 3)];
+        for (let pi = 0; pi < pCnt; pi++) aDot(_rInt(3, 50), _rInt(3, 18), pc, 1, 1);
+      }
+    }
+    if (isNight && _rand() < 0.45) {
+      // 随机角度小流星
+      const mx = _rInt(8, 38), my = _rInt(2, 7);
+      aLine(mx, my, mx + 5, my + 3, '#ffe994'); aDot(mx + 5, my + 3, '#ffffff', 1, 1);
+    }
+    if (_rand() < 0.55) {
+      // 前景随机小物件（地面小花 / 小蘑菇 / 小礼盒 / 小路牌 / 贝壳，避开画面正中）
+      const fx = _rand() < 0.5 ? _rInt(2, 9) : _rInt(43, 49);
+      const fy = _rInt(26, 32);
+      const propType = _rInt(0, 3);
+      if (propType === 0) {
+        aDot(fx, fy + 1, '#4f9c58', 1, 2); aDot(fx - 1, fy, '#ff85ad', 3, 1); aDot(fx, fy - 1, '#ffe066', 1, 1);
+      } else if (propType === 1) {
+        aDot(fx, fy + 1, '#fff5e6', 2, 2); aDot(fx - 1, fy, '#e85868', 4, 1); aDot(fx, fy - 1, '#ffffff', 1, 1);
+      } else if (propType === 2) {
+        aDot(fx, fy, '#ff9eb8', 3, 3); aDot(fx + 1, fy, '#ffe066', 1, 3); aDot(fx, fy + 1, '#ffe066', 3, 1);
+      } else {
+        aDot(fx + 1, fy, '#7a5238', 1, 3); aDot(fx - 1, fy - 1, '#e8c494', 4, 2);
+      }
     }
 
     // 绘制两只小狗（使用各自最新/快照外观 + 随机位置/姿势/朝向）
@@ -35305,7 +35360,7 @@
       config.puppyStats = config.puppyStats || {};
       config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coins;
       config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
-      const gotPhoto = Math.random() < 0.70;
+      const gotPhoto = typeof ca.gotPhoto === 'boolean' ? ca.gotPhoto : ((Number(ca.variant?.seed || 0) % 10) < 7);
       if (gotPhoto) {
         const ph = PUP_DUAL_PHOTOS.find(x => x.id === ca.photoId) || pick(PUP_DUAL_PHOTOS);
         const isNewPhoto = !(config.puppyDualAlbum && config.puppyDualAlbum[ph.id]);
@@ -35466,29 +35521,31 @@
       const durMs = 10 * 60 * 1000;
       const ph = pick(PUP_DUAL_PHOTOS);
       const sharedVariant = rollDualPhotoVariant();
+      const sharedGotPhoto = Math.random() < 0.70; // 双方严格同步：出发时统一决定本趟是否拍到照片
       advMap[fr.cloudId] = {
         friendCloudId: fr.cloudId,
         friendName: fr.name || '好友',
         friendLook: fr.look ? JSON.parse(JSON.stringify(fr.look)) : {},
         photoId: ph.id,
+        gotPhoto: sharedGotPhoto,
         variant: sharedVariant,
         startAt: Date.now(),
         endAt: Date.now() + durMs,
       };
       saveConfig();
       const baseUrl = getCloudBaseUrl();
-      fetch(`${baseUrl}/gift`, {
+      fetchWithTimeout(`${baseUrl}/gift`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fromId: ensureMyCloudId(),
           fromName: getPupName(),
           toId: fr.cloudId,
-          gifts: [{ kind: '__coadv__', id: ph.id, qty: 1, variant: sharedVariant, startAt: advMap[fr.cloudId].startAt, endAt: advMap[fr.cloudId].endAt }],
+          gifts: [{ kind: '__coadv__', id: ph.id, qty: 1, gotPhoto: sharedGotPhoto, variant: sharedVariant, startAt: advMap[fr.cloudId].startAt, endAt: advMap[fr.cloudId].endAt }],
           redPacket: 0,
           msg: `约你的小狗一起去了【${ph.title}】探险~`,
         }),
-      }).catch(() => {});
+      }, 9000).catch(() => {});
       renderPupVisitPanel();
       openCoopAdvProgressModal(fr.cloudId);
     } finally {
@@ -35512,8 +35569,8 @@
     config.puppyStats = config.puppyStats || {};
     config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coins;
     config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
-    // 不一定每次都能拿到新照片（约 70% 概率拍到照片，随机从全部 30 张抽取，可能新解锁也可能重复留影）
-    const gotPhoto = Math.random() < 0.70;
+    // 与好友严格同步本趟是否拍到照片（一方没拍到则另一方也不会拍到）
+    const gotPhoto = typeof ca.gotPhoto === 'boolean' ? ca.gotPhoto : ((Number(ca.variant?.seed || 0) % 10) < 7);
     let ph = null, savedRec = null, latestShot = null, isNewPhoto = false;
     if (gotPhoto) {
       ph = PUP_DUAL_PHOTOS.find(x => x.id === ca.photoId) || pick(PUP_DUAL_PHOTOS);
