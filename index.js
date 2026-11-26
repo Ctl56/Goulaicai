@@ -2768,6 +2768,7 @@
     puppyBagHead1: '',
     puppyBagHead2: '',
     puppyBagBorder: '',
+    puppyBagFg: '',
     puppyBagPalettes: [],
     puppyBagFollowST: false,
     puppyReplyBell: true,
@@ -5377,7 +5378,7 @@
       max-height: calc(100vh - 72px);
       border-radius: 0;
       background: #faf6f7;
-      color: #54444a;
+      color: var(--px-custom-fg, #54444a);
       border: 2px solid #bfa4ae;
       outline: 2px solid #f2eaed;
       outline-offset: -4px;
@@ -5462,7 +5463,7 @@
       justify-content: space-between;
       padding: 6px 8px;
       background: linear-gradient(90deg, #e8d5db, #dfd0d8);
-      color: #54444a;
+      color: var(--px-custom-fg, #54444a);
       border-bottom: 2px solid #bfa4ae;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -5479,7 +5480,7 @@
       border-radius: 0;
       border: 2px solid #3b2a22;
       background: #fffdf7;
-      color: #3b2a22;
+      color: var(--px-custom-fg, #3b2a22);
       font-family: inherit;
       font-weight: 700;
       font-size: 11px;
@@ -5725,7 +5726,7 @@
     .st-px-idname {
       font-size: 12px;
       font-weight: 700;
-      color: #3b2a22;
+      color: var(--px-custom-fg, #3b2a22);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -5750,7 +5751,7 @@
     .st-px-stat-lbl {
       width: 24px;
       flex-shrink: 0;
-      color: #5c4638;
+      color: var(--px-custom-fg, #5c4638);
     }
 
     .st-px-bar {
@@ -5838,7 +5839,7 @@
       width: 22px;
       text-align: right;
       font-variant-numeric: tabular-nums;
-      color: #3b2a22;
+      color: var(--px-custom-fg, #3b2a22);
     }
 
     .st-px-coin-box {
@@ -5848,7 +5849,7 @@
       gap: 4px;
       font-size: 10px;
       font-weight: 700;
-      color: #6b4b18;
+      color: var(--px-custom-fg, #6b4b18);
     }
 
     .st-px-coin-left {
@@ -5949,7 +5950,7 @@
       justify-content: space-between;
       font-size: 10px;
       font-weight: 700;
-      color: #6b5446;
+      color: var(--px-custom-fg, #6b5446);
       margin: 0 0 5px;
       padding-bottom: 3px;
       border-bottom: 2px dashed var(--px-border, #bfa4ae);
@@ -6297,14 +6298,14 @@
     .st-px-preview-title {
       font-size: 11px;
       font-weight: 700;
-      color: #3b2a22;
+      color: var(--px-custom-fg, #3b2a22);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .st-px-preview-sub {
       font-size: 10px;
-      color: #7c6248;
+      color: var(--px-custom-fg, #7c6248);
       font-weight: 700;
     }
     .st-px-preview-btns {
@@ -6323,7 +6324,7 @@
       align-items: center;
       justify-content: space-between;
       font-size: 10px;
-      color: #7c6248;
+      color: var(--px-custom-fg, #7c6248);
       font-weight: 700;
     }
     .st-px-shop-item.equipped .st-px-shop-meta { color: #f4d98c; }
@@ -6380,7 +6381,7 @@
       font-weight: 700;
     }
 
-    .st-px-slider-row span:first-child { width: 44px; color: #5c4638; }
+    .st-px-slider-row span:first-child { width: 44px; color: var(--px-custom-fg, #5c4638); }
     .st-px-slider-row span:last-child { width: 34px; text-align: right; font-variant-numeric: tabular-nums; }
     .st-px-range { flex: 1; accent-color: var(--px-fg, #3b2a22); cursor: pointer; }
     .st-px-trail-ctrl-bar {
@@ -6976,7 +6977,7 @@
       image-rendering: pixelated;
     }
     .st-px-gacha-res-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin: 6px 0; text-align: left; }
-    .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: #4f3a43; line-height: 1.3; }
+    .st-px-gacha-chip { padding: 3px 5px; font-size: 10px; border: 1.5px solid #bfa4ae; background: #ffffff; color: var(--px-custom-fg, #4f3a43); line-height: 1.3; }
     .st-px-gacha-chip.tier-R { background: #f4f7fc; border-color: #9bb4d4; color: #364e6b; }
     .st-px-gacha-chip.tier-SR { background: #f5eeff; border-color: #a882e0; color: #4a267a; font-weight: 700; }
     .st-px-gacha-chip.tier-SSR { background: linear-gradient(115deg,#fff6cc,#ffe8f4,#e8f8ff); border-color: #e3a530; color: #6b3d06; font-weight: 700; }
@@ -8518,7 +8519,7 @@
                 <canvas id="st-px-gacha-vendor-emo" width="18" height="16" style="position:absolute;top:-11px;right:-9px;width:22px;height:20px;image-rendering:pixelated;pointer-events:none;opacity:0;transition:all 0.35s ease;"></canvas>
               </div>
               <div style="flex:1;min-width:0;">
-                <div style="font-size:10.5px;font-weight:700;color:#3b2a22;margin-bottom:2px;">幸运扭蛋屋 · 招财喵老板</div>
+                <div style="font-size:10.5px;font-weight:700;color:var(--px-custom-fg,#3b2a22);margin-bottom:2px;">幸运扭蛋屋 · 招财喵老板</div>
                 <div id="st-px-gacha-vendor-msg" style="font-size:9.5px;line-height:1.4;color:#5a463c;background:#fffdf8;border:1px solid #d4bcc4;padding:4px 6px;">「欢迎光临喵~ 今天手气一定超旺，十连保底 SR 哦！」</div>
               </div>
             </div>
@@ -8535,7 +8536,7 @@
             <div class="st-px-adv-card" style="text-align:center;">
               <canvas id="st-px-gacha-canvas" width="120" height="84" style="width:180px;height:126px;margin:0 auto 5px;display:block;border:2px solid var(--px-border,#bfa4ae);image-rendering:pixelated;background:#faf6f7;"></canvas>
               <div style="font-weight:700;margin-bottom:3px;" id="st-px-gacha-msg">扭蛋限定池与珍稀魔药等你来扭!</div>
-              <div style="font-size:9px;color:#6b5446;margin-bottom:5px;" id="st-px-gacha-info">限定进度加载中 · 十连保底SR · 70抽必出SSR</div>
+              <div style="font-size:9px;color:var(--px-custom-fg,#6b5446);margin-bottom:5px;" id="st-px-gacha-info">限定进度加载中 · 十连保底SR · 70抽必出SSR</div>
               <div class="st-px-grid-2" style="gap:5px;">
                 <button class="st-px-btn care" id="st-px-gacha-pull" type="button">单抽 (10币)</button>
                 <button class="st-px-btn care" id="st-px-gacha-pull10" type="button" style="border-color:#d4983a;background:#fff4d9;color:#6b3e0d;">十连 (90币)</button>
@@ -8586,7 +8587,7 @@
             <div class="st-px-photo-viewer" id="st-px-photo-viewer">
               <canvas id="st-px-photo-big" width="54" height="36"></canvas>
               <div style="font-weight:700;" id="st-px-photo-big-title"></div>
-              <div style="font-size:9px;color:#6b5446;text-align:center;" id="st-px-photo-big-note"></div>
+              <div style="font-size:9px;color:var(--px-custom-fg,#6b5446);text-align:center;" id="st-px-photo-big-note"></div>
               <button class="st-px-mini-act" id="st-px-photo-big-close" type="button">收起大图</button>
             </div>
             <div class="st-px-photo-grid" id="st-px-album-grid"></div>
@@ -8709,7 +8710,7 @@
             <button class="st-px-mini-act" id="st-tb-bag-pal-toggle" type="button">展开</button>
           </div>
           <div id="st-tb-bag-pal-panel" style="display:none;padding-top:4px;">
-            <div class="st-px-color-row" style="grid-template-columns:repeat(4,1fr);">
+            <div class="st-px-color-row" style="grid-template-columns:repeat(5,1fr);">
               <label class="st-px-color-item">
                 <span>底色</span>
                 <input class="st-px-color-input" id="st-tb-bag-bg" type="color" />
@@ -8725,6 +8726,10 @@
               <label class="st-px-color-item">
                 <span>边框</span>
                 <input class="st-px-color-input" id="st-tb-bag-border" type="color" />
+              </label>
+              <label class="st-px-color-item">
+                <span>字色</span>
+                <input class="st-px-color-input" id="st-tb-bag-fg" type="color" />
               </label>
             </div>
             <div class="st-px-slider-row" style="margin:4px 0;justify-content:space-between;">
@@ -10531,6 +10536,7 @@
   const bagHead1Input = root.querySelector('#st-tb-bag-head1');
   const bagHead2Input = root.querySelector('#st-tb-bag-head2');
   const bagBorderInput = root.querySelector('#st-tb-bag-border');
+  const bagFgInput = root.querySelector('#st-tb-bag-fg');
   const bagPalNameInput = root.querySelector('#st-tb-bag-pal-name');
   const bagPalSaveBtn = root.querySelector('#st-tb-bag-pal-save');
   const furToggleBtn = root.querySelector('#st-tb-fur-toggle');
@@ -23594,24 +23600,48 @@
             const vMsg = root.querySelector('#st-px-sell-vendor-msg');
             if (sellPokeCnt >= 5 && nowT >= (ve.sellPokeCd || 0)) {
               sellPokeCnt = 0;
-              ve.sellPokeCd = nowT + 10 * 60000;
-              if (Math.random() < 0.70) {
-                ve.sellRateMult = 1.25;
-                ve.sellRateUntil = nowT + 3 * 60000;
+              ve.sellPokeCd = nowT + 60 * 60000;
+              const fmtDur = (sec) => sec % 60 === 0 ? `${sec / 60} 分钟` : `${Math.floor(sec / 60)} 分 ${sec % 60} 秒`;
+              if (Math.random() < 0.60) {
+                const goodPool = [
+                  { mult: 1.15, pct: 15, sec: 240, w: 28 },
+                  { mult: 1.20, pct: 20, sec: 180, w: 26 },
+                  { mult: 1.25, pct: 25, sec: 120, w: 22 },
+                  { mult: 1.30, pct: 30, sec: 90, w: 14 },
+                  { mult: 1.35, pct: 35, sec: 60, w: 10 },
+                ];
+                let r = Math.random() * goodPool.reduce((s, x) => s + x.w, 0);
+                let tier = goodPool[0];
+                for (const x of goodPool) { r -= x.w; if (r <= 0) { tier = x; break; } }
+                ve.sellRateMult = tier.mult;
+                ve.sellRateUntil = nowT + tier.sec * 1000;
                 saveConfig();
                 drawSellAvatar('happy');
                 popSellEmo('heart');
-                const mTxt = '唔…耳朵被挠得好舒服！接下来 3 分钟阿狸给你加价 25% 回收！';
+                const durTxt = fmtDur(tier.sec);
+                const mTxt = tier.pct >= 35
+                  ? `唔…耳朵被挠得太舒服了！阿狸破例给你限时 ${durTxt} 加价 ${tier.pct}% 回收！快趁现在出手！`
+                  : `唔…耳朵被挠得好舒服！接下来 ${durTxt} 阿狸给你加价 ${tier.pct}% 回收！`;
                 if (vMsg) vMsg.textContent = `「${mTxt}」`;
                 openGuardConfirm('触发隐藏彩蛋 · 阿狸开心啦！', mTxt, () => {}, '太棒了', true);
                 renderPupShop();
               } else {
-                ve.sellRateMult = 0.7;
-                ve.sellRateUntil = nowT + 3 * 60000;
+                const badPool = [
+                  { mult: 0.85, fold: '8.5', sec: 180, w: 30 },
+                  { mult: 0.80, fold: '8', sec: 150, w: 30 },
+                  { mult: 0.70, fold: '7', sec: 120, w: 25 },
+                  { mult: 0.65, fold: '6.5', sec: 90, w: 15 },
+                ];
+                let r = Math.random() * badPool.reduce((s, x) => s + x.w, 0);
+                let tier = badPool[0];
+                for (const x of badPool) { r -= x.w; if (r <= 0) { tier = x; break; } }
+                ve.sellRateMult = tier.mult;
+                ve.sellRateUntil = nowT + tier.sec * 1000;
                 saveConfig();
                 drawSellAvatar('angry');
                 popSellEmo('anger');
-                const mTxt = '再一直戳阿狸尾巴要生气了！接下来 3 分钟回收价打 7 折哼！（原价 1 币物品保持不变）';
+                const durTxt = fmtDur(tier.sec);
+                const mTxt = `再一直戳阿狸尾巴要生气了！接下来 ${durTxt} 回收价打 ${tier.fold} 折哼！（原价 1 币物品保持不变）`;
                 if (vMsg) vMsg.textContent = `「${mTxt}」`;
                 openGuardConfirm('触发隐藏彩蛋 · 阿狸生气啦！', mTxt, () => {}, '知道啦', true);
                 renderPupShop();
@@ -23691,9 +23721,15 @@
       const _vMsgInit = root.querySelector('#st-px-sell-vendor-msg');
       if (_vMsgInit) {
         if (_nowT < (_ve.sellRateUntil || 0)) {
-          _vMsgInit.textContent = _pokeMult > 1
-            ? '「心情超好~ 3 分钟内全场回收价 +25% 加成中！」'
-            : '「哼，还在生气中… 回收价暂时打 7 折哦（1币不变）。」';
+          const _remSec = Math.max(1, Math.ceil((_ve.sellRateUntil - _nowT) / 1000));
+          const _remTxt = _remSec >= 60 ? `剩 ${Math.floor(_remSec / 60)}分${_remSec % 60 ? (_remSec % 60) + '秒' : ''}` : `剩 ${_remSec}秒`;
+          if (_pokeMult > 1) {
+            const _pct = Math.round((_pokeMult - 1) * 100);
+            _vMsgInit.textContent = `「心情超好~ 全场回收价 +${_pct}% 加成中（${_remTxt}）！」`;
+          } else {
+            const _fold = Number((_pokeMult * 10).toFixed(1));
+            _vMsgInit.textContent = `「哼，还在生气中… 回收价暂时打 ${_fold} 折哦（${_remTxt}，1币不变）。」`;
+          }
         } else if (_ve.dailyMoodTxt) {
           _vMsgInit.textContent = `「${_ve.dailyMoodTxt}」`;
         }
@@ -42522,6 +42558,7 @@
       if (stFg) {
         pupBagEl.style.color = stFg;
         pupBagEl.style.setProperty('--px-fg', stFg);
+        pupBagEl.style.setProperty('--px-custom-fg', stFg);
       }
       if (headEl) {
         headEl.style.background = stBg || '';
@@ -42561,6 +42598,12 @@
     } else {
       pupBagEl.style.removeProperty('--px-border');
       pupBagEl.style.removeProperty('--px-fg');
+    }
+    const fgCol = config.puppyBagFg || '';
+    if (fgCol) {
+      pupBagEl.style.setProperty('--px-custom-fg', fgCol);
+    } else {
+      pupBagEl.style.removeProperty('--px-custom-fg');
     }
     if (headEl) {
       const parseRgb = (hex) => {
@@ -42739,6 +42782,7 @@
           config.puppyBagHead1 = pal.h1 || '';
           config.puppyBagHead2 = pal.h2 || '';
           config.puppyBagBorder = pal.bd || '';
+          config.puppyBagFg = pal.fg || '';
           saveConfig();
           applyPupCosmeticSkins();
           renderBagSkinCustomizer();
@@ -42762,12 +42806,14 @@
     if (bagHead1Input) bagHead1Input.value = config.puppyBagHead1 || '#e8d5db';
     if (bagHead2Input) bagHead2Input.value = config.puppyBagHead2 || '#dfd0d8';
     if (bagBorderInput) bagBorderInput.value = config.puppyBagBorder || '#bfa4ae';
+    if (bagFgInput) bagFgInput.value = config.puppyBagFg || '#54444a';
   };
 
   if (bagBgInput) bagBgInput.addEventListener('input', () => { config.puppyBagBg = bagBgInput.value; saveConfig(); applyPupCosmeticSkins(); });
   if (bagHead1Input) bagHead1Input.addEventListener('input', () => { config.puppyBagHead1 = bagHead1Input.value; saveConfig(); applyPupCosmeticSkins(); });
   if (bagHead2Input) bagHead2Input.addEventListener('input', () => { config.puppyBagHead2 = bagHead2Input.value; saveConfig(); applyPupCosmeticSkins(); });
   if (bagBorderInput) bagBorderInput.addEventListener('input', () => { config.puppyBagBorder = bagBorderInput.value; saveConfig(); applyPupCosmeticSkins(); });
+  if (bagFgInput) bagFgInput.addEventListener('input', () => { config.puppyBagFg = bagFgInput.value; saveConfig(); applyPupCosmeticSkins(); });
   if (bagPalSaveBtn) bagPalSaveBtn.addEventListener('click', () => {
     if (!Array.isArray(config.puppyBagPalettes)) config.puppyBagPalettes = [];
     const nm = (bagPalNameInput?.value || '').trim() || `配色${config.puppyBagPalettes.length + 1}`;
@@ -42777,6 +42823,7 @@
       h1: bagHead1Input?.value || '#e8d5db',
       h2: bagHead2Input?.value || '#dfd0d8',
       bd: bagBorderInput?.value || '#bfa4ae',
+      fg: config.puppyBagFg || '',
     });
     if (bagPalNameInput) bagPalNameInput.value = '';
     saveConfig();
@@ -42787,6 +42834,7 @@
     config.puppyBagHead1 = '';
     config.puppyBagHead2 = '';
     config.puppyBagBorder = '';
+    config.puppyBagFg = '';
     saveConfig();
     applyPupCosmeticSkins();
     renderBagSkinCustomizer();
@@ -45096,24 +45144,116 @@
       const ve = (config.puppyVendorEgg = config.puppyVendorEgg || {});
       if (gPokeCnt >= 5 && nowT >= (ve.gachaPokeCd || 0)) {
         gPokeCnt = 0;
-        ve.gachaPokeCd = nowT + 10 * 60000;
-        if (Math.random() < 0.70) {
-          config.puppyInventory = config.puppyInventory || {};
-          config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+        ve.gachaPokeCd = nowT + 60 * 60000;
+        if (Math.random() < 0.55) {
+          const goodEvts = [
+            { id: 'ticket1', w: 34 },
+            { id: 'coins', w: 26 },
+            { id: 'snack', w: 20 },
+            { id: 'pity_up', w: 12 },
+            { id: 'ticket2', w: 8 },
+          ];
+          let r = Math.random() * goodEvts.reduce((s, x) => s + x.w, 0);
+          let ev = goodEvts[0].id;
+          for (const x of goodEvts) { r -= x.w; if (r <= 0) { ev = x.id; break; } }
+          let gTxt = '';
+          let bubTxt = '';
+          if (ev === 'ticket1' || ev === 'ticket2') {
+            const cnt = ev === 'ticket2' ? 2 : 1;
+            config.puppyInventory = config.puppyInventory || {};
+            config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + cnt;
+            gTxt = cnt === 2
+              ? '呼噜噜…今天手劲刚好挠到痒处喵！老板大方塞你 2 张扭蛋券！'
+              : '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张扭蛋券！';
+            bubTxt = `招财喵老板开心送了 ${cnt} 张扭蛋券!`;
+          } else if (ev === 'coins') {
+            const gain = 8 + Math.floor(Math.random() * 11);
+            config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + gain;
+            if (config.puppyStats) config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + gain;
+            gTxt = `招财喵开心一抖铃铛，哗啦掉出 ${gain} 枚小狗币，全归你啦喵！`;
+            bubTxt = `招财喵掉出 ${gain} 枚小狗币!`;
+          } else if (ev === 'snack') {
+            const snacks = SHOP_PUP_GOODS.filter(x => x.cat === 'snack');
+            const chosen = snacks.length ? snacks[Math.floor(Math.random() * snacks.length)] : null;
+            if (chosen) {
+              config.puppyInventory = config.puppyInventory || {};
+              config.puppyInventory[chosen.id] = Math.max(0, Math.floor(config.puppyInventory[chosen.id] || 0)) + 1;
+              gTxt = `招财喵从柜台底下摸出私藏的「${chosen.name}」塞给你，拿去喂小狗吧喵！`;
+              bubTxt = `招财喵送了 1 份${chosen.name}!`;
+            } else {
+              config.puppyInventory = config.puppyInventory || {};
+              config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
+              gTxt = '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张扭蛋券！';
+              bubTxt = '招财喵老板开心送了 1 张扭蛋券!';
+            }
+          } else {
+            const curPity = Math.max(0, Math.floor(config.puppyGachaSsrPity || 0));
+            const addPity = Math.min(3, Math.max(0, 69 - curPity));
+            if (addPity > 0) {
+              config.puppyGachaSsrPity = curPity + addPity;
+              gTxt = `招财喵对着扭蛋机哈了口欧气，SSR 保底进度悄悄前进 +${addPity} 抽喵！`;
+              bubTxt = `招财喵加持 SSR 保底 +${addPity}!`;
+            } else {
+              const gain = 10;
+              config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) + gain;
+              gTxt = `招财喵见你马上要出金啦，顺手送你 ${gain} 枚小狗币助助兴喵！`;
+              bubTxt = `招财喵送了 ${gain} 枚小狗币!`;
+            }
+          }
           saveConfig();
+          updatePupStatBars();
           renderGachaView();
           drawGachaAvatar('happy');
           popGachaEmo('heart');
-          const gTxt = '呼噜呼噜…被顺毛太舒服了喵！悄悄塞你 1 张 扭蛋券！';
           if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
           openGuardConfirm('触发隐藏彩蛋 · 招财喵超开心！', gTxt, () => {}, '谢谢老板', true);
-          if (config.puppyEnabled) showPuppyBubble('招财喵老板开心送了 1 张扭蛋券!', 2200);
+          if (config.puppyEnabled && bubTxt) showPuppyBubble(bubTxt, 2200);
         } else {
-          ve.gachaLockUntil = nowT + 2 * 60000;
+          const badEvts = [
+            { id: 'lock', w: 34 },
+            { id: 'slap_coins', w: 28 },
+            { id: 'scare_mood', w: 22 },
+            { id: 'pity_drop', w: 16 },
+          ];
+          let r = Math.random() * badEvts.reduce((s, x) => s + x.w, 0);
+          let ev = badEvts[0].id;
+          for (const x of badEvts) { r -= x.w; if (r <= 0) { ev = x.id; break; } }
+          let gTxt = '';
+          if (ev === 'lock') {
+            const mins = 2 + Math.floor(Math.random() * 29);
+            ve.gachaLockUntil = nowT + mins * 60000;
+            gTxt = `喵呜！不准再揪胡子了！卷帘门拉下来冷静 ${mins} 分钟喵！`;
+          } else if (ev === 'slap_coins') {
+            const curCoins = Math.max(0, Math.floor(config.puppyCoins || 0));
+            const loss = Math.min(curCoins, 3 + Math.floor(Math.random() * 6));
+            if (loss > 0) {
+              config.puppyCoins = curCoins - loss;
+              gTxt = `喵嗷！爪子一挥把你兜里 ${loss} 枚小狗币拍进了功德箱，当精神损失费喵！`;
+            } else {
+              const mins = 2 + Math.floor(Math.random() * 29);
+              ve.gachaLockUntil = nowT + mins * 60000;
+              gTxt = `喵嗷！本来想没收几枚小狗币，结果你兜里比本喵脸还干净…卷帘门拉下冷静 ${mins} 分钟喵！`;
+            }
+          } else if (ev === 'scare_mood') {
+            config.puppyMood = Math.max(0, Math.round((config.puppyMood ?? 80) - 6));
+            gTxt = '哈——！招财喵突然炸毛哈气，把旁边的小狗吓了一跳，心情 -6！';
+          } else {
+            const curPity = Math.max(0, Math.floor(config.puppyGachaSsrPity || 0));
+            const drop = Math.min(curPity, 1 + Math.floor(Math.random() * 5));
+            if (drop > 0) {
+              config.puppyGachaSsrPity = curPity - drop;
+              gTxt = `喵哼！招财喵气得一巴掌拍歪机器，SSR 保底进度被震退了 ${drop} 抽！`;
+            } else {
+              const mins = 2 + Math.floor(Math.random() * 29);
+              ve.gachaLockUntil = nowT + mins * 60000;
+              gTxt = `喵呜！气得一爪拍在开关上，扭蛋机卡壳冷静 ${mins} 分钟喵！`;
+            }
+          }
           saveConfig();
+          updatePupStatBars();
+          renderGachaView();
           drawGachaAvatar('angry');
           popGachaEmo('anger');
-          const gTxt = '喵呜！不准再揪胡子了！卷帘门拉下来冷静 2 分钟喵！';
           if (gachaVendorMsg) gachaVendorMsg.textContent = `「${gTxt}」`;
           openGuardConfirm('触发隐藏彩蛋 · 招财喵生气啦！', gTxt, () => {}, '知错了', true);
         }
