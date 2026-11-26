@@ -2773,6 +2773,7 @@
     puppyReplyBell: true,
     puppyChatPeek: true,
     puppyBgNotify: true,
+    puppyIslandArtwork: true,
     puppyBellSound: true,
     puppyBellTone: 'ios_tri',
     puppyShowPersTag: false,
@@ -8755,6 +8756,10 @@
             </div>
           </div>
           <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
+            <span style="width:auto;">灵动岛显示小狗形象</span>
+            <button class="st-px-btn care" id="st-tb-pup-island-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;">已开启</button>
+          </div>
+          <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
             <span style="width:auto;">小狗自主说话频率</span>
             <div style="display:flex;gap:3px;" id="st-tb-pup-talkfreq-bar">
               <button class="st-px-btn" data-talk-freq="quiet" type="button" style="height:22px;padding:0 6px;font-size:10px;">安静</button>
@@ -11121,7 +11126,9 @@
       kaAudioEl.addEventListener('ended', onKaInterrupted);
       doc.body.appendChild(kaAudioEl);
       try {
-        if (win.navigator?.mediaSession) {
+        if (typeof syncDynamicIslandArtwork === 'function') {
+          syncDynamicIslandArtwork();
+        } else if (win.navigator?.mediaSession) {
           win.navigator.mediaSession.metadata = null;
           win.navigator.mediaSession.playbackState = 'none';
         }
@@ -11129,6 +11136,7 @@
       try {
         await kaAudioEl.play();
         kaNeedsGesture = false;
+        try { if (typeof syncDynamicIslandArtwork === 'function') syncDynamicIslandArtwork(); } catch (_) {}
       } catch (_) {
         kaNeedsGesture = true;
       }
@@ -21973,6 +21981,7 @@
     try { saveConfig(); } catch (_) {}
     try { if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true); } catch (_) {}
     try { if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto(); } catch (_) {}
+    try { if (typeof syncDynamicIslandArtwork === 'function') syncDynamicIslandArtwork(); } catch (_) {}
     try { if (typeof renderPupWardrobe === 'function') renderPupWardrobe(); } catch (_) {}
     try { if (typeof renderPupShop === 'function') renderPupShop(); } catch (_) {}
     try { if (typeof updatePupStatBars === 'function') updatePupStatBars(); } catch (_) {}
@@ -43480,6 +43489,101 @@
     });
   }
 
+  const pupIslandBtn = root.querySelector('#st-tb-pup-island-toggle');
+  const buildPuppyIslandArtworkUrl = () => {
+    try {
+      const cv = doc.createElement('canvas');
+      cv.width = 512; cv.height = 512;
+      const c2 = cv.getContext('2d');
+      if (!c2) return '';
+      c2.imageSmoothingEnabled = false;
+      // 柔和奶油底色，灵动岛小图与锁屏封面都清晰可爱
+      c2.fillStyle = '#fff5ee';
+      c2.fillRect(0, 0, 512, 512);
+      c2.fillStyle = '#ffe3ec';
+      c2.fillRect(24, 24, 464, 464);
+      c2.fillStyle = '#fffaf5';
+      c2.fillRect(40, 40, 432, 432);
+      // 绘制当前穿着完整装扮的像素小狗（整数 16x 缩放，边缘锐利不发糊）
+      const pal = getPupPalette();
+      const grid = PUP_SPRITES.idle1 || [];
+      const scale = 16;
+      const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
+      c2.save();
+      c2.translate(64, 52);
+      c2.scale(scale, scale);
+      for (let y = 0; y < grid.length; y++) {
+        const row = grid[y];
+        for (let x = 0; x < row.length; x++) {
+          const col = pal[row[x]];
+          if (col) { c2.fillStyle = col; c2.fillRect(ox + x, oy + y, 1, 1); }
+        }
+      }
+      const prevCtx = activePxCtx;
+      try {
+        activePxCtx = c2;
+        drawPupOutfit(config.puppyOutfit || 'none', ox, oy, hx, hy, false, false, false, false);
+        if (Array.isArray(config.puppyAccs)) config.puppyAccs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+        drawPupCompanion(config.puppyCompanion || 'none', ox, oy, false);
+      } finally {
+        activePxCtx = prevCtx;
+      }
+      c2.restore();
+      return cv.toDataURL('image/png');
+    } catch (_) {
+      return '';
+    }
+  };
+  const syncPuppyPageTouchIcon = (artUrl) => {
+    if (!artUrl || config.puppyIslandArtwork === false) return;
+    try {
+      const head = doc.head || doc.documentElement;
+      if (!head) return;
+      ['apple-touch-icon', 'icon'].forEach(rel => {
+        let lk = head.querySelector(`link[rel="${rel}"][data-glc-pup-icon="1"]`) || head.querySelector(`link[rel="${rel}"]`);
+        if (!lk) {
+          lk = doc.createElement('link');
+          lk.rel = rel;
+          head.appendChild(lk);
+        }
+        lk.setAttribute('data-glc-pup-icon', '1');
+        lk.href = artUrl;
+      });
+    } catch (_) {}
+  };
+  setTimeout(() => {
+    try {
+      if (config.puppyIslandArtwork !== false) {
+        const u = buildPuppyIslandArtworkUrl();
+        if (u) syncPuppyPageTouchIcon(u);
+      }
+    } catch (_) {}
+  }, 1800);
+
+  var syncDynamicIslandArtwork = () => {
+    try {
+      const artUrlNow = config.puppyIslandArtwork !== false ? buildPuppyIslandArtworkUrl() : '';
+      if (artUrlNow) syncPuppyPageTouchIcon(artUrlNow);
+      if (!win.navigator?.mediaSession) return;
+      if (!config.keepAlive || config.keepAlivePolicy !== 'exclusive') return;
+      if (config.puppyIslandArtwork === false) {
+        win.navigator.mediaSession.metadata = null;
+        win.navigator.mediaSession.playbackState = 'none';
+        return;
+      }
+      if (typeof MediaMetadata === 'undefined') return;
+      const artUrl = buildPuppyIslandArtworkUrl();
+      const pname = getPupName();
+      win.navigator.mediaSession.metadata = new MediaMetadata({
+        title: `${pname}正在陪伴中`,
+        artist: '狗来财 · 后台守护',
+        album: `${pname}的小窝`,
+        artwork: artUrl ? [{ src: artUrl, sizes: '512x512', type: 'image/png' }] : [],
+      });
+      win.navigator.mediaSession.playbackState = 'playing';
+    } catch (_) {}
+  };
+
   const syncBgNotifyUI = () => {
     if (pupBgNotifyBtn) {
       const on = config.puppyBgNotify !== false;
@@ -43493,7 +43597,24 @@
       pupSoundBtn.classList.toggle('active', on);
       pupSoundBtn.classList.toggle('care', on);
     }
+    if (pupIslandBtn) {
+      const on = config.puppyIslandArtwork !== false;
+      pupIslandBtn.textContent = on ? '已开启' : '已关闭';
+      pupIslandBtn.classList.toggle('active', on);
+      pupIslandBtn.classList.toggle('care', on);
+    }
   };
+  if (pupIslandBtn) {
+    pupIslandBtn.addEventListener('click', () => {
+      config.puppyIslandArtwork = !(config.puppyIslandArtwork !== false);
+      saveConfig();
+      syncBgNotifyUI();
+      syncDynamicIslandArtwork();
+      if (config.puppyEnabled) {
+        showPuppyBubble(config.puppyIslandArtwork ? '强保活时灵动岛会显示我的样子啦~' : '已关闭灵动岛小狗形象显示~', 2200);
+      }
+    });
+  }
   if (pupBgNotifyBtn) {
     pupBgNotifyBtn.addEventListener('click', () => {
       config.puppyBgNotify = !(config.puppyBgNotify !== false);
@@ -43700,17 +43821,20 @@
       const titlePool = BG_NOTIFY_TITLE_BY_PERS[curBellP] || BG_NOTIFY_TITLE_BY_PERS.sleepyhead;
       const notifyTitle = pick(titlePool).replace(/\{name\}/g, getPupName());
       let iconUrl = '';
-      try { if (puppyCanvas) iconUrl = puppyCanvas.toDataURL('image/png'); } catch (_) {}
+      try {
+        if (typeof buildPuppyIslandArtworkUrl === 'function') iconUrl = buildPuppyIslandArtworkUrl();
+        if (!iconUrl && puppyCanvas) iconUrl = puppyCanvas.toDataURL('image/png');
+      } catch (_) {}
 
       // 震动 + 锁屏/控制中心媒体横幅兜底（即便在非 HTTPS 手机网页也生效！）
       try { if (navigator.vibrate) navigator.vibrate([160, 80, 200]); } catch (_) {}
       try {
-        if ('mediaSession' in navigator && typeof MediaMetadata !== 'undefined') {
+        if ('mediaSession' in navigator && typeof MediaMetadata !== 'undefined' && config.puppyIslandArtwork !== false) {
           navigator.mediaSession.metadata = new MediaMetadata({
             title: notifyTitle,
             artist: bodyTxt,
-            album: 'SillyTavern 小狗提醒',
-            artwork: iconUrl ? [{ src: iconUrl, sizes: '72x72', type: 'image/png' }] : [],
+            album: `${getPupName()}的小窝`,
+            artwork: iconUrl ? [{ src: iconUrl, sizes: '512x512', type: 'image/png' }] : [],
           });
         }
       } catch (_) {}
@@ -43722,14 +43846,14 @@
           if (navigator.serviceWorker && navigator.serviceWorker.ready) {
             navigator.serviceWorker.ready.then(reg => {
               if (reg && typeof reg.showNotification === 'function') {
-                reg.showNotification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, tag: nTag, renotify: true, silent: false })
+                reg.showNotification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, badge: iconUrl || undefined, image: iconUrl || undefined, tag: nTag, renotify: true, silent: false })
                   .catch(() => reg.showNotification(notifyTitle, { body: bodyTxt, tag: nTag, renotify: true, silent: false }).catch(() => {}));
               }
             }).catch(() => {});
           }
         } catch (_) {}
         try {
-          const n = new Notification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, tag: nTag, renotify: true, silent: false, requireInteraction: false });
+          const n = new Notification(notifyTitle, { body: bodyTxt, icon: iconUrl || undefined, badge: iconUrl || undefined, image: iconUrl || undefined, tag: nTag, renotify: true, silent: false, requireInteraction: false });
           n.onclick = () => { try { win.focus(); } catch (_) {} n.close(); };
           fired = true;
         } catch (_) {
@@ -49114,6 +49238,7 @@
     syncPuppyBagUI();
     checkPupAchievements();
     const callMe = ownerVal || '你';
+    try { if (typeof syncDynamicIslandArtwork === 'function') syncDynamicIslandArtwork(); } catch (_) {}
     showPuppyBubble(getPersExtra('nameSave', { callMe, selfName: selfVal || val }), 2400);
   });
   bdaySaveBtn.addEventListener('click', () => {
