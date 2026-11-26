@@ -22911,6 +22911,186 @@
     return m.expireAt > now;
   };
 
+  const MERCHANT_NPC_LINES = [
+    '嘘——这批货我可是翻了三座山才淘来的，别声张。',
+    '眼光不错嘛小狗老板，点一下商品就能先预览效果哦！',
+    '扭蛋券我每趟只带五张，手慢可就没啦。',
+    '小推车停不了多久，看中哪件趁早下手~',
+    '今天风大，给你算个老熟人折扣价！',
+    '别戳我的兜帽啦，再戳……再戳也不会再便宜一币的！',
+    '听说隔壁小狗穿了这套回头率百分百呢。',
+    '货真价实，童叟无欺，买前点开预览包你放心！',
+  ];
+  let merchantLineIdx = 0;
+
+  const drawMerchantNpcCanvas = (cv, bounce = false) => {
+    if (!cv) return;
+    const g = cv.getContext('2d');
+    if (!g) return;
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, cv.width, cv.height);
+    const dy = bounce ? -1 : 0;
+    // 暖色星夜背景小卡
+    g.fillStyle = '#2d2444'; g.fillRect(0, 0, 24, 24);
+    g.fillStyle = '#3f3261'; g.fillRect(1, 1, 22, 16);
+    g.fillStyle = '#ffe580'; g.fillRect(3, 3, 1, 1); g.fillRect(19, 4, 1, 1); g.fillRect(16, 2, 1, 1);
+    // 木质小推车护栏与轮子（右下）
+    g.fillStyle = '#8c5632'; g.fillRect(1, 18, 22, 3);
+    g.fillStyle = '#b37446'; g.fillRect(2, 19, 20, 1);
+    g.fillStyle = '#5c361e'; g.fillRect(4, 21, 4, 3); g.fillRect(16, 21, 4, 3);
+    g.fillStyle = '#d9a468'; g.fillRect(5, 22, 2, 1); g.fillRect(17, 22, 2, 1);
+    // 神秘商人兜帽披风（深紫罗兰 + 金边）
+    g.fillStyle = '#563c7a'; g.fillRect(7, 4 + dy, 10, 6); g.fillRect(6, 7 + dy, 12, 11);
+    g.fillStyle = '#7352a1'; g.fillRect(8, 5 + dy, 8, 3); g.fillRect(7, 11 + dy, 10, 6);
+    // 金色兜帽边与领扣
+    g.fillStyle = '#f5c84c'; g.fillRect(7, 9 + dy, 10, 1); g.fillRect(11, 12 + dy, 2, 2);
+    // 兜帽阴影与发光小眼睛（神秘猫猫/狐狸商人）
+    g.fillStyle = '#221733'; g.fillRect(8, 6 + dy, 8, 4);
+    g.fillStyle = '#ffe066'; g.fillRect(9, 8 + dy, 2, 1); g.fillRect(13, 8 + dy, 2, 1);
+    // 尖尖小耳朵从兜帽顶探出
+    g.fillStyle = '#563c7a'; g.fillRect(7, 3 + dy, 2, 2); g.fillRect(15, 3 + dy, 2, 2);
+    // 手提暖光小灯笼（右侧）
+    g.fillStyle = '#5c361e'; g.fillRect(18, 8 + dy, 1, 10); g.fillRect(18, 8 + dy, 3, 1);
+    g.fillStyle = '#ffcf54'; g.fillRect(19, 10 + dy, 3, 4);
+    g.fillStyle = '#fff9c4'; g.fillRect(20, 11 + dy, 1, 2);
+  };
+
+  const openMerchantItemPreviewModal = (it, onBuy) => {
+    if (!it) return;
+    let mask = root.querySelector('#st-tb-merchant-preview-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-merchant-preview-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const kindLabels = {
+      outfit: '服装', acc: '饰品', comp: '随行伙伴', badge: '专属徽章',
+      trail: '像素拖尾', bubble: '对话气泡', avatarframe: '头像框',
+    };
+    const kindLabel = kindLabels[it.kind] || '特惠好物';
+
+    mask.innerHTML = `<div style="width:284px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12px;font-weight:700;">商品试看 · ${escapeHtmlSimple(kindLabel)}</span>
+        <button type="button" id="st-mp-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div id="st-mp-stage" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:112px;padding:10px;background:#ffffff;border:2px solid ${pxBd};margin-bottom:8px;"></div>
+      <div style="text-align:center;margin-bottom:9px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:2px;">${escapeHtmlSimple(it.name)}</div>
+        <div style="font-size:10.5px;opacity:0.82;">原价 <span style="text-decoration:line-through;">${it.origPrice}</span> 币 → 神秘特惠 <b style="color:#d94c7a;">${it.salePrice} 币</b></div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button type="button" id="st-mp-close" class="st-px-btn" style="flex:1;">先看看</button>
+        <button type="button" id="st-mp-buy" class="st-px-btn${it.sold ? '' : ' care'}" style="flex:1.4;" ${it.sold ? 'disabled' : ''}>${it.sold ? '已购入' : `特惠买下 (${it.salePrice}币)`}</button>
+      </div>
+    </div>`;
+
+    const stage = mask.querySelector('#st-mp-stage');
+    if (stage) {
+      if (it.kind === 'outfit' || it.kind === 'acc' || it.kind === 'comp') {
+        const cv = doc.createElement('canvas');
+        cv.width = 32; cv.height = 32;
+        cv.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;display:block;';
+        const c2 = cv.getContext('2d');
+        if (c2) {
+          c2.imageSmoothingEnabled = false;
+          const grid = PUP_FRAMES.idle1 || [];
+          const pal = getPupPalette(config.puppyFur, config.puppyEar, config.puppyCollar, config.puppyOutline, config.puppyShowCollar !== false);
+          const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
+          for (let y = 0; y < grid.length; y++) {
+            const row = grid[y];
+            for (let x = 0; x < row.length; x++) {
+              const col = pal[row[x]];
+              if (col) { c2.fillStyle = col; c2.fillRect(ox + x, oy + y, 1, 1); }
+            }
+          }
+          const prevCtx = activePxCtx;
+          try {
+            activePxCtx = c2;
+            const prevOutfit = it.kind === 'outfit' ? it.id : (config.puppyOutfit || 'none');
+            drawPupOutfit(prevOutfit, ox, oy, hx, hy, false, false, false, false);
+            const accList = it.kind === 'acc' ? [it.id] : (Array.isArray(config.puppyAccs) ? config.puppyAccs : []);
+            accList.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+            const prevComp = it.kind === 'comp' ? it.id : (config.puppyCompanion || 'none');
+            drawPupCompanion(prevComp, ox, oy, false);
+          } finally {
+            activePxCtx = prevCtx;
+          }
+        }
+        stage.appendChild(cv);
+        const cap = doc.createElement('div');
+        cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:4px;';
+        cap.textContent = `${getPupName()} 试穿效果预览`;
+        stage.appendChild(cap);
+      } else if (it.kind === 'avatarframe') {
+        const lk = {
+          fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
+          showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit, accs: config.puppyAccs,
+          accOffsets: config.puppyAccOffsets, comp: config.puppyCompanion, onesieShowEars: config.puppyOnesieShowEars,
+          avatarFrame: it.id,
+        };
+        const av = makeFriendAvatarCanvas(lk);
+        av.style.transform = 'scale(1.45)';
+        av.style.margin = '14px 0';
+        stage.appendChild(av);
+        const cap = doc.createElement('div');
+        cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:6px;';
+        cap.textContent = '头像框佩戴预览';
+        stage.appendChild(cap);
+      } else if (it.kind === 'bubble') {
+        const bObj = (SHOP_PUP_BUBBLES || []).find(x => x.id === it.id);
+        const bub = doc.createElement('div');
+        bub.style.cssText = `padding:8px 12px;font-size:11px;font-weight:700;background:${bObj?.bg || '#fff'};color:${bObj?.fg || '#3b2a22'};border:2px solid ${bObj?.bd || pxBd};box-shadow:3px 3px 0 rgba(0,0,0,0.14);border-radius:${bObj?.radius || '8px'};max-width:210px;text-align:center;`;
+        bub.textContent = `汪！这就是「${it.name}」的对话气泡效果~`;
+        stage.appendChild(bub);
+      } else if (it.kind === 'trail') {
+        const tObj = (SHOP_PUP_TRAILS || []).find(x => x.id === it.id);
+        const cols = (tObj && Array.isArray(tObj.colors) && tObj.colors.length) ? tObj.colors : ['#ff8aa8', '#ffe066', '#88d4ff'];
+        const bar = doc.createElement('div');
+        bar.style.cssText = 'display:flex;align-items:center;gap:6px;padding:12px 14px;background:#f9f5f7;border:1.5px dashed ' + pxBd + ';';
+        for (let i = 0; i < 8; i++) {
+          const dot = doc.createElement('span');
+          const sz = 6 + (i % 3) * 3;
+          dot.style.cssText = `display:inline-block;width:${sz}px;height:${sz}px;background:${cols[i % cols.length]};opacity:${(0.4 + i * 0.08).toFixed(2)};`;
+          bar.appendChild(dot);
+        }
+        stage.appendChild(bar);
+        const cap = doc.createElement('div');
+        cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:6px;';
+        cap.textContent = tObj?.desc || '小狗行走时的专属像素拖尾特效';
+        stage.appendChild(cap);
+      } else {
+        const bdObj = (SHOP_PUP_BADGES || []).find(x => x.id === it.id);
+        const pill = doc.createElement('div');
+        pill.style.cssText = `padding:7px 14px;font-size:11.5px;font-weight:700;background:${bdObj?.bg || '#fff4d6'};color:${bdObj?.fg || '#6b4210'};border:2px solid ${bdObj?.bd || '#d9a441'};box-shadow:3px 3px 0 rgba(0,0,0,0.14);`;
+        pill.textContent = bdObj?.title || it.name;
+        stage.appendChild(pill);
+        if (bdObj?.desc) {
+          const cap = doc.createElement('div');
+          cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:6px;text-align:center;';
+          cap.textContent = bdObj.desc;
+          stage.appendChild(cap);
+        }
+      }
+    }
+
+    const closeMp = () => { mask.style.display = 'none'; };
+    mask.onclick = (e) => { e.stopPropagation(); if (e.target === mask) closeMp(); };
+    mask.querySelector('#st-mp-x')?.addEventListener('click', closeMp);
+    mask.querySelector('#st-mp-close')?.addEventListener('click', closeMp);
+    mask.querySelector('#st-mp-buy')?.addEventListener('click', () => {
+      closeMp();
+      if (typeof onBuy === 'function') onBuy();
+    });
+    bringModalFront(mask);
+    mask.style.display = 'flex';
+  };
+
   const renderMerchantBannerInShop = () => {
     if (!pupShopGridEl || !pupShopGridEl.parentElement) return;
     const isActive = tickMerchantLifecycle();
@@ -22924,7 +23104,7 @@
       box = doc.createElement('div');
       box.id = 'st-px-merchant-box';
       box.className = 'st-px-adv-card';
-      box.style.cssText = 'margin-bottom:6px;padding:6px 7px;';
+      box.style.cssText = 'margin-bottom:6px;padding:7px 8px;';
       const filterEl = root.querySelector('#st-px-shop-own-filter');
       pupShopGridEl.parentElement.insertBefore(box, filterEl || pupShopGridEl);
     }
@@ -22933,9 +23113,35 @@
     box.innerHTML = '';
 
     const head = doc.createElement('div');
-    head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-weight:700;font-size:10.5px;';
+    head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-weight:700;font-size:10.5px;';
     head.innerHTML = `<span>神秘商人小推车</span><span style="opacity:0.75;font-weight:400;">剩余 ${leftMin} 分钟</span>`;
     box.appendChild(head);
+
+    // 神秘商人像素形象 + 可点击对话气泡
+    const npcRow = doc.createElement('div');
+    npcRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:7px;padding:5px 6px;background:var(--px-card,#ffffff);border:1.5px solid var(--px-border,#bfa4ae);cursor:pointer;';
+    npcRow.title = '点点神秘商人听听他说什么';
+    const npcCv = doc.createElement('canvas');
+    npcCv.width = 24; npcCv.height = 24;
+    npcCv.style.cssText = 'width:46px;height:46px;image-rendering:pixelated;border:1.5px solid var(--px-border,#bfa4ae);flex-shrink:0;display:block;';
+    drawMerchantNpcCanvas(npcCv, false);
+    const npcTalkWrap = doc.createElement('div');
+    npcTalkWrap.style.cssText = 'flex:1;min-width:0;';
+    const npcTag = doc.createElement('div');
+    npcTag.style.cssText = 'font-size:9.5px;font-weight:700;opacity:0.78;margin-bottom:2px;';
+    npcTag.textContent = '旅行商人 · 戳我搭话';
+    const npcLine = doc.createElement('div');
+    npcLine.style.cssText = 'font-size:10px;line-height:1.42;word-break:break-word;';
+    npcLine.textContent = `「${MERCHANT_NPC_LINES[merchantLineIdx % MERCHANT_NPC_LINES.length]}」`;
+    npcTalkWrap.append(npcTag, npcLine);
+    npcRow.append(npcCv, npcTalkWrap);
+    npcRow.addEventListener('click', () => {
+      merchantLineIdx = (merchantLineIdx + 1) % MERCHANT_NPC_LINES.length;
+      npcLine.textContent = `「${MERCHANT_NPC_LINES[merchantLineIdx]}」`;
+      drawMerchantNpcCanvas(npcCv, true);
+      setTimeout(() => drawMerchantNpcCanvas(npcCv, false), 180);
+    });
+    box.appendChild(npcRow);
 
     const list = doc.createElement('div');
     list.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
@@ -22949,7 +23155,7 @@
     const tBtn = doc.createElement('button');
     tBtn.type = 'button';
     tBtn.className = 'st-px-btn' + (tLeft > 0 ? ' care' : '');
-    tBtn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;';
+    tBtn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;flex-shrink:0;';
     tBtn.textContent = tLeft > 0 ? '买1张 (8币)' : '已售罄';
     tBtn.disabled = tLeft <= 0;
     tBtn.addEventListener('click', () => {
@@ -22970,20 +23176,11 @@
     tRow.append(tName, tBtn);
     list.appendChild(tRow);
 
-    // 2. 随机 2-3 件未拥有的打折商品
+    // 2. 随机 2-3 件未拥有的打折商品（支持点击预览）
     (m.items || []).forEach(it => {
       const row = doc.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:10px;';
-      const nm = doc.createElement('span');
-      nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-      nm.textContent = `${it.name} · 原${it.origPrice}币 → ${it.salePrice}币`;
-      const btn = doc.createElement('button');
-      btn.type = 'button';
-      btn.className = 'st-px-btn' + (!it.sold ? ' care' : '');
-      btn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;flex-shrink:0;';
-      btn.textContent = it.sold ? '已购' : `买 (${it.salePrice}币)`;
-      btn.disabled = Boolean(it.sold);
-      btn.addEventListener('click', () => {
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;';
+      const doBuy = () => {
         const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
         if (curC < it.salePrice) { setShopNotice(`小狗币不足，还差 ${it.salePrice - curC} 币`); return; }
         openGuardConfirm('确认购买神秘商人特惠？', `花费 ${it.salePrice} 枚小狗币购入【${it.name}】（原价 ${it.origPrice} 币，余额 ${curC} 币）。`, () => {
@@ -23003,11 +23200,28 @@
           renderPupShop();
           setShopNotice(`已特惠购入【${it.name}】`);
         }, '确认购买', true);
-      });
-      row.append(nm, btn);
+      };
+      const nm = doc.createElement('span');
+      nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;text-decoration:underline dotted;';
+      nm.title = '点击预览商品效果';
+      nm.textContent = `${it.name} · 原${it.origPrice}币 → ${it.salePrice}币`;
+      nm.addEventListener('click', () => openMerchantItemPreviewModal(it, doBuy));
+      const pvBtn = doc.createElement('button');
+      pvBtn.type = 'button';
+      pvBtn.className = 'st-px-btn';
+      pvBtn.style.cssText = 'height:20px;padding:0 5px;font-size:9px;line-height:18px;flex-shrink:0;';
+      pvBtn.textContent = '预览';
+      pvBtn.addEventListener('click', () => openMerchantItemPreviewModal(it, doBuy));
+      const btn = doc.createElement('button');
+      btn.type = 'button';
+      btn.className = 'st-px-btn' + (!it.sold ? ' care' : '');
+      btn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;flex-shrink:0;';
+      btn.textContent = it.sold ? '已购' : `买 (${it.salePrice}币)`;
+      btn.disabled = Boolean(it.sold);
+      btn.addEventListener('click', doBuy);
+      row.append(nm, pvBtn, btn);
       list.appendChild(row);
     });
-
     box.appendChild(list);
   };
 
@@ -32387,12 +32601,29 @@
     guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', () => dismissGuestPuppy(guestId));
   };
 
-  let modalStackZ = 9991;
+  const ALL_PUP_MODAL_IDS = [
+    'st-tb-px-notice-mask',
+    'st-tb-friends-mask',
+    'st-tb-bond-mask',
+    'st-tb-noteboard-mask',
+    'st-tb-writenote-mask',
+    'st-tb-cloud-send-mask',
+    'st-tb-freq-mask',
+    'st-tb-coadv-prog-mask',
+    'st-tb-coadv-result-mask',
+    'st-tb-merchant-preview-mask',
+    'st-tb-dark-buff-mask',
+  ];
   const bringModalFront = (maskEl) => {
     if (!maskEl) return;
-    modalStackZ += 1;
-    if (modalStackZ > 9995) modalStackZ = 9992;
-    maskEl.style.zIndex = String(modalStackZ);
+    const visibleOthers = ALL_PUP_MODAL_IDS
+      .map(id => root.querySelector('#' + id))
+      .filter(el => el && el !== maskEl && el.style.display && el.style.display !== 'none');
+    visibleOthers.sort((a, b) => (Number(a.style.zIndex) || 9992) - (Number(b.style.zIndex) || 9992));
+    visibleOthers.forEach((el, idx) => {
+      el.style.zIndex = String(Math.min(9994, 9992 + idx));
+    });
+    maskEl.style.zIndex = '9995';
   };
 
   const PX_ICO_HEART = `<svg width="10" height="9" viewBox="0 0 10 9" style="display:block;flex-shrink:0;margin:0;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="1" y="1" width="3" height="2" fill="#e05884"/><rect x="6" y="1" width="3" height="2" fill="#e05884"/><rect x="1" y="3" width="8" height="2" fill="#e05884"/><rect x="2" y="5" width="6" height="1" fill="#e05884"/><rect x="3" y="6" width="4" height="1" fill="#e05884"/><rect x="4" y="7" width="2" height="1" fill="#e05884"/><rect x="2" y="2" width="1" height="1" fill="#ffc4d6"/></svg>`;
@@ -34301,11 +34532,59 @@
       ctx2.fillStyle = '#8c5632'; ctx2.fillRect(0, 22, 54, 14);
       ctx2.fillStyle = '#f5c242'; ctx2.fillRect(40, 18, 8, 6); ctx2.fillStyle = '#fff5b8'; ctx2.fillRect(42, 19, 4, 2);
     } else if (m === 'patisserie') {
-      // 法式街角甜品屋：粉白条纹遮阳棚 + 暖光橱窗 + 蛋糕塔
-      ctx2.fillStyle = '#fff5f8'; ctx2.fillRect(4, 6, 46, 18);
-      for (let i = 0; i < 8; i++) { ctx2.fillStyle = i % 2 ? '#ff8aa8' : '#ffffff'; ctx2.fillRect(3 + i * 6, 6, 6, 5); }
-      ctx2.fillStyle = '#d9f2ff'; ctx2.fillRect(8, 13, 14, 9); ctx2.fillRect(32, 13, 14, 9);
-      ctx2.fillStyle = '#ff96b8'; ctx2.fillRect(12, 18, 6, 4); ctx2.fillStyle = '#ffe078'; ctx2.fillRect(36, 17, 6, 5);
+      // 法式街角甜品屋：法式蓝灰斜顶 + 金框招牌 + 玫瑰奶油条纹遮阳棚 + 暖光甜品橱窗 + 鼠尾草绿木门 + 花箱与石板路
+      // 巴黎蓝灰孟莎屋顶与小天窗
+      ctx2.fillStyle = '#5c6c87'; ctx2.fillRect(3, 1, 48, 5);
+      ctx2.fillStyle = '#7486a3'; ctx2.fillRect(5, 2, 44, 2);
+      ctx2.fillStyle = '#48566e'; ctx2.fillRect(2, 5, 50, 1);
+      ctx2.fillStyle = '#fff0c2'; ctx2.fillRect(11, 2, 4, 3); ctx2.fillRect(39, 2, 4, 3);
+      // 奶油石膏墙面与立柱装饰
+      ctx2.fillStyle = '#fff5ea'; ctx2.fillRect(4, 6, 46, 18);
+      ctx2.fillStyle = '#ebd9c8'; ctx2.fillRect(4, 6, 2, 18); ctx2.fillRect(48, 6, 2, 18); ctx2.fillRect(29, 13, 2, 11);
+      // 复古酒红金边法式店招
+      ctx2.fillStyle = '#73384a'; ctx2.fillRect(12, 6, 30, 4);
+      ctx2.fillStyle = '#f2cf78'; ctx2.fillRect(13, 6, 28, 1); ctx2.fillRect(13, 9, 28, 1);
+      ctx2.fillStyle = '#fff7e0';
+      for (let x = 16; x <= 36; x += 3) ctx2.fillRect(x, 7, 2, 1);
+      // 玫瑰粉白条纹波浪遮阳棚 + 棚下阴影
+      for (let i = 0; i < 12; i++) {
+        ctx2.fillStyle = i % 2 ? '#ef7a96' : '#fffaf5';
+        ctx2.fillRect(3 + i * 4, 10, 4, 4);
+        ctx2.fillStyle = i % 2 ? '#d6607d' : '#f2e4da';
+        ctx2.fillRect(3 + i * 4, 14, 4, 1);
+      }
+      ctx2.fillStyle = 'rgba(120,76,84,0.18)'; ctx2.fillRect(4, 15, 46, 1);
+      // 左侧暖光烘焙橱窗 + 草莓双层蛋糕 & 彩色马卡龙
+      ctx2.fillStyle = '#8c5840'; ctx2.fillRect(7, 15, 20, 9);
+      ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(8, 16, 18, 7);
+      ctx2.fillStyle = '#ffd680'; ctx2.fillRect(8, 20, 18, 3);
+      // 窗格高光
+      ctx2.fillStyle = 'rgba(255,255,255,0.65)'; ctx2.fillRect(9, 16, 2, 3);
+      // 橱窗内双层草莓奶油蛋糕
+      ctx2.fillStyle = '#fff8fa'; ctx2.fillRect(10, 20, 6, 3); ctx2.fillRect(11, 18, 4, 2);
+      ctx2.fillStyle = '#e8527a'; ctx2.fillRect(12, 17, 2, 1); ctx2.fillRect(10, 20, 6, 1);
+      // 橱窗内马卡龙小碟
+      ctx2.fillStyle = '#ff96b8'; ctx2.fillRect(19, 21, 2, 2);
+      ctx2.fillStyle = '#8be0b8'; ctx2.fillRect(21, 21, 2, 2);
+      ctx2.fillStyle = '#ffe066'; ctx2.fillRect(23, 21, 2, 2);
+      // 窗台小花箱（绿叶 + 粉红玫瑰）
+      ctx2.fillStyle = '#6c9c5e'; ctx2.fillRect(7, 23, 20, 2);
+      ctx2.fillStyle = '#ff6e96'; ctx2.fillRect(9, 22, 2, 2); ctx2.fillRect(16, 22, 2, 2); ctx2.fillRect(23, 22, 2, 2);
+      // 右侧鼠尾草绿法式木门 + 玻璃窗格 + 黄铜把手
+      ctx2.fillStyle = '#6e9985'; ctx2.fillRect(33, 15, 11, 9);
+      ctx2.fillStyle = '#587d6c'; ctx2.fillRect(33, 15, 11, 1);
+      ctx2.fillStyle = '#ffeab0'; ctx2.fillRect(35, 16, 7, 4);
+      ctx2.fillStyle = '#6e9985'; ctx2.fillRect(38, 16, 1, 4);
+      ctx2.fillStyle = '#f2c95e'; ctx2.fillRect(42, 21, 1, 2);
+      // 门边暖色小壁灯
+      ctx2.fillStyle = '#5c463c'; ctx2.fillRect(45, 16, 2, 3);
+      ctx2.fillStyle = '#fff2a6'; ctx2.fillRect(45, 17, 2, 2);
+      // 法式暖灰石板街道纹理
+      ctx2.fillStyle = '#d9c6bc'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#cbb4a8';
+      for (let ry = 25; ry < 35; ry += 3) {
+        for (let rx = (ry % 2 ? 2 : 6); rx < 52; rx += 9) ctx2.fillRect(rx, ry, 5, 1);
+      }
     } else if (m === 'igloo') {
       // 极光冰屋营地：流动翡翠粉极光带 + 圆拱冰屋 + 暖黄门洞
       ctx2.fillStyle = 'rgba(110,255,196,0.45)'; ctx2.fillRect(4, 4, 28, 4); ctx2.fillRect(20, 7, 30, 4);
@@ -34474,9 +34753,6 @@
     }, v.p1 || 'happy', lay.x1, lay.y1, lay.d1);
     drawMiniDog(shot.frLook || {}, v.p2 || 'idle1', lay.x2, lay.y2, lay.d2);
 
-    // 氛围粒子（爱心/星光/音符）
-    ctx2.fillStyle = v.fx === 'heart' ? '#ff6e9c' : (v.fx === 'note' ? '#6eb8ff' : '#ffe066');
-    ctx2.fillRect(25, 13, 2, 2); ctx2.fillRect(28, 11, 2, 2);
     ctx2.restore();
   };
 
@@ -34523,6 +34799,248 @@
     return config.puppyCoopAdvCooldowns;
   };
 
+  let coAdvProgTimer = null;
+  const closeCoopAdvProgressModal = () => {
+    if (coAdvProgTimer) { clearInterval(coAdvProgTimer); coAdvProgTimer = null; }
+    const m = root.querySelector('#st-tb-coadv-prog-mask');
+    if (m) m.style.display = 'none';
+  };
+
+  const openCoopAdvProgressModal = (friendCloudId) => {
+    const advMap = getCoopAdvMap();
+    const ca = advMap[friendCloudId];
+    if (!ca) return;
+    if (ca.endAt <= Date.now()) {
+      closeCoopAdvProgressModal();
+      claimCoopCloudAdventure(friendCloudId);
+      return;
+    }
+    if (coAdvProgTimer) { clearInterval(coAdvProgTimer); coAdvProgTimer = null; }
+    let mask = root.querySelector('#st-tb-coadv-prog-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-coadv-prog-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const fr = getFriendList().find(x => x && x.cloudId === friendCloudId);
+    const frLook = fr?.look || ca.friendLook || {};
+    const myLook = {
+      fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
+      showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit, accs: config.puppyAccs,
+      accOffsets: config.puppyAccOffsets, comp: config.puppyCompanion, onesieShowEars: config.puppyOnesieShowEars,
+    };
+
+    mask.innerHTML = `<div style="width:292px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12px;font-weight:700;">双狗探险中</span>
+        <button type="button" id="st-cap-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+      </div>
+      <div style="display:flex;justify-content:center;margin-bottom:8px;">
+        <canvas id="st-cap-cv" width="110" height="46" style="width:242px;height:101px;image-rendering:pixelated;border:2px solid ${pxBd};background:#ccecff;display:block;"></canvas>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:700;margin-bottom:4px;">
+        <span>${escapeHtmlSimple(getPupName())} &amp; ${escapeHtmlSimple(ca.friendName || '好友')}</span>
+        <span id="st-cap-time" style="font-weight:700;opacity:0.85;">--:--</span>
+      </div>
+      <div style="height:8px;background:#ffffff;border:1.5px solid ${pxBd};overflow:hidden;margin-bottom:7px;">
+        <div id="st-cap-bar" style="height:100%;width:0%;background:var(--px-accent,#9e6b7e);transition:width 0.25s linear;"></div>
+      </div>
+      <div id="st-cap-tip" style="font-size:10px;opacity:0.82;text-align:center;margin-bottom:9px;">两只小狗正背着小包四处张望寻宝中...</div>
+      <button type="button" id="st-cap-hide" class="st-px-btn care" style="width:100%;">先收起（后台继续探险）</button>
+    </div>`;
+
+    const cv = mask.querySelector('#st-cap-cv');
+    const c2 = cv ? cv.getContext('2d') : null;
+    if (c2) c2.imageSmoothingEnabled = false;
+    const timeEl = mask.querySelector('#st-cap-time');
+    const barEl = mask.querySelector('#st-cap-bar');
+    const tipEl = mask.querySelector('#st-cap-tip');
+    const walkTips = [
+      '两只小狗正背着小包四处张望寻宝中...',
+      '沿路闻到了草地和烤面包的香味~',
+      '发现了一块闪闪发亮的小路牌！',
+      '一前一后小跑着，尾巴摇得可欢啦~',
+      '好像听见前面有好玩的声音，快去看看！',
+    ];
+    let tick = 0;
+
+    const drawWalkPup = (lk, poseKey, x, y) => {
+      if (!c2) return;
+      const grid = PUP_FRAMES[poseKey] || PUP_FRAMES.walk1 || PUP_FRAMES.idle1;
+      const pal = getPupPalette(lk?.fur, lk?.ear, lk?.collar, lk?.outline, lk?.showCollar !== false);
+      c2.save();
+      c2.translate(x, y);
+      c2.scale(0.85, 0.85);
+      const ox = 0, oy = 0, hx = 10, hy = 2;
+      for (let py = 0; py < grid.length; py++) {
+        const row = grid[py];
+        for (let px = 0; px < row.length; px++) {
+          const col = pal[row[px]];
+          if (col) { c2.fillStyle = col; c2.fillRect(ox + px, oy + py, 1, 1); }
+        }
+      }
+      const prevCtx = activePxCtx, prevShowEars = config.puppyOnesieShowEars, prevOffsets = config.puppyAccOffsets;
+      try {
+        activePxCtx = c2;
+        if (lk) {
+          config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
+          if (lk.accOffsets) config.puppyAccOffsets = lk.accOffsets;
+          drawPupOutfit(lk.outfit || 'none', ox, oy, hx, hy, false, false, false, false);
+          if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
+          drawPupCompanion(lk.comp || lk.companion || 'none', ox, oy, false);
+        }
+      } finally {
+        activePxCtx = prevCtx;
+        config.puppyOnesieShowEars = prevShowEars;
+        config.puppyAccOffsets = prevOffsets;
+      }
+      c2.restore();
+    };
+
+    const renderFrame = () => {
+      const now = Date.now();
+      const total = Math.max(1000, (ca.endAt || now) - (ca.startAt || (now - 1000)));
+      const remMs = Math.max(0, (ca.endAt || now) - now);
+      if (remMs <= 0) {
+        closeCoopAdvProgressModal();
+        claimCoopCloudAdventure(friendCloudId);
+        return;
+      }
+      const sec = Math.ceil(remMs / 1000);
+      const mm = Math.floor(sec / 60);
+      const ss = sec % 60;
+      if (timeEl) timeEl.textContent = `剩余 ${mm}:${String(ss).padStart(2, '0')}`;
+      const pct = Math.min(100, Math.max(2, Math.round(((total - remMs) / total) * 100)));
+      if (barEl) barEl.style.width = `${pct}%`;
+      if (tipEl && tick % 14 === 0) tipEl.textContent = walkTips[Math.floor(tick / 14) % walkTips.length];
+      if (!c2) return;
+      // 天空渐变
+      const g = c2.createLinearGradient(0, 0, 0, 32);
+      g.addColorStop(0, '#a6ddff'); g.addColorStop(1, '#fff4e8');
+      c2.fillStyle = g; c2.fillRect(0, 0, 110, 32);
+      // 滚动云朵
+      c2.fillStyle = '#ffffff';
+      const cx1 = 110 - ((tick * 2) % 130);
+      const cx2 = 110 - (((tick * 2) + 64) % 130);
+      c2.fillRect(cx1, 5, 16, 4); c2.fillRect(cx1 + 3, 3, 10, 3);
+      c2.fillRect(cx2, 10, 14, 3); c2.fillRect(cx2 + 3, 8, 8, 3);
+      // 远山
+      c2.fillStyle = '#b4deb8';
+      c2.fillRect(0, 26, 110, 6);
+      for (let i = 0; i < 4; i++) {
+        const hx = 120 - (((tick * 1) + i * 34) % 140);
+        c2.fillRect(hx, 23, 18, 4); c2.fillRect(hx + 4, 21, 10, 3);
+      }
+      // 草地与小路
+      c2.fillStyle = '#7ec472'; c2.fillRect(0, 31, 110, 15);
+      c2.fillStyle = '#edd8b4'; c2.fillRect(0, 36, 110, 7);
+      // 滚动路边小花与碎石
+      for (let i = 0; i < 6; i++) {
+        const fx = 116 - (((tick * 3) + i * 21) % 126);
+        c2.fillStyle = i % 2 ? '#ff8aa8' : '#ffe066';
+        c2.fillRect(fx, 33, 2, 2);
+        c2.fillStyle = '#d4bc94';
+        c2.fillRect((fx + 9) % 110, 39, 3, 1);
+      }
+      // 两只并肩前进的小狗
+      const bounce1 = tick % 2 === 0 ? 0 : -1;
+      const bounce2 = tick % 2 === 0 ? -1 : 0;
+      drawWalkPup(myLook, tick % 2 === 0 ? 'walk1' : 'walk2', 24, 19 + bounce1);
+      drawWalkPup(frLook, tick % 2 === 0 ? 'walk2' : 'walk1', 58, 19 + bounce2);
+      // 飘浮小爱心
+      const hy = 12 - (tick % 4);
+      c2.fillStyle = '#ff6e9c';
+      c2.fillRect(50, hy, 2, 2); c2.fillRect(53, hy, 2, 2); c2.fillRect(51, hy + 1, 3, 2); c2.fillRect(52, hy + 3, 1, 1);
+      tick++;
+    };
+
+    mask.onclick = (e) => { e.stopPropagation(); if (e.target === mask) closeCoopAdvProgressModal(); };
+    mask.querySelector('#st-cap-x')?.addEventListener('click', closeCoopAdvProgressModal);
+    mask.querySelector('#st-cap-hide')?.addEventListener('click', closeCoopAdvProgressModal);
+    bringModalFront(mask);
+    mask.style.display = 'flex';
+    renderFrame();
+    coAdvProgTimer = setInterval(() => {
+      if (!mask || mask.style.display === 'none') {
+        closeCoopAdvProgressModal();
+        return;
+      }
+      renderFrame();
+    }, 240);
+  };
+
+  const openCoopAdvResultModal = (friendName, ph, rec, shot, isNewPhoto, coins, randSnack, bondGain) => {
+    let mask = root.querySelector('#st-tb-coadv-result-mask');
+    if (!mask) {
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-coadv-result-mask';
+      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+      root.appendChild(mask);
+    }
+    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const PX_ICO_COIN = `<svg width="16" height="16" viewBox="0 0 12 12" style="display:block;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="3" y="1" width="6" height="10" fill="#e6a838"/><rect x="1" y="3" width="10" height="6" fill="#e6a838"/><rect x="2" y="2" width="8" height="8" fill="#f7cf54"/><rect x="4" y="3" width="4" height="6" fill="#ffe98a"/><rect x="5" y="4" width="2" height="4" fill="#d99426"/></svg>`;
+
+    const photoAreaHtml = ph
+      ? `<div style="position:relative;display:flex;flex-direction:column;align-items:center;padding:7px;background:#ffffff;border:2px solid ${pxBd};margin-bottom:9px;">
+          <span style="position:absolute;top:11px;left:11px;padding:1px 6px;font-size:9px;font-weight:700;background:${isNewPhoto ? '#e85686' : '#7b8fa8'};color:#ffffff;border:1px solid rgba(0,0,0,0.2);">${isNewPhoto ? '新照片!' : '新留影'}</span>
+          <canvas id="st-car-photo" width="54" height="36" style="width:244px;height:162px;image-rendering:pixelated;display:block;border:1.5px solid ${pxBd};"></canvas>
+          <div style="margin-top:6px;font-size:11.5px;font-weight:700;text-align:center;">【${escapeHtmlSimple(ph.title)}】</div>
+          <div style="margin-top:2px;font-size:9.5px;opacity:0.78;text-align:center;">${escapeHtmlSimple(ph.note || '')}（已存入双人相册）</div>
+        </div>`
+      : `<div style="padding:14px 10px;background:#ffffff;border:2px dashed ${pxBd};margin-bottom:9px;text-align:center;">
+          <div style="font-size:11px;font-weight:700;margin-bottom:4px;">这次玩得太投入，没拍到新照片~</div>
+          <div style="font-size:9.5px;opacity:0.78;line-height:1.5;">你和「${escapeHtmlSimple(friendName)}」在路上追蝴蝶玩疯了，虽然相册没添新图，但带回了满满战利品！</div>
+        </div>`;
+
+    mask.innerHTML = `<div style="width:296px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+        <span style="font-size:12px;font-weight:700;">双狗探险满载而归</span>
+        <span style="font-size:9.5px;opacity:0.78;">搭档：${escapeHtmlSimple(friendName)}</span>
+      </div>
+      ${photoAreaHtml}
+      <div style="font-size:10px;font-weight:700;margin-bottom:5px;opacity:0.85;">本次探险收获</div>
+      <div id="st-car-rewards" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+        <div style="flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
+          ${PX_ICO_COIN}
+          <span style="font-size:10px;font-weight:700;">+${coins} 小狗币</span>
+        </div>
+        ${randSnack ? `<div id="st-car-snack-card" style="flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
+          <div id="st-car-snack-ico" style="width:16px;height:16px;display:flex;align-items:center;justify-content:center;"></div>
+          <span style="font-size:10px;font-weight:700;text-align:center;line-height:1.2;">${escapeHtmlSimple(randSnack.name)} ×1</span>
+        </div>` : ''}
+        <div style="flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:#ffffff;border:1.5px solid ${pxBd};box-sizing:border-box;">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;transform:scale(1.4);">${PX_ICO_HEART}</span>
+          <span style="font-size:10px;font-weight:700;color:#d94c7a;">羁绊 +${bondGain}</span>
+        </div>
+      </div>
+      <button type="button" id="st-car-ok" class="st-px-btn care" style="width:100%;">开心收下</button>
+    </div>`;
+
+    if (ph) {
+      const pcv = mask.querySelector('#st-car-photo');
+      if (pcv) drawDualAdvPhotoCanvas(pcv, ph, false, rec, shot);
+    }
+    if (randSnack) {
+      const sHost = mask.querySelector('#st-car-snack-ico');
+      if (sHost && typeof makeVisitGiftIcon === 'function') {
+        const sCv = makeVisitGiftIcon(randSnack.id);
+        if (sCv) { sCv.style.width = '18px'; sCv.style.height = '18px'; sHost.appendChild(sCv); }
+      }
+    }
+    mask.onclick = (e) => { e.stopPropagation(); };
+    mask.querySelector('#st-car-ok')?.addEventListener('click', () => { mask.style.display = 'none'; });
+    bringModalFront(mask);
+    mask.style.display = 'flex';
+  };
+
   let coAdvBusy = false;
   const startCoopCloudAdventure = async (fr) => {
     if (!fr || !fr.cloudId || coAdvBusy) return;
@@ -34530,8 +35048,7 @@
     const cdMap = getCoopAdvCdMap();
     const cur = advMap[fr.cloudId];
     if (cur && cur.endAt > Date.now()) {
-      const rem = Math.ceil((cur.endAt - Date.now()) / 60000);
-      openPixelPupNoticeModal('正在探险中', `你和「${fr.name}」还在双人探险中，还剩约 ${rem} 分钟（不影响和别的好友组队哦）~`);
+      openCoopAdvProgressModal(fr.cloudId);
       return;
     }
     if (cur && cur.endAt <= Date.now()) {
@@ -34541,7 +35058,7 @@
     const cdUntil = Number(cdMap[fr.cloudId] || 0);
     if (cdUntil > Date.now()) {
       const cdRem = Math.ceil((cdUntil - Date.now()) / 60000);
-      openPixelPupNoticeModal('小狗需要歇一会儿', `刚和「${fr.name}」探险回来，还需休整约 ${cdRem} 分钟才能再次出发（可以同时约其他好友探险）~`);
+      openPixelPupNoticeModal('小狗需要歇一会儿', `刚和「${fr.name}」探险回来，还需休整约 ${cdRem} 分钟才能再次出发~`);
       return;
     }
     coAdvBusy = true;
@@ -34573,7 +35090,7 @@
         }),
       }).catch(() => {});
       renderPupVisitPanel();
-      openPixelPupNoticeModal('组队探险出发！', `已约上「${fr.name}」出发双人探险（10 分钟）！每位好友独立计时，互不干扰~`, '一路顺风');
+      openCoopAdvProgressModal(fr.cloudId);
     } finally {
       coAdvBusy = false;
     }
@@ -34584,9 +35101,9 @@
     const cdMap = getCoopAdvCdMap();
     const ca = advMap[friendCloudId];
     if (!ca || Date.now() < ca.endAt) return;
+    closeCoopAdvProgressModal();
     delete advMap[friendCloudId];
-    cdMap[friendCloudId] = Date.now() + 30 * 60 * 1000; // 每位好友独立 30 分钟冷却
-    const ph = PUP_DUAL_PHOTOS.find(x => x.id === ca.photoId) || pick(PUP_DUAL_PHOTOS);
+    cdMap[friendCloudId] = Date.now() + 30 * 60 * 1000;
     const fr = getFriendList().find(x => x.cloudId === ca.friendCloudId);
     const bondInfo = fr ? getFriendBondInfo(fr) : { lv: 1 };
     const extraBonus = bondInfo.lv >= 9 ? 8 : (bondInfo.lv >= 7 ? 4 : 0);
@@ -34595,7 +35112,16 @@
     config.puppyStats = config.puppyStats || {};
     config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + coins;
     config.puppyStats.cloudCoAdvs = (config.puppyStats.cloudCoAdvs || 0) + 1;
-    saveDualAlbumShot(ph, ca.friendName, fr?.look || ca.friendLook, null, ca.variant || null);
+    // 不一定每次都能拿到新照片（约 70% 概率拍到照片，随机从全部 30 张抽取，可能新解锁也可能重复留影）
+    const gotPhoto = Math.random() < 0.70;
+    let ph = null, savedRec = null, latestShot = null, isNewPhoto = false;
+    if (gotPhoto) {
+      ph = PUP_DUAL_PHOTOS.find(x => x.id === ca.photoId) || pick(PUP_DUAL_PHOTOS);
+      isNewPhoto = !(config.puppyDualAlbum && config.puppyDualAlbum[ph.id]);
+      saveDualAlbumShot(ph, ca.friendName, fr?.look || ca.friendLook, null, ca.variant || null);
+      savedRec = config.puppyDualAlbum ? config.puppyDualAlbum[ph.id] : null;
+      latestShot = Array.isArray(savedRec?.history) && savedRec.history.length ? savedRec.history[0] : savedRec;
+    }
     const lootPool = [...SHOP_PUP_GOODS.filter(x => x.type === 'snack'), ...GACHA_SNACKS];
     const randSnack = lootPool.length ? pick(lootPool) : null;
     if (randSnack) {
@@ -34608,13 +35134,7 @@
     if (typeof renderPupShop === 'function') renderPupShop();
     checkPupAchievements();
     renderPupVisitPanel();
-    openPixelPupNoticeModal(
-      '双狗探险满载而归！',
-      `你和「${ca.friendName}」从【${ph.title}】回来啦！你收获了 +${coins} 小狗币${randSnack ? ` 与「${randSnack.name} ×1」` : ''}，同一张双人明信片已存入「冒险 → 相册 → 双人」！`,
-      '知道了',
-      '',
-      true
-    );
+    openCoopAdvResultModal(ca.friendName || '好友', ph, savedRec, latestShot, isNewPhoto, coins, randSnack, 25);
   };
 
   const checkFinishedCoopAdventures = () => {
@@ -39039,11 +39559,72 @@
             k.darkFed = (k.darkFed || 0) + 1;
             adjustPupStats(6, -2, -4);
             addPupAffinity(1, 'kitchen_dark');
-            if (config.puppyEnabled) {
-              setPuppyState(pick(['speechless', 'shock']), 120);
-              spawnPupFx('steam', 12, 6);
-              showPuppyBubble(pickPersLine(DARK_DISH_ROASTS, { dish: item.name }), 3400);
+            const DARK_BUFFS = [
+              { id: 'bloat_job', name: '打工人胃胀', durMin: 20, desc: '吃撑还反酸！接下来 20 分钟内，下次兼职打工需要多花 5 分钟才能完成。' },
+              { id: 'dizzy_wage', name: '头晕转圈圈', durMin: 20, desc: '眼冒金星迷迷糊糊！接下来 20 分钟内，下次兼职打工结算工资减少 15%。' },
+              { id: 'sleepy_slow', name: '犯困眼皮打架', durMin: 20, desc: '黑暗料理催眠发作！接下来 20 分钟内，下次打工结束后的歇爪休息时间延长 5 分钟。' },
+              { id: 'hiccup_smoke', name: '冒烟连环嗝', durMin: 15, desc: '一口黑烟打个不停！小狗当场额外下降 8 点心情，还直冒蒸汽。' },
+              { id: 'bitter_tongue', name: '舌尖发苦', durMin: 15, desc: '嘴里苦到皱眉！接下来 15 分钟内，小狗每次互动都会委屈地晃晃脑袋。' },
+            ];
+            const rolledBuff = pick(DARK_BUFFS);
+            config.puppyDarkBuff = {
+              id: rolledBuff.id,
+              name: rolledBuff.name,
+              desc: rolledBuff.desc,
+              dishName: item.name,
+              expireAt: Date.now() + rolledBuff.durMin * 60000,
+            };
+            if (rolledBuff.id === 'hiccup_smoke') {
+              adjustPupStats(0, 0, -8);
             }
+            const roastTxt = pickPersLine(DARK_DISH_ROASTS, { dish: item.name });
+            if (config.puppyEnabled) {
+              setPuppyState(pick(['speechless', 'shock']), 130);
+              spawnPupFx('steam', 12, 6);
+              if (rolledBuff.id === 'hiccup_smoke') {
+                spawnPupFx('steam', 9, 4);
+                spawnPupFx('steam', 15, 5);
+              }
+              showPuppyBubble(roastTxt, 3400);
+            }
+            // 弹出黑暗料理负面 Buff 像素弹窗
+            (() => {
+              let dMask = root.querySelector('#st-tb-dark-buff-mask');
+              if (!dMask) {
+                dMask = doc.createElement('div');
+                dMask.id = 'st-tb-dark-buff-mask';
+                dMask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
+                root.appendChild(dMask);
+              }
+              const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
+              const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
+              const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
+              const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+              dMask.innerHTML = `<div style="width:288px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
+                  <span style="font-size:12px;font-weight:700;color:#7a3e8c;">吃下黑暗料理 · 触发负面状态</span>
+                  <button type="button" id="st-dbuff-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;background:#ffffff;border:1.5px solid ${pxBd};margin-bottom:8px;">
+                  <div id="st-dbuff-ico" style="flex-shrink:0;"></div>
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:11.5px;font-weight:700;color:#7a3e8c;margin-bottom:2px;">[${escapeHtmlSimple(rolledBuff.name)}]</div>
+                    <div style="font-size:9.5px;opacity:0.78;">来自「${escapeHtmlSimple(item.name)}」 · 持续 ${rolledBuff.durMin} 分钟</div>
+                  </div>
+                </div>
+                <div style="font-size:10.5px;line-height:1.55;margin-bottom:7px;">${escapeHtmlSimple(rolledBuff.desc)}</div>
+                <div style="font-size:10px;line-height:1.5;background:#ffffff;border:1px dashed ${pxBd};padding:6px 8px;margin-bottom:9px;opacity:0.9;">${escapeHtmlSimple(getPupName())}：「${escapeHtmlSimple(roastTxt)}」</div>
+                <button type="button" id="st-dbuff-ok" class="st-px-btn care" style="width:100%;">我错了，下次好好做饭</button>
+              </div>`;
+              const icoHost = dMask.querySelector('#st-dbuff-ico');
+              if (icoHost) icoHost.appendChild(makeDishCanvas(item, true, false));
+              const closeDb = () => { dMask.style.display = 'none'; };
+              dMask.onclick = (ev) => { ev.stopPropagation(); if (ev.target === dMask) closeDb(); };
+              dMask.querySelector('#st-dbuff-x')?.addEventListener('click', closeDb);
+              dMask.querySelector('#st-dbuff-ok')?.addEventListener('click', closeDb);
+              bringModalFront(dMask);
+              dMask.style.display = 'flex';
+            })();
           } else {
             adjustPupStats(item.hunger, item.thirst, item.mood);
             addPupAffinity(item.aff, 'kitchen');
@@ -45182,6 +45763,19 @@
             const fPool = failMsgPools[jObj.id];
             ev.msg = fPool ? pick(fPool) : '{self}今天打工手忙脚乱搞砸了一点小活，被扣了点工资。';
           }
+          const dbClaim = config.puppyDarkBuff;
+          let darkWageCut = 0;
+          let darkCdExtra = 0;
+          if (dbClaim && Number(dbClaim.expireAt || 0) > Date.now()) {
+            if (dbClaim.id === 'dizzy_wage') {
+              darkWageCut = Math.max(1, Math.round(totalWage * 0.15));
+              totalWage = Math.max(1, totalWage - darkWageCut);
+              config.puppyDarkBuff = null;
+            } else if (dbClaim.id === 'sleepy_slow') {
+              darkCdExtra = 5 * 60 * 1000;
+              config.puppyDarkBuff = null;
+            }
+          }
           config.puppyCoins = (config.puppyCoins || 0) + totalWage;
           config.puppyMood = Math.max(0, Math.min(100, (config.puppyMood || 80) + (messedUp ? -3 : (gotTip ? 6 : 3))));
           config.puppyStats = config.puppyStats || {};
@@ -45196,7 +45790,7 @@
             config.puppyStats.jobFailCount = (config.puppyStats.jobFailCount || 0) + 1;
           }
           config.puppyJob = null;
-          config.puppyJobCooldownUntil = Date.now() + (failType === 'pause' ? 3600000 : (failType === 'deduct' ? 1200000 : 600000));
+          config.puppyJobCooldownUntil = Date.now() + (failType === 'pause' ? 3600000 : (failType === 'deduct' ? 1200000 : 600000)) + darkCdExtra;
           saveConfig();
           checkPupAchievements();
           if (pup.state !== 'drag' && pup.state !== 'sleep') setPuppyState(messedUp ? 'speechless' : (promoted ? 'love_firework' : 'happy'), 110);
@@ -45228,7 +45822,7 @@
         startBtn.disabled = true;
         startBtn.textContent = '请先领取本次工资';
       } else {
-        const pct = Math.min(100, Math.round(((jObj.durMs - remMs) / jObj.durMs) * 100));
+        const totalJobDur = jObj.durMs + (config.puppyJob.extraDurMs || 0); const pct = Math.min(100, Math.max(0, Math.round(((totalJobDur - remMs) / totalJobDur) * 100)));
         statusEl.innerHTML = `
           <div class="st-px-job-head" style="font-weight:700;font-size:10px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${jObj.name} · 剩余 ${Math.ceil(remMs / 1000)}秒</div>
           <div style="height:6px;background:#efe6e9;border:1px solid var(--px-border,#bfa4ae);overflow:hidden;margin-bottom:4px;">
@@ -45252,7 +45846,7 @@
           drawJobStageCanvas(stage, jObj.id, jobAnimTick);
           const remMsNow = Math.max(0, config.puppyJob.endAt - Date.now());
           const rem = Math.ceil(remMsNow / 1000);
-          const pctNow = Math.min(100, Math.round(((jObj.durMs - remMsNow) / jObj.durMs) * 100));
+          const totalJobDurNow = jObj.durMs + (config.puppyJob.extraDurMs || 0); const pctNow = Math.min(100, Math.max(0, Math.round(((totalJobDurNow - remMsNow) / totalJobDurNow) * 100)));
           const head = statusEl.querySelector('.st-px-job-head');
           if (head) head.textContent = `${jObj.name} · 剩余 ${rem}秒`;
           const barFill = statusEl.querySelector('.st-px-job-bar-fill');
@@ -45315,9 +45909,15 @@
       }
       if (config.puppyJob || Date.now() < (config.puppyJobCooldownUntil || 0)) return;
       const sel = PUP_JOBS.find(j => j.id === selectedJobId) || PUP_JOBS[0];
-      config.puppyJob = { id: sel.id, startedAt: Date.now(), endAt: Date.now() + sel.durMs };
+      let extraDurMs = 0;
+      const db = config.puppyDarkBuff;
+      if (db && db.id === 'bloat_job' && Number(db.expireAt || 0) > Date.now()) {
+        extraDurMs = 5 * 60 * 1000;
+        config.puppyDarkBuff = null;
+      }
+      config.puppyJob = { id: sel.id, startedAt: Date.now(), endAt: Date.now() + sel.durMs + extraDurMs, extraDurMs };
       saveConfig();
-      showPuppyBubble(getPersTalk('jobGo', sel.name), 2400);
+      showPuppyBubble(extraDurMs ? `呜……吃太撑胃胀，去${sel.name}打工得多花 5 分钟才行……` : getPersTalk('jobGo', sel.name), 2600);
       renderJobPanel();
     });
   }
@@ -49137,7 +49737,7 @@
   let outsideTapStart = null;
   const isOutsideCloseBlocked = (target) => {
     if (!target) return true;
-    if (typeof target.closest === 'function' && target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask')) return true;
+    if (typeof target.closest === 'function' && target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask')) return true;
     if (gachaModalEl && gachaModalEl.contains(target)) return true;
     if (confirmMask && confirmMask.contains(target)) return true;
     if (readerEl && readerEl.contains(target)) return true;
