@@ -15723,34 +15723,35 @@
         px(hc + 1, hy - 2, '#ffe066');
       });
     } else if (outfit === 'gacha_stained_glass_cape') {
-      // [扭蛋SSR 像素风] 晚风银蓝裙：深蓝V领斗篷披肩 + 金星胸扣 + 清晰深线勾边星纱小裙
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 0 || x === topMax) ? '#263452' : (x === 4 ? '#ffe078' : '#3a4e78'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === xMin || x === xMax) ? '#263452' : (x >= 3 && x <= 5 ? '#e8f1fc' : '#4f6999'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#263452' : ((x === 2 || x === 7) ? '#ffe078' : '#6b87bd'));
-      for (let x = xMin; x <= xMax; x++) {
-        if (x === xMin || x === xMax) pxBody(bx + x, by + 3, '#263452');
-        else pxBody(bx + x, by + 3, (x % 3 === 0) ? '#ffffff' : '#9bb6e6');
+      // [扭蛋SSR] 晚风银蓝裙：午夜蓝短披肩斗篷 + 金星胸扣 + 银蓝流光百褶裙摆
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffe27a' : '#3d5280');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 5) ? '#c7daf7' : '#4f6aa1');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 2 || x === 7) ? '#ffe27a' : '#7392cc');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === 4 || x === 5) ? '#ffffff' : '#a8c2f0');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        px(bx + xMin - 1, by + 1, '#3d5280'); px(bx + xMax + 1, by + 1, '#3d5280');
+        px(bx + xMin - 1, by + 2, '#5e7bb5'); px(bx + xMax + 1, by + 2, '#5e7bb5');
       }
     } else if (outfit === 'gacha_jellyfish_veil') {
-      // [扭蛋SSR 像素风] 海盐水母裙：清晰海蓝深线勾边伞形荷叶裙 + 错落垂坠1px水母流苏
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 0 || x === topMax) ? '#4f86b5' : (x === 4 ? '#ffffff' : '#9ed4f7'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === xMin || x === xMax) ? '#4f86b5' : '#ccebff');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#4f86b5' : ((x === 3 || x === 6) ? '#ffffff' : '#b2e0fc'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x % 2 === 0) ? '#6fa8d6' : '#ffffff');
+      // [扭蛋SSR] 海盐水母裙：莹透冰蓝水母伞盖蓬裙 + 轻盈垂坠水母光丝
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffffff' : '#a6dbfc');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 6) ? '#ffffff' : '#cdebfd');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#dff3ff');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === 2 || x === 5 || x === 8) ? '#ffffff' : '#8bc9f5');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        px(bx + xMin + 1, by + 4, '#9ed4f7'); px(bx + 3, by + 4, '#ffffff'); px(bx + 7, by + 4, '#9ed4f7'); px(bx + xMax - 1, by + 4, '#ffffff');
+        px(bx + xMin - 1, by + 2, '#cdebfd'); px(bx + xMax + 1, by + 2, '#cdebfd');
+        px(bx + xMin + 1, by + 4, '#a6dbfc'); px(bx + 4, by + 4, '#ffffff'); px(bx + xMax - 1, by + 4, '#a6dbfc');
+        px(bx + 4, by + 5, '#cdebfd');
       }
     } else if (outfit === 'gacha_rose_velvet_train') {
-      // [扭蛋SSR 像素风] 丝绒拖尾裙：象牙白褶皱立领衬衫 + 酒红双排金扣马甲束腰 + 复古燕尾礼裙摆
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x >= 3 && x <= 5) ? '#fffdf7' : ((x === 0 || x === topMax) ? '#470d1a' : '#7a1c30'));
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 2 || x === 6) ? '#f0c975' : ((x === 4) ? '#fffdf7' : '#691527'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#470d1a' : (x === 4 ? '#f0c975' : '#8a2238'));
-      for (let x = xMin; x <= xMax; x++) {
-        if (x === 4 || x === 5) pxBody(bx + x, by + 3, '#fff8eb'); // 前开叉露内衬
-        else pxBody(bx + x, by + 3, (x === xMin || x === xMax) ? '#470d1a' : '#691527');
-      }
+      // [扭蛋SSR] 丝绒拖尾裙：奶油白小立领 + 勃艮第酒红修身礼裙 + 香槟金细腰扣 + 侧后优雅拖尾
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x >= 3 && x <= 5) ? '#fffbf2' : '#851e34');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#f2cc74' : '#9c263f');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 4 || x === 5) ? '#fff6e6' : '#7d1b30');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === 4 || x === 5) ? '#fffbf2' : '#6b1427');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        px(bx + xMin - 1, by + 4, '#470d1a'); px(bx + xMin, by + 4, '#8a2238'); px(bx + xMin + 1, by + 4, '#f0c975');
+        px(bx + xMax + 1, by + 3, '#851e34'); px(bx + xMax + 2, by + 3, '#f2cc74');
+        px(bx + xMax + 1, by + 4, '#6b1427'); px(bx + xMax + 2, by + 4, '#851e34');
       }
     } else if (outfit === 'gacha_denim_jumper_skirt') {
       // [扭蛋SR 短裙] 牛仔背带裙：白T恤 + 浅丹宁蓝胸挡双背带与铜扣 + 利落A字短裙
@@ -15784,34 +15785,36 @@
       for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, '#fffdf7');
       pxBody(bx + 2, by + 1, '#ffffff'); pxBody(bx + 6, by + 2, '#ffffff'); pxBody(bx + 3, by + 2, '#a8cf9b');
     } else if (outfit === 'lux_gold_camellia_gown') {
-      // [商城豪华 22币 像素风] 山茶花礼裙：焦糖金细线勾边 + 方领泡泡袖 + 胸前立体山茶花 + 像素锯齿蕾丝裙摆
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 0 || x === topMax) ? '#b89458' : (x >= 3 && x <= 5 ? '#ffffff' : '#faf0dc'));
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 0 || x === topMax) ? '#b89458' : '#e6c27a'); // 细金束腰
-      pxBody(bx + 4, by, '#ffffff'); pxBody(bx + 4, by + 1, '#f2cc6b'); pxBody(bx + 3, by + 1, '#ffffff'); pxBody(bx + 5, by + 1, '#ffffff');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#b89458' : '#fffaf0');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === xMin || x === xMax) ? '#b89458' : ((x % 2 === 0) ? '#f0d8a8' : '#ffffff'));
+      // [商城豪华 22币] 山茶花礼裙：清透象牙奶白大蓬礼裙 + 胸前山茶金蕊 + 香槟金细腰带 + 两侧1px蓬松外扩裙摆
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#f2c864' : (x === 3 || x === 5 ? '#ffffff' : '#fcf5e6'));
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#ffffff' : '#ecd194');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 2 || x === 7) ? '#f7e9c8' : '#fffdf7');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x === 4 || x === 5 ? '#ffffff' : '#f5e4bc');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin; x <= xMax; x += 2) px(bx + x, by + 4, '#ffffff'); // 镂空像素蕾丝齿边
+        px(bx + xMin - 1, by + 2, '#fcf5e6'); px(bx + xMax + 1, by + 2, '#fcf5e6');
+        px(bx + xMin - 1, by + 3, '#fffdf7'); px(bx + xMax + 1, by + 3, '#fffdf7');
+        px(bx + xMin, by + 4, '#ffffff'); px(bx + 4, by + 4, '#ffffff'); px(bx + xMax, by + 4, '#ffffff');
       }
     } else if (outfit === 'lux_peacock_feather_gown') {
-      // [商城豪华 26币 像素风] 月白蕾丝裙：雾蓝深边勾勒 + 交叉系带束腰 + 错落双层月白波浪裙
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 0 || x === topMax) ? '#5a7394' : (x === 4 ? '#ffffff' : '#d6e3f2'));
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 0 || x === topMax) ? '#5a7394' : ((x === 3 || x === 5) ? '#5a7394' : '#ffffff')); // 交叉系带
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#5a7394' : (x === 4 ? '#ffffff' : '#adc4de'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === xMin || x === xMax) ? '#5a7394' : ((x % 3 === 0) ? '#ffffff' : '#8aa6c7'));
+      // [商城豪华 26币] 月白蕾丝裙：清冷雾蓝一字露肩公主裙 + 高腰冰蓝细蝴蝶结 + 双层月白飘逸外摆
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x >= 3 && x <= 5) ? '#ffffff' : '#d6e6f7');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#7ea6d4' : ((x === 3 || x === 5) ? '#a6c6e8' : '#f2f8ff'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 3 || x === 6) ? '#ffffff' : '#cde0f5');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === 2 || x === 5 || x === 8) ? '#ffffff' : '#b2cceb');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        for (let x = xMin - 1; x <= xMax; x += 2) px(bx + x, by + 4, '#e6f0fa');
+        px(bx + xMin - 1, by + 3, '#e3effc'); px(bx + xMax + 1, by + 3, '#e3effc');
+        px(bx + xMin + 1, by + 4, '#ffffff'); px(bx + xMax - 1, by + 4, '#ffffff');
       }
     } else if (outfit === 'lux_sunset_phoenix_gown') {
-      // [商城豪华 30币 像素风] 玫瑰奶纱裙：暗玫瑰深线勾边 + 奶油心形领口 + 立体大蝴蝶结腰封 + 前短后长荷叶摆
-      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 0 || x === topMax) ? '#8c4a5e' : (x >= 3 && x <= 5 ? '#fffdf9' : '#e8bcc9'));
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === xMin || x === xMax) ? '#8c4a5e' : ((x >= 3 && x <= 5) ? '#b85c78' : '#fff5f8'));
-      pxBody(bx + 4, by + 1, '#ffffff'); // 蝴蝶结中心珍珠
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === xMin || x === xMax) ? '#8c4a5e' : '#d99fae');
-      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === xMin || x === xMax) ? '#8c4a5e' : ((x === 4 || x === 5) ? '#fffdf9' : '#c98296'));
+      // [商城豪华 30币] 玫瑰奶纱裙：温柔烟粉修身上衣 + 珍珠心领 + 玫瑰粉蝴蝶结 + 三层奶白烟粉蛋糕蓬裙
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fffdf9' : '#f2c4d2');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 5) ? '#d67894' : (x === 4 ? '#ffffff' : '#fbe3ea'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, '#fff7fa');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, (x === 3 || x === 6) ? '#fffdf9' : '#e8a9bc');
       if (!isFlatPose && !isStretchPose && !isSitPose) {
-        px(bx + xMin - 1, by + 4, '#8c4a5e'); px(bx + xMin, by + 4, '#f5dfe5'); px(bx + xMin + 1, by + 4, '#ffffff');
-        px(bx + xMax, by + 4, '#f5dfe5'); px(bx + xMax + 1, by + 4, '#8c4a5e');
+        px(bx + xMin - 1, by + 2, '#fff7fa'); px(bx + xMax + 1, by + 2, '#fff7fa');
+        px(bx + xMin - 1, by + 3, '#f2c4d2'); px(bx + xMax + 1, by + 3, '#f2c4d2');
+        px(bx + xMin, by + 4, '#fffdf9'); px(bx + 4, by + 4, '#fffdf9'); px(bx + xMax, by + 4, '#fffdf9');
       }
     } else if (outfit === 'gacha_retro_vinyl_jacket') {
       // [扭蛋SR] 绿白棒球服：纯复古墨绿衣身 + 奶白插肩袖 + 胸口金色徽章
@@ -26519,6 +26522,30 @@
         config.puppyStats = config.puppyStats || {};
         config.puppyStats.snapPhotos = (config.puppyStats.snapPhotos || 0) + 1;
         logDiaryEvent('和主人拍了纪念合影');
+        // Lv8 咔嚓合影：先播快门闪光拍照（自动带入桌面串门小狗），拍完弹出拍立得DIY工坊，自定义取名、背景调色后存入相册
+        const triggerSnapPhotoStudio = () => {
+          try {
+            let fl = root.querySelector('#st-tb-snap-flash');
+            if (fl) fl.remove();
+            fl = doc.createElement('div');
+            fl.id = 'st-tb-snap-flash';
+            fl.style.cssText = 'position:fixed;inset:0;background:rgba(255,253,248,0.88);z-index:10050;pointer-events:none;display:flex;align-items:center;justify-content:center;transition:opacity 0.36s ease;opacity:1;';
+            fl.innerHTML = '<div style="width:156px;height:116px;border:3px dashed #8a6d62;box-shadow:0 0 0 4px rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#54444a;letter-spacing:2px;">咔嚓!</div>';
+            root.appendChild(fl);
+            setTimeout(() => { fl.style.opacity = '0'; }, 140);
+            setTimeout(() => { fl.remove(); }, 520);
+          } catch (_) {}
+          setTimeout(() => {
+            const deskGuests = (typeof getGuestList === 'function' ? getGuestList() : []).filter(g => g.onDesktop !== false);
+            const snapped = [{ id: 'host', name: getPupName(), look: getHostLookSnap() }];
+            deskGuests.forEach(g => snapped.push({ id: `g_${g.id}`, name: g.name, look: g.look || {} }));
+            const defTitle = snapped.length > 1
+              ? `${snapped.map(x => x.name).join(' & ')}`
+              : `${getPupName()}的咔嚓纪念`;
+            openDualPhotoModal(null, snapped, { bgId: 'diy_dots', bgCol1: '#fff3f7', bgCol2: '#f2b8c9', title: defTitle });
+          }, 380);
+        };
+        triggerSnapPhotoStudio();
       }
       adjustPupStats(0, 0, 16);
       addPupAffinity(1, 'act');
@@ -31430,6 +31457,15 @@
   };
 
   const POLAROID_BGS = [
+    { id: 'diy_solid',   name: '纯色DIY', diy: 1 },
+    { id: 'diy_dots',    name: '波点DIY', diy: 2 },
+    { id: 'diy_vstripe', name: '竖条纹',  diy: 2 },
+    { id: 'diy_hstripe', name: '横条纹',  diy: 2 },
+    { id: 'diy_diag',    name: '斜条纹',  diy: 2 },
+    { id: 'diy_plaid',   name: '格子纹',  diy: 2 },
+    { id: 'diy_checker', name: '棋盘格',  diy: 2 },
+    { id: 'diy_grad',    name: '双色渐变', diy: 2 },
+    { id: 'diy_hearts',  name: '爱心波点', diy: 2 },
     { id: 'meadow',      name: '晴空草地' },
     { id: 'sakura',      name: '樱花林道' },
     { id: 'night',       name: '夏夜萤火' },
@@ -31470,8 +31506,96 @@
     { name: '深蓝', bg: '#2c3552', bd: '#d4be8d' },
   ];
 
-  const drawPolaroidBg = (ctx, bgId, W, H) => {
+  const drawPolaroidBg = (ctx, bgId, W, H, opts = {}) => {
     const pxDot = (x, y, c, w = 1, h = 1) => { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), w, h); };
+    const bgC1 = opts.bgCol1 || '#fff3f7';
+    const bgC2 = opts.bgCol2 || '#f2b8c9';
+    if (bgId === 'diy_solid') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H); return;
+    }
+    if (bgId === 'diy_dots') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bgC2;
+      for (let row = 0, y = 4; y < H + 4; row++, y += 10) {
+        const xOff = (row % 2 === 0) ? 4 : 9;
+        for (let x = xOff; x < W + 4; x += 10) {
+          ctx.fillRect(x - 1, y - 2, 3, 5);
+          ctx.fillRect(x - 2, y - 1, 5, 3);
+        }
+      }
+      return;
+    }
+    if (bgId === 'diy_vstripe') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bgC2;
+      for (let x = 0; x < W; x += 8) ctx.fillRect(x, 0, 4, H);
+      return;
+    }
+    if (bgId === 'diy_hstripe') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bgC2;
+      for (let y = 0; y < H; y += 8) ctx.fillRect(0, y, W, 4);
+      return;
+    }
+    if (bgId === 'diy_diag') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bgC2;
+      for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+          if (((x + y) % 10) < 4) ctx.fillRect(x, y, 1, 1);
+        }
+      }
+      return;
+    }
+    if (bgId === 'diy_plaid') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      const [r1, g1, b1] = hexToRgbBytes(bgC1, '#fff3f7');
+      const [r2, g2, b2] = hexToRgbBytes(bgC2, '#f2b8c9');
+      const midC = `rgb(${Math.round((r1 + r2) / 2)},${Math.round((g1 + g2) / 2)},${Math.round((b1 + b2) / 2)})`;
+      for (let y = 0; y < H; y++) {
+        const hy = (y % 12) < 4;
+        for (let x = 0; x < W; x++) {
+          const vx = (x % 12) < 4;
+          if (hy && vx) { ctx.fillStyle = bgC2; ctx.fillRect(x, y, 1, 1); }
+          else if (hy || vx) { ctx.fillStyle = midC; ctx.fillRect(x, y, 1, 1); }
+        }
+      }
+      return;
+    }
+    if (bgId === 'diy_checker') {
+      for (let y = 0; y < H; y += 8) {
+        for (let x = 0; x < W; x += 8) {
+          ctx.fillStyle = (((x >> 3) + (y >> 3)) % 2 === 0) ? bgC1 : bgC2;
+          ctx.fillRect(x, y, 8, 8);
+        }
+      }
+      return;
+    }
+    if (bgId === 'diy_grad') {
+      const [r1, g1, b1] = hexToRgbBytes(bgC1, '#fff3f7');
+      const [r2, g2, b2] = hexToRgbBytes(bgC2, '#d8ecff');
+      const steps = 18;
+      for (let i = 0; i < steps; i++) {
+        const t = i / (steps - 1);
+        ctx.fillStyle = `rgb(${Math.round(r1 + (r2 - r1) * t)},${Math.round(g1 + (g2 - g1) * t)},${Math.round(b1 + (b2 - b1) * t)})`;
+        ctx.fillRect(0, Math.floor(i * H / steps), W, Math.ceil(H / steps) + 1);
+      }
+      return;
+    }
+    if (bgId === 'diy_hearts') {
+      ctx.fillStyle = bgC1; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = bgC2;
+      for (let row = 0, y = 5; y < H + 4; row++, y += 12) {
+        const xOff = (row % 2 === 0) ? 5 : 11;
+        for (let x = xOff; x < W + 4; x += 12) {
+          ctx.fillRect(x - 2, y - 1, 2, 2);
+          ctx.fillRect(x + 1, y - 1, 2, 2);
+          ctx.fillRect(x - 1, y, 3, 2);
+          ctx.fillRect(x, y + 2, 1, 1);
+        }
+      }
+      return;
+    }
     const pxBlob = (cx, cy, rx, ry, c) => {
       ctx.fillStyle = c;
       for (let dy = -ry; dy <= ry; dy++) {
@@ -32245,7 +32369,7 @@
     if (cv.width !== W * 10 || cv.height !== H * 10) { cv.width = W * 10; cv.height = H * 10; }
     ctx.setTransform(10, 0, 0, 10, 0, 0);
     ctx.imageSmoothingEnabled = false;
-    drawPolaroidBg(ctx, opts.bgId || 'meadow', W, H);
+    drawPolaroidBg(ctx, opts.bgId || 'meadow', W, H, opts);
 
     const dogs = Array.isArray(opts.dogs) && opts.dogs.length
       ? opts.dogs
@@ -32392,6 +32516,8 @@
         ];
     const st = {
       bgId: ph.bgId || 'meadow',
+      bgCol1: ph.bgCol1 || '#fff3f7',
+      bgCol2: ph.bgCol2 || '#f2b8c9',
       dogs,
       title: ph.title || dogs.map(x => x.name).join(' & '),
       showHeart: ph.showHeart !== false,
@@ -32441,7 +32567,7 @@
   };
 
   // 拍立得编辑器：DOM 只建一次、绝不重建 innerHTML（选色器绝不自动关闭、滚动条绝不跳回顶部！）
-  const openDualPhotoModal = (savedPhoto = null, preselectedDogs = null) => {
+  const openDualPhotoModal = (savedPhoto = null, preselectedDogs = null, extraOpts = null) => {
     if (savedPhoto) { openSavedPhotoViewerModal(savedPhoto); return; }
     const guests = getGuestList();
     if (!savedPhoto && !preselectedDogs) {
@@ -32526,9 +32652,11 @@
         });
 
     const st = {
-      bgId: savedPhoto?.bgId || 'meadow',
+      bgId: savedPhoto?.bgId || extraOpts?.bgId || 'meadow',
+      bgCol1: savedPhoto?.bgCol1 || extraOpts?.bgCol1 || '#fff3f7',
+      bgCol2: savedPhoto?.bgCol2 || extraOpts?.bgCol2 || '#f2b8c9',
       dogs: initDogs,
-      title: savedPhoto?.title || initDogs.map(x => x.name).join(' & '),
+      title: savedPhoto?.title || extraOpts?.title || initDogs.map(x => x.name).join(' & '),
       showHeart: savedPhoto?.showHeart !== false,
       paperCol: savedPhoto?.paperCol || '#ffffff',
       borderCol: savedPhoto?.borderCol || '#d6ccc8',
@@ -32570,8 +32698,15 @@
           <div style="margin-bottom:6px;">
             <input type="text" id="st-vph-title-inp" class="st-tb-input" value="${st.title.replace(/"/g, '&quot;')}" placeholder="给这张合照取个名字~" style="width:100%;font-size:10px;padding:4px 6px;box-sizing:border-box;" />
           </div>
-          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景场景 (${POLAROID_BGS.length})</div>
-          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px;"></div>
+          <div style="font-size:9.5px;font-weight:700;margin-bottom:3px;">背景样式 (${POLAROID_BGS.length}种 · 含自定义调色)</div>
+          <div id="st-vph-bgs" style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;"></div>
+          <div id="st-vph-diy-cols" style="display:none;flex-direction:column;gap:4px;padding:5px 6px;margin-bottom:6px;background:rgba(255,255,255,0.65);border:1px dashed var(--px-border,#bfa4ae);font-size:9.5px;">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <label style="display:inline-flex;align-items:center;gap:3px;font-weight:700;">背景色<input type="color" id="st-vph-bgc1" value="${st.bgCol1}" style="width:22px;height:18px;border:none;padding:0;background:none;cursor:pointer;" /></label>
+              <label id="st-vph-bgc2-wrap" style="display:inline-flex;align-items:center;gap:3px;font-weight:700;">图案色<input type="color" id="st-vph-bgc2" value="${st.bgCol2}" style="width:22px;height:18px;border:none;padding:0;background:none;cursor:pointer;" /></label>
+            </div>
+            <div id="st-vph-bg-swatches" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
+          </div>
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;">
             <div id="st-vph-dog-tabs" style="display:flex;flex-wrap:wrap;gap:3px;"></div>
             <button type="button" id="st-vph-flip" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;flex-shrink:0;">翻转朝向</button>
@@ -32697,6 +32832,44 @@
     } else {
       const bgBtns = [];
       const bgBox = winEl.querySelector('#st-vph-bgs');
+      const diyColBox = winEl.querySelector('#st-vph-diy-cols');
+      const bgC1Inp = winEl.querySelector('#st-vph-bgc1');
+      const bgC2Inp = winEl.querySelector('#st-vph-bgc2');
+      const bgC2Wrap = winEl.querySelector('#st-vph-bgc2-wrap');
+      const bgSwatchesEl = winEl.querySelector('#st-vph-bg-swatches');
+      const syncDiyColUI = () => {
+        const curBg = POLAROID_BGS.find(x => x.id === st.bgId);
+        if (diyColBox) diyColBox.style.display = curBg?.diy ? 'flex' : 'none';
+        if (bgC2Wrap) bgC2Wrap.style.display = curBg?.diy === 2 ? 'inline-flex' : 'none';
+        if (bgC1Inp) bgC1Inp.value = st.bgCol1;
+        if (bgC2Inp) bgC2Inp.value = st.bgCol2;
+      };
+      bgC1Inp?.addEventListener('input', () => { st.bgCol1 = bgC1Inp.value; redrawCv(); });
+      bgC2Inp?.addEventListener('input', () => { st.bgCol2 = bgC2Inp.value; redrawCv(); });
+      if (bgSwatchesEl) {
+        [
+          { name: '奶粉', c1: '#fff0f5', c2: '#f2adc4' },
+          { name: '海盐', c1: '#eef7ff', c2: '#9cc8f0' },
+          { name: '鹅黄', c1: '#fffbe6', c2: '#f2d072' },
+          { name: '薄荷', c1: '#eefcf5', c2: '#8fd4b2' },
+          { name: '香芋', c1: '#f5f0ff', c2: '#c5aef2' },
+          { name: '焦糖', c1: '#fcf3e6', c2: '#d9a973' },
+          { name: '夜蓝', c1: '#243052', c2: '#7a95cc' },
+        ].forEach(sw => {
+          const sb = doc.createElement('button');
+          sb.type = 'button';
+          sb.className = 'st-px-btn';
+          sb.style.cssText = `height:18px;padding:0 5px;font-size:8.5px;background:${sw.c1};border-color:${sw.c2};color:${getTextCol(sw.c1)};`;
+          sb.textContent = sw.name;
+          sb.addEventListener('click', () => {
+            st.bgCol1 = sw.c1;
+            st.bgCol2 = sw.c2;
+            syncDiyColUI();
+            redrawCv();
+          });
+          bgSwatchesEl.appendChild(sb);
+        });
+      }
       POLAROID_BGS.forEach(item => {
         const b = doc.createElement('button');
         b.type = 'button';
@@ -32706,11 +32879,13 @@
         b.addEventListener('click', () => {
           st.bgId = item.id;
           bgBtns.forEach(x => x.b.classList.toggle('active', x.id === st.bgId));
+          syncDiyColUI();
           redrawCv();
         });
         bgBtns.push({ id: item.id, b });
         bgBox.appendChild(b);
       });
+      syncDiyColUI();
 
       const dogBtns = [];
       const dtBox = winEl.querySelector('#st-vph-dog-tabs');
@@ -37792,6 +37967,14 @@
         delBtn.textContent = '删除';
         delBtn.addEventListener('click', (e2) => {
           e2.stopPropagation();
+          if (delBtn.dataset.confirming !== '1') {
+            delBtn.dataset.confirming = '1';
+            delBtn.textContent = '确认删除?';
+            delBtn.style.background = '#d9534f';
+            delBtn.style.color = '#ffffff';
+            delBtn.style.borderColor = '#a94442';
+            return;
+          }
           if (Array.isArray(config.puppyDmHistory?.[fid])) {
             config.puppyDmHistory[fid] = config.puppyDmHistory[fid].filter(x => x.id !== m.id);
             saveConfig();
@@ -39558,13 +39741,39 @@
   }, 160);
 
   // ==================== 每日心情签筒 + 专属零食投喂 ====================
+  const inferOutfitCatShared = (item) => {
+    if (!item) return '';
+    if (item.cat && ['skirt', 'daily', 'trad', 'onesie'].includes(item.cat)) return item.cat;
+    const nm = `${item.id || ''} ${item.name || ''}`;
+    if (/hanfu|kimono|qipao|tang|song|ming|ancient|trad|guofeng|汉服|古风|唐|宋|明|旗袍|和服|振袖|仙裙|霓裳/.test(nm)) return 'trad';
+    if (/onesie|pajama|sleep|hoodie|bear|bunny|frog|shark|dino|sheep|penguin|banana|toast|raincoat|睡衣|连体|卫衣|雨衣|面包服/.test(nm)) return 'onesie';
+    if (/dress|skirt|gown|lolita|ballet|veil|train|cape|maid|裙|纱|斗篷|甜仆/.test(nm)) return 'skirt';
+    if (/shirt|jacket|coat|suit|jeans|sweater|uniform|daily|street|cafe|baseball|preppy|sailor|外套|夹克|衬衫|西装|制服|日常|牛仔|毛衣|棒球|学院|水手/.test(nm)) return 'daily';
+    return 'skirt';
+  };
+  const inferAccCatShared = (item) => {
+    if (!item) return '';
+    if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag'].includes(item.cat)) return item.cat;
+    const nm = `${item.id || ''} ${item.name || ''}`;
+    if (/wing|feather|cape|quill|key|翅|羽|披风|发条/.test(nm)) return 'wing';
+    if (/aura|halo|star|moon|glow|ring|cloud|lantern|光环|光晕|星|月|极光|雾|提灯/.test(nm)) return 'aura';
+    if (/bag|purse|basket|pack|umbrella|skate|包|篮|背|伞|滑板/.test(nm)) return 'bag';
+    if (/neck|collar|scarf|tie|bell|necklace|ribbon|围巾|项链|领结|项圈|铃铛|丝带/.test(nm)) return 'neck';
+    return 'head';
+  };
   const matchesLuckyTag = (tag) => {
-    if (tag === 'wing' || tag === 'aura' || tag === 'bag' || tag === 'head') {
-      return (config.puppyAccs || []).some(id => SHOP_PUP_ACCS.find(a => a.id === id)?.cat === tag);
+    const allOutfits = [...SHOP_PUP_OUTFITS, ...GACHA_OUTFITS, ...TREASURE_OUTFITS, ...SPECIAL_EVENT_OUTFITS, ...FREE_PUP_OUTFITS];
+    const allAccs = [...SHOP_PUP_ACCS, ...GACHA_ACCS, ...TREASURE_ACCS];
+    if (tag === 'wing' || tag === 'aura' || tag === 'bag' || tag === 'head' || tag === 'neck') {
+      return (config.puppyAccs || []).some(id => {
+        const aObj = allAccs.find(a => a.id === id);
+        return aObj && inferAccCatShared(aObj) === tag;
+      });
     }
-    if (tag === 'skirt' || tag === 'trad' || tag === 'onesie') {
-      const oObj = SHOP_PUP_OUTFITS.find(o => o.id === config.puppyOutfit);
-      return oObj ? oObj.cat === tag : (tag === 'skirt' && FREE_PUP_OUTFITS.some(f => f.id === config.puppyOutfit && f.id !== 'none'));
+    if (tag === 'skirt' || tag === 'trad' || tag === 'onesie' || tag === 'daily') {
+      if (!config.puppyOutfit || config.puppyOutfit === 'none') return false;
+      const oObj = allOutfits.find(o => o.id === config.puppyOutfit);
+      return oObj ? inferOutfitCatShared(oObj) === tag : false;
     }
     if (tag === 'comp') {
       return Boolean(config.puppyCompanion && config.puppyCompanion !== 'none');
@@ -40843,25 +41052,8 @@
       config.puppyFashionDaily = { date: today, best: '', claimed: false };
     }
     const theme = getTodayFashionTheme();
-    const inferOutfitCat = (item) => {
-      if (!item) return '';
-      if (item.cat && ['skirt', 'daily', 'trad', 'onesie'].includes(item.cat)) return item.cat;
-      const nm = `${item.id || ''} ${item.name || ''}`;
-      if (/hanfu|kimono|qipao|tang|song|ming|ancient|trad|guofeng|汉服|古风|唐|宋|明|旗袍|和服|仙裙|霓裳/.test(nm)) return 'trad';
-      if (/onesie|pajama|sleep|hoodie|bear|bunny|frog|shark|dino|睡衣|连体|绒|卫衣|毛衣|冬/.test(nm)) return 'onesie';
-      if (/shirt|jacket|coat|suit|jeans|sweater|uniform|daily|street|cafe|卫|外套|夹克|衬衫|西装|制服|日常|牛仔|毛衣/.test(nm)) return 'daily';
-      return 'skirt';
-    };
-    const inferAccCat = (item) => {
-      if (!item) return '';
-      if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag'].includes(item.cat)) return item.cat;
-      const nm = `${item.id || ''} ${item.name || ''}`;
-      if (/wing|feather|cape|翅|羽|披风/.test(nm)) return 'wing';
-      if (/aura|halo|star|moon|glow|ring|cloud|光环|光晕|星|月|极光|雾/.test(nm)) return 'aura';
-      if (/bag|purse|basket|pack|包|篮|背/.test(nm)) return 'bag';
-      if (/neck|collar|scarf|tie|bell|necklace|ribbon|围巾|项链|领结|项圈|铃铛|丝带/.test(nm)) return 'neck';
-      return 'head';
-    };
+    const inferOutfitCat = inferOutfitCatShared;
+    const inferAccCat = inferAccCatShared;
     const allOutfits = [...SHOP_PUP_OUTFITS, ...GACHA_OUTFITS, ...TREASURE_OUTFITS, ...SPECIAL_EVENT_OUTFITS, ...FREE_PUP_OUTFITS];
     const allAccs = [...SHOP_PUP_ACCS, ...GACHA_ACCS, ...TREASURE_ACCS];
     const allSpecialComps = [...GACHA_COMPANIONS, ...TREASURE_COMPANIONS];
