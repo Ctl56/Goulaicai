@@ -127,6 +127,9 @@
     { id: 'outfit_cocoa_vest', name: '可可格纹马甲', price: 13, cat: 'daily' },
     { id: 'outfit_matcha_cape', name: '抹茶小斗篷', price: 14, cat: 'daily' },
     { id: 'outfit_lilac_dress', name: '丁香花瓣裙', price: 14, cat: 'skirt' },
+    { id: 'lux_gold_camellia_gown', name: '鎏金山茶花礼裙', price: 22, cat: 'skirt' },
+    { id: 'lux_peacock_feather_gown', name: '孔雀翎羽拖尾裙', price: 26, cat: 'skirt' },
+    { id: 'lux_sunset_phoenix_gown', name: '霞光锦绣拖尾裙', price: 30, cat: 'skirt' },
     { id: 'outfit_sailor_mint', name: '海盐水手服', price: 13, cat: 'daily' },
     { id: 'outfit_peach_overalls', name: '杏仁针织开衫', price: 12, cat: 'daily' },
     { id: 'outfit_trad_lotus_ruqun', name: '青莲齐腰裙', price: 14, cat: 'trad' },
@@ -1606,6 +1609,16 @@
     { id: 'gacha_egg_plush', name: '荷包蛋卫衣', tier: 'SR' },
     { id: 'gacha_strawberry_cape', name: '草莓奶盖披风', tier: 'SR' },
     { id: 'gacha_star_raincoat', name: '透明小雨衣', tier: 'SSR' },
+    { id: 'gacha_stained_glass_cape', name: '彩窗琉璃裙', tier: 'SSR' },
+    { id: 'gacha_jellyfish_veil', name: '水母荧光纱', tier: 'SSR' },
+    { id: 'gacha_rose_velvet_train', name: '红丝绒宫廷拖尾裙', tier: 'SSR' },
+    { id: 'gacha_retro_vinyl_jacket', name: '复古唱片棒球服', tier: 'SR' },
+    { id: 'gacha_porcelain_teapot', name: '青釉茶壶蓬裙', tier: 'SR' },
+    { id: 'gacha_mushroom_poncho', name: '白点伞菇斗篷', tier: 'SR' },
+    { id: 'gacha_denim_jumper_skirt', name: '牛仔背带小短裙', tier: 'SR' },
+    { id: 'gacha_asym_tulip_skirt', name: '斜摆郁金香裙', tier: 'SR' },
+    { id: 'gacha_pleated_tennis_skirt', name: '奶霜百褶小裙', tier: 'SR' },
+    { id: 'gacha_daisy_slip_dress', name: '雏菊细带茶歇裙', tier: 'SR' },
   ];
   const GACHA_ACCS = [
     { id: 'gacha_crystal_wings', name: '彩虹糖纸翅', tier: 'SSR' },
@@ -1660,6 +1673,12 @@
     { id: 'gacha_aura_tiny_planet', name: '迷你小星球环', tier: 'SSR' },
     { id: 'gacha_head_egg_tart', name: '头顶蛋挞', tier: 'SR' },
     { id: 'gacha_head_loading_bar', name: '大脑加载中', tier: 'SR' },
+    { id: 'gacha_acc_paper_umbrella', name: '手绘油纸小伞', tier: 'SSR' },
+    { id: 'gacha_acc_clockwork_key', name: '发条金钥匙', tier: 'SSR' },
+    { id: 'gacha_acc_floating_lantern', name: '提灯小萤笼', tier: 'SR' },
+    { id: 'gacha_acc_monocle_chain', name: '金丝单片眼镜', tier: 'SR' },
+    { id: 'gacha_acc_mini_skateboard', name: '背挂滑板', tier: 'SR' },
+    { id: 'gacha_acc_quill_scroll', name: '漂浮羽毛笔', tier: 'SR' },
   ];
   const GACHA_COMPANIONS = [
     { id: 'gacha_mini_angel', name: '小天使灵', tier: 'SSR' },
@@ -8207,8 +8226,8 @@
               <span id="st-px-id-badges-wrap" style="display:inline-flex;align-items:center;gap:var(--badge-pair-gap, 4px);flex-shrink:0;"><span class="st-px-title-badge" id="st-px-id-title" style="display:none;"></span><span class="st-px-title-badge" id="st-px-id-shopbadge" style="display:none;"></span></span>
             </div>
             <div class="st-px-idline">
-              <span><span style="font-size:10px;color:#6b5446;font-weight:700;" id="st-px-aff-label">好感 Lv.1 初相识</span><span class="st-px-pers-tag" id="st-px-pers-tag" style="display:none;">懒洋洋</span></span>
-              <span class="st-px-coin-left" style="font-size:10px;font-weight:700;color:#6b4b18;"><i class="st-px-coin-ico"></i><span id="st-px-num-coins">0</span></span>
+              <span><span style="font-size:10px;color:var(--px-custom-fg,#6b5446);font-weight:700;" id="st-px-aff-label">好感 Lv.1 初相识</span><span class="st-px-pers-tag" id="st-px-pers-tag" style="display:none;">懒洋洋</span></span>
+              <span class="st-px-coin-left" style="font-size:10px;font-weight:700;color:var(--px-custom-fg,#6b4b18);"><i class="st-px-coin-ico"></i><span id="st-px-num-coins">0</span></span>
             </div>
           </div>
         </div>
@@ -15468,6 +15487,144 @@
         px(hc - 1, hy - 2, '#ffffff');
         px(hc + 1, hy - 2, '#ffe066');
       });
+    } else if (outfit === 'gacha_stained_glass_cape') {
+      // [扭蛋SSR 豪华] 彩窗琉璃裙：鎏金立领+教堂彩绘玻璃马赛克层叠宽裙+星光拖尾
+      const panes = ['#e84a5f', '#f7b731', '#2bcbba', '#9b59b6', '#ff85a2', '#45aaf2'];
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffe066' : '#353d6b');
+      }
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fff4b8' : '#262b4a');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#d9a441' : panes[Math.abs(x) % panes.length]);
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#262b4a' : panes[Math.abs(x + 2) % panes.length]);
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffe066' : panes[Math.abs(x + 4) % panes.length]);
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = xMin - 1; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#d9a441' : '#353d6b');
+        px(bx + xMin - 2, by + 4, '#ffe066');
+      }
+    } else if (outfit === 'gacha_jellyfish_veil') {
+      // [扭蛋SSR 豪华] 水母荧光纱：珍珠肩领+半透水母伞形蓬裙+垂坠发光触须飘带
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffffff' : '#b8f4ff');
+      }
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#e6fbff' : '#99f0ff');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#d8c2ff' : '#7ae8ff');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#c4e0ff' : '#b294ff');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#78f7eb' : '#e6c8ff');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = xMin - 1; x <= xMax + 1; x += 2) px(bx + x, by + 4, x % 4 === 0 ? '#8efbf0' : '#ead4ff');
+        px(bx + xMin - 1, by + 3, '#ffffff');
+        px(bx + xMax + 1, by + 3, '#ffffff');
+      }
+    } else if (outfit === 'gacha_rose_velvet_train') {
+      // [扭蛋SSR 豪华] 红丝绒宫廷拖尾裙：香槟金蕾丝立领+酒红丝绒收腰+层叠珍珠大拖尾
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x === 4 ? '#fff6d6' : (x % 2 === 0 ? '#f0c975' : '#fffdf7'));
+      }
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffe082' : '#7a1c2e');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 5) ? '#f0c975' : '#94243a');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#b5334c' : '#7a1c2e');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#f7dc94' : '#5e1322');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#7a1c2e' : '#f0c975');
+        px(bx + xMin - 2, by + 3, '#94243a');
+        px(bx + xMin - 3, by + 4, '#fff8e6');
+        px(bx + xMax + 1, by + 3, '#fff8e6');
+      }
+    } else if (outfit === 'gacha_denim_jumper_skirt') {
+      // [扭蛋SR 短裙] 牛仔背带小短裙：奶白短袖衬衫+水洗浅蓝牛仔双肩背带+利落A字短裙
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 2 || x === 6) ? '#6e9ac4' : '#fffdf7');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 2 || x === 6) ? '#f2c14e' : (x >= 2 && x <= 6 ? '#7da9d4' : '#fffdf7'));
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#6995bf' : '#7da9d4');
+      for (let x = 1; x <= topMax - 1; x++) pxBody(bx + x, by + 3, '#e8f1fa');
+    } else if (outfit === 'gacha_asym_tulip_skirt') {
+      // [扭蛋SR 斜摆裙] 斜摆郁金香裙：奶油方领上衣+珊瑚粉不对称斜裁垂坠裙摆与侧腰花结
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x >= 3 && x <= 5) ? '#fffdf7' : '#ffccd8');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, x === 2 ? '#e85d75' : '#ff9eb5');
+      for (let x = xMin; x <= topMax; x++) pxBody(bx + x, by + 2, x < 3 ? '#f27999' : '#ffb5c7');
+      for (let x = xMin; x <= Math.floor(topMax * 0.65); x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffe6ed' : '#f27999');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        px(bx + xMin, by + 4, '#ff9eb5');
+        px(bx + xMin + 1, by + 4, '#ffe6ed');
+      }
+    } else if (outfit === 'gacha_pleated_tennis_skirt') {
+      // [扭蛋SR 百褶短裙] 奶霜百褶小裙：燕麦针织小背心配焦糖V领边与清爽双色短百褶裙
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 3 || x === 5) ? '#9c6644' : '#f7efe1');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#9c6644' : '#fffaf0');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, x % 2 === 0 ? '#d4a373' : '#faedcd');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#bc8a5f' : '#ffffff');
+    } else if (outfit === 'gacha_daisy_slip_dress') {
+      // [扭蛋SR 茶歇裙] 雏菊细带茶歇裙：淡鹅黄细肩带连衣裙点缀奶白小雏菊与花边下摆
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 2 || x === 6) ? '#f5d76e' : '#fffdf7');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x === 3 || x === 7) ? '#ffffff' : '#fae38c');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, (x === 1 || x === 5) ? '#ffffff' : (x === 4 ? '#a8d5a2' : '#f5d76e'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#fffdf7' : '#fceaa6');
+    } else if (outfit === 'lux_gold_camellia_gown') {
+      // [商城豪华 22币] 鎏金山茶花礼裙：香槟金花边立领+象牙缎面山茶花胸饰+多层珍珠拖尾
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x === 4 ? '#fffdf7' : (x % 2 === 0 ? '#e6bd63' : '#fff7e0'));
+      }
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, (x === 3 || x === 5) ? '#f0c975' : '#fffaf0');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x === 4 ? '#e6bd63' : (x % 2 === 0 ? '#fffdf7' : '#f7e9cc'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#f0c975' : '#fff4db');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#ffffff' : '#e6bd63');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#f7e9cc' : '#e6bd63');
+        px(bx + xMin - 2, by + 3, '#fffdf7');
+        px(bx + xMin - 3, by + 4, '#ffffff');
+      }
+    } else if (outfit === 'lux_peacock_feather_gown') {
+      // [商城豪华 26币] 孔雀翎羽拖尾裙：鎏金肩饰+孔雀蓝绿丝绒裙身+宝石翎眼渐变华丽大拖尾
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#f0c975' : '#186a73');
+      }
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#ffe066' : '#145863');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 3 === 0 ? '#2ec4b6' : '#1c7280');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 1 || x === 5 || x === 9) ? '#f5c84c' : (x % 2 === 0 ? '#1b4f72' : '#26a69a'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#48d1cc' : '#145863');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = xMin - 2; x <= xMax + 1; x++) px(bx + x, by + 4, x % 3 === 0 ? '#ffe066' : (x % 2 === 0 ? '#1c7280' : '#2ec4b6'));
+        px(bx + xMin - 2, by + 3, '#2ec4b6');
+        px(bx + xMin - 3, by + 4, '#f5c84c');
+        px(bx + xMax + 1, by + 3, '#f5c84c');
+      }
+    } else if (outfit === 'lux_sunset_phoenix_gown') {
+      // [商城豪华 30币] 霞光锦绣拖尾裙：珍珠金丝立领+珊瑚橘金暮紫渐变层裙+星辉锦绣超长拖尾
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = 1; x <= topMax - 1; x++) px(bx + x, by - 1, x % 2 === 0 ? '#ffe484' : '#ff9a8b');
+      }
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fff6cc' : '#f26a7e');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, x % 2 === 0 ? '#ff9f68' : '#f7788a');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffe078' : (x % 2 === 0 ? '#d96ba8' : '#ff8c78'));
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#9c59a8' : '#ffbe6b');
+      if (!isFlatPose && !isStretchPose && !isSitPose) {
+        for (let x = xMin - 3; x <= xMax + 1; x++) px(bx + x, by + 4, x % 2 === 0 ? '#ffe078' : '#b85aa8');
+        px(bx + xMin - 2, by + 3, '#ff9f68');
+        px(bx + xMin - 3, by + 3, '#ffe484');
+        px(bx + xMax + 1, by + 3, '#fff6cc');
+      }
+    } else if (outfit === 'gacha_retro_vinyl_jacket') {
+      // [扭蛋SR] 复古唱片棒球服：森林绿羊毛衣身配奶油袖口与黑胶金徽章
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#f7f1e1' : '#245943');
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 1, (x <= 1 || x >= topMax - 1) ? '#f7f1e1' : (x === 4 ? '#f2c14e' : '#1e4d3a'));
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 2, (x <= 1 || x >= topMax - 1) ? '#ebe2cc' : (x === 4 ? '#222222' : '#245943'));
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#f7f1e1' : '#1e4d3a');
+    } else if (outfit === 'gacha_porcelain_teapot') {
+      // [扭蛋SR] 青釉茶壶蓬裙：温润青瓷釉色上衣配象牙白花边与暖金丝带
+      for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, x === 4 ? '#fffdf7' : '#8ec4b8');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, '#e6b85c');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, x % 3 === 0 ? '#ffffff' : '#a8d8cd');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#fffdf7' : '#7ab2a6');
+    } else if (outfit === 'gacha_mushroom_poncho') {
+      // [扭蛋SR] 白点伞菇斗篷：珊瑚红白波点伞菇连帽斗篷配褶皱奶杏领与苔绿边
+      for (let x = xMin; x <= topMax; x++) pxBody(bx + x, by, x % 2 === 0 ? '#fff4e0' : '#ebd5b3');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 1, (x === 1 || x === 5) ? '#fffdf7' : '#d94848');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 2, (x === 3 || x === 7) ? '#fffdf7' : '#c93b3b');
+      for (let x = xMin; x <= xMax; x++) pxBody(bx + x, by + 3, x % 2 === 0 ? '#7fa668' : '#f7ecd8');
+      drawHood('#d94848', '#c93b3b', '#fff4e0', (hc) => {
+        px(hc - 2, hy - 2, '#fffdf7');
+        px(hc + 1, hy - 3, '#fffdf7');
+        px(hc + 2, hy - 1, '#fffdf7');
+      });
     } else if (outfit === 'gacha_egg_plush') {
       // [扭蛋SR 搞笑] 荷包蛋卫衣：圆滚滚蛋白软卫衣正中一颗溏心大蛋黄
       for (let x = 0; x <= topMax; x++) pxBody(bx + x, by, '#fffdf7');
@@ -17478,6 +17635,75 @@
       for (let x = -2; x <= 2; x++) {
         px(hc + x, hy - 2, (x + 2) <= step ? '#78c6f7' : '#ffffff');
       }
+    } else if (acc === 'gacha_acc_paper_umbrella') {
+      // [扭蛋SSR] 手绘油纸小伞：斜撑在肩后的国风手绘珊瑚桃白油纸伞
+      const ux = hc - 5;
+      const uy = hy - 2;
+      // 伞柄斜向下
+      px(ux + 1, uy + 2, '#8c5a32'); px(ux + 2, uy + 3, '#a66e3f'); px(ux + 3, uy + 4, '#8c5a32');
+      // 伞顶与伞面
+      px(ux, uy - 2, '#e6b85c');
+      for (let x = -3; x <= 3; x++) px(ux + x, uy - 1, Math.abs(x) === 3 ? '#d95b6a' : (x % 2 === 0 ? '#fff6eb' : '#f28b96'));
+      for (let x = -4; x <= 4; x++) px(ux + x, uy, x % 2 === 0 ? '#e36474' : '#ffe6dc');
+      for (let x = -4; x <= 4; x++) px(ux + x, uy + 1, Math.abs(x) === 4 ? '#b84252' : (x % 3 === 0 ? '#f0c975' : '#fffdf7'));
+    } else if (acc === 'gacha_acc_clockwork_key') {
+      // [扭蛋SSR] 发条金钥匙：背上会随帧轻轻转动的复古黄铜发条钥匙
+      const phase = Math.floor((pup.tick || 0) / 10) % 2;
+      const kx = ox + 1;
+      const ky = oy + 8;
+      // 轴杆
+      px(kx + 1, ky, '#b8862d'); px(kx, ky, '#e6b84c');
+      if (phase === 0) {
+        // 竖展双翼钥匙环
+        px(kx - 1, ky - 2, '#ffe078'); px(kx - 2, ky - 2, '#d9a441');
+        px(kx - 2, ky - 1, '#ffe078'); px(kx - 1, ky - 1, '#fff6cc');
+        px(kx - 1, ky, '#e6b84c');
+        px(kx - 2, ky + 1, '#ffe078'); px(kx - 1, ky + 1, '#fff6cc');
+        px(kx - 1, ky + 2, '#d9a441'); px(kx - 2, ky + 2, '#b8862d');
+      } else {
+        // 侧转缩窄帧
+        px(kx - 1, ky - 1, '#ffe078'); px(kx - 1, ky, '#fff6cc'); px(kx - 1, ky + 1, '#d9a441');
+        px(kx - 2, ky, '#e6b84c');
+      }
+    } else if (acc === 'gacha_acc_floating_lantern') {
+      // [扭蛋SR] 提灯小萤笼：在身侧轻轻浮动的暖光木框萤火提灯
+      const bob = Math.floor((pup.tick || 0) / 14) % 2;
+      const lx = hc + 7;
+      const ly = hy + 2 + bob;
+      px(lx, ly - 3, '#d9a441'); // 提环
+      for (let x = -1; x <= 1; x++) { px(lx + x, ly - 2, '#6b4423'); px(lx + x, ly + 1, '#6b4423'); }
+      px(lx - 1, ly - 1, '#ffe478'); px(lx, ly - 1, '#fff9d6'); px(lx + 1, ly - 1, '#ffe478');
+      px(lx - 1, ly, '#ffbe42'); px(lx, ly, bob ? '#fffdf0' : '#ffd257'); px(lx + 1, ly, '#ffbe42');
+      px(lx, ly + 2, '#e85d5d'); // 小红穗
+    } else if (acc === 'gacha_acc_monocle_chain') {
+      // [扭蛋SR] 金丝单片眼镜：单眼复古金框镜片与垂坠细金链
+      const mx = hc + 2;
+      const my = hy + 3;
+      px(mx - 1, my - 1, '#e6b84c'); px(mx, my - 1, '#ffe078'); px(mx + 1, my - 1, '#e6b84c');
+      px(mx - 1, my, '#e6b84c'); px(mx, my, 'rgba(210,242,255,0.75)'); px(mx + 1, my, '#e6b84c');
+      px(mx - 1, my + 1, '#d9a441'); px(mx, my + 1, '#e6b84c'); px(mx + 1, my + 1, '#d9a441');
+      // 垂坠细金链
+      px(mx + 2, my + 1, '#f0c975'); px(mx + 2, my + 2, '#d9a441'); px(mx + 1, my + 3, '#f0c975');
+    } else if (acc === 'gacha_acc_mini_skateboard') {
+      // [扭蛋SR] 背挂滑板：斜背在身后的薄荷珊瑚条纹迷你滑板与小滚轮
+      const sx = ox + 4;
+      const sy = oy + 7;
+      px(sx - 2, sy - 1, '#ff7f8a'); px(sx - 1, sy - 1, '#fffdf7');
+      px(sx - 1, sy, '#72d6c9'); px(sx, sy, '#ff7f8a');
+      px(sx, sy + 1, '#fffdf7'); px(sx + 1, sy + 1, '#72d6c9');
+      px(sx + 1, sy + 2, '#ff7f8a'); px(sx + 2, sy + 2, '#5cc2b5');
+      // 两个小滑板轮
+      px(sx - 2, sy, '#3b2a22'); px(sx + 2, sy + 1, '#3b2a22');
+    } else if (acc === 'gacha_acc_quill_scroll') {
+      // [扭蛋SR] 漂浮羽毛笔：在身旁轻盈起伏并洒落星屑的雪白金尖羽毛笔
+      const bob = Math.floor((pup.tick || 0) / 12) % 2;
+      const qx = hc - 6;
+      const qy = hy + 1 + bob;
+      px(qx - 2, qy - 3, '#ffffff'); px(qx - 1, qy - 3, '#eef5ff');
+      px(qx - 2, qy - 2, '#d9e8ff'); px(qx - 1, qy - 2, '#ffffff'); px(qx, qy - 2, '#eef5ff');
+      px(qx - 1, qy - 1, '#c4dbfa'); px(qx, qy - 1, '#ffffff');
+      px(qx, qy, '#e6b84c'); px(qx + 1, qy + 1, '#b8862d'); // 金笔尖
+      px(qx + 2, qy + 1 - bob, '#ffe078'); // 闪烁金墨星点
     } else if (acc === 'gacha_sr_clover_ears') {
       // 薄荷蝴蝶耳夹：左右耳畔对称薄荷奶油迷你蝴蝶发夹
       px(hc - 5, hy - 2, '#8be0b8'); px(hc - 4, hy - 1, '#fff3c4'); px(hc - 5, hy - 1, '#a9ebd0'); px(hc - 5, hy, '#75cfa6');
@@ -22246,9 +22472,12 @@
         treasure_star_halo: 'aura', treasure_angel_halo: 'aura',
         gacha_magic_aura: 'aura', gacha_aura_aurora_ring: 'aura', gacha_star_orbit: 'aura',
         gacha_angel_halo: 'aura', gacha_aura_sushi: 'aura', gacha_aura_tiny_planet: 'aura',
+        gacha_acc_floating_lantern: 'aura', gacha_acc_quill_scroll: 'aura',
         gacha_crystal_wings: 'wing', gacha_wing_jellyfish: 'wing', gacha_wing_rainbow_ribbon: 'wing',
         gacha_wing_cardboard: 'wing', gacha_bowtie_wing: 'wing', gacha_bow_ribbon_tail: 'wing', gacha_wing_candy_cloud: 'wing',
+        gacha_acc_paper_umbrella: 'wing', gacha_acc_clockwork_key: 'wing',
         gacha_cat_bag: 'bag', gacha_berry_pack: 'bag', gacha_bag_dumpling: 'bag', gacha_bag_cat_cloud: 'bag', gacha_mini_camera_bag: 'bag',
+        gacha_acc_mini_skateboard: 'bag',
       };
       const allAccOwned = [
         ...FREE_PUP_ACCS.map(i => ({ ...i, _wcats: i.id === 'none' ? ['all'] : ['head'] })),
@@ -22411,16 +22640,19 @@
         gacha_stellar_gown: 'skirt', gacha_aurora_dress: 'skirt', gacha_moon_empress: 'skirt',
         gacha_swan_ballet: 'skirt', gacha_starlight_cape_dress: 'skirt', gacha_star_witch_dress: 'skirt',
         gacha_strawberry_maid: 'skirt', gacha_matcha_plaid: 'skirt', gacha_lilac_lolita: 'skirt', gacha_strawberry_cake_dress: 'skirt',
+        gacha_stained_glass_cape: 'skirt', gacha_jellyfish_veil: 'skirt', gacha_rose_velvet_train: 'skirt',
+        gacha_porcelain_teapot: 'skirt', gacha_denim_jumper_skirt: 'skirt', gacha_asym_tulip_skirt: 'skirt',
+        gacha_pleated_tennis_skirt: 'skirt', gacha_daisy_slip_dress: 'skirt',
         treasure_sakura_haori: 'trad', fest_lucky_cape: 'trad',
         gacha_cloud_hanfu: 'trad', gacha_cherry_blossom_kimono: 'trad',
         treasure_star_pajama: 'onesie', gacha_fried_shrimp: 'onesie', gacha_cat_hoodie: 'onesie',
         gacha_cloud_pajama: 'onesie', gacha_frog_raincoat: 'onesie', gacha_bread_toast: 'onesie',
-        gacha_banana_suit: 'onesie', gacha_milk_cow_onesie: 'onesie', gacha_star_raincoat: 'onesie',
+        gacha_banana_suit: 'onesie', gacha_milk_cow_onesie: 'onesie', gacha_star_raincoat: 'onesie', gacha_mushroom_poncho: 'onesie',
         treasure_clover_cloak: 'daily', game_crown_cape: 'daily',
         ck_outfit_knit_cardigan: 'daily', ck_outfit_century_cloak: 'daily',
         gacha_peach_preppy: 'daily', gacha_sailor_cream: 'daily', gacha_honey_bear_coat: 'daily',
         gacha_strawberry_overalls: 'daily', gacha_cloud_sweater: 'daily', gacha_strawberry_sweater: 'daily',
-        gacha_egg_plush: 'daily', gacha_strawberry_cape: 'daily',
+        gacha_egg_plush: 'daily', gacha_strawberry_cape: 'daily', gacha_retro_vinyl_jacket: 'daily',
       };
       const allOutfitOwned = [
         ...FREE_PUP_OUTFITS.map(i => ({ ...i, _wcats: i.id === 'none' ? ['all'] : ['daily'] })),
@@ -36089,7 +36321,14 @@
       if (btn) { btn.disabled = true; btn.textContent = '添加中…'; }
       try {
         const ok = await addCloudFriendByCode(inp?.value || '');
-        if (ok) openFriendsListModal();
+        if (ok) {
+          if (inp) inp.value = '';
+          openFriendsListModal();
+          const noticeMask = root.querySelector('#st-tb-px-notice-mask');
+          if (noticeMask && noticeMask.style.display && noticeMask.style.display !== 'none') {
+            bringModalFront(noticeMask);
+          }
+        }
       } finally {
         addFriendBusy = false;
         if (btn) { btn.disabled = false; btn.textContent = '加好友'; }
