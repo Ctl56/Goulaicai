@@ -318,6 +318,17 @@
     { id: 'acc_head_lace_bows', name: '蕾丝珍珠耳结', price: 12, cat: 'head' },
     { id: 'acc_head_fox_ears', name: '雪白小狐耳', price: 12, cat: 'head' },
     { id: 'acc_head_star_braids', name: '奶黄麻花辫', price: 12, cat: 'head' },
+    // 独立分类：10 款镂空前襟斗篷（中间留空可与任意裙子/衣服叠穿）
+    { id: 'cape_goth_lace', name: '黑纱蕾丝斗篷', price: 12, cat: 'cape' },
+    { id: 'cape_red_riding', name: '小红帽绒斗篷', price: 13, cat: 'cape' },
+    { id: 'cape_ivory_pearl', name: '象牙珍珠披肩', price: 15, cat: 'cape' },
+    { id: 'cape_star_velvet', name: '星夜绒斗篷', price: 16, cat: 'cape' },
+    { id: 'cape_sakura_gauze', name: '樱雾薄纱斗篷', price: 14, cat: 'cape' },
+    { id: 'cape_matcha_plaid', name: '抹茶格纹斗篷', price: 14, cat: 'cape' },
+    { id: 'cape_royal_ermine', name: '宫廷绒毛披风', price: 18, cat: 'cape' },
+    { id: 'cape_sea_jelly', name: '海盐泡泡斗篷', price: 15, cat: 'cape' },
+    { id: 'cape_caramel_bear', name: '焦糖毛绒斗篷', price: 14, cat: 'cape' },
+    { id: 'cape_lavender_bell', name: '丁香铃兰斗篷', price: 16, cat: 'cape' },
   ];
 
   // 独立分类：24 款漂浮像素小跟班
@@ -17502,6 +17513,80 @@
       for (let x = -2; x <= 2; x++) px(hc + x, hy + 4, '#ffffff');
       for (let x = -2; x <= 2; x++) px(hc + x, hy + 5, (x === 0 || x === 1) ? '#ffae33' : '#fffdf7');
       for (let x = -1; x <= 1; x++) px(hc + x, hy + 6, x === 0 ? '#ffd257' : '#ffffff');
+    } else if (acc && acc.startsWith('cape_')) {
+      // 镂空前襟斗篷：左右披肩外扩垂坠，中间身子(ox+4..ox+10)完全留空，可与任意裙子/衣服叠穿！
+      if (isFlatPose) return;
+      const cy = oy + 8;
+      // 通用左右斗篷主体绘制辅助（cMain 主色, cHi 高光/纹理色, cHem 下摆装饰色, cHem2 交替下摆色, cClasp 领口扣饰色）
+      const drawOpenCapeBase = (cMain, cHi, cHem, cHem2, cClasp) => {
+        // 领口/肩部 (cy)
+        px(ox + 2, cy, cMain); px(ox + 3, cy, cMain); px(ox + 4, cy, cMain); px(ox + 5, cy, cClasp || cMain);
+        px(ox + 9, cy, cClasp || cMain); px(ox + 10, cy, cMain); px(ox + 11, cy, cMain); px(ox + 12, cy, cMain);
+        // 第2层左右外扩 (cy + 1)
+        px(ox + 1, cy + 1, cMain); px(ox + 2, cy + 1, cHi); px(ox + 3, cy + 1, cMain);
+        px(ox + 11, cy + 1, cMain); px(ox + 12, cy + 1, cHi); px(ox + 13, cy + 1, cMain);
+        // 第3层左右宽摆 (cy + 2)
+        px(ox + 0, cy + 2, cMain); px(ox + 1, cy + 2, cHi); px(ox + 2, cy + 2, cMain); px(ox + 3, cy + 2, cMain);
+        px(ox + 11, cy + 2, cMain); px(ox + 12, cy + 2, cMain); px(ox + 13, cy + 2, cHi); px(ox + 14, cy + 2, cMain);
+        // 第4层装饰下摆 (cy + 3)
+        px(ox + 0, cy + 3, cHem); px(ox + 1, cy + 3, cHem2); px(ox + 2, cy + 3, cHem); px(ox + 3, cy + 3, cHem2);
+        px(ox + 11, cy + 3, cHem2); px(ox + 12, cy + 3, cHem); px(ox + 13, cy + 3, cHem2); px(ox + 14, cy + 3, cHem);
+      };
+
+      if (acc === 'cape_goth_lace') {
+        // 黑纱蕾丝斗篷：复刻图款黑斗篷 + 白黑交错像素蕾丝花边 + 银扣
+        drawOpenCapeBase('#26232b', '#3a3542', '#26232b', '#ffffff', '#cfd6e6');
+        px(ox + 6, cy, '#cfd6e6'); px(ox + 8, cy, '#cfd6e6');
+      } else if (acc === 'cape_red_riding') {
+        // 小红帽绒斗篷：暖莓红绒面 + 奶白毛绒包边与下摆 + 金色蝴蝶结扣
+        drawOpenCapeBase('#c93848', '#de5060', '#fffaf0', '#f7ead7', '#f5cc6c');
+        px(ox + 3, cy + 1, '#fffaf0'); px(ox + 11, cy + 1, '#fffaf0');
+        px(ox + 3, cy + 2, '#fffaf0'); px(ox + 11, cy + 2, '#fffaf0');
+        px(ox + 7, cy, '#f5cc6c');
+      } else if (acc === 'cape_ivory_pearl') {
+        // 象牙珍珠披肩：温润奶白披肩 + 香槟金肩线 + 垂坠珍珠圆点下摆
+        drawOpenCapeBase('#fcf5e8', '#ffffff', '#ffffff', '#e8d5b5', '#e6c278');
+        px(ox + 2, cy, '#e6c278'); px(ox + 12, cy, '#e6c278');
+        px(ox + 1, cy + 4, '#ffffff'); px(ox + 3, cy + 4, '#ffffff');
+        px(ox + 11, cy + 4, '#ffffff'); px(ox + 13, cy + 4, '#ffffff');
+      } else if (acc === 'cape_star_velvet') {
+        // 星夜绒斗篷：午夜深蓝 + 散落碎金星光 + 香槟金流光下摆
+        drawOpenCapeBase('#283863', '#3b5087', '#3b5087', '#ffe27a', '#ffe27a');
+        px(ox + 1, cy + 2, '#ffe27a'); px(ox + 13, cy + 1, '#ffe27a');
+        px(ox + 2, cy + 1, '#fff6cc'); px(ox + 12, cy + 2, '#fff6cc');
+      } else if (acc === 'cape_sakura_gauze') {
+        // 樱雾薄纱斗篷：粉雾轻纱 + 浅粉白交错花瓣边 + 樱花小别针
+        drawOpenCapeBase('#f5bfd0', '#fce0e9', '#ffffff', '#f7a8c2', '#e86f98');
+        px(ox + 0, cy + 3, '#fce0e9'); px(ox + 14, cy + 3, '#fce0e9');
+        px(ox + 4, cy, '#e86f98'); px(ox + 10, cy, '#e86f98');
+      } else if (acc === 'cape_matcha_plaid') {
+        // 抹茶格纹斗篷：复古抹茶格纹 + 奶白毛线球下摆 + 焦糖木扣
+        drawOpenCapeBase('#7da678', '#a6c99d', '#7da678', '#fff8eb', '#b87a4b');
+        px(ox + 2, cy + 2, '#f5eedc'); px(ox + 12, cy + 2, '#f5eedc');
+        px(ox + 1, cy + 1, '#5d8259'); px(ox + 13, cy + 1, '#5d8259');
+        px(ox + 6, cy, '#b87a4b'); px(ox + 8, cy, '#b87a4b');
+      } else if (acc === 'cape_royal_ermine') {
+        // 宫廷绒毛披风：勃艮第酒红 + 貂绒白边点黑斑 + 领口金链
+        drawOpenCapeBase('#7d1e34', '#9e2b45', '#fffdf8', '#fffdf8', '#f2c968');
+        px(ox + 1, cy + 3, '#3b2a22'); px(ox + 3, cy + 3, '#3b2a22');
+        px(ox + 11, cy + 3, '#3b2a22'); px(ox + 13, cy + 3, '#3b2a22');
+        px(ox + 6, cy, '#f2c968'); px(ox + 7, cy, '#ffe999'); px(ox + 8, cy, '#f2c968');
+      } else if (acc === 'cape_sea_jelly') {
+        // 海盐泡泡斗篷：透亮冰蓝 + 白蓝波浪边 + 垂坠1px水珠光丝
+        drawOpenCapeBase('#8ecbf2', '#c7e9ff', '#ffffff', '#a8dcfa', '#ffffff');
+        px(ox + 0, cy + 4, '#c7e9ff'); px(ox + 2, cy + 4, '#ffffff');
+        px(ox + 12, cy + 4, '#ffffff'); px(ox + 14, cy + 4, '#c7e9ff');
+      } else if (acc === 'cape_caramel_bear') {
+        // 焦糖毛绒斗篷：暖奶茶焦糖绒 + 厚奶霜卷毛下摆 + 可可圆扣
+        drawOpenCapeBase('#c78d5a', '#deab7a', '#fff6e6', '#f2dfc2', '#6b4226');
+        px(ox + 2, cy + 1, '#fff6e6'); px(ox + 12, cy + 1, '#fff6e6');
+        px(ox + 5, cy, '#6b4226'); px(ox + 9, cy, '#6b4226');
+      } else if (acc === 'cape_lavender_bell') {
+        // 丁香铃兰斗篷：柔紫丁香披风 + 浅薄荷藤叶边 + 纯白铃兰花苞垂坠
+        drawOpenCapeBase('#b59be3', '#d7c4f7', '#a6d6b0', '#b59be3', '#e8f5eb');
+        px(ox + 1, cy + 4, '#ffffff'); px(ox + 3, cy + 4, '#ffffff');
+        px(ox + 11, cy + 4, '#ffffff'); px(ox + 13, cy + 4, '#ffffff');
+      }
     } else if (acc === 'gacha_neck_star_cape') {
       // [扭蛋SSR 好看] 星纱小披风：暮蓝金星透明流光小披风
       if (isFlatPose) return;
@@ -22455,6 +22540,7 @@
       { id: 'wing', label: '翅膀' },
       { id: 'aura', label: '光环' },
       { id: 'bag', label: '包包' },
+      { id: 'cape', label: '斗篷' },
       { id: 'limited', label: '限定' },
     ],
     outfit: [
@@ -23950,6 +24036,7 @@
             { id: 'wing', label: '翅膀' },
             { id: 'aura', label: '光环' },
             { id: 'bag', label: '包包' },
+            { id: 'cape', label: '斗篷' },
           ]
         : shopMainCat === 'goods'
           ? [
@@ -40900,6 +40987,7 @@
   };
   const inferAccCatShared = (item) => {
     if (!item) return '';
+    if (item.cat === 'cape') return 'wing';
     if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag'].includes(item.cat)) return item.cat;
     const nm = `${item.id || ''} ${item.name || ''}`;
     if (/wing|feather|cape|quill|key|翅|羽|披风|发条/.test(nm)) return 'wing';
