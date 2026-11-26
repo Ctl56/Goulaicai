@@ -21388,7 +21388,7 @@
             care_legend_200:      ['..oo..','.oyyo.','..oo..'],
             game_legend_100:      ['..yy..','.ywwy.','..yy..'],
             rich_tycoon_500:      ['.yyyy.','ywwwwy','.oooo.'],
-            job_legend_50:        ['..oo..','.oyyo.','..oo..'],
+            job_legend_50:        ['.yyyy.','yoowoy','.yyyy.'],
             adv_legend_50:        ['..bb..','.bggb.','..bb..'],
             visitor_host_30:      ['.l..p.','lwwpww','.l..p.'],
             hidden_2048_double:   ['.yy...','ywwy..','.yy...'],
@@ -21403,7 +21403,7 @@
             ach_gacha_30:         ['..ll..','.lyyl.','..ll..'],
             hidden_early_bird:    ['..yy..','.yccy.','..cc..'],
             hidden_chat_100:      ['.bbbb.','bwwwwb','.bbbb.'],
-            hidden_fashion_3:     ['..pp..','.pwwp.','..pp..'],
+            hidden_fashion_3:     ['p.ww.p','.pppp.','p.pp.p'],
             hidden_style_player:  ['..cc..','.cppc.','..yy..'],
             hidden_garden_gift_30:['..pp..','.pggp.','..gg..'],
             hidden_mem_streak_5:  ['.bb...','bwwb..','.bb...'],
@@ -21420,8 +21420,40 @@
           ]);
           const isSenior = seniorSet.has(ach.id);
           el.classList.add(isSenior ? 'bespoke-lux' : 'bespoke-std');
-          if (isSenior) {
-            // 彻底停用会落入彩虹兜底的 makeUltOrn，改用 8 种自配色专属雕边 + 连续微调不雷同位置
+          // 18 款互不重复的小像素饰件池（供普通丰富、资深升级、最高级超豪华分层按哈希错位取用，绝不重复）
+          const EXTRA_ACCENTS = [
+            ['..gg..','.gllg.','g..g..','..g...'], // 嫩叶芽
+            ['.pp...','pwwp..','.pp...','..p...'], // 樱花瓣
+            ['..yy..','.ywwy.','.y..y.','..yy..'], // 金环结
+            ['..c...','.cwc..','.cwc..','..c...'], // 珍珠滴
+            ['..p.p.','.ppppp','..ppp.','...p..'], // 迷你心芽
+            ['..yy..','.y..y.','..y...','.yy...'], // 小音符
+            ['.cc...','cwwc..','.ccc..','..c...'], // 软云朵
+            ['.r..r.','rrwwrr','.r..r.','......'], // 迷你缎结
+            ['..gg..','.gwwg.','..gg..','...g..'], // 苜蓿小芽
+            ['..l...','.lwl..','lwwwl.','.lwl..'], // 浅紫花苞
+            ['..b...','.bwb..','..bb..','...b..'], // 琥珀水滴
+            ['.yy...','ywwy..','y.....','.yy...'], // 小弯月牙
+            ['..m...','.mwm..','m...m.','.mmm..'], // 薄荷铃铛
+            ['.oo...','owwo..','.oo...','..y...'], // 暖橘糖珠
+            ['..cc..','.c..c.','cwwwwc','..cc..'], // 小贝壳
+            ['.p..p.','.pwwp.','..pp..','..yy..'], // 蝶翼小结
+            ['..r...','.rwr..','.rgr..','..g...'], // 红浆果枝
+            ['.y..y.','.ywwy.','..yy..','.y..y.'], // 流金穗结
+          ];
+          const g3Idx = (h >> 2) % EXTRA_ACCENTS.length;
+          const g4Idx = (g3Idx + 7 + (h % 5)) % EXTRA_ACCENTS.length;
+          const g3 = EXTRA_ACCENTS[g3Idx];
+          const g4 = EXTRA_ACCENTS[g4Idx];
+          const mythicSet = new Set([
+            'collector_max', 'soulmate', 'hidden_all_master', 'hidden_gacha_triple_ssr',
+            'hidden_cloud_soulmate', 'hidden_cloud_gallery', 'hidden_fashion_sss',
+            'hidden_gacha_ssr_lucky', 'adv_album_all', 'adv_curio_all'
+          ]);
+          const isMythic = (ach.tier >= 4) || mythicSet.has(ach.id);
+
+          if (isSenior || isMythic) {
+            // 高级(原3件升级为4~5件) & 最高级传说成就(超级丰富：3边高定雕边 + 主副饰件 + 2处不同方位独立不重复小饰件)
             const trimSides = ['bottom', 'top', 'left', 'right'];
             const uSide = trimSides[h % trimSides.length];
             el.appendChild(makeCustomTrim(uSide, ach.bd, ach.fg, h));
@@ -21435,15 +21467,66 @@
               : (uSide === 'left'
                 ? `left:${topPct}%;top:-8px;transform:translateX(-50%);`
                 : p2);
-            el.appendChild(renderBespokePiece({ pos: mainPos, w: 14, h: 12, anim: (h % 3 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+            el.appendChild(renderBespokePiece({ pos: mainPos, w: isMythic ? 15 : 14, h: isMythic ? 13 : 12, anim: (h % 2 === 0 || isMythic ? 'b-bob' : ''), pal, grid: g1 }));
             if (subG) {
-              el.appendChild(renderBespokePiece({ pos: subPos, w: 8, h: 7, pal, grid: subG }));
+              el.appendChild(renderBespokePiece({ pos: subPos, w: isMythic ? 9 : 8, h: isMythic ? 8 : 7, pal, grid: subG }));
+            }
+            // 第2条非对称辅雕边（高级精选 & 全部最高级必带）
+            const secondTrim = trimSides[(h + 2) % 4];
+            if (isMythic || (h % 2 === 0)) {
+              el.appendChild(makeCustomTrim(secondTrim, ach.bd, ach.fg, h + 11));
+            }
+            // 第3处独立不重复小饰件（自动错开主/副与顶正中）
+            const offPct1 = (h % 2 === 0) ? (22 + ((h >> 4) % 14)) : (67 + ((h >> 4) % 15));
+            const extraPos3 = uSide === 'right'
+              ? `left:${offPct1}%;top:-7px;transform:translateX(-50%);`
+              : (uSide === 'left'
+                ? `left:${offPct1}%;bottom:-6px;transform:translateX(-50%);`
+                : `right:-9px;top:${sideTopR}%;transform:translateY(-50%);`);
+            el.appendChild(renderBespokePiece({ pos: extraPos3, w: 8, h: 7, anim: (h % 3 === 1 ? 'b-bob' : ''), pal, grid: g3 }));
+
+            // 最高级传说成就：再叠加第3条高定雕边 + 第4处完全不重复的精巧小饰件！
+            if (isMythic) {
+              const thirdTrim = trimSides[(h + 1) % 4];
+              el.appendChild(makeCustomTrim(thirdTrim, ach.bd, ach.fg, h + 19));
+              const offPct2 = (h % 2 === 0) ? (68 + ((h >> 5) % 14)) : (20 + ((h >> 5) % 14));
+              const extraPos4 = (uSide === 'top' || uSide === 'bottom')
+                ? `left:-9px;top:${sideTopL}%;transform:translateY(-50%);`
+                : `left:${offPct2}%;${uSide === 'right' ? 'top:-7px;' : 'bottom:-6px;'}transform:translateX(-50%);`;
+              el.appendChild(renderBespokePiece({ pos: extraPos4, w: 7, h: 6, anim: 'b-bob', pal, grid: g4 }));
             }
           } else {
             if (h % 3 === 0) el.classList.add('bespoke-static');
             el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
             if (subG) {
               el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
+            }
+            const enrichBadge = (ach.tier >= 2) || (h % 2 === 0);
+            if (enrichBadge) {
+              const usedTop = /top:-/.test(p1) || /top:-/.test(p2);
+              const usedBot = /bottom:-/.test(p1) || /bottom:-/.test(p2);
+              const usedRight = /right:-/.test(p1) || /right:-/.test(p2);
+              const usedLeft = /left:-/.test(p1) || /left:-/.test(p2);
+              const altPct = (h % 2 === 0) ? (22 + ((h >> 4) % 14)) : (66 + ((h >> 4) % 16));
+              let p3 = `right:${4 + ((h >> 6) % 12)}px;bottom:-6px;`;
+              let trimSide = '';
+              if (!usedRight) {
+                p3 = `right:-9px;top:${sideTopR}%;transform:translateY(-50%);`;
+                if (!usedBot) trimSide = 'bottom';
+                else if (!usedTop) trimSide = 'top';
+              } else if (!usedBot) {
+                p3 = `left:${altPct}%;bottom:-6px;transform:translateX(-50%);`;
+                if (!usedTop) trimSide = 'top';
+              } else if (!usedTop) {
+                p3 = `left:${altPct}%;top:-7px;transform:translateX(-50%);`;
+                if (!usedLeft) trimSide = 'left';
+              } else if (!usedLeft) {
+                p3 = `left:-9px;top:${sideTopL}%;transform:translateY(-50%);`;
+              }
+              el.appendChild(renderBespokePiece({ pos: p3, w: 7, h: 6, anim: (h % 4 === 0 ? 'b-bob' : ''), pal, grid: g3 }));
+              if (ach.tier >= 2 && trimSide) {
+                el.appendChild(makeCustomTrim(trimSide, ach.bd, ach.fg, h + 7));
+              }
             }
           }
         }
