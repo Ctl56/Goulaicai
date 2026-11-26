@@ -5782,8 +5782,10 @@
       font-family: inherit !important;
       font-size: 10px !important;
       font-weight: 700 !important;
+      margin: 0 !important;
       padding: 0 6px !important;
-      line-height: 18px !important;
+      line-height: normal !important;
+      vertical-align: middle !important;
       box-shadow: none !important;
       cursor: pointer !important;
       outline: none !important;
@@ -8759,7 +8761,7 @@
             </div>
             <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
               <span style="width:auto;">等 AI 回复摇铃提醒</span>
-              <button class="st-px-btn care" id="st-tb-pup-bell-toggle" type="button" style="height:22px;padding:0 8px;">已开启</button>
+              <button class="st-px-btn care" id="st-tb-pup-bell-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;margin:0;">已开启</button>
             </div>
             <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
               <span style="width:auto;">提示音开关</span>
@@ -8780,7 +8782,7 @@
                   <option value="harp_glide">竖琴轻拨</option>
                   <option value="star_twinkle">星光叮当</option>
                 </select>
-                <button class="st-px-btn" id="st-tb-pup-tone-test" type="button" style="height:22px;padding:0 8px;font-size:10px;line-height:18px;">试听</button>
+                <button class="st-px-btn" id="st-tb-pup-tone-test" type="button" style="height:22px;padding:0 8px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;margin:0;box-sizing:border-box;">试听</button>
               </div>
             </div>
             <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
@@ -8794,7 +8796,7 @@
             </div>
             <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
               <span style="width:auto;">偷看聊天氛围反应</span>
-              <button class="st-px-btn care" id="st-tb-pup-peek-toggle" type="button" style="height:22px;padding:0 8px;">已开启</button>
+              <button class="st-px-btn care" id="st-tb-pup-peek-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;margin:0;">已开启</button>
             </div>
             <div style="border-top:1px dashed var(--px-bd,#bfa4ae);margin-top:6px;padding-top:6px;">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
@@ -8804,7 +8806,7 @@
               <div id="st-px-remind-body" style="display:none;padding-top:4px;">
                 <div class="st-px-slider-row" style="justify-content:space-between;margin-bottom:4px;">
                   <span style="width:auto;">定时喝水与护眼提醒</span>
-                  <button class="st-px-btn" id="st-px-drink-toggle" type="button" style="height:22px;padding:0 8px;">已关闭</button>
+                  <button class="st-px-btn" id="st-px-drink-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;display:inline-flex;align-items:center;justify-content:center;margin:0;">已关闭</button>
                 </div>
                 <div class="st-px-grid-4" id="st-px-drink-mins" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;">
                   <button class="st-px-btn" data-drink-min="30" type="button" style="height:22px;font-size:10px;">30分</button>
