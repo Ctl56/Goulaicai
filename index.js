@@ -2777,7 +2777,9 @@
     puppyBarkUrl: '',
     puppyBarkIconUrl: '',
     streamDraftRescue: true,
-    badgeGestureMode: 'tap_panel_hold_qd',
+    badgeGesturePanel: 'tap',
+    badgeGestureQd: 'hold',
+    quickDockTipV2Reset: false,
     puppyBellSound: true,
     puppyBellTone: 'ios_tri',
     puppyShowPersTag: false,
@@ -11507,12 +11509,27 @@
   let badgeTapTimer = null;
   let badgeLastTapAt = 0;
 
-  const getBadgeGestureSpec = () => {
-    const mode = String(config.badgeGestureMode || 'tap_panel_hold_qd');
-    if (mode === 'tap_qd_hold_panel') return { tap: 'qd', hold: 'panel', dbl: null };
-    if (mode === 'tap_panel_dbl_qd') return { tap: 'panel', hold: null, dbl: 'qd' };
-    if (mode === 'tap_qd_dbl_panel') return { tap: 'qd', hold: null, dbl: 'panel' };
-    return { tap: 'panel', hold: 'qd', dbl: null };
+  const BADGE_GESTURE_OPTIONS = [
+    { id: 'tap', label: '单击' },
+    { id: 'hold', label: '长按' },
+    { id: 'dbl', label: '双击' },
+    { id: 'swipe_up', label: '上滑' },
+    { id: 'swipe_down', label: '下滑' },
+    { id: 'swipe_in', label: '向内轻滑' },
+  ];
+
+  const getBadgeGestureMap = () => {
+    const p = String(config.badgeGesturePanel || 'tap');
+    let q = String(config.badgeGestureQd || 'hold');
+    if (p === q) q = p === 'tap' ? 'hold' : 'tap';
+    return { panel: p, qd: q };
+  };
+
+  const getTargetForGesture = (gId) => {
+    const gm = getBadgeGestureMap();
+    if (gm.panel === gId) return 'panel';
+    if (gm.qd === gId) return 'qd';
+    return null;
   };
 
   const triggerBadgeTarget = (target) => {
@@ -11530,8 +11547,7 @@
 
   badge.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-    const spec = getBadgeGestureSpec();
-    triggerBadgeTarget(spec.hold || spec.dbl || 'qd');
+    triggerBadgeTarget(getTargetForGesture('hold') || 'qd');
   });
   badge.addEventListener('pointerdown', (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') return;
@@ -11543,18 +11559,19 @@
       id: e.pointerId,
       startX: e.clientX,
       startY: e.clientY,
+      startT: Date.now(),
       origX: config.posX ?? rect.left,
       origY: config.posY ?? rect.top,
       moved: false,
       longPressed: false,
     };
     clearTimeout(badgeLongPressTimer);
-    const spec = getBadgeGestureSpec();
-    if (spec.hold) {
+    const holdTarget = getTargetForGesture('hold');
+    if (holdTarget) {
       badgeLongPressTimer = setTimeout(() => {
         if (dragState && !dragState.moved) {
           dragState.longPressed = true;
-          triggerBadgeTarget(spec.hold);
+          triggerBadgeTarget(holdTarget);
         }
       }, 280);
     }
@@ -11582,34 +11599,59 @@
     clearTimeout(badgeLongPressTimer);
     const wasMoved = dragState.moved;
     const wasLong = dragState.longPressed;
+    const dx = e.clientX - dragState.startX;
+    const dy = e.clientY - dragState.startY;
+    const dt = Date.now() - (dragState.startT || 0);
+    const origX = dragState.origX;
+    const origY = dragState.origY;
     dragState = null;
     badge.classList.remove('dragging');
     try { badge.releasePointerCapture(e.pointerId); } catch (_) {}
 
     if (wasMoved) {
+      // 快速短划判定（< 260ms 且距离 22~110px）：若绑定了对应滑动手势，直接触发并回弹悬浮球原位！
+      const dist = Math.hypot(dx, dy);
+      let swipeG = null;
+      if (dt < 260 && dist >= 22 && dist <= 115) {
+        if (Math.abs(dy) > Math.abs(dx) * 1.25) {
+          swipeG = dy < 0 ? 'swipe_up' : 'swipe_down';
+        } else if (Math.abs(dx) > Math.abs(dy) * 1.25) {
+          const isLeftDock = config.dockSide === 'left';
+          if ((isLeftDock && dx > 0) || (!isLeftDock && dx < 0)) swipeG = 'swipe_in';
+        }
+      }
+      const swipeTarget = swipeG ? getTargetForGesture(swipeG) : null;
+      if (swipeTarget) {
+        config.posX = origX;
+        config.posY = origY;
+        applyBadgePosition(false);
+        triggerBadgeTarget(swipeTarget);
+        return;
+      }
       config.dockSide = (config.posX + (cachedBadgeW / 2)) < (win.innerWidth / 2) ? 'left' : 'right';
       saveConfig();
       applyBadgePosition(false);
     } else if (!wasLong) {
-      const spec = getBadgeGestureSpec();
-      if (spec.dbl) {
+      const tapTarget = getTargetForGesture('tap');
+      const dblTarget = getTargetForGesture('dbl');
+      if (dblTarget) {
         const nowTap = Date.now();
         if (nowTap - badgeLastTapAt < 260) {
           clearTimeout(badgeTapTimer);
           badgeTapTimer = null;
           badgeLastTapAt = 0;
-          triggerBadgeTarget(spec.dbl);
+          triggerBadgeTarget(dblTarget);
         } else {
           badgeLastTapAt = nowTap;
           clearTimeout(badgeTapTimer);
           badgeTapTimer = setTimeout(() => {
             badgeTapTimer = null;
             badgeLastTapAt = 0;
-            triggerBadgeTarget(spec.tap);
+            if (tapTarget) triggerBadgeTarget(tapTarget);
           }, 240);
         }
-      } else {
-        triggerBadgeTarget(spec.tap);
+      } else if (tapTarget) {
+        triggerBadgeTarget(tapTarget);
       }
     }
   };
@@ -59615,22 +59657,38 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdCfgMask.className = 'st-tb-qd-modal-mask';
       qdCfgMask.innerHTML = `<div class="st-tb-qd-modal">
         <div class="st-tb-qd-modal-title"><span>自定义快捷面板与悬浮球手势</span><button class="st-tb-mini-btn" id="st-tb-qd-cfg-close" type="button">关闭</button></div>
-        <div style="padding:7px 8px;border:1px solid var(--tb-border,#ccc);border-radius:8px;background:var(--tb-surface,#fff);margin-bottom:4px;">
-          <div style="font-size:11.5px;font-weight:700;margin-bottom:5px;">悬浮球打开方式</div>
-          <div id="st-tb-qd-gesture-bar" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
-            <button type="button" class="st-tb-mini-btn" data-gmode="tap_panel_hold_qd" style="padding:5px 4px;font-size:10.5px;">单击工具箱 / 长按快捷</button>
-            <button type="button" class="st-tb-mini-btn" data-gmode="tap_qd_hold_panel" style="padding:5px 4px;font-size:10.5px;">单击快捷 / 长按工具箱</button>
-            <button type="button" class="st-tb-mini-btn" data-gmode="tap_panel_dbl_qd" style="padding:5px 4px;font-size:10.5px;">单击工具箱 / 双击快捷</button>
-            <button type="button" class="st-tb-mini-btn" data-gmode="tap_qd_dbl_panel" style="padding:5px 4px;font-size:10.5px;">单击快捷 / 双击工具箱</button>
+        <div style="padding:7px 8px;border:1px solid var(--tb-border,#ccc);border-radius:8px;background:var(--tb-surface,#fff);margin-bottom:4px;display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:11.5px;font-weight:700;">悬浮球打开方式</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="font-size:11.5px;">打开工具箱</span>
+            <select id="st-tb-qd-gest-panel" class="st-tb-select" style="flex:0 0 130px;height:26px;font-size:11px;padding:0 6px;">
+              <option value="tap">单击悬浮球</option>
+              <option value="hold">长按悬浮球</option>
+              <option value="dbl">双击悬浮球</option>
+              <option value="swipe_up">悬浮球上滑</option>
+              <option value="swipe_down">悬浮球下滑</option>
+              <option value="swipe_in">向屏幕内侧轻滑</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="font-size:11.5px;">打开快捷面板</span>
+            <select id="st-tb-qd-gest-qd" class="st-tb-select" style="flex:0 0 130px;height:26px;font-size:11px;padding:0 6px;">
+              <option value="tap">单击悬浮球</option>
+              <option value="hold">长按悬浮球</option>
+              <option value="dbl">双击悬浮球</option>
+              <option value="swipe_up">悬浮球上滑</option>
+              <option value="swipe_down">悬浮球下滑</option>
+              <option value="swipe_in">向屏幕内侧轻滑</option>
+            </select>
           </div>
         </div>
         <div style="font-size:11.5px;opacity:0.78;">已启用的快捷按钮，可按住左侧横杠拖动或点上下排序，也能改名或移除：</div>
         <div class="st-tb-qd-list" id="st-tb-qd-active-list"></div>
-        <div style="font-size:11.5px;opacity:0.78;">点击下方功能即可加入长按快捷栏：</div>
+        <div style="font-size:11.5px;opacity:0.78;">点击下方功能即可加入快捷面板：</div>
         <div class="st-tb-qd-pool" id="st-tb-qd-pool-list"></div>
         <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:15px;">
           <input type="checkbox" id="st-tb-qd-cfg-tip-toggle" style="margin:0 !important;padding:0 !important;width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;transform:none !important;position:static !important;vertical-align:middle !important;accent-color:var(--tb-accent, #6b8cff);" />
-          <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">长按悬浮球时显示自定义提醒弹窗</span>
+          <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">显示自定义提醒</span>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
           <button class="st-tb-mini-btn" id="st-tb-qd-cfg-reset" type="button">恢复默认</button>
@@ -59642,24 +59700,44 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       qdCfgMask.querySelector('#st-tb-qd-cfg-close')?.addEventListener('click', closeCfg);
       qdCfgMask.querySelector('#st-tb-qd-cfg-done')?.addEventListener('click', closeCfg);
       qdCfgMask.addEventListener('click', (e) => { if (e.target === qdCfgMask) closeCfg(); });
+      const panelSel = qdCfgMask.querySelector('#st-tb-qd-gest-panel');
+      const qdSel = qdCfgMask.querySelector('#st-tb-qd-gest-qd');
       const syncGestureModeUI = () => {
-        const curM = String(config.badgeGestureMode || 'tap_panel_hold_qd');
-        qdCfgMask.querySelectorAll('#st-tb-qd-gesture-bar [data-gmode]').forEach(b => {
-          b.classList.toggle('active', b.dataset.gmode === curM);
-        });
+        const gm = getBadgeGestureMap();
+        if (panelSel) panelSel.value = gm.panel;
+        if (qdSel) qdSel.value = gm.qd;
       };
-      qdCfgMask.querySelectorAll('#st-tb-qd-gesture-bar [data-gmode]').forEach(b => {
-        b.addEventListener('click', () => {
-          config.badgeGestureMode = b.dataset.gmode;
+      if (panelSel) {
+        panelSel.addEventListener('change', () => {
+          const prevP = getBadgeGestureMap().panel;
+          const nextP = panelSel.value;
+          if (nextP === config.badgeGestureQd) {
+            config.badgeGestureQd = prevP;
+            showImmNotice('手势相同，已自动帮你互换');
+          }
+          config.badgeGesturePanel = nextP;
           saveConfig();
           syncGestureModeUI();
-          showImmNotice(`悬浮球手势已切换：${b.textContent}`);
         });
-      });
+      }
+      if (qdSel) {
+        qdSel.addEventListener('change', () => {
+          const prevQ = getBadgeGestureMap().qd;
+          const nextQ = qdSel.value;
+          if (nextQ === config.badgeGesturePanel) {
+            config.badgeGesturePanel = prevQ;
+            showImmNotice('手势相同，已自动帮你互换');
+          }
+          config.badgeGestureQd = nextQ;
+          saveConfig();
+          syncGestureModeUI();
+        });
+      }
       qdCfgMask._syncGestureModeUI = syncGestureModeUI;
       qdCfgMask.querySelector('#st-tb-qd-cfg-reset')?.addEventListener('click', () => {
         config.quickDockItems = QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
-        config.badgeGestureMode = 'tap_panel_hold_qd';
+        config.badgeGesturePanel = 'tap';
+        config.badgeGestureQd = 'hold';
         saveConfig();
         syncGestureModeUI();
         renderQuickDock();
@@ -59802,15 +59880,20 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     qdCfgMask.classList.add('open');
   };
 
+  if (!config.quickDockTipV2Reset) {
+    config.quickDockTipHidden = false;
+    config.quickDockTipV2Reset = true;
+    saveConfig();
+  }
   const showQuickDockFirstTip = () => {
     if (config.quickDockTipHidden) return;
     if (!qdTipMask) {
       qdTipMask = doc.createElement('div');
       qdTipMask.id = 'st-tb-qd-tip-mask';
       qdTipMask.className = 'st-tb-qd-modal-mask';
-      qdTipMask.innerHTML = `<div class="st-tb-qd-modal" style="max-width:320px;">
-        <div class="st-tb-qd-modal-title"><span>长按快捷键支持自定义</span></div>
-        <div style="font-size:12.5px;opacity:0.9;">你可以在「工具箱 - 外观 - 长按悬浮球快捷栏」里自由增删功能、调整排序，还可以给每个按钮重新命名。</div>
+      qdTipMask.innerHTML = `<div class="st-tb-qd-modal" style="max-width:326px;">
+        <div class="st-tb-qd-modal-title"><span>快捷面板支持自定义</span></div>
+        <div style="font-size:14px;font-weight:700;line-height:1.6;">你可以在「工具箱 - 外观 - 快捷栏自定义」，或直接点快捷面板末尾的「编辑」，自由增删功能、调整排序、按钮改名，还可以自选悬浮球打开方式。</div>
         <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;user-select:none;margin:2px 0;padding:0;line-height:15px;">
           <input type="checkbox" id="st-tb-qd-tip-never" style="margin:0 !important;padding:0 !important;width:15px !important;height:15px !important;min-width:15px !important;flex:0 0 15px !important;transform:none !important;position:static !important;vertical-align:middle !important;accent-color:var(--tb-accent, #6b8cff);" />
           <span style="display:inline-flex;align-items:center;height:15px;line-height:15px;margin:0;padding:0;">下次不再出现</span>
