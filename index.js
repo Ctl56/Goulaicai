@@ -8764,7 +8764,7 @@
               <button class="st-px-btn" id="st-tb-pup-export-icon" type="button" style="height:22px;padding:0 7px;font-size:10px;" title="导出当前穿搭的 512x512 高清小狗方图，可用于换图标或上传图床">保存头像图</button>
             </div>
           </div>
-          <div style="margin-top:5px;padding:6px 7px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);display:flex;flex-direction:column;gap:4px;">
+          <div id="st-tb-pup-bark-box" style="margin-top:5px;padding:6px 7px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);display:flex;flex-direction:column;gap:4px;">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
               <span style="font-size:10px;font-weight:700;">iOS Bark 弹窗推送</span>
               <div style="display:flex;gap:3px;">
@@ -43598,6 +43598,10 @@
       pupIslandBtn.classList.toggle('active', on);
       pupIslandBtn.classList.toggle('care', on);
     }
+    const barkBoxEl = root.querySelector('#st-tb-pup-bark-box');
+    if (barkBoxEl) {
+      barkBoxEl.style.display = (config.puppyBgNotify !== false) ? 'flex' : 'none';
+    }
   };
   if (pupIslandBtn) {
     pupIslandBtn.addEventListener('click', () => {
@@ -43680,15 +43684,20 @@
     };
   };
 
+  const normalizeBarkBaseUrl = (input) => {
+    const s = String(input || '').trim();
+    const m = s.match(/^(https?:\/\/[^/]+\/[^/?#]+)/i);
+    return m ? m[1] : s.replace(/\/+$/, '');
+  };
   const sendBarkPuppyNotify = async (title, body, withIcon = true) => {
-    const rawUrl = String(config.puppyBarkUrl || '').trim().replace(/\/+$/, '');
-    if (!rawUrl || !/^https?:\/\//i.test(rawUrl)) return false;
+    const baseUrl = normalizeBarkBaseUrl(config.puppyBarkUrl);
+    if (!baseUrl || !/^https?:\/\//i.test(baseUrl)) return false;
     const iconParam = withIcon ? String(config.puppyBarkIconUrl || '').trim() : '';
     const qs = new URLSearchParams();
     qs.set('group', config.puppyEnabled ? '狗来财' : 'SillyTavern');
     qs.set('sound', 'bell');
     if (iconParam && /^https?:\/\//i.test(iconParam)) qs.set('icon', iconParam);
-    const getUrl = `${rawUrl}/${encodeURIComponent(String(title || 'SillyTavern 回复完成'))}/${encodeURIComponent(String(body || '新回复已送达'))}?${qs.toString()}`;
+    const getUrl = `${baseUrl}/${encodeURIComponent(String(title || 'SillyTavern 回复完成'))}/${encodeURIComponent(String(body || '新回复已送达'))}?${qs.toString()}`;
     try {
       await fetch(getUrl, { method: 'GET', mode: 'no-cors', cache: 'no-store' });
       return true;
@@ -43958,14 +43967,15 @@
       playSoftBellChime();
     }
 
-    if ((isTest || doc.hidden) && config.puppyBarkUrl) {
+    const _hasBark = Boolean(config.puppyBgNotify !== false && String(config.puppyBarkUrl || '').trim() && /^https?:\/\//i.test(String(config.puppyBarkUrl || '').trim()));
+    if ((isTest || doc.hidden) && _hasBark) {
       try {
         const _pair = getPersonalityNotifyPair();
         sendBarkPuppyNotify(_pair.title, _pair.body, _pair.useIcon);
       } catch (_) {}
     }
 
-    if ((isTest || doc.hidden) && config.puppyBgNotify !== false) {
+    if ((isTest || doc.hidden) && config.puppyBgNotify !== false && !_hasBark) {
       if (!isTest) {
         pendingBgReturn = true;
         startTitleFlash(`${getPupName()}喊你回来看回复`);
