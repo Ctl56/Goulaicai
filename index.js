@@ -7100,14 +7100,14 @@
       opacity: 1 !important;
       pointer-events: auto !important;
       display: inline-block !important;
-      max-width: 192px !important;
+      max-width: 196px !important;
       min-width: 24px !important;
       white-space: pre-wrap !important;
       word-break: break-word !important;
-      padding: 6px 9px !important;
+      padding: 5px 8px !important;
       font-size: 11px !important;
       line-height: 1.48 !important;
-      border-radius: 8px !important;
+      border-radius: 0 !important;
       border-width: 2px !important;
       border-style: solid !important;
       box-sizing: border-box !important;
@@ -7139,7 +7139,7 @@
       max-height: calc(100vh - 76px);
       display: none;
       flex-direction: column;
-      z-index: 9994;
+      z-index: 9985;
       pointer-events: auto;
       box-sizing: border-box;
       background: var(--px-bg, #faf6f7);
@@ -7188,7 +7188,7 @@
       align-items: center;
       gap: 6px;
       padding: 4px 8px 4px 5px;
-      z-index: 9994;
+      z-index: 9985;
       pointer-events: auto;
       cursor: pointer;
       box-sizing: border-box;
@@ -13221,7 +13221,7 @@
         const cs = win.getComputedStyle(pupBagEl);
         const pxBg = pupBagEl.style.background || cs.backgroundColor || '#faf6f7';
         const pxBd = pupBagEl.style.getPropertyValue('--px-border') || cs.getPropertyValue('--px-border') || cs.borderTopColor || '#bfa4ae';
-        const pxFg = pupBagEl.style.getPropertyValue('--px-fg') || cs.getPropertyValue('--px-fg') || cs.color || '#54444a';
+        const pxFg = pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || cs.getPropertyValue('--px-fg') || cs.color || '#54444a';
         const pxSoft = pupBagEl.style.getPropertyValue('--px-bg-soft') || cs.getPropertyValue('--px-bg-soft') || '#f3ebee';
         const pxCard = pupBagEl.style.getPropertyValue('--px-card') || cs.getPropertyValue('--px-card') || '#ffffff';
         box.style.background = pxBg;
@@ -13230,6 +13230,12 @@
         box.style.setProperty('--px-bg', pxBg);
         box.style.setProperty('--px-border', pxBd.trim());
         box.style.setProperty('--px-fg', pxFg.trim());
+        box.style.setProperty('--px-custom-fg', pxFg.trim());
+        ['--px-bg-soft', '--px-card'].forEach(v => {
+          const val = pupBagEl.style.getPropertyValue(v);
+          if (val) box.style.setProperty(v, val);
+          else box.style.removeProperty(v);
+        });
         box.style.setProperty('--px-bg-soft', pxSoft.trim());
         box.style.setProperty('--px-card', pxCard.trim());
         if (confirmCancelBtn) { confirmCancelBtn.className = 'st-px-btn'; confirmCancelBtn.style.cssText = 'height:24px;padding:0 10px;font-size:11px;'; }
@@ -33292,7 +33298,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     mask.innerHTML = `<div style="width:286px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
         <span style="font-size:12px;font-weight:700;">${escapeHtmlSimple(title)}</span>
@@ -33329,7 +33342,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const rowsHtml = items.map((it, idx) => `
       <div style="padding:6px 8px;background:#ffffff;border:1.5px solid ${pxBd};margin-bottom:6px;box-sizing:border-box;">
         <div style="font-size:11px;font-weight:700;margin-bottom:2px;">${idx + 1}. ${escapeHtmlSimple(it.title)}</div>
@@ -33718,6 +33738,7 @@
                   dir: 'them',
                   text: String(meta.text || '').slice(0, 300),
                   sticker: String(meta.sticker || ''),
+                  stickerLook: (meta.stickerLook && typeof meta.stickerLook === 'object') ? meta.stickerLook : null,
                   bubbleId: String(meta.bubbleId || 'bub_default'),
                   bubBg: String(meta.bubBg || ''),
                   bubBd: String(meta.bubBd || ''),
@@ -34009,7 +34030,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
 
     mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:2px solid ${pxBd};box-shadow:0 6px 20px rgba(50,34,42,0.24);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
@@ -34426,7 +34454,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
 
     mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
@@ -34518,7 +34553,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     mask.innerHTML = `<div style="width:306px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
         <span style="font-size:12px;font-weight:700;">给「${escapeHtmlSimple(toName)}」贴小纸条</span>
@@ -34700,7 +34742,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const fromName = reqItem.fromName || '小伙伴';
     mask.innerHTML = `<div style="width:296px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
@@ -35880,7 +35929,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const fr = getFriendList().find(x => x && x.cloudId === friendCloudId);
     const frLook = fr?.look || ca.friendLook || {};
     const myLook = {
@@ -36043,7 +36099,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const PX_ICO_COIN = `<svg width="16" height="16" viewBox="0 0 12 12" style="display:block;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="3" y="1" width="6" height="10" fill="#e6a838"/><rect x="1" y="3" width="10" height="6" fill="#e6a838"/><rect x="2" y="2" width="8" height="8" fill="#f7cf54"/><rect x="4" y="3" width="4" height="6" fill="#ffe98a"/><rect x="5" y="4" width="2" height="4" fill="#d99426"/></svg>`;
 
     const photoAreaHtml = ph
@@ -36189,7 +36252,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const PX_ICO_COIN = `<svg width="16" height="16" viewBox="0 0 12 12" style="display:block;image-rendering:pixelated;" shape-rendering="crispEdges"><rect x="3" y="1" width="6" height="10" fill="#e6a838"/><rect x="1" y="3" width="10" height="6" fill="#e6a838"/><rect x="2" y="2" width="8" height="8" fill="#f7cf54"/><rect x="4" y="3" width="4" height="6" fill="#ffe98a"/><rect x="5" y="4" width="2" height="4" fill="#d99426"/></svg>`;
     const snacksArr = Array.from(snacksMap.values());
 
@@ -36393,7 +36463,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const pxCard = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-card') || '#ffffff')) || '#ffffff';
 
     const myLookObj = {
@@ -36577,100 +36654,137 @@
     { id: 'shy', name: '害羞' },
   ];
 
-  const drawPupStickerCanvas = (stickerId, pxSize = 54, lookObj = null) => {
-    const c = doc.createElement('canvas');
-    c.width = 120;
-    c.height = 120;
-    c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
-    const g = c.getContext('2d');
-    g.setTransform(5, 0, 0, 5, 0, 0);
+  const drawPupHeadPortrait = (canvas, lookObj, stickerId = '') => {
+    canvas.width = 24;
+    canvas.height = 24;
+    const g = canvas.getContext('2d');
     g.imageSmoothingEnabled = false;
-    const lk = lookObj || getMyCurrentLookObj();
-    const pal = typeof getPupPalette === 'function' ? getPupPalette(lk) : { f: '#f4d9b5', e: '#c88c58', o: '#3b2a22', c: '#e06c88' };
+    g.clearRect(0, 0, 24, 24);
+    const pal = typeof getPupPalette === 'function' ? getPupPalette(lookObj || {}) : { w: '#fffdf7', s: '#ece5da', e: '#e2ae74', o: '#3b2a22', r: '#d66565', g: '#f4cf5e' };
+    const fur = pal.w || '#fffdf7';
+    const furShade = pal.s || fur;
+    const ear = pal.e || '#e2ae74';
+    const out = pal.o || '#3b2a22';
+    const colr = pal.r || '#d66565';
+    const bell = pal.g || '#f4cf5e';
     const p = (x, y, col, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
-    const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
-    const grid = (stickerId === 'sleep' && PUP_SPRITES.sleep1) ? PUP_SPRITES.sleep1 : (PUP_SPRITES.sit1 || PUP_SPRITES.idle1);
-    for (let y = 0; y < grid.length; y++) {
-      const row = grid[y];
-      for (let x = 0; x < row.length; x++) {
-        const col = pal[row[x]];
-        if (col) p(ox + x, oy + y, col);
-      }
+
+    // Cute pixel puppy HEAD + NECK & COLLAR (24x24 pure integer grid)
+    // Neck & collar (bottom y=18..22)
+    p(8, 18, out, 8, 1);
+    p(7, 19, out, 1, 4); p(16, 19, out, 1, 4);
+    p(8, 19, colr, 8, 2);
+    p(11, 20, bell, 2, 2); // little collar bell
+    p(8, 21, furShade, 8, 2);
+    p(9, 21, fur, 6, 2);
+
+    // Floppy ears
+    p(3, 8, out, 2, 7); p(4, 9, ear, 2, 6); p(5, 14, out, 1, 1);
+    p(19, 8, out, 2, 7); p(18, 9, ear, 2, 6); p(18, 14, out, 1, 1);
+
+    // Head outline & fill
+    p(6, 6, out, 12, 1);
+    p(5, 7, out, 1, 11); p(18, 7, out, 1, 11);
+    p(6, 18, out, 12, 1);
+    p(6, 7, fur, 12, 11);
+    p(6, 16, furShade, 12, 2); // soft chin shading
+    p(7, 7, '#ffffff', 2, 1); // subtle pixel forehead highlight
+
+    // Blush cheeks
+    p(7, 13, '#ffb5c8', 2, 1); p(15, 13, '#ffb5c8', 2, 1);
+    // Nose
+    p(11, 12, out, 2, 1);
+
+    if (!stickerId) {
+      // Standard cute pixel portrait eyes & smile
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2);
+      p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
+      p(10, 14, out, 1, 1); p(11, 15, out, 2, 1); p(13, 14, out, 1, 1);
+      return;
     }
-    // Render user's outfit so the sticker really looks like their own puppy
-    const prevCtx = activePxCtx;
-    const prevShowEars = config.puppyOnesieShowEars;
-    try {
-      activePxCtx = g;
-      if (lk && lk.outfit && lk.outfit !== 'none' && stickerId !== 'sleep') {
-        config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
-        drawPupOutfit(lk.outfit, ox, oy, hx, hy, false, false, false, false);
-      }
-    } catch (_) {} finally {
-      activePxCtx = prevCtx;
-      config.puppyOnesieShowEars = prevShowEars;
-    }
-    // Crisp pixel emotion overlays tailored to each sticker
+
+    // Hilarious expressive pixel stickers (v87 style!)
     if (stickerId === 'happy') {
-      p(3, 4, '#ffd24c', 1, 3); p(2, 5, '#ffd24c', 3, 1);
-      p(19, 3, '#ff8aa6', 1, 1); p(21, 3, '#ff8aa6', 1, 1); p(19, 4, '#ff8aa6', 3, 1); p(20, 5, '#ff8aa6', 1, 1);
-      p(18, 9, '#ffd24c', 1, 1);
+      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
+      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
+      p(10, 14, out, 4, 1); p(11, 15, '#ff8aa6', 2, 2);
+      p(2, 2, '#ffd24c', 1, 3); p(1, 3, '#ffd24c', 3, 1);
+      p(20, 3, '#ff8aa6', 2, 2);
     } else if (stickerId === 'love') {
-      p(2, 4, '#f05a82', 2, 2); p(5, 4, '#f05a82', 2, 2); p(2, 5, '#f05a82', 5, 2); p(3, 7, '#f05a82', 3, 1); p(4, 8, '#f05a82', 1, 1);
-      p(3, 5, '#ffd6e2', 1, 1);
-      p(18, 3, '#ff8aa6', 1, 1); p(20, 3, '#ff8aa6', 1, 1); p(18, 4, '#ff8aa6', 3, 1); p(19, 5, '#ff8aa6', 1, 1);
+      p(8, 10, '#e84a72', 2, 2); p(14, 10, '#e84a72', 2, 2);
+      p(10, 14, out, 4, 1); p(11, 15, '#ff8aa6', 2, 1);
+      p(17, 1, '#f05a82', 2, 2); p(20, 1, '#f05a82', 2, 2); p(17, 2, '#f05a82', 5, 2); p(18, 4, '#f05a82', 3, 1); p(19, 5, '#f05a82', 1, 1);
+      p(18, 2, '#ffd6e2', 1, 1);
     } else if (stickerId === 'cry') {
-      // Sparkling blue teardrops under eyes
-      p(hx - 1, hy + 4, '#7cc6f7', 1, 4); p(hx + 2, hy + 4, '#7cc6f7', 1, 4);
-      p(hx - 2, hy + 7, '#a8dcff', 1, 1); p(hx + 3, hy + 7, '#a8dcff', 1, 1);
-      p(3, 5, '#7cc6f7', 2, 2); p(4, 4, '#a8dcff', 1, 1);
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2);
+      p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
+      p(8, 12, '#7cc6f7', 2, 6); p(14, 12, '#7cc6f7', 2, 6);
+      p(10, 15, out, 4, 1); p(9, 16, out, 1, 1); p(14, 16, out, 1, 1);
     } else if (stickerId === 'sleep') {
-      p(16, 3, '#7b99cc', 4, 1); p(18, 4, '#7b99cc', 1, 1); p(17, 5, '#7b99cc', 1, 1); p(16, 6, '#7b99cc', 4, 1);
-      p(11, 5, '#a8bee6', 3, 1); p(12, 6, '#a8bee6', 1, 1); p(11, 7, '#a8bee6', 3, 1);
+      p(8, 11, out, 3, 1); p(13, 11, out, 3, 1);
+      p(11, 14, out, 2, 1); p(12, 15, '#99d6ff', 1, 2); // tiny drool
+      p(17, 1, '#7b99cc', 4, 1); p(19, 2, '#7b99cc', 1, 1); p(18, 3, '#7b99cc', 1, 1); p(17, 4, '#7b99cc', 4, 1);
+      p(13, 2, '#a8bee6', 3, 1); p(14, 3, '#a8bee6', 1, 1); p(13, 4, '#a8bee6', 3, 1);
     } else if (stickerId === 'angry') {
-      p(18, 3, '#e84858', 1, 4); p(17, 4, '#e84858', 3, 1); p(20, 5, '#e84858', 2, 1);
-      p(3, 6, '#ff6b78', 2, 1); p(2, 7, '#ff6b78', 1, 1);
+      p(8, 9, out, 1, 1); p(9, 10, out, 2, 1); p(15, 9, out, 1, 1); p(13, 10, out, 2, 1);
+      p(10, 14, out, 4, 1); p(10, 15, '#ff6b78', 4, 2);
+      p(18, 1, '#e84858', 1, 4); p(17, 2, '#e84858', 3, 1); p(20, 3, '#e84858', 2, 1);
     } else if (stickerId === 'snack') {
-      // Cute white bone beside puppy
-      p(2, 5, '#ffffff', 6, 2); p(1, 4, '#ffffff', 2, 4); p(7, 4, '#ffffff', 2, 4);
-      p(1, 5, '#d9cfc5', 1, 2); p(8, 5, '#d9cfc5', 1, 2);
-      p(19, 4, '#ffd24c', 1, 3); p(18, 5, '#ffd24c', 3, 1);
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
+      p(8, 14, '#ffffff', 8, 2); p(7, 13, '#ffffff', 2, 4); p(15, 13, '#ffffff', 2, 4);
+      p(7, 14, '#d9cfc5', 1, 2); p(16, 14, '#d9cfc5', 1, 2);
     } else if (stickerId === 'good') {
-      // Gold star & thumb badge
-      p(18, 4, '#ffe066', 3, 4); p(19, 2, '#ffe066', 2, 2); p(17, 5, '#d9a441', 1, 3);
-      p(3, 4, '#ffe066', 1, 3); p(2, 5, '#ffe066', 3, 1);
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
+      p(10, 14, out, 4, 1);
+      p(19, 11, '#ffe066', 3, 4); p(20, 9, '#ffe066', 2, 2); p(18, 12, '#d9a441', 1, 3);
+      p(2, 2, '#ffe066', 1, 3); p(1, 3, '#ffe066', 3, 1);
     } else if (stickerId === 'hug') {
-      p(9, 3, '#f05a82', 2, 2); p(12, 3, '#f05a82', 2, 2); p(9, 4, '#f05a82', 5, 2); p(10, 6, '#f05a82', 3, 1); p(11, 7, '#f05a82', 1, 1);
-      p(2, 7, '#ffb5c8', 2, 1); p(20, 7, '#ffb5c8', 2, 1);
+      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
+      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
+      p(10, 14, out, 4, 1);
+      p(4, 16, fur, 3, 3); p(5, 17, '#ffbfd4', 1, 1);
+      p(17, 16, fur, 3, 3); p(18, 17, '#ffbfd4', 1, 1);
+      p(10, 1, '#f05a82', 4, 2); p(11, 3, '#f05a82', 2, 1);
     } else if (stickerId === 'what') {
-      p(17, 2, '#5a78b5', 3, 1); p(19, 3, '#5a78b5', 1, 2); p(18, 4, '#5a78b5', 1, 1); p(18, 6, '#5a78b5', 1, 1);
-      p(3, 4, '#8aa8d9', 2, 1); p(4, 5, '#8aa8d9', 1, 1); p(4, 7, '#8aa8d9', 1, 1);
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2);
+      p(11, 14, out, 2, 2);
+      p(18, 1, '#5a78b5', 3, 1); p(20, 2, '#5a78b5', 1, 2); p(19, 3, '#5a78b5', 1, 1); p(19, 5, '#5a78b5', 1, 1);
     } else if (stickerId === 'party') {
-      // Cute party hat on head + confetti
-      p(hx, hy - 3, '#ff8aa6', 2, 1); p(hx - 1, hy - 2, '#ffe066', 4, 1); p(hx - 2, hy - 1, '#8cc8f7', 6, 1);
-      p(2, 4, '#ffe066', 2, 2); p(20, 4, '#8be0b8', 2, 2); p(3, 18, '#ff8aa6', 2, 1); p(20, 17, '#8cc8f7', 2, 1);
+      p(8, 11, out, 1, 1); p(9, 10, out, 1, 1); p(10, 11, out, 1, 1);
+      p(14, 11, out, 1, 1); p(15, 10, out, 1, 1); p(16, 11, out, 1, 1);
+      p(10, 14, out, 4, 1); p(11, 15, '#ff8aa6', 2, 1);
+      p(11, 1, '#ff8aa6', 2, 1); p(10, 2, '#ffe066', 4, 1); p(9, 3, '#8cc8f7', 6, 2); p(8, 5, '#ff8aa6', 8, 1);
+      p(2, 3, '#ffe066', 2, 2); p(20, 3, '#8be0b8', 2, 2);
     } else if (stickerId === 'tea') {
-      // Cute milk tea cup
-      p(4, 2, '#6b4423', 1, 3);
-      p(2, 5, '#ffffff', 5, 1);
-      p(2, 6, '#e6c39c', 5, 5);
-      p(3, 9, '#4a3222', 1, 1); p(5, 9, '#4a3222', 1, 1);
-      p(19, 5, '#ff8aa6', 2, 2);
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
+      p(10, 14, out, 4, 1);
+      p(19, 10, '#6b4423', 1, 3);
+      p(17, 13, '#ffffff', 5, 1);
+      p(17, 14, '#e6c39c', 5, 5);
+      p(18, 17, '#4a3222', 1, 1); p(20, 17, '#4a3222', 1, 1);
     } else {
-      // shy: rosy blush + sparkle
-      p(hx - 2, hy + 4, '#ff8ca8', 2, 1); p(hx + 2, hy + 4, '#ff8ca8', 2, 1);
-      p(3, 5, '#ffb5c8', 1, 3); p(2, 6, '#ffb5c8', 3, 1);
-      p(19, 5, '#ffb5c8', 1, 3); p(18, 6, '#ffb5c8', 3, 1);
+      p(8, 10, out, 2, 2); p(14, 10, out, 2, 2); p(8, 10, '#ffffff', 1, 1); p(14, 10, '#ffffff', 1, 1);
+      p(6, 13, '#ff8ca8', 3, 2); p(15, 13, '#ff8ca8', 3, 2);
+      p(11, 14, out, 2, 1);
     }
+  };
+
+  const drawPupStickerCanvas = (stickerId, pxSize = 48, lookObj = null) => {
+    const c = doc.createElement('canvas');
+    c.style.cssText = `width:${pxSize}px;height:${pxSize}px;image-rendering:pixelated;display:block;flex-shrink:0;`;
+    drawPupHeadPortrait(c, lookObj || getMyCurrentLookObj(), stickerId);
     return c;
   };
 
   let activeDmFriendId = '';
+  let dmStickerUseFriendLook = false;
+
   const getMyCurrentLookObj = () => ({
     fur: config.puppyFur || '',
     ear: config.puppyEar || '',
     collar: config.puppyCollar || '',
     outline: config.puppyOutline || '',
+    showCollar: config.puppyShowCollar !== false,
     outfit: config.puppyOutfit || 'none',
     accs: Array.isArray(config.puppyAccs) ? config.puppyAccs : [],
     accOffsets: config.puppyAccOffsets || {},
@@ -36682,6 +36796,51 @@
     afBgCol: config.puppyAfBgCol || '',
     bubble: config.puppyBubbleSkin || 'bub_default',
   });
+
+  const makeDmHeadAvatar = (lookObj, boxPx = 36) => {
+    const look = lookObj || {};
+    const wrap = doc.createElement('div');
+    wrap.className = 'st-px-avatar-wrap';
+    const afId = look.avatarFrame || 'af_custom';
+    const hasFrameClass = Boolean(afId && afId !== 'af_custom' && afId !== 'af_none');
+    wrap.style.cssText = `position:relative;width:${boxPx}px;height:${boxPx}px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:2px;margin:0;border-width:2px;border-style:solid;border-color:var(--px-border,#bfa4ae);background:#fffdf9;box-sizing:border-box;overflow:visible;`;
+    if (!hasFrameClass && (look.afBorderCol || look.afBgCol)) {
+      if (look.afBorderCol) wrap.style.borderColor = look.afBorderCol;
+      if (look.afBgCol) wrap.style.background = look.afBgCol;
+    }
+    if (hasFrameClass) {
+      wrap.classList.add(afId.replace(/_/g, '-'));
+      if (look.afOverrideCol) {
+        if (look.afBorderCol) wrap.style.borderColor = look.afBorderCol;
+        if (look.afBgCol) wrap.style.background = look.afBgCol;
+      }
+      const allAf = [...SHOP_PUP_AVATAR_FRAMES, ...SECRET_ADV_AVATAR_FRAMES, ...GACHA_AVATAR_FRAMES, ...SPECIAL_EVENT_AVATAR_FRAMES];
+      const afObj = allAf.find(a => a.id === afId);
+      if (afObj && afObj.dyn) {
+        wrap.classList.add('is-dyn');
+        const fxCvs = doc.createElement('canvas');
+        fxCvs.className = 'st-px-af-fx st-fr-af-fx';
+        fxCvs.dataset.afDyn = afObj.dyn;
+        fxCvs.width = 64;
+        fxCvs.height = 64;
+        const padFx = Math.round(boxPx * 0.22);
+        fxCvs.style.cssText = `position:absolute;left:-${padFx}px;top:-${padFx}px;width:${boxPx + padFx * 2}px;height:${boxPx + padFx * 2}px;pointer-events:none;image-rendering:pixelated;z-index:4;`;
+        wrap.appendChild(fxCvs);
+        if (typeof drawAfDynFxToCanvas === 'function') {
+          try { drawAfDynFxToCanvas(fxCvs, afObj.dyn, afFxTick || 0); } catch (_) {}
+        }
+      }
+      if (afObj && Array.isArray(afObj.charms) && typeof makeAfCharm9 === 'function') {
+        afObj.charms.forEach(ch => { try { wrap.appendChild(makeAfCharm9(ch.key, ch.pos)); } catch (_) {} });
+      }
+    }
+    const cv = doc.createElement('canvas');
+    const innerPx = Math.max(24, boxPx - 6);
+    cv.style.cssText = `width:${innerPx}px;height:${innerPx}px;display:block;image-rendering:pixelated;`;
+    drawPupHeadPortrait(cv, look, '');
+    wrap.appendChild(cv);
+    return wrap;
+  };
 
   const syncDmPanelTheme = () => {
     if (!pupBagEl) return;
@@ -36754,17 +36913,6 @@
     }
   };
 
-  const makeScaledDmAvatar = (lookObj, boxPx = 38, scale = 0.72) => {
-    const box = doc.createElement('div');
-    box.style.cssText = `width:${boxPx}px;height:${boxPx}px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;position:relative;`;
-    const av = makeFriendAvatarCanvas(lookObj || {}, true);
-    av.style.margin = '0';
-    av.style.transform = `scale(${scale})`;
-    av.style.transformOrigin = 'center center';
-    box.appendChild(av);
-    return box;
-  };
-
   const renderFriendDmMessages = (fid) => {
     const panel = root.querySelector('#st-tb-dm-panel');
     if (!panel || panel.style.display === 'none' || panel.dataset.fid !== fid) return;
@@ -36783,7 +36931,7 @@
       const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
       row.style.cssText = `display:flex;align-items:flex-start;gap:7px;margin-bottom:9px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
-      const avWrap = makeScaledDmAvatar(senderLook, 40, 0.8);
+      const avWrap = makeDmHeadAvatar(senderLook, 38);
       const bubCol = doc.createElement('div');
       bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
       const bub = doc.createElement('div');
@@ -36792,7 +36940,8 @@
         bub.style.padding = '5px 7px';
         const stWrap = doc.createElement('div');
         stWrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;';
-        stWrap.appendChild(drawPupStickerCanvas(m.sticker, 56, senderLook));
+        const stLook = (m.stickerLook && typeof m.stickerLook === 'object') ? m.stickerLook : senderLook;
+        stWrap.appendChild(drawPupStickerCanvas(m.sticker, 48, stLook));
         if (m.text) {
           const tx = doc.createElement('div');
           tx.style.cssText = 'font-size:10.5px;margin-top:2px;';
@@ -36815,7 +36964,7 @@
   };
 
   let dmSendBusy = false;
-  const sendFriendDmMessage = async (fid, fname, text, sticker = '') => {
+  const sendFriendDmMessage = async (fid, fname, text, sticker = '', stickerLook = null) => {
     if (dmSendBusy) return;
     const cleanTxt = String(text || '').trim().slice(0, 300);
     if (!cleanTxt && !sticker) return;
@@ -36829,8 +36978,11 @@
       const bubBg = config.puppyBubOverrideCol ? (config.puppyBubBgCol || '') : '';
       const bubBd = config.puppyBubOverrideCol ? (config.puppyBubBorderCol || '') : '';
       const bubFg = config.puppyBubOverrideCol ? (config.puppyBubTextCol || '') : '';
+      const stLkCompact = stickerLook ? {
+        fur: stickerLook.fur || '', ear: stickerLook.ear || '', collar: stickerLook.collar || '', outline: stickerLook.outline || '', showCollar: stickerLook.showCollar !== false,
+      } : null;
       config.puppyDmHistory[fid].push({
-        id: msgId, dir: 'me', text: cleanTxt, sticker, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
+        id: msgId, dir: 'me', text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
       });
       if (config.puppyDmHistory[fid].length > 80) config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
       saveConfig();
@@ -36843,7 +36995,7 @@
           fromId: ensureMyCloudId(),
           fromName: getPupName(),
           toId: fid,
-          gifts: [{ kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs }],
+          gifts: [{ kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs }],
           redPacket: 0,
           msg: cleanTxt || `[${PUP_DM_STICKERS.find(s => s.id === sticker)?.name || '表情包'}]`,
         }),
@@ -36881,19 +37033,23 @@
     panel.style.boxShadow = '5px 5px 0 rgba(59,42,34,0.28)';
 
     const savedRect = config.puppyDmRect || {};
+    const pW = typeof savedRect.width === 'number' ? clamp(savedRect.width, 240, 440) : 296;
+    const pH = typeof savedRect.height === 'number' ? clamp(savedRect.height, 280, Math.round(win.innerHeight * 0.85)) : 382;
+    panel.style.width = `${pW}px`;
+    panel.style.height = `${pH}px`;
     const left = typeof savedRect.left === 'number'
-      ? clamp(savedRect.left, 8, Math.max(8, win.innerWidth - 304))
-      : Math.max(8, Math.round((win.innerWidth - 296) / 2));
+      ? clamp(savedRect.left, 8, Math.max(8, win.innerWidth - pW - 8))
+      : Math.max(8, Math.round((win.innerWidth - pW) / 2));
     const top = typeof savedRect.top === 'number'
-      ? clamp(savedRect.top, 8, Math.max(8, win.innerHeight - 390))
-      : Math.max(12, Math.round((win.innerHeight - 382) / 2));
+      ? clamp(savedRect.top, 8, Math.max(8, win.innerHeight - pH - 8))
+      : Math.max(12, Math.round((win.innerHeight - pH) / 2));
     panel.style.left = `${left}px`;
     panel.style.top = `${top}px`;
 
     panel.innerHTML = `
-      <div id="st-dm-head" style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:6px 8px;border-bottom:2px dashed var(--px-border,#bfa4ae);cursor:grab;user-select:none;flex-shrink:0;">
-        <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-          <span id="st-dm-head-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"></span>
+      <div id="st-dm-head" style="display:flex;align-items:center;justify-content:space-between;gap:5px;padding:7px 8px;border-bottom:2px dashed var(--px-border,#bfa4ae);cursor:grab;user-select:none;flex-shrink:0;overflow:visible;">
+        <div style="display:flex;align-items:center;gap:7px;min-width:0;flex:1;overflow:visible;">
+          <span id="st-dm-head-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;"></span>
           <span style="font-size:11.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
           <button type="button" id="st-dm-bond-btn" class="st-px-btn" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(0px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${bondLv}</span></button>
         </div>
@@ -36904,41 +37060,63 @@
         </div>
       </div>
       <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:8px 8px 4px;box-sizing:border-box;background:var(--px-bg-soft,rgba(255,255,255,0.45));"></div>
-      <div id="st-dm-sticker-box" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border-top:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);max-height:152px;overflow-y:auto;flex-shrink:0;"></div>
+      <div id="st-dm-sticker-wrap" style="display:none;flex-direction:column;border-top:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);flex-shrink:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 7px 2px;font-size:9.5px;">
+          <span style="font-weight:700;">小狗表情包</span>
+          <button type="button" id="st-dm-st-who" class="st-px-btn${dmStickerUseFriendLook ? ' active' : ''}" style="height:18px;padding:0 6px;font-size:9px;">${dmStickerUseFriendLook ? '外观:对方小狗' : '外观:我的小狗'}</button>
+        </div>
+        <div id="st-dm-sticker-box" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px 6px 6px;max-height:152px;overflow-y:auto;"></div>
+      </div>
       <div style="display:flex;align-items:center;gap:4px;padding:6px 7px;border-top:2px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
         <button type="button" id="st-dm-sticker-btn" class="st-px-btn" style="height:26px;padding:0 6px;font-size:10px;flex-shrink:0;">表情</button>
         <input type="text" id="st-dm-inp" maxlength="300" placeholder="发条私聊消息..." style="flex:1;min-width:0;" />
         <button type="button" id="st-dm-send" class="st-px-btn care" style="height:26px;padding:0 9px;font-size:10.5px;flex-shrink:0;">发送</button>
-      </div>`;
+      </div>
+      <div id="st-dm-resize" title="拖动调整大小" style="position:absolute;right:0;bottom:0;width:16px;height:16px;cursor:nwse-resize;z-index:5;background:transparent;"></div>`;
+
+    panel.onclick = (e) => e.stopPropagation();
 
     const headAvSlot = panel.querySelector('#st-dm-head-av');
-    if (headAvSlot) headAvSlot.appendChild(makeScaledDmAvatar(fullFr.look || {}, 34, 0.66));
+    if (headAvSlot) headAvSlot.appendChild(makeDmHeadAvatar(fullFr.look || {}, 36));
 
     panel.querySelector('#st-dm-bond-btn')?.addEventListener('click', (e) => {
       e.stopPropagation();
       if (typeof openFriendBondModal === 'function') openFriendBondModal(fid);
     });
 
-    // Populate sticker picker using user's actual puppy look
+    const stWrap = panel.querySelector('#st-dm-sticker-wrap');
     const stBox = panel.querySelector('#st-dm-sticker-box');
-    if (stBox) {
-      const myLk = getMyCurrentLookObj();
+    const renderStickerGrid = () => {
+      if (!stBox) return;
+      stBox.innerHTML = '';
+      const useLk = dmStickerUseFriendLook ? (fullFr.look || {}) : getMyCurrentLookObj();
       PUP_DM_STICKERS.forEach(st => {
         const b = doc.createElement('button');
         b.type = 'button';
         b.className = 'st-px-btn st-dm-st-btn';
-        b.appendChild(drawPupStickerCanvas(st.id, 38, myLk));
+        b.appendChild(drawPupStickerCanvas(st.id, 36, useLk));
         const lb = doc.createElement('span');
         lb.style.cssText = 'font-size:9.5px;font-weight:700;line-height:1.15;display:block;white-space:nowrap;';
         lb.textContent = st.name;
         b.appendChild(lb);
-        b.addEventListener('click', () => {
-          stBox.style.display = 'none';
-          sendFriendDmMessage(fid, fname, '', st.id);
+        b.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          if (stWrap) stWrap.style.display = 'none';
+          sendFriendDmMessage(fid, fname, '', st.id, useLk);
         });
         stBox.appendChild(b);
       });
-    }
+    };
+    renderStickerGrid();
+
+    panel.querySelector('#st-dm-st-who')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dmStickerUseFriendLook = !dmStickerUseFriendLook;
+      const btn = e.currentTarget;
+      btn.textContent = dmStickerUseFriendLook ? '外观:对方小狗' : '外观:我的小狗';
+      btn.classList.toggle('active', dmStickerUseFriendLook);
+      renderStickerGrid();
+    });
 
     // Drag header
     const headEl = panel.querySelector('#st-dm-head');
@@ -36946,6 +37124,7 @@
       if (e.target.closest('button')) return;
       e.preventDefault();
       e.stopPropagation();
+      if (typeof bringFloatFront === 'function') bringFloatFront(panel);
       try { headEl.setPointerCapture(e.pointerId); } catch (_) {}
       const pid = e.pointerId;
       const sx = e.clientX, sy = e.clientY;
@@ -36971,7 +37150,38 @@
       win.addEventListener('pointercancel', onUp);
     });
 
+    // Invisible bottom-right corner resize handle
+    const rszEl = panel.querySelector('#st-dm-resize');
+    rszEl?.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof bringFloatFront === 'function') bringFloatFront(panel);
+      try { rszEl.setPointerCapture(e.pointerId); } catch (_) {}
+      const pid = e.pointerId;
+      const rect0 = panel.getBoundingClientRect();
+      const sx = e.clientX, sy = e.clientY, ow = rect0.width, oh = rect0.height;
+      const onMove = (ev) => {
+        if (ev.pointerId !== pid) return;
+        panel.style.width = `${clamp(Math.round(ow + (ev.clientX - sx)), 240, 440)}px`;
+        panel.style.height = `${clamp(Math.round(oh + (ev.clientY - sy)), 280, Math.round(win.innerHeight * 0.85))}px`;
+      };
+      const onUp = (ev) => {
+        if (ev.pointerId !== pid) return;
+        win.removeEventListener('pointermove', onMove);
+        win.removeEventListener('pointerup', onUp);
+        win.removeEventListener('pointercancel', onUp);
+        try { rszEl.releasePointerCapture(pid); } catch (_) {}
+        const r2 = panel.getBoundingClientRect();
+        config.puppyDmRect = { ...(config.puppyDmRect || {}), width: Math.round(r2.width), height: Math.round(r2.height) };
+        saveConfig();
+      };
+      win.addEventListener('pointermove', onMove);
+      win.addEventListener('pointerup', onUp);
+      win.addEventListener('pointercancel', onUp);
+    });
+
     panel.querySelector('#st-dm-bub-toggle')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       config.puppyDmUseMyBubble = !config.puppyDmUseMyBubble;
       saveConfig();
       const btn = e.currentTarget;
@@ -36980,13 +37190,15 @@
       renderFriendDmMessages(fid);
     });
 
-    panel.querySelector('#st-dm-close')?.addEventListener('click', () => {
+    panel.querySelector('#st-dm-close')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       panel.style.display = 'none';
       const p2 = root.querySelector('#st-tb-dm-pill');
       if (p2) p2.style.display = 'none';
     });
 
-    panel.querySelector('#st-dm-min')?.addEventListener('click', () => {
+    panel.querySelector('#st-dm-min')?.addEventListener('click', (e) => {
+      e.stopPropagation();
       panel.style.display = 'none';
       let pEl = root.querySelector('#st-tb-dm-pill');
       if (!pEl) {
@@ -37000,22 +37212,24 @@
       pEl.style.borderStyle = 'solid';
       pEl.style.boxShadow = '3px 3px 0 rgba(59,42,34,0.25)';
       const pr = config.puppyDmRect || {};
-      const pl = typeof pr.pillLeft === 'number' ? clamp(pr.pillLeft, 6, Math.max(6, win.innerWidth - 132)) : Math.max(8, win.innerWidth - 136);
+      const pl = typeof pr.pillLeft === 'number' ? clamp(pr.pillLeft, 6, Math.max(6, win.innerWidth - 136)) : Math.max(8, win.innerWidth - 140);
       const pt = typeof pr.pillTop === 'number' ? clamp(pr.pillTop, 6, Math.max(6, win.innerHeight - 54)) : Math.max(60, Math.round(win.innerHeight * 0.42));
       pEl.style.left = `${pl}px`;
       pEl.style.top = `${pt}px`;
-      pEl.innerHTML = `<span id="st-dm-pill-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;"></span>
+      pEl.innerHTML = `<span id="st-dm-pill-av" style="display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;overflow:visible;"></span>
         <span style="font-size:10.5px;font-weight:700;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fname)}</span>
-        <span id="st-dm-pill-badge" style="display:none;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:#e05263;color:#fff;font-size:9px;font-weight:700;align-items:center;justify-content:center;">0</span>
+        <span id="st-dm-pill-badge" style="display:none;min-width:15px;height:15px;padding:0 4px;border-radius:0;background:#e05263;color:#fff;font-size:9px;font-weight:700;align-items:center;justify-content:center;">0</span>
         <button type="button" id="st-dm-pill-x" class="st-px-btn" style="height:18px;padding:0 4px;font-size:9px;margin-left:2px;" title="关闭">×</button>`;
+      pEl.onclick = (ev) => ev.stopPropagation();
       const pav = pEl.querySelector('#st-dm-pill-av');
-      if (pav) pav.appendChild(makeScaledDmAvatar(fullFr.look || {}, 30, 0.58));
+      if (pav) pav.appendChild(makeDmHeadAvatar(fullFr.look || {}, 30));
       pEl.querySelector('#st-dm-pill-x')?.addEventListener('click', (ev) => {
         ev.stopPropagation();
         pEl.style.display = 'none';
       });
       let moved = false;
       pEl.onpointerdown = (ev) => {
+        ev.stopPropagation();
         if (ev.target.closest('button')) return;
         moved = false;
         const pid = ev.pointerId;
@@ -37051,13 +37265,15 @@
         win.addEventListener('pointercancel', onU);
       };
       pEl.style.display = 'flex';
+      if (typeof bringFloatFront === 'function') bringFloatFront(pEl);
       syncDmPanelTheme();
       syncDmPillBadge();
     });
 
-    panel.querySelector('#st-dm-sticker-btn')?.addEventListener('click', () => {
-      if (!stBox) return;
-      stBox.style.display = stBox.style.display === 'grid' ? 'none' : 'grid';
+    panel.querySelector('#st-dm-sticker-btn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!stWrap) return;
+      stWrap.style.display = stWrap.style.display === 'flex' ? 'none' : 'flex';
     });
 
     const inpEl = panel.querySelector('#st-dm-inp');
@@ -37067,7 +37283,7 @@
       if (inpEl) inpEl.value = '';
       sendFriendDmMessage(fid, fname, val, '');
     };
-    panel.querySelector('#st-dm-send')?.addEventListener('click', doSend);
+    panel.querySelector('#st-dm-send')?.addEventListener('click', (e) => { e.stopPropagation(); doSend(); });
     inpEl?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -37076,6 +37292,7 @@
     });
 
     panel.style.display = 'flex';
+    if (typeof bringFloatFront === 'function') bringFloatFront(panel);
     syncDmPanelTheme();
     renderFriendDmMessages(fid);
   };
@@ -37093,7 +37310,14 @@
     const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
     const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
     const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-custom-fg') || pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
+    if (pupBagEl && mask) {
+      ['--px-bg', '--px-bg-soft', '--px-card', '--px-border', '--px-fg', '--px-custom-fg'].forEach(v => {
+        const val = pupBagEl.style.getPropertyValue(v);
+        if (val) mask.style.setProperty(v, val);
+        else mask.style.removeProperty(v);
+      });
+    }
     const myFid = ensureMyCloudId();
 
     mask.innerHTML = `<div style="width:320px;max-width:calc(100vw - 24px);padding:13px 13px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
@@ -51932,7 +52156,7 @@
   let outsideTapStart = null;
   const isOutsideCloseBlocked = (target) => {
     if (!target) return true;
-    if (typeof target.closest === 'function' && target.closest('#st-tb-pup-ask, #st-tb-pup-signboard, #st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask, [id^="st-tb-"][id$="-mask"], [id^="st-tb-"][id$="-modal"]')) return true;
+    if (typeof target.closest === 'function' && target.closest('#st-tb-pup-ask, #st-tb-pup-signboard, #st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask, #st-tb-dm-panel, #st-tb-dm-pill, [id^="st-tb-"][id$="-mask"], [id^="st-tb-"][id$="-modal"]')) return true;
     if (askEl && (askEl.contains(target) || askEl.style.display === 'block' || askEl.style.display === 'flex')) return true;
     if (signboardEl && (signboardEl.contains(target) || signboardEl.style.display === 'block' || signboardEl.style.display === 'flex')) return true;
     if (gachaModalEl && (gachaModalEl.contains(target) || gachaModalEl.classList.contains('open'))) return true;
