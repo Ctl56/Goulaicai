@@ -8745,23 +8745,92 @@
             </div>
 
           </div>
-          <div class="st-px-slider-row" style="margin-top:6px;justify-content:space-between;">
-            <span style="width:auto;">等 AI 回复摇铃提醒</span>
-            <button class="st-px-btn care" id="st-tb-pup-bell-toggle" type="button" style="height:22px;padding:0 8px;">已开启</button>
+          <div class="st-px-subhead" style="margin-top:6px;">
+            <span>互动与提醒设置</span>
+            <button class="st-px-mini-act" id="st-px-interact-fold" type="button">展开</button>
           </div>
-          <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
-            <span style="width:auto;">切屏后台弹窗与提示音</span>
-            <div style="display:flex;gap:3px;">
-              <button class="st-px-btn care" id="st-tb-pup-bgnotify-toggle" type="button" style="height:22px;padding:0 6px;font-size:10px;">弹窗:开</button>
-              <button class="st-px-btn" id="st-tb-pup-bgnotify-test" type="button" style="height:22px;padding:0 6px;font-size:10px;" title="授权浏览器桌面通知并立即发一条测试弹窗">授权测试</button>
-              <button class="st-px-btn care" id="st-tb-pup-sound-toggle" type="button" style="height:22px;padding:0 6px;font-size:10px;">音效:开</button>
+          <div class="st-px-adv-card" id="st-px-interact-body" style="display:none;margin-bottom:5px;">
+            <div class="st-px-slider-row" style="justify-content:space-between;">
+              <span style="width:auto;">灵动岛显示小狗形象</span>
+              <div style="display:flex;gap:3px;">
+                <button class="st-px-btn care" id="st-tb-pup-island-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;">已开启</button>
+                <button class="st-px-btn" id="st-tb-pup-export-icon" type="button" style="height:22px;padding:0 7px;font-size:10px;" title="导出当前穿搭的 512x512 高清小狗方图">保存头像图</button>
+              </div>
+            </div>
+            <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
+              <span style="width:auto;">等 AI 回复摇铃提醒</span>
+              <button class="st-px-btn care" id="st-tb-pup-bell-toggle" type="button" style="height:22px;padding:0 8px;">已开启</button>
+            </div>
+            <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
+              <span style="width:auto;">提示音开关</span>
+              <button class="st-px-btn care" id="st-tb-pup-sound-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;">音效:开</button>
+            </div>
+            <div class="st-px-slider-row" id="st-tb-pup-tone-row" style="margin-top:4px;justify-content:space-between;gap:5px;">
+              <span style="width:auto;">提示音铃声</span>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <select id="st-tb-pup-tone-sel" class="st-px-tone-sel">
+                  <option value="ios_tri">iOS三全音</option>
+                  <option value="ios_note">iOS叮咚</option>
+                  <option value="water_drop">清脆水滴</option>
+                  <option value="pixel_coin">像素金币</option>
+                  <option value="wind_chime">清亮风铃</option>
+                  <option value="music_box">八音盒三音</option>
+                  <option value="cat_bell">俏皮小猫铃</option>
+                  <option value="bubble_pop">灵动泡泡啵</option>
+                  <option value="harp_glide">竖琴轻拨</option>
+                  <option value="star_twinkle">星光叮当</option>
+                </select>
+                <button class="st-px-btn" id="st-tb-pup-tone-test" type="button" style="height:22px;padding:0 8px;font-size:10px;line-height:18px;">试听</button>
+              </div>
+            </div>
+            <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
+              <span style="width:auto;">小狗自主说话频率</span>
+              <div style="display:flex;gap:3px;" id="st-tb-pup-talkfreq-bar">
+                <button class="st-px-btn" data-talk-freq="quiet" type="button" style="height:22px;padding:0 6px;font-size:10px;">安静</button>
+                <button class="st-px-btn" data-talk-freq="low" type="button" style="height:22px;padding:0 6px;font-size:10px;">较少</button>
+                <button class="st-px-btn active care" data-talk-freq="normal" type="button" style="height:22px;padding:0 6px;font-size:10px;">适中</button>
+                <button class="st-px-btn" data-talk-freq="chatty" type="button" style="height:22px;padding:0 6px;font-size:10px;">话痨</button>
+              </div>
+            </div>
+            <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
+              <span style="width:auto;">偷看聊天氛围反应</span>
+              <button class="st-px-btn care" id="st-tb-pup-peek-toggle" type="button" style="height:22px;padding:0 8px;">已开启</button>
+            </div>
+            <div style="border-top:1px dashed var(--px-bd,#bfa4ae);margin-top:6px;padding-top:6px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-weight:700;font-size:10.5px;">定时提醒与喝水管家</span>
+                <button class="st-px-mini-act" id="st-px-remind-fold" type="button">展开</button>
+              </div>
+              <div id="st-px-remind-body" style="display:none;padding-top:4px;">
+                <div class="st-px-slider-row" style="justify-content:space-between;margin-bottom:4px;">
+                  <span style="width:auto;">定时喝水与护眼提醒</span>
+                  <button class="st-px-btn" id="st-px-drink-toggle" type="button" style="height:22px;padding:0 8px;">已关闭</button>
+                </div>
+                <div class="st-px-grid-4" id="st-px-drink-mins" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;">
+                  <button class="st-px-btn" data-drink-min="30" type="button" style="height:22px;font-size:10px;">30分</button>
+                  <button class="st-px-btn" data-drink-min="45" type="button" style="height:22px;font-size:10px;">45分</button>
+                  <button class="st-px-btn" data-drink-min="60" type="button" style="height:22px;font-size:10px;">60分</button>
+                  <button class="st-px-btn" data-drink-min="90" type="button" style="height:22px;font-size:10px;">90分</button>
+                </div>
+                <div style="font-size:10px;opacity:0.8;margin-bottom:6px;" id="st-px-drink-next">开启后小狗会举着像素木牌按时提醒你喝水歇眼。</div>
+                <div style="border-top:1px dashed var(--px-bd,#bfa4ae);padding-top:6px;">
+                  <div style="font-weight:700;font-size:11px;margin-bottom:4px;">添加自定义倒计时提醒</div>
+                  <div style="display:flex;gap:4px;margin-bottom:4px;">
+                    <input id="st-px-rem-label" class="st-px-inp" type="text" maxlength="20" placeholder="例如: 关火 / 吃药 / 伸懒腰" style="flex:1;height:24px;font-size:11px;" />
+                    <input id="st-px-rem-min" class="st-px-inp" type="number" min="1" max="720" value="15" style="width:52px;height:24px;font-size:11px;" title="多少分钟后提醒" />
+                    <button class="st-px-btn care" id="st-px-rem-add" type="button" style="height:24px;padding:0 8px;">定时</button>
+                  </div>
+                  <div id="st-px-rem-list"></div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
-            <span style="width:auto;">灵动岛显示小狗形象</span>
+
+          <div class="st-px-slider-row" style="margin-top:6px;justify-content:space-between;">
+            <span style="width:auto;">切屏后台弹窗</span>
             <div style="display:flex;gap:3px;">
-              <button class="st-px-btn care" id="st-tb-pup-island-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;">已开启</button>
-              <button class="st-px-btn" id="st-tb-pup-export-icon" type="button" style="height:22px;padding:0 7px;font-size:10px;" title="导出当前穿搭的 512x512 高清小狗方图，可用于换图标或上传图床">保存头像图</button>
+              <button class="st-px-btn care" id="st-tb-pup-bgnotify-toggle" type="button" style="height:22px;padding:0 7px;font-size:10px;">弹窗:开</button>
+              <button class="st-px-btn" id="st-tb-pup-bgnotify-test" type="button" style="height:22px;padding:0 7px;font-size:10px;" title="授权浏览器桌面通知并立即发一条测试弹窗">授权测试</button>
             </div>
           </div>
           <div id="st-tb-pup-bark-box" style="margin-top:5px;padding:6px 7px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);display:flex;flex-direction:column;gap:4px;">
@@ -8772,71 +8841,14 @@
                 <button class="st-px-btn" id="st-tb-pup-bark-test" type="button" style="height:20px;padding:0 7px;font-size:9.5px;">测推送</button>
               </div>
             </div>
-            <input id="st-tb-pup-bark-url" type="text" class="st-px-in" placeholder="Bark 推送链接，如 https://api.day.app/你的Key/" style="width:100%;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
+            <input id="st-tb-pup-bark-url" type="text" class="st-px-in" placeholder="Bark 推送链接，留空则继续用原本弹窗" style="width:100%;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
             <div style="display:flex;align-items:center;gap:3px;">
-              <input id="st-tb-pup-bark-icon" type="text" class="st-px-in" placeholder="弹窗图标链接（点右侧直接上传本地图或小狗图）" style="flex:1;min-width:0;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
+              <input id="st-tb-pup-bark-icon" type="text" class="st-px-in" placeholder="弹窗图标链接（可选，点右侧上传）" style="flex:1;min-width:0;height:24px;font-size:10px;padding:0 6px;box-sizing:border-box;background:#ffffff !important;color:var(--px-fg,#54444a) !important;border:1.5px solid var(--px-border,#bfa4ae) !important;" />
               <button class="st-px-btn" id="st-tb-pup-bark-pick" type="button" style="height:24px;padding:0 6px;font-size:9.5px;flex-shrink:0;">本地选图</button>
               <button class="st-px-btn" id="st-tb-pup-bark-usepup" type="button" style="height:24px;padding:0 6px;font-size:9.5px;flex-shrink:0;">用小狗图</button>
               <input id="st-tb-pup-bark-file" type="file" accept="image/*" style="display:none;" />
             </div>
-            <div style="font-size:9px;opacity:0.75;line-height:1.4;">开着小狗时按小狗性格台词和标题推送，关掉小狗则按普通提醒推送；可直接选本地照片或一键上传当前小狗作为弹窗图。</div>
-          </div>
-          <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
-            <span style="width:auto;">小狗自主说话频率</span>
-            <div style="display:flex;gap:3px;" id="st-tb-pup-talkfreq-bar">
-              <button class="st-px-btn" data-talk-freq="quiet" type="button" style="height:22px;padding:0 6px;font-size:10px;">安静</button>
-              <button class="st-px-btn" data-talk-freq="low" type="button" style="height:22px;padding:0 6px;font-size:10px;">较少</button>
-              <button class="st-px-btn active care" data-talk-freq="normal" type="button" style="height:22px;padding:0 6px;font-size:10px;">适中</button>
-              <button class="st-px-btn" data-talk-freq="chatty" type="button" style="height:22px;padding:0 6px;font-size:10px;">话痨</button>
-            </div>
-          </div>
-          <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;gap:5px;">
-            <span style="width:auto;">提示音铃声</span>
-            <div style="display:flex;gap:4px;align-items:center;">
-              <select id="st-tb-pup-tone-sel" class="st-px-tone-sel">
-                <option value="ios_tri">iOS三全音</option>
-                <option value="ios_note">iOS叮咚</option>
-                <option value="water_drop">清脆水滴</option>
-                <option value="pixel_coin">像素金币</option>
-                <option value="wind_chime">清亮风铃</option>
-                <option value="music_box">八音盒三音</option>
-                <option value="cat_bell">俏皮小猫铃</option>
-                <option value="bubble_pop">灵动泡泡啵</option>
-                <option value="harp_glide">竖琴轻拨</option>
-                <option value="star_twinkle">星光叮当</option>
-              </select>
-              <button class="st-px-btn" id="st-tb-pup-tone-test" type="button" style="height:22px;padding:0 8px;font-size:10px;line-height:18px;">试听</button>
-            </div>
-          </div>
-          <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
-            <span style="width:auto;">偷看聊天氛围反应</span>
-            <button class="st-px-btn care" id="st-tb-pup-peek-toggle" type="button" style="height:22px;padding:0 8px;">已开启</button>
-          </div>
-          <div class="st-px-subhead" style="margin-top:6px;">
-            <span>定时提醒与喝水管家</span>
-            <button class="st-px-mini-act" id="st-px-remind-fold" type="button">展开</button>
-          </div>
-          <div class="st-px-adv-card" id="st-px-remind-body" style="display:none;margin-bottom:5px;">
-            <div class="st-px-slider-row" style="justify-content:space-between;margin-bottom:4px;">
-              <span style="width:auto;">定时喝水与护眼提醒</span>
-              <button class="st-px-btn" id="st-px-drink-toggle" type="button" style="height:22px;padding:0 8px;">已关闭</button>
-            </div>
-            <div class="st-px-grid-4" id="st-px-drink-mins" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;">
-              <button class="st-px-btn" data-drink-min="30" type="button" style="height:22px;font-size:10px;">30分</button>
-              <button class="st-px-btn" data-drink-min="45" type="button" style="height:22px;font-size:10px;">45分</button>
-              <button class="st-px-btn" data-drink-min="60" type="button" style="height:22px;font-size:10px;">60分</button>
-              <button class="st-px-btn" data-drink-min="90" type="button" style="height:22px;font-size:10px;">90分</button>
-            </div>
-            <div style="font-size:10px;opacity:0.8;margin-bottom:6px;" id="st-px-drink-next">开启后小狗会举着像素木牌按时提醒你喝水歇眼。</div>
-            <div style="border-top:1px dashed var(--px-bd,#bfa4ae);padding-top:6px;">
-              <div style="font-weight:700;font-size:11px;margin-bottom:4px;">添加自定义倒计时提醒</div>
-              <div style="display:flex;gap:4px;margin-bottom:4px;">
-                <input id="st-px-rem-label" class="st-px-inp" type="text" maxlength="20" placeholder="例如: 关火 / 吃药 / 伸懒腰" style="flex:1;height:24px;font-size:11px;" />
-                <input id="st-px-rem-min" class="st-px-inp" type="number" min="1" max="720" value="15" style="width:52px;height:24px;font-size:11px;" title="多少分钟后提醒" />
-                <button class="st-px-btn care" id="st-px-rem-add" type="button" style="height:24px;padding:0 8px;">定时</button>
-              </div>
-              <div id="st-px-rem-list"></div>
-            </div>
+            <div style="font-size:9px;opacity:0.75;line-height:1.4;">留空则走原本弹窗；填好后只走 Bark 推送。开着小狗按小狗性格推送，关掉小狗恢复普通提醒。</div>
           </div>
 
           <div class="st-px-subhead" style="margin-top:6px;">
@@ -43591,6 +43603,8 @@
       pupSoundBtn.textContent = on ? '音效:开' : '音效:关';
       pupSoundBtn.classList.toggle('active', on);
       pupSoundBtn.classList.toggle('care', on);
+      const toneRow = root.querySelector('#st-tb-pup-tone-row');
+      if (toneRow) toneRow.style.display = on ? 'flex' : 'none';
     }
     if (pupIslandBtn) {
       const on = config.puppyIslandArtwork !== false;
@@ -43814,6 +43828,15 @@
       saveConfig();
       syncBgNotifyUI();
       if (config.puppyBellSound) playSoftBellChime();
+    });
+  }
+  const interactFoldBtn = root.querySelector('#st-px-interact-fold');
+  const interactBodyEl = root.querySelector('#st-px-interact-body');
+  if (interactFoldBtn && interactBodyEl) {
+    interactFoldBtn.addEventListener('click', () => {
+      const open = interactBodyEl.style.display === 'none';
+      interactBodyEl.style.display = open ? 'block' : 'none';
+      interactFoldBtn.textContent = open ? '收起' : '展开';
     });
   }
   syncBgNotifyUI();
