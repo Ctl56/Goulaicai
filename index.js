@@ -6881,6 +6881,10 @@
     .st-px-bsp-piece.b-tilt { animation: stBespokeTilt 2.8s ease-in-out infinite; }
     @keyframes stBespokeSwayLR { 0%, 100% { transform: translateX(-2px); } 50% { transform: translateX(2px); } }
     .st-px-bsp-piece.b-sway-lr { animation: stBespokeSwayLR 3.2s ease-in-out infinite; }
+    @keyframes stBespokePulse { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.12); filter: brightness(1.12); } }
+    .st-px-bsp-piece.b-pulse { animation: stBespokePulse 2.4s ease-in-out infinite; }
+    @keyframes stBespokeHop { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(-3px); } 65% { transform: translateY(0); } }
+    .st-px-bsp-piece.b-hop { animation: stBespokeHop 2.1s ease-in-out infinite; }
     .st-px-title-badge.bespoke-lux { margin: 8px 12px; }
     .st-px-title-badge.bespoke-std { margin: 5px 10px; }
     #st-tb-root.no-badge-white-rim .st-px-title-badge.tier-2::before,
@@ -20492,10 +20496,10 @@
     sb_moon_lullaby: {
       cls: 'bespoke-std bespoke-glow',
       pieces: [
-        { pos: 'right:-12px;top:50%;transform:translateY(-50%);', w: 13, h: 14, pal: { l: '#8f96e8', y: '#ffe694', w: '#ffffff', p: '#ffb8d4' },
-          grid: ['...yyyy...','..yyww....','.yyy.p.p..','.yyy.ppp..','..yywwp...','...yyyy...'] },
-        { pos: 'left:-9px;bottom:-5px;', w: 10, h: 8, anim: 'b-bob', pal: { l: '#a8aef2', w: '#ffffff' },
-          grid: ['..ll....','.lwl..l.','..ll....'] },
+        { pos: 'left:-11px;top:-7px;', w: 15, h: 12, anim: 'b-tilt', pal: { w: '#fffdf7', e: '#d9a46c', p: '#ff9ec2', k: '#3b2a22' },
+          grid: ['.ee....ee.','ewwweewwee','ewwwwwwwwe','wwkwwwwkww','wpwwkkwwpw','.wwwwwwww.'] },
+        { pos: 'right:-9px;bottom:-6px;', w: 13, h: 9, anim: 'b-pulse', pal: { p: '#ff7fa8', w: '#ffffff', l: '#b8beff' },
+          grid: ['.pp.pp..ll','pppppp.lwl','.pppp...ll','..pp......'] },
       ],
     },
     sb_pearl_lady: {
@@ -21393,27 +21397,47 @@
 
 
   // 为商店中原本只有 1~2 个元素的铭牌补充 20 款完全原创、互不重复的组合/长短错落贴图（含动态轻摇与组合造型）
+
+  // 扭蛋全部 15 款铭牌（5 SSR + 10 SR）专属原创非对称组合贴图（按各自主题手绘、零重复、多样动效、绝不死板居中）
+  const GACHA_BADGE_COMBOS = {
+    gb_gacha_lucky_dog:     { pos: 'left:22%;top:-8px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-tilt', pal: { y: '#f2c249', w: '#ffffff', k: '#4a3a36', r: '#e05858' }, grid: ['..yyyyy...yyyy..','.ywwwwwy.ywwwwy.','.ywkwkwy.ywrrwy.','.ywwkwwy..yyyy..','..yyyyy.........'] },
+    gb_gacha_star_sugar:    { pos: 'right:10px;bottom:-7px;', w: 17, h: 8, anim: 'b-pulse', pal: { l: '#c2a6ff', p: '#ff9ec9', c: '#8ce0ff', w: '#ffffff' }, grid: ['..lll..pp..ccc..','.lwwwlpwwpcwwwc.','..lll..pp..ccc..','....llllpppp....','................'] },
+    gb_gacha_melon_eater:   { pos: 'left:72%;top:-8px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-hop', pal: { g: '#58b86e', w: '#ffffff', r: '#f26278', k: '#3b2a22' }, grid: ['....rrrrrrrr....','..rrrkrrrrkrrr..','.rwwwwwwwwwwwwr.','.gggggggggggggg.','................'] },
+    gb_gacha_sleep_master:  { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 17, h: 7, anim: 'b-sway-lr', pal: { b: '#7a94e6', w: '#ffffff', y: '#ffe694' }, grid: ['bbbb...bbb..yy..','..b.....b..ywwy.','.b.....b....yy..','bbbb..bbb.......','................'] },
+    gb_gacha_snack_thief:   { pos: 'right:12px;top:-8px;', w: 16, h: 8, anim: 'b-hop', pal: { o: '#d99852', k: '#5c3418', c: '#9ad8ff', w: '#ffffff' }, grid: ['..ooooo...cccc..','.ookooko.cwwwwc.','.ookooko..cccc..','..ooooo.....cc..','................'] },
+    gb_gacha_slacking_pro:  { pos: 'left:26%;top:-8px;transform:translateX(-50%);', w: 17, h: 7, anim: 'b-sway-lr', pal: { m: '#6bbdb3', w: '#ffffff', c: '#a8e8ff', k: '#3b2a22' }, grid: ['..c...mmmmmm....','.cwc.mkmmmmmm.m.','..c...mmmmmmmm..','......mmmmmm..m.','................'] },
+    gb_gacha_night_snack:   { pos: 'left:70%;bottom:-7px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-tilt', pal: { o: '#b87a4b', w: '#ffffff', r: '#e06458', y: '#ffe078' }, grid: ['..w...w...oooo..','.w...w...oo.....','rrrrrrrrrrrrrr..','.ryyyyyyyyyyr...','..rrrrrrrrrr....'] },
+    gb_gacha_cloud_drifter: { pos: 'left:22%;top:-8px;transform:translateX(-50%);', w: 17, h: 8, anim: 'b-sway-lr', pal: { w: '#ffffff', c: '#a8dcff', p: '#ffb8d4' }, grid: ['....wwwwww...pp.','..wwwwwwwwwwpwwp','.ccwwwwwwwwccpp.','....cccccc......','................'] },
+    gb_gacha_destiny_star:  { pos: 'right:10px;top:-8px;', w: 16, h: 8, anim: 'b-pulse', pal: { g: '#64c284', y: '#ffe078', c: '#8ce0ff', w: '#ffffff' }, grid: ['..gg..gg..yyyy..','.gwwggwwgywwwwy.','..gggggg..yyyy..','...gg..cc.......','................'] },
+    gb_gacha_couch_potato:  { pos: 'left:66%;top:-8px;transform:translateX(-50%);', w: 17, h: 7, anim: 'b-tilt', pal: { l: '#b8a8eb', w: '#ffffff', y: '#ffe6b8' }, grid: ['.llllllllllllll.','llwwwwwwwwwwwwll','llwyyyyyyyyyywll','.llllllllllllll.','................'] },
+    gb_gacha_no_work_dog:   { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-hop', pal: { r: '#e06478', y: '#ffe078', w: '#ffffff', o: '#b87a4b' }, grid: ['..oo........oo..','...oo.rrrr.oo...','.....rwwwwr.....','....rryyyyrr....','.....rrrrrr.....'] },
+    gb_gacha_e_pickles:     { pos: 'right:12px;bottom:-7px;', w: 16, h: 8, anim: 'b-tilt', pal: { g: '#6cb572', w: '#ffffff', y: '#f5d26b', c: '#c9f2e6' }, grid: ['....yyyyyyyy....','...cwwwwwwwwc...','...cwggggggwc...','...cwggggggwc...','....cccccccc....'] },
+    gb_gacha_read_nonsense: { pos: 'left:28%;top:-8px;transform:translateX(-50%);', w: 17, h: 8, anim: 'b-pulse', pal: { c: '#8cb8f5', w: '#ffffff', p: '#ff8cb8' }, grid: ['.cccccccc..ppp..','cwwwwwwwwcpwwwp.','cwwpppwwwc..pp..','.cccccccc...pp..','...cc...........'] },
+    gb_gacha_chaos_king:    { pos: 'left:70%;top:-8px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-hop', pal: { r: '#e67864', w: '#ffffff', y: '#ffe078' }, grid: ['.r..r..r...www..','..rrrrr...wwyww.','.rrrrrrr.ww...w.','..rrrrr.........','................'] },
+    gb_gacha_sleepy_rich:   { pos: 'right:12px;bottom:-7px;', w: 17, h: 8, anim: 'b-pulse', pal: { y: '#f2c249', w: '#fff6cc', l: '#c2a6ff' }, grid: ['..yyyyyy...llll.','.ywwwwwwy.lwwwwl','yyyyyyyyyy.llll.','.yyyyyyyy.......','................'] },
+  };
+
   const SHOP_BADGE_EXTRA_COMBOS = {
-    sb_star_ocean:     { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { y: '#ffe066', c: '#66c2ff', w: '#ffffff' }, grid: ['..cc....yy....cc..','.cwwc..ywwy..cwwc.','..cc....yy....cc..','....cccccccc......','..................'] },
-    sb_cloud_candy:    { pos: 'right:12px;top:-8px;', w: 16, h: 8, anim: 'b-bob', pal: { y: '#f5c242', w: '#ffffff', k: '#4a3a36', c: '#a8dcff' }, grid: ['....yyyyyyyy....','...ywwwwwwwwy...','..ywkkkwwkkkwy..','..ywwwwccwwwwy..','...yyyyyyyyyy...'] },
-    sb_moon_lullaby:   { pos: 'left:68%;top:-8px;transform:translateX(-50%);', w: 16, h: 8, anim: 'b-bob', pal: { l: '#b8a8ff', p: '#ff9ec2', w: '#ffffff' }, grid: ['..ll..pp..pp..ll','.lwwlpppppppplwwl','..ll..pppppp..ll','.......pppp.....','........pp......'] },
+    sb_star_ocean:     { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-sway-lr', pal: { y: '#ffe066', c: '#66c2ff', w: '#ffffff' }, grid: ['..cc....yy....cc..','.cwwc..ywwy..cwwc.','..cc....yy....cc..','....cccccccc......','..................'] },
+    sb_cloud_candy:    { pos: 'right:12px;top:-8px;', w: 16, h: 8, anim: 'b-tilt', pal: { y: '#f5c242', w: '#ffffff', k: '#4a3a36', c: '#a8dcff' }, grid: ['....yyyyyyyy....','...ywwwwwwwwy...','..ywkkkwwkkkwy..','..ywwwwccwwwwy..','...yyyyyyyyyy...'] },
+    sb_moon_lullaby:   { pos: 'left:66%;top:-7px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-sway-lr', pal: { w: '#fffdf7', p: '#ff9ec2', l: '#9da5f2' }, grid: ['..pp..ll..pp....','pwwwwllllwwwwp..','..pp..ll..pp....','................','................'] },
     sb_royal_pup:      { pos: 'left:28%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: '', pal: { o: '#b87a4b', w: '#ffffff', y: '#f2c249', r: '#e05858' }, grid: ['..oooo......yyyy..','..o..oooo..ywwwwy.','.....o..oo.ywrrwy.','............yyyy..','..................'] },
-    sb_ribbon_idol:    { pos: 'right:10px;bottom:-7px;', w: 17, h: 7, anim: 'b-bob', pal: { p: '#ff8cb8', w: '#ffffff', y: '#ffe078', l: '#d6b8ff' }, grid: ['pp..yy..ll..yy..pp','.pwwyywwllwwyywwp.','..pp..yyyy..ll....','......y..y........','..................'] },
-    sb_lantern_night:  { pos: 'left:22%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { y: '#f2c249', w: '#fff6cc', r: '#e04858' }, grid: ['..yyyy....yyyy..','.ywwwwy..ywwwwy.','.ywrrwy..ywrrwy.','..yyyyrrrrryyy..','......rrrr......'] },
-    sb_crystal_prism:  { pos: 'left:66%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { c: '#7ed6f7', p: '#ffb8e0', l: '#c9a6ff', w: '#ffffff' }, grid: ['..c...pp...ll...c.','.cwc.pwwp.lwwl.cwc','..c...pp...ll...c.','....ccccpppp......','..................'] },
+    sb_ribbon_idol:    { pos: 'right:10px;bottom:-7px;', w: 17, h: 7, anim: 'b-sway-lr', pal: { p: '#ff8cb8', w: '#ffffff', y: '#ffe078', l: '#d6b8ff' }, grid: ['pp..yy..ll..yy..pp','.pwwyywwllwwyywwp.','..pp..yyyy..ll....','......y..y........','..................'] },
+    sb_lantern_night:  { pos: 'left:22%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-pulse', pal: { y: '#f2c249', w: '#fff6cc', r: '#e04858' }, grid: ['..yyyy....yyyy..','.ywwwwy..ywwwwy.','.ywrrwy..ywrrwy.','..yyyyrrrrryyy..','......rrrr......'] },
+    sb_crystal_prism:  { pos: 'left:66%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-pulse', pal: { c: '#7ed6f7', p: '#ffb8e0', l: '#c9a6ff', w: '#ffffff' }, grid: ['..c...pp...ll...c.','.cwc.pwwp.lwwl.cwc','..c...pp...ll...c.','....ccccpppp......','..................'] },
     sb_paw_guardian:   { pos: 'left:26%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { w: '#ffffff', p: '#ffbfd4', o: '#c78d5a' }, grid: ['..www..ppp..www.','.wwwwwpppppwwwww','..www..ppp..www.','....oooooooo....','................'] },
-    sb_golden_bell:    { pos: 'right:14px;bottom:-7px;', w: 16, h: 7, anim: 'b-bob', pal: { y: '#f2c249', w: '#fff8d6', p: '#ff9ec2' }, grid: ['....yyyyyyyy....','..yywwwwwwwwyy..','..ywwppwwppwwy..','....yyyyyyyy....','.......yy.......'] },
-    sb_music_star:     { pos: 'left:30%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { y: '#ffe078', b: '#788ee6', w: '#ffffff' }, grid: ['...bb.....yyy.....','...bwb...ywwwy....','..bb.b...y........','..bb.....yyyy.....','..................'] },
+    sb_golden_bell:    { pos: 'right:14px;bottom:-7px;', w: 16, h: 7, anim: 'b-tilt', pal: { y: '#f2c249', w: '#fff8d6', p: '#ff9ec2' }, grid: ['....yyyyyyyy....','..yywwwwwwwwyy..','..ywwppwwppwwy..','....yyyyyyyy....','.......yy.......'] },
+    sb_music_star:     { pos: 'left:30%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-sway-lr', pal: { y: '#ffe078', b: '#788ee6', w: '#ffffff' }, grid: ['...bb.....yyy.....','...bwb...ywwwy....','..bb.b...y........','..bb.....yyyy.....','..................'] },
     sb_arcade_god:     { pos: 'left:64%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { w: '#ffffff', c: '#a8d8ff', l: '#d6c2ff' }, grid: ['..www..cccc..www','.wwwwwccccccwwww','..wwwllwwwwllwww','.....llllllll...','................'] },
     sb_ancient_fan:    { pos: 'left:24%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: '', pal: { g: '#64b898', w: '#effcf7', y: '#e6c278', r: '#e06c6c' }, grid: ['....gggggggggg....','..ggwwwwwwwwwwgg..','..gwwyyyyyyyywwg..','.....gggrrggg.....','........rr........'] },
-    sb_heart_devotion: { pos: 'right:12px;top:-8px;', w: 16, h: 7, anim: 'b-bob', pal: { r: '#e65c8c', p: '#ffb8d0', y: '#f5cc68', w: '#ffffff' }, grid: ['..rr..rr..yyyy..','.rrrrrrrrywwwwy.','..rrrrrr..yyyy..','...rrrr.........','....rr..........'] },
-    sb_aurora_halo:    { pos: 'left:32%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { m: '#7af0d4', c: '#8cc8ff', l: '#c9a6ff', w: '#ffffff' }, grid: ['mmmmmmccccccclllll','.mwwm..cwwc..lwwl.','..mm....cc....ll..','..................','..................'] },
-    sb_mid_cuddle_pro: { pos: 'left:64%;bottom:-7px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { p: '#ff9ec2', w: '#ffffff', y: '#ffe694' }, grid: ['..pp..pp..yyyy..','.ppppppp.ywwwwy.','..pppppp..yyyy..','...pppp.........','....pp..........'] },
+    sb_heart_devotion: { pos: 'right:12px;top:-8px;', w: 16, h: 7, anim: 'b-pulse', pal: { r: '#e65c8c', p: '#ffb8d0', y: '#f5cc68', w: '#ffffff' }, grid: ['..rr..rr..yyyy..','.rrrrrrrrywwwwy.','..rrrrrr..yyyy..','...rrrr.........','....rr..........'] },
+    sb_aurora_halo:    { pos: 'left:32%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-sway-lr', pal: { m: '#7af0d4', c: '#8cc8ff', l: '#c9a6ff', w: '#ffffff' }, grid: ['mmmmmmccccccclllll','.mwwm..cwwc..lwwl.','..mm....cc....ll..','..................','..................'] },
+    sb_mid_cuddle_pro: { pos: 'left:64%;bottom:-7px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-pulse', pal: { p: '#ff9ec2', w: '#ffffff', y: '#ffe694' }, grid: ['..pp..pp..yyyy..','.ppppppp.ywwwwy.','..pppppp..yyyy..','...pppp.........','....pp..........'] },
     sb_mid_snack_boss: { pos: 'left:26%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: '', pal: { o: '#d99858', k: '#5c3418', p: '#ff8cb0', w: '#ffffff' }, grid: ['..oooo....ppppp...','.ookkoo..pwwwwwp..','.ookkoo..pwwwwwp..','..oooo....ppppp...','..................'] },
-    sb_mid_good_mood:  { pos: 'right:12px;top:-8px;', w: 16, h: 7, anim: 'b-bob', pal: { g: '#68c284', y: '#ffe066', w: '#ffffff', p: '#ff9eb8' }, grid: ['..gg..yyyy..pp..','.gwwgywwwwypwwp.','..gg..yyyy..pp..','......gggg......','................'] },
-    sb_mid_lucky_paw:  { pos: 'left:66%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { y: '#f2c249', r: '#e04858', w: '#fff6cc' }, grid: ['..yyyy....rrrr..','.ywwwwy..rwwwwr.','..yyyyrrrrryyy..','......rrrr......','................'] },
+    sb_mid_good_mood:  { pos: 'right:12px;top:-8px;', w: 16, h: 7, anim: 'b-hop', pal: { g: '#68c284', y: '#ffe066', w: '#ffffff', p: '#ff9eb8' }, grid: ['..gg..yyyy..pp..','.gwwgywwwwypwwp.','..gg..yyyy..pp..','......gggg......','................'] },
+    sb_mid_lucky_paw:  { pos: 'left:66%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-tilt', pal: { y: '#f2c249', r: '#e04858', w: '#fff6cc' }, grid: ['..yyyy....rrrr..','.ywwwwy..rwwwwr.','..yyyyrrrrryyy..','......rrrr......','................'] },
     sb_milk_cloud_pup: { pos: 'left:28%;top:-8px;transform:translateX(-50%);', w: 16, h: 7, anim: 'b-bob', pal: { c: '#9ad8ff', p: '#ffb8d4', w: '#ffffff' }, grid: ['..ccc..www..ppp.','.cwwwcwwwwwpwwwp','..ccc..www..ppp.','................','................'] },
-    sb_lazy_sunshine:  { pos: 'left:28%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-bob', pal: { y: '#ffbd4a', w: '#fff4b8', g: '#8cd488' }, grid: ['......yyyyyy......','....yywwwwwwyy....','..ggyyyyyyyyyygg..','.gggggggggggggggg.','..................'] },
+    sb_lazy_sunshine:  { pos: 'left:28%;bottom:-7px;transform:translateX(-50%);', w: 18, h: 7, anim: 'b-pulse', pal: { y: '#ffbd4a', w: '#fff4b8', g: '#8cd488' }, grid: ['......yyyyyy......','....yywwwwwwyy....','..ggyyyyyyyyyygg..','.gggggggggggggggg.','..................'] },
   };
 
   const fillAchBadgeEl = (el, ach, isMystery = false) => {
@@ -21439,7 +21463,14 @@
       }
       if (Array.isArray(bespoke.ult)) {
         const uKey = bespoke.ultKey || fKey;
-        bespoke.ult.forEach(side => el.appendChild(makeUltOrn(side, uKey)));
+        bespoke.ult.forEach(side => {
+          const orn = makeUltOrn(side, uKey);
+          if (ach.id === 'kitchen_dex_all') {
+            if (side === 'top') orn.style.left = '66%';
+            else if (side === 'bottom') orn.style.left = '34%';
+          }
+          el.appendChild(orn);
+        });
       }
       if (!origWrap && Array.isArray(bespoke.trim)) {
         bespoke.trim.forEach(([side, vIdx]) => el.appendChild(makeCustomTrim(side, ach.bd, ach.fg, vIdx)));
@@ -21449,6 +21480,9 @@
       }
       if (SHOP_BADGE_EXTRA_COMBOS[ach.id]) {
         el.appendChild(renderBespokePiece(SHOP_BADGE_EXTRA_COMBOS[ach.id]));
+      }
+      if (GACHA_BADGE_COMBOS[ach.id]) {
+        el.appendChild(renderBespokePiece(GACHA_BADGE_COMBOS[ach.id]));
       }
     } else if (tier >= 4 && !isMystery) {
       el.appendChild(makeUltOrn('top', fKey));
@@ -21712,22 +21746,23 @@
           freeSlots.push(`right:${5 + ((h >> 6) % 10)}px;bottom:-6px;`);
           freeSlots.push(`right:${6 + ((h >> 3) % 10)}px;top:-7px;`);
 
+          const ACH_ANIMS = ['b-bob', 'b-tilt', 'b-sway-lr', 'b-pulse', 'b-hop'];
+          const a1 = ACH_ANIMS[h % ACH_ANIMS.length];
+          const a2 = ACH_ANIMS[(h + 2) % ACH_ANIMS.length];
           if (isMythic) {
-            // 最高级传说/神迹成就：恢复原版精致大尺寸主饰件 + 副饰件 + 1处错落独立饰件，不使用包裹画布
-            el.appendChild(renderBespokePiece({ pos: p1, w: 15, h: 13, anim: 'b-bob', pal, grid: g1 }));
-            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, pal, grid: subG }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 9, h: 8, anim: 'b-bob', pal, grid: g3 }));
+            el.appendChild(renderBespokePiece({ pos: p1, w: 15, h: 13, anim: a1, pal, grid: g1 }));
+            if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 9, h: 8, anim: (h % 2 === 0 ? a2 : ''), pal, grid: subG }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 10, h: 8, anim: a2, pal, grid: g3 }));
           } else if (isSenior) {
-            // 高级成就：主饰件 + 副饰件 + 仅1处错落大尺寸饰件（清爽成组不零碎）
-            el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+            el.appendChild(renderBespokePiece({ pos: p1, w: 14, h: 12, anim: (h % 2 === 0 ? a1 : ''), pal, grid: g1 }));
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
-            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 9, h: 8, anim: (h % 3 === 1 ? 'b-bob' : ''), pal, grid: g3 }));
+            el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 9, h: 8, anim: (h % 3 !== 0 ? a2 : ''), pal, grid: g3 }));
           } else {
             if (h % 3 === 0) el.classList.add('bespoke-static');
-            el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 5 === 0 ? 'b-bob' : ''), pal, grid: g1 }));
+            el.appendChild(renderBespokePiece({ pos: p1, w: 13, h: 11, anim: (h % 3 === 0 ? a1 : ''), pal, grid: g1 }));
             if (subG) el.appendChild(renderBespokePiece({ pos: p2, w: 8, h: 7, pal, grid: subG }));
             if (ach.tier >= 2 || (h % 2 === 0)) {
-              el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 7, h: 6, anim: (h % 4 === 0 ? 'b-bob' : ''), pal, grid: g3 }));
+              el.appendChild(renderBespokePiece({ pos: freeSlots[0], w: 8, h: 7, anim: (h % 2 === 0 ? a2 : ''), pal, grid: g3 }));
             }
           }
         }
