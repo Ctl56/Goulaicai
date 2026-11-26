@@ -1015,6 +1015,7 @@
     { id: 'hidden_cloud_dual_album_all', title: '全图鉴双子星', desc: '集齐全部 30 张双人探险相册，赠限定「双子纪念馆框」动态头像框', reward: 66, tier: 4, hidden: true, frame: 'dualalball_bespoke', bonus: { avatarframe: 'af_cloud_gallery' }, bg: 'linear-gradient(115deg,#ffecf5,#fff4d9,#e8f5ff,#f3ebff)', bd: '#d470a2', fg: '#661a44', icon: 'crown' },
     { id: 'cloud_bond_lv5', title: '默契星火', desc: '与任意一位好友的汪汪羁绊达到 Lv.5，赠扭蛋券 ×2', reward: 25, tier: 3, frame: 'bond5_bespoke', bonus: { tickets: 2 }, bg: 'linear-gradient(120deg,#fff0f5,#fff5ea,#f0edff)', bd: '#e07ca0', fg: '#70203e', icon: 'heart' },
     { id: 'hidden_cloud_bond_lv10', title: '宿命双星誓约', desc: '与任意一位好友的汪汪羁绊达到满级 Lv.10，赠扭蛋券 ×5', reward: 88, tier: 4, hidden: true, frame: 'bond10_bespoke', bonus: { tickets: 5 }, bg: 'linear-gradient(115deg,#ffeaf2,#f2e8ff,#e6f4ff,#fff6d9)', bd: '#c86cd4', fg: '#541a66', icon: 'crown' },
+    { id: 'hidden_merchant_halfticket', title: '五折券天选欧皇', desc: '在神秘商人小推车偶遇 0.1% 超低概率的五折扭蛋券，赠扭蛋券 ×3', reward: 50, tier: 4, hidden: true, frame: 'rainbow_ult', bonus: { tickets: 3 }, bg: 'linear-gradient(115deg,#fff6d6,#ffe4f0,#e6f2ff)', bd: '#e6a838', fg: '#6b3f08', icon: 'crown' },
     { id: 'hidden_all_master', title: '全成就七彩神话', desc: '集齐其余全部成就的传说级宠狗大师', reward: 20, tier: 4, frame: 'rainbow_ult', hidden: true, bg: 'linear-gradient(115deg,#ffd6e8,#ffe8c2,#fff9c4,#cbf7d8,#c4ebff,#dfd0ff,#ffd6e8)', bd: '#e68ad9', fg: '#5c1f6e', icon: 'crown' },
   ];
   const _ACH_ICON_REMAP = {
@@ -20916,6 +20917,7 @@
       hidden_cloud_dual_album_all: Object.keys(config.puppyDualAlbum || {}).length >= 30,
       cloud_bond_lv5: (typeof getMaxFriendBondLv === 'function' ? getMaxFriendBondLv() : 1) >= 5,
       hidden_cloud_bond_lv10: (typeof getMaxFriendBondLv === 'function' ? getMaxFriendBondLv() : 1) >= 10,
+      hidden_merchant_halfticket: (st.merchantHalfTicketSeen || 0) >= 1,
     };
 
     const newlyUnlocked = [];
@@ -22397,6 +22399,11 @@
           d.collar = saved.collar || config.puppyCollar;
           d.outline = saved.outline || config.puppyOutline || '#3b2a22';
           d.showCollar = saved.showCollar !== false;
+          if (pupFurInput) pupFurInput.value = d.fur;
+          if (pupEarInput) pupEarInput.value = d.ear;
+          if (pupCollarInput) pupCollarInput.value = d.collar;
+          if (pupOutlineInput) pupOutlineInput.value = d.outline;
+          renderPupColorPresets();
           renderPupWardrobe();
         });
         const nameB = doc.createElement('button');
@@ -22900,10 +22907,23 @@
     if (m.expireAt === 0 && now >= (m.nextAppearAt || 0)) {
       m.expireAt = now + 25 * 60000; // 停留 25 分钟
       m.ticketsLeft = 5;
+      const isHalfTicket = Math.random() < 0.001; // 0.1% 超低概率五折扭蛋券
+      m.ticketHalfOff = isHalfTicket;
+      m.ticketPrice = isHalfTicket ? 4 : 8;
       m.items = buildMerchantStock();
       m.notified = true;
+      if (isHalfTicket) {
+        config.puppyStats = config.puppyStats || {};
+        config.puppyStats.merchantHalfTicketSeen = (config.puppyStats.merchantHalfTicketSeen || 0) + 1;
+      }
       saveConfig();
-      if (config.puppyEnabled && typeof showPuppyBubble === 'function') {
+      if (isHalfTicket) {
+        try { checkPupAchievements(); } catch (_) {}
+        if (config.puppyEnabled && typeof showPuppyBubble === 'function') {
+          showPuppyBubble('哇！0.1% 超低概率触发！神秘商人居然带来了五折扭蛋券，快去商城抢购！', 4800);
+        }
+        try { openPixelPupNoticeModal('神秘奇遇 · 五折扭蛋券！', '神秘商人今天心情极好，以 0.1% 的超低概率刷出了【五折扭蛋券 · 4币/张】，已解锁专属隐藏成就！快去商城小推车里抢购吧~', '马上去看'); } catch (_) {}
+      } else if (config.puppyEnabled && typeof showPuppyBubble === 'function') {
         showPuppyBubble('神秘商人的小推车难得路过，快去商城看看！', 3400);
       }
       return true;
@@ -22955,140 +22975,49 @@
     g.fillStyle = '#fff9c4'; g.fillRect(20, 11 + dy, 1, 2);
   };
 
-  const openMerchantItemPreviewModal = (it, onBuy) => {
+  const previewMerchantItemInShop = (it) => {
     if (!it) return;
-    let mask = root.querySelector('#st-tb-merchant-preview-mask');
-    if (!mask) {
-      mask = doc.createElement('div');
-      mask.id = 'st-tb-merchant-preview-mask';
-      mask.style.cssText = 'position:fixed;inset:0;padding:16px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:9995;pointer-events:auto;box-sizing:border-box;';
-      root.appendChild(mask);
+    let fullObj = null;
+    let shopKind = it.kind;
+    if (it.kind === 'outfit') fullObj = (SHOP_PUP_OUTFITS || []).find(x => x.id === it.id);
+    else if (it.kind === 'acc') fullObj = (SHOP_PUP_ACCS || []).find(x => x.id === it.id);
+    else if (it.kind === 'comp') fullObj = (SHOP_PUP_COMPANIONS || []).find(x => x.id === it.id);
+    else if (it.kind === 'badge') fullObj = (SHOP_PUP_BADGES || []).find(x => x.id === it.id);
+    else if (it.kind === 'trail') fullObj = (SHOP_PUP_TRAILS || []).find(x => x.id === it.id);
+    else if (it.kind === 'bubble') { fullObj = (SHOP_PUP_BUBBLES || []).find(x => x.id === it.id); shopKind = 'bubskin'; }
+    else if (it.kind === 'avatarframe') fullObj = (SHOP_PUP_AVATAR_FRAMES || []).find(x => x.id === it.id);
+    if (!fullObj) fullObj = { id: it.id, name: it.name, title: it.name, price: it.origPrice };
+
+    if (bubPreviewRevertTimer) {
+      clearTimeout(bubPreviewRevertTimer);
+      bubPreviewRevertTimer = null;
+      applyPupCosmeticSkins();
     }
-    const bagCs = pupBagEl ? win.getComputedStyle(pupBagEl) : null;
-    const pxBg = (pupBagEl && (pupBagEl.style.background || bagCs?.backgroundColor)) || '#faf6f7';
-    const pxBd = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-border') || bagCs?.borderTopColor)) || '#bfa4ae';
-    const pxFg = (pupBagEl && (pupBagEl.style.getPropertyValue('--px-fg') || bagCs?.color)) || '#54444a';
-    const kindLabels = {
-      outfit: '服装', acc: '饰品', comp: '随行伙伴', badge: '专属徽章',
-      trail: '像素拖尾', bubble: '对话气泡', avatarframe: '头像框',
-    };
-    const kindLabel = kindLabels[it.kind] || '特惠好物';
+    if (shopPreviewItem && shopPreviewItem.kind === 'badge') updatePupStatBars();
 
-    mask.innerHTML = `<div style="width:284px;max-width:calc(100vw - 24px);padding:12px 12px 11px;margin:0 auto;background:${pxBg};color:${pxFg};border:3px solid ${pxBd};box-shadow:5px 5px 0 rgba(59,42,34,0.28);box-sizing:border-box;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;margin-bottom:8px;border-bottom:2px dashed ${pxBd};">
-        <span style="font-size:12px;font-weight:700;">商品试看 · ${escapeHtmlSimple(kindLabel)}</span>
-        <button type="button" id="st-mp-x" class="st-px-btn" style="height:20px;padding:0 6px;font-size:10px;">×</button>
-      </div>
-      <div id="st-mp-stage" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:112px;padding:10px;background:#ffffff;border:2px solid ${pxBd};margin-bottom:8px;"></div>
-      <div style="text-align:center;margin-bottom:9px;">
-        <div style="font-size:12px;font-weight:700;margin-bottom:2px;">${escapeHtmlSimple(it.name)}</div>
-        <div style="font-size:10.5px;opacity:0.82;">原价 <span style="text-decoration:line-through;">${it.origPrice}</span> 币 → 神秘特惠 <b style="color:#d94c7a;">${it.salePrice} 币</b></div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button type="button" id="st-mp-close" class="st-px-btn" style="flex:1;">先看看</button>
-        <button type="button" id="st-mp-buy" class="st-px-btn${it.sold ? '' : ' care'}" style="flex:1.4;" ${it.sold ? 'disabled' : ''}>${it.sold ? '已购入' : `特惠买下 (${it.salePrice}币)`}</button>
-      </div>
-    </div>`;
-
-    const stage = mask.querySelector('#st-mp-stage');
-    if (stage) {
-      if (it.kind === 'outfit' || it.kind === 'acc' || it.kind === 'comp') {
-        const cv = doc.createElement('canvas');
-        cv.width = 32; cv.height = 32;
-        cv.style.cssText = 'width:96px;height:96px;image-rendering:pixelated;display:block;';
-        const c2 = cv.getContext('2d');
-        if (c2) {
-          c2.imageSmoothingEnabled = false;
-          const grid = PUP_FRAMES.idle1 || [];
-          const pal = getPupPalette(config.puppyFur, config.puppyEar, config.puppyCollar, config.puppyOutline, config.puppyShowCollar !== false);
-          const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
-          for (let y = 0; y < grid.length; y++) {
-            const row = grid[y];
-            for (let x = 0; x < row.length; x++) {
-              const col = pal[row[x]];
-              if (col) { c2.fillStyle = col; c2.fillRect(ox + x, oy + y, 1, 1); }
-            }
-          }
-          const prevCtx = activePxCtx;
-          try {
-            activePxCtx = c2;
-            const prevOutfit = it.kind === 'outfit' ? it.id : (config.puppyOutfit || 'none');
-            drawPupOutfit(prevOutfit, ox, oy, hx, hy, false, false, false, false);
-            const accList = it.kind === 'acc' ? [it.id] : (Array.isArray(config.puppyAccs) ? config.puppyAccs : []);
-            accList.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, false, false));
-            const prevComp = it.kind === 'comp' ? it.id : (config.puppyCompanion || 'none');
-            drawPupCompanion(prevComp, ox, oy, false);
-          } finally {
-            activePxCtx = prevCtx;
-          }
-        }
-        stage.appendChild(cv);
-        const cap = doc.createElement('div');
-        cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:4px;';
-        cap.textContent = `${getPupName()} 试穿效果预览`;
-        stage.appendChild(cap);
-      } else if (it.kind === 'avatarframe') {
-        const lk = {
-          fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
-          showCollar: config.puppyShowCollar !== false, outfit: config.puppyOutfit, accs: config.puppyAccs,
-          accOffsets: config.puppyAccOffsets, comp: config.puppyCompanion, onesieShowEars: config.puppyOnesieShowEars,
-          avatarFrame: it.id,
-        };
-        const av = makeFriendAvatarCanvas(lk);
-        av.style.transform = 'scale(1.45)';
-        av.style.margin = '14px 0';
-        stage.appendChild(av);
-        const cap = doc.createElement('div');
-        cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:6px;';
-        cap.textContent = '头像框佩戴预览';
-        stage.appendChild(cap);
-      } else if (it.kind === 'bubble') {
-        const bObj = (SHOP_PUP_BUBBLES || []).find(x => x.id === it.id);
-        const bub = doc.createElement('div');
-        bub.style.cssText = `padding:8px 12px;font-size:11px;font-weight:700;background:${bObj?.bg || '#fff'};color:${bObj?.fg || '#3b2a22'};border:2px solid ${bObj?.bd || pxBd};box-shadow:3px 3px 0 rgba(0,0,0,0.14);border-radius:${bObj?.radius || '8px'};max-width:210px;text-align:center;`;
-        bub.textContent = `汪！这就是「${it.name}」的对话气泡效果~`;
-        stage.appendChild(bub);
-      } else if (it.kind === 'trail') {
-        const tObj = (SHOP_PUP_TRAILS || []).find(x => x.id === it.id);
-        const cols = (tObj && Array.isArray(tObj.colors) && tObj.colors.length) ? tObj.colors : ['#ff8aa8', '#ffe066', '#88d4ff'];
-        const bar = doc.createElement('div');
-        bar.style.cssText = 'display:flex;align-items:center;gap:6px;padding:12px 14px;background:#f9f5f7;border:1.5px dashed ' + pxBd + ';';
-        for (let i = 0; i < 8; i++) {
-          const dot = doc.createElement('span');
-          const sz = 6 + (i % 3) * 3;
-          dot.style.cssText = `display:inline-block;width:${sz}px;height:${sz}px;background:${cols[i % cols.length]};opacity:${(0.4 + i * 0.08).toFixed(2)};`;
-          bar.appendChild(dot);
-        }
-        stage.appendChild(bar);
-        const cap = doc.createElement('div');
-        cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:6px;';
-        cap.textContent = tObj?.desc || '小狗行走时的专属像素拖尾特效';
-        stage.appendChild(cap);
-      } else {
-        const bdObj = (SHOP_PUP_BADGES || []).find(x => x.id === it.id);
-        const pill = doc.createElement('div');
-        pill.style.cssText = `padding:7px 14px;font-size:11.5px;font-weight:700;background:${bdObj?.bg || '#fff4d6'};color:${bdObj?.fg || '#6b4210'};border:2px solid ${bdObj?.bd || '#d9a441'};box-shadow:3px 3px 0 rgba(0,0,0,0.14);`;
-        pill.textContent = bdObj?.title || it.name;
-        stage.appendChild(pill);
-        if (bdObj?.desc) {
-          const cap = doc.createElement('div');
-          cap.style.cssText = 'font-size:9.5px;opacity:0.75;margin-top:6px;text-align:center;';
-          cap.textContent = bdObj.desc;
-          stage.appendChild(cap);
-        }
-      }
+    shopPreviewItem = { kind: shopKind, item: fullObj };
+    if (shopKind === 'bubskin') {
+      applyPupCosmeticSkins(null, fullObj.id);
+      if (config.puppyEnabled) showPuppyBubble(`[试看气泡] ${fullObj.name} 好好看汪!`, 3000);
+      bubPreviewRevertTimer = setTimeout(() => applyPupCosmeticSkins(), 3200);
+    } else if (shopKind === 'trail') {
+      applyPupCosmeticSkins();
+      const _dPrev = clamp(Number(config.puppyTrailDensity ?? 1.0), 0.4, 2.4);
+      const _cntPrev = Math.max(2, Math.min(12, Math.round(5 * _dPrev)));
+      const _stepPrev = Math.max(7, Math.round(20 / _dPrev));
+      const _gapPrev = Math.max(50, Math.round(115 / _dPrev));
+      for (let k = 0; k < _cntPrev; k++) setTimeout(() => spawnWalkTrailDot(fullObj.id, k * _stepPrev), k * _gapPrev);
+      if (config.puppyEnabled) showPuppyBubble(`[试看特效] ${fullObj.name}`, 2000);
+    } else if (shopKind === 'avatarframe') {
+      applyPupCosmeticSkins(null, null, fullObj.id);
+      if (config.puppyEnabled) showPuppyBubble(`[试看头像框] 快看背包左上角小狗框!`, 2200);
     }
-
-    const closeMp = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { e.stopPropagation(); if (e.target === mask) closeMp(); };
-    mask.querySelector('#st-mp-x')?.addEventListener('click', closeMp);
-    mask.querySelector('#st-mp-close')?.addEventListener('click', closeMp);
-    mask.querySelector('#st-mp-buy')?.addEventListener('click', () => {
-      closeMp();
-      if (typeof onBuy === 'function') onBuy();
-    });
-    bringModalFront(mask);
-    mask.style.display = 'flex';
+    drawShopPreview();
+    setShopNotice(`正在预览【${fullObj.name || fullObj.title || it.name}】，可直接在小推车特惠买下`);
+    const pvWrap = root.querySelector('.st-px-pane[data-px-pane="shop"] .st-px-preview-wrap');
+    if (pvWrap && typeof pvWrap.scrollIntoView === 'function') {
+      try { pvWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+    }
   };
 
   const renderMerchantBannerInShop = () => {
@@ -23146,44 +23075,65 @@
     const list = doc.createElement('div');
     list.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
 
-    // 1. 扭蛋券（限购5张，8币/张）
+    // 1. 扭蛋券（限购5张，支持单买或一键全买，0.1% 概率五折 4币/张）
     const tRow = doc.createElement('div');
-    tRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:10px;';
+    tRow.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;';
     const tLeft = Math.max(0, Math.floor(m.ticketsLeft || 0));
+    const tPrice = m.ticketHalfOff ? 4 : Number(m.ticketPrice || 8);
     const tName = doc.createElement('span');
-    tName.textContent = `扭蛋券 · 8币/张 · 限购余 ${tLeft}/5`;
-    const tBtn = doc.createElement('button');
-    tBtn.type = 'button';
-    tBtn.className = 'st-px-btn' + (tLeft > 0 ? ' care' : '');
-    tBtn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;flex-shrink:0;';
-    tBtn.textContent = tLeft > 0 ? '买1张 (8币)' : '已售罄';
-    tBtn.disabled = tLeft <= 0;
-    tBtn.addEventListener('click', () => {
+    tName.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+    tName.innerHTML = `${m.ticketHalfOff ? '<b style="color:#d94c7a;">[五折]</b> ' : ''}扭蛋券 · ${tPrice}币/张 · 余 ${tLeft}/5`;
+    const buyTickets = (qty) => {
+      const n = Math.min(tLeft, Math.max(1, qty));
+      const cost = n * tPrice;
       const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
-      if (curC < 8) { setShopNotice(`小狗币不足，还差 ${8 - curC} 币`); return; }
-      openGuardConfirm('确认购买神秘商人扭蛋券？', `花费 8 枚小狗币购买 1 张扭蛋券（余额 ${curC} 币）。`, () => {
-        if ((m.ticketsLeft || 0) <= 0) return;
-        config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - 8; recordCoinsSpent(8);
+      if (curC < cost) { setShopNotice(`小狗币不足，还差 ${cost - curC} 币`); return; }
+      openGuardConfirm(`确认购买 ${n} 张扭蛋券？`, `花费 ${cost} 枚小狗币购买 ${n} 张扭蛋券，当前余额 ${curC} 币。`, () => {
+        const avail = Math.max(0, Math.floor(m.ticketsLeft || 0));
+        const realN = Math.min(avail, n);
+        if (realN <= 0) return;
+        const realCost = realN * tPrice;
+        if (Math.floor(config.puppyCoins || 0) < realCost) return;
+        config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - realCost; recordCoinsSpent(realCost);
         config.puppyInventory = config.puppyInventory || {};
-        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + 1;
-        m.ticketsLeft -= 1;
+        config.puppyInventory.gacha_ticket = Math.max(0, Math.floor(config.puppyInventory.gacha_ticket || 0)) + realN;
+        m.ticketsLeft = avail - realN;
         saveConfig();
         updatePupStatBars();
         renderMerchantBannerInShop();
-        setShopNotice('已购入 1 张扭蛋券');
+        setShopNotice(`已购入 ${realN} 张扭蛋券`);
       }, '确认购买', true);
-    });
-    tRow.append(tName, tBtn);
+    };
+    const tBtnWrap = doc.createElement('div');
+    tBtnWrap.style.cssText = 'display:flex;align-items:center;gap:3px;flex-shrink:0;';
+    const tBtn = doc.createElement('button');
+    tBtn.type = 'button';
+    tBtn.className = 'st-px-btn' + (tLeft > 0 ? ' care' : '');
+    tBtn.style.cssText = 'height:20px;padding:0 6px;font-size:9px;line-height:18px;';
+    tBtn.textContent = tLeft > 0 ? `买1张 ${tPrice}币` : '已售罄';
+    tBtn.disabled = tLeft <= 0;
+    tBtn.addEventListener('click', () => buyTickets(1));
+    tBtnWrap.appendChild(tBtn);
+    if (tLeft > 1) {
+      const tAllBtn = doc.createElement('button');
+      tAllBtn.type = 'button';
+      tAllBtn.className = 'st-px-btn care';
+      tAllBtn.style.cssText = 'height:20px;padding:0 6px;font-size:9px;line-height:18px;';
+      tAllBtn.textContent = `全买${tLeft}张 ${tLeft * tPrice}币`;
+      tAllBtn.addEventListener('click', () => buyTickets(tLeft));
+      tBtnWrap.appendChild(tAllBtn);
+    }
+    tRow.append(tName, tBtnWrap);
     list.appendChild(tRow);
 
-    // 2. 随机 2-3 件未拥有的打折商品（支持点击预览）
+    // 2. 随机 2-3 件未拥有的打折商品（点击与普通商城预览完全一致）
     (m.items || []).forEach(it => {
       const row = doc.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:10px;';
       const doBuy = () => {
         const curC = Math.max(0, Math.floor(config.puppyCoins || 0));
         if (curC < it.salePrice) { setShopNotice(`小狗币不足，还差 ${it.salePrice - curC} 币`); return; }
-        openGuardConfirm('确认购买神秘商人特惠？', `花费 ${it.salePrice} 枚小狗币购入【${it.name}】（原价 ${it.origPrice} 币，余额 ${curC} 币）。`, () => {
+        openGuardConfirm('确认购买神秘商人特惠？', `花费 ${it.salePrice} 枚小狗币购入【${it.name}】，原价 ${it.origPrice} 币，当前余额 ${curC} 币。`, () => {
           if (it.sold) return;
           config.puppyCoins = Math.max(0, Math.floor(config.puppyCoins || 0)) - it.salePrice; recordCoinsSpent(it.salePrice);
           if (it.kind === 'outfit') { config.puppyOwnedOutfits = config.puppyOwnedOutfits || []; if (!config.puppyOwnedOutfits.includes(it.id)) config.puppyOwnedOutfits.push(it.id); }
@@ -23203,25 +23153,26 @@
       };
       const nm = doc.createElement('span');
       nm.style.cssText = 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;text-decoration:underline dotted;';
-      nm.title = '点击预览商品效果';
+      nm.title = '点击实时预览';
       nm.textContent = `${it.name} · 原${it.origPrice}币 → ${it.salePrice}币`;
-      nm.addEventListener('click', () => openMerchantItemPreviewModal(it, doBuy));
+      nm.addEventListener('click', () => previewMerchantItemInShop(it));
       const pvBtn = doc.createElement('button');
       pvBtn.type = 'button';
       pvBtn.className = 'st-px-btn';
       pvBtn.style.cssText = 'height:20px;padding:0 5px;font-size:9px;line-height:18px;flex-shrink:0;';
       pvBtn.textContent = '预览';
-      pvBtn.addEventListener('click', () => openMerchantItemPreviewModal(it, doBuy));
+      pvBtn.addEventListener('click', () => previewMerchantItemInShop(it));
       const btn = doc.createElement('button');
       btn.type = 'button';
       btn.className = 'st-px-btn' + (!it.sold ? ' care' : '');
       btn.style.cssText = 'height:20px;padding:0 7px;font-size:9.5px;line-height:18px;flex-shrink:0;';
-      btn.textContent = it.sold ? '已购' : `买 (${it.salePrice}币)`;
+      btn.textContent = it.sold ? '已购' : `买 ${it.salePrice}币`;
       btn.disabled = Boolean(it.sold);
       btn.addEventListener('click', doBuy);
       row.append(nm, pvBtn, btn);
       list.appendChild(row);
     });
+
     box.appendChild(list);
   };
 
@@ -24030,19 +23981,22 @@
       btn.type = 'button';
       btn.className = 'st-px-btn';
       btn.textContent = p.name;
-      const isActive =
-        config.puppyFur?.toLowerCase() === p.fur.toLowerCase() &&
-        config.puppyEar?.toLowerCase() === p.ear.toLowerCase() &&
-        config.puppyCollar?.toLowerCase() === p.collar.toLowerCase();
+      const curFur = (wardDraft?.fur || config.puppyFur || '').toLowerCase();
+      const curEar = (wardDraft?.ear || config.puppyEar || '').toLowerCase();
+      const curCollar = (wardDraft?.collar || config.puppyCollar || '').toLowerCase();
+      const isActive = curFur === p.fur.toLowerCase() && curEar === p.ear.toLowerCase() && curCollar === p.collar.toLowerCase();
       btn.classList.toggle('active', isActive);
       btn.addEventListener('click', () => {
-        config.puppyFur = p.fur;
-        config.puppyEar = p.ear;
-        config.puppyCollar = p.collar;
-        saveConfig();
-        syncPuppyBagUI();
-        drawPuppyScene();
-        showPuppyBubble(getPersTalk('fur'), 1800);
+        const d = ensureWardDraft();
+        d.fur = p.fur;
+        d.ear = p.ear;
+        d.collar = p.collar;
+        if (pupFurInput) pupFurInput.value = d.fur;
+        if (pupEarInput) pupEarInput.value = d.ear;
+        if (pupCollarInput) pupCollarInput.value = d.collar;
+        renderPupColorPresets();
+        redrawWardStickyPreview();
+        renderPupWardrobe();
       });
       pupColorPresetsEl.appendChild(btn);
     });
@@ -24068,10 +24022,10 @@
       achHeadEl.innerHTML = `成就称号 (${_uCnt}/${PUP_ACHIEVEMENTS.length})${freshNewAchs.size > 0 ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
     }
     if (pupBagTab === 'look' && achListEl && achListEl.classList.contains('open')) renderPupAchievements();
-    pupFurInput.value = config.puppyFur || '#fffdf7';
-    pupEarInput.value = config.puppyEar || '#e2ae74';
-    pupCollarInput.value = config.puppyCollar || '#d66565';
-    if (pupOutlineInput) pupOutlineInput.value = config.puppyOutline || '#3b2a22';
+    pupFurInput.value = (wardDraft && wardDraft.fur) || config.puppyFur || '#fffdf7';
+    pupEarInput.value = (wardDraft && wardDraft.ear) || config.puppyEar || '#e2ae74';
+    pupCollarInput.value = (wardDraft && wardDraft.collar) || config.puppyCollar || '#d66565';
+    if (pupOutlineInput) pupOutlineInput.value = (wardDraft && wardDraft.outline) || config.puppyOutline || '#3b2a22';
     const showCollar = config.puppyShowCollar !== false;
     pupCollarToggleBtn.textContent = showCollar ? '已佩戴（点此摘下）' : '已摘下（点此戴上）';
     pupCollarToggleBtn.classList.toggle('active', showCollar);
@@ -34452,16 +34406,37 @@
       // 远景小气球
       ctx2.fillStyle = '#7ec8ff'; ctx2.fillRect(7, 6, 5, 5); ctx2.fillStyle = '#fff'; ctx2.fillRect(9, 6, 2, 5);
     } else if (m === 'aquarium') {
-      // 海底玻璃隧道：弧形玻璃穹顶 + 发光水母 + 鱼群 + 光束
-      ctx2.fillStyle = 'rgba(130,245,255,0.14)';
-      ctx2.fillRect(10, 0, 8, 24); ctx2.fillRect(34, 0, 10, 24);
-      ctx2.strokeStyle = 'rgba(190,248,255,0.55)'; ctx2.lineWidth = 1;
-      ctx2.beginPath(); ctx2.arc(27, 25, 23, Math.PI, 0); ctx2.stroke();
-      ctx2.beginPath(); ctx2.arc(27, 25, 17, Math.PI, 0); ctx2.stroke();
-      // 发光水母
-      ctx2.fillStyle = '#ff9ee0'; ctx2.fillRect(12, 6, 5, 3); ctx2.fillStyle = '#ffd6f5'; ctx2.fillRect(13, 9, 1, 4); ctx2.fillRect(15, 9, 1, 3);
-      ctx2.fillStyle = '#7ef2ff'; ctx2.fillRect(38, 8, 6, 3); ctx2.fillStyle = '#d6fcff'; ctx2.fillRect(39, 11, 1, 4); ctx2.fillRect(42, 11, 1, 3);
-      ctx2.fillStyle = '#144466'; ctx2.fillRect(0, 24, 54, 12); ctx2.fillStyle = '#266c96'; ctx2.fillRect(4, 25, 46, 2);
+      // 海底玻璃隧道：深海丁达尔光柱 + 拱形玻璃钢架 + 荧光水母群 + 热带鱼 + 两侧珊瑚礁 + 水波步道
+      ctx2.fillStyle = 'rgba(126,245,255,0.16)';
+      ctx2.beginPath(); ctx2.moveTo(8,0); ctx2.lineTo(17,0); ctx2.lineTo(12,24); ctx2.lineTo(4,24); ctx2.fill();
+      ctx2.beginPath(); ctx2.moveTo(31,0); ctx2.lineTo(42,0); ctx2.lineTo(47,24); ctx2.lineTo(35,24); ctx2.fill();
+      // 远处珊瑚剪影与海草
+      ctx2.fillStyle = '#1b5f87'; ctx2.fillRect(0, 17, 10, 7); ctx2.fillRect(44, 16, 10, 8);
+      ctx2.fillStyle = '#ff7fa8'; ctx2.fillRect(2, 19, 3, 5); ctx2.fillRect(5, 20, 2, 4);
+      ctx2.fillStyle = '#ffb86c'; ctx2.fillRect(46, 19, 3, 5); ctx2.fillRect(50, 18, 2, 6);
+      ctx2.fillStyle = '#4ad4a0'; ctx2.fillRect(8, 18, 1, 6); ctx2.fillRect(44, 18, 1, 6);
+      // 发光水母（粉/青双色）与触须
+      ctx2.fillStyle = '#ff9ee0'; ctx2.fillRect(11, 5, 6, 3); ctx2.fillStyle = '#fff0fa'; ctx2.fillRect(12, 5, 2, 1);
+      ctx2.fillStyle = '#ffd6f5'; ctx2.fillRect(12, 8, 1, 4); ctx2.fillRect(14, 8, 1, 5); ctx2.fillRect(16, 8, 1, 3);
+      ctx2.fillStyle = '#7ef2ff'; ctx2.fillRect(36, 7, 7, 3); ctx2.fillStyle = '#ebfeff'; ctx2.fillRect(38, 7, 2, 1);
+      ctx2.fillStyle = '#c4faff'; ctx2.fillRect(37, 10, 1, 4); ctx2.fillRect(39, 10, 1, 5); ctx2.fillRect(41, 10, 1, 3);
+      // 游过的小丑鱼与蓝色鱼群
+      ctx2.fillStyle = '#ff9b42'; ctx2.fillRect(23, 10, 4, 2); ctx2.fillStyle = '#ffffff'; ctx2.fillRect(25, 10, 1, 2);
+      ctx2.fillStyle = '#ffe066'; ctx2.fillRect(29, 14, 3, 2); ctx2.fillRect(18, 15, 3, 1);
+      // 透明拱形玻璃隧道钢架与反光高光
+      ctx2.strokeStyle = 'rgba(205,250,255,0.72)'; ctx2.lineWidth = 1.2;
+      ctx2.beginPath(); ctx2.arc(27, 25, 24, Math.PI, 0); ctx2.stroke();
+      ctx2.strokeStyle = 'rgba(170,238,255,0.48)'; ctx2.lineWidth = 1;
+      ctx2.beginPath(); ctx2.arc(27, 25, 18, Math.PI, 0); ctx2.stroke();
+      ctx2.beginPath(); ctx2.arc(27, 25, 12, Math.PI, 0); ctx2.stroke();
+      // 升腾小气泡
+      ctx2.fillStyle = '#e6fdff';
+      [[7,10],[19,7],[27,5],[45,11],[33,12]].forEach(([bx,by]) => ctx2.fillRect(bx, by, 1, 1));
+      // 隧道透视步道与水波纹光斑
+      ctx2.fillStyle = '#123e5e'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#1e5c85'; ctx2.fillRect(4, 25, 46, 9);
+      ctx2.fillStyle = 'rgba(138,242,255,0.35)';
+      ctx2.fillRect(10, 27, 8, 1); ctx2.fillRect(32, 29, 10, 1); ctx2.fillRect(20, 32, 12, 1);
     } else if (m === 'cinema') {
       // 露天星光影院：白色复古银幕 + 放映机光束 + 彩旗灯串
       ctx2.fillStyle = '#5c4b78'; ctx2.fillRect(11, 4, 32, 15);
@@ -34470,15 +34445,48 @@
       ctx2.fillStyle = 'rgba(255,244,180,0.2)'; ctx2.fillRect(14, 17, 26, 7);
       for (let i = 0; i < 9; i++) { ctx2.fillStyle = i % 2 ? '#ffe078' : '#ff8eb0'; ctx2.fillRect(3 + i * 6, 2 + (i % 2), 2, 2); }
     } else if (m === 'cablecar') {
-      // 雪顶高山缆车：三层雪山 + 索道钢缆 + 红白缆车厢
-      ctx2.fillStyle = '#b4d6f5';
-      ctx2.beginPath(); ctx2.moveTo(0,24); ctx2.lineTo(14,7); ctx2.lineTo(28,24); ctx2.fill();
-      ctx2.beginPath(); ctx2.moveTo(22,24); ctx2.lineTo(39,5); ctx2.lineTo(54,24); ctx2.fill();
+      // 雪顶高山缆车：晴空暖云 + 三重层次雪峰与蓝影面 + 积雪冷杉林 + 铁塔双钢缆 + 红白全景缆车厢
       ctx2.fillStyle = '#ffffff';
-      ctx2.beginPath(); ctx2.moveTo(10,12); ctx2.lineTo(14,7); ctx2.lineTo(18,12); ctx2.fill();
-      ctx2.beginPath(); ctx2.moveTo(34,11); ctx2.lineTo(39,5); ctx2.lineTo(44,11); ctx2.fill();
-      ctx2.strokeStyle = '#4c5c75'; ctx2.lineWidth = 1; ctx2.beginPath(); ctx2.moveTo(0,6); ctx2.lineTo(54,14); ctx2.stroke();
-      ctx2.fillStyle = '#e04f5f'; ctx2.fillRect(22, 10, 10, 8); ctx2.fillStyle = '#d9f4ff'; ctx2.fillRect(24, 12, 6, 4);
+      ctx2.fillRect(4, 3, 9, 2); ctx2.fillRect(6, 2, 5, 2);
+      ctx2.fillRect(42, 2, 8, 2); ctx2.fillRect(44, 1, 4, 2);
+      // 远景主雪峰（向阳雪白 + 背阴冰蓝）
+      ctx2.fillStyle = '#9ec4eb';
+      ctx2.beginPath(); ctx2.moveTo(-2,24); ctx2.lineTo(13,6); ctx2.lineTo(29,24); ctx2.fill();
+      ctx2.fillStyle = '#7eaad9';
+      ctx2.beginPath(); ctx2.moveTo(13,6); ctx2.lineTo(29,24); ctx2.lineTo(19,24); ctx2.fill();
+      ctx2.fillStyle = '#ffffff';
+      ctx2.beginPath(); ctx2.moveTo(8,12); ctx2.lineTo(13,6); ctx2.lineTo(17,11); ctx2.lineTo(14,13); ctx2.lineTo(11,11); ctx2.fill();
+
+      ctx2.fillStyle = '#a8cef2';
+      ctx2.beginPath(); ctx2.moveTo(20,24); ctx2.lineTo(39,4); ctx2.lineTo(56,24); ctx2.fill();
+      ctx2.fillStyle = '#82aedb';
+      ctx2.beginPath(); ctx2.moveTo(39,4); ctx2.lineTo(56,24); ctx2.lineTo(44,24); ctx2.fill();
+      ctx2.fillStyle = '#ffffff';
+      ctx2.beginPath(); ctx2.moveTo(33,11); ctx2.lineTo(39,4); ctx2.lineTo(44,10); ctx2.lineTo(40,12); ctx2.lineTo(36,10); ctx2.fill();
+
+      // 山脚覆雪冷杉松林
+      [3, 9, 44, 49].forEach((tx, idx) => {
+        const th = idx % 2 ? 7 : 6;
+        ctx2.fillStyle = '#3f6e62';
+        ctx2.beginPath(); ctx2.moveTo(tx, 24 - th); ctx2.lineTo(tx - 3, 24); ctx2.lineTo(tx + 3, 24); ctx2.fill();
+        ctx2.fillStyle = '#ffffff';
+        ctx2.fillRect(tx - 1, 24 - th, 2, 2);
+      });
+      // 索道铁塔与双钢缆
+      ctx2.fillStyle = '#586a82'; ctx2.fillRect(4, 9, 2, 15); ctx2.fillRect(2, 10, 6, 1);
+      ctx2.strokeStyle = '#47576e'; ctx2.lineWidth = 1;
+      ctx2.beginPath(); ctx2.moveTo(0, 8); ctx2.lineTo(54, 15); ctx2.stroke();
+      // 红白全景缆车厢 + 吊臂 + 暖窗
+      ctx2.fillStyle = '#47576e'; ctx2.fillRect(26, 11, 2, 3);
+      ctx2.fillStyle = '#e04f5f'; ctx2.fillRect(21, 14, 12, 8);
+      ctx2.fillStyle = '#fff7f2'; ctx2.fillRect(21, 14, 12, 2);
+      ctx2.fillStyle = '#ffe9a8'; ctx2.fillRect(23, 16, 3, 4); ctx2.fillRect(28, 16, 3, 4);
+      ctx2.fillStyle = '#b83545'; ctx2.fillRect(21, 21, 12, 1);
+      // 蓬松雪坡前景与细雪点
+      ctx2.fillStyle = '#f2f9ff'; ctx2.fillRect(0, 24, 54, 12);
+      ctx2.fillStyle = '#d4e8fa'; ctx2.fillRect(0, 27, 54, 2); ctx2.fillRect(6, 31, 42, 1);
+      ctx2.fillStyle = '#ffffff';
+      [[17,5],[29,8],[47,9],[11,16],[36,15]].forEach(([sx,sy]) => ctx2.fillRect(sx, sy, 1, 1));
     } else if (m === 'nightmarket') {
       // 霓虹夜市：两侧木摊棚 + 暖红灯笼串 + 招牌微光
       ctx2.fillStyle = '#5c3c6e'; ctx2.fillRect(2, 10, 16, 14); ctx2.fillRect(36, 9, 16, 15);
@@ -34629,13 +34637,45 @@
       }
       [[10,9],[20,14],[31,7],[42,12],[16,19],[38,18]].forEach(([x,y]) => { ctx2.fillStyle = '#e0ff78'; ctx2.fillRect(x,y,2,2); });
     } else if (m === 'windmill') {
-      // 薰衣草风车丘：紫色花田坡 + 白色大风车塔与四叶桨
-      ctx2.fillStyle = '#b08ee8'; ctx2.fillRect(0, 20, 54, 16);
-      ctx2.fillStyle = '#8b64c9'; for (let i = 0; i < 9; i++) ctx2.fillRect(i * 6 + 1, 22 + (i % 2) * 3, 4, 2);
-      ctx2.fillStyle = '#ffffff'; ctx2.fillRect(23, 9, 8, 14);
-      ctx2.fillStyle = '#e05868'; ctx2.fillRect(22, 7, 10, 3);
-      ctx2.strokeStyle = '#ffffff'; ctx2.lineWidth = 1.5;
-      ctx2.beginPath(); ctx2.moveTo(19,5); ctx2.lineTo(35,17); ctx2.moveTo(35,5); ctx2.lineTo(19,17); ctx2.stroke();
+      // 薰衣草风车丘：柔和晚霞白云 + 远近起伏紫花坡 + 层次花垄 + 复古红顶白风车塔与格纹木风叶 + 飘散花瓣
+      ctx2.fillStyle = '#ffffff';
+      ctx2.fillRect(5, 3, 10, 2); ctx2.fillRect(7, 2, 6, 2);
+      ctx2.fillRect(39, 4, 9, 2); ctx2.fillRect(41, 3, 5, 2);
+      // 远景淡紫山丘
+      ctx2.fillStyle = '#c8b4f2';
+      ctx2.beginPath(); ctx2.moveTo(0,22); ctx2.quadraticCurveTo(16,15,34,20); ctx2.quadraticCurveTo(45,16,54,21); ctx2.lineTo(54,24); ctx2.lineTo(0,24); ctx2.fill();
+      // 远坡柏树剪影
+      ctx2.fillStyle = '#5a7d68';
+      ctx2.fillRect(7, 15, 2, 5); ctx2.fillRect(11, 16, 2, 4); ctx2.fillRect(45, 15, 2, 5);
+      // 复古白石风车塔（梯形塔身 + 红瓦圆顶 + 木门暖窗）
+      ctx2.fillStyle = '#fff9f2';
+      ctx2.beginPath(); ctx2.moveTo(24,9); ctx2.lineTo(30,9); ctx2.lineTo(32,22); ctx2.lineTo(22,22); ctx2.fill();
+      ctx2.fillStyle = '#e6d8cc'; ctx2.fillRect(29, 9, 2, 13);
+      ctx2.fillStyle = '#d95b6a';
+      ctx2.beginPath(); ctx2.moveTo(22,9); ctx2.lineTo(27,4); ctx2.lineTo(32,9); ctx2.fill();
+      ctx2.fillStyle = '#8c5a3c'; ctx2.fillRect(26, 17, 3, 5);
+      ctx2.fillStyle = '#ffe588'; ctx2.fillRect(26, 12, 2, 2);
+      // 精致四叶木格风车桨
+      ctx2.strokeStyle = '#7a4e32'; ctx2.lineWidth = 1.4;
+      ctx2.beginPath(); ctx2.moveTo(19,3); ctx2.lineTo(35,17); ctx2.moveTo(35,3); ctx2.lineTo(19,17); ctx2.stroke();
+      ctx2.fillStyle = '#fff7e8';
+      ctx2.fillRect(20, 4, 3, 2); ctx2.fillRect(31, 4, 3, 2);
+      ctx2.fillRect(20, 14, 3, 2); ctx2.fillRect(31, 14, 3, 2);
+      ctx2.fillStyle = '#d95b6a'; ctx2.fillRect(26, 9, 2, 2);
+      // 近景起伏薰衣草花海与透视紫花垄
+      ctx2.fillStyle = '#a47ee0'; ctx2.fillRect(0, 22, 54, 14);
+      ctx2.fillStyle = '#865bc9';
+      for (let row = 0; row < 4; row++) {
+        const y0 = 23 + row * 3;
+        for (let x0 = (row % 2 ? 1 : 4); x0 < 53; x0 += 6) {
+          ctx2.fillRect(x0, y0, 4, 2);
+          ctx2.fillStyle = '#d8c2ff'; ctx2.fillRect(x0 + 1, y0, 2, 1);
+          ctx2.fillStyle = '#865bc9';
+        }
+      }
+      // 随风飘起的淡紫花瓣
+      ctx2.fillStyle = '#efe6ff';
+      [[14,9],[39,11],[18,16],[42,18]].forEach(([px,py]) => ctx2.fillRect(px, py, 1, 1));
     } else if (m === 'xmasmarket') {
       // 雪夜圣诞集市：挂满彩灯圣诞树 + 姜饼屋摊位 + 飘雪
       ctx2.fillStyle = '#2c7a52';
@@ -34851,7 +34891,7 @@
         <div id="st-cap-bar" style="height:100%;width:0%;background:var(--px-accent,#9e6b7e);transition:width 0.25s linear;"></div>
       </div>
       <div id="st-cap-tip" style="font-size:10px;opacity:0.82;text-align:center;margin-bottom:9px;">两只小狗正背着小包四处张望寻宝中...</div>
-      <button type="button" id="st-cap-hide" class="st-px-btn care" style="width:100%;">先收起（后台继续探险）</button>
+      <button type="button" id="st-cap-hide" class="st-px-btn care" style="width:100%;">先收起</button>
     </div>`;
 
     const cv = mask.querySelector('#st-cap-cv');
@@ -34871,11 +34911,12 @@
 
     const drawWalkPup = (lk, poseKey, x, y) => {
       if (!c2) return;
-      const grid = PUP_FRAMES[poseKey] || PUP_FRAMES.walk1 || PUP_FRAMES.idle1;
+      const grid = PUP_SPRITES[poseKey] || PUP_SPRITES.walk1 || PUP_SPRITES.idle1;
+      if (!grid || !grid.length) return;
       const pal = getPupPalette(lk?.fur, lk?.ear, lk?.collar, lk?.outline, lk?.showCollar !== false);
       c2.save();
       c2.translate(x, y);
-      c2.scale(0.85, 0.85);
+      c2.scale(0.92, 0.92);
       const ox = 0, oy = 0, hx = 10, hy = 2;
       for (let py = 0; py < grid.length; py++) {
         const row = grid[py];
@@ -34904,7 +34945,8 @@
 
     const renderFrame = () => {
       const now = Date.now();
-      const total = Math.max(1000, (ca.endAt || now) - (ca.startAt || (now - 1000)));
+      const startTs = ca.startAt || (ca.endAt ? ca.endAt - 10 * 60 * 1000 : now - 1000);
+      const total = Math.max(1000, (ca.endAt || now) - startTs);
       const remMs = Math.max(0, (ca.endAt || now) - now);
       if (remMs <= 0) {
         closeCoopAdvProgressModal();
@@ -34915,8 +34957,8 @@
       const mm = Math.floor(sec / 60);
       const ss = sec % 60;
       if (timeEl) timeEl.textContent = `剩余 ${mm}:${String(ss).padStart(2, '0')}`;
-      const pct = Math.min(100, Math.max(2, Math.round(((total - remMs) / total) * 100)));
-      if (barEl) barEl.style.width = `${pct}%`;
+      const pct = Math.min(100, Math.max(1, ((total - remMs) / total) * 100));
+      if (barEl) barEl.style.width = `${pct.toFixed(2)}%`;
       if (tipEl && tick % 14 === 0) tipEl.textContent = walkTips[Math.floor(tick / 14) % walkTips.length];
       if (!c2) return;
       // 天空渐变
@@ -34993,7 +35035,7 @@
           <span style="position:absolute;top:11px;left:11px;padding:1px 6px;font-size:9px;font-weight:700;background:${isNewPhoto ? '#e85686' : '#7b8fa8'};color:#ffffff;border:1px solid rgba(0,0,0,0.2);">${isNewPhoto ? '新照片!' : '新留影'}</span>
           <canvas id="st-car-photo" width="54" height="36" style="width:244px;height:162px;image-rendering:pixelated;display:block;border:1.5px solid ${pxBd};"></canvas>
           <div style="margin-top:6px;font-size:11.5px;font-weight:700;text-align:center;">【${escapeHtmlSimple(ph.title)}】</div>
-          <div style="margin-top:2px;font-size:9.5px;opacity:0.78;text-align:center;">${escapeHtmlSimple(ph.note || '')}（已存入双人相册）</div>
+          <div style="margin-top:2px;font-size:9.5px;opacity:0.78;text-align:center;">${escapeHtmlSimple(ph.note || '')} · 已存入双人相册</div>
         </div>`
       : `<div style="padding:14px 10px;background:#ffffff;border:2px dashed ${pxBd};margin-bottom:9px;text-align:center;">
           <div style="font-size:11px;font-weight:700;margin-bottom:4px;">这次玩得太投入，没拍到新照片~</div>
@@ -35273,7 +35315,7 @@
     info.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
         <div style="display:flex;align-items:center;gap:4px;min-width:0;overflow:hidden;">
           <span style="font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fr.name || '小伙伴')}</span>
-          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(1px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
+          <button type="button" class="st-px-btn st-fr-bond" title="查看汪汪羁绊" style="display:inline-flex;align-items:center;justify-content:center;gap:3px;height:18px;line-height:1;padding:0 5px;font-size:9px;color:#d94c7a;flex-shrink:0;"><span style="display:inline-flex;transform:translateY(-1px);">${PX_ICO_HEART}</span><span style="line-height:1;display:inline-block;">Lv.${getFriendBondInfo(fr).lv}</span></button>
         </div>
         <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
           <span style="font-size:9px;opacity:0.65;">${fr.updatedAt ? formatCloudAgo(fr.updatedAt) : ''}</span>
@@ -45816,7 +45858,7 @@
             <div style="font-size:11px;font-weight:700;">基础工资: +${baseWage}币${tip ? ` · 额外小费: +${tip}币` : ''}${penalty ? ` · 搞砸扣款: -${penalty}币` : ''}${(tip || penalty) ? ` · 实发 +${totalWage}币` : ''}${messedUp ? ' · 闯祸停工反省 1 小时' : ''}</div>
             ${promoHtml}
           `;
-          syncPupBagUI();
+          updatePupStatBars(); syncPuppyBagUI();
         });
         statusEl.appendChild(claimBtn);
         startBtn.disabled = true;
@@ -47770,7 +47812,7 @@
         askEl.style.display = 'none';
         saveConfig();
         checkPupAchievements();
-        syncPupBagUI();
+        updatePupStatBars(); syncPuppyBagUI();
       });
       askOptsEl.appendChild(btn);
     });
@@ -48592,19 +48634,15 @@
     });
   });
 
-  let colorCloudSyncT = null;
   const bindPupColorInput = (inputEl, key) => {
+    const keyMap = { puppyFur: 'fur', puppyEar: 'ear', puppyCollar: 'collar', puppyOutline: 'outline' };
     inputEl.addEventListener('input', () => {
-      config[key] = inputEl.value;
-      saveConfig();
+      const d = ensureWardDraft();
+      const dk = keyMap[key];
+      if (dk) d[dk] = inputEl.value;
       renderPupColorPresets();
-      drawShopPreview();
-      drawPupAvatarPhoto();
-      drawPuppyScene();
-      clearTimeout(colorCloudSyncT);
-      colorCloudSyncT = setTimeout(() => {
-        if (typeof pushMyCloudPupNow === 'function') pushMyCloudPupNow(true);
-      }, 1500);
+      redrawWardStickyPreview();
+      renderPupWardrobe();
     });
   };
   bindPupColorInput(pupFurInput, 'puppyFur');
@@ -49737,12 +49775,16 @@
   let outsideTapStart = null;
   const isOutsideCloseBlocked = (target) => {
     if (!target) return true;
-    if (typeof target.closest === 'function' && target.closest('#st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask')) return true;
-    if (gachaModalEl && gachaModalEl.contains(target)) return true;
-    if (confirmMask && confirmMask.contains(target)) return true;
+    if (typeof target.closest === 'function' && target.closest('#st-tb-pup-ask, #st-tb-pup-signboard, #st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask, [id^="st-tb-"][id$="-mask"], [id^="st-tb-"][id$="-modal"]')) return true;
+    if (askEl && (askEl.contains(target) || askEl.style.display === 'block' || askEl.style.display === 'flex')) return true;
+    if (signboardEl && (signboardEl.contains(target) || signboardEl.style.display === 'block' || signboardEl.style.display === 'flex')) return true;
+    if (gachaModalEl && (gachaModalEl.contains(target) || gachaModalEl.classList.contains('open'))) return true;
+    if (confirmMask && (confirmMask.contains(target) || confirmMask.classList.contains('open'))) return true;
     if (readerEl && readerEl.contains(target)) return true;
     const _rMini = doc.getElementById('st-tb-reader-mini-pill');
     if (_rMini && _rMini.contains(target)) return true;
+    // 只要当前还有任意小狗弹窗处于打开状态，点叉或点遮罩绝不顺带关掉小狗背包
+    if (ALL_PUP_MODAL_IDS.some(id => { const el = root.querySelector('#' + id); return el && el.style.display && el.style.display !== 'none'; })) return true;
     return false;
   };
   doc.addEventListener('pointerdown', (e) => {
