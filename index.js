@@ -23938,6 +23938,33 @@
     if (config.puppyPinned && (st === 'walk' || st === 'sneak' || st === 'chase' || st === 'run')) {
       st = 'sit';
     }
+    // 避让已开启放置(固定)的其他小狗：自家小狗准备停下时如果会和已放置小狗重叠，继续多走几步错开！
+    const isStopLike = !['walk', 'sneak', 'chase', 'run', 'drag'].includes(st);
+    if (!config.puppyPinned && isStopLike && typeof guestRuntimes !== 'undefined' && typeof getGuestList === 'function') {
+      try {
+        const gList = getGuestList();
+        const myY = pup.y || defaultPupY();
+        const maxPupX = Math.max(16, win.innerWidth - 82);
+        let hitPinned = null;
+        for (const [gid, grt] of guestRuntimes.entries()) {
+          const gObj = gList.find(x => x.id === gid);
+          if (!gObj || !gObj.pinned || gObj.onDesktop === false) continue;
+          const gy = grt.y || defaultPupY();
+          if (Math.abs(myY - gy) < 56 && Math.abs(pup.x - grt.x) < 74) {
+            hitPinned = grt;
+            break;
+          }
+        }
+        if (hitPinned) {
+          const canLeft = hitPinned.x - 80 >= 16;
+          const canRight = hitPinned.x + 80 <= maxPupX;
+          if (pup.x <= hitPinned.x) pup.dir = canLeft ? -1 : 1;
+          else pup.dir = canRight ? 1 : -1;
+          st = 'walk';
+          durationFrames = Math.max(48, Math.min(80, durationFrames));
+        }
+      } catch (_) {}
+    }
     pup.state = st;
     pup.timer = durationFrames;
     if (st === 'happy') { pup.happyStyle = randInt(0, 5); pup.happyFxKind = pick(['heart', 'sparkle', 'flower_fx', 'clover_fx', 'note']); }
@@ -36499,6 +36526,7 @@
     'st-tb-bq-zoom-mask',
     'st-tb-bq-recv-mask',
     'st-tb-bq-del-confirm-mask',
+    'st-tb-job-promo-mask',
     'st-tb-px-notice-mask',
     'st-tb-friends-mask',
     'st-tb-bond-mask',
@@ -38479,18 +38507,32 @@
       }
 
       if (rt.timer <= 0) {
-        // 防重叠检查：如果停下的位置和自家小狗或其他串门小狗太近（同行间距 < 54px），顺手再多走几步错开！
+        // 防重叠检查：任何开启放置(固定)的小狗强制 74px 避让（不受冷却限制），普通小狗保持 56px 错开！
+        const isOverPinnedAt = (cx, cy) => {
+          if (config.puppyPinned && config.puppyEnabled && !config.puppyDesktopHidden) {
+            if (Math.abs((pup.y || defaultPupY()) - cy) < 56 && Math.abs(pup.x - cx) < 74) return true;
+          }
+          for (const [oid, ort] of guestRuntimes.entries()) {
+            if (oid === guest.id) continue;
+            const og = list.find(x => x.id === oid);
+            if (!og || !og.pinned || og.onDesktop === false) continue;
+            if (Math.abs((ort.y || defaultPupY()) - cy) < 56 && Math.abs(ort.x - cx) < 74) return true;
+          }
+          return false;
+        };
         const isCrowdedAt = (cx, cy) => {
-          if (Math.abs((pup.y || defaultPupY()) - cy) < 44 && Math.abs(pup.x - cx) < 54) return true;
+          if (isOverPinnedAt(cx, cy)) return true;
+          if (!config.puppyDesktopHidden && Math.abs((pup.y || defaultPupY()) - cy) < 44 && Math.abs(pup.x - cx) < 56) return true;
           for (const [oid, ort] of guestRuntimes.entries()) {
             if (oid === guest.id) continue;
             const og = list.find(x => x.id === oid);
             if (!og || og.onDesktop === false) continue;
-            if (Math.abs((ort.y || defaultPupY()) - cy) < 44 && Math.abs(ort.x - cx) < 54) return true;
+            if (Math.abs((ort.y || defaultPupY()) - cy) < 44 && Math.abs(ort.x - cx) < 56) return true;
           }
           return false;
         };
-        if (!guest.pinned && now >= (rt.crowdEvadeUntil || 0) && isCrowdedAt(rt.x, rt.y || defaultPupY()) && !(rt.talkingUntil && now < rt.talkingUntil)) {
+        const hitPinnedNow = !guest.pinned && isOverPinnedAt(rt.x, rt.y || defaultPupY());
+        if (!guest.pinned && (hitPinnedNow || (now >= (rt.crowdEvadeUntil || 0) && isCrowdedAt(rt.x, rt.y || defaultPupY()) && !(rt.talkingUntil && now < rt.talkingUntil)))) {
           rt.crowdEvadeUntil = now + randInt(24000, 42000);
           const leftClear = rt.x - 58 >= 8 && !isCrowdedAt(rt.x - 58, rt.y || defaultPupY());
           const rightClear = rt.x + 58 <= maxX && !isCrowdedAt(rt.x + 58, rt.y || defaultPupY());
@@ -55959,6 +56001,36 @@
             3400
           );
           const promoHtml = promoted ? `<div style="font-size:11px;font-weight:700;color:#b8456c;margin-top:3px;">恭喜晋升本店 Lv.${rkAfter.lv}【${rkAfter.title}】! 基础工资升至 ${rkAfter.wage[0]}~${rkAfter.wage[1]} 币!</div>` : '';
+          if (promoted) {
+            try {
+              const rwObj = rkAfter.lv >= 3 ? JOB_MASTER_REWARDS[jObj.id] : null;
+              let pm = root.querySelector('#st-tb-job-promo-mask');
+              if (pm) pm.remove();
+              pm = doc.createElement('div');
+              pm.id = 'st-tb-job-promo-mask';
+              pm.className = 'st-px-submodal-keep-bag';
+              pm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+              const closePm = (e2) => { if (e2) e2.stopPropagation(); win.__stSubModalClosedAt = Date.now(); pm.remove(); };
+              const pc = doc.createElement('div');
+              pc.style.cssText = 'width:min(286px,90vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+              pc.innerHTML = `
+                <div style="font-weight:700;font-size:12.5px;margin-bottom:6px;">[ 职场晋升恭喜！ ]</div>
+                <div style="font-size:11px;font-weight:700;margin-bottom:5px;">${getPupName()} 在【${jObj.name}】晋升为 Lv.${rkAfter.lv} ${rkAfter.title}！</div>
+                <div style="font-size:10px;line-height:1.55;margin-bottom:6px;text-align:left;padding:6px 8px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);">
+                  <div>· 单次基础工资提升至 <b>${rkAfter.wage[0]}~${rkAfter.wage[1]} 币</b></div>
+                  <div>· 小费触发概率提升 +${Math.max(0, rkAfter.lv - 1) * 3}%</div>
+                  ${rwObj ? `<div style="color:#b8456c;font-weight:700;margin-top:3px;">· 解锁满级专属奖励：${rwObj.name}（已放进衣柜并标 NEW）</div>` : ''}
+                </div>
+                <button type="button" id="st-job-promo-ok" class="st-px-btn care" style="width:100%;height:26px;font-size:10.5px;">太棒啦，收下奖励</button>
+              `;
+              pc.querySelector('#st-job-promo-ok').addEventListener('click', closePm);
+              pm.appendChild(pc);
+              pm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+              pm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === pm) closePm(e2); });
+              root.appendChild(pm);
+              applyPupModalThemeAndTop(pm);
+            } catch (_) {}
+          }
           const masterHtml = newlyMaster.length ? `<div style="font-size:10.5px;font-weight:700;color:#8a4f1f;margin-top:3px;">解锁满级店长赠礼：${newlyMaster.join('、')}（已放入衣柜）</div>` : '';
           const coopHtml = coopFriendName
             ? (isFirstCoop
@@ -56059,7 +56131,7 @@
     } else {
       const sel = PUP_JOBS.find(j => j.id === selectedJobId) || PUP_JOBS[0];
       const selRk = getJobRankInfo(sel);
-      const selNext = selRk.nextNeed ? `还差 ${selRk.nextNeed - selRk.cnt} 次晋升` : '已满级(已赠限定外观)';
+      const selNext = selRk.nextNeed ? `还差 ${selRk.nextNeed - selRk.cnt} 次晋升` : '已满级';
       const durSec = Math.round(selRk.durMs / 1000);
       const restMin = Math.round(selRk.restMs / 60000);
       const fitInfo = getTodayJobOutfitFit(sel.id);
