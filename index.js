@@ -8769,8 +8769,8 @@
             <div id="st-px-mail-list" style="display:flex;flex-direction:column;gap:4px;"></div>
           </div>
           <div id="st-px-act-garden-view" style="display:none;">
-            <div style="margin-top:4px;margin-bottom:6px;padding:5px 6px;background:var(--px-bg-soft,#f7eef2);border:1.5px dashed var(--px-border,#bfa4ae);">
-              <div id="st-px-garden-mode-title" style="font-size:9.5px;font-weight:700;opacity:0.86;margin-bottom:4px;letter-spacing:0.5px;">小狗的小花园</div>
+            <div style="margin-bottom:6px;">
+              <div id="st-px-garden-mode-title" style="font-size:10px;font-weight:700;margin-bottom:4px;">小狗的小花园</div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
                 <button class="st-px-btn care" id="st-px-gmode-pot" type="button" style="height:22px;font-size:9.5px;padding:0 4px;">像素花盆</button>
                 <button class="st-px-btn" id="st-px-gmode-diy" type="button" style="height:22px;font-size:9.5px;padding:0 4px;">花束工作台</button>
@@ -37066,33 +37066,30 @@
             fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
             continue;
           }
-          // 收到好友手工 DIY 花束礼物：存入花束图鉴并加羁绊亲密度！
+          // 收到好友手工 DIY 花束礼物：在线直接弹窗展示花束，离线/切屏先放桌面礼物盒！
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__bouquet__') {
             const bq = g.gifts[0];
-            config.puppyBouquetDex = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
-            config.puppyBouquetDex.unshift({
-              id: 'bq_recv_' + Date.now(),
-              name: bq.name || '好友手作花束',
-              origName: bq.name || '好友手作花束',
-              customName: '',
-              tier: bq.tier || 'single',
-              flowers: bq.flowers || '',
-              wrapCol: bq.wrapCol || '#f2d9c2',
-              ribbonCol: bq.ribbonCol || '#e07a94',
-              note: bq.note || g.msg || '',
-              img: bq.img || '',
-              fromName: g.fromName || '好友',
-              date: getTodayStr(),
-            });
-            if (config.puppyBouquetDex.length > 60) config.puppyBouquetDex = config.puppyBouquetDex.slice(0, 60);
-            const frM = getFriendList().find(x => x.cloudId === g.fromId);
-            if (frM && typeof addFriendBondExp === 'function') {
-              const bExp = bq.tier === 'luxury' ? 40 : (bq.tier === 'mix' ? 25 : 15);
-              addFriendBondExp(frM, bExp, '收到手作花束');
+            win.__stSeenBqGids = win.__stSeenBqGids || new Set();
+            if (!win.__stSeenBqGids.has(g.id)) {
+              win.__stSeenBqGids.add(g.id);
+              const giftRec = {
+                gid: g.id,
+                fromId: g.fromId,
+                fromName: g.fromName || '好友',
+                msg: g.msg || bq.note || '',
+                bouquet: bq,
+              };
+              if (doc.hidden) {
+                config.puppyPendingCloudGifts = Array.isArray(config.puppyPendingCloudGifts) ? config.puppyPendingCloudGifts : [];
+                if (!config.puppyPendingCloudGifts.some(x => x && x.gid === g.id)) {
+                  config.puppyPendingCloudGifts.push(giftRec);
+                  saveConfig();
+                }
+                if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
+              } else if (typeof openBouquetReceivedModal === 'function') {
+                openBouquetReceivedModal(giftRec);
+              }
             }
-            saveConfig();
-            if (config.puppyEnabled) showPuppyBubble(`收到「${g.fromName || '好友'}」亲手包的花束【${bq.name || '手作花束'}】！已收进花束图鉴~`, 3600);
-            fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
             continue;
           }
           // 收到好友组队双狗探险邀请：双方同步进入同一场 10 分钟探险（期间互不重复邀请），倒计时结束才结算弹窗！
@@ -37604,9 +37601,79 @@
   let deskGiftBoxEl = null;
   let giftBoxBubbleActive = false;
 
+  var openBouquetReceivedModal = (giftRec) => {
+    if (!giftRec || !giftRec.bouquet) return;
+    const bq = giftRec.bouquet;
+    let rm = root.querySelector('#st-tb-bq-recv-mask');
+    if (rm) rm.remove();
+    rm = doc.createElement('div');
+    rm.id = 'st-tb-bq-recv-mask';
+    rm.className = 'st-px-submodal-keep-bag';
+    rm.style.cssText = 'position:fixed;inset:0;z-index:10048;background:rgba(0,0,0,0.52);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    const bExp = bq.tier === 'luxury' ? 40 : (bq.tier === 'mix' ? 25 : 15);
+    const bqName = bq.name || '好友手作花束';
+    const fromN = giftRec.fromName || '好友';
+    const card = doc.createElement('div');
+    card.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+    card.innerHTML = `
+      <div style="font-weight:700;font-size:12px;margin-bottom:6px;">收到「${escapeHtmlSimple(fromN)}」送来的手作花束！</div>
+      <img src="${bq.img || ''}" style="width:168px;height:168px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;margin:0 auto 7px;background:#fffaf4;" />
+      <div style="font-weight:700;font-size:11.5px;margin-bottom:3px;">【${escapeHtmlSimple(bqName)}】</div>
+      <div style="font-size:9.5px;opacity:0.85;margin-bottom:3px;">花材：${escapeHtmlSimple(bq.flowers || '')}</div>
+      ${(bq.note || giftRec.msg) ? `<div style="font-size:10px;color:#8a4f62;margin-bottom:5px;">花语：「${escapeHtmlSimple(bq.note || giftRec.msg)}」</div>` : ''}
+      <div style="font-size:9.5px;color:#2e7d47;margin-bottom:8px;">羁绊亲密度 +${bExp}</div>
+      <button type="button" id="st-bq-recv-ok" class="st-px-btn care" style="width:100%;height:26px;font-size:10.5px;">收下并存入花束图鉴</button>
+    `;
+    const acceptBouquet = (e2) => {
+      if (e2) e2.stopPropagation();
+      config.puppyBouquetDex = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
+      config.puppyBouquetDex.unshift({
+        id: 'bq_recv_' + Date.now(),
+        name: bqName,
+        origName: bqName,
+        customName: '',
+        tier: bq.tier || 'single',
+        flowers: bq.flowers || '',
+        wrapCol: bq.wrapCol || '#f2d9c2',
+        ribbonCol: bq.ribbonCol || '#e07a94',
+        note: bq.note || giftRec.msg || '',
+        img: bq.img || '',
+        fromName: fromN,
+        date: getTodayStr(),
+      });
+      if (config.puppyBouquetDex.length > 60) config.puppyBouquetDex = config.puppyBouquetDex.slice(0, 60);
+      const frM = getFriendList().find(x => x.cloudId === giftRec.fromId);
+      if (frM && typeof addFriendBondExp === 'function') addFriendBondExp(frM, bExp, '收到手作花束');
+      saveConfig();
+      try {
+        const baseUrl = getCloudBaseUrl();
+        const myId = ensureMyCloudId();
+        if (giftRec.gid) {
+          fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: giftRec.gid }) }).catch(() => {});
+        }
+      } catch (_) {}
+      win.__stSubModalClosedAt = Date.now();
+      rm.remove();
+      if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
+      if (typeof renderBouquetDex === 'function') renderBouquetDex();
+      if (config.puppyEnabled) showPuppyBubble(`收下「${fromN}」送的花束【${bqName}】啦，已放进花束图鉴~`, 3000);
+    };
+    card.querySelector('#st-bq-recv-ok').addEventListener('click', acceptBouquet);
+    rm.appendChild(card);
+    rm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+    rm.addEventListener('click', (e2) => e2.stopPropagation());
+    root.appendChild(rm);
+  };
+
   const claimNextDeskCloudGift = () => {
     if (!Array.isArray(config.puppyPendingCloudGifts) || !config.puppyPendingCloudGifts.length) return;
     const g = config.puppyPendingCloudGifts.shift();
+    if (g && g.bouquet) {
+      saveConfig();
+      syncDesktopGiftBox();
+      openBouquetReceivedModal(g);
+      return;
+    }
     if (g && g.gid) {
       getGuestList().forEach(gst => {
         if (Array.isArray(gst.pendingGifts) && gst.pendingGifts.some(x => x && x.gid === g.gid)) {
@@ -44369,7 +44436,7 @@
   };
 
   // 共用：点击放大查看花束 + 自定义改名（保留原名/送花人取的名字作为默认！）
-  const openBouquetDetailModal = (bqObj, onUpdated) => {
+  const openBouquetDetailModal = (bqObj, onUpdated, onDelete = null) => {
     let vm = root.querySelector('#st-tb-bq-view-mask');
     if (vm) vm.remove();
     vm = doc.createElement('div');
@@ -44391,7 +44458,10 @@
         <input type="text" id="st-bq-rename-inp" class="st-px-in" maxlength="16" value="${escapeHtmlSimple(bqObj.customName || '')}" placeholder="自定义新名字（留空恢复默认原名）" style="flex:1;height:24px;font-size:10px;" />
         <button type="button" id="st-bq-rename-save" class="st-px-btn care" style="height:24px;padding:0 8px;font-size:10px;flex-shrink:0;">改名</button>
       </div>
-      <button type="button" id="st-bq-view-close" class="st-px-btn" style="width:100%;height:24px;font-size:10px;">关闭</button>
+      <div style="display:flex;gap:6px;">
+        ${typeof onDelete === 'function' ? '<button type="button" id="st-bq-view-del" class="st-px-btn" style="flex:1;height:24px;font-size:10px;color:#b83b52;border-color:#d48a98;">删除花束</button>' : ''}
+        <button type="button" id="st-bq-view-close" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">关闭</button>
+      </div>
     `;
     card.querySelector('#st-bq-rename-save').addEventListener('click', (e2) => {
       e2.stopPropagation();
@@ -44404,6 +44474,20 @@
       if (typeof onUpdated === 'function') onUpdated();
     });
     card.querySelector('#st-bq-view-close').addEventListener('click', closeV);
+    card.querySelector('#st-bq-view-del')?.addEventListener('click', (e2) => {
+      e2.stopPropagation();
+      openConfirmModal({
+        title: '删除花束',
+        message: `确定要删除花束「${curN}」吗？`,
+        warning: '删除后无法恢复，请谨慎操作。',
+        okText: '确认删除',
+        onConfirm: () => {
+          win.__stSubModalClosedAt = Date.now();
+          vm.remove();
+          if (typeof onDelete === 'function') onDelete();
+        },
+      });
+    });
     vm.appendChild(card);
     vm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
     vm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === vm) closeV(e2); });
@@ -44929,11 +45013,21 @@
         e2.stopPropagation();
         const frs = typeof getFriendList === 'function' ? getFriendList() : [];
         if (!frs.length) { openPixelPupNoticeModal('暂无云端好友', '先去「冒险 -> 串门」加好友再来直接赠送吧，也可以先放进背包哦~'); return; }
-        const rec = buildRecordAndConsume();
-        saveConfig();
-        closeP(e2);
-        renderBouquetWorkbench();
-        openBouquetSendFriendModal(rec, () => { renderBouquetWorkbench(); });
+        const customN = String(pc.querySelector('#st-bq-pack-name')?.value || '').trim();
+        const previewRec = {
+          name: customN || defName, origName: customN || defName, customName: '',
+          tier: bqTier, flowers: flNames.join(' + '),
+          wrapCol: bqWrapCol, ribbonCol: bqRibbonCol,
+          note: String(pc.querySelector('#st-bq-pack-note')?.value || '').trim(),
+          img: imgUrl, date: getTodayStr(),
+        };
+        // 只有真正选定好友点发送时才消耗花材并写入花束图鉴；点取消不消耗也不保存！
+        openBouquetSendFriendModal(previewRec, () => {
+          buildRecordAndConsume();
+          saveConfig();
+          closeP();
+          renderBouquetWorkbench();
+        });
       });
       pc.querySelector('#st-bq-pack-cancel').addEventListener('click', closeP);
       pm.appendChild(pc);
@@ -44957,12 +45051,13 @@
         const img = doc.createElement('img');
         img.src = bq.img || '';
         img.style.cssText = 'width:36px;height:36px;image-rendering:pixelated;border:1px solid var(--px-border,#bfa4ae);flex-shrink:0;cursor:pointer;';
-        img.addEventListener('click', (e2) => { e2.stopPropagation(); openBouquetDetailModal(bq, renderBouquetWorkbench); });
+        const delStockBq = () => { config.puppyBouquets.splice(idx, 1); saveConfig(); renderBouquetWorkbench(); };
+        img.addEventListener('click', (e2) => { e2.stopPropagation(); openBouquetDetailModal(bq, renderBouquetWorkbench, delStockBq); });
         const inf = doc.createElement('div');
         inf.style.cssText = 'flex:1;min-width:0;font-size:9.5px;cursor:pointer;';
         const dispN = bq.customName || bq.name || bq.origName || '手作花束';
         inf.innerHTML = `<div style="font-weight:700;">${escapeHtmlSimple(dispN)}</div><div style="font-size:8.5px;opacity:0.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtmlSimple(bq.flowers)}${bq.note ? ' · 「' + escapeHtmlSimple(bq.note) + '」' : ''}</div>`;
-        inf.addEventListener('click', (e2) => { e2.stopPropagation(); openBouquetDetailModal(bq, renderBouquetWorkbench); });
+        inf.addEventListener('click', (e2) => { e2.stopPropagation(); openBouquetDetailModal(bq, renderBouquetWorkbench, delStockBq); });
         const sendBtn = doc.createElement('button');
         sendBtn.type = 'button'; sendBtn.className = 'st-px-btn care'; sendBtn.style.cssText = 'height:21px;padding:0 6px;font-size:9px;flex-shrink:0;'; sendBtn.textContent = '送好友';
         sendBtn.addEventListener('click', (ev) => {
@@ -44988,13 +45083,13 @@
     const card = doc.createElement('div');
     card.className = 'st-px-adv-card';
     card.style.cssText = 'padding:8px;';
-    card.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:6px;">花束图鉴（已收录 ${list.length} 束 · 点击放大与改名）</div>`;
+    card.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:6px;">花束图鉴（${list.length}）</div>`;
     if (!list.length) {
       card.innerHTML += '<div style="font-size:10px;opacity:0.75;padding:12px 4px;text-align:center;">还没有扎过花束哦，切到「花束工作台」亲手包一束吧~</div>';
     } else {
       const grid = doc.createElement('div');
       grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:240px;overflow-y:auto;';
-      list.forEach(bq => {
+      list.forEach((bq, dIdx) => {
         const cell = doc.createElement('div');
         cell.style.cssText = 'padding:6px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);text-align:center;cursor:pointer;';
         const dispN = bq.customName || bq.name || bq.origName || '手作花束';
@@ -45005,7 +45100,7 @@
           ${bq.note ? `<div style="font-size:8.5px;color:#8a4f62;margin-top:2px;">「${escapeHtmlSimple(bq.note)}」</div>` : ''}
           <div style="font-size:8px;opacity:0.62;margin-top:2px;">${bq.fromName ? `来自 ${escapeHtmlSimple(bq.fromName)} · ` : ''}${bq.date || ''}</div>
         `;
-        cell.addEventListener('click', (e2) => { e2.stopPropagation(); openBouquetDetailModal(bq, renderBouquetDex); });
+        cell.addEventListener('click', (e2) => { e2.stopPropagation(); openBouquetDetailModal(bq, renderBouquetDex, () => { config.puppyBouquetDex.splice(dIdx, 1); saveConfig(); renderBouquetDex(); }); });
         grid.appendChild(cell);
       });
       card.appendChild(grid);
