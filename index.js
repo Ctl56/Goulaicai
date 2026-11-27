@@ -31852,7 +31852,7 @@
         // 东西颠丢了，但抓拍了一张照片回来
         const ph = pick(PUP_PHOTOS.filter(p => p.dest === dest.id));
         const isNewPh = !config.puppyAlbum[ph.id];
-        freshNewPhotos.add(ph.id);
+        freshNewPhotos.add(ph.id); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
         const prevRec = config.puppyAlbum[ph.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
@@ -31936,7 +31936,7 @@
         const unowned = destPhotos.filter(p => !config.puppyAlbum[p.id]);
         gotPhoto = (gearId === 'filter_cam' && unowned.length) ? pick(unowned) : pick(destPhotos);
         isNewPhoto = !config.puppyAlbum[gotPhoto.id];
-        freshNewPhotos.add(gotPhoto.id);
+        freshNewPhotos.add(gotPhoto.id); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
         const prevRec = config.puppyAlbum[gotPhoto.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
@@ -36477,7 +36477,26 @@
     guestPopEl.querySelector('#st-gp-bye')?.addEventListener('click', () => dismissGuestPuppy(guestId));
   };
 
+  var nextPupTopZ = () => {
+    win.__stPupTopZ = Math.max(10055, (win.__stPupTopZ || 10055) + 1);
+    return win.__stPupTopZ;
+  };
+  var applyPupModalThemeAndTop = (maskEl) => {
+    if (!maskEl) return;
+    maskEl.style.zIndex = String(nextPupTopZ());
+    try { if (typeof syncBagThemeToEl === 'function') syncBagThemeToEl(maskEl); } catch (_) {}
+  };
+
   const ALL_PUP_MODAL_IDS = [
+    'st-tb-job-coop-mask',
+    'st-tb-job-rev-mask',
+    'st-tb-bond-show-mask',
+    'st-tb-bq-pack-mask',
+    'st-tb-bq-send-mask',
+    'st-tb-bq-view-mask',
+    'st-tb-bq-zoom-mask',
+    'st-tb-bq-recv-mask',
+    'st-tb-bq-del-confirm-mask',
     'st-tb-px-notice-mask',
     'st-tb-friends-mask',
     'st-tb-bond-mask',
@@ -37614,7 +37633,7 @@
     const bqName = bq.name || '好友手作花束';
     const fromN = giftRec.fromName || '好友';
     const card = doc.createElement('div');
-    card.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+    card.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
     card.innerHTML = `
       <div style="font-weight:700;font-size:12px;margin-bottom:6px;">收到「${escapeHtmlSimple(fromN)}」送来的手作花束！</div>
       <img src="${bq.img || ''}" style="width:168px;height:168px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;margin:0 auto 7px;background:#fffaf4;" />
@@ -37662,7 +37681,7 @@
     rm.appendChild(card);
     rm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
     rm.addEventListener('click', (e2) => e2.stopPropagation());
-    root.appendChild(rm);
+    root.appendChild(rm); applyPupModalThemeAndTop(rm);
   };
 
   const claimNextDeskCloudGift = () => {
@@ -39324,6 +39343,7 @@
     const newHist = [newShot, ...prevHist].slice(0, 12);
     const keepPinned = Boolean(prevRec?.pinnedCover);
     const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
+    try { if (typeof freshNewPhotos !== 'undefined') freshNewPhotos.add('dual:' + ph.id); } catch (_) {}
     config.puppyDualAlbum[ph.id] = {
       date: shotDate,
       firstDate: prevRec?.firstDate || shotDate,
@@ -40153,7 +40173,7 @@
       sm.className = 'st-px-submodal-keep-bag';
       sm.style.cssText = 'position:fixed;inset:0;z-index:10045;background:rgba(16,14,26,0.58);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
       const card = doc.createElement('div');
-      card.style.cssText = 'width:min(310px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.28);text-align:center;';
+      card.style.cssText = 'width:min(310px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.28);text-align:center;';
       const titleDiv = doc.createElement('div');
       titleDiv.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:6px;';
       titleDiv.textContent = `[专属联机演出] ${label}`;
@@ -40172,7 +40192,7 @@
       btnRow.append(replayBtn, closeBtn);
       card.append(titleDiv, cvs, cap, btnRow);
       sm.appendChild(card);
-      root.appendChild(sm);
+      root.appendChild(sm); applyPupModalThemeAndTop(sm);
 
       const g2 = cvs.getContext('2d');
       let tick = 0;
@@ -44398,7 +44418,7 @@
     sm.style.cssText = 'position:fixed;inset:0;z-index:10046;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
     const closeS = (e2) => { if (e2) e2.stopPropagation(); win.__stSubModalClosedAt = Date.now(); sm.remove(); };
     const sc = doc.createElement('div');
-    sc.style.cssText = 'width:min(280px,90vw);max-height:66vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;';
+    sc.style.cssText = 'width:min(280px,90vw);max-height:66vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;';
     const dispName = bqObj.customName || bqObj.name || bqObj.origName || '手作花束';
     sc.innerHTML = `<div style="font-weight:700;font-size:11px;margin-bottom:6px;">把【${escapeHtmlSimple(dispName)}】送给谁？</div>`;
     frs.forEach(fr => {
@@ -44432,7 +44452,7 @@
     sm.appendChild(sc);
     sm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
     sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) closeS(e2); });
-    root.appendChild(sm);
+    root.appendChild(sm); applyPupModalThemeAndTop(sm);
   };
 
   // 共用：点击放大查看花束 + 自定义改名（保留原名/送花人取的名字作为默认！）
@@ -44447,7 +44467,7 @@
     const origN = bqObj.origName || bqObj.name || '手作花束';
     const curN = bqObj.customName || origN;
     const card = doc.createElement('div');
-    card.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:11px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.24);';
+    card.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:11px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.24);';
     card.innerHTML = `
       <div style="font-weight:700;font-size:12px;margin-bottom:6px;">${escapeHtmlSimple(curN)}</div>
       <img src="${bqObj.img || ''}" style="width:176px;height:176px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;margin:0 auto 7px;background:#fffaf4;" />
@@ -44476,22 +44496,42 @@
     card.querySelector('#st-bq-view-close').addEventListener('click', closeV);
     card.querySelector('#st-bq-view-del')?.addEventListener('click', (e2) => {
       e2.stopPropagation();
-      openConfirmModal({
-        title: '删除花束',
-        message: `确定要删除花束「${curN}」吗？`,
-        warning: '删除后无法恢复，请谨慎操作。',
-        okText: '确认删除',
-        onConfirm: () => {
-          win.__stSubModalClosedAt = Date.now();
-          vm.remove();
-          if (typeof onDelete === 'function') onDelete();
-        },
+      let cm = root.querySelector('#st-tb-bq-del-confirm-mask');
+      if (cm) cm.remove();
+      cm = doc.createElement('div');
+      cm.id = 'st-tb-bq-del-confirm-mask';
+      cm.className = 'st-px-submodal-keep-bag';
+      cm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.52);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+      const closeC = (ev3) => { if (ev3) ev3.stopPropagation(); win.__stSubModalClosedAt = Date.now(); cm.remove(); };
+      const cc = doc.createElement('div');
+      cc.style.cssText = 'width:min(268px,88vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+      cc.innerHTML = `
+        <div style="font-weight:700;font-size:12px;margin-bottom:6px;">[ 删除花束确认 ]</div>
+        <div style="font-size:10.5px;line-height:1.5;margin-bottom:4px;">确定要删除花束「${escapeHtmlSimple(curN)}」吗？</div>
+        <div style="font-size:9.5px;color:#b83b52;margin-bottom:10px;">删除后无法恢复，请确认哦~</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button type="button" id="st-bq-del-cancel" class="st-px-btn" style="height:25px;font-size:10px;">取消</button>
+          <button type="button" id="st-bq-del-ok" class="st-px-btn care" style="height:25px;font-size:10px;">确认删除</button>
+        </div>
+      `;
+      cc.querySelector('#st-bq-del-cancel').addEventListener('click', closeC);
+      cc.querySelector('#st-bq-del-ok').addEventListener('click', (ev3) => {
+        ev3.stopPropagation();
+        win.__stSubModalClosedAt = Date.now();
+        cm.remove();
+        vm.remove();
+        if (typeof onDelete === 'function') onDelete();
       });
+      cm.appendChild(cc);
+      cm.addEventListener('pointerdown', (ev3) => ev3.stopPropagation());
+      cm.addEventListener('click', (ev3) => { ev3.stopPropagation(); if (ev3.target === cm) closeC(ev3); });
+      root.appendChild(cm);
+      applyPupModalThemeAndTop(cm);
     });
     vm.appendChild(card);
     vm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
     vm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === vm) closeV(e2); });
-    root.appendChild(vm);
+    root.appendChild(vm); applyPupModalThemeAndTop(vm);
   };
 
   var renderBouquetWorkbench = () => {
@@ -44642,7 +44682,7 @@
         renderBouquetWorkbench();
       };
       const zCard = doc.createElement('div');
-      zCard.style.cssText = 'width:min(320px,94vw);max-height:86vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.26);';
+      zCard.style.cssText = 'width:min(320px,94vw);max-height:86vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.26);';
       const zHead = doc.createElement('div');
       zHead.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:6px;';
       zHead.innerHTML = '<span>放大精细排版（拖动花/丝带/装饰）</span>';
@@ -44767,7 +44807,7 @@
       zm.appendChild(zCard);
       zm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
       zm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === zm) closeZ(e2); });
-      root.appendChild(zm);
+      root.appendChild(zm); applyPupModalThemeAndTop(zm);
     });
     prevWrap.append(cvs, dragHint, zoomEditBtn, resetAllBtn);
 
@@ -44969,7 +45009,7 @@
       pm.style.cssText = 'position:fixed;inset:0;z-index:10045;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
       const closeP = (e2) => { if (e2) e2.stopPropagation(); win.__stSubModalClosedAt = Date.now(); pm.remove(); };
       const pc = doc.createElement('div');
-      pc.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:11px;text-align:center;';
+      pc.style.cssText = 'width:min(300px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:11px;text-align:center;';
       pc.innerHTML = `
         <div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">打包完成！给花束取个名字吧</div>
         <img src="${imgUrl}" style="width:128px;height:128px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;margin:0 auto 7px;background:#fffaf4;" />
@@ -45033,7 +45073,7 @@
       pm.appendChild(pc);
       pm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
       pm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === pm) closeP(e2); });
-      root.appendChild(pm);
+      root.appendChild(pm); applyPupModalThemeAndTop(pm);
     });
     card.appendChild(packBtn);
     wrap.appendChild(card);
@@ -45572,7 +45612,13 @@
     let gardenReady = false;
     try {
       const gst = config.puppyGarden || {};
-      if (gst.stage === 3) gardenReady = true;
+      if (gst.stage === 3) {
+        gardenReady = true;
+      } else if (gst.stage === 1 || gst.stage === 2) {
+        const potObj = (typeof GARDEN_POT_TIERS !== 'undefined' && GARDEN_POT_TIERS[gst.potLv || 0]) ? GARDEN_POT_TIERS[gst.potLv || 0] : { cdMult: 1 };
+        const waitMs = Math.round((gst.stage === 1 ? 30000 : 60000) * (potObj.cdMult || 1));
+        if (now - (gst.lastWaterAt || 0) >= waitMs) gardenReady = true;
+      }
     } catch (_) {}
     const setDot = (el, show) => {
       if (!el) return;
@@ -55311,7 +55357,7 @@
       };
       let activeRevShop = initialShopId || selectedJobId || PUP_JOBS[0].id;
       const card = doc.createElement('div');
-      card.style.cssText = 'width:min(330px,93vw);max-height:78vh;display:flex;flex-direction:column;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.22);';
+      card.style.cssText = 'width:min(330px,93vw);max-height:78vh;display:flex;flex-direction:column;background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.22);';
       const renderRevModalBody = () => {
         card.innerHTML = '';
         const totalGot = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
@@ -55425,7 +55471,7 @@
       mask.appendChild(card);
       mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
       mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeRevModal(e2); });
-      root.appendChild(mask);
+      root.appendChild(mask); applyPupModalThemeAndTop(mask);
     };
     const topRevBtn = root.querySelector('#st-px-job-top-rev-btn');
     if (topRevBtn) {
@@ -55845,7 +55891,7 @@
           mask.remove();
         };
         const card = doc.createElement('div');
-        card.style.cssText = 'width:min(300px,90vw);max-height:70vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.2);';
+        card.style.cssText = 'width:min(300px,90vw);max-height:70vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.2);';
         const head = doc.createElement('div');
         head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
         head.innerHTML = '<span>选择双狗拼班好友（每好友每日1次）</span>';
@@ -55897,7 +55943,7 @@
         mask.appendChild(card);
         mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
         mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeCoopModal(e2); });
-        root.appendChild(mask);
+        root.appendChild(mask); applyPupModalThemeAndTop(mask);
       });
 
       const curShopRevCnt = (config.puppyJobReviews?.[sel.id] || []).length;
