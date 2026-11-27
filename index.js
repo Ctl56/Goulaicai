@@ -36697,7 +36697,7 @@
       mask.style.display = 'none';
       if (typeof onCloseCb === 'function') setTimeout(() => { try { onCloseCb(); } catch (_) {} }, 60);
     };
-    mask.onclick = (e) => { e.stopPropagation(); if (!strictClose && e.target === mask) closeN(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-pxn-close')?.addEventListener('click', closeN);
     mask.querySelector('#st-pxn-ok')?.addEventListener('click', closeN);
     bringModalFront(mask);
@@ -38310,7 +38310,7 @@
       }
     }
     const closeNb = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeNb(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-nb-close')?.addEventListener('click', closeNb);
     mask.querySelector('#st-nb-ok')?.addEventListener('click', closeNb);
     bringModalFront(mask);
@@ -38352,7 +38352,7 @@
       </div>
     </div>`;
     const closeWn = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeWn(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-wn-close')?.addEventListener('click', closeWn);
     mask.querySelector('#st-wn-cancel')?.addEventListener('click', closeWn);
     let wnSending = false;
@@ -40054,7 +40054,7 @@
       tick++;
     };
 
-    mask.onclick = (e) => { e.stopPropagation(); if (e.target === mask) closeCoopAdvProgressModal(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-cap-x')?.addEventListener('click', closeCoopAdvProgressModal);
     mask.querySelector('#st-cap-hide')?.addEventListener('click', closeCoopAdvProgressModal);
     bringModalFront(mask);
@@ -40524,7 +40524,7 @@
     });
 
     const closeBm = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeBm(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-bm-close')?.addEventListener('click', closeBm);
     mask.querySelector('#st-bm-ok')?.addEventListener('click', closeBm);
     mask.querySelector('#st-bm-coadv')?.addEventListener('click', () => { closeBm(); startCoopCloudAdventure(fr); });
@@ -40683,8 +40683,8 @@
       };
       replayBtn.addEventListener('click', (e2) => { e2.stopPropagation(); tick = 0; });
       closeBtn.addEventListener('click', closeShow);
-      sm.addEventListener('pointerdown', (e2) => { e2.stopPropagation(); if (strictBtnClose && e2.target === sm) e2.preventDefault(); });
-      sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (!strictBtnClose && e2.target === sm) closeShow(e2); });
+      sm.addEventListener('pointerdown', (e2) => { e2.stopPropagation(); if (e2.target === sm) e2.preventDefault(); });
+      sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) e2.preventDefault(); });
     };
     win.__stOpenBondActionShowModal = openBondActionShowModal;
 
@@ -42478,7 +42478,7 @@
     </div>`;
 
     const closeFlm = () => { mask.style.display = 'none'; };
-    mask.onclick = (e) => { if (e.target === mask) closeFlm(); };
+    mask.onclick = (e) => { e.stopPropagation(); };
     mask.querySelector('#st-flm-close')?.addEventListener('click', closeFlm);
     mask.querySelector('#st-flm-ok')?.addEventListener('click', closeFlm);
     mask.querySelector('#st-flm-copy')?.addEventListener('click', () => {
@@ -44972,7 +44972,7 @@
     sc.appendChild(cancelB);
     sm.appendChild(sc);
     sm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
-    sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) closeS(e2); });
+    sm.addEventListener('click', (e2) => { e2.stopPropagation(); });
     root.appendChild(sm); applyPupModalThemeAndTop(sm);
   };
 
@@ -56760,7 +56760,7 @@
               pc.querySelector('#st-job-promo-ok').addEventListener('click', closePm);
               pm.appendChild(pc);
               pm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
-              pm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === pm) closePm(e2); });
+              pm.addEventListener('click', (e2) => { e2.stopPropagation(); });
               root.appendChild(pm);
               applyPupModalThemeAndTop(pm);
             } catch (_) {}
@@ -56961,7 +56961,7 @@
         }
         mask.appendChild(card);
         mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
-        mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeCoopModal(e2); });
+        mask.addEventListener('click', (e2) => { e2.stopPropagation(); });
         root.appendChild(mask); applyPupModalThemeAndTop(mask);
       });
 
