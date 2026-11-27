@@ -2733,8 +2733,6 @@
   ];
   const SPECIAL_EVENT_BUBBLES = [
     { id: 'bub_ach_fluff', name: '[成就] 暖绒云绵泡', dyn: 'gdyn_cloudsea_roll', charms: [], desc: '摸头大师成就专属动态限定：蓬松暖绒云绵漂浮气泡框' },
-    { id: 'bub_job_boba', name: '[打工] 波霸奶盖泡', dyn: 'job_boba_cup', charms: [], desc: '奶茶店 Lv.3 金牌店长专属：左上倾斜珍珠奶茶杯配右下翻涌绵密奶盖' },
-    { id: 'bub_job_florist', name: '[打工] 花房露珠泡', dyn: 'job_florist_dew', charms: [], desc: '花店 Lv.3 金牌店长专属：右上复古小洒水壶与郁金香配左下常春藤露珠' },
     { id: 'bub_bond_lv6', name: '[好感Lv6] 心意微光泡', dyn: 'hearts', desc: '好感度 Lv.6 专属纪念动态气泡：温柔玫瑰流光配冒起的小爱心' },
     { id: 'bub_bday_cake', name: '[生日] 蜡烛礼赞泡', dyn: 'gdyn_bday_celebrate', charms: [], desc: '生日专属动态限定：双层草莓奶油小蛋糕配摇曳烛火与马卡龙气球飘彩' },
     { id: 'bub_bday_yr2', name: '[生日] 星愿气球泡', dyn: 'gdyn_bday_yr2', charms: [], desc: '生日专属动态限定：浮升马卡龙心形气球配彩带飘摇与香槟流光气泡框' },
@@ -2744,6 +2742,8 @@
     { id: 'bub_spend_5k_vinyl', name: '[成就] 黑胶咖啡馆泡', dyn: 'spend_vinyl_cafe', charms: [], desc: '消费满 5000 币成就专属动态限定：暖咖手冲拿铁蒸汽配旋转复古黑胶唱片气泡' },
     { id: 'bub_cloud_memo', name: '[成就] 手账纸条泡', dyn: 'poststamp', charms: [{ pos: 'tr', key: 'dot_heart' }], desc: '软木板笔友成就专属动态限定：奶油手账便签框配樱红小图钉与飘动邮戳' },
     { id: 'bub_cloud_compass', name: '[成就] 双星罗盘泡', dyn: 'gdyn_cloudsea_roll', charms: [{ pos: 'tl', key: 'bow' }], desc: '传说双子旅人成就专属动态限定：蓝金星航罗盘配云海流光气泡框' },
+    { id: 'bub_job_boba', name: '[打工] 波霸奶盖泡', dyn: 'job_boba_cup', charms: [], desc: '奶茶店 Lv.3 金牌店长专属：左上倾斜珍珠奶茶杯配右下翻涌绵密奶盖' },
+    { id: 'bub_job_florist', name: '[打工] 花房露珠泡', dyn: 'job_florist_dew', charms: [], desc: '花店 Lv.3 金牌店长专属：右上复古小洒水壶与郁金香配左下常春藤露珠' },
   ];
   const SECRET_ADV_AVATAR_FRAMES = [
     { id: 'af_adv_cloud', name: '[秘境] 云端小翅膀', dyn: 'gadyn_feather_drift', charms: [], desc: '冒险极低概率偶遇的云端仙羽动态头像框：双侧柔羽轻扇配上升云雾光环' },
@@ -2751,8 +2751,6 @@
   ];
   const SPECIAL_EVENT_AVATAR_FRAMES = [
     { id: 'af_ach_velvet', name: '[成就] 高定丝绒金框', dyn: 'ach_velvet_gold', charms: [], desc: '衣橱主理人成就专属动态限定：酒红丝绒与香槟鎏金雕花冠冕流光头像框' },
-    { id: 'af_job_bakery', name: '[打工] 可颂麦香框', dyn: 'job_bakery_crust', charms: [], desc: '面包店 Lv.3 金牌店长专属：暖金酥皮边配右上热可颂、左下金麦穗与袅袅烘焙热气' },
-    { id: 'af_job_bookshop', name: '[打工] 旧书页签框', dyn: 'job_bookshop_folio', charms: [], desc: '旧书店 Lv.3 金牌店长专属：深蓝烫金边配右下叠放精装书与左上垂坠黄铜书签穗' },
     { id: 'af_ach_triple_ssr', name: '[神迹成就] 三金神迹圣冕框', dyn: 'ach_triple_ssr_mythic', charms: [], desc: '十连三金隐藏成就专属绝版动态限定：三峰宝石圣冕配双侧鎏金羽翼与八颗虹彩晶钻绕框流光' },
     { id: 'af_bond_lv9', name: '[好感Lv9] 星月守护框', dyn: 'bond_lv9_guard', charms: [], desc: '好感度 Lv.9 专属纪念动态头像框：柔金星月流光守护框' },
     { id: 'af_bday_candle', name: '[生日] 奶油蛋糕框', dyn: 'gadyn_bday_cake', charms: [], desc: '生日专属动态限定：草莓奶油淋面配摇曳双烛火与马卡龙小气球头像框' },
@@ -2763,6 +2761,8 @@
     { id: 'af_spend_10k_carousel', name: '[成就] 旋转音乐盒框', dyn: 'spend_musicbox_carousel', charms: [], desc: '消费满 10000 币成就专属动态限定：绯金条纹华盖配双侧发条钥匙与音符乐筒头像框' },
     { id: 'af_cloud_twinstar', name: '[成就] 双子星讯框', dyn: 'cloud_twinstar', charms: [], desc: '跨屏挚友成就专属动态限定：蓝粉双子星轨环绕流光纪念头像框' },
     { id: 'af_cloud_gallery', name: '[成就] 双子纪念馆框', dyn: 'cloud_gallery', charms: [], desc: '全图鉴双子星成就专属动态限定：七彩棱镜光轨双人纪念馆头像框' },
+    { id: 'af_job_bakery', name: '[打工] 可颂麦香框', dyn: 'job_bakery_crust', charms: [], desc: '面包店 Lv.3 金牌店长专属：暖金酥皮边配右上热可颂、左下金麦穗与袅袅烘焙热气' },
+    { id: 'af_job_bookshop', name: '[打工] 旧书页签框', dyn: 'job_bookshop_folio', charms: [], desc: '旧书店 Lv.3 金牌店长专属：深蓝烫金边配右下叠放精装书与左上垂坠黄铜书签穗' },
   ];
   const SECRET_ADV_TRAILS = [
     { id: 'trail_adv_meteor', name: '[秘境] 流星碎光', cols: ['#ffe478', '#9ee8ff', '#ffffff'], desc: '冒险极低概率偶遇的流星碎光足迹' },
@@ -2869,6 +2869,7 @@
     puppyJobReviews: {},
     puppyJobReviewClaimed: {},
     puppyJobMasterClaimed: {},
+    puppyJobUrgentCd: {},
     puppyBubbleMode: 'wrap',
     puppyGender: '',
     puppyGenderLocked: false,
@@ -5543,7 +5544,7 @@
     .st-px-avatar-wrap.af-job-bakery { border-color: #d99b52 !important; background: linear-gradient(135deg,#fff6e6,#f7dfba,#fffaf0) !important; box-shadow: inset 0 0 0 1.5px #fff8eb, 0 2px 8px rgba(217,155,82,0.35) !important; }
     .st-px-avatar-wrap.af-job-bookshop { border-color: #d9b56c !important; background: linear-gradient(135deg,#2a3550,#3d4d73,#242e47) !important; box-shadow: inset 0 0 0 1.5px #e8cc8a, 0 2px 9px rgba(42,53,80,0.42) !important; }
     .st-px-avatar-wrap.af-ach-velvet { border-color: #d9b664 !important; background: linear-gradient(135deg,#661b2d,#85263d,#591525) !important; box-shadow: inset 0 0 0 1.5px #f5de9d, 0 2px 9px rgba(110,28,48,0.42) !important; }
-    .st-px-avatar-wrap.af-cloud-twinstar { border-color: #c9b882 !important; background: linear-gradient(135deg,#2e3859,#45527d,#2e3859) !important; box-shadow: 0 0 0 1px #e8ecf7, 0 2px 9px rgba(55,68,108,0.4) !important; }
+    .st-px-avatar-wrap.af-cloud-twinstar { border-color: #d8c8f5 !important; background: linear-gradient(135deg,#232b4d,#383f6e,#493b6b) !important; box-shadow: inset 0 0 0 1.5px #fff4d6, 0 2px 10px rgba(72,64,132,0.46) !important; }
     .st-px-avatar-wrap.af-dyn-windmill-hill { border-color: #7cc4e8 !important; background: linear-gradient(135deg,#eef9ff,#daf2ff,#f7fcff) !important; box-shadow: 0 0 0 1px #ffffff, 0 2px 8px rgba(124,196,232,0.38) !important; }
     .st-px-avatar-wrap.af-lux-seraph-wings { border-color: #e6c675 !important; background: linear-gradient(135deg,#fffdf7,#faf2de,#ffffff) !important; box-shadow: inset 0 0 0 1px #ffffff, 0 2px 10px rgba(230,198,117,0.42) !important; }
     .st-px-avatar-wrap.af-lux-demon-horns { border-color: #b84b68 !important; background: linear-gradient(135deg,#2e2038,#45294a,#2b1c33) !important; box-shadow: inset 0 0 0 1px #e37892, 0 2px 10px rgba(145,48,78,0.48) !important; }
@@ -9060,7 +9061,7 @@
             </div>
             <div class="st-px-job-grid" id="st-px-job-list"></div>
             <button class="st-px-btn care" id="st-px-job-start" type="button" style="width:100%;">出发兼职打工 (45秒)</button>
-            <div class="st-px-note" style="margin-top:5px;">Lv.1~3 每班 45/60/75 秒、歇爪 10/12/15 分钟；支持今日急招、穿搭契合、好友每日拼班与好评墙收集，满级赠专属装扮。</div>
+            
           </div>
         </div>
         <div class="st-px-pane" data-px-pane="game">
@@ -48124,12 +48125,27 @@
       return;
     }
     if (m === 'cloud_twinstar') {
-      // [成就] 双子星讯框（专属独立设计）：蓝粉双子信标星绕框连线微闪
-      const [x1, y1] = perimPt(t * 2);
-      const [x2, y2] = perimPt(t * 2 + 90);
-      _px(x1 - 2, y1 - 2, '#7cc6f7', 5, 5); _px(x1 - 1, y1 - 1, '#ffffff', 3, 3);
-      _px(x2 - 2, y2 - 2, '#ff9eb8', 5, 5); _px(x2 - 1, y2 - 1, '#ffffff', 3, 3);
-      _px(6, 5, '#ffe082', 2, 2); _px(55, 55, '#ffe082', 2, 2);
+      // [成就] 双子星讯框（精修重绘）：左上冰蓝弯月托星珠 + 右下樱粉星弧连珠 + 双子彗尾绕框流光
+      const tw = (t % 10) < 5 ? 0 : 1;
+      // 左上精致月牙与冰蓝微光星珠
+      _px(6, 4, '#fff4cc', 4, 2); _px(4, 6, '#ffe699', 3, 5); _px(6, 11, '#fff4cc', 4, 2);
+      _px(7, 6, '#586291', 3, 5); // 镂空月牙内弧
+      _px(10, 7 + tw, '#8cd6ff', 3, 3); _px(11, 8 + tw, '#ffffff', 1, 1);
+      // 右下樱粉双子星弧与珍珠流苏
+      _px(50, 56, '#ffd6e6', 6, 2); _px(55, 50, '#ffb3cf', 2, 6); _px(52, 53, '#ffe49e', 2, 2);
+      _px(48, 52 - tw, '#ff9ec2', 3, 3); _px(49, 53 - tw, '#ffffff', 1, 1);
+      // 右上与左下细碎星尘点缀
+      _px(53, 7, tw ? '#ffffff' : '#ffe8a3', 2, 2); _px(56, 11, '#a8dcff', 1, 1);
+      _px(8, 53, tw ? '#ffd1e3' : '#ffffff', 2, 2); _px(5, 49, '#ffe8a3', 1, 1);
+      // 蓝粉双子细彗星沿框优雅巡游（带 2 段轻盈尾迹）
+      const [bx0, by0] = perimPt(t * 2);
+      const [bx1, by1] = perimPt(t * 2 - 4);
+      const [bx2, by2] = perimPt(t * 2 - 8);
+      _px(bx2, by2, '#5a94c9', 1, 1); _px(bx1, by1, '#8cd6ff', 2, 2); _px(bx0 - 1, by0 - 1, '#ffffff', 2, 2);
+      const [px0, py0] = perimPt(t * 2 + 90);
+      const [px1, py1] = perimPt(t * 2 + 86);
+      const [px2, py2] = perimPt(t * 2 + 82);
+      _px(px2, py2, '#c9789a', 1, 1); _px(px1, py1, '#ffadc8', 2, 2); _px(px0 - 1, py0 - 1, '#ffffff', 2, 2);
       return;
     }
     if (m === 'cloud_gallery') {
@@ -53730,7 +53746,13 @@
       const ids = PUP_JOBS.map(x => x.id);
       const i1 = h % ids.length;
       const i2 = (i1 + 1 + ((h >>> 3) % (ids.length - 1))) % ids.length;
-      return new Set([ids[i1], ids[i2]]);
+      const nowMs = Date.now();
+      const cdMap = config.puppyJobUrgentCd || {};
+      const res = new Set();
+      [ids[i1], ids[i2]].forEach(id => {
+        if (nowMs >= (Number(cdMap[id]) || 0)) res.add(id);
+      });
+      return res;
     };
     const JOB_OUTFIT_FIT_TIPS = {
       boba: { tip: '日常/连体/斗篷或甜品丝带配饰', check: () => {
@@ -53758,28 +53780,28 @@
     };
     const JOB_CUSTOMER_REVIEWS = {
       boba: [
-        { id: 'b1', tag: '五星好评', text: '小狗店员摇出来的奶盖绵密得像云朵，递杯子还歪头笑，明天继续来！' },
-        { id: 'b2', tag: '回头客', text: '点了三分糖多珍珠，它数珍珠数得超认真，一杯装得满满当当。' },
-        { id: 'b3', tag: '热心路人', text: '本来路过只是想歇脚，结果被柜台后忙着贴杯贴的小狗萌到连买两杯。' },
-        { id: 'b4', tag: '常客打卡', text: '店长说这只小狗已经是摇茶王牌了，味道稳得一批，满分推荐！' },
+        { id: 'b1', user: '常客小橘', tag: '绵密奶盖', text: '小狗店员摇出来的奶盖绵密得像云朵，递杯子还歪头笑，明天继续来！' },
+        { id: 'b2', user: '三分糖控', tag: '珍珠爆满', text: '点了三分糖多珍珠，它数珍珠数得超认真，一杯装得满满当当。' },
+        { id: 'b3', user: '路过学生党', tag: '萌系杯贴', text: '本来路过只是想歇脚，结果被柜台后忙着贴杯贴的小狗萌到连买两杯。' },
+        { id: 'b4', user: '奶茶老饕', tag: '王牌摇茶', text: '店长说这只小狗已经是摇茶王牌了，味道稳得一批，满分推荐！' },
       ],
       bakery: [
-        { id: 'k1', tag: '五星好评', text: '刚出炉的可颂酥到掉渣，小狗揉面师鼻尖沾了点面粉也太可爱了吧！' },
-        { id: 'k2', tag: '早餐党', text: '每天早上路过都能闻到它烤的黄油麦香，装袋还会系一个工整蝴蝶结。' },
-        { id: 'k3', tag: '甜品控', text: '挤的奶油花居然一圈比一圈圆，这手艺比我还会做烘焙。' },
-        { id: 'k4', tag: '满分推荐', text: '临走前小狗还递了张热乎乎的烤面包小票，心情瞬间被治愈了。' },
+        { id: 'k1', user: '早八打工人', tag: '现烤可颂', text: '刚出炉的可颂酥到掉渣，小狗揉面师鼻尖沾了点面粉也太可爱了吧！' },
+        { id: 'k2', user: '邻街画师', tag: '黄油麦香', text: '每天早上路过都能闻到它烤的黄油麦香，装袋还会系一个工整蝴蝶结。' },
+        { id: 'k3', user: '甜品爱好者', tag: '精致裱花', text: '挤的奶油花居然一圈比一圈圆，这手艺比我还会做烘焙。' },
+        { id: 'k4', user: '下班路人', tag: '治愈小票', text: '临走前小狗还递了张热乎乎的烤面包小票，心情瞬间被治愈了。' },
       ],
       florist: [
-        { id: 'f1', tag: '五星好评', text: '小狗帮我挑的洋桔梗配尤加利叶配色超温柔，花瓣上还带着清晨露珠。' },
-        { id: 'f2', tag: '送花常客', text: '它包花束时把丝带扯得笔直，送给朋友被夸了一整天。' },
-        { id: 'f3', tag: '路过种草', text: '一进门就被它摇着尾巴迎宾，本来只买一支花，最后抱了一大束走。' },
-        { id: 'f4', tag: '花房熟客', text: '这家店的花开得特别久，听说是小狗每天按时洒水唱小曲养出来的。' },
+        { id: 'f1', user: '摄影师阿白', tag: '清晨露珠', text: '小狗帮我挑的洋桔梗配尤加利叶配色超温柔，花瓣上还带着清晨露珠。' },
+        { id: 'f2', user: '送花常客', tag: '工整丝带', text: '它包花束时把丝带扯得笔直，送给朋友被夸了一整天。' },
+        { id: 'f3', user: '散步路人', tag: '热情迎宾', text: '一进门就被它摇着尾巴迎宾，本来只买一支花，最后抱了一大束走。' },
+        { id: 'f4', user: '园艺博主', tag: '花期超长', text: '这家店的花开得特别久，听说是小狗每天按时洒水唱小曲养出来的。' },
       ],
       bookshop: [
-        { id: 's1', tag: '五星好评', text: '找了好久的绝版书居然被小狗从书架顶层翻出来了，还帮我擦干净灰尘！' },
-        { id: 's2', tag: '爱书人', text: '每本买走的书里都被它夹了一张手绘小爪印书签，细节太戳人了。' },
-        { id: 's3', tag: '安静读者', text: '店里安安静静的，小狗理完书会乖乖趴在收银台边守着，氛围一百分。' },
-        { id: 's4', tag: '旧书淘客', text: '分类排得比图书馆还整齐，问它书在哪一排直接用小爪子精准指路。' },
+        { id: 's1', user: '旧书淘客', tag: '绝版宝藏', text: '找了好久的绝版书居然被小狗从书架顶层翻出来了，还帮我擦干净灰尘！' },
+        { id: 's2', user: '手账女孩', tag: '爪印书签', text: '每本买走的书里都被它夹了一张手绘小爪印书签，细节太戳人了。' },
+        { id: 's3', user: '午后读者', tag: '安静守店', text: '店里安安静静的，小狗理完书会乖乖趴在收银台边守着，氛围一百分。' },
+        { id: 's4', user: '图书馆常客', tag: '精准指路', text: '分类排得比图书馆还整齐，问它书在哪一排直接用小爪子精准指路。' },
       ],
     };
     const grantJobMasterRewardsIfEligible = () => {
@@ -53926,6 +53948,10 @@
           }
           const isUrgentJob = Boolean(config.puppyJob && config.puppyJob.isUrgent);
           const urgentBonus = (!messedUp && isUrgentJob) ? (3 + Math.floor(Math.random() * 3)) : 0;
+          if (isUrgentJob) {
+            config.puppyJobUrgentCd = config.puppyJobUrgentCd || {};
+            config.puppyJobUrgentCd[jObj.id] = Date.now() + 12 * 3600 * 1000;
+          }
           let urgentSnackName = '';
           if (!messedUp && isUrgentJob && Array.isArray(SHOP_PUP_SNACKS) && SHOP_PUP_SNACKS.length && Math.random() < 0.6) {
             const cheapSnacks = SHOP_PUP_SNACKS.filter(s => (s.price || 0) <= 12);
@@ -54137,95 +54163,224 @@
       drawJobStageCanvas(stage, sel.id, 0);
       statusEl.appendChild(stage);
 
-      // 双狗拼班选择器（每个云端好友每天限 1 次） + 顾客好评墙入口
+      // 等高对齐双按钮栏：左「选择拼班好友」弹窗 + 右「本店好评墙」弹窗（关闭绝不误关小狗背包）
       const extraBar = doc.createElement('div');
-      extraBar.style.cssText = 'display:flex;align-items:center;gap:4px;margin-top:5px;flex-wrap:wrap;';
+      extraBar.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;align-items:stretch;';
       const friends = typeof getFriendList === 'function' ? getFriendList() : [];
       const todayDs = getJobDateStr();
-      const coopSel = doc.createElement('select');
-      coopSel.id = 'st-px-job-coop-sel';
-      coopSel.style.cssText = 'flex:1;min-width:110px;height:22px;font-size:10px;padding:0 5px;border:1.5px solid var(--px-border,#bfa4ae);background:var(--px-card,#fff);color:var(--px-fg,#4a3a40);font-family:inherit;box-sizing:border-box;';
-      const optSolo = doc.createElement('option');
-      optSolo.value = '';
-      optSolo.textContent = friends.length ? '单狗独班（可选好友拼班）' : '单狗独班（暂无云端好友）';
-      coopSel.appendChild(optSolo);
-      friends.forEach(fr => {
-        const fid = String(fr.cloudId || '');
-        if (!fid) return;
-        const usedToday = config.puppyJobCoopDaily && config.puppyJobCoopDaily[fid] === todayDs;
-        const fName = (config.puppyFriendRemarks && config.puppyFriendRemarks[fid]) || fr.name || '好友小狗';
-        const op = doc.createElement('option');
-        op.value = fid;
-        op.disabled = usedToday;
-        op.textContent = usedToday ? `${fName}（今日已拼班）` : `拼班：${fName} (+3~4币)`;
-        coopSel.appendChild(op);
+      if (win.__stJobCoopFid && config.puppyJobCoopDaily && config.puppyJobCoopDaily[win.__stJobCoopFid] === todayDs) {
+        win.__stJobCoopFid = '';
+      }
+      const pickedFr = win.__stJobCoopFid ? friends.find(x => String(x.cloudId || '') === win.__stJobCoopFid) : null;
+      if (!pickedFr) win.__stJobCoopFid = '';
+      const pickedName = pickedFr ? ((config.puppyFriendRemarks && config.puppyFriendRemarks[pickedFr.cloudId]) || pickedFr.name || '好友') : '';
+      const coopBtn = doc.createElement('button');
+      coopBtn.type = 'button';
+      coopBtn.className = 'st-px-btn' + (pickedFr ? ' care' : '');
+      coopBtn.style.cssText = 'height:24px;min-height:24px;padding:0 6px;font-size:10px;line-height:22px;width:100%;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+      coopBtn.textContent = pickedFr ? `拼班：${pickedName}` : '选择拼班好友';
+      coopBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        let mask = root.querySelector('#st-tb-job-coop-mask');
+        if (mask) mask.remove();
+        mask = doc.createElement('div');
+        mask.id = 'st-tb-job-coop-mask';
+        mask.className = 'st-px-submodal-keep-bag';
+        mask.style.cssText = 'position:fixed;inset:0;z-index:10040;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+        const closeCoopModal = (e2) => {
+          if (e2) { e2.stopPropagation(); }
+          win.__stSubModalClosedAt = Date.now();
+          mask.remove();
+        };
+        const card = doc.createElement('div');
+        card.style.cssText = 'width:min(300px,90vw);max-height:70vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.2);';
+        const head = doc.createElement('div');
+        head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
+        head.innerHTML = '<span>选择双狗拼班好友（每好友每日1次）</span>';
+        const clsBtn = doc.createElement('button');
+        clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
+        clsBtn.addEventListener('click', closeCoopModal);
+        head.appendChild(clsBtn);
+        card.appendChild(head);
+        const soloRow = doc.createElement('button');
+        soloRow.type = 'button';
+        soloRow.className = 'st-px-btn' + (!win.__stJobCoopFid ? ' care' : '');
+        soloRow.style.cssText = 'width:100%;height:26px;font-size:10.5px;margin-bottom:6px;justify-content:space-between;display:flex;align-items:center;padding:0 8px;';
+        soloRow.innerHTML = '<span>单狗独班</span><span style="font-size:9px;opacity:0.8;">不邀请好友</span>';
+        soloRow.addEventListener('click', (e2) => {
+          win.__stJobCoopFid = '';
+          closeCoopModal(e2);
+          renderJobPanel();
+        });
+        card.appendChild(soloRow);
+        if (!friends.length) {
+          const empty = doc.createElement('div');
+          empty.style.cssText = 'font-size:10px;opacity:0.75;text-align:center;padding:12px 6px;';
+          empty.textContent = '还没有云端好友哦，先去「串门」加好友再来双狗拼班吧~';
+          card.appendChild(empty);
+        } else {
+          friends.forEach(fr => {
+            const fid = String(fr.cloudId || '');
+            if (!fid) return;
+            const usedToday = Boolean(config.puppyJobCoopDaily && config.puppyJobCoopDaily[fid] === todayDs);
+            const fName = (config.puppyFriendRemarks && config.puppyFriendRemarks[fid]) || fr.name || '好友小狗';
+            const isSel = win.__stJobCoopFid === fid;
+            const row = doc.createElement('button');
+            row.type = 'button';
+            row.disabled = usedToday;
+            row.className = 'st-px-btn' + (isSel ? ' care' : '');
+            row.style.cssText = `width:100%;height:30px;font-size:10.5px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;opacity:${usedToday ? '0.52' : '1'};`;
+            row.innerHTML = `<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fName)}</span><span style="font-size:9px;flex-shrink:0;">${usedToday ? '今日已拼班' : (isSel ? '已选(+3~4币)' : '可拼班 +3~4币')}</span>`;
+            row.addEventListener('click', (e2) => {
+              if (usedToday) return;
+              win.__stJobCoopFid = fid;
+              closeCoopModal(e2);
+              renderJobPanel();
+            });
+            card.appendChild(row);
+          });
+        }
+        mask.appendChild(card);
+        mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+        mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeCoopModal(e2); });
+        root.appendChild(mask);
       });
+
+      const curShopRevCnt = (config.puppyJobReviews?.[sel.id] || []).length;
       const revWallBtn = doc.createElement('button');
       revWallBtn.type = 'button';
       revWallBtn.className = 'st-px-btn';
-      revWallBtn.style.cssText = 'height:22px;padding:0 7px;font-size:10px;flex-shrink:0;';
-      revWallBtn.textContent = `好评墙 (${totalRevCnt}/16)`;
-      revWallBtn.addEventListener('click', () => {
-        let mask = root.querySelector('#st-px-job-rev-mask');
+      revWallBtn.style.cssText = 'height:24px;min-height:24px;padding:0 6px;font-size:10px;line-height:22px;width:100%;box-sizing:border-box;white-space:nowrap;';
+      revWallBtn.textContent = `本店好评墙 (${curShopRevCnt}/4)`;
+      revWallBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        let mask = root.querySelector('#st-tb-job-rev-mask');
         if (mask) mask.remove();
         mask = doc.createElement('div');
-        mask.id = 'st-px-job-rev-mask';
+        mask.id = 'st-tb-job-rev-mask';
+        mask.className = 'st-px-submodal-keep-bag';
         mask.style.cssText = 'position:fixed;inset:0;z-index:10040;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+        const closeRevModal = (e2) => {
+          if (e2) { e2.stopPropagation(); }
+          win.__stSubModalClosedAt = Date.now();
+          mask.remove();
+        };
+        let activeRevShop = sel.id;
         const card = doc.createElement('div');
-        card.style.cssText = 'width:min(320px,92vw);max-height:76vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.2);';
-        const head = doc.createElement('div');
-        head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
-        head.innerHTML = `<span>打工顾客好评墙 (${totalRevCnt}/16)</span>`;
-        const clsBtn = doc.createElement('button');
-        clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
-        clsBtn.addEventListener('click', () => mask.remove());
-        head.appendChild(clsBtn);
-        card.appendChild(head);
-        PUP_JOBS.forEach(j => {
-          const gotIds = Array.isArray(config.puppyJobReviews?.[j.id]) ? config.puppyJobReviews[j.id] : [];
-          const revs = JOB_CUSTOMER_REVIEWS[j.id] || [];
-          const claimed = Boolean(config.puppyJobReviewClaimed?.[j.id]);
-          const rw = JOB_MASTER_REWARDS[j.id];
-          const sec = doc.createElement('div');
-          sec.style.cssText = 'margin-bottom:8px;padding:6px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);';
-          const sh = doc.createElement('div');
-          sh.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-size:10.5px;font-weight:700;margin-bottom:4px;';
-          sh.innerHTML = `<span>${j.name} (${gotIds.length}/${revs.length}) · Lv.3赠${rw ? rw.name.replace('[打工] ','') : ''}</span>`;
+        card.style.cssText = 'width:min(330px,93vw);max-height:78vh;display:flex;flex-direction:column;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.22);';
+        const renderRevModalBody = () => {
+          card.innerHTML = '';
+          const totalGot = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
+          const head = doc.createElement('div');
+          head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
+          head.innerHTML = `<span>店铺顾客好评墙 · 总进度 ${totalGot}/16</span>`;
+          const clsBtn = doc.createElement('button');
+          clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
+          clsBtn.addEventListener('click', closeRevModal);
+          head.appendChild(clsBtn);
+          card.appendChild(head);
+
+          // 4家店铺独立标签页
+          const tabBar = doc.createElement('div');
+          tabBar.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:7px;';
+          const shortShopNames = { boba: '奶茶店', bakery: '面包店', florist: '花店', bookshop: '旧书店' };
+          PUP_JOBS.forEach(j => {
+            const gLen = (config.puppyJobReviews?.[j.id] || []).length;
+            const tb = doc.createElement('button');
+            tb.type = 'button';
+            tb.className = 'st-px-btn' + (activeRevShop === j.id ? ' care' : '');
+            tb.style.cssText = 'height:22px;padding:0 3px;font-size:9.5px;';
+            tb.textContent = `${shortShopNames[j.id] || j.name}(${gLen}/4)`;
+            tb.addEventListener('click', (e2) => { e2.stopPropagation(); activeRevShop = j.id; renderRevModalBody(); });
+            tabBar.appendChild(tb);
+          });
+          card.appendChild(tabBar);
+
+          const jObjCur = PUP_JOBS.find(x => x.id === activeRevShop) || PUP_JOBS[0];
+          const gotIds = Array.isArray(config.puppyJobReviews?.[jObjCur.id]) ? config.puppyJobReviews[jObjCur.id] : [];
+          const revs = JOB_CUSTOMER_REVIEWS[jObjCur.id] || [];
+          const claimed = Boolean(config.puppyJobReviewClaimed?.[jObjCur.id]);
+          const rw = JOB_MASTER_REWARDS[jObjCur.id];
+          const pct = Math.round((gotIds.length / Math.max(1, revs.length)) * 100);
+
+          // 本店主题看板头
+          const banner = doc.createElement('div');
+          banner.style.cssText = `display:flex;align-items:center;gap:8px;padding:7px 8px;margin-bottom:7px;background:${jObjCur.bg || 'var(--px-card,#fff)'};border:1.5px solid ${jObjCur.accent || 'var(--px-border,#bfa4ae)'};color:#4a3525;`;
+          const ic = doc.createElement('canvas');
+          ic.width = 16; ic.height = 16;
+          ic.style.cssText = 'width:26px;height:26px;image-rendering:pixelated;flex-shrink:0;';
+          drawJobMiniIcon(ic, jObjCur.icon);
+          const bInfo = doc.createElement('div');
+          bInfo.style.cssText = 'flex:1;min-width:0;';
+          bInfo.innerHTML = `
+            <div style="font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:4px;">
+              <span>${jObjCur.name}</span>
+              <span style="font-size:9.5px;color:#b86b24;">口碑 5.0 · ${gotIds.length}/${revs.length}</span>
+            </div>
+            <div style="height:5px;background:rgba(0,0,0,0.1);margin:4px 0 3px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:${jObjCur.accent || '#d99b66'};"></div>
+            </div>
+            <div style="font-size:9px;opacity:0.85;">Lv.3满级赠礼：${rw ? rw.name : ''}</div>
+          `;
+          banner.append(ic, bInfo);
           if (gotIds.length >= revs.length && !claimed) {
             const cBtn = doc.createElement('button');
-            cBtn.type = 'button'; cBtn.className = 'st-px-btn care'; cBtn.style.cssText = 'height:19px;padding:0 6px;font-size:9px;'; cBtn.textContent = '领+15币';
-            cBtn.addEventListener('click', () => {
+            cBtn.type = 'button'; cBtn.className = 'st-px-btn care'; cBtn.style.cssText = 'height:22px;padding:0 7px;font-size:9.5px;flex-shrink:0;'; cBtn.textContent = '领+15币';
+            cBtn.addEventListener('click', (e2) => {
+              e2.stopPropagation();
               config.puppyJobReviewClaimed = config.puppyJobReviewClaimed || {};
-              if (config.puppyJobReviewClaimed[j.id]) return;
-              config.puppyJobReviewClaimed[j.id] = true;
+              if (config.puppyJobReviewClaimed[jObjCur.id]) return;
+              config.puppyJobReviewClaimed[jObjCur.id] = true;
               config.puppyCoins = (config.puppyCoins || 0) + 15;
               config.puppyStats = config.puppyStats || {};
               config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + 15;
               saveConfig(); checkPupAchievements(); updatePupStatBars();
-              mask.remove(); renderJobPanel();
-              showPuppyBubble(`集齐了【${j.name}】全部好评，领到 +15 币口碑奖金啦~`, 2600);
+              renderRevModalBody(); renderJobPanel();
+              showPuppyBubble(`集齐了【${jObjCur.name}】全部好评，领到 +15 币口碑奖金啦~`, 2600);
             });
-            sh.appendChild(cBtn);
+            banner.appendChild(cBtn);
           } else if (claimed) {
             const sp = doc.createElement('span');
-            sp.style.cssText = 'font-size:9px;color:#2e7d47;'; sp.textContent = '已领奖';
-            sh.appendChild(sp);
+            sp.style.cssText = 'font-size:9.5px;font-weight:700;color:#2e7d47;flex-shrink:0;'; sp.textContent = '已领奖';
+            banner.appendChild(sp);
           }
-          sec.appendChild(sh);
-          revs.forEach(rv => {
+          card.appendChild(banner);
+
+          // 便签式好评卡片列表
+          const listWrap = doc.createElement('div');
+          listWrap.style.cssText = 'overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-right:2px;';
+          revs.forEach((rv, rIdx) => {
             const has = gotIds.includes(rv.id);
-            const row = doc.createElement('div');
-            row.style.cssText = `font-size:9.5px;line-height:1.45;padding:3px 4px;margin-top:2px;border-left:2px solid ${has ? '#d98a5c' : '#ccc'};opacity:${has ? '1' : '0.52'};`;
-            row.textContent = has ? `[${rv.tag}] ${rv.text}` : '[未解锁] 继续在本店顺利打工即可收集该条顾客好评';
-            sec.appendChild(row);
+            const note = doc.createElement('div');
+            note.style.cssText = `padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid ${has ? (jObjCur.accent || '#d99b66') : 'var(--px-border,#d0c0c6)'};box-shadow:${has ? '2px 2px 0 rgba(59,42,34,0.1)' : 'none'};opacity:${has ? '1' : '0.58'};`;
+            if (has) {
+              note.innerHTML = `
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;font-size:9.5px;">
+                  <span style="font-weight:700;">#${rIdx + 1} ${rv.user || '匿名常客'}</span>
+                  <span style="padding:0 5px;background:${jObjCur.bg || '#fff6eb'};border:1px solid ${jObjCur.accent || '#d99b66'};color:#7a4b1f;font-size:8.5px;font-weight:700;">${rv.tag} · 5.0分</span>
+                </div>
+                <div style="font-size:10px;line-height:1.5;">「${rv.text}」</div>
+              `;
+            } else {
+              note.innerHTML = `
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:9.5px;opacity:0.75;">
+                  <span>#${rIdx + 1} 未解锁顾客留言</span>
+                  <span>待收集</span>
+                </div>
+                <div style="font-size:9.5px;margin-top:2px;opacity:0.7;">继续在【${jObjCur.name}】顺利完成班次即可收集这张顾客便签~</div>
+              `;
+            }
+            listWrap.appendChild(note);
           });
-          card.appendChild(sec);
-        });
+          card.appendChild(listWrap);
+        };
+        renderRevModalBody();
         mask.appendChild(card);
-        mask.addEventListener('click', (ev) => { if (ev.target === mask) mask.remove(); });
+        mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+        mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeRevModal(e2); });
         root.appendChild(mask);
       });
-      extraBar.append(coopSel, revWallBtn);
+      extraBar.append(coopBtn, revWallBtn);
       statusEl.appendChild(extraBar);
       startBtn.disabled = false;
       startBtn.textContent = `去【${sel.name}】兼职打工 (${durSec}秒)`;
@@ -54249,7 +54404,8 @@
       for (let i = 0; i < todayDs.length; i++) h = ((h * 31) + todayDs.charCodeAt(i)) >>> 0;
       const jIds = PUP_JOBS.map(x => x.id);
       const u1 = h % jIds.length, u2 = (u1 + 1 + ((h >>> 3) % (jIds.length - 1))) % jIds.length;
-      const isUrgent = sel.id === jIds[u1] || sel.id === jIds[u2];
+      const urgCdUntil = Number((config.puppyJobUrgentCd && config.puppyJobUrgentCd[sel.id]) || 0);
+      const isUrgent = (sel.id === jIds[u1] || sel.id === jIds[u2]) && Date.now() >= urgCdUntil;
       const oStr = String(config.puppyOutfit || ''), aArr = config.puppyAccs || [];
       const outfitFit = sel.id === 'boba'
         ? (/daily|onesie|sweater|overalls|apron|milk|boba|tea|berry|strawberry|matcha|honey|peach|sailor/.test(oStr) || aArr.some(a => /cape_|ribbon|bow|bell|donut|egg|berry|strawberry|tea/.test(a)))
@@ -54259,8 +54415,8 @@
             ? (/dress|skirt|gown|lolita|sakura|daisy|tulip|clover|hanfu|kimono/.test(oStr) || aArr.some(a => /flower|sakura|leaf|elf|clover|butterfly|rose|wisteria|lavender|cape_sakura|cape_forest/.test(a)))
             : (/preppy|plaid|knit|cardigan|cloak|skirt|uniform|vintage|retro|denim/.test(oStr) || aArr.some(a => /glass|beret|scarf|quill|scroll|bag|cape_denim|cape_matcha|cape_music|cape_stained/.test(a)))));
       let coopFriendId = '', coopFriendName = '';
-      const coopSelEl = root.querySelector('#st-px-job-coop-sel');
-      const pickedFid = coopSelEl ? String(coopSelEl.value || '').trim() : '';
+      const pickedFid = String(win.__stJobCoopFid || '').trim();
+      win.__stJobCoopFid = '';
       if (pickedFid) {
         config.puppyJobCoopDaily = config.puppyJobCoopDaily || {};
         if (config.puppyJobCoopDaily[pickedFid] !== todayDs) {
@@ -58103,6 +58259,8 @@
   let outsideTapStart = null;
   const isOutsideCloseBlocked = (target) => {
     if (!target) return true;
+    if (Date.now() - (win.__stSubModalClosedAt || 0) < 450) return true;
+    if (typeof target.closest === 'function' && target.closest('.st-px-submodal-keep-bag')) return true;
     if (typeof target.closest === 'function' && target.closest('#st-tb-pup-ask, #st-tb-pup-signboard, #st-tb-visit-photo-win, #st-tb-saved-photo-viewer, #st-tb-photo-del-confirm, #st-tb-photo-pick-modal, #st-px-photo-viewer, #st-tb-visit-gift-modal, #st-tb-return-gift-modal, #st-tb-coop-cook-modal, #st-tb-onetime-tip-modal, #st-tb-pup-art-modal, #st-tb-px-notice-mask, #st-tb-noteboard-mask, #st-tb-writenote-mask, #st-tb-cloud-send-mask, #st-tb-friends-mask, #st-tb-desk-noteboard, #st-tb-desk-giftbox, #st-tb-bond-mask, #st-tb-freq-mask, #st-tb-coadv-prog-mask, #st-tb-coadv-result-mask, #st-tb-merchant-preview-mask, #st-tb-dark-buff-mask, #st-tb-dm-panel, #st-tb-dm-pill, #st-tb-desk-dm-stack, [id^="st-tb-"][id$="-mask"], [id^="st-tb-"][id$="-modal"]')) return true;
     if (askEl && (askEl.contains(target) || askEl.style.display === 'block' || askEl.style.display === 'flex')) return true;
     if (signboardEl && (signboardEl.contains(target) || signboardEl.style.display === 'block' || signboardEl.style.display === 'flex')) return true;
@@ -65475,6 +65633,38 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   setTimeout(() => {
     renderPresetSelect();
     checkAutoSwitchCharPreset();
+    // 更新后立即为已满级(Lv.3 / >=40次)的打工店铺自动补发限定气泡与头像框
+    try {
+      const _jLv = config.puppyJobLevels || {};
+      const _jRwMap = {
+        boba: { kind: 'bubble', id: 'bub_job_boba' },
+        bakery: { kind: 'avatarframe', id: 'af_job_bakery' },
+        florist: { kind: 'bubble', id: 'bub_job_florist' },
+        bookshop: { kind: 'avatarframe', id: 'af_job_bookshop' },
+      };
+      config.puppyJobMasterClaimed = config.puppyJobMasterClaimed || {};
+      config.puppyOwnedBubbles = config.puppyOwnedBubbles || [];
+      config.puppyOwnedAvatarFrames = config.puppyOwnedAvatarFrames || [];
+      let _grantedAny = false;
+      Object.keys(_jRwMap).forEach(sid => {
+        if ((Number(_jLv[sid]) || 0) >= 40) {
+          const rw = _jRwMap[sid];
+          if (rw.kind === 'bubble' && !config.puppyOwnedBubbles.includes(rw.id)) {
+            config.puppyOwnedBubbles.push(rw.id);
+            _grantedAny = true;
+          }
+          if (rw.kind === 'avatarframe' && !config.puppyOwnedAvatarFrames.includes(rw.id)) {
+            config.puppyOwnedAvatarFrames.push(rw.id);
+            _grantedAny = true;
+          }
+          if (!config.puppyJobMasterClaimed[sid]) {
+            config.puppyJobMasterClaimed[sid] = true;
+            _grantedAny = true;
+          }
+        }
+      });
+      if (_grantedAny) saveConfig();
+    } catch (_) {}
     if (config.puppyEnabled && puppyEl && !puppyEl.classList.contains('active')) {
       startPuppy();
     }
