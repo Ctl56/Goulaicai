@@ -45491,8 +45491,8 @@
     fBar.style.cssText = 'display:flex;gap:3px;';
     [
       { id: 'all', lbl: `全部(${allList.length})` },
-      { id: 'made', lbl: `自己做的(${madeCnt})` },
-      { id: 'recv', lbl: `收到的(${recvCnt})` },
+      { id: 'made', lbl: `自制(${madeCnt})` },
+      { id: 'recv', lbl: `获赠(${recvCnt})` },
     ].forEach(f => {
       const fb = doc.createElement('button');
       fb.type = 'button';
@@ -45507,7 +45507,7 @@
     if (!filtered.length) {
       const emp = doc.createElement('div');
       emp.style.cssText = 'font-size:10px;opacity:0.75;padding:12px 4px;text-align:center;';
-      emp.textContent = bqDexFilter === 'recv' ? '还没有收到好友送来的花束哦~' : (bqDexFilter === 'made' ? '还没有自己亲手扎过花束哦~' : '还没有扎过花束哦，切到「花束工作台」亲手包一束吧~');
+      emp.textContent = bqDexFilter === 'recv' ? '还没有获赠过好友送来的花束哦~' : (bqDexFilter === 'made' ? '还没有自制过花束哦~' : '还没有扎过花束哦，切到「花束工作台」亲手包一束吧~');
       card.appendChild(emp);
     } else {
       const grid = doc.createElement('div');
@@ -51436,6 +51436,7 @@
           config.puppyBagHead2 = pal.h2 || '';
           config.puppyBagBorder = pal.bd || '';
           config.puppyBagFg = pal.fg || '';
+          config.puppyBagActivePalName = pal.name || `配色${idx + 1}`;
           saveConfig();
           applyPupCosmeticSkins();
           renderBagSkinCustomizer();
@@ -51498,6 +51499,7 @@
       bd: bagBorderInput?.value || '#bfa4ae',
       fg: config.puppyBagFg || '',
     });
+    config.puppyBagActivePalName = nm;
     if (bagPalNameInput) bagPalNameInput.value = '';
     saveConfig();
     renderBagSkinCustomizer();
@@ -51515,17 +51517,30 @@
   const bagPalCopyBtn = root.querySelector('#st-tb-bag-pal-copy');
   const bagPalPasteBtn = root.querySelector('#st-tb-bag-pal-paste');
   if (bagPalCopyBtn) bagPalCopyBtn.addEventListener('click', () => {
+    const curBg = (config.puppyBagBg || bagBgInput?.value || '#faf6f7').toLowerCase();
+    const curH1 = (config.puppyBagHead1 || bagHead1Input?.value || '#e8d5db').toLowerCase();
+    const curH2 = (config.puppyBagHead2 || bagHead2Input?.value || '#dfd0d8').toLowerCase();
+    const curBd = (config.puppyBagBorder || bagBorderInput?.value || '#bfa4ae').toLowerCase();
+    const curFg = (config.puppyBagFg || bagFgInput?.value || '#54444a').toLowerCase();
+    const matchedPal = (Array.isArray(config.puppyBagPalettes) ? config.puppyBagPalettes : []).find(p =>
+      String(p.bg || '').toLowerCase() === curBg &&
+      String(p.h1 || '').toLowerCase() === curH1 &&
+      String(p.h2 || '').toLowerCase() === curH2 &&
+      String(p.bd || '').toLowerCase() === curBd &&
+      (!p.fg || String(p.fg || '').toLowerCase() === curFg)
+    );
+    const activeName = (bagPalNameInput?.value || '').trim() || (matchedPal && matchedPal.name) || String(config.puppyBagActivePalName || '').trim() || '自定义配色';
     const payload = {
-      name: (bagPalNameInput?.value || '').trim() || '分享配色',
-      bg: config.puppyBagBg || bagBgInput?.value || '#faf6f7',
-      h1: config.puppyBagHead1 || bagHead1Input?.value || '#e8d5db',
-      h2: config.puppyBagHead2 || bagHead2Input?.value || '#dfd0d8',
-      bd: config.puppyBagBorder || bagBorderInput?.value || '#bfa4ae',
-      fg: config.puppyBagFg || bagFgInput?.value || '#54444a',
+      name: activeName,
+      bg: curBg,
+      h1: curH1,
+      h2: curH2,
+      bd: curBd,
+      fg: curFg,
     };
     const code = 'GLC_BAG:' + JSON.stringify(payload);
     copyVisitCodeReliable(code);
-    showPuppyBubble('已复制当前背包配色配方，发给好友粘贴就能一键套用~', 2600);
+    showPuppyBubble(`已复制配方「${activeName}」，发给好友粘贴就能一键套用~`, 2600);
   });
   if (bagPalPasteBtn) bagPalPasteBtn.addEventListener('click', () => {
     let pm = root.querySelector('#st-tb-bag-pal-paste-mask');
@@ -51574,6 +51589,7 @@
         config.puppyBagHead2 = pal.h2;
         config.puppyBagBorder = pal.bd;
         config.puppyBagFg = pal.fg;
+        config.puppyBagActivePalName = pal.name || '';
         if (alsoSave) {
           if (!Array.isArray(config.puppyBagPalettes)) config.puppyBagPalettes = [];
           config.puppyBagPalettes.push(pal);
