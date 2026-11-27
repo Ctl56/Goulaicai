@@ -1048,7 +1048,8 @@
     { id: 'ach_gacha_30', title: '扭蛋收藏家', desc: '累计扭蛋满 30 次，赠限定好运金骰发卡与扭蛋券 ×3', reward: 15, tier: 3, frame: 'gems', bonus: { acc: 'ach_dice_clip', tickets: 3 }, bg: 'linear-gradient(120deg,#f2e8ff,#e6f4ff,#fff0f6)', bd: '#9e82e6', fg: '#3b2478', icon: 'crown' },
     { id: 'ach_pet_200', title: '摸头大师', desc: '累计摸摸小狗满 200 次，赠暖绒云绵动态气泡框', reward: 15, tier: 3, frame: 'hearts', bonus: { bubble: 'bub_ach_fluff' }, bg: 'linear-gradient(120deg,#ffeaf2,#fff5e6,#ffedf6)', bd: '#eb8ca8', fg: '#782240', icon: 'paw' },
     { id: 'ach_job_coop_5', title: '最佳拍档汪', desc: '累计完成 5 次云端好友双狗拼班打工', reward: 15, tier: 3, frame: 'job_coop', bg: 'linear-gradient(120deg,#fff3e6,#ffe6ef,#f0f7ff)', bd: '#d98a6c', fg: '#6b3622', icon: 'ribbon_medal' },
-    { id: 'ach_job_reviews_all', title: '五星口碑王', desc: '集齐全部 4 家打工店铺的 16 条顾客好评', reward: 25, tier: 4, frame: 'job_reviews', bg: 'linear-gradient(115deg,#fff6dc,#ffe9f0,#eaf7ee)', bd: '#d49a3a', fg: '#5e3c0e', icon: 'diamond_cup' },
+    { id: 'ach_job_reviews_all', title: '五星口碑王', desc: '集齐全部 4 家打工店铺的 24 条顾客好评', reward: 25, tier: 4, frame: 'job_reviews', bg: 'linear-gradient(115deg,#fff6dc,#ffe9f0,#eaf7ee)', bd: '#d49a3a', fg: '#5e3c0e', icon: 'diamond_cup' },
+    { id: 'hidden_job_bad_4', title: '差评收集家', desc: '累计在打工店铺收集 4 条翻车差评，越挫越勇！', reward: 18, tier: 3, hidden: true, frame: 'job_bad_4', bg: 'linear-gradient(120deg,#f5eef2,#fdebe6,#eef0f7)', bd: '#b86c7a', fg: '#5c2633', icon: 'ribbon_medal' },
     { id: 'ach_wardrobe_30', title: '衣橱主理人', desc: '累计拥有 30 件装扮，赠高定丝绒金动态头像框', reward: 20, tier: 4, frame: 'pearl_lace', bonus: { avatarframe: 'af_ach_velvet' }, bg: 'linear-gradient(115deg,#f5e8ff,#ffeaf5,#fff6dc)', bd: '#c486d9', fg: '#54206e', icon: 'dress' },
     { id: 'hidden_night_owl', title: '午夜守望汪', desc: '凌晨时段仍与小狗相伴互动，赠扭蛋券 ×3', reward: 18, tier: 3, frame: 'moons', hidden: true, bonus: { tickets: 3 }, bg: 'linear-gradient(120deg,#e8eeff,#f0e8ff,#e6f6ff)', bd: '#7f92e0', fg: '#263470', icon: 'moon_ach' },
     { id: 'hidden_early_bird', title: '晨光早起汪', desc: '清晨时分准时来和小狗打招呼，赠扭蛋券 ×3', reward: 18, tier: 3, frame: 'clouds', hidden: true, bonus: { tickets: 3 }, bg: 'linear-gradient(120deg,#fff7d9,#ffede0,#eef8ff)', bd: '#e6a852', fg: '#6e3f08', icon: 'sun_smile_ico' },
@@ -2870,6 +2871,8 @@
     puppyJobReviewClaimed: {},
     puppyJobMasterClaimed: {},
     puppyJobUrgentCd: {},
+    puppyJobBadReviews: {},
+    puppyJobUrgentState: {},
     puppyBubbleMode: 'wrap',
     puppyGender: '',
     puppyGenderLocked: false,
@@ -5341,15 +5344,16 @@
       position: absolute;
       top: 1px;
       right: 1px;
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: #e8587a;
+      background: #ff3b6b;
       border: 1px solid #ffffff;
       pointer-events: none;
-      box-shadow: 0 0 3px rgba(232,88,122,0.55);
+      z-index: 4;
+      box-shadow: 0 0 4px rgba(255,59,107,0.65);
     }
-    .st-px-tab, .st-px-subtabs .st-px-btn { position: relative; }
+    .st-px-tab, .st-px-subtabs .st-px-btn { position: relative; overflow: visible !important; }
     #st-tb-guest-pop #st-gp-quote-box {
       background: var(--px-card, #ffffff);
       border: 1px solid var(--px-border, #bfa4ae);
@@ -7241,7 +7245,7 @@
     #st-tb-puppy-bubble.bub-dyn-crystal-tide, .st-tb-guest-bubble.bub-dyn-crystal-tide { background: linear-gradient(135deg,#ecfbff 0%,#eef3ff 35%,#f6eeff 68%,#ebfff8 100%); background-size: 240% 240%; animation: stBubSheen 4.3s ease infinite; border-color: #7cc4de; color: #244a63; box-shadow: 0 2px 10px rgba(124,196,222,0.28), inset 0 0 0 1px rgba(255,255,255,0.96); }
     #st-tb-puppy-bubble.bub-dyn-crystal-tide::after, .st-tb-guest-bubble.bub-dyn-crystal-tide::after { background: #ecfbff; border-color: #7cc4de; }
     #st-tb-puppy-bubble.bub-dyn-velvet-gold, .st-tb-guest-bubble.bub-dyn-velvet-gold { background: linear-gradient(135deg,#6b1e34 0%,#4f1426 38%,#7a263e 72%,#521528 100%); background-size: 240% 240%; animation: stBubSheen 4.4s ease infinite; border-color: #e6be68; color: #fff4d8; box-shadow: 0 2px 12px rgba(107,30,52,0.42), inset 0 0 0 1px rgba(255,236,184,0.65); }
-    #st-tb-puppy-bubble.bub-dyn-velvet-gold::after, .st-tb-guest-bubble.bub-dyn-velvet-gold::after { background: #5a182b; border-color: #e6be68; }
+    #st-tb-puppy-bubble.bub-dyn-velvet-gold::after, .st-tb-guest-bubble.bub-dyn-velvet-gold::after { bottom: -5px; width: 6px; height: 7px; background: #5a182b; border-top: none; border-left: none; border-right: 2px solid #e6be68; border-bottom: 2px solid #e6be68; z-index: 2; }
     @keyframes stBubSheen {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -20192,6 +20196,41 @@
         },
       ],
     },
+    // 差评收集家（隐藏成就）：右上皱巴巴一星小票 + 左下冒汗道歉小蝴蝶结（独特右上+左下构图）
+    hidden_job_bad_4: {
+      cls: 'bespoke-lux',
+      pieces: [
+        { pos: 'right:-8px;top:-7px;', w: 11, h: 11, anim: 'b-tilt', pal: { w: '#fff8f0', g: '#c7b8b0', r: '#d94e62', k: '#4d3a36' },
+          grid: [
+            '..ggggggg..',
+            '.gwwwwwwwg.',
+            '.gwrrwwwkg.',
+            '.gwrrwkkkg.',
+            '.gwwwwwwwg.',
+            '.gwkkkkkwg.',
+            '.gwwwwwwwg.',
+            '..gwggwg...',
+            '...........',
+            '...........',
+            '...........',
+          ]
+        },
+        { pos: 'left:-8px;bottom:-6px;', w: 11, h: 10, anim: 'b-wiggle', pal: { b: '#78c4f0', l: '#d6f2ff', p: '#e88aa0', w: '#fffdf7' },
+          grid: [
+            '....b......',
+            '...blb.....',
+            '...bbb.....',
+            '.pp...pp...',
+            'pppw.wppp..',
+            '.ppppp.....',
+            '..p.p......',
+            '...........',
+            '...........',
+            '...........',
+          ]
+        },
+      ],
+    },
     // 五星口碑王：左中复古柜台金铃铛 + 右下红印五星口碑戳（独特左中+右下构图）
     ach_job_reviews_all: {
       cls: 'bespoke-lux bespoke-glow',
@@ -23159,7 +23198,8 @@
       hidden_midnight_chef: Boolean(config.puppyStats?.midnightChef),
       hidden_job_boss: Object.values(config.puppyJobLevels || {}).some(v => (Number(v) || 0) >= 40),
       ach_job_coop_5: (config.puppyStats?.jobCoopCount || 0) >= 5,
-      ach_job_reviews_all: ['boba', 'bakery', 'florist', 'bookshop'].every(id => (config.puppyJobReviews?.[id] || []).length >= 4),
+      ach_job_reviews_all: ['boba', 'bakery', 'florist', 'bookshop'].every(id => (config.puppyJobReviews?.[id] || []).length >= 6),
+      hidden_job_bad_4: ['boba', 'bakery', 'florist', 'bookshop'].reduce((s, id) => s + ((config.puppyJobBadReviews?.[id] || []).length), 0) >= 4,
       lt_cook_100: (config.puppyKitchen?.cooked || 0) >= 100,
       lt_wish_50: (config.puppyWishlist?.totalDone || 0) >= 50,
       lt_toy_100: (config.puppyStats?.toyTotal || 0) >= 100,
@@ -23981,6 +24021,7 @@
     if (typeof syncStStreamingFps === 'function') syncStStreamingFps(config.perfStreamAdapt !== false);
     if (typeof syncChatPaintPause === 'function') syncChatPaintPause();
     if (open) {
+      try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
       syncPuppyBagUI();
       if (pupBagTab === 'game') restoreGameView();
       if (pupBagTab === 'adv') renderPupAdventure();
@@ -24264,7 +24305,7 @@
     freshNewWardItems.add(id);
     config.puppyFreshWardItems = Array.from(freshNewWardItems);
   };
-  const clearWardItemNew = (id) => {
+  var clearWardItemNew = (id) => {
     if (!id || !freshNewWardItems.has(id)) return false;
     freshNewWardItems.delete(id);
     config.puppyFreshWardItems = Array.from(freshNewWardItems);
@@ -25064,9 +25105,11 @@
       const wearingC = config[actKey] === item.id;
       if (ownedC) {
         config[actKey] = wearingC ? defVal : item.id;
+        if (!wearingC && typeof clearWardItemNew === 'function') clearWardItemNew(item.id);
         saveConfig();
         applyPupCosmeticSkins();
         renderPupShop();
+        if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
         setShopNotice(wearingC ? '已恢复默认外观' : `已启用【${item.name}】`);
         if (config.puppyEnabled) showPuppyBubble(wearingC ? getPersTalk('removeAcc') : getPersTalk('wearCos', item.name), 2000);
         return;
@@ -25080,12 +25123,13 @@
       }
       config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
       config[ownKey].push(item.id);
-      config[actKey] = item.id;
+      if (typeof markWardItemNew === 'function') markWardItemNew(item.id);
       saveConfig();
       updatePupStatBars();
       applyPupCosmeticSkins();
       renderPupShop();
-      setShopNotice(`已兑换并启用【${item.name}】`);
+      if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
+      setShopNotice(`已购入【${item.name}】，点「换上」可直接启用`);
       if (config.puppyEnabled) {
         setPuppyState('happy', 100);
         showPuppyBubble(getPersTalk('buyNew', item.name), 2200);
@@ -25098,9 +25142,11 @@
       const wearingB = config.puppyActiveShopBadge === item.id;
       if (ownedB) {
         config.puppyActiveShopBadge = wearingB ? '' : item.id;
+        if (!wearingB && typeof clearWardItemNew === 'function') clearWardItemNew(item.id);
         saveConfig();
         updatePupStatBars();
         renderPupShop();
+        if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
         setShopNotice(wearingB ? `已卸下铭牌 ${item.title}` : `已佩戴铭牌 ${item.title}`);
         if (config.puppyEnabled) showPuppyBubble(wearingB ? '卸下流光铭牌啦' : `戴上豪华铭牌【${item.title}】!`, 1800);
         return;
@@ -25114,11 +25160,11 @@
       }
       config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
       config.puppyOwnedBadges.push(item.id); markWardItemNew(item.id);
-      config.puppyActiveShopBadge = item.id;
       saveConfig();
       updatePupStatBars();
       renderPupShop();
-      setShopNotice(`已兑换并佩戴【${item.title}】`);
+      if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
+      setShopNotice(`已购入【${item.title}】，点「佩戴」可直接戴上`);
       if (config.puppyEnabled) {
         setPuppyState('happy', 110);
         showPuppyBubble(`戴上新买的流光铭牌【${item.title}】!`, 2200);
@@ -25171,10 +25217,12 @@
       if (kind === 'outfit') config.puppyOutfit = equipped ? 'none' : item.id;
       else if (kind === 'comp') config.puppyCompanion = equipped ? 'none' : item.id;
       else toggleEquipAcc(item.id);
+      if (!equipped && typeof clearWardItemNew === 'function') clearWardItemNew(item.id);
       saveConfig();
       renderPupWardrobe();
       renderPupShop();
       drawPuppyScene();
+      if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
       showPuppyBubble(equipped ? getPersTalk('removeOutfit') : getPersTalk('wearOutfit', item.name), 1900);
       return;
     }
@@ -25190,13 +25238,10 @@
     config.puppyCoins = curCoins - item.price; recordCoinsSpent(item.price);
     if (kind === 'outfit') {
       if (!config.puppyOwnedOutfits.includes(item.id)) { config.puppyOwnedOutfits.push(item.id); markWardItemNew(item.id); }
-      config.puppyOutfit = item.id;
     } else if (kind === 'comp') {
       if (!config.puppyOwnedCompanions.includes(item.id)) { config.puppyOwnedCompanions.push(item.id); markWardItemNew(item.id); }
-      config.puppyCompanion = item.id;
     } else {
       if (!config.puppyOwnedAccs.includes(item.id)) { config.puppyOwnedAccs.push(item.id); markWardItemNew(item.id); }
-      toggleEquipAcc(item.id);
     }
     saveConfig();
     updatePupStatBars();
@@ -43782,6 +43827,7 @@
   };
 
   const renderGarden = () => {
+    try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
     if (!gardenGridEl) return;
     if (!config.puppyGarden) config.puppyGarden = { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {} };
     const st = config.puppyGarden;
@@ -44215,10 +44261,21 @@
     if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
   };
 
-  const updateAdvJobTabBadges = () => {
+  var updateAdvJobTabBadges = () => {
     const now = Date.now();
     const advDone = Boolean(config.puppyAdventure && config.puppyAdventure.endAt && now >= config.puppyAdventure.endAt);
     const jobDone = Boolean(config.puppyJob && config.puppyJob.endAt && now >= config.puppyJob.endAt);
+    let gardenReady = false;
+    try {
+      const gst = config.puppyGarden || {};
+      if (gst.stage === 3) {
+        gardenReady = true;
+      } else if (gst.stage === 1 || gst.stage === 2) {
+        const potObj = (typeof GARDEN_POT_TIERS !== 'undefined' && GARDEN_POT_TIERS[gst.potLv || 0]) ? GARDEN_POT_TIERS[gst.potLv || 0] : { cdMult: 1 };
+        const waitMs = Math.round((gst.stage === 1 ? 30000 : 60000) * (potObj.cdMult || 1));
+        if (now - (gst.lastWaterAt || 0) >= waitMs) gardenReady = true;
+      }
+    } catch (_) {}
     const setDot = (el, show) => {
       if (!el) return;
       let d = el.querySelector('.st-px-tab-dot');
@@ -44233,6 +44290,8 @@
     setDot(root.querySelector('.st-px-tab[data-px-tab="adv"]'), advDone || jobDone);
     setDot(root.querySelector('[data-adv-tab="go"]'), advDone);
     setDot(root.querySelector('[data-adv-tab="job"]'), jobDone);
+    setDot(root.querySelector('.st-px-tab[data-px-tab="act"]'), gardenReady);
+    setDot(root.querySelector('[data-act-tab="garden"]'), gardenReady);
     const hasNewAcc = Array.isArray(config.puppyOwnedAccs) && config.puppyOwnedAccs.some(id => freshNewWardItems.has(id));
     const hasNewOut = Array.isArray(config.puppyOwnedOutfits) && config.puppyOwnedOutfits.some(id => freshNewWardItems.has(id));
     const hasNewCp = Array.isArray(config.puppyOwnedCompanions) && config.puppyOwnedCompanions.some(id => freshNewWardItems.has(id));
@@ -44241,7 +44300,7 @@
   if (win.__stAdvJobBadgeTimer) clearInterval(win.__stAdvJobBadgeTimer);
   win.__stAdvJobBadgeTimer = setInterval(() => {
     if (pupBagOpen && typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
-  }, 3000);
+  }, 1500);
 
   const progressPupWish = (wishId, delta = 1) => {
     const wl = ensureDailyWishlist();
@@ -53758,37 +53817,65 @@
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     };
     const getTodayUrgentJobIds = () => {
-      const ds = getJobDateStr();
-      let h = 0;
-      for (let i = 0; i < ds.length; i++) h = ((h * 31) + ds.charCodeAt(i)) >>> 0;
-      const ids = PUP_JOBS.map(x => x.id);
-      const i1 = h % ids.length;
-      const i2 = (i1 + 1 + ((h >>> 3) % (ids.length - 1))) % ids.length;
+      config.puppyJobUrgentState = config.puppyJobUrgentState || {};
       const nowMs = Date.now();
-      const cdMap = config.puppyJobUrgentCd || {};
+      let changed = false;
       const res = new Set();
-      [ids[i1], ids[i2]].forEach(id => {
-        if (nowMs >= (Number(cdMap[id]) || 0)) res.add(id);
+      PUP_JOBS.forEach(j => {
+        let st = config.puppyJobUrgentState[j.id];
+        if (!st || typeof st !== 'object') {
+          const appear = Math.random() < 0.38;
+          st = { active: appear, nextRollAt: appear ? 0 : nowMs + (3 + Math.random() * 3) * 3600000 };
+          config.puppyJobUrgentState[j.id] = st;
+          changed = true;
+        } else if (!st.active && nowMs >= (Number(st.nextRollAt) || 0)) {
+          // 冷却结束后随机概率出现，不保证必出
+          const appear = Math.random() < 0.42;
+          st.active = appear;
+          st.nextRollAt = appear ? 0 : nowMs + (3 + Math.random() * 3) * 3600000;
+          changed = true;
+        }
+        if (st.active) res.add(j.id);
       });
+      if (changed) saveConfig();
       return res;
     };
-    const JOB_OUTFIT_FIT_TIPS = {
-      boba: { tip: '日常/连体/斗篷或甜品丝带配饰', check: () => {
-        const o = String(config.puppyOutfit || ''); const accs = config.puppyAccs || [];
-        return /daily|onesie|sweater|overalls|apron|milk|boba|tea|berry|strawberry|matcha|honey|peach|sailor/.test(o) || accs.some(a => /cape_|ribbon|bow|bell|donut|egg|berry|strawberry|tea/.test(a));
-      }},
-      bakery: { tip: '日常/连体/围裙或小熊暖色配饰', check: () => {
-        const o = String(config.puppyOutfit || ''); const accs = config.puppyAccs || [];
-        return /toast|bread|cake|bear|honey|caramel|apron|knit|sweater|onesie|pajama/.test(o) || accs.some(a => /bear|honey|caramel|beret|bow|cape_caramel|cape_honey|cape_patchwork/.test(a));
-      }},
-      florist: { tip: '小裙子/斗篷或花叶蝴蝶配饰', check: () => {
-        const o = String(config.puppyOutfit || ''); const accs = config.puppyAccs || [];
-        return /dress|skirt|gown|lolita|sakura|daisy|tulip|clover|hanfu|kimono/.test(o) || accs.some(a => /flower|sakura|leaf|elf|clover|butterfly|rose|wisteria|lavender|cape_sakura|cape_forest/.test(a));
-      }},
-      bookshop: { tip: '学院/小裙/斗篷或眼镜贝雷帽配饰', check: () => {
-        const o = String(config.puppyOutfit || ''); const accs = config.puppyAccs || [];
-        return /preppy|plaid|knit|cardigan|cloak|skirt|uniform|vintage|retro|denim/.test(o) || accs.some(a => /glass|beret|scarf|quill|scroll|bag|cape_denim|cape_matcha|cape_music|cape_stained/.test(a));
-      }},
+    const getJobCoopBonusRange = (lv) => {
+      const n = Math.max(1, Math.floor(Number(lv) || 1));
+      if (n <= 1) return [1, 1];
+      if (n === 2) return [1, 2];
+      if (n === 3) return [2, 3];
+      if (n === 4) return [3, 4];
+      return [4, 5];
+    };
+    const JOB_OUTFIT_FIT_POOLS = {
+      boba: [
+        { tip: '日常/卫衣/水手服', check: () => /daily|sweater|overalls|sailor|preppy|peach|strawberry|milk|boba|tea/.test(String(config.puppyOutfit || '')) },
+        { tip: '甜品/丝带/蝴蝶结配饰', check: () => (config.puppyAccs || []).some(a => /ribbon|bow|bell|donut|egg|berry|strawberry|tea|candy/.test(a)) },
+        { tip: '任意小斗篷/披肩', check: () => (config.puppyAccs || []).some(a => /^(?:gacha_)?cape_/.test(a)) },
+      ],
+      bakery: [
+        { tip: '连体衣/毛衣/烘焙风衣服', check: () => /toast|bread|cake|bear|honey|caramel|knit|sweater|onesie|pajama|egg/.test(String(config.puppyOutfit || '')) },
+        { tip: '小熊/贝雷帽/暖色毛绒配饰', check: () => (config.puppyAccs || []).some(a => /bear|honey|caramel|beret|earmuff|scarf|cape_caramel|cape_honey/.test(a)) },
+        { tip: '格纹/拼布/奶油色系装扮', check: () => /plaid|cream|milk|vanilla|matcha/.test(String(config.puppyOutfit || '')) || (config.puppyAccs || []).some(a => /plaid|patchwork|cream|ivory|macaron/.test(a)) },
+      ],
+      florist: [
+        { tip: '小裙子/洛丽塔/碎花裙', check: () => /dress|skirt|gown|lolita|sakura|daisy|tulip|clover/.test(String(config.puppyOutfit || '')) },
+        { tip: '花朵/绿叶/蝴蝶类配饰', check: () => (config.puppyAccs || []).some(a => /flower|sakura|leaf|elf|clover|butterfly|rose|wisteria|lavender|forest/.test(a)) },
+        { tip: '薄纱/羽织/花系斗篷', check: () => /hanfu|kimono|haori|veil/.test(String(config.puppyOutfit || '')) || (config.puppyAccs || []).some(a => /gauze|shawl|cape_sakura|cape_forest|cape_wisteria|cape_rose/.test(a)) },
+      ],
+      bookshop: [
+        { tip: '学院/针织/复古格纹衣服', check: () => /preppy|plaid|knit|cardigan|cloak|uniform|vintage|retro|denim/.test(String(config.puppyOutfit || '')) },
+        { tip: '眼镜/围巾/包包/书卷配饰', check: () => (config.puppyAccs || []).some(a => /glass|beret|scarf|quill|scroll|bag|music/.test(a)) },
+        { tip: '牛仔/抹茶/燕麦针织斗篷', check: () => (config.puppyAccs || []).some(a => /cape_denim|cape_matcha|cape_stained|cape_music|cape_star|cape_goth/.test(a)) },
+      ],
+    };
+    const getTodayJobOutfitFit = (shopId) => {
+      const pool = JOB_OUTFIT_FIT_POOLS[shopId] || JOB_OUTFIT_FIT_POOLS.boba;
+      const key = getJobDateStr() + ':' + shopId;
+      let h = 0;
+      for (let i = 0; i < key.length; i++) h = ((h * 31) + key.charCodeAt(i)) >>> 0;
+      return pool[h % pool.length];
     };
     const JOB_MASTER_REWARDS = {
       boba: { kind: 'bubble', id: 'bub_job_boba', name: '[打工] 波霸奶盖泡' },
@@ -53802,24 +53889,50 @@
         { id: 'b2', user: '三分糖控', tag: '珍珠爆满', text: '点了三分糖多珍珠，它数珍珠数得超认真，一杯装得满满当当。' },
         { id: 'b3', user: '路过学生党', tag: '萌系杯贴', text: '本来路过只是想歇脚，结果被柜台后忙着贴杯贴的小狗萌到连买两杯。' },
         { id: 'b4', user: '奶茶老饕', tag: '王牌摇茶', text: '店长说这只小狗已经是摇茶王牌了，味道稳得一批，满分推荐！' },
+        { id: 'b5', user: '下午茶搭子', tag: '冰块精准', text: '要求少冰去茶沫，小狗居然真的数着冰块放进去，喝起来一点不水。' },
+        { id: 'b6', user: '夜班程序员', tag: '暖手热饮', text: '大晚上来买热红茶拿铁，它特意套了双层隔热杯套递给我，太贴心了。' },
       ],
       bakery: [
         { id: 'k1', user: '早八打工人', tag: '现烤可颂', text: '刚出炉的可颂酥到掉渣，小狗揉面师鼻尖沾了点面粉也太可爱了吧！' },
         { id: 'k2', user: '邻街画师', tag: '黄油麦香', text: '每天早上路过都能闻到它烤的黄油麦香，装袋还会系一个工整蝴蝶结。' },
         { id: 'k3', user: '甜品爱好者', tag: '精致裱花', text: '挤的奶油花居然一圈比一圈圆，这手艺比我还会做烘焙。' },
         { id: 'k4', user: '下班路人', tag: '治愈小票', text: '临走前小狗还递了张热乎乎的烤面包小票，心情瞬间被治愈了。' },
+        { id: 'k5', user: '吐司忠粉', tag: '拉丝软糯', text: '它揉出来的生吐司居然能拉出细丝，连面包边都软乎乎的。' },
+        { id: 'k6', user: '周末宝妈', tag: '贴心分切', text: '小朋友想吃碱水结，小狗主动帮忙切成了小块还画了张笑脸贴纸。' },
       ],
       florist: [
         { id: 'f1', user: '摄影师阿白', tag: '清晨露珠', text: '小狗帮我挑的洋桔梗配尤加利叶配色超温柔，花瓣上还带着清晨露珠。' },
         { id: 'f2', user: '送花常客', tag: '工整丝带', text: '它包花束时把丝带扯得笔直，送给朋友被夸了一整天。' },
         { id: 'f3', user: '散步路人', tag: '热情迎宾', text: '一进门就被它摇着尾巴迎宾，本来只买一支花，最后抱了一大束走。' },
         { id: 'f4', user: '园艺博主', tag: '花期超长', text: '这家店的花开得特别久，听说是小狗每天按时洒水唱小曲养出来的。' },
+        { id: 'f5', user: '婚礼筹备员', tag: '配色绝佳', text: '随口说了句想要浅粉渐变，小狗叼来三支不同深浅的玫瑰搭得绝美。' },
+        { id: 'f6', user: '租房青年', tag: '附赠养护卡', text: '买了一小束洋甘菊，花纸里还夹着小狗按爪印的换水提醒小卡片。' },
       ],
       bookshop: [
         { id: 's1', user: '旧书淘客', tag: '绝版宝藏', text: '找了好久的绝版书居然被小狗从书架顶层翻出来了，还帮我擦干净灰尘！' },
         { id: 's2', user: '手账女孩', tag: '爪印书签', text: '每本买走的书里都被它夹了一张手绘小爪印书签，细节太戳人了。' },
         { id: 's3', user: '午后读者', tag: '安静守店', text: '店里安安静静的，小狗理完书会乖乖趴在收银台边守着，氛围一百分。' },
         { id: 's4', user: '图书馆常客', tag: '精准指路', text: '分类排得比图书馆还整齐，问它书在哪一排直接用小爪子精准指路。' },
+        { id: 's5', user: '推理迷', tag: '宝藏推荐', text: '小狗用鼻子拱出来一本冷门老推理小说，回家一口气通宵看完了。' },
+        { id: 's6', user: '雨天避雨客', tag: '贴心包书', text: '外面突然下大雨，它给我的旧书套了防水牛皮纸袋才交到我手里。' },
+      ],
+    };
+    const JOB_BAD_REVIEWS = {
+      boba: [
+        { id: 'bb1', user: '被甩一身珍珠的哥们', tag: '翻车现场', text: '小狗摇茶太起劲没扣紧盖子，我白衬衫上多了七颗黑糖珍珠，看它委屈巴巴又舍不得骂。' },
+        { id: 'bb2', user: '控糖失败选手', tag: '齁甜暴击', text: '点的是微糖，它听成了三倍糖，喝一口直接把我甜到灵魂出窍！' },
+      ],
+      bakery: [
+        { id: 'kb1', user: '焦炭可颂受害者', tag: '烤过头了', text: '小狗盯烤箱盯到打瞌睡，递给我一个黑漆漆的可颂，敲桌子居然还邦邦响。' },
+        { id: 'kb2', user: '满头面粉的路人', tag: '面粉风暴', text: '它在橱窗里揉面打了个大喷嚏，我推门进来瞬间体验了一把沉浸式下雪。' },
+      ],
+      florist: [
+        { id: 'fb1', user: '光杆花束买家', tag: '剪秃啦', text: '说好帮我稍微修一下叶子，小狗咔嚓咔嚓太上头，最后递给我三根光秃秃的花茎。' },
+        { id: 'fb2', user: '湿鞋倒霉蛋', tag: '水漫花房', text: '它拿洒水壶追蝴蝶，转弯漂移直接把我帆布鞋浇了个透心凉。' },
+      ],
+      bookshop: [
+        { id: 'sb1', user: '被埋书山的人', tag: '多米诺书架', text: '小狗踮脚放书碰倒了一整排百科全书，差点把我俩一起埋在书堆里。' },
+        { id: 'sb2', user: '算错账的冤种', tag: '迷糊收银', text: '它偷偷看漫画看入迷，把我二十块的旧书找了五十块零钱，还是我提醒它退回去的。' },
       ],
     };
     const grantJobMasterRewardsIfEligible = () => {
@@ -53965,10 +54078,10 @@
             }
           }
           const isUrgentJob = Boolean(config.puppyJob && config.puppyJob.isUrgent);
-          const urgentBonus = (!messedUp && isUrgentJob) ? (3 + Math.floor(Math.random() * 3)) : 0;
+          const urgentBonus = (!messedUp && isUrgentJob) ? (2 + Math.floor(Math.random() * 3)) : 0;
           if (isUrgentJob) {
-            config.puppyJobUrgentCd = config.puppyJobUrgentCd || {};
-            config.puppyJobUrgentCd[jObj.id] = Date.now() + 12 * 3600 * 1000;
+            config.puppyJobUrgentState = config.puppyJobUrgentState || {};
+            config.puppyJobUrgentState[jObj.id] = { active: false, nextRollAt: Date.now() + 12 * 3600 * 1000 };
           }
           let urgentSnackName = '';
           if (!messedUp && isUrgentJob && Array.isArray(SHOP_PUP_SNACKS) && SHOP_PUP_SNACKS.length && Math.random() < 0.6) {
@@ -53983,7 +54096,9 @@
           const isOutfitFit = Boolean(config.puppyJob && config.puppyJob.outfitFit);
           const outfitBonus = (!messedUp && isOutfitFit) ? 2 : 0;
           const coopFriendName = (config.puppyJob && config.puppyJob.coopFriendName) ? String(config.puppyJob.coopFriendName) : '';
-          const coopBonus = (!messedUp && coopFriendName) ? (3 + Math.floor(Math.random() * 2)) : 0;
+          const coopMin = Number(config.puppyJob && config.puppyJob.coopBonusMin) || 1;
+          const coopMax = Number(config.puppyJob && config.puppyJob.coopBonusMax) || coopMin;
+          const coopBonus = (!messedUp && coopFriendName) ? (coopMin + Math.floor(Math.random() * (coopMax - coopMin + 1))) : 0;
           let totalWage = Math.max(1, baseWage + tip + urgentBonus + outfitBonus + coopBonus - penalty);
           const failMsgPools = {
             boba: [
@@ -54038,14 +54153,24 @@
             config.puppyStats.jobCoopCount = (config.puppyStats.jobCoopCount || 0) + 1;
           }
           let unlockedReview = null;
+          let unlockedBadReview = null;
           if (!messedUp) {
             config.puppyJobReviews = config.puppyJobReviews || {};
             const gotList = Array.isArray(config.puppyJobReviews[jObj.id]) ? config.puppyJobReviews[jObj.id] : [];
             const poolRev = (JOB_CUSTOMER_REVIEWS[jObj.id] || []).filter(r => !gotList.includes(r.id));
-            if (poolRev.length && (isGoodFit || gotTip || Math.random() < 0.65)) {
+            if (poolRev.length && (isGoodFit || gotTip || Math.random() < 0.68)) {
               unlockedReview = pick(poolRev);
               gotList.push(unlockedReview.id);
               config.puppyJobReviews[jObj.id] = gotList;
+            }
+          } else {
+            config.puppyJobBadReviews = config.puppyJobBadReviews || {};
+            const gotBad = Array.isArray(config.puppyJobBadReviews[jObj.id]) ? config.puppyJobBadReviews[jObj.id] : [];
+            const poolBad = (JOB_BAD_REVIEWS[jObj.id] || []).filter(r => !gotBad.includes(r.id));
+            if (poolBad.length) {
+              unlockedBadReview = pick(poolBad);
+              gotBad.push(unlockedBadReview.id);
+              config.puppyJobBadReviews[jObj.id] = gotBad;
             }
           }
           const rkAfter = getJobRankInfo(jObj);
@@ -54078,7 +54203,9 @@
           const promoHtml = promoted ? `<div style="font-size:11px;font-weight:700;color:#b8456c;margin-top:3px;">恭喜晋升本店 Lv.${rkAfter.lv}【${rkAfter.title}】! 基础工资升至 ${rkAfter.wage[0]}~${rkAfter.wage[1]} 币!</div>` : '';
           const masterHtml = newlyMaster.length ? `<div style="font-size:10.5px;font-weight:700;color:#8a4f1f;margin-top:3px;">解锁满级店长赠礼：${newlyMaster.join('、')}（已放入衣柜）</div>` : '';
           const coopHtml = (!messedUp && coopFriendName) ? `<div style="font-size:10.5px;color:#5a4a7a;margin-top:3px;">[双狗拼班] ${getPupName()} 和 ${escapeHtmlSimple(coopFriendName)} 默契配合下班，领到双人默契津贴 +${coopBonus}币！</div>` : '';
-          const revHtml = unlockedReview ? `<div style="font-size:10px;color:#3d6b47;margin-top:3px;">[新顾客好评] ${unlockedReview.tag}：「${unlockedReview.text}」</div>` : '';
+          const revHtml = unlockedReview
+            ? `<div style="font-size:10px;color:#3d6b47;margin-top:3px;">[新顾客好评] ${unlockedReview.user}：「${unlockedReview.text}」</div>`
+            : (unlockedBadReview ? `<div style="font-size:10px;color:#b83b52;margin-top:3px;">[新翻车差评] ${unlockedBadReview.user}：「${unlockedBadReview.text}」</div>` : '');
           const bonusParts = [];
           if (tip) bonusParts.push(`小费 +${tip}币`);
           if (urgentBonus) bonusParts.push(`急招补贴 +${urgentBonus}币${urgentSnackName ? `(赠${urgentSnackName})` : ''}`);
@@ -54091,7 +54218,7 @@
             <div style="font-size:11px;font-weight:700;">基础 +${baseWage}币${bonusParts.length ? ' · ' + bonusParts.join(' · ') : ''} · 实发 +${totalWage}币${failType === 'pause' ? ' · 停工反省 1 小时' : (failType === 'deduct' ? ' · 休息 20 分钟' : '')}</div>
             ${coopHtml}${revHtml}${promoHtml}${masterHtml}
           `;
-          updatePupStatBars(); syncPuppyBagUI();
+          updatePupStatBars(); syncPuppyBagUI(); if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
         });
         statusEl.appendChild(claimBtn);
         startBtn.disabled = true;
@@ -54166,14 +54293,13 @@
       const selNext = selRk.nextNeed ? `还差 ${selRk.nextNeed - selRk.cnt} 次晋升` : '已满级(已赠限定外观)';
       const durSec = Math.round(selRk.durMs / 1000);
       const restMin = Math.round(selRk.restMs / 60000);
-      const fitInfo = JOB_OUTFIT_FIT_TIPS[sel.id];
+      const fitInfo = getTodayJobOutfitFit(sel.id);
       const isFitNow = Boolean(fitInfo && fitInfo.check());
       const isUrgNow = urgentSet.has(sel.id);
-      const totalRevCnt = ['boba', 'bakery', 'florist', 'bookshop'].reduce((acc, k) => acc + ((config.puppyJobReviews?.[k] || []).length), 0);
       statusEl.innerHTML = `
         <div style="font-size:10.5px;font-weight:700;">已选【${sel.name}】Lv.${selRk.lv} ${selRk.title}（${selRk.wage[0]}~${selRk.wage[1]}币 · ${selNext}）</div>
-        <div style="font-size:9.5px;opacity:0.86;margin-top:2px;">时长 ${durSec}秒 / 歇爪 ${restMin}分钟${isUrgNow ? ' · <b style="color:#c93d54;">今日急招(+3~5币/概率赠零食)</b>' : ''}</div>
-        <div style="font-size:9.5px;margin-top:2px;color:${isFitNow ? '#2e7d47' : 'inherit'};">${isFitNow ? '穿搭契合：已触发 (+2币)' : `穿搭契合：换上${fitInfo ? fitInfo.tip : ''}可 +2币`}</div>
+        <div style="font-size:9.5px;opacity:0.86;margin-top:2px;">时长 ${durSec}秒 / 歇爪 ${restMin}分钟${isUrgNow ? ' · <b style="color:#c93d54;">随机急招(+2~4币/概率赠零食)</b>' : ''}</div>
+        <div style="font-size:9.5px;margin-top:2px;color:${isFitNow ? '#2e7d47' : 'inherit'};">${isFitNow ? `今日穿搭契合：已触发 (+2币 · ${fitInfo.tip})` : `今日穿搭契合：穿${fitInfo ? fitInfo.tip : ''}可 +2币`}</div>
       `;
       const stage = doc.createElement('canvas');
       stage.width = 128; stage.height = 54;
@@ -54242,13 +54368,17 @@
             if (!fid) return;
             const usedToday = Boolean(config.puppyJobCoopDaily && config.puppyJobCoopDaily[fid] === todayDs);
             const fName = (config.puppyFriendRemarks && config.puppyFriendRemarks[fid]) || fr.name || '好友小狗';
+            const bInfo = typeof getFriendBondInfo === 'function' ? getFriendBondInfo(fr) : { lv: 1 };
+            const fLv = Number(bInfo && bInfo.lv) || 1;
+            const [bMin, bMax] = getJobCoopBonusRange(fLv);
+            const bTxt = bMin === bMax ? `+${bMin}币` : `+${bMin}~${bMax}币`;
             const isSel = win.__stJobCoopFid === fid;
             const row = doc.createElement('button');
             row.type = 'button';
             row.disabled = usedToday;
             row.className = 'st-px-btn' + (isSel ? ' care' : '');
             row.style.cssText = `width:100%;height:30px;font-size:10.5px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;opacity:${usedToday ? '0.52' : '1'};`;
-            row.innerHTML = `<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fName)}</span><span style="font-size:9px;flex-shrink:0;">${usedToday ? '今日已拼班' : (isSel ? '已选(+3~4币)' : '可拼班 +3~4币')}</span>`;
+            row.innerHTML = `<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fName)} <span style="font-size:9px;opacity:0.78;">Lv.${fLv}</span></span><span style="font-size:9px;flex-shrink:0;">${usedToday ? '今日已拼班' : (isSel ? `已选(${bTxt})` : `可拼班 ${bTxt}`)}</span>`;
             row.addEventListener('click', (e2) => {
               if (usedToday) return;
               win.__stJobCoopFid = fid;
@@ -54269,7 +54399,7 @@
       revWallBtn.type = 'button';
       revWallBtn.className = 'st-px-btn';
       revWallBtn.style.cssText = 'height:24px;min-height:24px;padding:0 6px;font-size:10px;line-height:22px;width:100%;box-sizing:border-box;white-space:nowrap;';
-      revWallBtn.textContent = `本店好评墙 (${curShopRevCnt}/4)`;
+      revWallBtn.textContent = `本店好评墙 (${curShopRevCnt}/6)`;
       revWallBtn.addEventListener('click', (ev) => {
         ev.stopPropagation();
         let mask = root.querySelector('#st-tb-job-rev-mask');
@@ -54289,9 +54419,10 @@
         const renderRevModalBody = () => {
           card.innerHTML = '';
           const totalGot = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
+          const totalBad = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobBadReviews?.[k] || []).length), 0);
           const head = doc.createElement('div');
-          head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:12px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
-          head.innerHTML = `<span>店铺顾客好评墙 · 总进度 ${totalGot}/16</span>`;
+          head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
+          head.innerHTML = `<span>店铺口碑墙 · 好评 ${totalGot}/24 · 差评 ${totalBad}/8</span>`;
           const clsBtn = doc.createElement('button');
           clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
           clsBtn.addEventListener('click', closeRevModal);
@@ -54308,7 +54439,7 @@
             tb.type = 'button';
             tb.className = 'st-px-btn' + (activeRevShop === j.id ? ' care' : '');
             tb.style.cssText = 'height:22px;padding:0 3px;font-size:9.5px;';
-            tb.textContent = `${shortShopNames[j.id] || j.name}(${gLen}/4)`;
+            tb.textContent = `${shortShopNames[j.id] || j.name}(${gLen}/6)`;
             tb.addEventListener('click', (e2) => { e2.stopPropagation(); activeRevShop = j.id; renderRevModalBody(); });
             tabBar.appendChild(tb);
           });
@@ -54390,6 +54521,30 @@
             }
             listWrap.appendChild(note);
           });
+          // 本店翻车差评区（集满 4 条解锁隐藏成就）
+          const badRevs = JOB_BAD_REVIEWS[jObjCur.id] || [];
+          const gotBadIds = Array.isArray(config.puppyJobBadReviews?.[jObjCur.id]) ? config.puppyJobBadReviews[jObjCur.id] : [];
+          const badSub = doc.createElement('div');
+          badSub.style.cssText = 'font-size:10px;font-weight:700;color:#b83b52;margin-top:6px;padding-top:5px;border-top:1px dashed var(--px-border,#bfa4ae);';
+          badSub.textContent = `翻车差评记录 (${gotBadIds.length}/${badRevs.length}) · 全店累计 4 条解锁隐藏成就`;
+          listWrap.appendChild(badSub);
+          badRevs.forEach((br, bIdx) => {
+            const hasB = gotBadIds.includes(br.id);
+            const bNote = doc.createElement('div');
+            bNote.style.cssText = `padding:6px 8px;background:var(--px-card,#fff);border:1.5px dashed ${hasB ? '#d46a7e' : 'var(--px-border,#d0c0c6)'};opacity:${hasB ? '1' : '0.55'};`;
+            if (hasB) {
+              bNote.innerHTML = `
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;font-size:9.5px;">
+                  <span style="font-weight:700;color:#a83349;">[差评#${bIdx + 1}] ${br.user}</span>
+                  <span style="padding:0 5px;background:#fff0f3;border:1px solid #d46a7e;color:#a83349;font-size:8.5px;font-weight:700;">${br.tag} · 1.0分</span>
+                </div>
+                <div style="font-size:10px;line-height:1.48;">「${br.text}」</div>
+              `;
+            } else {
+              bNote.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">[差评#${bIdx + 1}] 未收录 · 打工偶尔手忙脚乱翻车时会收到顾客吐槽~</div>`;
+            }
+            listWrap.appendChild(bNote);
+          });
           card.appendChild(listWrap);
         };
         renderRevModalBody();
@@ -54418,21 +54573,36 @@
       const baseDurMs = cntNow >= 40 ? 75000 : (cntNow >= 15 ? 60000 : 45000);
       const dNow = new Date();
       const todayDs = `${dNow.getFullYear()}-${String(dNow.getMonth() + 1).padStart(2, '0')}-${String(dNow.getDate()).padStart(2, '0')}`;
-      let h = 0;
-      for (let i = 0; i < todayDs.length; i++) h = ((h * 31) + todayDs.charCodeAt(i)) >>> 0;
-      const jIds = PUP_JOBS.map(x => x.id);
-      const u1 = h % jIds.length, u2 = (u1 + 1 + ((h >>> 3) % (jIds.length - 1))) % jIds.length;
-      const urgCdUntil = Number((config.puppyJobUrgentCd && config.puppyJobUrgentCd[sel.id]) || 0);
-      const isUrgent = (sel.id === jIds[u1] || sel.id === jIds[u2]) && Date.now() >= urgCdUntil;
+      const isUrgent = Boolean(config.puppyJobUrgentState && config.puppyJobUrgentState[sel.id] && config.puppyJobUrgentState[sel.id].active);
       const oStr = String(config.puppyOutfit || ''), aArr = config.puppyAccs || [];
-      const outfitFit = sel.id === 'boba'
-        ? (/daily|onesie|sweater|overalls|apron|milk|boba|tea|berry|strawberry|matcha|honey|peach|sailor/.test(oStr) || aArr.some(a => /cape_|ribbon|bow|bell|donut|egg|berry|strawberry|tea/.test(a)))
-        : (sel.id === 'bakery'
-          ? (/toast|bread|cake|bear|honey|caramel|apron|knit|sweater|onesie|pajama/.test(oStr) || aArr.some(a => /bear|honey|caramel|beret|bow|cape_caramel|cape_honey|cape_patchwork/.test(a)))
-          : (sel.id === 'florist'
-            ? (/dress|skirt|gown|lolita|sakura|daisy|tulip|clover|hanfu|kimono/.test(oStr) || aArr.some(a => /flower|sakura|leaf|elf|clover|butterfly|rose|wisteria|lavender|cape_sakura|cape_forest/.test(a)))
-            : (/preppy|plaid|knit|cardigan|cloak|skirt|uniform|vintage|retro|denim/.test(oStr) || aArr.some(a => /glass|beret|scarf|quill|scroll|bag|cape_denim|cape_matcha|cape_music|cape_stained/.test(a)))));
-      let coopFriendId = '', coopFriendName = '';
+      const _fitKey = todayDs + ':' + sel.id;
+      let _fh = 0;
+      for (let i = 0; i < _fitKey.length; i++) _fh = ((_fh * 31) + _fitKey.charCodeAt(i)) >>> 0;
+      const _fitIdx = _fh % 3;
+      const _fitCheckers = {
+        boba: [
+          () => /daily|sweater|overalls|sailor|preppy|peach|strawberry|milk|boba|tea/.test(oStr),
+          () => aArr.some(a => /ribbon|bow|bell|donut|egg|berry|strawberry|tea|candy/.test(a)),
+          () => aArr.some(a => /^(?:gacha_)?cape_/.test(a)),
+        ],
+        bakery: [
+          () => /toast|bread|cake|bear|honey|caramel|knit|sweater|onesie|pajama|egg/.test(oStr),
+          () => aArr.some(a => /bear|honey|caramel|beret|earmuff|scarf|cape_caramel|cape_honey/.test(a)),
+          () => /plaid|cream|milk|vanilla|matcha/.test(oStr) || aArr.some(a => /plaid|patchwork|cream|ivory|macaron/.test(a)),
+        ],
+        florist: [
+          () => /dress|skirt|gown|lolita|sakura|daisy|tulip|clover/.test(oStr),
+          () => aArr.some(a => /flower|sakura|leaf|elf|clover|butterfly|rose|wisteria|lavender|forest/.test(a)),
+          () => /hanfu|kimono|haori|veil/.test(oStr) || aArr.some(a => /gauze|shawl|cape_sakura|cape_forest|cape_wisteria|cape_rose/.test(a)),
+        ],
+        bookshop: [
+          () => /preppy|plaid|knit|cardigan|cloak|uniform|vintage|retro|denim/.test(oStr),
+          () => aArr.some(a => /glass|beret|scarf|quill|scroll|bag|music/.test(a)),
+          () => aArr.some(a => /cape_denim|cape_matcha|cape_stained|cape_music|cape_star|cape_goth/.test(a)),
+        ],
+      };
+      const outfitFit = Boolean((_fitCheckers[sel.id] || _fitCheckers.boba)[_fitIdx]());
+      let coopFriendId = '', coopFriendName = '', coopBonusMin = 1, coopBonusMax = 1;
       const pickedFid = String(win.__stJobCoopFid || '').trim();
       win.__stJobCoopFid = '';
       if (pickedFid) {
@@ -54443,6 +54613,10 @@
           if (frObj) {
             coopFriendId = pickedFid;
             coopFriendName = (config.puppyFriendRemarks && config.puppyFriendRemarks[pickedFid]) || frObj.name || '好友小狗';
+            const bInfo = typeof getFriendBondInfo === 'function' ? getFriendBondInfo(frObj) : { lv: 1 };
+            const fLv = Number(bInfo && bInfo.lv) || 1;
+            const rng = fLv <= 1 ? [1, 1] : (fLv === 2 ? [1, 2] : (fLv === 3 ? [2, 3] : (fLv === 4 ? [3, 4] : [4, 5])));
+            coopBonusMin = rng[0]; coopBonusMax = rng[1];
             config.puppyJobCoopDaily[pickedFid] = todayDs;
           }
         }
@@ -54453,7 +54627,7 @@
         extraDurMs = 5 * 60 * 1000;
         config.puppyDarkBuff = null;
       }
-      config.puppyJob = { id: sel.id, startedAt: Date.now(), endAt: Date.now() + baseDurMs + extraDurMs, baseDurMs, extraDurMs, isUrgent, outfitFit, coopFriendId, coopFriendName };
+      config.puppyJob = { id: sel.id, startedAt: Date.now(), endAt: Date.now() + baseDurMs + extraDurMs, baseDurMs, extraDurMs, isUrgent, outfitFit, coopFriendId, coopFriendName, coopBonusMin, coopBonusMax };
       saveConfig();
       showPuppyBubble(extraDurMs ? `呜……吃太撑胃胀，去${sel.name}打工得多花 5 分钟才行……` : (coopFriendName ? `拉上 ${coopFriendName} 一起去${sel.name}拼班打工啦~` : getPersTalk('jobGo', sel.name)), 2600);
       renderJobPanel();
