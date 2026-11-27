@@ -33212,7 +33212,7 @@
     rtA.timer = 480;
   };
 
-  const showOneTimePanelTip = (statKey, title, bodyText) => {
+  var showOneTimePanelTip = (statKey, title, bodyText) => {
     config.puppyStats = config.puppyStats || {};
     if (config.puppyStats[statKey]) return;
     config.puppyStats[statKey] = true;
@@ -51513,7 +51513,7 @@
       config.perfFoldKeep = config.perfFoldEnabled ? (Number(config.perfFoldCount) || 20) : 0;
       saveConfig();
       applyPerfOptimizer();
-      if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+      try { if (typeof syncQuickDockUI === 'function') syncQuickDockUI(); } catch (_) {}
     });
   }
   if (perfFoldSel) {
@@ -58620,7 +58620,7 @@
     }
     if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
   };
-  const togglePuppyDesktopHidden = () => {
+  var togglePuppyDesktopHidden = () => {
     if (!config.puppyEnabled) return;
     config.puppyDesktopHidden = !Boolean(config.puppyDesktopHidden);
     saveConfig();
@@ -66644,7 +66644,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     syncQuickDockUI();
   };
 
-  const syncQuickDockUI = () => {
+  var syncQuickDockUI = () => {
     if (!quickDockEl) return;
     const isAct = {
       imm: Boolean(config.immersive),
