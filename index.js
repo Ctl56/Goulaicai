@@ -6165,6 +6165,8 @@
     }
     .st-px-tab:last-child { border-right: none; }
     .st-px-tab.active { background: var(--px-border, #bfa4ae); color: #ffffff; }
+    .st-px-tab:first-child.active { box-shadow: inset 2px 0 0 var(--px-bg-soft, #f3ebee); }
+    .st-px-tab:last-child.active { box-shadow: inset -2px 0 0 var(--px-bg-soft, #f3ebee); }
 
     .st-px-body {
       padding: 8px;
@@ -16390,7 +16392,7 @@
   };
 
   // 绘制原有 10 款免费配饰 + 22 款商城特别像素配饰
-  const drawPupAccessory = (acc, hx, hy, ox, oy, isFlatPose, isDead, isSitPose = false) => {
+  const drawPupAccessory = (acc, hx, hy, ox, oy, isFlatPose, isDead, isSitPose = false, isStretchPose = false) => {
     if (!acc || acc === 'none' || isDead) return;
     const _accOff = config.puppyAccOffsets && config.puppyAccOffsets[acc];
     const _tr = activePxCtx && typeof activePxCtx.getTransform === 'function' ? activePxCtx.getTransform() : null;
@@ -17780,6 +17782,14 @@
       // 镂空前襟斗篷：站立/坐下左右披肩自然垂坠、中间身子留空可叠穿；趴下/睡觉时优雅盖在小狗背上如小披毯，绝不变裸体！
       const cy = oy + 8;
       const drawOpenCapeBase = (cMain, cHi, cHem, cHem2, cClasp) => {
+        if (isStretchPose) {
+          // 伸懒腰：后背抬起在 ox+2..ox+7, oy+5..oy+8，头部伏低在右侧 ox+9..ox+15，斗篷精准披在抬起的背部上
+          for (let x = ox + 3; x <= ox + 7; x++) px(x, oy + 5, (x === ox + 7) ? (cClasp || cMain) : cMain);
+          for (let x = ox + 2; x <= ox + 7; x++) px(x, oy + 6, (x === ox + 4 || x === ox + 6) ? cHi : cMain);
+          for (let x = ox + 2; x <= ox + 7; x++) px(x, oy + 7, (x === ox + 3 || x === ox + 5) ? cHi : cMain);
+          for (let x = ox + 2; x <= ox + 7; x++) px(x, oy + 8, (x % 2 === 0) ? cHem : cHem2);
+          return;
+        }
         if (isFlatPose) {
           // 趴下/睡觉：严格贴合背部 (ox+1..ox+6, oy+7..oy+10)，绝不越过 ox+6 遮挡小狗头部与眼睛
           for (let x = ox + 2; x <= ox + 6; x++) px(x, oy + 7, (x === ox + 6) ? (cClasp || cMain) : cMain);
@@ -27032,7 +27042,7 @@
 
     // 双配饰（最多同时佩戴 2 个）+ 独立漂浮小跟班
     if (Array.isArray(config.puppyAccs)) {
-      config.puppyAccs.forEach(accId => drawPupAccessory(accId, hx, hy, ox, oy, isFlatPose, isDead, isSitPose));
+      config.puppyAccs.forEach(accId => drawPupAccessory(accId, hx, hy, ox, oy, isFlatPose, isDead, isSitPose, isStretchPose));
     }
     drawPupCompanion(config.puppyCompanion, ox, oy, isDead);
 
@@ -31329,7 +31339,10 @@
   const syncFreshCuriosConfig = () => {
     config.puppyFreshCurios = Array.from(freshNewCurios);
   };
-  const freshNewPhotos = new Set();
+  const freshNewPhotos = new Set((Array.isArray(config.puppyFreshPhotos) ? config.puppyFreshPhotos : []).filter(id => id && !String(id).startsWith('dual:')));
+  const syncFreshPhotosConfig = () => {
+    config.puppyFreshPhotos = Array.from(freshNewPhotos);
+  };
   let lastAdvUnboxing = null;
   let advTickTimer = null;
 
@@ -31933,7 +31946,9 @@
         // 东西颠丢了，但抓拍了一张照片回来
         const ph = pick(PUP_PHOTOS.filter(p => p.dest === dest.id));
         const isNewPh = !config.puppyAlbum[ph.id];
-        freshNewPhotos.add(ph.id); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
+        gotPhoto = ph;
+        isNewPhoto = isNewPh;
+        freshNewPhotos.add(ph.id); syncFreshPhotosConfig(); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
         const prevRec = config.puppyAlbum[ph.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
@@ -31960,7 +31975,9 @@
         if (isLong) {
           const item = rollAdventureCurio(dest.id, false);
           const isNew = !config.puppyCurios[item.id];
+          if (isNew) { freshNewCurios.add(item.id); syncFreshCuriosConfig(); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {} }
           config.puppyCurios[item.id] = (config.puppyCurios[item.id] || 0) + 1;
+          if (Array.isArray(gotCurios)) gotCurios.push({ item, isNew });
           coinGain = 1;
           summary = `半路遇上阵雨丢了一袋宝贝... 只护住${isNew ? '[新]' : ''}${item.name} (+1币)`;
         } else {
@@ -31975,7 +31992,9 @@
         // 相机镜头糊了照片没洗出来，但带回 1 件小收藏品
         const item = rollAdventureCurio(dest.id, isLong);
         const isNew = !config.puppyCurios[item.id];
+        if (isNew) { freshNewCurios.add(item.id); syncFreshCuriosConfig(); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {} }
         config.puppyCurios[item.id] = (config.puppyCurios[item.id] || 0) + 1;
+        if (Array.isArray(gotCurios)) gotCurios.push({ item, isNew });
         coinGain = 1;
         summary = `爪子按糊了快门照片没洗出来... 不过捡回了${isNew ? '[新]' : ''}${item.name} (+1币)`;
       }
@@ -32017,7 +32036,7 @@
         const unowned = destPhotos.filter(p => !config.puppyAlbum[p.id]);
         gotPhoto = (gearId === 'filter_cam' && unowned.length) ? pick(unowned) : pick(destPhotos);
         isNewPhoto = !config.puppyAlbum[gotPhoto.id];
-        freshNewPhotos.add(gotPhoto.id); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
+        freshNewPhotos.add(gotPhoto.id); syncFreshPhotosConfig(); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
         const prevRec = config.puppyAlbum[gotPhoto.id];
         const shotDate = getTodayStr();
         const shotLook = adv.look ? JSON.parse(JSON.stringify(adv.look)) : null;
@@ -36061,7 +36080,7 @@
         };
         if (extraOpts?.albumTarget === 'snap') {
           if (!Array.isArray(config.puppySnapAlbum)) config.puppySnapAlbum = [];
-          config.puppySnapAlbum.unshift(entry); config.puppyFreshSnap = true; if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
+          config.puppySnapAlbum.unshift(entry);
           if (config.puppySnapAlbum.length > 64) config.puppySnapAlbum = config.puppySnapAlbum.slice(0, 64);
           let firstSnapMsg = '成片已存入咔嚓相册！';
           const todayS = getTodayStr();
@@ -36755,13 +36774,9 @@
     clearTimeout(cloudNoticeFlushTimer);
     cloudNoticeFlushTimer = setTimeout(() => flushCloudNoticeQueue(), 260);
   };
-  let _fgNoticeTimer = null;
   const scheduleFgNoticeFlush = () => {
     if (doc.hidden) return;
-    clearTimeout(_fgNoticeTimer);
-    _fgNoticeTimer = setTimeout(() => {
-      if (!doc.hidden) requestAnimationFrame(() => flushCloudNoticeQueue());
-    }, 950);
+    flushCloudNoticeQueue();
   };
   doc.addEventListener('visibilitychange', () => { if (!doc.hidden) scheduleFgNoticeFlush(); });
   win.addEventListener('focus', () => { scheduleFgNoticeFlush(); });
@@ -38683,22 +38698,16 @@
     if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
   }, 2500);
   let _fgCloudSyncAt = 0;
-  let _fgCloudSyncTimer = null;
   const scheduleFgCloudSync = () => {
     if (doc.hidden) return;
     const now = Date.now();
-    if (now - _fgCloudSyncAt < 2500) return;
+    if (now - _fgCloudSyncAt < 300) return;
     _fgCloudSyncAt = now;
-    clearTimeout(_fgCloudSyncTimer);
-    _fgCloudSyncTimer = setTimeout(() => {
-      if (doc.hidden) return;
-      requestAnimationFrame(() => {
-        if (!lastCloudPushSig) pushMyCloudPupNow(true);
-        if (typeof pollCloudInbox === 'function') pollCloudInbox();
-        if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
-        if (typeof syncDesktopNoteboard === 'function') syncDesktopNoteboard();
-      });
-    }, 1150);
+    if (!lastCloudPushSig) pushMyCloudPupNow(true);
+    if (typeof pollCloudInbox === 'function') pollCloudInbox();
+    if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
+    if (typeof syncDesktopNoteboard === 'function') syncDesktopNoteboard();
+    if (typeof flushPendingBondShows === 'function') flushPendingBondShows();
   };
   doc.addEventListener('visibilitychange', () => { if (!doc.hidden) scheduleFgCloudSync(); });
   win.addEventListener('focus', () => { scheduleFgCloudSync(); });
@@ -39697,7 +39706,7 @@
     const newHist = [newShot, ...prevHist].slice(0, 12);
     const keepPinned = Boolean(prevRec?.pinnedCover);
     const nextCoverIdx = keepPinned ? Math.min((prevRec.coverShotIdx || 0) + 1, newHist.length - 1) : 0;
-    try { if (typeof freshNewPhotos !== 'undefined') freshNewPhotos.add('dual:' + ph.id); } catch (_) {}
+    try { if (typeof updateAdvJobTabBadges === 'function') setTimeout(() => updateAdvJobTabBadges(), 60); } catch (_) {}
     config.puppyDualAlbum[ph.id] = {
       date: shotDate,
       firstDate: prevRec?.firstDate || shotDate,
@@ -43007,7 +43016,9 @@
           if (!locked) {
             card.addEventListener('click', () => {
               if (freshNewDualPhotos.delete(ph.id)) {
-                syncFreshDualPhotosConfig(); saveConfig(); renderPupAdventure();
+                syncFreshDualPhotosConfig(); saveConfig();
+                if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
+                renderPupAdventure();
                 if (freshNewDualPhotos.size > 0) {
                   setTimeout(() => {
                     const nt = albumGridEl?.querySelector('.st-px-new-tag');
@@ -43105,7 +43116,7 @@
               renderDualShot();
               photoViewerEl.classList.add('open');
               const bodySc = pupBagEl?.querySelector('.st-px-body');
-              if (bodySc) bodySc.scrollTop = 0;
+              if (bodySc) bodySc.scrollTo({ top: 0, behavior: 'smooth' });
             });
           }
           albumGridEl.appendChild(card);
@@ -43141,14 +43152,9 @@
         if (!locked) {
           card.addEventListener('click', () => {
             if (freshNewPhotos.delete(ph.id)) {
+              syncFreshPhotosConfig(); saveConfig();
               if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
               renderPupAdventure();
-              setTimeout(() => {
-                try {
-                  const selfP = albumGridEl?.querySelector(`[data-adv-photo-id="${ph.id}"]`);
-                  if (selfP && typeof selfP.scrollIntoView === 'function') selfP.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } catch (_) {}
-              }, 70);
               if (freshNewPhotos.size > 0) {
                 setTimeout(() => {
                   const nt = albumGridEl?.querySelector('.st-px-new-tag');
@@ -43292,7 +43298,7 @@
             photoViewerEl.classList.add('open');
             // 自动平滑滚到顶部放大图，不用手动往上翻！
             try {
-              const scroller = photoViewerEl.closest('.st-px-bag-body, .st-tb-body') || pupBagEl;
+              const scroller = pupBagEl?.querySelector('.st-px-body') || photoViewerEl.closest('.st-px-body, .st-tb-body');
               if (scroller && typeof scroller.scrollTo === 'function') scroller.scrollTo({ top: 0, behavior: 'smooth' });
               photoViewerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (_) {}
@@ -46306,7 +46312,7 @@
         d.remove();
       }
     };
-    const hasNewAlbum = typeof freshNewPhotos !== 'undefined' && freshNewPhotos.size > 0;
+    const hasNewAlbum = (typeof freshNewPhotos !== 'undefined' && freshNewPhotos.size > 0) || (typeof freshNewDualPhotos !== 'undefined' && freshNewDualPhotos.size > 0);
     const hasNewMuseum = typeof freshNewCurios !== 'undefined' && freshNewCurios.size > 0;
     const hasNewSnap = Boolean(config.puppyFreshSnap);
     setDot(root.querySelector('.st-px-tab[data-px-tab="adv"]'), advDone || jobDone || hasNewAlbum || hasNewMuseum);
@@ -46314,12 +46320,12 @@
     setDot(root.querySelector('[data-adv-tab="job"]'), jobDone);
     setDot(root.querySelector('[data-adv-tab="album"]'), hasNewAlbum);
     setDot(root.querySelector('[data-adv-tab="museum"]'), hasNewMuseum);
-    setDot(root.querySelector('.st-px-tab[data-px-tab="act"]'), gardenReady || hasNewSnap);
+    setDot(root.querySelector('.st-px-tab[data-px-tab="act"]'), gardenReady);
     setDot(root.querySelector('[data-act-tab="garden"]'), gardenReady);
     const potModeBtn = root.querySelector('#st-px-gmode-pot');
     if (potModeBtn) { potModeBtn.style.position = 'relative'; potModeBtn.style.overflow = 'visible'; setDot(potModeBtn, gardenReady); }
     const snapBtnEl = root.querySelector('#st-px-snap-album-btn');
-    if (snapBtnEl) { snapBtnEl.style.position = 'relative'; snapBtnEl.style.overflow = 'visible'; setDot(snapBtnEl, hasNewSnap); }
+    if (snapBtnEl) { snapBtnEl.style.position = 'relative'; snapBtnEl.style.overflow = 'visible'; setDot(snapBtnEl, false); }
     const hasNewAcc = Array.isArray(config.puppyOwnedAccs) && config.puppyOwnedAccs.some(id => freshNewWardItems.has(id));
     const hasNewOut = Array.isArray(config.puppyOwnedOutfits) && config.puppyOwnedOutfits.some(id => freshNewWardItems.has(id));
     const hasNewCp = Array.isArray(config.puppyOwnedCompanions) && config.puppyOwnedCompanions.some(id => freshNewWardItems.has(id));
@@ -53422,11 +53428,11 @@
   doc.addEventListener('visibilitychange', () => {
     if (!doc.hidden) {
       stopTitleFlash();
-      if (typeof flushPendingRemotePokes === 'function') setTimeout(() => { if (!doc.hidden) flushPendingRemotePokes(); }, 1300);
-      if (typeof syncCloudGuestLooks === 'function') setTimeout(() => { if (!doc.hidden) syncCloudGuestLooks(true); }, 1500);
-      if (typeof syncDeskDmNoticeStack === 'function') setTimeout(() => { if (!doc.hidden) syncDeskDmNoticeStack(); }, 1650);
-      if (typeof checkFinishedCoopAdventures === 'function') setTimeout(() => { if (!doc.hidden) checkFinishedCoopAdventures(); }, 1800);
-      if (typeof flushPendingBondShows === 'function') setTimeout(() => { if (!doc.hidden) flushPendingBondShows(); }, 1950);
+      if (typeof flushPendingRemotePokes === 'function') flushPendingRemotePokes();
+      if (typeof syncCloudGuestLooks === 'function') syncCloudGuestLooks(true);
+      if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack();
+      if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
+      if (typeof flushPendingBondShows === 'function') flushPendingBondShows();
       if (pendingJumpToReplyTopMesId !== null) {
         const jumpMid = pendingJumpToReplyTopMesId;
         pendingJumpToReplyTopMesId = null;
