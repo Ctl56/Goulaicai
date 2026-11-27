@@ -45661,11 +45661,11 @@
     let gardenReady = false;
     try {
       const gst = config.puppyGarden || {};
-      if (gst.stage === 3) {
+      if (gst.stage >= 4) {
         gardenReady = true;
-      } else if (gst.stage === 1 || gst.stage === 2) {
+      } else if (gst.stage >= 1 && gst.stage <= 3) {
         const potObj = (typeof GARDEN_POT_TIERS !== 'undefined' && GARDEN_POT_TIERS[gst.potLv || 0]) ? GARDEN_POT_TIERS[gst.potLv || 0] : { cdMult: 1 };
-        const waitMs = Math.round((gst.stage === 1 ? 30000 : 60000) * (potObj.cdMult || 1));
+        const waitMs = Math.round((gst.stage === 1 ? 30000 : (gst.stage === 2 ? 60000 : 120000)) * (potObj.cdMult || 1));
         if (now - (gst.lastWaterAt || 0) >= waitMs) gardenReady = true;
       }
     } catch (_) {}
@@ -45690,6 +45690,8 @@
     setDot(root.querySelector('[data-adv-tab="museum"]'), hasNewMuseum);
     setDot(root.querySelector('.st-px-tab[data-px-tab="act"]'), gardenReady || hasNewSnap);
     setDot(root.querySelector('[data-act-tab="garden"]'), gardenReady);
+    const potModeBtn = root.querySelector('#st-px-gmode-pot');
+    if (potModeBtn) { potModeBtn.style.position = 'relative'; potModeBtn.style.overflow = 'visible'; setDot(potModeBtn, gardenReady); }
     const snapBtnEl = root.querySelector('#st-px-snap-album-btn');
     if (snapBtnEl) { snapBtnEl.style.position = 'relative'; snapBtnEl.style.overflow = 'visible'; setDot(snapBtnEl, hasNewSnap); }
     const hasNewAcc = Array.isArray(config.puppyOwnedAccs) && config.puppyOwnedAccs.some(id => freshNewWardItems.has(id));
@@ -47624,11 +47626,11 @@
     ],
     sakura: [
       '..oo.oo..',
-      '.opp.ppo.',
-      'opdpwpdpo',
-      'oppwywppo',
-      '.oppwppo.',
-      '.opd.dpo.',
+      '.oppoppo.',
+      'opppdpppo',
+      'oppdypppo',
+      '.oppdppo.',
+      '.oppoppo.',
       '..oo.oo..',
       '.........',
       '.........',
