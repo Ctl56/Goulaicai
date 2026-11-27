@@ -2873,6 +2873,8 @@
     puppyJobUrgentCd: {},
     puppyJobBadReviews: {},
     puppyJobUrgentState: {},
+    puppyBouquets: [],
+    puppyBouquetDex: [],
     puppyBubbleMode: 'wrap',
     puppyGender: '',
     puppyGenderLocked: false,
@@ -8766,6 +8768,14 @@
             <div id="st-px-mail-list" style="display:flex;flex-direction:column;gap:4px;"></div>
           </div>
           <div id="st-px-act-garden-view" style="display:none;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:5px;">
+              <button class="st-px-btn care" id="st-px-gmode-pot" type="button" style="height:21px;font-size:9.5px;padding:0 4px;">像素花盆</button>
+              <button class="st-px-btn" id="st-px-gmode-diy" type="button" style="height:21px;font-size:9.5px;padding:0 4px;">花束工作台</button>
+              <button class="st-px-btn" id="st-px-gmode-bqd" type="button" style="height:21px;font-size:9.5px;padding:0 4px;">花束图鉴</button>
+            </div>
+            <div id="st-px-garden-diy-wrap" style="display:none;"></div>
+            <div id="st-px-garden-bqd-wrap" style="display:none;"></div>
+            <div id="st-px-garden-pot-wrap">
             <div class="st-px-subhead">
               <span id="st-px-garden-head">像素小花盆</span>
               <span id="st-px-garden-dex">花鉴 0/9</span>
@@ -8783,6 +8793,7 @@
             </div>
             <div class="st-px-subhead"><span id="st-px-garden-subhead">花卉图鉴（42 种，含 12 朵隐藏变异传说花）</span></div>
             <div class="st-px-grid-3" id="st-px-garden-grid"></div>
+            </div>
           </div>
           <div id="st-px-act-fashion-view" style="display:none;">
             <div class="st-px-subhead">
@@ -28556,9 +28567,12 @@
             win.__stPupMusicAudio.volume = 0.58;
           }
           const au = win.__stPupMusicAudio;
+          try { if (win.navigator && win.navigator.audioSession) win.navigator.audioSession.type = 'playback'; } catch (_) {}
           au.pause();
+          au.muted = true;
+          au.loop = true;
           au.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-          au.play().then(() => { au.pause(); }).catch(() => {});
+          au.play().catch(() => {});
         } catch (_) {}
         const _loadJsonp = (url, cbParam = 'callback', timeoutMs = 5500) => new Promise((resolve) => {
           const cbName = `__stGlcMusicCb_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
@@ -28645,49 +28659,10 @@
                 pickedSong = { title: String(s.title).trim(), artist: String(s.artist.name).trim(), previewUrl: String(s.preview) };
               }
             }
-            const buildMusicBoxWavUrl = (persKey) => {
-              const sr = 22050;
-              const melodies = {
-                sleepyhead: { name: '晚风八音盒', bpm: 92, notes: [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880.0, 783.99, 523.25, 659.25, 783.99, 1046.5, 880.0, 783.99, 659.25, 523.25] },
-                clingy:     { name: '草莓甜心盒', bpm: 108, notes: [659.25, 783.99, 880.0, 783.99, 659.25, 587.33, 659.25, 783.99, 1046.5, 987.77, 880.0, 783.99, 659.25, 783.99, 659.25, 523.25] },
-                tsundere:   { name: '傲娇小步舞', bpm: 116, notes: [587.33, 739.99, 880.0, 739.99, 659.25, 783.99, 987.77, 880.0, 739.99, 659.25, 587.33, 659.25, 739.99, 880.0, 739.99, 587.33] },
-                foodie:     { name: '焦糖布丁曲', bpm: 104, notes: [523.25, 587.33, 659.25, 783.99, 880.0, 783.99, 659.25, 587.33, 523.25, 659.25, 783.99, 880.0, 783.99, 659.25, 587.33, 523.25] },
-              };
-              const m = melodies[persKey] || melodies.sleepyhead;
-              const stepSec = 60 / m.bpm / 1.5;
-              const totalSamples = Math.floor(sr * (m.notes.length * stepSec + 1.2));
-              const buf = new ArrayBuffer(44 + totalSamples * 2);
-              const dv = new DataView(buf);
-              const wStr = (off, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i)); };
-              wStr(0, 'RIFF'); dv.setUint32(4, 36 + totalSamples * 2, true); wStr(8, 'WAVE');
-              wStr(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
-              dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
-              wStr(36, 'data'); dv.setUint32(40, totalSamples * 2, true);
-              const pcm = new Float32Array(totalSamples);
-              m.notes.forEach((freq, idx) => {
-                const start = Math.floor(idx * stepSec * sr);
-                const len = Math.floor(Math.min(1.15 * sr, totalSamples - start));
-                for (let i = 0; i < len; i++) {
-                  const t = i / sr;
-                  const env = Math.min(1, t * 45) * Math.exp(-t * 3.8);
-                  const val = (Math.sin(2 * Math.PI * freq * t) * 0.65 + Math.sin(4 * Math.PI * freq * t) * 0.22 + Math.sin(6 * Math.PI * freq * t) * 0.08) * env * 0.34;
-                  pcm[start + i] += val;
-                }
-              });
-              for (let i = 0; i < totalSamples; i++) {
-                const s = Math.max(-1, Math.min(1, pcm[i]));
-                dv.setInt16(44 + i * 2, s < 0 ? s * 32768 : s * 32767, true);
-              }
-              const bytes = new Uint8Array(buf);
-              let bin = '';
-              for (let i = 0; i < bytes.length; i += 8192) {
-                bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
-              }
-              return { name: m.name, url: 'data:audio/wav;base64,' + btoa(bin) };
-            };
             if (!pickedSong) {
-              const localBox = buildMusicBoxWavUrl(pId);
-              pickedSong = { title: localBox.name, artist: '小狗像素八音盒', previewUrl: localBox.url, isLocal: true };
+              try { if (win.__stPupMusicAudio) { win.__stPupMusicAudio.pause(); win.__stPupMusicAudio.muted = false; win.__stPupMusicAudio.loop = false; } } catch (_) {}
+              showPuppyBubble('刚才没连上随机电台，稍后再点一次一起听歌试试吧', 3200, true);
+              return;
             }
             const { title, artist, previewUrl } = pickedSong;
             const REC_BY_PERS = {
@@ -28749,8 +28724,11 @@
                 const au = win.__stPupMusicAudio || new win.Audio();
                 win.__stPupMusicAudio = au;
                 au.pause();
-                au.volume = 0.58;
+                au.loop = false;
+                au.muted = false;
+                au.volume = 0.65;
                 au.src = previewUrl;
+                try { au.load(); } catch (_) {}
                 const restoreLightKaSession = () => {
                   try {
                     if (config.keepAlive && config.keepAlivePolicy !== 'exclusive' && win.navigator && win.navigator.audioSession) {
@@ -36851,7 +36829,7 @@
       const res = await fetchWithTimeout(`${baseUrl}/pup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, code }),
+        body: JSON.stringify({ id, code, jobBusyUntil: (config.puppyJob && config.puppyJob.endAt > Date.now()) ? config.puppyJob.endAt : 0 }),
       });
       if (res.ok) lastCloudPushSig = sig;
     } catch (_) {}
@@ -37058,6 +37036,59 @@
             continue;
           }
 
+          // 收到好友首次双狗拼班打工邀请：同步进入同一场打工并共享收益！
+          if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__cojob__') {
+            const meta = g.gifts[0];
+            const jObj = PUP_JOBS.find(x => x.id === meta.shopId) || PUP_JOBS[0];
+            const edAt = Number(meta.endAt) || (Date.now() + 45000);
+            const stAt = Number(meta.startAt) || Date.now();
+            if (!config.puppyJob && edAt > Date.now()) {
+              const dN = new Date();
+              const tDs = `${dN.getFullYear()}-${String(dN.getMonth() + 1).padStart(2, '0')}-${String(dN.getDate()).padStart(2, '0')}`;
+              config.puppyJobCoopDaily = config.puppyJobCoopDaily || {};
+              config.puppyJobCoopDaily[g.fromId] = tDs;
+              config.puppyJob = {
+                id: jObj.id, startedAt: stAt, endAt: edAt,
+                baseDurMs: Number(meta.baseDurMs) || 45000, extraDurMs: 0,
+                isUrgent: false, outfitFit: false,
+                coopFriendId: g.fromId, coopFriendName: g.fromName || '好友小狗',
+                coopBonusMin: Number(meta.bonusMin) || 1, coopBonusMax: Number(meta.bonusMax) || 1,
+                isFirstCoop: true, syncedWage: Number(meta.syncedWage) || 0,
+              };
+              saveConfig();
+              if (typeof renderJobPanel === 'function') renderJobPanel();
+              if (config.puppyEnabled) showPuppyBubble(`好友「${g.fromName || '小伙伴'}」拉你一起去【${jObj.name}】拼班打工啦~`, 3200);
+            }
+            fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
+            continue;
+          }
+          // 收到好友手工 DIY 花束礼物：存入花束图鉴并加羁绊亲密度！
+          if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__bouquet__') {
+            const bq = g.gifts[0];
+            config.puppyBouquetDex = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
+            config.puppyBouquetDex.unshift({
+              id: 'bq_recv_' + Date.now(),
+              name: bq.name || '好友手作花束',
+              tier: bq.tier || 'single',
+              flowers: bq.flowers || '',
+              wrapCol: bq.wrapCol || '#f2d9c2',
+              ribbonCol: bq.ribbonCol || '#e07a94',
+              note: bq.note || g.msg || '',
+              img: bq.img || '',
+              fromName: g.fromName || '好友',
+              date: getTodayStr(),
+            });
+            if (config.puppyBouquetDex.length > 60) config.puppyBouquetDex = config.puppyBouquetDex.slice(0, 60);
+            const frM = getFriendList().find(x => x.cloudId === g.fromId);
+            if (frM && typeof addFriendBondExp === 'function') {
+              const bExp = bq.tier === 'luxury' ? 40 : (bq.tier === 'mix' ? 25 : 15);
+              addFriendBondExp(frM, bExp, '收到手作花束');
+            }
+            saveConfig();
+            if (config.puppyEnabled) showPuppyBubble(`收到「${g.fromName || '好友'}」亲手包的花束【${bq.name || '手作花束'}】！已收进花束图鉴~`, 3600);
+            fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
+            continue;
+          }
           // 收到好友组队双狗探险邀请：双方同步进入同一场 10 分钟探险（期间互不重复邀请），倒计时结束才结算弹窗！
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__coadv__') {
             const meta = g.gifts[0];
@@ -44025,6 +44056,426 @@
       }
     }
   };
+
+  // ==================== 花束 DIY 工作台（调色盘包装纸 + 可拖动小装饰 + 三档配方 + 花束图鉴 + 云端送好友） ====================
+  let gardenViewMode = 'pot'; // 'pot' | 'diy' | 'bqd'
+  let bqTier = 'single'; // 'single' (同花3朵) | 'mix' (2种各2朵) | 'luxury' (3种各2朵)
+  let bqPicked = []; // flower ids
+  let bqWrapCol = '#f2d9c2';
+  let bqRibbonCol = '#e07a94';
+  let bqCharms = []; // [{ key, x, y }] in 0..48 canvas coords
+  let bqNoteTxt = '';
+
+  const BQ_CHARM_DEFS = [
+    { key: 'bow',   label: '蝴蝶结', pal: { a: '#e87a98', b: '#ffd1de', w: '#fffdf7' }, grid: ['a...a','aa.aa','aabaa','.aaa.','a...a'] },
+    { key: 'pearl', label: '小珍珠', pal: { a: '#d9d4e3', b: '#ffffff' }, grid: ['.aaa.','abbba','abbaa','aaaaa','.aaa.'] },
+    { key: 'heart', label: '小爱心', pal: { a: '#e85a7a', b: '#ffb8c8' }, grid: ['.a.a.','abaaa','aaaaa','.aaa.','..a..'] },
+    { key: 'crown', label: '小皇冠', pal: { a: '#f0be4a', b: '#fff4bd' }, grid: ['a.a.a','ababa','aaaaa','aaaaa','.....'] },
+    { key: 'bell',  label: '小铃铛', pal: { a: '#e6b84c', b: '#fff2b8', c: '#8c5a2b' }, grid: ['..a..','.aba.','aaaaa','aaaaa','..c..'] },
+    { key: 'card',  label: '小卡片', pal: { a: '#bfa48a', b: '#fffdf7', c: '#e07a94' }, grid: ['aaaaa','abbba','abcba','abbba','aaaaa'] },
+  ];
+
+  const drawBouquetCanvas = (cvs, tier, flIds, wrapCol, ribbonCol, charms) => {
+    const g = cvs.getContext('2d');
+    if (!g) return;
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, 48, 48);
+    // 柔和奶油底
+    g.fillStyle = '#fffaf4'; g.fillRect(0, 0, 48, 48);
+    const wrapDark = shadeHex(wrapCol || '#f2d9c2', 0.84);
+    const wrapHi = shadeHex(wrapCol || '#f2d9c2', 1.08);
+    const ribCol = ribbonCol || '#e07a94';
+    const ribDark = shadeHex(ribCol, 0.82);
+
+    // 1. 包装纸背面折角
+    const backW = tier === 'luxury' ? 28 : (tier === 'mix' ? 24 : 20);
+    g.fillStyle = wrapDark;
+    g.fillRect(24 - Math.floor(backW / 2), 9, backW, 18);
+    g.fillStyle = wrapHi;
+    g.fillRect(24 - Math.floor(backW / 2) + 2, 11, backW - 4, 15);
+
+    // 2. 绿叶衬底
+    g.fillStyle = '#6da66e';
+    g.fillRect(14, 16, 20, 9);
+    g.fillStyle = '#8ac48b';
+    g.fillRect(12, 18, 4, 4); g.fillRect(32, 18, 4, 4);
+
+    // 3. 根据配方绘制花朵（3 / 4 / 6 朵）
+    const slots = tier === 'luxury'
+      ? [[16,13],[24,11],[32,13],[14,19],[24,18],[34,19]]
+      : (tier === 'mix' ? [[17,14],[24,12],[31,14],[24,19]] : [[18,15],[24,12],[30,15]]);
+    const expandedIds = [];
+    if (tier === 'single' && flIds[0]) { expandedIds.push(flIds[0], flIds[0], flIds[0]); }
+    else if (tier === 'mix' && flIds[0] && flIds[1]) { expandedIds.push(flIds[0], flIds[1], flIds[0], flIds[1]); }
+    else if (tier === 'luxury' && flIds[0] && flIds[1] && flIds[2]) { expandedIds.push(flIds[0], flIds[1], flIds[2], flIds[1], flIds[2], flIds[0]); }
+    slots.forEach(([fx, fy], idx) => {
+      const fid = expandedIds[idx];
+      const fObj = fid ? PUP_FLOWERS.find(x => x.id === fid) : null;
+      const c1 = fObj ? fObj.col : '#ffd1de';
+      const c2 = fObj ? fObj.col2 : '#f09bb4';
+      const cc = fObj ? fObj.center : '#ffe478';
+      g.fillStyle = c2; g.fillRect(fx - 3, fy - 2, 7, 5); g.fillRect(fx - 2, fy - 3, 5, 7);
+      g.fillStyle = c1; g.fillRect(fx - 2, fy - 2, 5, 5);
+      g.fillStyle = cc; g.fillRect(fx - 1, fy - 1, 3, 3);
+    });
+
+    // 4. 前层锥形包装纸
+    for (let row = 0; row < 18; row++) {
+      const half = Math.max(3, Math.round((backW / 2) - row * 0.58));
+      g.fillStyle = row % 4 === 0 ? wrapHi : wrapCol;
+      g.fillRect(24 - half, 23 + row, half * 2, 1);
+      g.fillStyle = wrapDark;
+      g.fillRect(24 - half, 23 + row, 1, 1);
+      g.fillRect(24 + half - 1, 23 + row, 1, 1);
+    }
+    // 底部露出的花茎
+    g.fillStyle = '#5c8c5e';
+    g.fillRect(22, 41, 4, 4);
+
+    // 5. 束腰丝带蝴蝶结
+    g.fillStyle = ribCol;
+    g.fillRect(19, 32, 10, 3);
+    g.fillRect(17, 31, 3, 4); g.fillRect(28, 31, 3, 4);
+    g.fillStyle = ribDark;
+    g.fillRect(21, 35, 2, 5); g.fillRect(25, 35, 2, 5);
+    g.fillStyle = '#fffdf7';
+    g.fillRect(23, 33, 2, 1);
+
+    // 6. 用户自由摆放的像素小装饰
+    (charms || []).forEach(ch => {
+      const def = BQ_CHARM_DEFS.find(d => d.key === ch.key);
+      if (!def) return;
+      const ox = Math.round(ch.x - 2), oy = Math.round(ch.y - 2);
+      for (let y = 0; y < def.grid.length; y++) {
+        const r = def.grid[y];
+        for (let x = 0; x < r.length; x++) {
+          const c = def.pal[r[x]];
+          if (c) { g.fillStyle = c; g.fillRect(ox + x, oy + y, 1, 1); }
+        }
+      }
+    });
+  };
+
+  var renderBouquetWorkbench = () => {
+    const wrap = root.querySelector('#st-px-garden-diy-wrap');
+    if (!wrap) return;
+    const st = config.puppyGarden || { unlocked: {} };
+    const inv = st.unlocked || {};
+    const needKinds = bqTier === 'luxury' ? 3 : (bqTier === 'mix' ? 2 : 1);
+    const needEach = bqTier === 'single' ? 3 : 2;
+    bqPicked = bqPicked.filter(fid => (inv[fid] || 0) >= needEach).slice(0, needKinds);
+
+    wrap.innerHTML = '';
+    const card = doc.createElement('div');
+    card.className = 'st-px-adv-card';
+    card.style.cssText = 'padding:8px;';
+
+    // 三档配方切换
+    const tierBar = doc.createElement('div');
+    tierBar.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px;';
+    [
+      { id: 'single', lbl: '单品花束(1种x3)' },
+      { id: 'mix',    lbl: '混搭花束(2种x2)' },
+      { id: 'luxury', lbl: '豪华捧花(3种x2)' },
+    ].forEach(t => {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = 'st-px-btn' + (bqTier === t.id ? ' care' : '');
+      b.style.cssText = 'height:21px;font-size:9px;padding:0 2px;';
+      b.textContent = t.lbl;
+      b.addEventListener('click', () => { bqTier = t.id; bqPicked = []; renderBouquetWorkbench(); });
+      tierBar.appendChild(b);
+    });
+    card.appendChild(tierBar);
+
+    // 预览画布（支持按住拖动小装饰！） + 配色控制
+    const topBox = doc.createElement('div');
+    topBox.style.cssText = 'display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;';
+    const prevWrap = doc.createElement('div');
+    prevWrap.style.cssText = 'flex-shrink:0;text-align:center;';
+    const cvs = doc.createElement('canvas');
+    cvs.width = 48; cvs.height = 48;
+    cvs.style.cssText = 'width:108px;height:108px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;touch-action:none;cursor:grab;';
+    drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms);
+    let dragIdx = -1;
+    const toCvsPos = (ev) => {
+      const rc = cvs.getBoundingClientRect();
+      return [
+        clamp(((ev.clientX - rc.left) / Math.max(1, rc.width)) * 48, 3, 45),
+        clamp(((ev.clientY - rc.top) / Math.max(1, rc.height)) * 48, 3, 45),
+      ];
+    };
+    cvs.addEventListener('pointerdown', (ev) => {
+      if (!bqCharms.length) return;
+      const [cx, cy] = toCvsPos(ev);
+      let best = -1, bestD = 9;
+      bqCharms.forEach((ch, idx) => {
+        const d = Math.hypot(ch.x - cx, ch.y - cy);
+        if (d < bestD) { bestD = d; best = idx; }
+      });
+      if (best >= 0) {
+        dragIdx = best;
+        try { cvs.setPointerCapture(ev.pointerId); } catch (_) {}
+        ev.stopPropagation();
+      }
+    });
+    cvs.addEventListener('pointermove', (ev) => {
+      if (dragIdx < 0 || !bqCharms[dragIdx]) return;
+      const [cx, cy] = toCvsPos(ev);
+      bqCharms[dragIdx].x = Math.round(cx);
+      bqCharms[dragIdx].y = Math.round(cy);
+      drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms);
+    });
+    const stopDragCh = () => { dragIdx = -1; };
+    cvs.addEventListener('pointerup', stopDragCh);
+    cvs.addEventListener('pointercancel', stopDragCh);
+    const dragHint = doc.createElement('div');
+    dragHint.style.cssText = 'font-size:8.5px;opacity:0.78;margin-top:2px;';
+    dragHint.textContent = '小装饰可按住拖动';
+    prevWrap.append(cvs, dragHint);
+
+    const ctrlCol = doc.createElement('div');
+    ctrlCol.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;';
+    // 调色盘自定义包装纸与丝带色
+    const colRow = doc.createElement('div');
+    colRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:9.5px;';
+    colRow.innerHTML = `<label style="display:inline-flex;align-items:center;gap:3px;">包装纸<input type="color" id="st-bq-wrap-col" value="${bqWrapCol}" style="width:20px;height:20px;padding:0;border:1px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;"></label><label style="display:inline-flex;align-items:center;gap:3px;">丝带<input type="color" id="st-bq-rib-col" value="${bqRibbonCol}" style="width:20px;height:20px;padding:0;border:1px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;"></label>`;
+    colRow.querySelector('#st-bq-wrap-col').addEventListener('input', (e) => { bqWrapCol = e.target.value; drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms); });
+    colRow.querySelector('#st-bq-rib-col').addEventListener('input', (e) => { bqRibbonCol = e.target.value; drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms); });
+    ctrlCol.appendChild(colRow);
+
+    // 快捷包装纸色块
+    const swRow = doc.createElement('div');
+    swRow.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;';
+    ['#f2d9c2', '#fff6fa', '#d8ecff', '#d9edd8', '#e6d8f5', '#7a2538'].forEach(hex => {
+      const sw = doc.createElement('button');
+      sw.type = 'button';
+      sw.style.cssText = `width:16px;height:16px;padding:0;border:1.5px solid #6b5446;background:${hex};cursor:pointer;`;
+      sw.addEventListener('click', () => { bqWrapCol = hex; const inp = colRow.querySelector('#st-bq-wrap-col'); if (inp) inp.value = hex; drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms); });
+      swRow.appendChild(sw);
+    });
+    ctrlCol.appendChild(swRow);
+
+    // 添加可拖动小装饰
+    const chRow = doc.createElement('div');
+    chRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:3px;';
+    BQ_CHARM_DEFS.forEach(cd => {
+      const cb = doc.createElement('button');
+      cb.type = 'button'; cb.className = 'st-px-btn'; cb.style.cssText = 'height:19px;padding:0 5px;font-size:8.5px;';
+      cb.textContent = `+${cd.label}`;
+      cb.addEventListener('click', () => {
+        if (bqCharms.length >= 6) return;
+        bqCharms.push({ key: cd.key, x: 16 + (bqCharms.length % 3) * 8, y: 24 + Math.floor(bqCharms.length / 3) * 8 });
+        drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms);
+      });
+      chRow.appendChild(cb);
+    });
+    const clrCh = doc.createElement('button');
+    clrCh.type = 'button'; clrCh.className = 'st-px-btn'; clrCh.style.cssText = 'height:19px;padding:0 5px;font-size:8.5px;'; clrCh.textContent = '清空装饰';
+    clrCh.addEventListener('click', () => { bqCharms = []; drawBouquetCanvas(cvs, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms); });
+    chRow.appendChild(clrCh);
+    ctrlCol.appendChild(chRow);
+
+    topBox.append(prevWrap, ctrlCol);
+    card.appendChild(topBox);
+
+    // 选花区
+    const flHead = doc.createElement('div');
+    flHead.style.cssText = 'font-size:9.5px;font-weight:700;margin-bottom:4px;';
+    flHead.textContent = `选择花材（需选 ${needKinds} 种，每种消耗 ${needEach} 朵 · 已选 ${bqPicked.length}/${needKinds}）`;
+    card.appendChild(flHead);
+    const flGrid = doc.createElement('div');
+    flGrid.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;max-height:74px;overflow-y:auto;margin-bottom:6px;';
+    const availFl = PUP_FLOWERS.filter(f => (inv[f.id] || 0) >= needEach);
+    if (!availFl.length) {
+      flGrid.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">暂无满足 ${needEach} 朵库存的花材，先去花盆多多培育收获吧~</div>`;
+    } else {
+      availFl.forEach(f => {
+        const isSel = bqPicked.includes(f.id);
+        const fb = doc.createElement('button');
+        fb.type = 'button';
+        fb.className = 'st-px-btn' + (isSel ? ' care' : '');
+        fb.style.cssText = 'height:20px;padding:0 6px;font-size:9px;';
+        fb.textContent = `${f.name}(x${inv[f.id]})`;
+        fb.addEventListener('click', () => {
+          if (isSel) bqPicked = bqPicked.filter(x => x !== f.id);
+          else if (bqPicked.length < needKinds) bqPicked.push(f.id);
+          renderBouquetWorkbench();
+        });
+        flGrid.appendChild(fb);
+      });
+    }
+    card.appendChild(flGrid);
+
+    // 花语输入 + 打包按钮
+    const noteRow = doc.createElement('div');
+    noteRow.style.cssText = 'display:flex;gap:5px;align-items:center;';
+    const noteInp = doc.createElement('input');
+    noteInp.type = 'text'; noteInp.maxLength = 24; noteInp.className = 'st-px-in';
+    noteInp.style.cssText = 'flex:1;height:24px;font-size:10px;';
+    noteInp.placeholder = '写一句小花语（可选）';
+    noteInp.value = bqNoteTxt;
+    noteInp.addEventListener('input', () => { bqNoteTxt = noteInp.value; });
+    const packBtn = doc.createElement('button');
+    packBtn.type = 'button'; packBtn.className = 'st-px-btn care';
+    packBtn.style.cssText = 'height:24px;padding:0 10px;font-size:10px;flex-shrink:0;';
+    packBtn.disabled = bqPicked.length < needKinds;
+    packBtn.textContent = '打包花束';
+    packBtn.addEventListener('click', () => {
+      if (bqPicked.length < needKinds) return;
+      const flNames = bqPicked.map(fid => {
+        st.unlocked[fid] = Math.max(0, (st.unlocked[fid] || 0) - needEach);
+        const fo = PUP_FLOWERS.find(x => x.id === fid);
+        return fo ? fo.name : '小花';
+      });
+      const bqName = bqTier === 'luxury' ? `${flNames[0]}豪华捧花` : (bqTier === 'mix' ? `${flNames[0]}${flNames[1]}花束` : `${flNames[0]}单品花束`);
+      const imgUrl = cvs.toDataURL('image/png');
+      const rec = {
+        id: 'bq_' + Date.now(),
+        name: bqName, tier: bqTier,
+        flowers: flNames.join(' + '),
+        wrapCol: bqWrapCol, ribbonCol: bqRibbonCol,
+        note: String(bqNoteTxt || '').trim(),
+        img: imgUrl, date: getTodayStr(),
+      };
+      config.puppyBouquets = Array.isArray(config.puppyBouquets) ? config.puppyBouquets : [];
+      config.puppyBouquetDex = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
+      config.puppyBouquets.unshift(rec);
+      config.puppyBouquetDex.unshift({ ...rec });
+      if (config.puppyBouquetDex.length > 60) config.puppyBouquetDex = config.puppyBouquetDex.slice(0, 60);
+      bqPicked = []; bqNoteTxt = '';
+      saveConfig();
+      renderBouquetWorkbench();
+      showPuppyBubble(`扎好了一束【${bqName}】！可以留在花束图鉴欣赏或送给好友哦~`, 2600);
+    });
+    noteRow.append(noteInp, packBtn);
+    card.appendChild(noteRow);
+    wrap.appendChild(card);
+
+    // 已有手作花束库存（支持直接送云端好友！）
+    const myBqs = Array.isArray(config.puppyBouquets) ? config.puppyBouquets : [];
+    if (myBqs.length) {
+      const stockBox = doc.createElement('div');
+      stockBox.className = 'st-px-adv-card';
+      stockBox.style.cssText = 'margin-top:6px;padding:7px;';
+      stockBox.innerHTML = `<div style="font-size:10px;font-weight:700;margin-bottom:5px;">手作花束库存 (${myBqs.length})</div>`;
+      myBqs.slice(0, 12).forEach((bq, idx) => {
+        const row = doc.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:6px;padding:4px 0;border-top:1px dashed var(--px-border,#bfa4ae);';
+        const img = doc.createElement('img');
+        img.src = bq.img || '';
+        img.style.cssText = 'width:34px;height:34px;image-rendering:pixelated;border:1px solid var(--px-border,#bfa4ae);flex-shrink:0;';
+        const inf = doc.createElement('div');
+        inf.style.cssText = 'flex:1;min-width:0;font-size:9.5px;';
+        inf.innerHTML = `<div style="font-weight:700;">${escapeHtmlSimple(bq.name)}</div><div style="font-size:8.5px;opacity:0.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtmlSimple(bq.flowers)}${bq.note ? ' · 「' + escapeHtmlSimple(bq.note) + '」' : ''}</div>`;
+        const sendBtn = doc.createElement('button');
+        sendBtn.type = 'button'; sendBtn.className = 'st-px-btn care'; sendBtn.style.cssText = 'height:21px;padding:0 6px;font-size:9px;flex-shrink:0;'; sendBtn.textContent = '送好友';
+        sendBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const frs = typeof getFriendList === 'function' ? getFriendList() : [];
+          if (!frs.length) { openPixelPupNoticeModal('暂无云端好友', '先去「冒险 -> 串门」添加云端好友就可以送花束啦~'); return; }
+          let sm = root.querySelector('#st-tb-bq-send-mask');
+          if (sm) sm.remove();
+          sm = doc.createElement('div');
+          sm.id = 'st-tb-bq-send-mask';
+          sm.className = 'st-px-submodal-keep-bag';
+          sm.style.cssText = 'position:fixed;inset:0;z-index:10045;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+          const closeS = (e2) => { if (e2) e2.stopPropagation(); win.__stSubModalClosedAt = Date.now(); sm.remove(); };
+          const sc = doc.createElement('div');
+          sc.style.cssText = 'width:min(280px,90vw);max-height:66vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;';
+          sc.innerHTML = `<div style="font-weight:700;font-size:11px;margin-bottom:6px;">把【${escapeHtmlSimple(bq.name)}】送给谁？</div>`;
+          frs.forEach(fr => {
+            const fb = doc.createElement('button');
+            fb.type = 'button'; fb.className = 'st-px-btn'; fb.style.cssText = 'width:100%;height:26px;margin-bottom:4px;font-size:10px;';
+            const fn = (config.puppyFriendRemarks && config.puppyFriendRemarks[fr.cloudId]) || fr.name || '好友';
+            fb.textContent = `送给 ${fn}`;
+            fb.addEventListener('click', (e2) => {
+              e2.stopPropagation();
+              const baseUrl = getCloudBaseUrl();
+              fetchWithTimeout(`${baseUrl}/gift`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  fromId: ensureMyCloudId(), fromName: getPupName(), toId: fr.cloudId,
+                  gifts: [{ kind: '__bouquet__', name: bq.name, tier: bq.tier, flowers: bq.flowers, wrapCol: bq.wrapCol, ribbonCol: bq.ribbonCol, note: bq.note, img: bq.img }],
+                  redPacket: 0, msg: bq.note || `送你一束亲手包的【${bq.name}】~`,
+                }),
+              }, 8000).catch(() => {});
+              if (typeof addFriendBondExp === 'function') addFriendBondExp(fr, bq.tier === 'luxury' ? 40 : (bq.tier === 'mix' ? 25 : 15), '送出手作花束');
+              config.puppyBouquets.splice(idx, 1);
+              saveConfig();
+              closeS(e2);
+              renderBouquetWorkbench();
+              showPuppyBubble(`已经把【${bq.name}】寄给 ${fn} 啦~`, 2400);
+            });
+            sc.appendChild(fb);
+          });
+          const cancelB = doc.createElement('button');
+          cancelB.type = 'button'; cancelB.className = 'st-px-btn'; cancelB.style.cssText = 'width:100%;height:22px;margin-top:4px;font-size:10px;'; cancelB.textContent = '取消';
+          cancelB.addEventListener('click', closeS);
+          sc.appendChild(cancelB);
+          sm.appendChild(sc);
+          sm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+          sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) closeS(e2); });
+          root.appendChild(sm);
+        });
+        row.append(img, inf, sendBtn);
+        stockBox.appendChild(row);
+      });
+      wrap.appendChild(stockBox);
+    }
+  };
+
+  var renderBouquetDex = () => {
+    const wrap = root.querySelector('#st-px-garden-bqd-wrap');
+    if (!wrap) return;
+    const list = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
+    wrap.innerHTML = '';
+    const card = doc.createElement('div');
+    card.className = 'st-px-adv-card';
+    card.style.cssText = 'padding:8px;';
+    card.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:6px;">花束图鉴（已收录 ${list.length} 束）</div>`;
+    if (!list.length) {
+      card.innerHTML += '<div style="font-size:10px;opacity:0.75;padding:12px 4px;text-align:center;">还没有扎过花束哦，切到「花束工作台」亲手包一束吧~</div>';
+    } else {
+      const grid = doc.createElement('div');
+      grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:240px;overflow-y:auto;';
+      list.forEach(bq => {
+        const cell = doc.createElement('div');
+        cell.style.cssText = 'padding:6px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);text-align:center;';
+        cell.innerHTML = `
+          <img src="${bq.img || ''}" style="width:62px;height:62px;image-rendering:pixelated;border:1px solid var(--px-border,#bfa4ae);display:block;margin:0 auto 4px;" />
+          <div style="font-size:9.5px;font-weight:700;">${escapeHtmlSimple(bq.name)}</div>
+          <div style="font-size:8.5px;opacity:0.78;">${escapeHtmlSimple(bq.flowers || '')}</div>
+          ${bq.note ? `<div style="font-size:8.5px;color:#8a4f62;margin-top:2px;">「${escapeHtmlSimple(bq.note)}」</div>` : ''}
+          <div style="font-size:8px;opacity:0.62;margin-top:2px;">${bq.fromName ? `来自 ${escapeHtmlSimple(bq.fromName)} · ` : ''}${bq.date || ''}</div>
+        `;
+        grid.appendChild(cell);
+      });
+      card.appendChild(grid);
+    }
+    wrap.appendChild(card);
+  };
+
+  const syncGardenSubView = () => {
+    const potW = root.querySelector('#st-px-garden-pot-wrap');
+    const diyW = root.querySelector('#st-px-garden-diy-wrap');
+    const bqdW = root.querySelector('#st-px-garden-bqd-wrap');
+    const bPot = root.querySelector('#st-px-gmode-pot');
+    const bDiy = root.querySelector('#st-px-gmode-diy');
+    const bBqd = root.querySelector('#st-px-gmode-bqd');
+    if (potW) potW.style.display = gardenViewMode === 'pot' ? 'block' : 'none';
+    if (diyW) diyW.style.display = gardenViewMode === 'diy' ? 'block' : 'none';
+    if (bqdW) bqdW.style.display = gardenViewMode === 'bqd' ? 'block' : 'none';
+    if (bPot) bPot.classList.toggle('care', gardenViewMode === 'pot');
+    if (bDiy) bDiy.classList.toggle('care', gardenViewMode === 'diy');
+    if (bBqd) bBqd.classList.toggle('care', gardenViewMode === 'bqd');
+    if (gardenViewMode === 'diy') renderBouquetWorkbench();
+    if (gardenViewMode === 'bqd') renderBouquetDex();
+  };
+  root.querySelector('#st-px-gmode-pot')?.addEventListener('click', () => { gardenViewMode = 'pot'; syncGardenSubView(); renderGarden(); });
+  root.querySelector('#st-px-gmode-diy')?.addEventListener('click', () => { gardenViewMode = 'diy'; syncGardenSubView(); });
+  root.querySelector('#st-px-gmode-bqd')?.addEventListener('click', () => { gardenViewMode = 'bqd'; syncGardenSubView(); });
 
   const renderGarden = () => {
     try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
@@ -53752,7 +54203,7 @@
     });
   };
 
-  const drawJobStageCanvas = (cvs, jobId, tick) => {
+  const drawJobStageCanvas = (cvs, jobId, tick, coopFriendId = '') => {
     const ctx = cvs.getContext('2d');
     const w = cvs.width, h = cvs.height;
     ctx.imageSmoothingEnabled = false;
@@ -53996,6 +54447,43 @@
       }
       ctx.restore();
     }
+    // 如果有拼班好友，在舞台另一侧画出好友小狗真实穿搭同屏打工！
+    if (coopFriendId) {
+      try {
+        const frList = typeof getFriendList === 'function' ? getFriendList() : [];
+        const frObj = frList.find(x => String(x.cloudId || '') === String(coopFriendId));
+        if (frObj && frObj.look) {
+          const lk = frObj.look;
+          const fx = Math.round(78 - walkWave * 16);
+          const fy = h - 34 - ((tick + 1) % 2);
+          const fPal = { o: lk.outline || '#3b2a22', w: lk.fur || '#fffdf7', s: shadeHex(lk.fur || '#fffdf7', 0.9), e: lk.ear || '#e2ae74', r: lk.collar || '#d66565', g: '#f4c842', k: '#241a15', p: '#ff9eb5', c: '#7a5a4e' };
+          const poseKey = tick % 2 === 0 ? 'walk1' : 'walk2';
+          const fGrid = PUP_SPRITES[poseKey] || PUP_SPRITES.idle1 || [];
+          ctx.save();
+          ctx.imageSmoothingEnabled = false;
+          ctx.translate(fx, fy + 4);
+          if (!facingLeft) { ctx.translate(18, 0); ctx.scale(-1, 1); }
+          for (let gy = 0; gy < fGrid.length; gy++) {
+            const row = fGrid[gy];
+            for (let gx = 0; gx < row.length; gx++) {
+              const col = fPal[row[gx]];
+              if (col) { ctx.fillStyle = col; ctx.fillRect(gx, gy, 1, 1); }
+            }
+          }
+          const prevCtx = activePxCtx, prevOff = config.puppyAccOffsets, prevEars = config.puppyOnesieShowEars;
+          try {
+            activePxCtx = ctx;
+            config.puppyAccOffsets = lk.accOffsets || {};
+            config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
+            drawPupOutfit(lk.outfit || 'none', 0, 0, 10, 2, false, false, false, false);
+            if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, 10, 2, 0, 0, false, false, false));
+          } finally {
+            activePxCtx = prevCtx; config.puppyAccOffsets = prevOff; config.puppyOnesieShowEars = prevEars;
+          }
+          ctx.restore();
+        }
+      } catch (_) {}
+    }
     // 小狗身旁闪烁的勤劳小星光
     ctx.fillStyle = '#ffe066';
     ctx.fillRect(px + 25, py + 4 + (tick % 2 ? 2 : 0), 2, 2);
@@ -54183,7 +54671,7 @@
         const totalBad = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobBadReviews?.[k] || []).length), 0);
         const head = doc.createElement('div');
         head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
-        head.innerHTML = `<span>店铺口碑墙 · 好评 ${totalGot}/24 · 差评 ${totalBad}/8</span>`;
+        head.innerHTML = '<span>店铺口碑墙</span>';
         const clsBtn = doc.createElement('button');
         clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
         clsBtn.addEventListener('click', closeRevModal);
@@ -54198,7 +54686,7 @@
           tb.type = 'button';
           tb.className = 'st-px-btn' + (activeRevShop === j.id ? ' care' : '');
           tb.style.cssText = 'height:22px;padding:0 3px;font-size:9.5px;';
-          tb.textContent = `${shortShopNames[j.id] || j.name}(${gLen}/6)`;
+          tb.textContent = `${shortShopNames[j.id] || j.name}`;
           tb.addEventListener('click', (e2) => { e2.stopPropagation(); activeRevShop = j.id; renderRevModalBody(); });
           tabBar.appendChild(tb);
         });
@@ -54220,7 +54708,7 @@
         bInfo.innerHTML = `
           <div style="font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:4px;">
             <span>${jObjCur.name}</span>
-            <span style="font-size:9.5px;color:#b86b24;">口碑 5.0 · ${gotIds.length}/${revs.length}</span>
+            <span style="font-size:9.5px;color:#b86b24;">顾客留言板</span>
           </div>
           <div style="height:5px;background:rgba(0,0,0,0.1);margin:4px 0 3px;overflow:hidden;">
             <div style="height:100%;width:${pct}%;background:${jObjCur.accent || '#d99b66'};"></div>
@@ -54252,45 +54740,37 @@
         card.appendChild(banner);
         const listWrap = doc.createElement('div');
         listWrap.style.cssText = 'overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-right:2px;';
-        revs.forEach((rv, rIdx) => {
-          const has = gotIds.includes(rv.id);
+        const badRevs = JOB_BAD_REVIEWS[jObjCur.id] || [];
+        const gotBadIds = Array.isArray(config.puppyJobBadReviews?.[jObjCur.id]) ? config.puppyJobBadReviews[jObjCur.id] : [];
+        // 混合编排所有顾客评价，未解锁前一律隐藏好坏，只有亲手触发后才揭晓！
+        const mixed = [];
+        const maxLen = Math.max(revs.length, badRevs.length);
+        for (let i = 0; i < revs.length; i++) {
+          mixed.push({ item: revs[i], isBad: false, has: gotIds.includes(revs[i].id) });
+          if (i === 1 && badRevs[0]) mixed.push({ item: badRevs[0], isBad: true, has: gotBadIds.includes(badRevs[0].id) });
+          if (i === 4 && badRevs[1]) mixed.push({ item: badRevs[1], isBad: true, has: gotBadIds.includes(badRevs[1].id) });
+        }
+        mixed.forEach((entry, mIdx) => {
+          const rv = entry.item;
           const note = doc.createElement('div');
-          note.style.cssText = `padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid ${has ? (jObjCur.accent || '#d99b66') : 'var(--px-border,#d0c0c6)'};box-shadow:${has ? '2px 2px 0 rgba(59,42,34,0.1)' : 'none'};opacity:${has ? '1' : '0.58'};`;
-          if (has) {
+          if (entry.has) {
+            const bd = entry.isBad ? '#d46a7e' : (jObjCur.accent || '#d99b66');
+            const tagBg = entry.isBad ? '#fff0f3' : (jObjCur.bg || '#fff6eb');
+            const tagCol = entry.isBad ? '#a83349' : '#7a4b1f';
+            const scoreTxt = entry.isBad ? '1.0分' : '5.0分';
+            note.style.cssText = `padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid ${bd};box-shadow:2px 2px 0 rgba(59,42,34,0.1);`;
             note.innerHTML = `
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;font-size:9.5px;">
-                <span style="font-weight:700;">#${rIdx + 1} ${rv.user || '匿名常客'}</span>
-                <span style="padding:0 5px;background:${jObjCur.bg || '#fff6eb'};border:1px solid ${jObjCur.accent || '#d99b66'};color:#7a4b1f;font-size:8.5px;font-weight:700;">${rv.tag} · 5.0分</span>
+                <span style="font-weight:700;color:${entry.isBad ? '#a83349' : 'inherit'};">#${mIdx + 1} ${rv.user || '匿名顾客'}</span>
+                <span style="padding:0 5px;background:${tagBg};border:1px solid ${bd};color:${tagCol};font-size:8.5px;font-weight:700;">${rv.tag} · ${scoreTxt}</span>
               </div>
               <div style="font-size:10px;line-height:1.5;">「${rv.text}」</div>
             `;
           } else {
-            note.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">#${rIdx + 1} 未解锁顾客留言 · 继续在【${jObjCur.name}】顺利完成班次即可收集~</div>`;
+            note.style.cssText = 'padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#d0c0c6);opacity:0.58;';
+            note.innerHTML = `<div style="font-size:9.5px;opacity:0.78;">#${mIdx + 1} 未解锁顾客评价 · 继续在【${jObjCur.name}】打工即可触发收集</div>`;
           }
           listWrap.appendChild(note);
-        });
-        const badRevs = JOB_BAD_REVIEWS[jObjCur.id] || [];
-        const gotBadIds = Array.isArray(config.puppyJobBadReviews?.[jObjCur.id]) ? config.puppyJobBadReviews[jObjCur.id] : [];
-        const badSub = doc.createElement('div');
-        badSub.style.cssText = 'font-size:10px;font-weight:700;color:#b83b52;margin-top:6px;padding-top:5px;border-top:1px dashed var(--px-border,#bfa4ae);';
-        badSub.textContent = `翻车差评记录 (${gotBadIds.length}/${badRevs.length}) · 全店累计 4 条解锁隐藏成就`;
-        listWrap.appendChild(badSub);
-        badRevs.forEach((br, bIdx) => {
-          const hasB = gotBadIds.includes(br.id);
-          const bNote = doc.createElement('div');
-          bNote.style.cssText = `padding:6px 8px;background:var(--px-card,#fff);border:1.5px dashed ${hasB ? '#d46a7e' : 'var(--px-border,#d0c0c6)'};opacity:${hasB ? '1' : '0.55'};`;
-          if (hasB) {
-            bNote.innerHTML = `
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;font-size:9.5px;">
-                <span style="font-weight:700;color:#a83349;">[差评#${bIdx + 1}] ${br.user}</span>
-                <span style="padding:0 5px;background:#fff0f3;border:1px solid #d46a7e;color:#a83349;font-size:8.5px;font-weight:700;">${br.tag} · 1.0分</span>
-              </div>
-              <div style="font-size:10px;line-height:1.48;">「${br.text}」</div>
-            `;
-          } else {
-            bNote.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">[差评#${bIdx + 1}] 未收录 · 打工偶尔手忙脚乱翻车时会收到顾客吐槽~</div>`;
-          }
-          listWrap.appendChild(bNote);
         });
         card.appendChild(listWrap);
       };
@@ -54304,7 +54784,7 @@
     if (topRevBtn) {
       const _tGood = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
       const _tBad = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobBadReviews?.[k] || []).length), 0);
-      topRevBtn.textContent = `口碑墙 (${_tGood}/24 · 差${_tBad})`;
+      topRevBtn.textContent = '口碑墙';
       topRevBtn.onclick = (e2) => { e2.stopPropagation(); openJobReviewWallModal(selectedJobId); };
     }
 
@@ -54448,10 +54928,36 @@
           const isOutfitFit = Boolean(config.puppyJob && config.puppyJob.outfitFit);
           const outfitBonus = (!messedUp && isOutfitFit) ? 2 : 0;
           const coopFriendName = (config.puppyJob && config.puppyJob.coopFriendName) ? String(config.puppyJob.coopFriendName) : '';
+          const isFirstCoop = Boolean(config.puppyJob && config.puppyJob.isFirstCoop);
+          const syncedWageVal = Number(config.puppyJob && config.puppyJob.syncedWage) || 0;
+          const effBaseWage = syncedWageVal > 0 ? syncedWageVal : baseWage;
           const coopMin = Number(config.puppyJob && config.puppyJob.coopBonusMin) || 1;
           const coopMax = Number(config.puppyJob && config.puppyJob.coopBonusMax) || coopMin;
-          const coopBonus = (!messedUp && coopFriendName) ? (coopMin + Math.floor(Math.random() * (coopMax - coopMin + 1))) : 0;
-          let totalWage = Math.max(1, baseWage + tip + urgentBonus + outfitBonus + coopBonus - penalty);
+          const coopBonus = (!messedUp && coopFriendName && isFirstCoop) ? (coopMin + Math.floor(Math.random() * (coopMax - coopMin + 1))) : 0;
+          // 好友首次拼班专属彩蛋（与我们基础概率一致：小费 22%，扣钱 9%），仅第一次生效！
+          let friendEggDelta = 0;
+          let friendEggLine = '';
+          if (coopFriendName && isFirstCoop) {
+            const fRoll = Math.random();
+            if (fRoll < 0.09) {
+              friendEggDelta = -(1 + Math.floor(Math.random() * 2));
+              const fBadLines = [
+                `${coopFriendName}转身时尾巴扫倒了一摞杯子，被店长扣了 ${Math.abs(friendEggDelta)} 币损耗费，正躲在你身后装无辜…`,
+                `${coopFriendName}帮忙递袋子时差点绊了一跤，被扣了 ${Math.abs(friendEggDelta)} 币整理费。`,
+                `${coopFriendName}偷瞄柜台小点心走神算错了一笔账，被店长象征性扣了 ${Math.abs(friendEggDelta)} 币。`,
+              ];
+              friendEggLine = pick(fBadLines);
+            } else if (fRoll < 0.31) {
+              friendEggDelta = 1 + Math.floor(Math.random() * 3);
+              const fGoodLines = [
+                `${coopFriendName}在柜台边歪头卖萌招揽了一波回头客，店长乐得额外发了 +${friendEggDelta} 币小费！`,
+                `${coopFriendName}主动帮客人贴好了工整贴纸，客人夸赞并塞了 +${friendEggDelta} 币打赏！`,
+                `${coopFriendName}和你默契接力效率翻倍，店长顺手多塞了 +${friendEggDelta} 币表扬红包！`,
+              ];
+              friendEggLine = pick(fGoodLines);
+            }
+          }
+          let totalWage = Math.max(1, effBaseWage + tip + urgentBonus + outfitBonus + coopBonus + friendEggDelta - penalty);
           const failMsgPools = {
             boba: [
               '{self}摇奶茶时盖子没扣紧甩了一桌珍珠，被店长扣了清洗费。',
@@ -54533,6 +55039,7 @@
           }
           const normalRestMs = rkBefore.restMs || 600000;
           config.puppyJob = null;
+          try { if (typeof scheduleCloudPupPush === 'function') scheduleCloudPupPush(); } catch (_) {}
           config.puppyJobCooldownUntil = Date.now() + (failType === 'pause' ? 3600000 : (failType === 'deduct' ? 1200000 : normalRestMs)) + darkCdExtra;
           saveConfig();
           checkPupAchievements();
@@ -54554,7 +55061,11 @@
           );
           const promoHtml = promoted ? `<div style="font-size:11px;font-weight:700;color:#b8456c;margin-top:3px;">恭喜晋升本店 Lv.${rkAfter.lv}【${rkAfter.title}】! 基础工资升至 ${rkAfter.wage[0]}~${rkAfter.wage[1]} 币!</div>` : '';
           const masterHtml = newlyMaster.length ? `<div style="font-size:10.5px;font-weight:700;color:#8a4f1f;margin-top:3px;">解锁满级店长赠礼：${newlyMaster.join('、')}（已放入衣柜）</div>` : '';
-          const coopHtml = (!messedUp && coopFriendName) ? `<div style="font-size:10.5px;color:#5a4a7a;margin-top:3px;">[双狗拼班] ${getPupName()} 和 ${escapeHtmlSimple(coopFriendName)} 默契配合下班，领到双人默契津贴 +${coopBonus}币！</div>` : '';
+          const coopHtml = coopFriendName
+            ? (isFirstCoop
+              ? `<div style="font-size:10.5px;color:#5a4a7a;margin-top:3px;">[今日首班拼班] ${getPupName()} 和 ${escapeHtmlSimple(coopFriendName)} 一起下班${coopBonus ? `，默契津贴 +${coopBonus}币` : ''}！${friendEggLine ? `<br/>[好友彩蛋] ${escapeHtmlSimple(friendEggLine)}` : ''}</div>`
+              : `<div style="font-size:10px;color:#6c5e82;margin-top:3px;">[好友作伴] ${escapeHtmlSimple(coopFriendName)} 乖乖陪你一起值完了这班（今日首班加成已领过）~</div>`)
+            : '';
           const revHtml = unlockedReview
             ? `<div style="font-size:10px;color:#3d6b47;margin-top:3px;">[新顾客好评] ${unlockedReview.user}：「${unlockedReview.text}」</div>`
             : (unlockedBadReview ? `<div style="font-size:10px;color:#b83b52;margin-top:3px;">[新翻车差评] ${unlockedBadReview.user}：「${unlockedBadReview.text}」</div>` : '');
@@ -54586,7 +55097,7 @@
         const stage = doc.createElement('canvas');
         stage.width = 128; stage.height = 54;
         stage.className = 'st-px-job-stage';
-        drawJobStageCanvas(stage, jObj.id, jobAnimTick);
+        drawJobStageCanvas(stage, jObj.id, jobAnimTick, config.puppyJob?.coopFriendId || '');
         statusEl.appendChild(stage);
         jobAnimTimer = setInterval(() => {
           if (!advJobView || advJobView.style.display === 'none' || !config.puppyJob) {
@@ -54597,7 +55108,7 @@
             renderJobPanel();
             return;
           }
-          drawJobStageCanvas(stage, jObj.id, jobAnimTick);
+          drawJobStageCanvas(stage, jObj.id, jobAnimTick, config.puppyJob?.coopFriendId || '');
           const remMsNow = Math.max(0, config.puppyJob.endAt - Date.now());
           const rem = Math.ceil(remMsNow / 1000);
           const totalJobDurNow = (config.puppyJob.baseDurMs || jObj.durMs) + (config.puppyJob.extraDurMs || 0); const pctNow = Math.min(100, Math.max(0, Math.round(((totalJobDurNow - remMsNow) / totalJobDurNow) * 100)));
@@ -54656,7 +55167,7 @@
       const stage = doc.createElement('canvas');
       stage.width = 128; stage.height = 54;
       stage.className = 'st-px-job-stage';
-      drawJobStageCanvas(stage, sel.id, 0);
+      drawJobStageCanvas(stage, sel.id, 0, win.__stJobCoopFid || '');
       statusEl.appendChild(stage);
 
       // 等高对齐双按钮栏：左「选择拼班好友」弹窗 + 右「本店好评墙」弹窗（关闭绝不误关小狗背包）
@@ -54664,9 +55175,7 @@
       extraBar.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;align-items:stretch;';
       const friends = typeof getFriendList === 'function' ? getFriendList() : [];
       const todayDs = getJobDateStr();
-      if (win.__stJobCoopFid && config.puppyJobCoopDaily && config.puppyJobCoopDaily[win.__stJobCoopFid] === todayDs) {
-        win.__stJobCoopFid = '';
-      }
+
       const pickedFr = win.__stJobCoopFid ? friends.find(x => String(x.cloudId || '') === win.__stJobCoopFid) : null;
       if (!pickedFr) win.__stJobCoopFid = '';
       const pickedName = pickedFr ? ((config.puppyFriendRemarks && config.puppyFriendRemarks[pickedFr.cloudId]) || pickedFr.name || '好友') : '';
@@ -54727,12 +55236,10 @@
             const isSel = win.__stJobCoopFid === fid;
             const row = doc.createElement('button');
             row.type = 'button';
-            row.disabled = usedToday;
             row.className = 'st-px-btn' + (isSel ? ' care' : '');
-            row.style.cssText = `width:100%;height:30px;font-size:10.5px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;opacity:${usedToday ? '0.52' : '1'};`;
-            row.innerHTML = `<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fName)} <span style="font-size:9px;opacity:0.78;">Lv.${fLv}</span></span><span style="font-size:9px;flex-shrink:0;">${usedToday ? '今日已拼班' : (isSel ? `已选(${bTxt})` : `可拼班 ${bTxt}`)}</span>`;
+            row.style.cssText = 'width:100%;height:30px;font-size:10.5px;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;';
+            row.innerHTML = `<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(fName)} <span style="font-size:9px;opacity:0.78;">Lv.${fLv}</span></span><span style="font-size:9px;flex-shrink:0;">${usedToday ? (isSel ? '已选·作伴无加成' : '今日已领·可邀作伴') : (isSel ? `已选(${bTxt})` : `首班 ${bTxt}`)}</span>`;
             row.addEventListener('click', (e2) => {
-              if (usedToday) return;
               win.__stJobCoopFid = fid;
               closeCoopModal(e2);
               renderJobPanel();
@@ -54751,159 +55258,10 @@
       revWallBtn.type = 'button';
       revWallBtn.className = 'st-px-btn';
       revWallBtn.style.cssText = 'height:24px;min-height:24px;padding:0 6px;font-size:10px;line-height:22px;width:100%;box-sizing:border-box;white-space:nowrap;';
-      revWallBtn.textContent = `本店好评墙 (${curShopRevCnt}/6)`;
+      revWallBtn.textContent = '本店口碑墙';
       revWallBtn.addEventListener('click', (ev) => {
         ev.stopPropagation();
-        let mask = root.querySelector('#st-tb-job-rev-mask');
-        if (mask) mask.remove();
-        mask = doc.createElement('div');
-        mask.id = 'st-tb-job-rev-mask';
-        mask.className = 'st-px-submodal-keep-bag';
-        mask.style.cssText = 'position:fixed;inset:0;z-index:10040;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
-        const closeRevModal = (e2) => {
-          if (e2) { e2.stopPropagation(); }
-          win.__stSubModalClosedAt = Date.now();
-          mask.remove();
-        };
-        let activeRevShop = sel.id;
-        const card = doc.createElement('div');
-        card.style.cssText = 'width:min(330px,93vw);max-height:78vh;display:flex;flex-direction:column;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.22);';
-        const renderRevModalBody = () => {
-          card.innerHTML = '';
-          const totalGot = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
-          const totalBad = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobBadReviews?.[k] || []).length), 0);
-          const head = doc.createElement('div');
-          head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
-          head.innerHTML = `<span>店铺口碑墙 · 好评 ${totalGot}/24 · 差评 ${totalBad}/8</span>`;
-          const clsBtn = doc.createElement('button');
-          clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
-          clsBtn.addEventListener('click', closeRevModal);
-          head.appendChild(clsBtn);
-          card.appendChild(head);
-
-          // 4家店铺独立标签页
-          const tabBar = doc.createElement('div');
-          tabBar.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:7px;';
-          const shortShopNames = { boba: '奶茶店', bakery: '面包店', florist: '花店', bookshop: '旧书店' };
-          PUP_JOBS.forEach(j => {
-            const gLen = (config.puppyJobReviews?.[j.id] || []).length;
-            const tb = doc.createElement('button');
-            tb.type = 'button';
-            tb.className = 'st-px-btn' + (activeRevShop === j.id ? ' care' : '');
-            tb.style.cssText = 'height:22px;padding:0 3px;font-size:9.5px;';
-            tb.textContent = `${shortShopNames[j.id] || j.name}(${gLen}/6)`;
-            tb.addEventListener('click', (e2) => { e2.stopPropagation(); activeRevShop = j.id; renderRevModalBody(); });
-            tabBar.appendChild(tb);
-          });
-          card.appendChild(tabBar);
-
-          const jObjCur = PUP_JOBS.find(x => x.id === activeRevShop) || PUP_JOBS[0];
-          const gotIds = Array.isArray(config.puppyJobReviews?.[jObjCur.id]) ? config.puppyJobReviews[jObjCur.id] : [];
-          const revs = JOB_CUSTOMER_REVIEWS[jObjCur.id] || [];
-          const claimed = Boolean(config.puppyJobReviewClaimed?.[jObjCur.id]);
-          const rw = JOB_MASTER_REWARDS[jObjCur.id];
-          const pct = Math.round((gotIds.length / Math.max(1, revs.length)) * 100);
-
-          // 本店主题看板头
-          const banner = doc.createElement('div');
-          banner.style.cssText = `display:flex;align-items:center;gap:8px;padding:7px 8px;margin-bottom:7px;background:${jObjCur.bg || 'var(--px-card,#fff)'};border:1.5px solid ${jObjCur.accent || 'var(--px-border,#bfa4ae)'};color:#4a3525;`;
-          const ic = doc.createElement('canvas');
-          ic.width = 16; ic.height = 16;
-          ic.style.cssText = 'width:26px;height:26px;image-rendering:pixelated;flex-shrink:0;';
-          drawJobMiniIcon(ic, jObjCur.icon);
-          const bInfo = doc.createElement('div');
-          bInfo.style.cssText = 'flex:1;min-width:0;';
-          bInfo.innerHTML = `
-            <div style="font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:4px;">
-              <span>${jObjCur.name}</span>
-              <span style="font-size:9.5px;color:#b86b24;">口碑 5.0 · ${gotIds.length}/${revs.length}</span>
-            </div>
-            <div style="height:5px;background:rgba(0,0,0,0.1);margin:4px 0 3px;overflow:hidden;">
-              <div style="height:100%;width:${pct}%;background:${jObjCur.accent || '#d99b66'};"></div>
-            </div>
-            <div style="font-size:9px;opacity:0.85;">Lv.3满级赠礼：${rw ? rw.name : ''}</div>
-          `;
-          banner.append(ic, bInfo);
-          if (gotIds.length >= revs.length && !claimed) {
-            const cBtn = doc.createElement('button');
-            cBtn.type = 'button'; cBtn.className = 'st-px-btn care'; cBtn.style.cssText = 'height:22px;padding:0 7px;font-size:9.5px;flex-shrink:0;'; cBtn.textContent = '领+15币';
-            cBtn.addEventListener('click', (e2) => {
-              e2.stopPropagation();
-              config.puppyJobReviewClaimed = config.puppyJobReviewClaimed || {};
-              if (config.puppyJobReviewClaimed[jObjCur.id]) return;
-              config.puppyJobReviewClaimed[jObjCur.id] = true;
-              config.puppyCoins = (config.puppyCoins || 0) + 15;
-              config.puppyStats = config.puppyStats || {};
-              config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + 15;
-              saveConfig(); checkPupAchievements(); updatePupStatBars();
-              renderRevModalBody(); renderJobPanel();
-              showPuppyBubble(`集齐了【${jObjCur.name}】全部好评，领到 +15 币口碑奖金啦~`, 2600);
-            });
-            banner.appendChild(cBtn);
-          } else if (claimed) {
-            const sp = doc.createElement('span');
-            sp.style.cssText = 'font-size:9.5px;font-weight:700;color:#2e7d47;flex-shrink:0;'; sp.textContent = '已领奖';
-            banner.appendChild(sp);
-          }
-          card.appendChild(banner);
-
-          // 便签式好评卡片列表
-          const listWrap = doc.createElement('div');
-          listWrap.style.cssText = 'overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-right:2px;';
-          revs.forEach((rv, rIdx) => {
-            const has = gotIds.includes(rv.id);
-            const note = doc.createElement('div');
-            note.style.cssText = `padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid ${has ? (jObjCur.accent || '#d99b66') : 'var(--px-border,#d0c0c6)'};box-shadow:${has ? '2px 2px 0 rgba(59,42,34,0.1)' : 'none'};opacity:${has ? '1' : '0.58'};`;
-            if (has) {
-              note.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;font-size:9.5px;">
-                  <span style="font-weight:700;">#${rIdx + 1} ${rv.user || '匿名常客'}</span>
-                  <span style="padding:0 5px;background:${jObjCur.bg || '#fff6eb'};border:1px solid ${jObjCur.accent || '#d99b66'};color:#7a4b1f;font-size:8.5px;font-weight:700;">${rv.tag} · 5.0分</span>
-                </div>
-                <div style="font-size:10px;line-height:1.5;">「${rv.text}」</div>
-              `;
-            } else {
-              note.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:9.5px;opacity:0.75;">
-                  <span>#${rIdx + 1} 未解锁顾客留言</span>
-                  <span>待收集</span>
-                </div>
-                <div style="font-size:9.5px;margin-top:2px;opacity:0.7;">继续在【${jObjCur.name}】顺利完成班次即可收集这张顾客便签~</div>
-              `;
-            }
-            listWrap.appendChild(note);
-          });
-          // 本店翻车差评区（集满 4 条解锁隐藏成就）
-          const badRevs = JOB_BAD_REVIEWS[jObjCur.id] || [];
-          const gotBadIds = Array.isArray(config.puppyJobBadReviews?.[jObjCur.id]) ? config.puppyJobBadReviews[jObjCur.id] : [];
-          const badSub = doc.createElement('div');
-          badSub.style.cssText = 'font-size:10px;font-weight:700;color:#b83b52;margin-top:6px;padding-top:5px;border-top:1px dashed var(--px-border,#bfa4ae);';
-          badSub.textContent = `翻车差评记录 (${gotBadIds.length}/${badRevs.length}) · 全店累计 4 条解锁隐藏成就`;
-          listWrap.appendChild(badSub);
-          badRevs.forEach((br, bIdx) => {
-            const hasB = gotBadIds.includes(br.id);
-            const bNote = doc.createElement('div');
-            bNote.style.cssText = `padding:6px 8px;background:var(--px-card,#fff);border:1.5px dashed ${hasB ? '#d46a7e' : 'var(--px-border,#d0c0c6)'};opacity:${hasB ? '1' : '0.55'};`;
-            if (hasB) {
-              bNote.innerHTML = `
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;font-size:9.5px;">
-                  <span style="font-weight:700;color:#a83349;">[差评#${bIdx + 1}] ${br.user}</span>
-                  <span style="padding:0 5px;background:#fff0f3;border:1px solid #d46a7e;color:#a83349;font-size:8.5px;font-weight:700;">${br.tag} · 1.0分</span>
-                </div>
-                <div style="font-size:10px;line-height:1.48;">「${br.text}」</div>
-              `;
-            } else {
-              bNote.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">[差评#${bIdx + 1}] 未收录 · 打工偶尔手忙脚乱翻车时会收到顾客吐槽~</div>`;
-            }
-            listWrap.appendChild(bNote);
-          });
-          card.appendChild(listWrap);
-        };
-        renderRevModalBody();
-        mask.appendChild(card);
-        mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
-        mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeRevModal(e2); });
-        root.appendChild(mask);
+        openJobReviewWallModal(sel.id);
       });
       extraBar.append(coopBtn, revWallBtn);
       statusEl.appendChild(extraBar);
@@ -54914,7 +55272,7 @@
 
   const jobStartBtn = root.querySelector('#st-px-job-start');
   if (jobStartBtn) {
-    jobStartBtn.addEventListener('click', () => {
+    jobStartBtn.addEventListener('click', async () => {
       if (config.puppyAdventure) {
         showPuppyBubble(getPersExtra('busyAdv'), 2400);
         return;
@@ -54954,32 +55312,68 @@
         ],
       };
       const outfitFit = Boolean((_fitCheckers[sel.id] || _fitCheckers.boba)[_fitIdx]());
-      let coopFriendId = '', coopFriendName = '', coopBonusMin = 1, coopBonusMax = 1;
+      let coopFriendId = '', coopFriendName = '', coopBonusMin = 1, coopBonusMax = 1, isFirstCoop = false, syncedWage = 0;
       const pickedFid = String(win.__stJobCoopFid || '').trim();
-      win.__stJobCoopFid = '';
       if (pickedFid) {
-        config.puppyJobCoopDaily = config.puppyJobCoopDaily || {};
-        if (config.puppyJobCoopDaily[pickedFid] !== todayDs) {
-          const frList = typeof getFriendList === 'function' ? getFriendList() : [];
-          const frObj = frList.find(x => String(x.cloudId || '') === pickedFid);
-          if (frObj) {
-            coopFriendId = pickedFid;
-            coopFriendName = (config.puppyFriendRemarks && config.puppyFriendRemarks[pickedFid]) || frObj.name || '好友小狗';
+        const frList = typeof getFriendList === 'function' ? getFriendList() : [];
+        const frObj = frList.find(x => String(x.cloudId || '') === pickedFid);
+        if (frObj) {
+          config.puppyJobCoopDaily = config.puppyJobCoopDaily || {};
+          isFirstCoop = config.puppyJobCoopDaily[pickedFid] !== todayDs;
+          coopFriendId = pickedFid;
+          coopFriendName = (config.puppyFriendRemarks && config.puppyFriendRemarks[pickedFid]) || frObj.name || '好友小狗';
+          if (isFirstCoop) {
+            // 今日首次邀请该好友：先检查对方是否正在打工
+            try {
+              const baseUrl = getCloudBaseUrl();
+              const chkRes = await fetchWithTimeout(`${baseUrl}/pup?id=${encodeURIComponent(pickedFid)}`, {}, 3500);
+              if (chkRes && chkRes.ok) {
+                const chkData = await chkRes.json();
+                if (chkData && Number(chkData.jobBusyUntil || 0) > Date.now()) {
+                  openPixelPupNoticeModal('暂不可拼班', '对方正在打工，请稍后再试~');
+                  return;
+                }
+              }
+            } catch (_) {}
             const bInfo = typeof getFriendBondInfo === 'function' ? getFriendBondInfo(frObj) : { lv: 1 };
             const fLv = Number(bInfo && bInfo.lv) || 1;
             const rng = fLv <= 1 ? [1, 1] : (fLv === 2 ? [1, 2] : (fLv === 3 ? [2, 3] : (fLv === 4 ? [3, 4] : [4, 5])));
             coopBonusMin = rng[0]; coopBonusMax = rng[1];
+            const wageRange = cntNow >= 40 ? [15, 20] : (cntNow >= 15 ? [10, 14] : sel.wage);
+            syncedWage = wageRange[0] + Math.floor(Math.random() * (wageRange[1] - wageRange[0] + 1));
             config.puppyJobCoopDaily[pickedFid] = todayDs;
           }
         }
       }
+      win.__stJobCoopFid = '';
       let extraDurMs = 0;
       const db = config.puppyDarkBuff;
       if (db && db.id === 'bloat_job' && Number(db.expireAt || 0) > Date.now()) {
         extraDurMs = 5 * 60 * 1000;
         config.puppyDarkBuff = null;
       }
-      config.puppyJob = { id: sel.id, startedAt: Date.now(), endAt: Date.now() + baseDurMs + extraDurMs, baseDurMs, extraDurMs, isUrgent, outfitFit, coopFriendId, coopFriendName, coopBonusMin, coopBonusMax };
+      const jStartAt = Date.now();
+      const jEndAt = jStartAt + baseDurMs + extraDurMs;
+      config.puppyJob = { id: sel.id, startedAt: jStartAt, endAt: jEndAt, baseDurMs, extraDurMs, isUrgent, outfitFit, coopFriendId, coopFriendName, coopBonusMin, coopBonusMax, isFirstCoop, syncedWage };
+      // 首次拼班同步通知好友一起显示正在打工并共享收益
+      if (coopFriendId && isFirstCoop) {
+        try {
+          const baseUrl = getCloudBaseUrl();
+          fetchWithTimeout(`${baseUrl}/gift`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fromId: ensureMyCloudId(),
+              fromName: getPupName(),
+              toId: coopFriendId,
+              gifts: [{ kind: '__cojob__', shopId: sel.id, startAt: jStartAt, endAt: jEndAt, baseDurMs, bonusMin: coopBonusMin, bonusMax: coopBonusMax, syncedWage }],
+              redPacket: 0,
+              msg: `约你一起去【${sel.name}】拼班打工啦~`,
+            }),
+          }, 7000).catch(() => {});
+        } catch (_) {}
+      }
+      try { if (typeof scheduleCloudPupPush === 'function') scheduleCloudPupPush(); } catch (_) {}
       saveConfig();
       showPuppyBubble(extraDurMs ? `呜……吃太撑胃胀，去${sel.name}打工得多花 5 分钟才行……` : (coopFriendName ? `拉上 ${coopFriendName} 一起去${sel.name}拼班打工啦~` : getPersTalk('jobGo', sel.name)), 2600);
       renderJobPanel();
