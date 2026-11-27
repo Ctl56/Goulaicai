@@ -44539,7 +44539,153 @@
       bqCharms = []; bqSelectedCharmIdx = -1;
       renderBouquetWorkbench();
     });
-    prevWrap.append(cvs, dragHint, resetAllBtn);
+    const zoomEditBtn = doc.createElement('button');
+    zoomEditBtn.type = 'button'; zoomEditBtn.className = 'st-px-btn care';
+    zoomEditBtn.style.cssText = 'width:100%;height:21px;font-size:9px;margin-top:4px;';
+    zoomEditBtn.textContent = '放大排版';
+    zoomEditBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      let zm = root.querySelector('#st-tb-bq-zoom-mask');
+      if (zm) zm.remove();
+      zm = doc.createElement('div');
+      zm.id = 'st-tb-bq-zoom-mask';
+      zm.className = 'st-px-submodal-keep-bag';
+      zm.style.cssText = 'position:fixed;inset:0;z-index:10046;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:10px;pointer-events:auto;';
+      const closeZ = (e2) => {
+        if (e2) e2.stopPropagation();
+        win.__stSubModalClosedAt = Date.now();
+        zm.remove();
+        renderBouquetWorkbench();
+      };
+      const zCard = doc.createElement('div');
+      zCard.style.cssText = 'width:min(320px,94vw);max-height:86vh;overflow-y:auto;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.26);';
+      const zHead = doc.createElement('div');
+      zHead.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:6px;';
+      zHead.innerHTML = '<span>放大精细排版（拖动花/丝带/装饰）</span>';
+      const zDoneBtn = doc.createElement('button');
+      zDoneBtn.type = 'button'; zDoneBtn.className = 'st-px-btn care'; zDoneBtn.style.cssText = 'height:21px;padding:0 8px;font-size:9.5px;'; zDoneBtn.textContent = '完成';
+      zDoneBtn.addEventListener('click', closeZ);
+      zHead.appendChild(zDoneBtn);
+      zCard.appendChild(zHead);
+
+      const bigCvs = doc.createElement('canvas');
+      bigCvs.width = 48; bigCvs.height = 48;
+      bigCvs.style.cssText = 'width:256px;height:256px;max-width:100%;aspect-ratio:1/1;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;margin:0 auto 7px;touch-action:none;cursor:grab;background:#fffaf4;';
+      const redrawBig = () => {
+        redrawPreview(bigCvs);
+        redrawPreview(cvs);
+      };
+      redrawBig();
+
+      let bigDrag = null;
+      const toBigPos = (e2) => {
+        const rc = bigCvs.getBoundingClientRect();
+        return [
+          clamp(((e2.clientX - rc.left) / Math.max(1, rc.width)) * 48, 2, 46),
+          clamp(((e2.clientY - rc.top) / Math.max(1, rc.height)) * 48, 2, 46),
+        ];
+      };
+      bigCvs.addEventListener('pointerdown', (e2) => {
+        const [cx, cy] = toBigPos(e2);
+        let bestCh = -1, bestChD = 6.5;
+        bqCharms.forEach((ch, idx) => {
+          const d = Math.hypot(ch.x - cx, ch.y - cy);
+          if (d < bestChD) { bestChD = d; bestCh = idx; }
+        });
+        if (bestCh >= 0) {
+          bigDrag = { type: 'charm', idx: bestCh };
+          bqSelectedCharmIdx = bestCh;
+          try { bigCvs.setPointerCapture(e2.pointerId); } catch (_) {}
+          e2.stopPropagation();
+          return;
+        }
+        if (Math.hypot(bqRibbonX - cx, bqRibbonY - cy) < 7.5) {
+          bigDrag = { type: 'ribbon', idx: 0 };
+          try { bigCvs.setPointerCapture(e2.pointerId); } catch (_) {}
+          e2.stopPropagation();
+          return;
+        }
+        const curSlots = (Array.isArray(bqCustomSlots) && bqCustomSlots.length) ? bqCustomSlots : getDefaultBouquetSlots(bqTier, bqFlowerSpread);
+        let bestFl = -1, bestFlD = 6.5;
+        curSlots.forEach(([fx, fy], idx) => {
+          const d = Math.hypot(fx - cx, fy - cy);
+          if (d < bestFlD) { bestFlD = d; bestFl = idx; }
+        });
+        if (bestFl >= 0) {
+          if (!Array.isArray(bqCustomSlots) || !bqCustomSlots.length) {
+            bqCustomSlots = curSlots.map(([x, y]) => [x, y]);
+          }
+          bigDrag = { type: 'flower', idx: bestFl };
+          try { bigCvs.setPointerCapture(e2.pointerId); } catch (_) {}
+          e2.stopPropagation();
+        }
+      });
+      bigCvs.addEventListener('pointermove', (e2) => {
+        if (!bigDrag) return;
+        const [cx, cy] = toBigPos(e2);
+        if (bigDrag.type === 'charm' && bqCharms[bigDrag.idx]) {
+          bqCharms[bigDrag.idx].x = Math.round(cx);
+          bqCharms[bigDrag.idx].y = Math.round(cy);
+        } else if (bigDrag.type === 'ribbon') {
+          bqRibbonX = Math.round(clamp(cx, 8, 40));
+          bqRibbonY = Math.round(clamp(cy, 16, 43));
+        } else if (bigDrag.type === 'flower' && bqCustomSlots && bqCustomSlots[bigDrag.idx]) {
+          bqCustomSlots[bigDrag.idx] = [Math.round(clamp(cx, 5, 43)), Math.round(clamp(cy, 4, 35))];
+        }
+        redrawBig();
+      });
+      const stopBigDrag = () => { bigDrag = null; };
+      bigCvs.addEventListener('pointerup', stopBigDrag);
+      bigCvs.addEventListener('pointercancel', stopBigDrag);
+      zCard.appendChild(bigCvs);
+
+      // 每个已放装饰独立调色与单独删除区
+      const zCharmList = doc.createElement('div');
+      zCharmList.style.cssText = 'text-align:left;margin-bottom:6px;';
+      const renderZCharms = () => {
+        zCharmList.innerHTML = '';
+        if (!bqCharms.length) {
+          zCharmList.innerHTML = '<div style="font-size:9.5px;opacity:0.72;text-align:center;">还没有添加小装饰，可关闭后在工作台添加，或直接拖动花朵和丝带排版~</div>';
+          return;
+        }
+        const tit = doc.createElement('div');
+        tit.style.cssText = 'font-size:9.5px;font-weight:700;margin-bottom:4px;';
+        tit.textContent = '已添加装饰（每个可单独调色或删除）：';
+        zCharmList.appendChild(tit);
+        const grid = doc.createElement('div');
+        grid.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;';
+        bqCharms.forEach((ch, idx) => {
+          const def = BQ_CHARM_DEFS.find(d => d.key === ch.key);
+          const chip = doc.createElement('div');
+          chip.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:2px 5px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);font-size:9px;';
+          const lbl = doc.createElement('span');
+          lbl.textContent = `${def ? def.label : ch.key}#${idx + 1}`;
+          const colInp = doc.createElement('input');
+          colInp.type = 'color'; colInp.value = ch.col || '#e87a98';
+          colInp.style.cssText = 'width:17px;height:17px;padding:0;border:1px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;';
+          colInp.addEventListener('input', () => { ch.col = colInp.value; redrawBig(); });
+          const delB = doc.createElement('button');
+          delB.type = 'button'; delB.className = 'st-px-btn'; delB.style.cssText = 'height:17px;padding:0 4px;font-size:9px;line-height:15px;'; delB.textContent = '×';
+          delB.addEventListener('click', (e2) => {
+            e2.stopPropagation();
+            bqCharms.splice(idx, 1);
+            redrawBig();
+            renderZCharms();
+          });
+          chip.append(lbl, colInp, delB);
+          grid.appendChild(chip);
+        });
+        zCharmList.appendChild(grid);
+      };
+      renderZCharms();
+      zCard.appendChild(zCharmList);
+
+      zm.appendChild(zCard);
+      zm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+      zm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === zm) closeZ(e2); });
+      root.appendChild(zm);
+    });
+    prevWrap.append(cvs, dragHint, zoomEditBtn, resetAllBtn);
 
     const ctrlCol = doc.createElement('div');
     ctrlCol.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;';
@@ -44643,14 +44789,42 @@
         bqCharms.push({ key: cd.key, x: 14 + (bqCharms.length % 4) * 6, y: 23 + Math.floor(bqCharms.length / 4) * 8, col: bqCharmCol });
         bqSelectedCharmIdx = bqCharms.length - 1;
         redrawPreview(cvs);
+        renderPlacedCharmsBar();
       });
       chRow.appendChild(cb);
     });
     const clrCh = doc.createElement('button');
     clrCh.type = 'button'; clrCh.className = 'st-px-btn'; clrCh.style.cssText = 'height:19px;padding:0 5px;font-size:8.5px;'; clrCh.textContent = '一键清空装饰';
-    clrCh.addEventListener('click', () => { bqCharms = []; bqSelectedCharmIdx = -1; redrawPreview(cvs); });
+    clrCh.addEventListener('click', () => { bqCharms = []; bqSelectedCharmIdx = -1; redrawPreview(cvs); renderPlacedCharmsBar(); });
     chRow.appendChild(clrCh);
     card.appendChild(chRow);
+
+    // 工作台内也直接显示每个已添加装饰的独立调色与删除按钮
+    const placedChWrap = doc.createElement('div');
+    placedChWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;';
+    const renderPlacedCharmsBar = () => {
+      placedChWrap.innerHTML = '';
+      if (!bqCharms.length) { placedChWrap.style.display = 'none'; return; }
+      placedChWrap.style.display = 'flex';
+      bqCharms.forEach((ch, idx) => {
+        const def = BQ_CHARM_DEFS.find(d => d.key === ch.key);
+        const chip = doc.createElement('div');
+        chip.style.cssText = 'display:inline-flex;align-items:center;gap:3px;padding:1px 4px;background:var(--px-card,#fff);border:1px solid var(--px-border,#bfa4ae);font-size:8.5px;';
+        const lbl = doc.createElement('span');
+        lbl.textContent = `${def ? def.label : ch.key}#${idx + 1}`;
+        const cInp = doc.createElement('input');
+        cInp.type = 'color'; cInp.value = ch.col || '#e87a98';
+        cInp.style.cssText = 'width:15px;height:15px;padding:0;border:1px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;';
+        cInp.addEventListener('input', () => { ch.col = cInp.value; redrawPreview(cvs); });
+        const delB = doc.createElement('button');
+        delB.type = 'button'; delB.className = 'st-px-btn'; delB.style.cssText = 'height:15px;padding:0 3px;font-size:8.5px;line-height:13px;'; delB.textContent = '×';
+        delB.addEventListener('click', () => { bqCharms.splice(idx, 1); redrawPreview(cvs); renderPlacedCharmsBar(); });
+        chip.append(lbl, cInp, delB);
+        placedChWrap.appendChild(chip);
+      });
+    };
+    renderPlacedCharmsBar();
+    card.appendChild(placedChWrap);
 
     // 选花区（单品点击直接切换花材，无需先取消！）
     const flHead = doc.createElement('div');
