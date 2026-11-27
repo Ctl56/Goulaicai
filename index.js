@@ -51954,100 +51954,224 @@
   const pupBgNotifyBtn = root.querySelector('#st-tb-pup-bgnotify-toggle');
   const pupSoundBtn = root.querySelector('#st-tb-pup-sound-toggle');
 
-  const playSoftBellChime = (overrideTone = null) => {
-    if (!overrideTone && config.puppyBellSound === false) return;
-    const tone = overrideTone || config.puppyBellTone || 'ios_tri';
+  // ==================== 铃声双通道引擎（预解锁 <audio> WAV + 共享 WebAudio，前台/切屏/轻保活/强保活均清晰发声，绝不关闭 kaAudioCtx） ====================
+  const _bellWavCache = {};
+  const _buildBellToneWavUrl = (tone) => {
+    if (_bellWavCache[tone]) return _bellWavCache[tone];
+    const sr = 22050;
+    const totalSec = 0.85;
+    const totalSamples = Math.floor(sr * totalSec);
+    const pcm = new Float32Array(totalSamples);
+    const addTone = (f0, f1, delay, dur, wave = 'sine', peak = 0.36) => {
+      const start = Math.floor(delay * sr);
+      const len = Math.min(Math.floor(dur * sr), totalSamples - start);
+      let phase = 0;
+      for (let i = 0; i < len; i++) {
+        const t = i / sr;
+        const frac = i / Math.max(1, len);
+        const freq = f1 ? f0 * Math.pow(f1 / f0, frac) : f0;
+        phase += (2 * Math.PI * freq) / sr;
+        let v = Math.sin(phase);
+        if (wave === 'triangle') v = (2 / Math.PI) * Math.asin(Math.sin(phase));
+        else if (wave === 'square') v = Math.sin(phase) >= 0 ? 0.65 : -0.65;
+        const env = Math.min(1, t / 0.014) * Math.exp(-t * (4.2 / Math.max(0.12, dur)));
+        pcm[start + i] += v * env * peak;
+      }
+    };
+    if (tone === 'ios_tri') {
+      addTone(783.99, 0, 0.00, 0.18, 'triangle', 0.38);
+      addTone(1046.50, 0, 0.14, 0.18, 'triangle', 0.38);
+      addTone(1318.51, 0, 0.28, 0.36, 'sine', 0.42);
+    } else if (tone === 'ios_note') {
+      addTone(880.00, 0, 0.00, 0.22, 'sine', 0.38);
+      addTone(1760.00, 0, 0.00, 0.14, 'sine', 0.14);
+      addTone(1174.66, 0, 0.15, 0.40, 'sine', 0.42);
+    } else if (tone === 'water_drop') {
+      addTone(520, 1480, 0.00, 0.24, 'sine', 0.42);
+    } else if (tone === 'pixel_coin') {
+      addTone(987.77, 0, 0.00, 0.11, 'square', 0.24);
+      addTone(1318.51, 0, 0.09, 0.32, 'square', 0.24);
+    } else if (tone === 'music_box') {
+      addTone(1318.51, 0, 0.00, 0.28, 'sine', 0.36);
+      addTone(1174.66, 0, 0.14, 0.26, 'sine', 0.34);
+      addTone(1567.98, 0, 0.28, 0.44, 'sine', 0.40);
+    } else if (tone === 'cat_bell') {
+      addTone(1760.00, 0, 0.00, 0.15, 'triangle', 0.32);
+      addTone(2093.00, 0, 0.07, 0.19, 'sine', 0.34);
+      addTone(1760.00, 0, 0.20, 0.15, 'triangle', 0.30);
+      addTone(2349.32, 0, 0.27, 0.30, 'sine', 0.36);
+    } else if (tone === 'bubble_pop') {
+      addTone(440, 1180, 0.00, 0.13, 'sine', 0.38);
+      addTone(580, 1560, 0.14, 0.13, 'sine', 0.38);
+    } else if (tone === 'harp_glide') {
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => addTone(f, 0, i * 0.075, 0.36, 'triangle', 0.32));
+    } else if (tone === 'star_twinkle') {
+      addTone(1567.98, 0, 0.00, 0.20, 'sine', 0.36);
+      addTone(1975.53, 0, 0.10, 0.20, 'sine', 0.36);
+      addTone(2637.02, 0, 0.20, 0.38, 'sine', 0.34);
+    } else {
+      addTone(1046.50, 0, 0.00, 0.24, 'sine', 0.36);
+      addTone(1318.51, 0, 0.11, 0.26, 'sine', 0.36);
+      addTone(1567.98, 0, 0.22, 0.40, 'sine', 0.38);
+    }
+    const buf = new ArrayBuffer(44 + totalSamples * 2);
+    const dv = new DataView(buf);
+    const wStr = (off, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i)); };
+    wStr(0, 'RIFF'); dv.setUint32(4, 36 + totalSamples * 2, true); wStr(8, 'WAVE');
+    wStr(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+    dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+    wStr(36, 'data'); dv.setUint32(40, totalSamples * 2, true);
+    for (let i = 0; i < totalSamples; i++) {
+      const s = Math.max(-1, Math.min(1, pcm[i]));
+      dv.setInt16(44 + i * 2, s < 0 ? s * 32768 : s * 32767, true);
+    }
+    const bytes = new Uint8Array(buf);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 8192) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+    }
+    const url = 'data:audio/wav;base64,' + btoa(bin);
+    _bellWavCache[tone] = url;
+    return url;
+  };
+
+  let _bellAudioUnlocked = false;
+  const _unlockPupBellAudio = () => {
+    if (_bellAudioUnlocked) return;
+    _bellAudioUnlocked = true;
+    try {
+      if (!win.__stPupBellAudio) {
+        win.__stPupBellAudio = new win.Audio();
+        win.__stPupBellAudio.preload = 'auto';
+        win.__stPupBellAudio.playsInline = true;
+      }
+      const ba = win.__stPupBellAudio;
+      ba.muted = true;
+      ba.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      ba.play().then(() => { ba.pause(); ba.muted = false; }).catch(() => { ba.muted = false; _bellAudioUnlocked = false; });
+    } catch (_) {}
+    try {
+      const AudioCtx = win.AudioContext || win.webkitAudioContext;
+      if (AudioCtx && (!win.__stPupBellCtx || win.__stPupBellCtx.state === 'closed')) {
+        win.__stPupBellCtx = new AudioCtx();
+      }
+      if (win.__stPupBellCtx && win.__stPupBellCtx.state === 'suspended') {
+        win.__stPupBellCtx.resume().catch(() => {});
+      }
+    } catch (_) {}
+  };
+  doc.addEventListener('pointerdown', _unlockPupBellAudio, { passive: true });
+
+  const _playBellWebAudio = (tone) => {
     try {
       const AudioCtx = win.AudioContext || win.webkitAudioContext;
       if (!AudioCtx) return;
       const reuseKa = !!(kaAudioCtx && kaAudioCtx.state !== 'closed' && (doc.hidden || kaAudioCtx.state === 'running'));
-      const ctx = reuseKa ? kaAudioCtx : new AudioCtx();
-      if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
-        try { ctx.resume().catch(() => {}); } catch (_) {}
+      let ctx = reuseKa ? kaAudioCtx : win.__stPupBellCtx;
+      if (!ctx || ctx.state === 'closed') {
+        ctx = new AudioCtx();
+        win.__stPupBellCtx = ctx;
       }
-      const now = ctx.currentTime;
-      const playNote = (freq, delay, dur, type = 'triangle', peak = 0.28) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, now + delay);
-        gain.gain.setValueAtTime(0.001, now + delay);
-        gain.gain.exponentialRampToValueAtTime(peak, now + delay + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now + delay);
-        osc.stop(now + delay + dur + 0.02);
-      };
-      if (tone === 'ios_tri') {
-        // 经典 iOS 清脆三全音上行和弦（响亮清晰）
-        playNote(783.99, 0.00, 0.16, 'triangle', 0.30);
-        playNote(1046.50, 0.14, 0.16, 'triangle', 0.30);
-        playNote(1318.51, 0.28, 0.32, 'sine', 0.32);
-      } else if (tone === 'ios_note') {
-        // 经典 iOS 双音清透叮咚
-        playNote(880.00, 0.00, 0.20, 'sine', 0.30);
-        playNote(1760.00, 0.00, 0.12, 'sine', 0.10);
-        playNote(1174.66, 0.15, 0.36, 'sine', 0.32);
-      } else if (tone === 'water_drop') {
-        // 灵动清脆水滴上扬音
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(520, now);
-        osc.frequency.exponentialRampToValueAtTime(1480, now + 0.14);
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.32, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.25);
-      } else if (tone === 'pixel_coin') {
-        // 复古像素叮当金币两连跳
-        playNote(987.77, 0.00, 0.10, 'square', 0.18);
-        playNote(1318.51, 0.09, 0.30, 'square', 0.18);
-      } else if (tone === 'music_box') {
-        // 温柔清脆八音盒三音
-        playNote(1318.51, 0.00, 0.26, 'sine', 0.28);
-        playNote(1174.66, 0.14, 0.24, 'sine', 0.26);
-        playNote(1567.98, 0.28, 0.42, 'sine', 0.30);
-      } else if (tone === 'cat_bell') {
-        // 俏皮高音双响小猫铃
-        playNote(1760.00, 0.00, 0.14, 'triangle', 0.24);
-        playNote(2093.00, 0.07, 0.18, 'sine', 0.26);
-        playNote(1760.00, 0.20, 0.14, 'triangle', 0.22);
-        playNote(2349.32, 0.27, 0.28, 'sine', 0.28);
-      } else if (tone === 'bubble_pop') {
-        // 灵动两连泡泡啵
-        [0, 0.14].forEach((d, idx) => {
+      const runNodes = () => {
+        const now = ctx.currentTime;
+        const playNote = (freq, delay, dur, type = 'triangle', peak = 0.32) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now + delay);
+          gain.gain.setValueAtTime(0.001, now + delay);
+          gain.gain.exponentialRampToValueAtTime(peak, now + delay + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + delay);
+          osc.stop(now + delay + dur + 0.02);
+        };
+        if (tone === 'ios_tri') {
+          playNote(783.99, 0.00, 0.16, 'triangle', 0.34);
+          playNote(1046.50, 0.14, 0.16, 'triangle', 0.34);
+          playNote(1318.51, 0.28, 0.32, 'sine', 0.36);
+        } else if (tone === 'ios_note') {
+          playNote(880.00, 0.00, 0.20, 'sine', 0.34);
+          playNote(1760.00, 0.00, 0.12, 'sine', 0.12);
+          playNote(1174.66, 0.15, 0.36, 'sine', 0.36);
+        } else if (tone === 'water_drop') {
+          const osc = ctx.createOscillator(), gain = ctx.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(idx === 0 ? 440 : 580, now + d);
-          osc.frequency.exponentialRampToValueAtTime(idx === 0 ? 1180 : 1560, now + d + 0.09);
-          gain.gain.setValueAtTime(0.001, now + d);
-          gain.gain.exponentialRampToValueAtTime(0.30, now + d + 0.015);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + d + 0.12);
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(1480, now + 0.14);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.36, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
           osc.connect(gain); gain.connect(ctx.destination);
-          osc.start(now + d); osc.stop(now + d + 0.14);
-        });
-      } else if (tone === 'harp_glide') {
-        // 清澈竖琴四音琶音
-        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => playNote(f, i * 0.075, 0.34, 'triangle', 0.24));
-      } else if (tone === 'star_twinkle') {
-        // 闪烁星光叮当和弦
-        playNote(1567.98, 0.00, 0.18, 'sine', 0.28);
-        playNote(1975.53, 0.10, 0.18, 'sine', 0.28);
-        playNote(2637.02, 0.20, 0.36, 'sine', 0.26);
+          osc.start(now); osc.stop(now + 0.25);
+        } else if (tone === 'pixel_coin') {
+          playNote(987.77, 0.00, 0.10, 'square', 0.20);
+          playNote(1318.51, 0.09, 0.30, 'square', 0.20);
+        } else if (tone === 'music_box') {
+          playNote(1318.51, 0.00, 0.26, 'sine', 0.32);
+          playNote(1174.66, 0.14, 0.24, 'sine', 0.30);
+          playNote(1567.98, 0.28, 0.42, 'sine', 0.34);
+        } else if (tone === 'cat_bell') {
+          playNote(1760.00, 0.00, 0.14, 'triangle', 0.28);
+          playNote(2093.00, 0.07, 0.18, 'sine', 0.30);
+          playNote(1760.00, 0.20, 0.14, 'triangle', 0.26);
+          playNote(2349.32, 0.27, 0.28, 'sine', 0.32);
+        } else if (tone === 'bubble_pop') {
+          [0, 0.14].forEach((d, idx) => {
+            const osc = ctx.createOscillator(), gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(idx === 0 ? 440 : 580, now + d);
+            osc.frequency.exponentialRampToValueAtTime(idx === 0 ? 1180 : 1560, now + d + 0.09);
+            gain.gain.setValueAtTime(0.001, now + d);
+            gain.gain.exponentialRampToValueAtTime(0.34, now + d + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + d + 0.12);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(now + d); osc.stop(now + d + 0.14);
+          });
+        } else if (tone === 'harp_glide') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => playNote(f, i * 0.075, 0.34, 'triangle', 0.28));
+        } else if (tone === 'star_twinkle') {
+          playNote(1567.98, 0.00, 0.18, 'sine', 0.32);
+          playNote(1975.53, 0.10, 0.18, 'sine', 0.32);
+          playNote(2637.02, 0.20, 0.36, 'sine', 0.30);
+        } else {
+          playNote(1046.50, 0.00, 0.22, 'sine', 0.32);
+          playNote(1318.51, 0.11, 0.24, 'sine', 0.32);
+          playNote(1567.98, 0.22, 0.38, 'sine', 0.34);
+        }
+      };
+      if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
+        ctx.resume().then(runNodes).catch(() => {});
       } else {
-        // 清亮三音风铃
-        playNote(1046.50, 0.00, 0.22, 'sine', 0.28);
-        playNote(1318.51, 0.11, 0.24, 'sine', 0.28);
-        playNote(1567.98, 0.22, 0.38, 'sine', 0.30);
+        runNodes();
       }
-      setTimeout(() => { try { ctx.close(); } catch (_) {} }, 900);
     } catch (_) {}
+  };
+
+  var playSoftBellChime = (overrideTone = null) => {
+    if (!overrideTone && config.puppyBellSound === false) return;
+    const tone = overrideTone || config.puppyBellTone || 'ios_tri';
+    try {
+      if (!win.__stPupBellAudio) {
+        win.__stPupBellAudio = new win.Audio();
+        win.__stPupBellAudio.preload = 'auto';
+        win.__stPupBellAudio.playsInline = true;
+      }
+      const ba = win.__stPupBellAudio;
+      ba.pause();
+      ba.muted = false;
+      ba.loop = false;
+      ba.volume = 0.85;
+      ba.src = _buildBellToneWavUrl(tone);
+      try { ba.currentTime = 0; } catch (_) {}
+      const p = ba.play();
+      if (p && typeof p.catch === 'function') {
+        p.catch(() => { _playBellWebAudio(tone); });
+      }
+    } catch (_) {
+      _playBellWebAudio(tone);
+    }
   };
 
   const pupToneSel = root.querySelector('#st-tb-pup-tone-sel');
