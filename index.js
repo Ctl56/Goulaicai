@@ -44168,6 +44168,44 @@
   let bqCharms = []; // [{ key, x, y, col }]
   let bqSelectedCharmIdx = -1;
   let bqNoteTxt = '';
+  const bqTierDrafts = { single: null, mix: null, luxury: null };
+  const saveCurBqTierDraft = () => {
+    bqTierDrafts[bqTier] = {
+      picked: [...bqPicked],
+      wrapCol: bqWrapCol, ribbonCol: bqRibbonCol, ribbonStyle: bqRibbonStyle,
+      ribbonScale: bqRibbonScale, ribbonX: bqRibbonX, ribbonY: bqRibbonY,
+      flowerStyle: bqFlowerStyle, flowerScale: bqFlowerScale, flowerSpread: bqFlowerSpread,
+      customSlots: Array.isArray(bqCustomSlots) ? bqCustomSlots.map(([x, y]) => [x, y]) : null,
+      charmCol: bqCharmCol,
+      charms: bqCharms.map(c => ({ ...c })),
+      noteTxt: bqNoteTxt,
+    };
+  };
+  const restoreBqTierDraft = (nextTier) => {
+    const d = bqTierDrafts[nextTier];
+    if (d) {
+      bqPicked = [...(d.picked || [])];
+      bqWrapCol = d.wrapCol || '#f2d9c2';
+      bqRibbonCol = d.ribbonCol || '#e07a94';
+      bqRibbonStyle = d.ribbonStyle || 'bow';
+      bqRibbonScale = d.ribbonScale || (nextTier === 'luxury' ? 1.3 : 1.0);
+      bqRibbonX = d.ribbonX || 24;
+      bqRibbonY = d.ribbonY || 32;
+      bqFlowerStyle = d.flowerStyle || 'real';
+      bqFlowerScale = d.flowerScale || 1.0;
+      bqFlowerSpread = d.flowerSpread || 1.0;
+      bqCustomSlots = Array.isArray(d.customSlots) ? d.customSlots.map(([x, y]) => [x, y]) : null;
+      bqCharmCol = d.charmCol || '#e87a98';
+      bqCharms = Array.isArray(d.charms) ? d.charms.map(c => ({ ...c })) : [];
+      bqNoteTxt = d.noteTxt || '';
+    } else {
+      bqPicked = [];
+      bqCustomSlots = null;
+      bqFlowerSpread = 1.0;
+      bqRibbonX = 24; bqRibbonY = 32;
+      bqRibbonScale = nextTier === 'luxury' ? 1.3 : 1.0;
+    }
+  };
 
   const getDefaultBouquetSlots = (tier, spread = 1.0) => {
     const raw = tier === 'luxury'
@@ -44217,10 +44255,10 @@
       g.fillStyle = c2; g.fillRect(fx - 1, fy - 2, 3, 1); g.fillRect(fx - 2, fy + 1, 4, 1);
       g.fillStyle = cc; g.fillRect(fx, fy - 1, 2, 2);
     } else if (['sakura', 'plum', 'cosmos', 'violet', 'iris'].includes(sh)) {
-      // 五瓣樱花/梅花/秋英花型
+      // 五瓣樱花/梅花/秋英/蓝鸢尾花型（全部花瓣紧密衔接无断层）
       g.fillStyle = c1;
-      g.fillRect(fx - 1, fy - 4, 3, 2); g.fillRect(fx - 4, fy - 1, 3, 3); g.fillRect(fx + 2, fy - 1, 3, 3);
-      g.fillRect(fx - 3, fy + 2, 3, 2); g.fillRect(fx + 1, fy + 2, 3, 2);
+      g.fillRect(fx - 1, fy - 3, 3, 3); g.fillRect(fx - 4, fy - 1, 3, 3); g.fillRect(fx + 2, fy - 1, 3, 3);
+      g.fillRect(fx - 3, fy + 1, 3, 2); g.fillRect(fx + 1, fy + 1, 3, 2);
       g.fillStyle = c2; g.fillRect(fx - 2, fy - 1, 5, 3);
       g.fillStyle = cc; g.fillRect(fx, fy, 1, 1);
     } else if (['sunflower', 'daisy', 'chrys', 'daffodil'].includes(sh)) {
@@ -44562,12 +44600,10 @@
       b.style.cssText = 'height:21px;font-size:9px;padding:0 2px;';
       b.textContent = t.lbl;
       b.addEventListener('click', () => {
+        if (bqTier === t.id) return;
+        saveCurBqTierDraft();
         bqTier = t.id;
-        bqPicked = [];
-        bqCustomSlots = null;
-        bqFlowerSpread = 1.0;
-        bqRibbonX = 24; bqRibbonY = 32;
-        bqRibbonScale = t.id === 'luxury' ? 1.3 : 1.0;
+        restoreBqTierDraft(t.id);
         renderBouquetWorkbench();
       });
       tierBar.appendChild(b);
@@ -44961,25 +44997,38 @@
     if (!availFl.length) {
       flGrid.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">暂无满足 ${needEach} 朵库存的花材，先去花盆多多培育收获吧~</div>`;
     } else {
+      const syncFlButtonsInPlace = () => {
+        flGrid.querySelectorAll('[data-bq-fl]').forEach(btnEl => {
+          btnEl.classList.toggle('care', bqPicked.includes(btnEl.dataset.bqFl));
+        });
+        flHead.textContent = `选择花材（需选 ${needKinds} 种，每种消耗 ${needEach} 朵 · 已选 ${bqPicked.length}/${needKinds}）`;
+        const pBtn = card.querySelector('#st-bq-pack-main-btn');
+        if (pBtn) {
+          pBtn.disabled = bqPicked.length < needKinds;
+          pBtn.textContent = bqPicked.length < needKinds ? `请先选满 ${needKinds} 种花材` : '打包花束';
+        }
+        redrawPreview(cvs);
+      };
       availFl.forEach(f => {
         const isSel = bqPicked.includes(f.id);
         const fb = doc.createElement('button');
         fb.type = 'button';
+        fb.dataset.bqFl = f.id;
         fb.className = 'st-px-btn' + (isSel ? ' care' : '');
         fb.style.cssText = 'height:20px;padding:0 6px;font-size:9px;';
         fb.textContent = `${f.name}(x${inv[f.id]})`;
         fb.addEventListener('click', () => {
+          const curSel = bqPicked.includes(f.id);
           if (needKinds === 1) {
-            // 单品直接切换！
             bqPicked = [f.id];
-          } else if (isSel) {
+          } else if (curSel) {
             bqPicked = bqPicked.filter(x => x !== f.id);
           } else if (bqPicked.length < needKinds) {
             bqPicked.push(f.id);
           } else {
             bqPicked = [...bqPicked.slice(1), f.id];
           }
-          renderBouquetWorkbench();
+          syncFlButtonsInPlace();
         });
         flGrid.appendChild(fb);
       });
@@ -44988,7 +45037,7 @@
 
     // 打包按钮 -> 弹出命名 + 先放背包 / 直接送好友弹窗
     const packBtn = doc.createElement('button');
-    packBtn.type = 'button'; packBtn.className = 'st-px-btn care';
+    packBtn.id = 'st-bq-pack-main-btn'; packBtn.type = 'button'; packBtn.className = 'st-px-btn care';
     packBtn.style.cssText = 'width:100%;height:26px;font-size:10.5px;';
     packBtn.disabled = bqPicked.length < needKinds;
     packBtn.textContent = bqPicked.length < needKinds ? `请先选满 ${needKinds} 种花材` : '打包花束';
@@ -58956,8 +59005,12 @@
       pxGameMemModeBtns.forEach(b => b.classList.toggle('active', b.dataset.memMode === mem.mode));
     }
     if (typeof ensureMemCanvasSize === 'function') ensureMemCanvasSize();
-    if (false) {
-      pxGame2048ModeBtns.forEach(b => b.classList.toggle('active', Number(b.dataset['2048Size']) === (g2048.size || 4)));
+    if (pxGame2048ModeBtns && pxGame2048ModeBtns.length) {
+      pxGame2048ModeBtns.forEach(b => {
+        const on = Number(b.dataset['2048Size']) === (g2048.size || 5);
+        b.classList.toggle('active', on);
+        b.classList.toggle('care', on);
+      });
     }
   };
 
@@ -59773,14 +59826,38 @@
       const rawSz = Number(btn.dataset['2048Size']);
       const sz = [4, 5, 6].includes(rawSz) ? rawSz : 5;
       if (g2048.size === sz) return;
-      stopPixelGame();
+      // 切难度前先保存当前正在进行中的棋盘进度，防止误切丢档！
+      config.puppy2048BySize = config.puppy2048BySize || {};
+      const prevSz = g2048.size || 5;
+      if (Array.isArray(g2048.grid) && g2048.grid.some(v => v > 0)) {
+        config.puppy2048BySize[prevSz] = {
+          grid: [...g2048.grid],
+          score: Number(g2048.score) || 0,
+          milestones: Array.isArray(g2048.milestones) ? [...g2048.milestones] : [],
+          running: Boolean(gameRunning && activeGameId === 'g2048'),
+        };
+      }
       g2048.size = sz;
-      g2048.grid = new Array(sz * sz).fill(0);
-      g2048.score = 0;
-      g2048.milestones = [];
-      save2048State(false);
-      pxGameScoreEl.textContent = '得分: 0';
-      pxGameMsgEl.textContent = sz === 6 ? '进阶 6x6 就绪' : (sz === 5 ? '初级 5x5 就绪' : '经典 4x4 就绪');
+      const savedNext = config.puppy2048BySize[sz];
+      const lbl = sz === 6 ? '进阶 6x6' : (sz === 5 ? '初级 5x5' : '经典 4x4');
+      if (savedNext && Array.isArray(savedNext.grid) && savedNext.grid.length === sz * sz && savedNext.grid.some(v => v > 0)) {
+        g2048.grid = [...savedNext.grid];
+        g2048.score = Number(savedNext.score) || 0;
+        g2048.milestones = Array.isArray(savedNext.milestones) ? [...savedNext.milestones] : [];
+        gameRunning = true;
+        save2048State(true);
+        pxGameScoreEl.textContent = `得分: ${g2048.score}`;
+        pxGameMsgEl.textContent = `已恢复 ${lbl} 进行中棋局`;
+      } else {
+        stopPixelGame();
+        g2048.grid = new Array(sz * sz).fill(0);
+        g2048.score = 0;
+        g2048.milestones = [];
+        save2048State(false);
+        pxGameScoreEl.textContent = '得分: 0';
+        pxGameMsgEl.textContent = `${lbl} 就绪`;
+      }
+      saveConfig();
       draw2048();
       updateGameButtonsUI();
     });
