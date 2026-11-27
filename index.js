@@ -6325,10 +6325,44 @@
       border: 1px solid var(--tb-border, rgba(0,0,0,0.08));
     }
     .st-tb-qd-item-tag { font-size: 11px; opacity: 0.72; white-space: nowrap; flex-shrink: 0; }
-    .st-tb-qd-item input {
-      flex: 1; min-width: 0; height: 24px; padding: 0 6px; border-radius: 6px;
-      border: 1px solid var(--tb-border, rgba(0,0,0,0.14));
-      background: var(--tb-bg, #ffffff); color: var(--tb-text, #222222); font-size: 12px;
+    #st-tb-root .st-tb-qd-item input,
+    #st-tb-root .st-tb-qd-item input.st-tb-input {
+      flex: 1 !important; min-width: 0 !important;
+      height: 24px !important; min-height: 24px !important; max-height: 24px !important;
+      line-height: 22px !important; padding: 0 7px !important; margin: 0 !important;
+      border-radius: 6px !important;
+      border: 1px solid var(--tb-border, rgba(0,0,0,0.14)) !important;
+      background: var(--tb-surface, #ffffff) !important;
+      background-color: var(--tb-surface, #ffffff) !important;
+      background-image: none !important;
+      color: var(--tb-text, #222222) !important;
+      -webkit-text-fill-color: var(--tb-text, #222222) !important;
+      font-family: inherit !important; font-size: 12px !important; font-weight: 400 !important;
+      box-shadow: none !important; outline: none !important; box-sizing: border-box !important;
+      -webkit-appearance: none !important; appearance: none !important;
+    }
+    #st-tb-root .st-tb-qd-item input:focus {
+      border-color: var(--tb-accent) !important;
+      background-color: var(--tb-surface-hover, var(--tb-surface)) !important;
+    }
+    /* 字体与美化正在使用的下拉框：拉高至 27px，舒展好点且比 32px 搜索框略扁 */
+    #st-tb-root #st-tb-font-search,
+    #st-tb-root #st-tb-theme-search,
+    #st-tb-root #st-qf-search,
+    #st-tb-root #st-qt-search {
+      height: 32px !important; min-height: 32px !important; max-height: 32px !important;
+      line-height: 30px !important; box-sizing: border-box !important;
+    }
+    #st-tb-root #st-tb-font-select,
+    #st-tb-root #st-tb-theme-select {
+      height: 27px !important; min-height: 27px !important; max-height: 27px !important;
+      line-height: 25px !important; padding: 0 8px !important; box-sizing: border-box !important;
+    }
+    #st-tb-root #st-qf-select,
+    #st-tb-root #st-qt-select {
+      flex: 0 0 auto !important;
+      height: 27px !important; min-height: 27px !important; max-height: 27px !important;
+      line-height: 25px !important; padding: 0 8px !important; box-sizing: border-box !important;
     }
     .st-tb-qd-pool { display: flex; flex-wrap: wrap; gap: 6px; max-height: 136px; min-height: 36px; overflow-y: auto; padding: 2px 2px 4px 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
     .st-tb-qd-chip {
@@ -12649,6 +12683,7 @@
       if (editingChatCatId === cat.id) {
         const inp = doc.createElement('input');
         inp.type = 'text';
+        inp.className = 'st-tb-input';
         inp.className = 'st-tb-input';
         inp.value = cat.name;
         inp.style.cssText = 'width:68px;height:22px;min-height:22px;padding:0 5px;font-size:11px;margin:0;';
