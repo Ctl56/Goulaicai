@@ -348,7 +348,7 @@
     { id: 'cape_sailor_ribbon', name: '水手领披肩', price: 16, cat: 'cape' },
     { id: 'cape_macaron_ruffle', name: '马卡龙披风', price: 19, cat: 'cape' },
     { id: 'cape_fox_fur_autumn', name: '枫叶毛领披', price: 20, cat: 'cape' },
-    { id: 'cape_stained_glass', name: '彩窗披风', price: 22, cat: 'cape' },
+    { id: 'cape_stained_glass', name: '燕麦针织披', price: 18, cat: 'cape' },
     { id: 'cape_music_notes', name: '琴键披肩', price: 18, cat: 'cape' },
     { id: 'cape_peach_cream', name: '蜜桃披风', price: 15, cat: 'cape' },
     { id: 'cape_forest_elf', name: '绿叶披风', price: 17, cat: 'cape' },
@@ -11366,6 +11366,9 @@
             showKaPolicyNotice(pol === 'exclusive'
               ? '已切换强保活：会占用音频栏与灵动岛，息屏常驻更稳'
               : '已切换轻保活：不占音频栏与灵动岛，可与其他音频同时使用');
+            if (pol === 'exclusive' && typeof showOneTimePanelTip === 'function') {
+              showOneTimePanelTip('seenIslandCustomTip_v148', '灵动岛显示提示', '切换强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
+            }
           });
         });
       }
@@ -12047,6 +12050,8 @@
           clearTimeout(badgeTapTimer);
           badgeTapTimer = null;
           badgeLastTapAt = 0;
+          if (e && e.cancelable) e.preventDefault();
+          if (e) e.stopPropagation();
           triggerBadgeTarget(dblTarget);
         } else {
           badgeLastTapAt = nowTap;
@@ -17857,12 +17862,10 @@
         px(ox + 5, oy + 7, '#f5e2c8'); px(ox + 6, oy + 7, '#fffdf5'); px(ox + 12, oy + 7, '#fffdf5'); px(ox + 13, oy + 7, '#f5e2c8');
         px(ox + 2, oy + 9, '#ffe078'); px(ox + 3, oy + 9, '#ffb84d'); px(ox + 2, oy + 10, '#ffb84d');
       } else if (acc === 'cape_stained_glass') {
-        // 彩窗披风：暮夜靛蓝底 + 玫红/湖蓝/琥珀金/翡翠绿菱形彩窗拼花 + 复古金边
-        drawOpenCapeBase('#2b3452', '#43527a', '#e6be5c', '#fff2b8', '#f5cf6e'); if (isFlatPose) return;
-        px(ox + 2, oy + 8, '#f06292'); px(ox + 4, oy + 8, '#5cc8ff');
-        px(ox + 1, oy + 9, '#4dd0a8'); px(ox + 3, oy + 9, '#ffd54f'); px(ox + 5, oy + 9, '#b88cff');
-        px(ox + 2, oy + 10, '#5cc8ff'); px(ox + 4, oy + 10, '#f06292');
-        px(ox + 13, oy + 9, '#ffd54f');
+        // 燕麦针织披：低饱和温柔燕麦粗针织 + 奶白绞花竖纹 + 浅咖罗纹下摆与木质纽扣
+        drawOpenCapeBase('#dfd4c0', '#f5efe4', '#c7b79e', '#e8dfd0', '#8a6b4e'); if (isFlatPose) return;
+        px(ox + 2, oy + 8, '#f5efe4'); px(ox + 2, oy + 9, '#f5efe4'); px(ox + 4, oy + 9, '#f5efe4');
+        px(ox + 3, oy + 10, '#c7b79e'); px(ox + 13, oy + 8, '#8a6b4e');
       } else if (acc === 'cape_music_notes') {
         // 琴键乐谱披肩：象牙白流线披肩 + 经典黑白钢琴键下摆 + 暖金音符领扣
         drawOpenCapeBase('#fffaf0', '#ffffff', '#2b2630', '#ffffff', '#f2c44c'); if (isFlatPose) return;
@@ -31489,7 +31492,7 @@
     const frameName = stg.frame || 'happy';
     const grid = PUP_SPRITES[frameName] || PUP_SPRITES.idle1;
     const isSit = frameName === 'sit1' || frameName === 'sit2';
-    const isFlat = frameName === 'sleep';
+    const isFlat = frameName === 'sleep' || frameName === 'lie' || frameName === 'stretch';
     g.save();
     let ox = stg.ox, oy = stg.oy;
     if (stg.flip) {
@@ -32710,7 +32713,7 @@
     const pal = getPupPalette(look || {});
     const grid = PUP_SPRITES[frameName] || PUP_SPRITES.idle1;
     const isSit = frameName === 'sit1' || frameName === 'sit2';
-    const isFlat = frameName === 'sleep';
+    const isFlat = frameName === 'sleep' || frameName === 'lie' || frameName === 'stretch';
     const isDead = frameName === 'playdead';
     ctx2d.save();
     if (flipX) {
@@ -38894,7 +38897,7 @@
     const drawMiniDog = (lk, pose, dx, dy, dir) => {
       const pal = getPupPalette(lk || {});
       const grid = PUP_SPRITES[pose] || PUP_SPRITES.idle1;
-      const isSit = pose === 'sit1', isFlat = pose === 'lie';
+      const isSit = pose === 'sit1' || pose === 'sit2' || pose === 'sit', isFlat = pose === 'lie' || pose === 'sleep' || pose === 'stretch';
       ctx2.save();
       ctx2.translate(Math.round(dx + 8), Math.round(dy + 8));
       ctx2.scale(dir < 0 ? -0.8 : 0.8, 0.8);
@@ -38916,7 +38919,7 @@
           config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
           if (lk.accOffsets) config.puppyAccOffsets = lk.accOffsets;
           drawPupOutfit(lk.outfit || 'none', ox, oy, hx, hy, isFlat, false, isSit, false);
-          const _prevStOff = config.puppyAccOffsets; if (lk && lk.accOffsets) config.puppyAccOffsets = lk.accOffsets; if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false)); config.puppyAccOffsets = _prevStOff;
+          const _prevStOff = config.puppyAccOffsets; if (lk && lk.accOffsets) config.puppyAccOffsets = lk.accOffsets; if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, hx, hy, ox, oy, isFlat, false, isSit)); config.puppyAccOffsets = _prevStOff;
           drawPupCompanion(lk.comp || lk.companion || 'none', ox, oy, false);
         }
       } finally {
@@ -50369,20 +50372,16 @@
       const c2 = cv.getContext('2d');
       if (!c2) return '';
       c2.imageSmoothingEnabled = false;
-      // 柔和奶油底色，灵动岛小图与锁屏封面都清晰可爱
-      c2.fillStyle = '#fff5ee';
+      // 纯净无边框柔和底色，只突出放大的像素小狗
+      c2.fillStyle = '#fff8f0';
       c2.fillRect(0, 0, 512, 512);
-      c2.fillStyle = '#ffe3ec';
-      c2.fillRect(24, 24, 464, 464);
-      c2.fillStyle = '#fffaf5';
-      c2.fillRect(40, 40, 432, 432);
-      // 绘制当前穿着完整装扮的像素小狗（整数 16x 缩放，边缘锐利不发糊）
+      // 绘制当前穿着完整装扮的像素小狗（整数 22x 放大，无边框、居中饱满、边缘锐利）
       const pal = getPupPalette();
       const grid = PUP_SPRITES.idle1 || [];
-      const scale = 16;
-      const ox = 4, oy = 10, hx = ox + 10, hy = oy + 2;
+      const scale = 22;
+      const ox = 3, oy = 7, hx = ox + 10, hy = oy + 2;
       c2.save();
-      c2.translate(64, 52);
+      c2.translate(14, 0);
       c2.scale(scale, scale);
       for (let y = 0; y < grid.length; y++) {
         const row = grid[y];
@@ -57767,11 +57766,17 @@
     badgeDot.classList.toggle('active', config.effect !== 'none' || config.puppyEnabled);
   };
 
+  let panelOpenedAt = 0;
+  let panelClickGuardTimer = null;
   const togglePanel = (open) => {
     panelOpen = open;
     panel.classList.toggle('open', open);
     backdrop.classList.toggle('open', open);
     if (open) {
+      panelOpenedAt = Date.now();
+      panel.style.pointerEvents = 'none';
+      clearTimeout(panelClickGuardTimer);
+      panelClickGuardTimer = setTimeout(() => { panel.style.pointerEvents = ''; }, 380);
       positionPanel();
       updateStats();
       if (typeof bringFloatFront === 'function') bringFloatFront(panel);
@@ -57795,7 +57800,7 @@
     }
   };
 
-  backdrop.addEventListener('click', () => togglePanel(false));
+  backdrop.addEventListener('click', () => { if (Date.now() - panelOpenedAt < 380) return; togglePanel(false); });
   closeBtn.addEventListener('click', () => togglePanel(false));
 
   hideBtn.addEventListener('click', () => {
@@ -57867,8 +57872,12 @@
   keepAliveBtn.addEventListener('click', () => {
     config.keepAlive = !config.keepAlive;
     saveConfig();
-    if (config.keepAlive) startKeepAlive();
-    else stopKeepAlive();
+    if (config.keepAlive) {
+      startKeepAlive();
+      if (typeof showOneTimePanelTip === 'function') {
+        showOneTimePanelTip('seenIslandCustomTip_v148', '灵动岛显示提示', '开启强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
+      }
+    } else stopKeepAlive();
   });
   const togglePartialRerollSetting = () => {
     config.partialRerollLastPara = !(config.partialRerollLastPara !== false);
