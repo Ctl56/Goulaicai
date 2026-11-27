@@ -2872,6 +2872,8 @@
     puppyJobMasterClaimed: {},
     puppyJobUrgentCd: {},
     puppyJobBadReviews: {},
+    puppyJobRatings: {},
+    puppyJobReviewScores: {},
     puppyJobUrgentState: {},
     puppyBouquets: [],
     puppyBouquetDex: [],
@@ -55576,7 +55578,7 @@
         bInfo.innerHTML = `
           <div style="font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:4px;">
             <span>${jObjCur.name}</span>
-            <span style="font-size:9.5px;color:#b86b24;">顾客留言板</span>
+            <span style="font-size:9.5px;color:#b86b24;">${(() => { const rt = config.puppyJobRatings?.[jObjCur.id]; return (rt && rt.count > 0) ? ('综合评分 ' + (rt.sum / rt.count).toFixed(1) + '分') : '暂无评分'; })()}</span>
           </div>
           <div style="height:5px;background:rgba(0,0,0,0.1);margin:4px 0 3px;overflow:hidden;">
             <div style="height:100%;width:${pct}%;background:${jObjCur.accent || '#d99b66'};"></div>
@@ -55625,7 +55627,8 @@
             const bd = entry.isBad ? '#d46a7e' : (jObjCur.accent || '#d99b66');
             const tagBg = entry.isBad ? '#fff0f3' : (jObjCur.bg || '#fff6eb');
             const tagCol = entry.isBad ? '#a83349' : '#7a4b1f';
-            const scoreTxt = entry.isBad ? '1.0分' : '5.0分';
+            const savedSc = config.puppyJobReviewScores && config.puppyJobReviewScores[rv.id];
+            const scoreTxt = (typeof savedSc === 'number' && savedSc > 0) ? `${savedSc.toFixed(1)}分` : (entry.isBad ? '1.8分' : '4.8分');
             note.style.cssText = `padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid ${bd};box-shadow:2px 2px 0 rgba(59,42,34,0.1);`;
             note.innerHTML = `
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;font-size:9.5px;">
@@ -55880,24 +55883,52 @@
           }
           let unlockedReview = null;
           let unlockedBadReview = null;
-          if (!messedUp) {
-            config.puppyJobReviews = config.puppyJobReviews || {};
-            const gotList = Array.isArray(config.puppyJobReviews[jObj.id]) ? config.puppyJobReviews[jObj.id] : [];
-            const poolRev = (JOB_CUSTOMER_REVIEWS[jObj.id] || []).filter(r => !gotList.includes(r.id));
-            if (poolRev.length && (isGoodFit || gotTip || Math.random() < 0.68)) {
-              unlockedReview = pick(poolRev);
-              gotList.push(unlockedReview.id);
-              config.puppyJobReviews[jObj.id] = gotList;
+          let triggeredRepeatReview = null;
+          let rolledRating = 0;
+          let shopAvgAfter = '';
+          const isPraiseShift = !messedUp && (gotTip || Boolean(ev.star));
+          const reviewChance = messedUp ? 0.60 : (isPraiseShift ? 0.60 : 0.20);
+          if (Math.random() < reviewChance) {
+            config.puppyJobRatings = config.puppyJobRatings || {};
+            config.puppyJobReviewScores = config.puppyJobReviewScores || {};
+            const rSt = config.puppyJobRatings[jObj.id] || { sum: 0, count: 0 };
+            if (!messedUp) {
+              rolledRating = isPraiseShift
+                ? pick([4.5, 4.6, 4.7, 4.8, 4.9, 5.0])
+                : pick([3.6, 3.8, 4.0, 4.2, 4.4, 4.5]);
+              config.puppyJobReviews = config.puppyJobReviews || {};
+              const gotList = Array.isArray(config.puppyJobReviews[jObj.id]) ? config.puppyJobReviews[jObj.id] : [];
+              const allGood = JOB_CUSTOMER_REVIEWS[jObj.id] || [];
+              const poolRev = allGood.filter(r => !gotList.includes(r.id));
+              if (poolRev.length) {
+                unlockedReview = pick(poolRev);
+                gotList.push(unlockedReview.id);
+                config.puppyJobReviews[jObj.id] = gotList;
+                config.puppyJobReviewScores[unlockedReview.id] = rolledRating;
+              } else if (allGood.length) {
+                triggeredRepeatReview = pick(allGood);
+                config.puppyJobReviewScores[triggeredRepeatReview.id] = rolledRating;
+              }
+            } else {
+              rolledRating = pick([1.0, 1.2, 1.5, 1.8, 2.0, 2.3, 2.5]);
+              config.puppyJobBadReviews = config.puppyJobBadReviews || {};
+              const gotBad = Array.isArray(config.puppyJobBadReviews[jObj.id]) ? config.puppyJobBadReviews[jObj.id] : [];
+              const allBad = JOB_BAD_REVIEWS[jObj.id] || [];
+              const poolBad = allBad.filter(r => !gotBad.includes(r.id));
+              if (poolBad.length) {
+                unlockedBadReview = pick(poolBad);
+                gotBad.push(unlockedBadReview.id);
+                config.puppyJobBadReviews[jObj.id] = gotBad;
+                config.puppyJobReviewScores[unlockedBadReview.id] = rolledRating;
+              } else if (allBad.length) {
+                triggeredRepeatReview = pick(allBad);
+                config.puppyJobReviewScores[triggeredRepeatReview.id] = rolledRating;
+              }
             }
-          } else {
-            config.puppyJobBadReviews = config.puppyJobBadReviews || {};
-            const gotBad = Array.isArray(config.puppyJobBadReviews[jObj.id]) ? config.puppyJobBadReviews[jObj.id] : [];
-            const poolBad = (JOB_BAD_REVIEWS[jObj.id] || []).filter(r => !gotBad.includes(r.id));
-            if (poolBad.length) {
-              unlockedBadReview = pick(poolBad);
-              gotBad.push(unlockedBadReview.id);
-              config.puppyJobBadReviews[jObj.id] = gotBad;
-            }
+            rSt.sum = Math.round((rSt.sum + rolledRating) * 10) / 10;
+            rSt.count = (rSt.count || 0) + 1;
+            config.puppyJobRatings[jObj.id] = rSt;
+            shopAvgAfter = (rSt.sum / rSt.count).toFixed(1);
           }
           const rkAfter = getJobRankInfo(jObj);
           const promoted = rkAfter.lv > rkBefore.lv;
@@ -55935,18 +55966,25 @@
               : `<div style="font-size:10px;color:#6c5e82;margin-top:3px;">[好友作伴] ${escapeHtmlSimple(coopFriendName)} 乖乖陪你一起值完了这班（今日首班加成已领过）~</div>`)
             : '';
           const revHtml = unlockedReview
-            ? `<div style="font-size:10px;color:#3d6b47;margin-top:3px;">[新顾客好评] ${unlockedReview.user}：「${unlockedReview.text}」</div>`
-            : (unlockedBadReview ? `<div style="font-size:10px;color:#b83b52;margin-top:3px;">[新翻车差评] ${unlockedBadReview.user}：「${unlockedBadReview.text}」</div>` : '');
+            ? `<div style="font-size:10px;color:#3d6b47;margin-top:3px;">[新顾客评价 · ${rolledRating.toFixed(1)}分] ${unlockedReview.user}：「${unlockedReview.text}」（本店综合 ${shopAvgAfter}分）</div>`
+            : (unlockedBadReview
+              ? `<div style="font-size:10px;color:#b83b52;margin-top:3px;">[新顾客评价 · ${rolledRating.toFixed(1)}分] ${unlockedBadReview.user}：「${unlockedBadReview.text}」（本店综合 ${shopAvgAfter}分）</div>`
+              : (triggeredRepeatReview
+                ? `<div style="font-size:10px;color:${messedUp ? '#b83b52' : '#5e5068'};margin-top:3px;">[顾客复评 · ${rolledRating.toFixed(1)}分] ${triggeredRepeatReview.user}：「${triggeredRepeatReview.text}」（本店综合 ${shopAvgAfter}分）</div>`
+                : ''));
           const bonusParts = [];
           if (tip) bonusParts.push(`小费 +${tip}币`);
-          if (urgentBonus) bonusParts.push(`急招补贴 +${urgentBonus}币${urgentSnackName ? `(赠${urgentSnackName})` : ''}`);
-          if (outfitBonus) bonusParts.push(`穿搭契合 +${outfitBonus}币`);
-          if (coopBonus) bonusParts.push(`拼班津贴 +${coopBonus}币`);
-          if (penalty) bonusParts.push(`扣款 -${penalty}币`);
+          if (urgentBonus) bonusParts.push(`急招 +${urgentBonus}币${urgentSnackName ? `(赠${urgentSnackName})` : ''}`);
+          if (outfitBonus) bonusParts.push(`穿搭 +${outfitBonus}币`);
+          if (coopBonus) bonusParts.push(`拼班 +${coopBonus}币`);
+          if (friendEggDelta > 0) bonusParts.push(`好友小费 +${friendEggDelta}币`);
+          if (friendEggDelta < 0) bonusParts.push(`好友扣款 -${Math.abs(friendEggDelta)}币`);
+          if (penalty) bonusParts.push(`搞砸扣款 -${penalty}币`);
+          if (darkWageCut) bonusParts.push(`状态减薪 -${darkWageCut}币`);
           statusEl.innerHTML = `
             <div style="font-weight:700;color:#8c4e1f;margin-bottom:4px;">[${jObj.name} Lv.${rkAfter.lv} 结算小剧场] ${ev.star ? '(金牌好评)' : ''}</div>
             <div style="font-size:11px;line-height:1.5;margin-bottom:5px;">${formatPupText(ev.msg)}</div>
-            <div style="font-size:11px;font-weight:700;">基础 +${baseWage}币${bonusParts.length ? ' · ' + bonusParts.join(' · ') : ''} · 实发 +${totalWage}币${failType === 'pause' ? ' · 停工反省 1 小时' : (failType === 'deduct' ? ' · 休息 20 分钟' : '')}</div>
+            <div style="font-size:11px;font-weight:700;">基础 +${effBaseWage}币${bonusParts.length ? ' · ' + bonusParts.join(' · ') : ''} → 实发入账 +${totalWage}币（余额 ${config.puppyCoins}币）${failType === 'pause' ? ' · 停工反省 1 小时' : (failType === 'deduct' ? ' · 休息 20 分钟' : '')}</div>
             ${coopHtml}${revHtml}${promoHtml}${masterHtml}
           `;
           updatePupStatBars(); syncPuppyBagUI(); if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
