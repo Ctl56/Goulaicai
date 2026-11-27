@@ -2892,6 +2892,7 @@
     puppyBgNotify: true,
     puppyIslandArtwork: true,
     puppyIslandCustomImg: '',
+    puppyDesktopHidden: false,
     puppyBarkUrl: '',
     puppyBarkIconUrl: '',
     streamDraftRescue: true,
@@ -5185,6 +5186,7 @@
     }
 
     #st-tb-puppy.active { display: block; }
+    #st-tb-puppy.desk-hidden { display: none !important; pointer-events: none !important; }
     #st-tb-puppy.dragging { cursor: grabbing; }
 
     #st-tb-puppy-canvas {
@@ -9152,6 +9154,10 @@
             <button class="st-px-mini-act" id="st-px-interact-fold" type="button">展开</button>
           </div>
           <div class="st-px-adv-card" id="st-px-interact-body" style="display:none;margin-bottom:5px;">
+            <div class="st-px-slider-row" style="justify-content:space-between;margin-bottom:4px;">
+              <span style="width:auto;">桌面显示小狗（隐藏仍可联机）</span>
+              <button class="st-px-btn care" id="st-tb-pup-bag-hide-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;" title="仅隐藏桌面形象，联机串门与背包功能照常可用">显示中</button>
+            </div>
             <div class="st-px-slider-row" style="justify-content:space-between;">
               <span style="width:auto;">灵动岛显示小狗形象</span>
               <div style="display:flex;gap:3px;">
@@ -10301,11 +10307,12 @@
             <div class="st-tb-label">
               <span>桌面小狗</span>
               <div style="display:flex;gap:4px;align-items:center;">
-                <button class="st-tb-mini-btn" id="st-tb-pup-bag-rescue" type="button" title="把小狗背包拉回屏幕中央">复位背包</button>
+                <button class="st-tb-mini-btn" id="st-tb-pup-hide-toggle" type="button" style="display:none;" title="仅隐藏桌面小狗形象，联机、串门、保活与背包均正常运行">隐藏桌面</button>
+                <button class="st-tb-mini-btn" id="st-tb-pup-bag-rescue" type="button" title="打开或把小狗背包拉回屏幕中央">打开背包</button>
                 <button class="st-tb-mini-btn" id="st-tb-puppy-toggle" type="button">开启</button>
               </div>
             </div>
-            <div class="st-tb-tip">开启后单击互动，长按让小狗坐下自娱自乐，快速连点三下打开像素背包；按住拖动可换位置。</div>
+            <div class="st-tb-tip">开启后单击互动，长按坐下，连点三下开背包；点「隐藏桌面」可收起桌面形象（联机、串门、灵动岛与背包照常运行），点「召回小狗」随时唤回。</div>
           </div>
         </div>
 
@@ -11367,7 +11374,7 @@
               ? '已切换强保活：会占用音频栏与灵动岛，息屏常驻更稳'
               : '已切换轻保活：不占音频栏与灵动岛，可与其他音频同时使用');
             if (pol === 'exclusive' && typeof showOneTimePanelTip === 'function') {
-              showOneTimePanelTip('seenIslandCustomTip_v148', '灵动岛显示提示', '切换强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
+              showOneTimePanelTip('seenIslandCustomTip_v149', '灵动岛显示提示', '切换强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置 -> 互动与提醒」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
             }
           });
         });
@@ -19340,6 +19347,7 @@
   };
 
   const showPuppyBubble = (text, duration = 1800, isAuto = false) => {
+    if (config.puppyDesktopHidden) return;
     const now = Date.now();
     if (isAuto) {
       if ((config.puppyTalkFreq || 'normal') === 'quiet') return;
@@ -29030,6 +29038,7 @@
     pup.tick = 0;
     pup.nextWeatherAt = Date.now() + nextWeatherDelay();
     puppyEl.classList.add('active');
+    puppyEl.classList.toggle('desk-hidden', Boolean(config.puppyDesktopHidden));
     setPuppyState('walk', 180);
     drawPuppyScene();
     if (typeof guestRuntimes !== 'undefined' && typeof getGuestList === 'function' && typeof drawSingleGuestScene === 'function') {
@@ -49937,6 +49946,7 @@
   const spawnWalkTrailDot = (overrideTrailId = null, demoOffset = 0, customPos = null) => {
     const trId = overrideTrailId || config.puppyWalkTrail;
     if (!trId || trId === 'trail_none' || !config.puppyEnabled) return;
+    if (!customPos && config.puppyDesktopHidden) return;
     const tr = [...SHOP_PUP_TRAILS, ...SECRET_ADV_TRAILS, ...GACHA_TRAILS].find(t => t.id === trId);
     if (!tr) return;
     trailStepAlt = (trailStepAlt + 1) % 2;
@@ -57716,6 +57726,7 @@
 
     puppyToggleBtn.textContent = config.puppyEnabled ? '已开启' : '开启';
     puppyToggleBtn.classList.toggle('active', Boolean(config.puppyEnabled));
+    if (typeof syncPuppyDesktopHiddenUI === 'function') syncPuppyDesktopHiddenUI();
 
     densityRange.value = config.density;
     speedRange.value = config.speed;
@@ -57875,7 +57886,7 @@
     if (config.keepAlive) {
       startKeepAlive();
       if (typeof showOneTimePanelTip === 'function') {
-        showOneTimePanelTip('seenIslandCustomTip_v148', '灵动岛显示提示', '开启强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
+        showOneTimePanelTip('seenIslandCustomTip_v149', '灵动岛显示提示', '开启强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置 -> 互动与提醒」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
       }
     } else stopKeepAlive();
   });
@@ -58591,12 +58602,58 @@
     });
   });
 
+  const pupHideToggleBtn = root.querySelector('#st-tb-pup-hide-toggle');
+  const pupBagHideToggleBtn = root.querySelector('#st-tb-pup-bag-hide-toggle');
+  var syncPuppyDesktopHiddenUI = () => {
+    const hidden = Boolean(config.puppyDesktopHidden);
+    const enabled = Boolean(config.puppyEnabled);
+    if (puppyEl) puppyEl.classList.toggle('desk-hidden', enabled && hidden);
+    if (pupHideToggleBtn) {
+      pupHideToggleBtn.style.display = enabled ? 'inline-flex' : 'none';
+      pupHideToggleBtn.textContent = hidden ? '召回小狗' : '隐藏桌面';
+      pupHideToggleBtn.classList.toggle('active', hidden);
+    }
+    if (pupBagHideToggleBtn) {
+      pupBagHideToggleBtn.textContent = hidden ? '已隐藏 · 点此召回' : '显示中 · 点此隐藏';
+      pupBagHideToggleBtn.classList.toggle('active', !hidden);
+      pupBagHideToggleBtn.classList.toggle('care', !hidden);
+    }
+  };
+  const togglePuppyDesktopHidden = () => {
+    if (!config.puppyEnabled) return;
+    config.puppyDesktopHidden = !Boolean(config.puppyDesktopHidden);
+    saveConfig();
+    if (config.puppyDesktopHidden) {
+      clearTimeout(puppyBubbleTimer);
+      clearTimeout(puppyBubbleQueueTimer);
+      if (puppyBubble) puppyBubble.classList.remove('show');
+      if (typeof clearBubbleStack === 'function') clearBubbleStack();
+      syncPuppyDesktopHiddenUI();
+      if (typeof showKaPolicyNotice === 'function') {
+        showKaPolicyNotice('已隐藏桌面小狗（联机、串门、保活与背包照常运行），可在工具箱或背包设置随时召回');
+      }
+    } else {
+      pup.x = clamp(pup.x, 16, Math.max(16, win.innerWidth - 82));
+      pup.homeY = clamp(pup.homeY || defaultPupY(), 12, Math.max(12, win.innerHeight - 74));
+      pup.y = pup.homeY;
+      pup._lastRenderKey = '';
+      syncPuppyDesktopHiddenUI();
+      drawPuppyScene();
+      showPuppyBubble('我回来啦~', 2200);
+    }
+  };
+  if (pupHideToggleBtn) pupHideToggleBtn.addEventListener('click', togglePuppyDesktopHidden);
+  if (pupBagHideToggleBtn) pupBagHideToggleBtn.addEventListener('click', togglePuppyDesktopHidden);
+  syncPuppyDesktopHiddenUI();
+
   puppyToggleBtn.addEventListener('click', () => {
     config.puppyEnabled = !config.puppyEnabled;
+    if (config.puppyEnabled) config.puppyDesktopHidden = false;
     saveConfig();
     syncUI();
     if (config.puppyEnabled) startPuppy();
     else stopPuppy();
+    syncPuppyDesktopHiddenUI();
     try { if (typeof syncDynamicIslandArtwork === 'function') syncDynamicIslandArtwork(); } catch (_) {}
   });
 
