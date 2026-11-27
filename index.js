@@ -9878,7 +9878,6 @@
               <button class="st-tb-btn" id="st-tb-chat-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
               <button class="st-tb-btn" id="st-tb-chat-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
               <button class="st-tb-btn" id="st-tb-chat-jumpfloor-btn" type="button" title="输入楼层号，或一键去顶部/回底部">跳转楼层</button>
-              <button class="st-tb-btn" id="st-tb-chat-bottom-btn" type="button" title="一键直接回到聊天最底部">回到底层</button>
               <button class="st-tb-btn" id="st-tb-chat-draftrescue-btn" type="button" title="流式生成回复时实时暂存草稿，刷新卡死重进可一键恢复">防丢草稿</button>
             </div>
           </div>
@@ -10481,7 +10480,6 @@
   const chatPartialRerollBtn = root.querySelector('#st-tb-chat-partial-reroll-btn');
   const chatJumpTopBtn = root.querySelector('#st-tb-chat-jumptop-btn');
   const chatJumpFloorBtn = root.querySelector('#st-tb-chat-jumpfloor-btn');
-  const chatBottomBtn = root.querySelector('#st-tb-chat-bottom-btn');
   const jumpFloorMask = root.querySelector('#st-tb-jumpfloor-mask');
   const jfInfoEl = root.querySelector('#st-tb-jf-info');
   const jfInputEl = root.querySelector('#st-tb-jf-input');
@@ -36721,8 +36719,16 @@
     clearTimeout(cloudNoticeFlushTimer);
     cloudNoticeFlushTimer = setTimeout(() => flushCloudNoticeQueue(), 260);
   };
-  doc.addEventListener('visibilitychange', () => { if (!doc.hidden) flushCloudNoticeQueue(); });
-  win.addEventListener('focus', () => { flushCloudNoticeQueue(); });
+  let _fgNoticeTimer = null;
+  const scheduleFgNoticeFlush = () => {
+    if (doc.hidden) return;
+    clearTimeout(_fgNoticeTimer);
+    _fgNoticeTimer = setTimeout(() => {
+      if (!doc.hidden) requestAnimationFrame(() => flushCloudNoticeQueue());
+    }, 950);
+  };
+  doc.addEventListener('visibilitychange', () => { if (!doc.hidden) scheduleFgNoticeFlush(); });
+  win.addEventListener('focus', () => { scheduleFgNoticeFlush(); });
 
   const getCloudBaseUrl = () => String(config.puppyCloudUrl || 'https://goulaicai-sync.chanbaek99461.workers.dev').trim().replace(/\/+$/, '');
   const fetchWithTimeout = async (url, opts = {}, ms = 9000) => {
@@ -38437,18 +38443,26 @@
     pollCloudInbox();
     if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
   }, 2500);
-  doc.addEventListener('visibilitychange', () => {
-    if (!doc.hidden) {
-      if (!lastCloudPushSig) pushMyCloudPupNow(true);
-      pollCloudInbox();
-      if (typeof checkFinishedCoopAdventures === 'function') checkFinishedCoopAdventures();
-    }
-  });
-  win.addEventListener('focus', () => {
-    if (typeof pollCloudInbox === 'function') pollCloudInbox();
-    if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
-    if (typeof syncDesktopNoteboard === 'function') syncDesktopNoteboard();
-  });
+  let _fgCloudSyncAt = 0;
+  let _fgCloudSyncTimer = null;
+  const scheduleFgCloudSync = () => {
+    if (doc.hidden) return;
+    const now = Date.now();
+    if (now - _fgCloudSyncAt < 2500) return;
+    _fgCloudSyncAt = now;
+    clearTimeout(_fgCloudSyncTimer);
+    _fgCloudSyncTimer = setTimeout(() => {
+      if (doc.hidden) return;
+      requestAnimationFrame(() => {
+        if (!lastCloudPushSig) pushMyCloudPupNow(true);
+        if (typeof pollCloudInbox === 'function') pollCloudInbox();
+        if (typeof syncDesktopGiftBox === 'function') syncDesktopGiftBox();
+        if (typeof syncDesktopNoteboard === 'function') syncDesktopNoteboard();
+      });
+    }, 1150);
+  };
+  doc.addEventListener('visibilitychange', () => { if (!doc.hidden) scheduleFgCloudSync(); });
+  win.addEventListener('focus', () => { scheduleFgCloudSync(); });
   setInterval(() => {
     if (doc.hidden) return;
     syncCloudGuestLooks(true);
@@ -52995,11 +53009,10 @@
   doc.addEventListener('visibilitychange', () => {
     if (!doc.hidden) {
       stopTitleFlash();
-      if (typeof syncCloudGuestLooks === 'function') setTimeout(() => syncCloudGuestLooks(true), 600);
-      if (typeof pollCloudInbox === 'function') setTimeout(() => pollCloudInbox(), 500);
-      if (typeof syncDeskDmNoticeStack === 'function') setTimeout(() => syncDeskDmNoticeStack(), 1100);
-      if (typeof flushPendingRemotePokes === 'function') setTimeout(() => flushPendingRemotePokes(), 750);
-      if (typeof checkFinishedCoopAdventures === 'function') setTimeout(() => checkFinishedCoopAdventures(), 1000);
+      if (typeof flushPendingRemotePokes === 'function') setTimeout(() => { if (!doc.hidden) flushPendingRemotePokes(); }, 1300);
+      if (typeof syncCloudGuestLooks === 'function') setTimeout(() => { if (!doc.hidden) syncCloudGuestLooks(true); }, 1500);
+      if (typeof syncDeskDmNoticeStack === 'function') setTimeout(() => { if (!doc.hidden) syncDeskDmNoticeStack(); }, 1650);
+      if (typeof checkFinishedCoopAdventures === 'function') setTimeout(() => { if (!doc.hidden) checkFinishedCoopAdventures(); }, 1800);
       if (pendingJumpToReplyTopMesId !== null) {
         const jumpMid = pendingJumpToReplyTopMesId;
         pendingJumpToReplyTopMesId = null;
@@ -60907,7 +60920,6 @@
       chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
     } catch (_) {}
   };
-  if (chatBottomBtn) chatBottomBtn.addEventListener('click', () => { scrollChatToBottomNow(); });
   if (jfBottomBtn) jfBottomBtn.addEventListener('click', () => {
     const chat = getContext()?.chat;
     const maxIdx = Array.isArray(chat) && chat.length ? chat.length - 1 : 0;
