@@ -7245,7 +7245,7 @@
     #st-tb-puppy-bubble.bub-dyn-crystal-tide, .st-tb-guest-bubble.bub-dyn-crystal-tide { background: linear-gradient(135deg,#ecfbff 0%,#eef3ff 35%,#f6eeff 68%,#ebfff8 100%); background-size: 240% 240%; animation: stBubSheen 4.3s ease infinite; border-color: #7cc4de; color: #244a63; box-shadow: 0 2px 10px rgba(124,196,222,0.28), inset 0 0 0 1px rgba(255,255,255,0.96); }
     #st-tb-puppy-bubble.bub-dyn-crystal-tide::after, .st-tb-guest-bubble.bub-dyn-crystal-tide::after { background: #ecfbff; border-color: #7cc4de; }
     #st-tb-puppy-bubble.bub-dyn-velvet-gold, .st-tb-guest-bubble.bub-dyn-velvet-gold { background: linear-gradient(135deg,#6b1e34 0%,#4f1426 38%,#7a263e 72%,#521528 100%); background-size: 240% 240%; animation: stBubSheen 4.4s ease infinite; border-color: #e6be68; color: #fff4d8; box-shadow: 0 2px 12px rgba(107,30,52,0.42), inset 0 0 0 1px rgba(255,236,184,0.65); }
-    #st-tb-puppy-bubble.bub-dyn-velvet-gold::after, .st-tb-guest-bubble.bub-dyn-velvet-gold::after { bottom: -5px; width: 6px; height: 7px; background: #5a182b; border-top: none; border-left: none; border-right: 2px solid #e6be68; border-bottom: 2px solid #e6be68; z-index: 2; }
+    #st-tb-puppy-bubble.bub-dyn-velvet-gold::after, .st-tb-guest-bubble.bub-dyn-velvet-gold::after { bottom: -6px; width: 4px; height: 4px; background: #5a182b; border-top: none; border-left: none; border-right: 2px solid #e6be68; border-bottom: 2px solid #e6be68; box-shadow: 0 -2px 0 0 #5a182b; z-index: 2; }
     @keyframes stBubSheen {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -9061,7 +9061,7 @@
             <div class="st-px-adv-card" id="st-px-job-status" style="margin-bottom:6px;"></div>
             <div class="st-px-subhead">
               <span>选择打工小店 (4)</span>
-              <span id="st-px-job-tip">不同性格触发专属剧情</span>
+              <button class="st-px-btn" id="st-px-job-top-rev-btn" type="button" style="height:20px;padding:0 7px;font-size:9.5px;">口碑墙</button>
             </div>
             <div class="st-px-job-grid" id="st-px-job-list"></div>
             <button class="st-px-btn care" id="st-px-job-start" type="button" style="width:100%;">出发兼职打工 (45秒)</button>
@@ -28645,9 +28645,49 @@
                 pickedSong = { title: String(s.title).trim(), artist: String(s.artist.name).trim(), previewUrl: String(s.preview) };
               }
             }
+            const buildMusicBoxWavUrl = (persKey) => {
+              const sr = 22050;
+              const melodies = {
+                sleepyhead: { name: '晚风八音盒', bpm: 92, notes: [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880.0, 783.99, 523.25, 659.25, 783.99, 1046.5, 880.0, 783.99, 659.25, 523.25] },
+                clingy:     { name: '草莓甜心盒', bpm: 108, notes: [659.25, 783.99, 880.0, 783.99, 659.25, 587.33, 659.25, 783.99, 1046.5, 987.77, 880.0, 783.99, 659.25, 783.99, 659.25, 523.25] },
+                tsundere:   { name: '傲娇小步舞', bpm: 116, notes: [587.33, 739.99, 880.0, 739.99, 659.25, 783.99, 987.77, 880.0, 739.99, 659.25, 587.33, 659.25, 739.99, 880.0, 739.99, 587.33] },
+                foodie:     { name: '焦糖布丁曲', bpm: 104, notes: [523.25, 587.33, 659.25, 783.99, 880.0, 783.99, 659.25, 587.33, 523.25, 659.25, 783.99, 880.0, 783.99, 659.25, 587.33, 523.25] },
+              };
+              const m = melodies[persKey] || melodies.sleepyhead;
+              const stepSec = 60 / m.bpm / 1.5;
+              const totalSamples = Math.floor(sr * (m.notes.length * stepSec + 1.2));
+              const buf = new ArrayBuffer(44 + totalSamples * 2);
+              const dv = new DataView(buf);
+              const wStr = (off, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(off + i, s.charCodeAt(i)); };
+              wStr(0, 'RIFF'); dv.setUint32(4, 36 + totalSamples * 2, true); wStr(8, 'WAVE');
+              wStr(12, 'fmt '); dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+              dv.setUint32(24, sr, true); dv.setUint32(28, sr * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
+              wStr(36, 'data'); dv.setUint32(40, totalSamples * 2, true);
+              const pcm = new Float32Array(totalSamples);
+              m.notes.forEach((freq, idx) => {
+                const start = Math.floor(idx * stepSec * sr);
+                const len = Math.floor(Math.min(1.15 * sr, totalSamples - start));
+                for (let i = 0; i < len; i++) {
+                  const t = i / sr;
+                  const env = Math.min(1, t * 45) * Math.exp(-t * 3.8);
+                  const val = (Math.sin(2 * Math.PI * freq * t) * 0.65 + Math.sin(4 * Math.PI * freq * t) * 0.22 + Math.sin(6 * Math.PI * freq * t) * 0.08) * env * 0.34;
+                  pcm[start + i] += val;
+                }
+              });
+              for (let i = 0; i < totalSamples; i++) {
+                const s = Math.max(-1, Math.min(1, pcm[i]));
+                dv.setInt16(44 + i * 2, s < 0 ? s * 32768 : s * 32767, true);
+              }
+              const bytes = new Uint8Array(buf);
+              let bin = '';
+              for (let i = 0; i < bytes.length; i += 8192) {
+                bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+              }
+              return { name: m.name, url: 'data:audio/wav;base64,' + btoa(bin) };
+            };
             if (!pickedSong) {
-              showPuppyBubble('刚才没连上随机电台，稍后再点一次一起听歌试试吧', 3200, true);
-              return;
+              const localBox = buildMusicBoxWavUrl(pId);
+              pickedSong = { title: localBox.name, artist: '小狗像素八音盒', previewUrl: localBox.url, isLocal: true };
             }
             const { title, artist, previewUrl } = pickedSong;
             const REC_BY_PERS = {
@@ -35956,7 +35996,7 @@
         };
         if (extraOpts?.albumTarget === 'snap') {
           if (!Array.isArray(config.puppySnapAlbum)) config.puppySnapAlbum = [];
-          config.puppySnapAlbum.unshift(entry);
+          config.puppySnapAlbum.unshift(entry); config.puppyFreshSnap = true; if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
           if (config.puppySnapAlbum.length > 64) config.puppySnapAlbum = config.puppySnapAlbum.slice(0, 64);
           let firstSnapMsg = '成片已存入咔嚓相册！';
           const todayS = getTodayStr();
@@ -40001,19 +40041,176 @@
     mask.querySelector('#st-bm-close')?.addEventListener('click', closeBm);
     mask.querySelector('#st-bm-ok')?.addEventListener('click', closeBm);
     mask.querySelector('#st-bm-coadv')?.addEventListener('click', () => { closeBm(); startCoopCloudAdventure(fr); });
-    const runBondAction = (needLv, label, bub) => {
+    const openBondActionShowModal = (actType, label, bub) => {
+      let sm = root.querySelector('#st-tb-bond-show-mask');
+      if (sm) sm.remove();
+      sm = doc.createElement('div');
+      sm.id = 'st-tb-bond-show-mask';
+      sm.className = 'st-px-submodal-keep-bag';
+      sm.style.cssText = 'position:fixed;inset:0;z-index:10045;background:rgba(16,14,26,0.58);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+      const card = doc.createElement('div');
+      card.style.cssText = 'width:min(310px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.28);text-align:center;';
+      const titleDiv = doc.createElement('div');
+      titleDiv.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:6px;';
+      titleDiv.textContent = `[专属联机演出] ${label}`;
+      const cvs = doc.createElement('canvas');
+      cvs.width = 160; cvs.height = 84;
+      cvs.style.cssText = 'width:100%;height:auto;aspect-ratio:160/84;image-rendering:pixelated;border:1.5px solid var(--px-border,#bfa4ae);display:block;margin-bottom:6px;';
+      const cap = doc.createElement('div');
+      cap.style.cssText = 'font-size:10.5px;line-height:1.45;margin-bottom:8px;';
+      cap.textContent = bub;
+      const btnRow = doc.createElement('div');
+      btnRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px;';
+      const replayBtn = doc.createElement('button');
+      replayBtn.type = 'button'; replayBtn.className = 'st-px-btn'; replayBtn.style.cssText = 'height:24px;font-size:10px;'; replayBtn.textContent = '重播演出';
+      const closeBtn = doc.createElement('button');
+      closeBtn.type = 'button'; closeBtn.className = 'st-px-btn care'; closeBtn.style.cssText = 'height:24px;font-size:10px;'; closeBtn.textContent = '好耶，收起';
+      btnRow.append(replayBtn, closeBtn);
+      card.append(titleDiv, cvs, cap, btnRow);
+      sm.appendChild(card);
+      root.appendChild(sm);
+
+      const g2 = cvs.getContext('2d');
+      let tick = 0;
+      let animId = null;
+      const myLk = { fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline, outfit: config.puppyOutfit, accs: config.puppyAccs || [], comp: config.puppyCompanion || 'none', accOffsets: config.puppyAccOffsets || {}, onesieShowEars: config.puppyOnesieShowEars };
+      const frLk = fr.look || {};
+      const drawDogAt = (lk, dx, dy, flipX, pose) => {
+        const pal = { o: lk.outline || '#3b2a22', w: lk.fur || '#fffdf7', s: shadeHex(lk.fur || '#fffdf7', 0.9), e: lk.ear || '#e2ae74', r: lk.collar || '#d66565', g: '#f4c842', k: '#241a15', p: '#ff9eb5', c: '#7a5a4e' };
+        const grid = PUP_SPRITES[pose] || PUP_SPRITES.idle1 || [];
+        const isSit = pose === 'sit1' || pose === 'sit2';
+        g2.save();
+        g2.translate(Math.round(dx), Math.round(dy));
+        if (flipX) { g2.translate(16, 0); g2.scale(-1, 1); }
+        for (let y = 0; y < grid.length; y++) {
+          const row = grid[y];
+          for (let x = 0; x < row.length; x++) {
+            const c = pal[row[x]];
+            if (c) { g2.fillStyle = c; g2.fillRect(x, y, 1, 1); }
+          }
+        }
+        const prevCtx = activePxCtx, prevOff = config.puppyAccOffsets, prevEars = config.puppyOnesieShowEars;
+        try {
+          activePxCtx = g2;
+          config.puppyAccOffsets = lk.accOffsets || {};
+          config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
+          drawPupOutfit(lk.outfit || 'none', 0, 0, 10, 2, false, false, isSit, false);
+          if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, 10, 2, 0, 0, false, false, isSit));
+        } finally {
+          activePxCtx = prevCtx; config.puppyAccOffsets = prevOff; config.puppyOnesieShowEars = prevEars;
+        }
+        g2.restore();
+      };
+      const renderFrame = () => {
+        if (!g2 || !doc.body.contains(sm)) { if (animId) clearInterval(animId); return; }
+        tick++;
+        const t = tick % 90;
+        if (actType === 'punch') {
+          // 暖阳庭院双狗冲刺跃起碰拳 + 彩纸爆散
+          g2.fillStyle = '#fff3e6'; g2.fillRect(0, 0, 160, 84);
+          g2.fillStyle = '#ffe0b8'; g2.fillRect(0, 62, 160, 22);
+          g2.fillStyle = '#ffd166'; g2.fillRect(132, 8, 12, 12);
+          const prog = Math.min(1, t / 24);
+          const lx = 18 + Math.round(prog * 40);
+          const rx = 126 - Math.round(prog * 40);
+          const jumpY = (t >= 20 && t <= 42) ? Math.round(Math.sin(((t - 20) / 22) * Math.PI) * 14) : 0;
+          drawDogAt(myLk, lx, 50 - jumpY, false, t < 20 ? (t % 6 < 3 ? 'walk1' : 'walk2') : 'happy');
+          drawDogAt(frLk, rx, 50 - jumpY, true, t < 20 ? (t % 6 < 3 ? 'walk1' : 'walk2') : 'happy');
+          if (t >= 26) {
+            const burst = Math.min(28, (t - 26) * 2);
+            const cols = ['#ff789e', '#ffd166', '#6ecbff', '#8ce09b', '#c792ff'];
+            for (let i = 0; i < 12; i++) {
+              const ang = (i / 12) * Math.PI * 2;
+              const px2 = 80 + Math.round(Math.cos(ang) * burst);
+              const py2 = 42 + Math.round(Math.sin(ang) * burst * 0.7);
+              g2.fillStyle = cols[i % cols.length];
+              g2.fillRect(px2, py2, 3, 3);
+            }
+          }
+        } else if (actType === 'dance') {
+          // 星光舞厅双聚光灯 + 双狗同步华尔兹旋舞 + 漂浮音符
+          g2.fillStyle = '#252a4a'; g2.fillRect(0, 0, 160, 84);
+          g2.fillStyle = '#363e6b'; g2.fillRect(0, 62, 160, 22);
+          // 舞台双聚光束
+          g2.fillStyle = 'rgba(255,236,168,0.14)';
+          const swayBeam = Math.round(Math.sin(t * 0.12) * 10);
+          g2.fillRect(42 + swayBeam, 0, 26, 66);
+          g2.fillRect(92 - swayBeam, 0, 26, 66);
+          const stepX = Math.round(Math.sin(t * 0.16) * 14);
+          const hop1 = Math.abs(Math.round(Math.sin(t * 0.32) * 6));
+          const hop2 = Math.abs(Math.round(Math.cos(t * 0.32) * 6));
+          drawDogAt(myLk, 52 + stepX, 49 - hop1, stepX < 0, 'happy');
+          drawDogAt(frLk, 92 - stepX, 49 - hop2, stepX >= 0, 'happy');
+          // 漂浮星尘与金音符
+          const noteCols = ['#ffe078', '#ffadc4', '#94dcff'];
+          for (let i = 0; i < 7; i++) {
+            const nx = (22 + i * 21 + t) % 156;
+            const ny = 10 + ((i * 13 + Math.round(Math.sin(t * 0.2 + i) * 6)) % 34);
+            g2.fillStyle = noteCols[i % 3];
+            g2.fillRect(nx, ny, 2, 2); g2.fillRect(nx + 1, ny - 2, 1, 2);
+          }
+        } else {
+          // 跨屏烟花告白：午夜星湖并排赏多色心形大烟花
+          g2.fillStyle = '#171d38'; g2.fillRect(0, 0, 160, 84);
+          g2.fillStyle = '#212c52'; g2.fillRect(0, 62, 160, 22);
+          // 湖面波光倒影
+          for (let i = 0; i < 6; i++) {
+            g2.fillStyle = 'rgba(180,210,255,0.22)';
+            g2.fillRect((12 + i * 26 + Math.floor(t / 3)) % 152, 68 + (i % 3) * 4, 10, 1);
+          }
+          drawDogAt(myLk, 58, 50, false, 'sit1');
+          drawDogAt(frLk, 86, 50, true, 'sit1');
+          // 三束交替绽放的像素大烟花
+          const fws = [
+            { cx: 44, cy: 22, phase: t % 30, col1: '#ff7aa8', col2: '#ffe484' },
+            { cx: 80, cy: 18, phase: (t + 10) % 30, col1: '#7ce0ff', col2: '#ffffff' },
+            { cx: 118, cy: 24, phase: (t + 20) % 30, col1: '#d19eff', col2: '#ffadc4' },
+          ];
+          fws.forEach(fw => {
+            if (fw.phase < 8) {
+              g2.fillStyle = fw.col2;
+              g2.fillRect(fw.cx, 54 - fw.phase * 4, 2, 4);
+            } else {
+              const r = (fw.phase - 8) * 1.15;
+              for (let k = 0; k < 10; k++) {
+                const a = (k / 10) * Math.PI * 2;
+                const fx = fw.cx + Math.round(Math.cos(a) * r);
+                const fy = fw.cy + Math.round(Math.sin(a) * r);
+                g2.fillStyle = k % 2 ? fw.col1 : fw.col2;
+                g2.fillRect(fx, fy, 2, 2);
+              }
+            }
+          });
+        }
+      };
+      renderFrame();
+      animId = setInterval(renderFrame, 90);
+      const closeShow = (e2) => {
+        if (e2) e2.stopPropagation();
+        if (animId) clearInterval(animId);
+        win.__stSubModalClosedAt = Date.now();
+        sm.remove();
+      };
+      replayBtn.addEventListener('click', (e2) => { e2.stopPropagation(); tick = 0; });
+      closeBtn.addEventListener('click', closeShow);
+      sm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+      sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) closeShow(e2); });
+    };
+
+    const runBondAction = (needLv, actType, label, bub) => {
       if (info.lv < needLv) { openPixelPupNoticeModal('尚未解锁', `与「${fr.name}」的汪汪羁绊达到 Lv.${needLv} 后即可解锁【${label}】哦~`); return; }
       closeBm();
       if (config.puppyEnabled) {
-        setPuppyState('spin', 120);
-        for (let i = 0; i < 8; i++) spawnPupFx(i % 2 ? 'heart' : 'sparkle', 6 + (i % 4) * 4, 4 + (i % 2) * 3);
+        setPuppyState(actType === 'firework' ? 'love_firework' : (actType === 'dance' ? 'music' : 'happy'), 140);
+        for (let i = 0; i < 10; i++) spawnPupFx(i % 2 ? 'heart' : 'sparkle', 6 + (i % 5) * 3, 4 + (i % 2) * 3);
         showPuppyBubble(bub, 3800);
       }
+      openBondActionShowModal(actType, label, bub);
       sendCloudRemotePoke(fr.cloudId, fr.name);
     };
-    mask.querySelector('#st-bm-act1')?.addEventListener('click', () => runBondAction(3, '碰拳庆贺', `和「${fr.name}」隔空双爪碰拳庆贺啦！`));
-    mask.querySelector('#st-bm-act2')?.addEventListener('click', () => runBondAction(5, '星光双人舞', `伴着星光和「${fr.name}」跳了一支双人舞~`));
-    mask.querySelector('#st-bm-act3')?.addEventListener('click', () => runBondAction(8, '跨屏烟花告白', `为「${fr.name}」在星空下点亮了跨屏烟花！`));
+    mask.querySelector('#st-bm-act1')?.addEventListener('click', () => runBondAction(3, 'punch', '碰拳庆贺', `和「${fr.name}」隔空双爪碰拳庆贺啦！`));
+    mask.querySelector('#st-bm-act2')?.addEventListener('click', () => runBondAction(5, 'dance', '星光双人舞', `伴着星光和「${fr.name}」跳了一支双人舞~`));
+    mask.querySelector('#st-bm-act3')?.addEventListener('click', () => runBondAction(8, 'firework', '跨屏烟花告白', `为「${fr.name}」在星空下点亮了跨屏烟花！`));
     bringModalFront(mask);
     mask.style.display = 'flex';
   };
@@ -42700,6 +42897,9 @@
   advSubTabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       advSubTab = btn.dataset.advTab || 'go';
+      if (advSubTab === 'album' && typeof freshNewPhotos !== 'undefined' && freshNewPhotos.size > 0) freshNewPhotos.clear();
+      if (advSubTab === 'museum' && typeof freshNewCurios !== 'undefined' && freshNewCurios.size > 0) freshNewCurios.clear();
+      if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
       photoViewerEl.classList.remove('open');
       renderPupAdventure();
     });
@@ -44287,11 +44487,18 @@
         d.remove();
       }
     };
-    setDot(root.querySelector('.st-px-tab[data-px-tab="adv"]'), advDone || jobDone);
+    const hasNewAlbum = typeof freshNewPhotos !== 'undefined' && freshNewPhotos.size > 0;
+    const hasNewMuseum = typeof freshNewCurios !== 'undefined' && freshNewCurios.size > 0;
+    const hasNewSnap = Boolean(config.puppyFreshSnap);
+    setDot(root.querySelector('.st-px-tab[data-px-tab="adv"]'), advDone || jobDone || hasNewAlbum || hasNewMuseum);
     setDot(root.querySelector('[data-adv-tab="go"]'), advDone);
     setDot(root.querySelector('[data-adv-tab="job"]'), jobDone);
-    setDot(root.querySelector('.st-px-tab[data-px-tab="act"]'), gardenReady);
+    setDot(root.querySelector('[data-adv-tab="album"]'), hasNewAlbum);
+    setDot(root.querySelector('[data-adv-tab="museum"]'), hasNewMuseum);
+    setDot(root.querySelector('.st-px-tab[data-px-tab="act"]'), gardenReady || hasNewSnap);
     setDot(root.querySelector('[data-act-tab="garden"]'), gardenReady);
+    const snapBtnEl = root.querySelector('#st-px-snap-album-btn');
+    if (snapBtnEl) { snapBtnEl.style.position = 'relative'; snapBtnEl.style.overflow = 'visible'; setDot(snapBtnEl, hasNewSnap); }
     const hasNewAcc = Array.isArray(config.puppyOwnedAccs) && config.puppyOwnedAccs.some(id => freshNewWardItems.has(id));
     const hasNewOut = Array.isArray(config.puppyOwnedOutfits) && config.puppyOwnedOutfits.some(id => freshNewWardItems.has(id));
     const hasNewCp = Array.isArray(config.puppyOwnedCompanions) && config.puppyOwnedCompanions.some(id => freshNewWardItems.has(id));
@@ -53955,6 +54162,151 @@
     };
     grantJobMasterRewardsIfEligible();
     const urgentSet = getTodayUrgentJobIds();
+    const openJobReviewWallModal = (initialShopId) => {
+      let mask = root.querySelector('#st-tb-job-rev-mask');
+      if (mask) mask.remove();
+      mask = doc.createElement('div');
+      mask.id = 'st-tb-job-rev-mask';
+      mask.className = 'st-px-submodal-keep-bag';
+      mask.style.cssText = 'position:fixed;inset:0;z-index:10040;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+      const closeRevModal = (e2) => {
+        if (e2) e2.stopPropagation();
+        win.__stSubModalClosedAt = Date.now();
+        mask.remove();
+      };
+      let activeRevShop = initialShopId || selectedJobId || PUP_JOBS[0].id;
+      const card = doc.createElement('div');
+      card.style.cssText = 'width:min(330px,93vw);max-height:78vh;display:flex;flex-direction:column;background:var(--px-bg,#fff9fb);color:var(--px-fg,#4a3a40);border:2px solid var(--px-border,#bfa4ae);padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.22);';
+      const renderRevModalBody = () => {
+        card.innerHTML = '';
+        const totalGot = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
+        const totalBad = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobBadReviews?.[k] || []).length), 0);
+        const head = doc.createElement('div');
+        head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:11.5px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px dashed var(--px-border,#bfa4ae);';
+        head.innerHTML = `<span>店铺口碑墙 · 好评 ${totalGot}/24 · 差评 ${totalBad}/8</span>`;
+        const clsBtn = doc.createElement('button');
+        clsBtn.type = 'button'; clsBtn.className = 'st-px-btn'; clsBtn.style.cssText = 'height:20px;padding:0 7px;font-size:10px;'; clsBtn.textContent = '关闭';
+        clsBtn.addEventListener('click', closeRevModal);
+        head.appendChild(clsBtn);
+        card.appendChild(head);
+        const tabBar = doc.createElement('div');
+        tabBar.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:7px;';
+        const shortShopNames = { boba: '奶茶店', bakery: '面包店', florist: '花店', bookshop: '旧书店' };
+        PUP_JOBS.forEach(j => {
+          const gLen = (config.puppyJobReviews?.[j.id] || []).length;
+          const tb = doc.createElement('button');
+          tb.type = 'button';
+          tb.className = 'st-px-btn' + (activeRevShop === j.id ? ' care' : '');
+          tb.style.cssText = 'height:22px;padding:0 3px;font-size:9.5px;';
+          tb.textContent = `${shortShopNames[j.id] || j.name}(${gLen}/6)`;
+          tb.addEventListener('click', (e2) => { e2.stopPropagation(); activeRevShop = j.id; renderRevModalBody(); });
+          tabBar.appendChild(tb);
+        });
+        card.appendChild(tabBar);
+        const jObjCur = PUP_JOBS.find(x => x.id === activeRevShop) || PUP_JOBS[0];
+        const gotIds = Array.isArray(config.puppyJobReviews?.[jObjCur.id]) ? config.puppyJobReviews[jObjCur.id] : [];
+        const revs = JOB_CUSTOMER_REVIEWS[jObjCur.id] || [];
+        const claimed = Boolean(config.puppyJobReviewClaimed?.[jObjCur.id]);
+        const rw = JOB_MASTER_REWARDS[jObjCur.id];
+        const pct = Math.round((gotIds.length / Math.max(1, revs.length)) * 100);
+        const banner = doc.createElement('div');
+        banner.style.cssText = `display:flex;align-items:center;gap:8px;padding:7px 8px;margin-bottom:7px;background:${jObjCur.bg || 'var(--px-card,#fff)'};border:1.5px solid ${jObjCur.accent || 'var(--px-border,#bfa4ae)'};color:#4a3525;`;
+        const ic = doc.createElement('canvas');
+        ic.width = 16; ic.height = 16;
+        ic.style.cssText = 'width:26px;height:26px;image-rendering:pixelated;flex-shrink:0;';
+        drawJobMiniIcon(ic, jObjCur.icon);
+        const bInfo = doc.createElement('div');
+        bInfo.style.cssText = 'flex:1;min-width:0;';
+        bInfo.innerHTML = `
+          <div style="font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:4px;">
+            <span>${jObjCur.name}</span>
+            <span style="font-size:9.5px;color:#b86b24;">口碑 5.0 · ${gotIds.length}/${revs.length}</span>
+          </div>
+          <div style="height:5px;background:rgba(0,0,0,0.1);margin:4px 0 3px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:${jObjCur.accent || '#d99b66'};"></div>
+          </div>
+          <div style="font-size:9px;opacity:0.85;">Lv.3满级赠礼：${rw ? rw.name : ''}</div>
+        `;
+        banner.append(ic, bInfo);
+        if (gotIds.length >= revs.length && !claimed) {
+          const cBtn = doc.createElement('button');
+          cBtn.type = 'button'; cBtn.className = 'st-px-btn care'; cBtn.style.cssText = 'height:22px;padding:0 7px;font-size:9.5px;flex-shrink:0;'; cBtn.textContent = '领+15币';
+          cBtn.addEventListener('click', (e2) => {
+            e2.stopPropagation();
+            config.puppyJobReviewClaimed = config.puppyJobReviewClaimed || {};
+            if (config.puppyJobReviewClaimed[jObjCur.id]) return;
+            config.puppyJobReviewClaimed[jObjCur.id] = true;
+            config.puppyCoins = (config.puppyCoins || 0) + 15;
+            config.puppyStats = config.puppyStats || {};
+            config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + 15;
+            saveConfig(); checkPupAchievements(); updatePupStatBars();
+            renderRevModalBody(); renderJobPanel();
+            showPuppyBubble(`集齐了【${jObjCur.name}】全部好评，领到 +15 币口碑奖金啦~`, 2600);
+          });
+          banner.appendChild(cBtn);
+        } else if (claimed) {
+          const sp = doc.createElement('span');
+          sp.style.cssText = 'font-size:9.5px;font-weight:700;color:#2e7d47;flex-shrink:0;'; sp.textContent = '已领奖';
+          banner.appendChild(sp);
+        }
+        card.appendChild(banner);
+        const listWrap = doc.createElement('div');
+        listWrap.style.cssText = 'overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding-right:2px;';
+        revs.forEach((rv, rIdx) => {
+          const has = gotIds.includes(rv.id);
+          const note = doc.createElement('div');
+          note.style.cssText = `padding:7px 8px;background:var(--px-card,#fff);border:1.5px solid ${has ? (jObjCur.accent || '#d99b66') : 'var(--px-border,#d0c0c6)'};box-shadow:${has ? '2px 2px 0 rgba(59,42,34,0.1)' : 'none'};opacity:${has ? '1' : '0.58'};`;
+          if (has) {
+            note.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;font-size:9.5px;">
+                <span style="font-weight:700;">#${rIdx + 1} ${rv.user || '匿名常客'}</span>
+                <span style="padding:0 5px;background:${jObjCur.bg || '#fff6eb'};border:1px solid ${jObjCur.accent || '#d99b66'};color:#7a4b1f;font-size:8.5px;font-weight:700;">${rv.tag} · 5.0分</span>
+              </div>
+              <div style="font-size:10px;line-height:1.5;">「${rv.text}」</div>
+            `;
+          } else {
+            note.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">#${rIdx + 1} 未解锁顾客留言 · 继续在【${jObjCur.name}】顺利完成班次即可收集~</div>`;
+          }
+          listWrap.appendChild(note);
+        });
+        const badRevs = JOB_BAD_REVIEWS[jObjCur.id] || [];
+        const gotBadIds = Array.isArray(config.puppyJobBadReviews?.[jObjCur.id]) ? config.puppyJobBadReviews[jObjCur.id] : [];
+        const badSub = doc.createElement('div');
+        badSub.style.cssText = 'font-size:10px;font-weight:700;color:#b83b52;margin-top:6px;padding-top:5px;border-top:1px dashed var(--px-border,#bfa4ae);';
+        badSub.textContent = `翻车差评记录 (${gotBadIds.length}/${badRevs.length}) · 全店累计 4 条解锁隐藏成就`;
+        listWrap.appendChild(badSub);
+        badRevs.forEach((br, bIdx) => {
+          const hasB = gotBadIds.includes(br.id);
+          const bNote = doc.createElement('div');
+          bNote.style.cssText = `padding:6px 8px;background:var(--px-card,#fff);border:1.5px dashed ${hasB ? '#d46a7e' : 'var(--px-border,#d0c0c6)'};opacity:${hasB ? '1' : '0.55'};`;
+          if (hasB) {
+            bNote.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;font-size:9.5px;">
+                <span style="font-weight:700;color:#a83349;">[差评#${bIdx + 1}] ${br.user}</span>
+                <span style="padding:0 5px;background:#fff0f3;border:1px solid #d46a7e;color:#a83349;font-size:8.5px;font-weight:700;">${br.tag} · 1.0分</span>
+              </div>
+              <div style="font-size:10px;line-height:1.48;">「${br.text}」</div>
+            `;
+          } else {
+            bNote.innerHTML = `<div style="font-size:9.5px;opacity:0.75;">[差评#${bIdx + 1}] 未收录 · 打工偶尔手忙脚乱翻车时会收到顾客吐槽~</div>`;
+          }
+          listWrap.appendChild(bNote);
+        });
+        card.appendChild(listWrap);
+      };
+      renderRevModalBody();
+      mask.appendChild(card);
+      mask.addEventListener('pointerdown', (e2) => e2.stopPropagation());
+      mask.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === mask) closeRevModal(e2); });
+      root.appendChild(mask);
+    };
+    const topRevBtn = root.querySelector('#st-px-job-top-rev-btn');
+    if (topRevBtn) {
+      const _tGood = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobReviews?.[k] || []).length), 0);
+      const _tBad = ['boba', 'bakery', 'florist', 'bookshop'].reduce((a, k) => a + ((config.puppyJobBadReviews?.[k] || []).length), 0);
+      topRevBtn.textContent = `口碑墙 (${_tGood}/24 · 差${_tBad})`;
+      topRevBtn.onclick = (e2) => { e2.stopPropagation(); openJobReviewWallModal(selectedJobId); };
+    }
 
     listEl.innerHTML = '';
     PUP_JOBS.forEach(j => {
