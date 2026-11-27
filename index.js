@@ -24374,6 +24374,24 @@
     try { saveConfig(); } catch (_) {}
     return true;
   };
+  var scrollWardItemIntoView = (id) => {
+    if (!id) return;
+    setTimeout(() => {
+      try {
+        const el = pupWardBodyEl?.querySelector(`[data-ward-item-id="${id}"]`);
+        if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (_) {}
+    }, 60);
+  };
+  var scrollShopItemIntoView = (id) => {
+    if (!id) return;
+    setTimeout(() => {
+      try {
+        const el = pupShopGridEl?.querySelector(`[data-shop-item-id="${id}"]`);
+        if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (_) {}
+    }, 60);
+  };
   const sortWardListWithNewFirst = (arr) => {
     const noneItems = [], newItems = [], restItems = [];
     arr.forEach(it => {
@@ -24618,9 +24636,10 @@
           btn.innerHTML = escapeHtmlSimple(item.name);
         }
         const isOn = item.id === 'none' ? wornAccs.length === 0 : wornAccs.includes(item.id);
+        btn.dataset.wardItemId = item.id;
         btn.classList.toggle('active', isOn);
         btn.addEventListener('click', () => {
-          clearWardItemNew(item.id);
+          const wasNew = clearWardItemNew(item.id);
           const d = ensureWardDraft();
           if (item.id === 'none') {
             d.accs = [];
@@ -24633,6 +24652,7 @@
             }
           }
           renderPupWardrobe();
+          if (wasNew) scrollWardItemIntoView(item.id);
         });
         grid.appendChild(btn);
       });
@@ -24802,12 +24822,14 @@
         } else {
           btn.innerHTML = escapeHtmlSimple(item.name);
         }
+        btn.dataset.wardItemId = item.id;
         btn.classList.toggle('active', wd.outfit === item.id);
         btn.addEventListener('click', () => {
-          clearWardItemNew(item.id);
+          const wasNew = clearWardItemNew(item.id);
           const d = ensureWardDraft();
           d.outfit = item.id;
           renderPupWardrobe();
+          if (wasNew) scrollWardItemIntoView(item.id);
         });
         grid.appendChild(btn);
       });
@@ -24840,12 +24862,14 @@
         } else {
           btn.innerHTML = escapeHtmlSimple(item.name);
         }
+        btn.dataset.wardItemId = item.id;
         btn.classList.toggle('active', (wd.comp || 'none') === item.id);
         btn.addEventListener('click', () => {
-          clearWardItemNew(item.id);
+          const wasNew = clearWardItemNew(item.id);
           const d = ensureWardDraft();
           d.comp = item.id;
           renderPupWardrobe();
+          if (wasNew) scrollWardItemIntoView(item.id);
         });
         grid.appendChild(btn);
       });
@@ -26531,11 +26555,16 @@
         const isNewC = ownedC && freshNewWardItems.has(item.id);
         const card = doc.createElement('button');
         card.type = 'button';
+        card.dataset.shopItemId = item.id;
         card.className = `st-px-shop-item${wearingC ? ' equipped' : ''}${isPrev ? ' previewing' : ''}`;
         card.innerHTML = `<span style="display:flex;align-items:center;justify-content:flex-start;gap:3px;width:100%;overflow:hidden;">${isNewC ? '<span class="st-px-new-tag" style="flex-shrink:0;margin:0;">NEW</span>' : ''}<span class="st-px-shop-name" style="min-width:0;flex:1;text-align:left;">${item.name}</span></span><span class="st-px-shop-meta"><span>${ownedC ? '已有' : `${item.price}币`}</span><span class="st-px-shop-tag">${wearingC ? '用着' : (ownedC ? '换' : '买')}</span></span>`;
         card.addEventListener('click', () => {
           shopPreviewItem = { kind: shopSubCat, item };
-          clearWardItemNew(item.id);
+          const wasNewShopC = clearWardItemNew(item.id);
+          if (wasNewShopC) {
+            renderPupShop();
+            scrollShopItemIntoView(item.id);
+          }
           if (shopSubCat === 'bagskin') {
             applyPupCosmeticSkins(item.id, null);
           } else if (shopSubCat === 'bubskin') {
@@ -26574,6 +26603,7 @@
         const isNewB = ownedB && freshNewWardItems.has(item.id);
         const card = doc.createElement('button');
         card.type = 'button';
+        card.dataset.shopItemId = item.id;
         card.className = `st-px-shop-item${wearingB ? ' equipped' : ''}${isPrev ? ' previewing' : ''}`;
         card.style.padding = '8px 4px 5px';
         card.style.alignItems = 'center';
@@ -26589,6 +26619,7 @@
           shopPreviewItem = { kind: 'badge', item };
           if (clearWardItemNew(item.id)) {
             renderPupShop();
+            scrollShopItemIntoView(item.id);
             return;
           }
           if (pupShopGridEl) pupShopGridEl.querySelectorAll('.previewing').forEach(el => el.classList.remove('previewing'));
@@ -31294,7 +31325,10 @@
   let advSelectedGear = '';
   let museumPage = 0;
   let museumSubMode = 'curio';
-  const freshNewCurios = new Set();
+  const freshNewCurios = new Set(Array.isArray(config.puppyFreshCurios) ? config.puppyFreshCurios : []);
+  const syncFreshCuriosConfig = () => {
+    config.puppyFreshCurios = Array.from(freshNewCurios);
+  };
   const freshNewPhotos = new Set();
   let lastAdvUnboxing = null;
   let advTickTimer = null;
@@ -31955,7 +31989,7 @@
       for (let i = 0; i < curioCnt; i++) {
         const item = rollAdventureCurio(dest.id, isLong, gearId);
         const isNew = !config.puppyCurios[item.id];
-        if (isNew) freshNewCurios.add(item.id);
+        if (isNew) { freshNewCurios.add(item.id); syncFreshCuriosConfig(); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {} }
         config.puppyCurios[item.id] = (config.puppyCurios[item.id] || 0) + 1;
         gotCurios.push({ item, isNew });
       }
@@ -32085,7 +32119,7 @@
         } else {
           const bonusItem = rollAdventureCurio(dest.id, true, gearId);
           const isNewB = !config.puppyCurios[bonusItem.id];
-          if (isNewB) freshNewCurios.add(bonusItem.id);
+          if (isNewB) { freshNewCurios.add(bonusItem.id); syncFreshCuriosConfig(); try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {} }
           config.puppyCurios[bonusItem.id] = (config.puppyCurios[bonusItem.id] || 0) + 1;
           gotCurios.push({ item: bonusItem, isNew: isNewB });
           extraEventTxt = ` · 奇遇: 风吹来一份额外惊喜【${bonusItem.name}】`;
@@ -43107,7 +43141,14 @@
         if (!locked) {
           card.addEventListener('click', () => {
             if (freshNewPhotos.delete(ph.id)) {
+              if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
               renderPupAdventure();
+              setTimeout(() => {
+                try {
+                  const selfP = albumGridEl?.querySelector(`[data-adv-photo-id="${ph.id}"]`);
+                  if (selfP && typeof selfP.scrollIntoView === 'function') selfP.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (_) {}
+              }, 70);
               if (freshNewPhotos.size > 0) {
                 setTimeout(() => {
                   const nt = albumGridEl?.querySelector('.st-px-new-tag');
@@ -43330,6 +43371,7 @@
         const card = doc.createElement('button');
         card.type = 'button';
         card.className = `st-px-curio-card${locked ? ' locked' : ''}`;
+        card.dataset.curioId = item.id;
         card.appendChild(makeCurioIconCanvas(item, locked));
         const nm = doc.createElement('div');
         nm.style.fontWeight = '700';
@@ -43347,12 +43389,16 @@
           card.addEventListener('click', () => {
             const hadNewCurio = freshNewCurios.delete(item.id);
             if (hadNewCurio) {
-              if (freshNewCurios.size > 0) {
-                const nextId = Array.from(freshNewCurios)[0];
-                const nextIdx = PUP_CURIOS.findIndex(c => c.id === nextId);
-                if (nextIdx >= 0) museumPage = Math.floor(nextIdx / 12);
-              }
+              syncFreshCuriosConfig();
+              saveConfig();
+              if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
               renderPupAdventure();
+              setTimeout(() => {
+                try {
+                  const selfCard = museumGridEl?.querySelector(`[data-curio-id="${item.id}"]`);
+                  if (selfCard && typeof selfCard.scrollIntoView === 'function') selfCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (_) {}
+              }, 70);
             }
             const dName = item.hidden ? '行囊隐藏秘境' : (PUP_ADV_DESTS.find(d => d.id === item.dest)?.name || '');
             curioDetailEl.style.display = 'block';
@@ -43423,11 +43469,23 @@
   advSubTabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       advSubTab = btn.dataset.advTab || 'go';
-      if (advSubTab === 'album' && typeof freshNewPhotos !== 'undefined' && freshNewPhotos.size > 0) freshNewPhotos.clear();
-      if (advSubTab === 'museum' && typeof freshNewCurios !== 'undefined' && freshNewCurios.size > 0) freshNewCurios.clear();
+      if (advSubTab === 'museum' && typeof freshNewCurios !== 'undefined' && freshNewCurios.size > 0) {
+        const firstNewId = Array.from(freshNewCurios)[0];
+        const firstIdx = PUP_CURIOS.findIndex(c => c.id === firstNewId);
+        if (firstIdx >= 0) museumPage = Math.floor(firstIdx / 12);
+      }
       if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
       photoViewerEl.classList.remove('open');
       renderPupAdventure();
+      if (advSubTab === 'museum' && typeof freshNewCurios !== 'undefined' && freshNewCurios.size > 0) {
+        setTimeout(() => {
+          try {
+            const firstTag = museumGridEl?.querySelector('.st-px-new-tag');
+            const firstCard = firstTag ? (firstTag.closest('.st-px-curio-card') || firstTag) : null;
+            if (firstCard && typeof firstCard.scrollIntoView === 'function') firstCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } catch (_) {}
+        }, 90);
+      }
     });
   });
   advStartShortBtn.addEventListener('click', () => startPuppyAdventure('short'));
