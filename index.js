@@ -17667,11 +17667,9 @@
         }
         // 站立/行走 & 坐下：围脖领口严格对齐小狗真实脖子位置 (oy + 7, ox + 6..12，扣饰对齐 ox + 9..10)，背后背部完整覆盖并自然加长垂坠，前胸保留镂空可叠穿任意裙子！
         const neckY = oy + 7;
-        // 1. 围脖领口区（严格居中对齐小狗脖子与鼻尖正下方 ox+10..11，左右对称包住脖颈 ox+6..13）
-        px(ox + 5, neckY, cMain); px(ox + 6, neckY, cMain);
-        px(ox + 7, neckY, cMain); px(ox + 8, neckY, cMain); px(ox + 9, neckY, cMain);
-        px(ox + 10, neckY, cClasp || cMain); px(ox + 11, neckY, cClasp || cMain);
-        px(ox + 12, neckY, cMain); px(ox + 13, neckY, cMain);
+        // 1. 恢复原版经典镂空前襟领口样式（左右领片+双内侧领扣，中间留空不封死），仅精准对齐小狗真实脖子行 oy+7
+        px(ox + 4, neckY, cMain); px(ox + 5, neckY, cMain); px(ox + 6, neckY, cMain); px(ox + 7, neckY, cClasp || cMain);
+        px(ox + 11, neckY, cClasp || cMain); px(ox + 12, neckY, cMain); px(ox + 13, neckY, cMain);
         // 2. 背部完整覆盖 + 右前侧肩垂（oy + 8）
         const backL = isSitPose ? ox + 2 : ox + 1;
         for (let x = backL; x <= ox + 6; x++) px(x, oy + 8, (x === ox + 3 || x === ox + 5) ? cHi : cMain);
@@ -17697,7 +17695,7 @@
         drawOpenCapeBase('#c93848', '#de5060', '#fffaf0', '#f7ead7', '#f5cc6c'); if (isFlatPose) return;
         px(ox + 3, cy + 1, '#fffaf0'); px(ox + 11, cy + 1, '#fffaf0');
         px(ox + 3, cy + 2, '#fffaf0'); px(ox + 11, cy + 2, '#fffaf0');
-        px(ox + 10, oy + 7, '#f5cc6c'); px(ox + 11, oy + 7, '#ffe694');
+        px(ox + 9, oy + 7, '#f5cc6c');
       } else if (acc === 'cape_ivory_pearl') {
         // 象牙珍珠披肩：温润奶白披肩 + 香槟金肩线 + 垂坠珍珠圆点下摆
         drawOpenCapeBase('#fcf5e8', '#ffffff', '#ffffff', '#e8d5b5', '#e6c278'); if (isFlatPose) return;
@@ -17808,7 +17806,7 @@
       } else if (acc === 'cape_royal_swan') {
         // 天鹅绒毛大披风：雪白蓬松天鹅绒围领 + 香槟金长拖摆 + 珍珠垂坠流苏
         drawOpenCapeBase('#fffaf2', '#ffffff', '#f2c864', '#ffffff', '#f2c864'); if (isFlatPose) return;
-        for (let x = ox + 5; x <= ox + 13; x++) px(x, oy + 7, (x === ox + 10 || x === ox + 11) ? '#f2c864' : '#ffffff');
+        px(ox + 5, oy + 7, '#ffffff'); px(ox + 6, oy + 7, '#ffffff'); px(ox + 7, oy + 7, '#f2c864'); px(ox + 11, oy + 7, '#f2c864'); px(ox + 12, oy + 7, '#ffffff'); px(ox + 13, oy + 7, '#ffffff');
         px(ox + 0, oy + 12, '#fffaf2'); px(ox + 1, oy + 12, '#f2c864'); px(ox + 3, oy + 12, '#ffffff'); px(ox + 5, oy + 12, '#f2c864');
       } else if (acc === 'cape_cherry_kimono') {
         // 落樱流苏羽织：珊瑚樱粉不对称斜摆 + 金白编织绳结 + 背后飘动小流苏
