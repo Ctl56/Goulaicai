@@ -2877,6 +2877,9 @@
     puppyJobUrgentState: {},
     puppyBouquets: [],
     puppyBouquetDex: [],
+    puppyBouquetRecipes: [],
+    puppyDmRecentStickers: [],
+    puppyDmBgCol: '',
     puppyBubbleMode: 'wrap',
     puppyGender: '',
     puppyGenderLocked: false,
@@ -9558,7 +9561,7 @@
       <button class="st-tb-mini-btn" id="st-se-act-copy" type="button">复制本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-multi" type="button">多选段落</button>
       <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">编辑本段</button>
-      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff);">roll本条</button>
+      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff) !important;opacity:1 !important;filter:none !important;pointer-events:auto !important;">roll本条</button>
       <button class="st-tb-mini-btn" id="st-se-act-del" type="button">删本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del-floor" type="button" style="color:#d9534f;">删整层</button>
     </div>
@@ -9864,6 +9867,7 @@
               <button class="st-tb-btn" id="st-tb-chat-partial-reroll-btn" type="button" title="当本层有多条内容时，点击重新生成会提示选择仅roll当前条或roll整层">局部重roll</button>
               <button class="st-tb-btn" id="st-tb-chat-jumptop-btn" type="button" title="AI生成回复完成后自动跳转到本层回复的开头">生成完回开头</button>
               <button class="st-tb-btn" id="st-tb-chat-jumpfloor-btn" type="button" title="输入楼层号，或一键去顶部/回底部">跳转楼层</button>
+              <button class="st-tb-btn" id="st-tb-chat-bottom-btn" type="button" title="一键直接回到聊天最底部">回到底层</button>
               <button class="st-tb-btn" id="st-tb-chat-draftrescue-btn" type="button" title="流式生成回复时实时暂存草稿，刷新卡死重进可一键恢复">防丢草稿</button>
             </div>
           </div>
@@ -10466,6 +10470,7 @@
   const chatPartialRerollBtn = root.querySelector('#st-tb-chat-partial-reroll-btn');
   const chatJumpTopBtn = root.querySelector('#st-tb-chat-jumptop-btn');
   const chatJumpFloorBtn = root.querySelector('#st-tb-chat-jumpfloor-btn');
+  const chatBottomBtn = root.querySelector('#st-tb-chat-bottom-btn');
   const jumpFloorMask = root.querySelector('#st-tb-jumpfloor-mask');
   const jfInfoEl = root.querySelector('#st-tb-jf-info');
   const jfInputEl = root.querySelector('#st-tb-jf-input');
@@ -13803,10 +13808,14 @@
         return;
       }
       cancelPendingReplyTopJump();
+      if (forcedMesId === null && typeof stGenBaselineAiMesId === 'number' && stGenBaselineAiMesId >= 0 && lastIdx <= stGenBaselineAiMesId) {
+        return;
+      }
       const doJump = (smooth) => {
         const chatEl = doc.querySelector('#chat');
         const mesEl = doc.querySelector(`#chat .mes[mesid="${lastIdx}"]`);
         if (!chatEl || !mesEl) return;
+        if (forcedMesId === null && typeof stGenBaselineAiMesId === 'number' && stGenBaselineAiMesId >= 0 && lastIdx <= stGenBaselineAiMesId) return;
         const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 6;
         chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: smooth ? 'smooth' : 'auto' });
       };
@@ -33216,6 +33225,8 @@
       if (rt._tagName !== wantName) { rt.tag.textContent = wantName; rt._tagName = wantName; }
       if (rt._tagDisp !== wantDisp) { rt.tag.style.display = wantDisp; rt._tagDisp = wantDisp; }
     }
+    const wantGuestOp = String(clamp(Number(config.puppyOpacity) || 1.0, 0.2, 1));
+    if (rt._lastOp !== wantGuestOp) { rt._lastOp = wantGuestOp; rt.el.style.opacity = wantGuestOp; }
     const rx = Math.round(rt.x);
     const ry = Math.round(rt.y || defaultPupY());
     if (rt._domX !== rx || rt._domY !== ry) {
@@ -37089,28 +37100,58 @@
             continue;
           }
 
-          // 收到好友首次双狗拼班打工邀请：同步进入同一场打工并共享收益！
+          // 收到好友首次双狗拼班打工邀请：在线同步进入拼班，离线/切屏记入离线总结并按自己店铺等级结算基础工资+共享额外津贴与随机事件！
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__cojob__') {
             const meta = g.gifts[0];
             const jObj = PUP_JOBS.find(x => x.id === meta.shopId) || PUP_JOBS[0];
             const edAt = Number(meta.endAt) || (Date.now() + 45000);
             const stAt = Number(meta.startAt) || Date.now();
-            if (!config.puppyJob && edAt > Date.now()) {
-              const dN = new Date();
-              const tDs = `${dN.getFullYear()}-${String(dN.getMonth() + 1).padStart(2, '0')}-${String(dN.getDate()).padStart(2, '0')}`;
-              config.puppyJobCoopDaily = config.puppyJobCoopDaily || {};
+            const dN = new Date();
+            const tDs = `${dN.getFullYear()}-${String(dN.getMonth() + 1).padStart(2, '0')}-${String(dN.getDate()).padStart(2, '0')}`;
+            const frDisp = (config.puppyFriendRemarks && config.puppyFriendRemarks[g.fromId]) || g.fromName || '好友小狗';
+            const sBonus = Number(meta.sharedCoopBonus) || Number(meta.bonusMin) || 1;
+            const sEggD = Number(meta.sharedEggDelta) || 0;
+            const sEggL = String(meta.sharedEggLine || '');
+            config.puppyJobCoopDaily = config.puppyJobCoopDaily || {};
+            const alreadyCoopToday = config.puppyJobCoopDaily[g.fromId] === tDs;
+            if (!alreadyCoopToday) {
               config.puppyJobCoopDaily[g.fromId] = tDs;
-              config.puppyJob = {
-                id: jObj.id, startedAt: stAt, endAt: edAt,
-                baseDurMs: Number(meta.baseDurMs) || 45000, extraDurMs: 0,
-                isUrgent: false, outfitFit: false,
-                coopFriendId: g.fromId, coopFriendName: g.fromName || '好友小狗',
-                coopBonusMin: Number(meta.bonusMin) || 1, coopBonusMax: Number(meta.bonusMax) || 1,
-                isFirstCoop: true, syncedWage: Number(meta.syncedWage) || 0,
-              };
-              saveConfig();
-              if (typeof renderJobPanel === 'function') renderJobPanel();
-              if (config.puppyEnabled) showPuppyBubble(`好友「${g.fromName || '小伙伴'}」拉你一起去【${jObj.name}】拼班打工啦~`, 3200);
+              if (!config.puppyJob && edAt > Date.now() && !doc.hidden) {
+                config.puppyJob = {
+                  id: jObj.id, startedAt: stAt, endAt: edAt,
+                  baseDurMs: Number(meta.baseDurMs) || 45000, extraDurMs: 0,
+                  isUrgent: false, outfitFit: false,
+                  coopFriendId: g.fromId, coopFriendName: frDisp,
+                  coopBonusMin: Number(meta.bonusMin) || 1, coopBonusMax: Number(meta.bonusMax) || 1,
+                  isFirstCoop: true,
+                  sharedCoopBonus: sBonus, sharedEggDelta: sEggD, sharedEggLine: sEggL,
+                };
+                saveConfig();
+                if (typeof renderJobPanel === 'function') renderJobPanel();
+                if (config.puppyEnabled) showPuppyBubble(`好友「${frDisp}」拉你一起去【${jObj.name}】拼班打工啦~`, 3200);
+              } else {
+                // 好友不在线/切屏期间或拼班已结束：自动按自己的店铺等级算基础工资 + 共享拼班津贴/随机事件，并记入离线总结！
+                const ownCnt = (config.puppyJobLevels && config.puppyJobLevels[jObj.id]) || 0;
+                const ownWageRng = ownCnt >= 40 ? [15, 20] : (ownCnt >= 15 ? [10, 14] : jObj.wage);
+                const ownBase = ownWageRng[0] + Math.floor(Math.random() * (ownWageRng[1] - ownWageRng[0] + 1));
+                const offTotal = Math.max(1, ownBase + sBonus + sEggD);
+                config.puppyCoins = (config.puppyCoins || 0) + offTotal;
+                config.puppyJobLevels = config.puppyJobLevels || {};
+                config.puppyJobLevels[jObj.id] = ownCnt + 1;
+                config.puppyStats = config.puppyStats || {};
+                config.puppyStats.coinsEarned = (config.puppyStats.coinsEarned || 0) + offTotal;
+                config.puppyStats.jobsDone = (config.puppyStats.jobsDone || 0) + 1;
+                config.puppyStats.jobCoopCount = (config.puppyStats.jobCoopCount || 0) + 1;
+                saveConfig();
+                if (typeof updatePupStatBars === 'function') updatePupStatBars();
+                const eggPart = sEggL ? `\n[拼班事件] ${sEggL}` : '';
+                const deltaPart = sEggD > 0 ? ` · 拼班小费 +${sEggD}币` : (sEggD < 0 ? ` · 拼班扣款 -${Math.abs(sEggD)}币` : '');
+                enqueueCloudNotice(
+                  '好友首次拼班打工结算',
+                  `你离线/切屏期间，好友「${frDisp}」拉着你的小狗一起去【${jObj.name}】完成了今日首班拼班打工！\n基础工资 +${ownBase}币 · 拼班津贴 +${sBonus}币${deltaPart} → 实发入账 +${offTotal}币${eggPart}`,
+                  '太棒啦'
+                );
+              }
             }
             fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
             continue;
@@ -37709,8 +37750,9 @@
     };
     card.querySelector('#st-bq-recv-ok').addEventListener('click', acceptBouquet);
     rm.appendChild(card);
-    rm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
-    rm.addEventListener('click', (e2) => e2.stopPropagation());
+    rm.dataset.strictButtonClose = '1';
+    rm.addEventListener('pointerdown', (e2) => { e2.stopPropagation(); if (e2.target === rm) e2.preventDefault(); });
+    rm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === rm) e2.preventDefault(); });
     root.appendChild(rm); applyPupModalThemeAndTop(rm);
   };
 
@@ -38469,12 +38511,14 @@
             rt.state = 'idle'; rt.timer = 100;
           }
         } else {
-          const spd = 1.15;
+          const gSpdMul = clamp(Number(config.puppySpeed) || 1.0, 0.4, 2.5);
+          const spd = 1.15 * gSpdMul;
           rt.x += (dx / dist) * spd;
           rt.y += (dy / dist) * spd;
           rt.dir = dx >= 0 ? 1 : -1;
           const gTrail = guest.look?.trail;
-          if (gTrail && gTrail !== 'trail_none' && rt.tick % 20 === 0) {
+          const gTrailEvery1 = Math.max(4, Math.round(20 / clamp(Number(config.puppyTrailDensity ?? 1.0), 0.3, 2.5)));
+          if (gTrail && gTrail !== 'trail_none' && rt.tick % gTrailEvery1 === 0) {
             spawnWalkTrailDot(gTrail, 0, { x: rt.x, y: rt.y, dir: rt.dir });
           }
         }
@@ -38497,11 +38541,13 @@
         };
       }
       if (rt.state === 'walk' && !guest.pinned) {
-        rt.x += rt.dir * (rt.ind?.walkSpd || 0.62);
+        const gSpdMul2 = clamp(Number(config.puppySpeed) || 1.0, 0.4, 2.5);
+        rt.x += rt.dir * (rt.ind?.walkSpd || 0.62) * gSpdMul2;
         if (rt.x <= 8) { rt.x = 8; rt.dir = 1; }
         if (rt.x >= maxX) { rt.x = maxX; rt.dir = -1; }
         const gTrail = guest.look?.trail;
-        if (gTrail && gTrail !== 'trail_none' && rt.tick % 24 === 0) {
+        const gTrailEvery2 = Math.max(4, Math.round(24 / clamp(Number(config.puppyTrailDensity ?? 1.0), 0.3, 2.5)));
+        if (gTrail && gTrail !== 'trail_none' && rt.tick % gTrailEvery2 === 0) {
           spawnWalkTrailDot(gTrail, 0, { x: rt.x, y: rt.y, dir: rt.dir });
         }
       }
@@ -41555,6 +41601,13 @@
           <button type="button" id="st-dm-bub-toggle" class="st-px-btn${config.puppyDmUseMyBubble ? ' active' : ''}" style="height:20px;padding:0 8px;font-size:9.5px;">${config.puppyDmUseMyBubble ? '开' : '关'}</button>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="font-weight:700;">私聊背景颜色</span>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <input type="color" id="st-dm-bg-col" value="${escapeHtmlSimple(config.puppyDmBgCol || '#faf6f7')}" style="width:24px;height:20px;padding:0;border:1.5px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;" />
+            <button type="button" id="st-dm-bg-reset" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;">默认</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <span style="font-weight:700;">排版与字号调节</span>
           <div style="display:flex;gap:4px;">
             <button type="button" id="st-dm-lay-toggle" class="st-px-btn" style="height:19px;padding:0 6px;font-size:9px;">展开</button>
@@ -41591,12 +41644,16 @@
       <div id="st-dm-msg-list" style="flex:1;overflow-y:auto;padding:10px 10px 6px;box-sizing:border-box;background:var(--px-bg-soft,rgba(255,255,255,0.45));"></div>
       <div id="st-dm-sticker-wrap" style="display:none;flex-direction:column;border-top:2px dashed var(--px-border,#bfa4ae);background:var(--px-bg,#faf6f7);flex-shrink:0;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;padding:4px 6px 2px;font-size:9.5px;">
-          <div style="display:flex;align-items:center;gap:3px;">
-            <button type="button" class="st-px-btn active st-dm-st-tab" data-st-cat="cute" style="height:18px;padding:0 6px;font-size:9px;">可爱</button>
-            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="funny" style="height:18px;padding:0 6px;font-size:9px;">搞怪</button>
-            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="fav" style="height:18px;padding:0 6px;font-size:9px;">收藏</button>
+          <div style="display:flex;align-items:center;gap:3px;flex-wrap:wrap;">
+            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="recent" style="height:18px;padding:0 5px;font-size:9px;">最近使用</button>
+            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="fav" style="height:18px;padding:0 5px;font-size:9px;">收藏</button>
+            <button type="button" class="st-px-btn active st-dm-st-tab" data-st-cat="cute" style="height:18px;padding:0 5px;font-size:9px;">可爱</button>
+            <button type="button" class="st-px-btn st-dm-st-tab" data-st-cat="funny" style="height:18px;padding:0 5px;font-size:9px;">搞怪</button>
           </div>
-          <button type="button" id="st-dm-st-who" class="st-px-btn${dmStickerUseFriendLook ? ' active' : ''}" style="height:18px;padding:0 5px;font-size:9px;">${dmStickerUseFriendLook ? '对方小狗' : '我的小狗'}</button>
+          <div style="display:flex;align-items:center;gap:3px;flex-shrink:0;">
+            <button type="button" id="st-dm-st-favmode" class="st-px-btn" style="height:18px;padding:0 5px;font-size:9px;">管理收藏</button>
+            <button type="button" id="st-dm-st-who" class="st-px-btn${dmStickerUseFriendLook ? ' active' : ''}" style="height:18px;padding:0 5px;font-size:9px;">${dmStickerUseFriendLook ? '对方小狗' : '我的小狗'}</button>
+          </div>
         </div>
         <div id="st-dm-st-toast" style="display:none;font-size:9px;text-align:center;padding:1px 6px;opacity:0.85;"></div>
         <div id="st-dm-sticker-box" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px 6px 6px;max-height:156px;overflow-y:auto;"></div>
@@ -41621,7 +41678,35 @@
     const stWrap = panel.querySelector('#st-dm-sticker-wrap');
     const stBox = panel.querySelector('#st-dm-sticker-box');
     const stToast = panel.querySelector('#st-dm-st-toast');
-    let activeStCat = 'cute';
+    let dmStickerFavMode = false;
+    const applyDmCustomBg = () => {
+      const col = String(config.puppyDmBgCol || '').trim();
+      const msgListEl = panel.querySelector('#st-dm-msg-list');
+      if (col) {
+        panel.style.background = col;
+        if (msgListEl) msgListEl.style.background = col;
+      } else {
+        panel.style.background = '';
+        if (msgListEl) msgListEl.style.background = 'var(--px-bg-soft,rgba(255,255,255,0.45))';
+      }
+    };
+    applyDmCustomBg();
+    const dmBgInp = panel.querySelector('#st-dm-bg-col');
+    const dmBgReset = panel.querySelector('#st-dm-bg-reset');
+    if (dmBgInp) dmBgInp.addEventListener('input', () => { config.puppyDmBgCol = dmBgInp.value; saveConfig(); applyDmCustomBg(); });
+    if (dmBgReset) dmBgReset.addEventListener('click', () => { config.puppyDmBgCol = ''; if (dmBgInp) dmBgInp.value = '#faf6f7'; saveConfig(); applyDmCustomBg(); });
+    const favModeBtn = panel.querySelector('#st-dm-st-favmode');
+    if (favModeBtn) {
+      favModeBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        dmStickerFavMode = !dmStickerFavMode;
+        favModeBtn.classList.toggle('active', dmStickerFavMode);
+        favModeBtn.textContent = dmStickerFavMode ? '完成收藏' : '管理收藏';
+        if (typeof showStToast === 'function') showStToast(dmStickerFavMode ? '收藏管理模式：点表情包即可收藏/取消收藏' : '已退出收藏管理模式');
+      });
+    }
+    let activeStCat = (Array.isArray(config.puppyDmRecentStickers) && config.puppyDmRecentStickers.length) ? 'recent' : 'cute';
+    panel.querySelectorAll('.st-dm-st-tab').forEach(tb => tb.classList.toggle('active', tb.dataset.stCat === activeStCat));
     let stToastTimer = null;
     const showStToast = (msg) => {
       if (!stToast) return;
@@ -41635,11 +41720,16 @@
       stBox.innerHTML = '';
       if (!Array.isArray(config.puppyDmFavStickers)) config.puppyDmFavStickers = [];
       const favSet = new Set(config.puppyDmFavStickers);
-      const list = activeStCat === 'fav'
-        ? PUP_DM_STICKERS.filter(s => favSet.has(s.id))
-        : PUP_DM_STICKERS.filter(s => (s.cat || 'cute') === activeStCat);
+      const recentIds = Array.isArray(config.puppyDmRecentStickers) ? config.puppyDmRecentStickers : [];
+      const list = activeStCat === 'recent'
+        ? recentIds.map(rid => PUP_DM_STICKERS.find(s => s.id === rid)).filter(Boolean)
+        : (activeStCat === 'fav'
+          ? PUP_DM_STICKERS.filter(s => favSet.has(s.id))
+          : PUP_DM_STICKERS.filter(s => (s.cat || 'cute') === activeStCat));
       if (!list.length) {
-        stBox.innerHTML = '<div style="grid-column:1/-1;text-align:center;font-size:10px;opacity:0.65;padding:18px 4px;">长按任意表情包即可加入收藏~</div>';
+        stBox.innerHTML = activeStCat === 'recent'
+          ? '<div style="grid-column:1/-1;text-align:center;font-size:10px;opacity:0.65;padding:18px 4px;">还没有最近使用过的表情包哦~</div>'
+          : '<div style="grid-column:1/-1;text-align:center;font-size:10px;opacity:0.65;padding:18px 4px;">点右上角「管理收藏」后再点表情包即可加入收藏~</div>';
         return;
       }
       const useLk = dmStickerUseFriendLook ? (fullFr.look || {}) : getMyCurrentLookObj();
@@ -41659,13 +41749,9 @@
         lb.style.cssText = 'font-size:9.5px;font-weight:700;line-height:1.15;display:block;white-space:nowrap;';
         lb.textContent = st.name;
         b.appendChild(lb);
-        let lpTimer = null;
-        let didLongPress = false;
-        b.addEventListener('pointerdown', (ev) => {
+        b.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          didLongPress = false;
-          lpTimer = setTimeout(() => {
-            didLongPress = true;
+          if (dmStickerFavMode) {
             if (!Array.isArray(config.puppyDmFavStickers)) config.puppyDmFavStickers = [];
             const idx = config.puppyDmFavStickers.indexOf(st.id);
             if (idx >= 0) {
@@ -41677,15 +41763,10 @@
             }
             saveConfig();
             renderStickerGrid();
-          }, 450);
-        });
-        const cancelLp = () => { if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; } };
-        b.addEventListener('pointerup', cancelLp);
-        b.addEventListener('pointerleave', cancelLp);
-        b.addEventListener('pointercancel', cancelLp);
-        b.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          if (didLongPress) { didLongPress = false; return; }
+            return;
+          }
+          config.puppyDmRecentStickers = [st.id, ...(Array.isArray(config.puppyDmRecentStickers) ? config.puppyDmRecentStickers.filter(x => x !== st.id) : [])].slice(0, 16);
+          saveConfig();
           if (stWrap) stWrap.style.display = 'none';
           sendFriendDmMessage(fid, fname, '', st.id, useLk);
         });
@@ -42501,14 +42582,30 @@
             });
             if (u.photo) {
               const pWrap = doc.createElement('div');
-              pWrap.style.cssText = 'display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;';
+              pWrap.style.cssText = 'display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:700;cursor:pointer;padding:2px 5px;border:1px dashed var(--px-border,#bfa4ae);background:var(--px-card,#fff);';
+              pWrap.title = '点击跳转到相册查看这张照片';
               const pCv = doc.createElement('canvas');
               pCv.width = 54; pCv.height = 36;
-              pCv.style.cssText = 'width:42px;height:28px;border:1px solid #3b2a22;image-rendering:pixelated;';
+              pCv.style.cssText = 'width:42px;height:28px;border:1px solid #3b2a22;image-rendering:pixelated;flex-shrink:0;';
               drawAdvPhotoCanvas(pCv, u.photo, false, u.photoRec);
               const pTx = doc.createElement('span');
-              pTx.innerHTML = `${u.photo.title}${u.isNewPhoto ? '<span class="st-px-new-tag">NEW</span>' : ''}`;
+              pTx.innerHTML = `${u.photo.title}${u.isNewPhoto ? '<span class="st-px-new-tag">NEW</span>' : '<span style="display:inline-block;margin-left:4px;padding:0 4px;font-size:8px;font-weight:700;background:var(--px-bg-soft,#f2e8ec);border:1px solid var(--px-border,#bfa4ae);color:var(--px-custom-fg,var(--px-fg,#6e5960));">重复 · 点看</span>'}`;
               pWrap.append(pCv, pTx);
+              pWrap.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                try {
+                  const targetPid = u.photo.id;
+                  const albTabBtn = root.querySelector('[data-adv-tab="album"]');
+                  if (albTabBtn) albTabBtn.click();
+                  setTimeout(() => {
+                    const cardEl = albumGridEl?.querySelector(`[data-adv-photo-id="${targetPid}"]`);
+                    if (cardEl) {
+                      if (typeof cardEl.scrollIntoView === 'function') cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      setTimeout(() => cardEl.click(), 120);
+                    }
+                  }, 120);
+                } catch (_) {}
+              });
               lootRow.appendChild(pWrap);
             }
             advStatusBox.appendChild(lootRow);
@@ -42733,6 +42830,7 @@
         const card = doc.createElement('button');
         card.type = 'button';
         card.className = `st-px-photo-card${locked ? ' locked' : ''}`;
+        card.dataset.advPhotoId = ph.id;
         const cv = doc.createElement('canvas');
         cv.width = 54; cv.height = 36;
         drawAdvPhotoCanvas(cv, ph, locked, rec);
@@ -44283,6 +44381,12 @@
     { key: 'berry',     label: '小草莓', grid: ['.ccc.','.aaa.','abaaa','.aaa.','..a..'] },
     { key: 'note',      label: '小音符', grid: ['..aaa','..a.a','..a..','.aa..','.aa..'] },
     { key: 'moon',      label: '小月亮', grid: ['.aaa.','ab...','aa...','aa...','.aaa.'] },
+    { key: 'paw',       label: '小爪印', grid: ['a.a.a','.....','.aaa.','aabaa','.aaa.'] },
+    { key: 'bone',      label: '小骨头', grid: ['a...a','aaaaa','.aba.','aaaaa','a...a'] },
+    { key: 'sakura',    label: '小樱花', grid: ['.a.a.','aabaa','.aba.','aabaa','.a.a.'] },
+    { key: 'candy',     label: '小糖果', grid: ['a...a','abbaa','abbaa','a...a','.....'] },
+    { key: 'letter',    label: '小信封', grid: ['aaaaa','acaca','aacaa','aaaaa','.....'] },
+    { key: 'dotstar',   label: '小星点', grid: ['..a..','..b..','ababa','..b..','..a..'] },
   ];
 
   const drawRealPixelFlower = (g, shape, fx, fy, c1, c2, cc) => {
@@ -44471,18 +44575,29 @@
       g.fillStyle = '#fffdf7'; g.fillRect(rx - 1, ry + 1, 2, 1);
     }
 
-    // 6. 12 种可自由选色+拖动的小装饰
+    // 6. 可自由选色+拖动+缩放+翻转的小装饰
     (charms || []).forEach(ch => {
       const def = BQ_CHARM_DEFS.find(d => d.key === ch.key);
       if (!def) return;
       const baseC = ch.col || '#e87a98';
       const pal = { a: baseC, b: shadeHex(baseC, 1.32), c: shadeHex(baseC, 0.65), w: '#fffdf7' };
-      const ox = Math.round(ch.x - 2), oy = Math.round(ch.y - 2);
-      for (let y = 0; y < def.grid.length; y++) {
+      const cSc = Math.max(0.6, Math.min(2.2, Number(ch.scale) || 1));
+      const cFlip = Boolean(ch.flip);
+      const gh = def.grid.length;
+      const gw = def.grid[0] ? def.grid[0].length : 5;
+      const halfW = (gw * cSc) / 2;
+      const halfH = (gh * cSc) / 2;
+      for (let y = 0; y < gh; y++) {
         const r = def.grid[y];
         for (let x = 0; x < r.length; x++) {
           const c = pal[r[x]];
-          if (c) { g.fillStyle = c; g.fillRect(ox + x, oy + y, 1, 1); }
+          if (!c) continue;
+          const sx = cFlip ? (gw - 1 - x) : x;
+          const px = Math.round(ch.x - halfW + sx * cSc);
+          const py = Math.round(ch.y - halfH + y * cSc);
+          const pw = Math.max(1, Math.ceil(cSc));
+          g.fillStyle = c;
+          g.fillRect(px, py, pw, pw);
         }
       }
     });
@@ -44990,7 +45105,7 @@
       cb.textContent = `+${cd.label}`;
       cb.addEventListener('click', () => {
         if (bqCharms.length >= 8) return;
-        bqCharms.push({ key: cd.key, x: 14 + (bqCharms.length % 4) * 6, y: 23 + Math.floor(bqCharms.length / 4) * 8, col: bqCharmCol });
+        bqCharms.push({ key: cd.key, x: 14 + (bqCharms.length % 4) * 6, y: 23 + Math.floor(bqCharms.length / 4) * 8, col: bqCharmCol, scale: 1, flip: false });
         bqSelectedCharmIdx = bqCharms.length - 1;
         redrawPreview(cvs);
         renderPlacedCharmsBar();
@@ -45020,10 +45135,22 @@
         cInp.type = 'color'; cInp.value = ch.col || '#e87a98';
         cInp.style.cssText = 'width:15px;height:15px;padding:0;border:1px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;';
         cInp.addEventListener('input', () => { ch.col = cInp.value; redrawPreview(cvs); });
+        const smB = doc.createElement('button');
+        smB.type = 'button'; smB.className = 'st-px-btn'; smB.style.cssText = 'height:15px;padding:0 3px;font-size:8px;line-height:13px;'; smB.textContent = '-';
+        smB.title = '缩小贴纸';
+        smB.addEventListener('click', () => { ch.scale = Math.max(0.6, Math.round(((Number(ch.scale) || 1) - 0.25) * 100) / 100); redrawPreview(cvs); });
+        const lgB = doc.createElement('button');
+        lgB.type = 'button'; lgB.className = 'st-px-btn'; lgB.style.cssText = 'height:15px;padding:0 3px;font-size:8px;line-height:13px;'; lgB.textContent = '+';
+        lgB.title = '放大贴纸';
+        lgB.addEventListener('click', () => { ch.scale = Math.min(2.2, Math.round(((Number(ch.scale) || 1) + 0.25) * 100) / 100); redrawPreview(cvs); });
+        const flB = doc.createElement('button');
+        flB.type = 'button'; flB.className = 'st-px-btn' + (ch.flip ? ' active' : ''); flB.style.cssText = 'height:15px;padding:0 3px;font-size:8px;line-height:13px;'; flB.textContent = '翻';
+        flB.title = '水平翻转';
+        flB.addEventListener('click', () => { ch.flip = !ch.flip; redrawPreview(cvs); renderPlacedCharmsBar(); });
         const delB = doc.createElement('button');
         delB.type = 'button'; delB.className = 'st-px-btn'; delB.style.cssText = 'height:15px;padding:0 3px;font-size:8.5px;line-height:13px;'; delB.textContent = '×';
         delB.addEventListener('click', () => { bqCharms.splice(idx, 1); redrawPreview(cvs); renderPlacedCharmsBar(); });
-        chip.append(lbl, cInp, delB);
+        chip.append(lbl, cInp, smB, lgB, flB, delB);
         placedChWrap.appendChild(chip);
       });
     };
@@ -45168,7 +45295,114 @@
       pm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === pm) closeP(e2); });
       root.appendChild(pm); applyPupModalThemeAndTop(pm);
     });
-    card.appendChild(packBtn);
+    const actRow = doc.createElement('div');
+    actRow.style.cssText = 'display:flex;gap:5px;align-items:center;';
+    packBtn.style.flex = '1';
+    const saveRecBtn = doc.createElement('button');
+    saveRecBtn.type = 'button';
+    saveRecBtn.className = 'st-px-btn';
+    saveRecBtn.style.cssText = 'height:26px;padding:0 9px;font-size:10px;flex-shrink:0;';
+    saveRecBtn.textContent = '保存配方';
+    saveRecBtn.addEventListener('click', () => {
+      config.puppyBouquetRecipes = Array.isArray(config.puppyBouquetRecipes) ? config.puppyBouquetRecipes : [];
+      const flNames = bqPicked.map(id => (PUP_FLOWERS.find(f => f.id === id)?.name || id));
+      const recName = (flNames.length ? flNames.join('+') : '自定风格') + '配方';
+      const bigC = doc.createElement('canvas'); bigC.width = 48; bigC.height = 48;
+      drawBouquetCanvas(bigC, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlStyle, bqRibStyle, bqRibScale, bqFlScale, bqFlSpread, bqCustomSlots, bqRibX, bqRibY);
+      const outC = doc.createElement('canvas'); outC.width = 96; outC.height = 96;
+      const og = outC.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(bigC, 0, 0, 96, 96);
+      config.puppyBouquetRecipes.unshift({
+        id: 'bqr_' + Date.now(),
+        name: recName,
+        tier: bqTier,
+        flIds: [...bqPicked],
+        wrapCol: bqWrapCol,
+        ribbonCol: bqRibbonCol,
+        flStyle: bqFlStyle,
+        ribStyle: bqRibStyle,
+        ribScale: bqRibScale,
+        flScale: bqFlScale,
+        flSpread: bqFlSpread,
+        ribX: bqRibX,
+        ribY: bqRibY,
+        customSlots: bqCustomSlots ? bqCustomSlots.map(s => ({ ...s })) : null,
+        charms: bqCharms.map(c => ({ ...c })),
+        note: bqNoteTxt || '',
+        img: outC.toDataURL('image/png'),
+      });
+      if (config.puppyBouquetRecipes.length > 20) config.puppyBouquetRecipes = config.puppyBouquetRecipes.slice(0, 20);
+      saveConfig();
+      renderBouquetWorkbench();
+      showPuppyBubble(`已保存花束配方【${recName}】啦~`, 2200);
+    });
+    actRow.append(packBtn, saveRecBtn);
+    card.appendChild(actRow);
+
+    const recipes = Array.isArray(config.puppyBouquetRecipes) ? config.puppyBouquetRecipes : [];
+    if (recipes.length) {
+      const recBox = doc.createElement('div');
+      recBox.style.cssText = 'margin-top:7px;padding-top:6px;border-top:1.5px dashed var(--px-border,#bfa4ae);';
+      recBox.innerHTML = `<div style="font-size:9.5px;font-weight:700;margin-bottom:4px;">已保存配方（${recipes.length}）</div>`;
+      const rList = doc.createElement('div');
+      rList.style.cssText = 'display:flex;flex-direction:column;gap:4px;max-height:112px;overflow-y:auto;';
+      recipes.forEach((rc, rIdx) => {
+        const row = doc.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:5px;padding:3px 5px;background:var(--px-card,#fff);border:1px solid var(--px-border,#bfa4ae);';
+        row.innerHTML = `<img src="${rc.img || ''}" style="width:24px;height:24px;image-rendering:pixelated;border:1px solid var(--px-border,#bfa4ae);flex-shrink:0;" /><span style="flex:1;min-width:0;font-size:9px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(rc.name || '花束配方')}</span>`;
+        const useB = doc.createElement('button');
+        useB.type = 'button'; useB.className = 'st-px-btn care'; useB.style.cssText = 'height:18px;padding:0 5px;font-size:8.5px;flex-shrink:0;'; useB.textContent = '套用';
+        useB.addEventListener('click', () => {
+          bqTier = rc.tier || 'single';
+          bqWrapCol = rc.wrapCol || '#f2d9c2';
+          bqRibbonCol = rc.ribbonCol || '#e07a94';
+          bqFlStyle = rc.flStyle || 'real';
+          bqRibStyle = rc.ribStyle || 'bow';
+          bqRibScale = Number(rc.ribScale) || 1.0;
+          bqFlScale = Number(rc.flScale) || 1.0;
+          bqFlSpread = Number(rc.flSpread) || 1.0;
+          bqRibX = Number(rc.ribX) || 24;
+          bqRibY = Number(rc.ribY) || 32;
+          bqCustomSlots = Array.isArray(rc.customSlots) ? rc.customSlots.map(s => ({ ...s })) : null;
+          bqCharms = Array.isArray(rc.charms) ? rc.charms.map(c => ({ ...c })) : [];
+          bqNoteTxt = rc.note || '';
+          const needE = bqTier === 'luxury' ? 1 : (bqTier === 'mix' ? 2 : 3);
+          bqPicked = (Array.isArray(rc.flIds) ? rc.flIds : []).filter(fid => (inv[fid] || 0) >= needE);
+          renderBouquetWorkbench();
+          const miss = (Array.isArray(rc.flIds) ? rc.flIds.length : 0) - bqPicked.length;
+          showPuppyBubble(miss > 0 ? `已套用配方【${rc.name}】！有 ${miss} 种花库存不足，请换选花材~` : `已套用配方【${rc.name}】啦~`, 2400);
+        });
+        const delB = doc.createElement('button');
+        delB.type = 'button'; delB.className = 'st-px-btn'; delB.style.cssText = 'height:18px;padding:0 5px;font-size:8.5px;color:#b83b52;flex-shrink:0;'; delB.textContent = '删';
+        delB.addEventListener('click', () => {
+          let dm = root.querySelector('#st-tb-bq-del-confirm-mask');
+          if (dm) dm.remove();
+          dm = doc.createElement('div');
+          dm.id = 'st-tb-bq-del-confirm-mask';
+          dm.className = 'st-px-submodal-keep-bag';
+          dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+          const closeDm = (e3) => { if (e3) e3.stopPropagation(); win.__stSubModalClosedAt = Date.now(); dm.remove(); };
+          const dc = doc.createElement('div');
+          dc.style.cssText = 'width:min(266px,88vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+          dc.innerHTML = `<div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">确认删除配方？</div><div style="font-size:10px;opacity:0.85;margin-bottom:10px;">确定要删除「${escapeHtmlSimple(rc.name || '花束配方')}」吗？删除后无法恢复。</div><div style="display:flex;gap:6px;"><button type="button" id="st-bq-rdel-no" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">取消</button><button type="button" id="st-bq-rdel-yes" class="st-px-btn" style="flex:1;height:24px;font-size:10px;color:#b83b52;font-weight:700;">确认删除</button></div>`;
+          dc.querySelector('#st-bq-rdel-no').addEventListener('click', closeDm);
+          dc.querySelector('#st-bq-rdel-yes').addEventListener('click', (e3) => {
+            closeDm(e3);
+            config.puppyBouquetRecipes.splice(rIdx, 1);
+            saveConfig();
+            renderBouquetWorkbench();
+          });
+          dm.appendChild(dc);
+          dm.addEventListener('pointerdown', (e3) => e3.stopPropagation());
+          dm.addEventListener('click', (e3) => { e3.stopPropagation(); if (e3.target === dm) closeDm(e3); });
+          root.appendChild(dm);
+          applyPupModalThemeAndTop(dm);
+        });
+        row.append(useB, delB);
+        rList.appendChild(row);
+      });
+      recBox.appendChild(rList);
+      card.appendChild(recBox);
+    }
     wrap.appendChild(card);
 
     // 已有手作花束库存（支持点击放大改名 + 送给云端好友）
@@ -45208,21 +45442,51 @@
     }
   };
 
+  let bqDexFilter = 'all';
   var renderBouquetDex = () => {
     const wrap = root.querySelector('#st-px-garden-bqd-wrap');
     if (!wrap) return;
-    const list = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
+    const allList = Array.isArray(config.puppyBouquetDex) ? config.puppyBouquetDex : [];
+    const madeCnt = allList.filter(x => !x.fromName).length;
+    const recvCnt = allList.filter(x => Boolean(x.fromName)).length;
+    const filtered = allList.map((bq, origIdx) => ({ bq, origIdx })).filter(({ bq }) => {
+      if (bqDexFilter === 'made') return !bq.fromName;
+      if (bqDexFilter === 'recv') return Boolean(bq.fromName);
+      return true;
+    });
     wrap.innerHTML = '';
     const card = doc.createElement('div');
     card.className = 'st-px-adv-card';
     card.style.cssText = 'padding:8px;';
-    card.innerHTML = `<div style="font-size:11px;font-weight:700;margin-bottom:6px;">花束图鉴（${list.length}）</div>`;
-    if (!list.length) {
-      card.innerHTML += '<div style="font-size:10px;opacity:0.75;padding:12px 4px;text-align:center;">还没有扎过花束哦，切到「花束工作台」亲手包一束吧~</div>';
+    const head = doc.createElement('div');
+    head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:6px;flex-wrap:wrap;';
+    head.innerHTML = `<span style="font-size:11px;font-weight:700;">花束图鉴（${allList.length}）</span>`;
+    const fBar = doc.createElement('div');
+    fBar.style.cssText = 'display:flex;gap:3px;';
+    [
+      { id: 'all', lbl: `全部(${allList.length})` },
+      { id: 'made', lbl: `自己做的(${madeCnt})` },
+      { id: 'recv', lbl: `收到的(${recvCnt})` },
+    ].forEach(f => {
+      const fb = doc.createElement('button');
+      fb.type = 'button';
+      fb.className = 'st-px-btn' + (bqDexFilter === f.id ? ' care' : '');
+      fb.style.cssText = 'height:19px;padding:0 6px;font-size:8.5px;';
+      fb.textContent = f.lbl;
+      fb.addEventListener('click', () => { bqDexFilter = f.id; renderBouquetDex(); });
+      fBar.appendChild(fb);
+    });
+    head.appendChild(fBar);
+    card.appendChild(head);
+    if (!filtered.length) {
+      const emp = doc.createElement('div');
+      emp.style.cssText = 'font-size:10px;opacity:0.75;padding:12px 4px;text-align:center;';
+      emp.textContent = bqDexFilter === 'recv' ? '还没有收到好友送来的花束哦~' : (bqDexFilter === 'made' ? '还没有自己亲手扎过花束哦~' : '还没有扎过花束哦，切到「花束工作台」亲手包一束吧~');
+      card.appendChild(emp);
     } else {
       const grid = doc.createElement('div');
       grid.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:6px;max-height:240px;overflow-y:auto;';
-      list.forEach((bq, dIdx) => {
+      filtered.forEach(({ bq, origIdx: dIdx }) => {
         const cell = doc.createElement('div');
         cell.style.cssText = 'padding:6px;background:var(--px-card,#fff);border:1.5px solid var(--px-border,#bfa4ae);text-align:center;cursor:pointer;';
         const dispN = bq.customName || bq.name || bq.origName || '手作花束';
@@ -52760,7 +53024,7 @@
       };
       if (statsInfo && statsInfo.chars > 0) {
         const sArr = REPLY_STATS_BY_PERS[curBellP] || REPLY_STATS_BY_PERS.sleepyhead;
-        const sLine = formatPupText(pick(sArr)).replace(/\{chars\}/g, String(statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
+        const sLine = formatPupText(pick(sArr)).replace(/\{tokens\}/g, String(statsInfo.tokens || statsInfo.chars)).replace(/\{chars\}/g, String(statsInfo.tokens || statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
         showPuppyBubble(sLine, 8500);
       } else {
         const bellArr = BELL_BY_PERS[curBellP] || BELL_BY_PERS.sleepyhead;
@@ -52989,12 +53253,24 @@
     return false;
   };
 
+  let stGenBaselineAiMesId = -1;
+  const getDomLastAiMesId = () => {
+    try {
+      const list = doc.querySelectorAll('#chat .mes[is_user="false"]');
+      if (!list.length) return -1;
+      const last = list[list.length - 1];
+      const v = Number(last.getAttribute('mesid'));
+      return Number.isFinite(v) ? v : -1;
+    } catch (_) { return -1; }
+  };
   const beginReplyTrack = () => {
     if (!stWasGenerating) {
       stWasGenerating = true;
       stGenStartedAt = Date.now();
       stGenGotMessage = false;
       stGenBaselineSig = getLastAiMsgSig();
+      stGenBaselineAiMesId = getDomLastAiMesId();
+      if (typeof cancelPendingReplyTopJump === 'function') cancelPendingReplyTopJump();
     }
   };
 
@@ -53014,73 +53290,89 @@
     return false;
   };
 
-  const getLatestAiReplyCharCount = () => {
+  const getLatestAiReplyTokenCount = () => {
     try {
-      const mesList = doc.querySelectorAll('#chat .mes[is_user="false"] .mes_text, #chat .mes:not([is_user="true"]) .mes_text');
-      const last = mesList.length ? mesList[mesList.length - 1] : null;
-      if (last) {
-        const t = String(last.textContent || '').replace(/\s+/g, '');
-        if (t.length > 0) return t.length;
-      }
       const ctx = getContext();
       const ch = Array.isArray(ctx?.chat) ? ctx.chat : [];
+      let latestAi = null;
       for (let i = ch.length - 1; i >= 0; i--) {
-        if (ch[i] && !ch[i].is_user && ch[i].mes) {
-          return String(ch[i].mes).replace(/\s+/g, '').length;
-        }
+        if (ch[i] && !ch[i].is_user && !ch[i].is_system) { latestAi = ch[i]; break; }
       }
+      if (latestAi) {
+        const exactTok = Number(latestAi?.extra?.token_count ?? latestAi?.token_count ?? 0);
+        if (Number.isFinite(exactTok) && exactTok > 0) return Math.round(exactTok);
+      }
+      let rawText = latestAi && latestAi.mes ? String(latestAi.mes) : '';
+      if (!rawText) {
+        const mesList = doc.querySelectorAll('#chat .mes[is_user="false"] .mes_text, #chat .mes:not([is_user="true"]) .mes_text');
+        const last = mesList.length ? mesList[mesList.length - 1] : null;
+        if (last) rawText = String(last.textContent || '');
+      }
+      if (!rawText) return 0;
+      if (typeof ctx?.getTokenCount === 'function') {
+        try {
+          const n = Number(ctx.getTokenCount(rawText));
+          if (Number.isFinite(n) && n > 0) return Math.round(n);
+        } catch (_) {}
+      }
+      const cjk = (rawText.match(/[\u4e00-\u9fff\u3400-\u4dbf\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
+      const nonCjk = rawText.replace(/[\u4e00-\u9fff\u3400-\u4dbf\u3040-\u30ff\uac00-\ud7af]/g, ' ');
+      const words = (nonCjk.match(/[A-Za-z0-9_]+/g) || []).length;
+      const punct = (nonCjk.match(/[^\sA-Za-z0-9_]/g) || []).length;
+      return Math.max(1, Math.round(cjk * 1.15 + words * 1.3 + punct * 0.5));
     } catch (_) {}
     return 0;
   };
+  const getLatestAiReplyCharCount = getLatestAiReplyTokenCount;
 
   const REPLY_STATS_BY_PERS = {
     sleepyhead: [
-      '呼啊… 这条回了 {chars} 字、等了 {sec} 秒，我都快打了个小盹啦~',
-      '慢悠悠读完啦，{sec} 秒写了 {chars} 字，{owner}快舒舒服服看吧~',
-      '刚数完哦，一共 {chars} 字、耗时 {sec} 秒，看完记得伸个懒腰~',
-      '{sec} 秒出炉的 {chars} 字新剧情，我眯着眼帮你盯着呢，快看~',
+      '呼啊… 这条回了 {tokens} tokens、耗时 {sec} 秒，我都快打了个小盹啦~',
+      '慢悠悠读完啦，{sec} 秒写了 {tokens} tokens，{owner}快舒舒服服看吧~',
+      '刚数完哦，一共 {tokens} tokens、耗时 {sec} 秒，看完记得伸个懒腰~',
+      '{sec} 秒出炉的 {tokens} tokens 新剧情，我眯着眼帮你盯着呢，快看~',
     ],
     clingy: [
-      '{owner}快看！等了 {sec} 秒写了整整 {chars} 字，我陪你一起读！',
-      '耶！{sec} 秒生成 {chars} 字，这下可以贴着{owner}看个够啦！',
-      '刚刚一直在旁边守着，{sec} 秒写出 {chars} 字呢，快回来摸摸我！',
-      '{chars} 字热乎乎送达！才用了 {sec} 秒，{owner}有没有想我呀？',
+      '{owner}快看！耗时 {sec} 秒写了整整 {tokens} tokens，我陪你一起读！',
+      '耶！{sec} 秒生成 {tokens} tokens，这下可以贴着{owner}看个够啦！',
+      '刚刚一直在旁边守着，{sec} 秒写出 {tokens} tokens 呢，快回来摸摸我！',
+      '{tokens} tokens 热乎乎送达！用了 {sec} 秒，{owner}有没有想我呀？',
     ],
     tsundere: [
-      '等了 {sec} 秒才憋出 {chars} 字，勉强还算过得去吧，快看啦！',
-      '哼，我可没帮你数着时间… 也就 {sec} 秒、{chars} 字而已！',
-      '写完了！{chars} 字用了 {sec} 秒，还不快来看本汪替你盯着的内容！',
-      '耗时 {sec} 秒、{chars} 字，效率凑合吧，看完记得夸夸我！',
+      '等了 {sec} 秒才憋出 {tokens} tokens，勉强还算过得去吧，快看啦！',
+      '哼，我可没帮你数着时间… 也就 {sec} 秒、{tokens} tokens 而已！',
+      '写完了！{tokens} tokens 用了 {sec} 秒，还不快来看本汪替你盯着的内容！',
+      '耗时 {sec} 秒、{tokens} tokens，效率凑合吧，看完记得夸夸我！',
     ],
     foodie: [
-      '哇！{sec} 秒端上来 {chars} 字，分量好足像一顿大餐！',
-      '刚数完，一共 {chars} 字用了 {sec} 秒，我都快看馋啦~',
-      '{sec} 秒出锅 {chars} 字！热气腾腾的，{owner}快趁热看吧！',
-      '啃着小饼干等了 {sec} 秒，结果等来 {chars} 字超级大份剧情！',
+      '哇！{sec} 秒端上来 {tokens} tokens，分量好足像一顿大餐！',
+      '刚数完，一共 {tokens} tokens 用了 {sec} 秒，我都快看馋啦~',
+      '{sec} 秒出锅 {tokens} tokens！热气腾腾的，{owner}快趁热看吧！',
+      '啃着小饼干等了 {sec} 秒，结果等来 {tokens} tokens 超级大份剧情！',
     ],
     explorer: [
-      '报！耗时 {sec} 秒斩获 {chars} 字新剧情，快切回来查收！',
-      '太稳啦，{sec} 秒直接写出 {chars} 字，我们继续往下看！',
-      '热乎乎的 {chars} 字已送达，只用了 {sec} 秒，能量满满！',
-      '刚帮你统计好了：{chars} 字、{sec} 秒，故事越来越精彩咯！',
+      '报！耗时 {sec} 秒斩获 {tokens} tokens 新剧情，快切回来查收！',
+      '太稳啦，{sec} 秒直接写出 {tokens} tokens，我们继续往下看！',
+      '热乎乎的 {tokens} tokens 已送达，用了 {sec} 秒，能量满满！',
+      '刚帮你统计好了：{tokens} tokens、{sec} 秒，故事越来越精彩咯！',
     ],
     fashionista: [
-      '嗯，用了 {sec} 秒写了 {chars} 字，节奏控制得还算不错。',
-      '刚写完，{chars} 字耗时 {sec} 秒，你慢慢看，我就在旁边。',
-      '{sec} 秒、{chars} 字，篇幅刚刚好，值得仔细看看。',
-      '已经帮你留着了，{sec} 秒出的 {chars} 字，应该合你口味。',
+      '嗯，用了 {sec} 秒写了 {tokens} tokens，节奏控制得还算不错。',
+      '刚写完，{tokens} tokens 耗时 {sec} 秒，你慢慢看，我就在旁边。',
+      '{sec} 秒、{tokens} tokens，篇幅刚刚好，值得仔细看看。',
+      '已经帮你留着了，{sec} 秒出的 {tokens} tokens，应该合你口味。',
     ],
     gamer: [
-      '叮！耗时 {sec} 秒输出 {chars} 字，这波手速直接拉满！',
-      '结算播报：{chars} 字达成，用时 {sec} 秒，火速开读！',
-      '连招完毕！{sec} 秒打出 {chars} 字，剧情推进一大截！',
-      '刚加载完，{sec} 秒生成 {chars} 字，这局表现很稳！',
+      '叮！耗时 {sec} 秒输出 {tokens} tokens，这波手速直接拉满！',
+      '结算播报：{tokens} tokens 达成，用时 {sec} 秒，火速开读！',
+      '连招完毕！{sec} 秒打出 {tokens} tokens，剧情推进一大截！',
+      '刚加载完，{sec} 秒生成 {tokens} tokens，这局表现很稳！',
     ],
     philosopher: [
-      '写好了，一共 {chars} 字，前后用了 {sec} 秒，可以慢慢看。',
-      '记了一下时间，{sec} 秒出了 {chars} 字，篇幅挺扎实的。',
-      '{chars} 字、{sec} 秒，不快不慢正好，先喝口水再读吧。',
-      '新回复到了，{sec} 秒写成 {chars} 字，没出什么岔子。',
+      '写好了，一共 {tokens} tokens，前后用了 {sec} 秒，可以慢慢看。',
+      '记了一下时间，{sec} 秒出了 {tokens} tokens，篇幅挺扎实的。',
+      '{tokens} tokens、{sec} 秒，不快不慢正好，先喝口水再读吧。',
+      '新回复到了，{sec} 秒写成 {tokens} tokens，没出什么岔子。',
     ],
   };
 
@@ -53090,16 +53382,17 @@
     const now = Date.now();
     if (now - lastAlertFiredAt < 4000) return;
     lastAlertFiredAt = now;
-    const chars = getLatestAiReplyCharCount();
-    const secStr = durMs >= 10000 ? String(Math.round(durMs / 1000)) : (Math.max(1000, durMs) / 1000).toFixed(1);
-    const statsInfo = chars > 0 ? { chars, sec: secStr } : null;
+    const tokens = getLatestAiReplyTokenCount();
+    const safeDurMs = Math.max(300, Number(durMs) || 0);
+    const secStr = safeDurMs >= 10000 ? String(Math.round(safeDurMs / 1000)) : (safeDurMs / 1000).toFixed(1);
+    const statsInfo = tokens > 0 ? { chars: tokens, tokens, sec: secStr } : null;
     if (config.puppyReplyBell !== false) {
       fireReplyReadyAlert(false, statsInfo);
     } else if (statsInfo && now - lastReplyStatsAt > 3500) {
       lastReplyStatsAt = now;
       const curP = config.puppyPersonality || 'sleepyhead';
       const arr = REPLY_STATS_BY_PERS[curP] || REPLY_STATS_BY_PERS.sleepyhead;
-      const line = formatPupText(pick(arr)).replace(/\{chars\}/g, String(statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
+      const line = formatPupText(pick(arr)).replace(/\{tokens\}/g, String(statsInfo.tokens || statsInfo.chars)).replace(/\{chars\}/g, String(statsInfo.tokens || statsInfo.chars)).replace(/\{sec\}/g, statsInfo.sec);
       showPuppyBubble(line, 8500);
     }
   };
@@ -53408,7 +53701,16 @@
   // 监听真实回复生成事件与 #mes_stop 按钮变化（过滤后台静默生成/试跑/主动停止/切换聊天）
   try {
     const ctxEv = getContext();
-    if (ctxEv?.eventSource && ctxEv?.eventTypes) {
+    try {
+    doc.addEventListener('click', (ev) => {
+      const t = ev.target && ev.target.closest ? ev.target.closest('#send_but') : null;
+      if (t) {
+        if (typeof cancelPendingReplyTopJump === 'function') cancelPendingReplyTopJump();
+        stGenBaselineAiMesId = getDomLastAiMesId();
+      }
+    }, true);
+  } catch (_) {}
+  if (ctxEv?.eventSource && ctxEv?.eventTypes) {
       if (ctxEv.eventTypes.GENERATION_STARTED) {
         ctxEv.eventSource.on(ctxEv.eventTypes.GENERATION_STARTED, (type, options, dryRun) => {
           if (dryRun === true || type === 'quiet' || type === 'impersonate' || (options && options.quiet_prompt)) return;
@@ -55842,32 +56144,20 @@
           const outfitBonus = (!messedUp && isOutfitFit) ? 2 : 0;
           const coopFriendName = (config.puppyJob && config.puppyJob.coopFriendName) ? String(config.puppyJob.coopFriendName) : '';
           const isFirstCoop = Boolean(config.puppyJob && config.puppyJob.isFirstCoop);
-          const syncedWageVal = Number(config.puppyJob && config.puppyJob.syncedWage) || 0;
-          const effBaseWage = syncedWageVal > 0 ? syncedWageVal : baseWage;
+          const effBaseWage = baseWage;
           const coopMin = Number(config.puppyJob && config.puppyJob.coopBonusMin) || 1;
           const coopMax = Number(config.puppyJob && config.puppyJob.coopBonusMax) || coopMin;
-          const coopBonus = (!messedUp && coopFriendName && isFirstCoop) ? (coopMin + Math.floor(Math.random() * (coopMax - coopMin + 1))) : 0;
-          // 好友首次拼班专属彩蛋（与我们基础概率一致：小费 22%，扣钱 9%），仅第一次生效！
+          const hasSharedBonus = Number.isFinite(Number(config.puppyJob && config.puppyJob.sharedCoopBonus)) && Number(config.puppyJob.sharedCoopBonus) > 0;
+          const coopBonus = (!messedUp && coopFriendName && isFirstCoop)
+            ? (hasSharedBonus ? Number(config.puppyJob.sharedCoopBonus) : (coopMin + Math.floor(Math.random() * (coopMax - coopMin + 1))))
+            : 0;
+          // 好友首次拼班专属彩蛋：双方完全同步同一条随机事件与加扣金额！
           let friendEggDelta = 0;
           let friendEggLine = '';
           if (coopFriendName && isFirstCoop) {
-            const fRoll = Math.random();
-            if (fRoll < 0.09) {
-              friendEggDelta = -(1 + Math.floor(Math.random() * 2));
-              const fBadLines = [
-                `${coopFriendName}转身时尾巴扫倒了一摞杯子，被店长扣了 ${Math.abs(friendEggDelta)} 币损耗费，正躲在你身后装无辜…`,
-                `${coopFriendName}帮忙递袋子时差点绊了一跤，被扣了 ${Math.abs(friendEggDelta)} 币整理费。`,
-                `${coopFriendName}偷瞄柜台小点心走神算错了一笔账，被店长象征性扣了 ${Math.abs(friendEggDelta)} 币。`,
-              ];
-              friendEggLine = pick(fBadLines);
-            } else if (fRoll < 0.31) {
-              friendEggDelta = 1 + Math.floor(Math.random() * 3);
-              const fGoodLines = [
-                `${coopFriendName}在柜台边歪头卖萌招揽了一波回头客，店长乐得额外发了 +${friendEggDelta} 币小费！`,
-                `${coopFriendName}主动帮客人贴好了工整贴纸，客人夸赞并塞了 +${friendEggDelta} 币打赏！`,
-                `${coopFriendName}和你默契接力效率翻倍，店长顺手多塞了 +${friendEggDelta} 币表扬红包！`,
-              ];
-              friendEggLine = pick(fGoodLines);
+            if (typeof config.puppyJob.sharedEggLine === 'string') {
+              friendEggDelta = Number(config.puppyJob.sharedEggDelta) || 0;
+              friendEggLine = config.puppyJob.sharedEggLine;
             }
           }
           let totalWage = Math.max(1, effBaseWage + tip + urgentBonus + outfitBonus + coopBonus + friendEggDelta - penalty);
@@ -56056,7 +56346,7 @@
           statusEl.innerHTML = `
             <div style="font-weight:700;color:#8c4e1f;margin-bottom:4px;">[${jObj.name} Lv.${rkAfter.lv} 结算小剧场] ${ev.star ? '(金牌好评)' : ''}</div>
             <div style="font-size:11px;line-height:1.5;margin-bottom:5px;">${formatPupText(ev.msg)}</div>
-            <div style="font-size:11px;font-weight:700;">基础 +${effBaseWage}币${bonusParts.length ? ' · ' + bonusParts.join(' · ') : ''} → 实发入账 +${totalWage}币（余额 ${config.puppyCoins}币）${failType === 'pause' ? ' · 停工反省 1 小时' : (failType === 'deduct' ? ' · 休息 20 分钟' : '')}</div>
+            <div style="font-size:11px;font-weight:700;">基础 +${effBaseWage}币${bonusParts.length ? ' · ' + bonusParts.join(' · ') : ''} → 实发入账 +${totalWage}币${failType === 'pause' ? ' · 停工反省 1 小时' : (failType === 'deduct' ? ' · 休息 20 分钟' : '')}</div>
             ${coopHtml}${revHtml}${promoHtml}${masterHtml}
           `;
           updatePupStatBars(); syncPuppyBagUI(); if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
@@ -56317,8 +56607,7 @@
             const fLv = Number(bInfo && bInfo.lv) || 1;
             const rng = fLv <= 1 ? [1, 1] : (fLv === 2 ? [1, 2] : (fLv === 3 ? [2, 3] : (fLv === 4 ? [3, 4] : [4, 5])));
             coopBonusMin = rng[0]; coopBonusMax = rng[1];
-            const wageRange = cntNow >= 40 ? [15, 20] : (cntNow >= 15 ? [10, 14] : sel.wage);
-            syncedWage = wageRange[0] + Math.floor(Math.random() * (wageRange[1] - wageRange[0] + 1));
+            syncedWage = 0;
             config.puppyJobCoopDaily[pickedFid] = todayDs;
           }
         }
@@ -56332,8 +56621,28 @@
       }
       const jStartAt = Date.now();
       const jEndAt = jStartAt + baseDurMs + extraDurMs;
-      config.puppyJob = { id: sel.id, startedAt: jStartAt, endAt: jEndAt, baseDurMs, extraDurMs, isUrgent, outfitFit, coopFriendId, coopFriendName, coopBonusMin, coopBonusMax, isFirstCoop, syncedWage };
-      // 首次拼班同步通知好友一起显示正在打工并共享收益
+      let sharedCoopBonus = 0, sharedEggDelta = 0, sharedEggLine = '';
+      if (coopFriendId && isFirstCoop) {
+        sharedCoopBonus = coopBonusMin + Math.floor(Math.random() * (coopBonusMax - coopBonusMin + 1));
+        const sRoll = Math.random();
+        if (sRoll < 0.09) {
+          sharedEggDelta = -(1 + Math.floor(Math.random() * 2));
+          sharedEggLine = pick([
+            `双狗拼班转身时尾巴扫倒了一摞杯子，被店长共同扣了 ${Math.abs(sharedEggDelta)} 币损耗费…`,
+            `拼班递袋子时两只小狗差点绊到一起，被扣了 ${Math.abs(sharedEggDelta)} 币整理费。`,
+            `拼班偷瞄柜台小点心走神算错了一笔账，被店长象征性扣了 ${Math.abs(sharedEggDelta)} 币。`,
+          ]);
+        } else if (sRoll < 0.31) {
+          sharedEggDelta = 1 + Math.floor(Math.random() * 3);
+          sharedEggLine = pick([
+            `双狗在柜台边一起歪头卖萌招揽了一波回头客，店长乐得每人多发了 +${sharedEggDelta} 币小费！`,
+            `双狗默契贴好工整贴纸，客人夸赞并各塞了 +${sharedEggDelta} 币打赏！`,
+            `双狗接力配合效率翻倍，店长顺手每人多塞了 +${sharedEggDelta} 币表扬红包！`,
+          ]);
+        }
+      }
+      config.puppyJob = { id: sel.id, startedAt: jStartAt, endAt: jEndAt, baseDurMs, extraDurMs, isUrgent, outfitFit, coopFriendId, coopFriendName, coopBonusMin, coopBonusMax, isFirstCoop, sharedCoopBonus, sharedEggDelta, sharedEggLine };
+      // 首次拼班同步通知好友：双方基础工资各自按本店等级算，额外拼班津贴和随机事件完全一致！
       if (coopFriendId && isFirstCoop) {
         try {
           const baseUrl = getCloudBaseUrl();
@@ -56344,7 +56653,7 @@
               fromId: ensureMyCloudId(),
               fromName: getPupName(),
               toId: coopFriendId,
-              gifts: [{ kind: '__cojob__', shopId: sel.id, startAt: jStartAt, endAt: jEndAt, baseDurMs, bonusMin: coopBonusMin, bonusMax: coopBonusMax, syncedWage }],
+              gifts: [{ kind: '__cojob__', shopId: sel.id, startAt: jStartAt, endAt: jEndAt, baseDurMs, bonusMin: coopBonusMin, bonusMax: coopBonusMax, sharedCoopBonus, sharedEggDelta, sharedEggLine }],
               redPacket: 0,
               msg: `约你一起去【${sel.name}】拼班打工啦~`,
             }),
@@ -59138,7 +59447,15 @@
     config.puppyOpacity = Number(pupOpacityRange.value);
     pupOpacityVal.textContent = `${Math.round(config.puppyOpacity * 100)}%`;
     scheduleSaveConfig();
-    if (config.puppyEnabled) drawPuppyScene();
+    if (config.puppyEnabled) {
+      drawPuppyScene();
+      try {
+        if (typeof guestRuntimes !== 'undefined') {
+          const opS = String(clamp(Number(config.puppyOpacity) || 1.0, 0.2, 1));
+          guestRuntimes.forEach(rt => { if (rt && rt.el) { rt._lastOp = opS; rt.el.style.opacity = opS; } });
+        }
+      } catch (_) {}
+    }
   });
 
   // ==================== 像素游乐厅：6 款像素小游戏（2048支持断点续玩，每日每款前3次免费） ====================
@@ -60560,6 +60877,18 @@
     });
   }
   if (jfTopBtn) jfTopBtn.addEventListener('click', () => { closeJumpFloorModal(); jumpToChatFloor(0); });
+  var scrollChatToBottomNow = () => {
+    try {
+      if (typeof cancelPendingReplyTopJump === 'function') cancelPendingReplyTopJump();
+      const chatEl = doc.querySelector('#chat');
+      if (!chatEl) return;
+      chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
+      setTimeout(() => {
+        try { chatEl.scrollTop = chatEl.scrollHeight; } catch (_) {}
+      }, 160);
+    } catch (_) {}
+  };
+  if (chatBottomBtn) chatBottomBtn.addEventListener('click', () => { scrollChatToBottomNow(); });
   if (jfBottomBtn) jfBottomBtn.addEventListener('click', () => {
     const chat = getContext()?.chat;
     const maxIdx = Array.isArray(chat) && chat.length ? chat.length - 1 : 0;
@@ -69167,6 +69496,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'partialreroll', name: '局部重roll', defLabel: '局部重roll' },
     { id: 'jumptop', name: '生成完回开头', defLabel: '回开头' },
     { id: 'jumpfloor', name: '跳转楼层', defLabel: '跳楼层' },
+    { id: 'tobottom',  name: '回到底层', defLabel: '回到底' },
     { id: 'draftrescue', name: '防丢草稿', defLabel: '防丢草稿' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
@@ -69824,6 +70154,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         syncUI();
         showImmNotice(config.jumpToReplyTop ? '已开启：生成回复完自动跳转到本层开头' : '已关闭：生成回复完不再自动跳转开头');
         syncQuickDockUI();
+      } else if (act === 'tobottom') {
+        if (typeof scrollChatToBottomNow === 'function') scrollChatToBottomNow();
       } else if (act === 'jumpfloor') {
         toggleQuickDock(false);
         openJumpFloorModal();
