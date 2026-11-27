@@ -24167,16 +24167,34 @@
       b.textContent = d.label;
       let hasNewInSub = false;
       if (d.id !== 'all' && freshNewWardItems.size > 0) {
-        if (tabKey === 'acc') {
-          const ownedAccs = Array.isArray(config.puppyOwnedAccs) ? config.puppyOwnedAccs : [];
-          hasNewInSub = ownedAccs.some(aid => freshNewWardItems.has(aid) && inferAccCat(aid) === d.id);
-        } else if (tabKey === 'outfit') {
-          const ownedOut = Array.isArray(config.puppyOwnedOutfits) ? config.puppyOwnedOutfits : [];
-          hasNewInSub = ownedOut.some(oid => freshNewWardItems.has(oid) && inferOutfitCat(oid) === d.id);
-        } else if (tabKey === 'comp') {
+        try {
+          if (tabKey === 'acc') {
+            const ownedAccs = Array.isArray(config.puppyOwnedAccs) ? config.puppyOwnedAccs : [];
+            const allAccPool = [...(typeof FREE_PUP_ACCS !== 'undefined' ? FREE_PUP_ACCS : []), ...(typeof SHOP_PUP_ACCS !== 'undefined' ? SHOP_PUP_ACCS : []), ...(typeof TREASURE_ACCS !== 'undefined' ? TREASURE_ACCS : []), ...(typeof GACHA_ACCS !== 'undefined' ? GACHA_ACCS : []), ...(typeof GAME_ACCS !== 'undefined' ? GAME_ACCS : [])];
+            const shopAccSet = new Set((typeof SHOP_PUP_ACCS !== 'undefined' ? SHOP_PUP_ACCS : []).map(x => x.id));
+            const freeAccSet = new Set((typeof FREE_PUP_ACCS !== 'undefined' ? FREE_PUP_ACCS : []).map(x => x.id));
+            hasNewInSub = ownedAccs.some(aid => {
+              if (!freshNewWardItems.has(aid)) return false;
+              if (d.id === 'limited') return !shopAccSet.has(aid) && !freeAccSet.has(aid);
+              const obj = allAccPool.find(x => x.id === aid) || { id: aid };
+              return typeof inferAccCatShared === 'function' ? inferAccCatShared(obj) === d.id : false;
+            });
+          } else if (tabKey === 'outfit') {
+            const ownedOut = Array.isArray(config.puppyOwnedOutfits) ? config.puppyOwnedOutfits : [];
+            const allOutPool = [...(typeof FREE_PUP_OUTFITS !== 'undefined' ? FREE_PUP_OUTFITS : []), ...(typeof SHOP_PUP_OUTFITS !== 'undefined' ? SHOP_PUP_OUTFITS : []), ...(typeof TREASURE_OUTFITS !== 'undefined' ? TREASURE_OUTFITS : []), ...(typeof GACHA_OUTFITS !== 'undefined' ? GACHA_OUTFITS : []), ...(typeof SPECIAL_EVENT_OUTFITS !== 'undefined' ? SPECIAL_EVENT_OUTFITS : []), ...(typeof GAME_OUTFITS !== 'undefined' ? GAME_OUTFITS : [])];
+            const shopOutSet = new Set((typeof SHOP_PUP_OUTFITS !== 'undefined' ? SHOP_PUP_OUTFITS : []).map(x => x.id));
+            const freeOutSet = new Set((typeof FREE_PUP_OUTFITS !== 'undefined' ? FREE_PUP_OUTFITS : []).map(x => x.id));
+            hasNewInSub = ownedOut.some(oid => {
+              if (!freshNewWardItems.has(oid)) return false;
+              if (d.id === 'limited') return !shopOutSet.has(oid) && !freeOutSet.has(oid);
+              const obj = allOutPool.find(x => x.id === oid) || { id: oid };
+              return typeof inferOutfitCatShared === 'function' ? inferOutfitCatShared(obj) === d.id : false;
+            });
+          } else if (tabKey === 'comp') {
           const ownedCp = Array.isArray(config.puppyOwnedCompanions) ? config.puppyOwnedCompanions : [];
           hasNewInSub = ownedCp.some(cid => freshNewWardItems.has(cid) && (d.id === 'limited' ? !SHOP_PUP_COMPANIONS.some(x => x.id === cid) : SHOP_PUP_COMPANIONS.some(x => x.id === cid)));
-        }
+          }
+        } catch (_) {}
       }
       if (hasNewInSub) {
         const dot = doc.createElement('span');
@@ -24241,7 +24259,7 @@
   };
 
   const freshNewWardItems = new Set(Array.isArray(config.puppyFreshWardItems) ? config.puppyFreshWardItems : []);
-  const markWardItemNew = (id) => {
+  var markWardItemNew = (id) => {
     if (!id || id === 'none') return;
     freshNewWardItems.add(id);
     config.puppyFreshWardItems = Array.from(freshNewWardItems);
@@ -24464,7 +24482,7 @@
         gacha_angel_halo: 'aura', gacha_aura_sushi: 'aura', gacha_aura_tiny_planet: 'aura',
         gacha_acc_floating_lantern: 'aura', gacha_acc_quill_scroll: 'aura',
         gacha_cape_aurora_train: 'cape', gacha_cape_angel_feather: 'cape', gacha_cape_ruby_empress: 'cape',
-        gacha_cape_butterfly_shawl: 'cape', gacha_cape_strawberry_cream: 'cape', gacha_cape_moon_moth: 'cape',
+        gacha_cape_butterfly_shawl: 'cape', gacha_cape_strawberry_cream: 'cape', gacha_cape_moon_moth: 'cape', gacha_cape_celestial_train: 'cape', gacha_cape_wisteria_train: 'cape', gacha_cape_snowqueen_train: 'cape', gacha_cape_golden_phoenix: 'cape',
         gacha_crystal_wings: 'wing', gacha_wing_jellyfish: 'wing', gacha_wing_rainbow_ribbon: 'wing',
         gacha_wing_cardboard: 'wing', gacha_bowtie_wing: 'wing', gacha_bow_ribbon_tail: 'wing', gacha_wing_candy_cloud: 'wing',
         gacha_acc_paper_umbrella: 'wing', gacha_acc_clockwork_key: 'wing',
@@ -42735,7 +42753,7 @@
   }, 160);
 
   // ==================== 每日心情签筒 + 专属零食投喂 ====================
-  const inferOutfitCatShared = (item) => {
+  var inferOutfitCatShared = (item) => {
     if (!item) return '';
     if (item.cat && ['skirt', 'daily', 'trad', 'onesie'].includes(item.cat)) return item.cat;
     const nm = `${item.id || ''} ${item.name || ''}`;
@@ -42745,7 +42763,7 @@
     if (/shirt|jacket|coat|suit|jeans|sweater|uniform|daily|street|cafe|baseball|preppy|sailor|外套|夹克|衬衫|西装|制服|日常|牛仔|毛衣|棒球|学院|水手/.test(nm)) return 'daily';
     return 'skirt';
   };
-  const inferAccCatShared = (item) => {
+  var inferAccCatShared = (item) => {
     if (!item) return '';
     if (item.cat === 'cape' || /^(?:gacha_)?cape_/.test(String(item.id || ''))) return 'cape';
     if (item.cat && ['head', 'neck', 'wing', 'aura', 'bag', 'cape'].includes(item.cat)) return item.cat;
@@ -53814,8 +53832,8 @@
         const rw = JOB_MASTER_REWARDS[j.id];
         if (rk.lv >= 3 && rw && !config.puppyJobMasterClaimed[j.id]) {
           config.puppyJobMasterClaimed[j.id] = true;
-          if (rw.kind === 'bubble' && !config.puppyOwnedBubbles.includes(rw.id)) config.puppyOwnedBubbles.push(rw.id);
-          if (rw.kind === 'avatarframe' && !config.puppyOwnedAvatarFrames.includes(rw.id)) config.puppyOwnedAvatarFrames.push(rw.id);
+          if (rw.kind === 'bubble' && !config.puppyOwnedBubbles.includes(rw.id)) { config.puppyOwnedBubbles.push(rw.id); if (typeof markWardItemNew === 'function') markWardItemNew(rw.id); }
+          if (rw.kind === 'avatarframe' && !config.puppyOwnedAvatarFrames.includes(rw.id)) { config.puppyOwnedAvatarFrames.push(rw.id); if (typeof markWardItemNew === 'function') markWardItemNew(rw.id); }
           newlyGranted.push(`${j.name}Lv.3赠礼【${rw.name}】`);
         }
       });
@@ -65651,10 +65669,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           const rw = _jRwMap[sid];
           if (rw.kind === 'bubble' && !config.puppyOwnedBubbles.includes(rw.id)) {
             config.puppyOwnedBubbles.push(rw.id);
+            if (typeof markWardItemNew === 'function') markWardItemNew(rw.id);
             _grantedAny = true;
           }
           if (rw.kind === 'avatarframe' && !config.puppyOwnedAvatarFrames.includes(rw.id)) {
             config.puppyOwnedAvatarFrames.push(rw.id);
+            if (typeof markWardItemNew === 'function') markWardItemNew(rw.id);
             _grantedAny = true;
           }
           if (!config.puppyJobMasterClaimed[sid]) {
