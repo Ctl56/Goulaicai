@@ -6790,17 +6790,6 @@
     .st-vph-round-col::-webkit-color-swatch-wrapper { padding: 0; }
     .st-vph-round-col::-webkit-color-swatch { border: none; border-radius: 50%; }
     .st-vph-round-col::-moz-color-swatch { border: none; border-radius: 50%; }
-    #st-tb-root input[type="color"] {
-      -webkit-appearance: none !important;
-      appearance: none !important;
-      border-radius: 50% !important;
-      padding: 0 !important;
-      overflow: hidden !important;
-      cursor: pointer;
-    }
-    #st-tb-root input[type="color"]::-webkit-color-swatch-wrapper { padding: 0 !important; }
-    #st-tb-root input[type="color"]::-webkit-color-swatch { border: none !important; border-radius: 50% !important; }
-    #st-tb-root input[type="color"]::-moz-color-swatch { border: none !important; border-radius: 50% !important; }
     .st-px-new-tag {
       display: inline-block;
       padding: 1px 4px;
@@ -9219,6 +9208,10 @@
               <input class="st-px-input" id="st-tb-bag-pal-name" type="text" maxlength="6" placeholder="配色配方名(如粉紫渐变)" />
               <button class="st-px-btn care" id="st-tb-bag-pal-save" type="button" style="height:24px;padding:0 8px;">存</button>
               <button class="st-px-btn" id="st-tb-bag-skin-reset" type="button" style="height:24px;padding:0 6px;">默认</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px;">
+              <button class="st-px-btn" id="st-tb-bag-pal-copy" type="button" style="height:22px;font-size:9.5px;">复制配色配方</button>
+              <button class="st-px-btn care" id="st-tb-bag-pal-paste" type="button" style="height:22px;font-size:9.5px;">粘贴配方套用</button>
             </div>
             <div class="st-px-grid-3" id="st-tb-bag-skin-presets" style="margin-top:4px;margin-bottom:4px;"></div>
           </div>
@@ -14598,10 +14591,16 @@
     }, streaming ? 1100 : 320);
   };
 
+  let _chatFloorSyncTimer = null;
   const attachChatObserver = () => {
     const chatEl = doc.getElementById('chat');
     if (!chatEl || chatObserver) return;
     chatObserver = new MutationObserver((mutations) => {
+      const hasDomChange = mutations.some(m => m.addedNodes.length > 0 || m.removedNodes.length > 0);
+      if (hasDomChange) {
+        clearTimeout(_chatFloorSyncTimer);
+        _chatFloorSyncTimer = setTimeout(() => { try { updateStats(); } catch (_) {} }, 120);
+      }
       if (!config.maskEnabled && !config.textReplaceEnabled) return;
       const relevant = mutations.some(m =>
         m.addedNodes.length > 0 &&
@@ -36546,6 +36545,8 @@
     'st-tb-bq-zoom-mask',
     'st-tb-bq-recv-mask',
     'st-tb-bq-del-confirm-mask',
+    'st-tb-bag-pal-del-mask',
+    'st-tb-bag-pal-paste-mask',
     'st-tb-job-promo-mask',
     'st-tb-px-notice-mask',
     'st-tb-friends-mask',
@@ -41628,7 +41629,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <span style="font-weight:700;">私聊背景颜色</span>
           <div style="display:flex;align-items:center;gap:4px;">
-            <input type="color" id="st-dm-bg-col" value="${escapeHtmlSimple(config.puppyDmBgCol || '#faf6f7')}" style="width:20px;height:20px;padding:0;border:1.5px solid var(--px-border,#bfa4ae);border-radius:50%;background:none;cursor:pointer;flex-shrink:0;" />
+            <input type="color" id="st-dm-bg-col" class="st-vph-round-col" value="${escapeHtmlSimple(config.puppyDmBgCol || '#faf6f7')}" style="width:20px;height:20px;" />
             <button type="button" id="st-dm-bg-reset" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;">默认</button>
           </div>
         </div>
@@ -51445,10 +51446,30 @@
         del.style.width = '18px';
         del.style.padding = '0';
         del.textContent = 'x';
-        del.addEventListener('click', () => {
-          config.puppyBagPalettes.splice(idx, 1);
-          saveConfig();
-          renderBagSkinCustomizer();
+        del.addEventListener('click', (e2) => {
+          e2.stopPropagation();
+          let dm = root.querySelector('#st-tb-bag-pal-del-mask');
+          if (dm) dm.remove();
+          dm = doc.createElement('div');
+          dm.id = 'st-tb-bag-pal-del-mask';
+          dm.className = 'st-px-submodal-keep-bag';
+          dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+          const closeDm = (ev) => { if (ev) ev.stopPropagation(); win.__stSubModalClosedAt = Date.now(); dm.remove(); };
+          const dc = doc.createElement('div');
+          dc.style.cssText = 'width:min(266px,88vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+          dc.innerHTML = `<div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">确认删除配色？</div><div style="font-size:10px;opacity:0.85;margin-bottom:10px;">确定要删除背包配色「${escapeHtmlSimple(pal.name || `配色${idx + 1}`)}」吗？删除后无法恢复。</div><div style="display:flex;gap:6px;"><button type="button" id="st-bpd-no" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">取消</button><button type="button" id="st-bpd-yes" class="st-px-btn" style="flex:1;height:24px;font-size:10px;color:#b83b52;font-weight:700;">确认删除</button></div>`;
+          dc.querySelector('#st-bpd-no').addEventListener('click', closeDm);
+          dc.querySelector('#st-bpd-yes').addEventListener('click', (ev) => {
+            closeDm(ev);
+            config.puppyBagPalettes.splice(idx, 1);
+            saveConfig();
+            renderBagSkinCustomizer();
+          });
+          dm.appendChild(dc);
+          dm.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+          dm.addEventListener('click', (ev) => { ev.stopPropagation(); if (ev.target === dm) closeDm(ev); });
+          root.appendChild(dm);
+          applyPupModalThemeAndTop(dm);
         });
         wrap.append(b, del);
         bagSkinPresetsEl.appendChild(wrap);
@@ -51490,6 +51511,90 @@
     saveConfig();
     applyPupCosmeticSkins();
     renderBagSkinCustomizer();
+  });
+  const bagPalCopyBtn = root.querySelector('#st-tb-bag-pal-copy');
+  const bagPalPasteBtn = root.querySelector('#st-tb-bag-pal-paste');
+  if (bagPalCopyBtn) bagPalCopyBtn.addEventListener('click', () => {
+    const payload = {
+      name: (bagPalNameInput?.value || '').trim() || '分享配色',
+      bg: config.puppyBagBg || bagBgInput?.value || '#faf6f7',
+      h1: config.puppyBagHead1 || bagHead1Input?.value || '#e8d5db',
+      h2: config.puppyBagHead2 || bagHead2Input?.value || '#dfd0d8',
+      bd: config.puppyBagBorder || bagBorderInput?.value || '#bfa4ae',
+      fg: config.puppyBagFg || bagFgInput?.value || '#54444a',
+    };
+    const code = 'GLC_BAG:' + JSON.stringify(payload);
+    copyVisitCodeReliable(code);
+    showPuppyBubble('已复制当前背包配色配方，发给好友粘贴就能一键套用~', 2600);
+  });
+  if (bagPalPasteBtn) bagPalPasteBtn.addEventListener('click', () => {
+    let pm = root.querySelector('#st-tb-bag-pal-paste-mask');
+    if (pm) pm.remove();
+    pm = doc.createElement('div');
+    pm.id = 'st-tb-bag-pal-paste-mask';
+    pm.className = 'st-px-submodal-keep-bag';
+    pm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    const closePm = (ev) => { if (ev) ev.stopPropagation(); win.__stSubModalClosedAt = Date.now(); pm.remove(); };
+    const pc = doc.createElement('div');
+    pc.style.cssText = 'width:min(290px,90vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+    pc.innerHTML = `
+      <div style="font-weight:700;font-size:11.5px;margin-bottom:6px;text-align:center;">粘贴背包配色配方</div>
+      <textarea id="st-bpp-inp" rows="3" placeholder="粘贴以 GLC_BAG: 开头的配色配方码..." style="width:100%;box-sizing:border-box;font-size:10px;padding:5px;margin-bottom:6px;resize:none;"></textarea>
+      <input type="text" id="st-bpp-name" maxlength="6" placeholder="可选：保存时的配方名" style="width:100%;box-sizing:border-box;height:24px;font-size:10px;padding:0 6px;margin-bottom:6px;" />
+      <div id="st-bpp-err" style="display:none;font-size:9.5px;color:#b83b52;margin-bottom:6px;text-align:center;"></div>
+      <div style="display:flex;gap:5px;">
+        <button type="button" id="st-bpp-cancel" class="st-px-btn" style="height:24px;padding:0 8px;font-size:10px;">取消</button>
+        <button type="button" id="st-bpp-apply" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">一键套用</button>
+        <button type="button" id="st-bpp-save" class="st-px-btn care" style="flex:1;height:24px;font-size:10px;">套用并保存</button>
+      </div>
+    `;
+    const parseCode = () => {
+      const raw = String(pc.querySelector('#st-bpp-inp')?.value || '').trim();
+      const jsonStr = raw.startsWith('GLC_BAG:') ? raw.slice(8).trim() : raw;
+      const obj = JSON.parse(jsonStr);
+      const isHex = (v) => typeof v === 'string' && /^#[0-9a-fA-F]{3,8}$/.test(v.trim());
+      if (!obj || typeof obj !== 'object' || (!isHex(obj.bg) && !isHex(obj.h1) && !isHex(obj.bd))) {
+        throw new Error('bad');
+      }
+      return {
+        name: String(pc.querySelector('#st-bpp-name')?.value || obj.name || '').trim().slice(0, 6) || `导入配色`,
+        bg: isHex(obj.bg) ? obj.bg.trim() : '',
+        h1: isHex(obj.h1) ? obj.h1.trim() : '',
+        h2: isHex(obj.h2) ? obj.h2.trim() : '',
+        bd: isHex(obj.bd) ? obj.bd.trim() : '',
+        fg: isHex(obj.fg) ? obj.fg.trim() : '',
+      };
+    };
+    const doApply = (alsoSave, ev) => {
+      const errEl = pc.querySelector('#st-bpp-err');
+      try {
+        const pal = parseCode();
+        config.puppyBagBg = pal.bg;
+        config.puppyBagHead1 = pal.h1;
+        config.puppyBagHead2 = pal.h2;
+        config.puppyBagBorder = pal.bd;
+        config.puppyBagFg = pal.fg;
+        if (alsoSave) {
+          if (!Array.isArray(config.puppyBagPalettes)) config.puppyBagPalettes = [];
+          config.puppyBagPalettes.push(pal);
+        }
+        saveConfig();
+        applyPupCosmeticSkins();
+        renderBagSkinCustomizer();
+        closePm(ev);
+        showPuppyBubble(alsoSave ? `已套用并保存配色「${pal.name}」~` : `已一键套用配色「${pal.name}」~`, 2400);
+      } catch (_) {
+        if (errEl) { errEl.textContent = '配方格式不对，请完整复制 GLC_BAG: 开头的配方码~'; errEl.style.display = 'block'; }
+      }
+    };
+    pc.querySelector('#st-bpp-cancel').addEventListener('click', closePm);
+    pc.querySelector('#st-bpp-apply').addEventListener('click', (ev) => doApply(false, ev));
+    pc.querySelector('#st-bpp-save').addEventListener('click', (ev) => doApply(true, ev));
+    pm.appendChild(pc);
+    pm.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+    pm.addEventListener('click', (ev) => { ev.stopPropagation(); if (ev.target === pm) closePm(ev); });
+    root.appendChild(pm);
+    applyPupModalThemeAndTop(pm);
   });
   applyPupCosmeticSkins();
   setTimeout(() => { if (typeof syncDeskDmNoticeStack === 'function') syncDeskDmNoticeStack(); }, 600);
@@ -62105,6 +62210,9 @@
     searchIndex = -1;
     searchStatusEl.textContent = '';
     updateStats();
+    setTimeout(updateStats, 180);
+    setTimeout(updateStats, 600);
+    setTimeout(updateStats, 1400);
     renderBookmarks();
     fetchCharacterChats();
     renderGreetingsList();
