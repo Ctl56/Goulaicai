@@ -9568,7 +9568,7 @@
       <button class="st-tb-qd-btn" data-qd="imm" type="button">沉浸</button>
       <button class="st-tb-qd-btn" data-qd="mask" type="button">打码</button>
       <button class="st-tb-qd-btn" data-qd="reader" type="button">阅读</button>
-      <button class="st-tb-qd-btn" data-qd="bag" type="button">小狗</button>
+      <button class="st-tb-qd-btn" data-qd="bag" type="button">藏唤狗</button>
       <button class="st-tb-qd-btn" data-qd="hide" type="button">隐藏</button>
     </div>
     <div id="st-tb-imm-hotzone" aria-hidden="true"></div>
@@ -58618,6 +58618,7 @@
       pupBagHideToggleBtn.classList.toggle('active', !hidden);
       pupBagHideToggleBtn.classList.toggle('care', !hidden);
     }
+    if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
   };
   const togglePuppyDesktopHidden = () => {
     if (!config.puppyEnabled) return;
@@ -66567,7 +66568,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'imm',       name: '沉浸模式',   defLabel: '沉浸' },
     { id: 'mask',      name: '一键打码',   defLabel: '打码' },
     { id: 'reader',    name: '悬浮阅读器', defLabel: '阅读' },
-    { id: 'bag',       name: '小狗背包',   defLabel: '小狗' },
+    { id: 'bag',       name: '藏/唤小狗',  defLabel: '藏唤狗' },
     { id: 'hide',      name: '完全隐藏',   defLabel: '隐藏' },
     { id: 'keepalive', name: '后台保活',   defLabel: '保活' },
     { id: 'guard',     name: '防手滑保护', defLabel: '防手滑' },
@@ -66587,13 +66588,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'theme',     name: '美化主题',   defLabel: '美化' },
     { id: 'phrases',   name: '快捷短语',   defLabel: '短语' },
     { id: 'textreplace', name: '正文替词', defLabel: '替词' },
-    { id: 'puppy',     name: '桌面小狗',   defLabel: '唤狗' },
+    { id: 'puppy',     name: '开关小狗',   defLabel: '开关狗' },
   ];
   const QUICK_DOCK_DEFAULT = [
     { id: 'imm', label: '沉浸' },
     { id: 'mask', label: '打码' },
     { id: 'reader', label: '阅读' },
-    { id: 'bag', label: '小狗' },
+    { id: 'bag', label: '藏唤狗' },
     { id: 'hide', label: '隐藏' },
   ];
   const getQuickDockItems = () => {
@@ -66605,7 +66606,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       .filter(it => it && validIds.has(it.id))
       .map(it => {
         const meta = QUICK_DOCK_CATALOG.find(c => c.id === it.id);
-        const lb = String(it.label || '').trim() || (meta ? meta.defLabel : it.id);
+        let lb = String(it.label || '').trim() || (meta ? meta.defLabel : it.id);
+        if (it.id === 'bag' && lb === '小狗') lb = '藏唤狗';
+        if (it.id === 'puppy' && lb === '唤狗') lb = '开关狗';
         return { id: it.id, label: lb.slice(0, 8) };
       });
     return filtered.length ? filtered : QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
@@ -66647,7 +66650,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       imm: Boolean(config.immersive),
       mask: Boolean(config.maskEnabled),
       reader: Boolean(readerOpen || readerMinimized),
-      bag: Boolean(pupBagOpen),
+      bag: Boolean(config.puppyEnabled && !config.puppyDesktopHidden),
       keepalive: Boolean(config.keepAlive),
       guard: Boolean(config.swipeGuard),
       partialreroll: config.partialRerollLastPara !== false,
@@ -67166,7 +67169,17 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         else toggleReader(!readerOpen);
       } else if (act === 'bag') {
         toggleQuickDock(false);
-        togglePupBag(!pupBagOpen);
+        if (!config.puppyEnabled) {
+          config.puppyEnabled = true;
+          config.puppyDesktopHidden = false;
+          saveConfig();
+          syncUI();
+          startPuppy();
+          if (typeof syncPuppyDesktopHiddenUI === 'function') syncPuppyDesktopHiddenUI();
+        } else if (typeof togglePuppyDesktopHidden === 'function') {
+          togglePuppyDesktopHidden();
+        }
+        syncQuickDockUI();
       } else if (act === 'hide') {
         toggleQuickDock(false);
         if (fullHideBtn) fullHideBtn.click();
@@ -67181,12 +67194,18 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           startKeepAlive();
           updateKeepAliveUI();
           showImmNotice('已开启轻保活：不占音频栏与灵动岛，可与其他音频同时使用');
+          if (typeof showOneTimePanelTip === 'function') {
+            showOneTimePanelTip('seenIslandCustomTip_v149', '灵动岛显示提示', '开启强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置 -> 互动与提醒」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
+          }
         } else if (config.keepAlivePolicy !== 'exclusive') {
           config.keepAlivePolicy = 'exclusive';
           saveConfig();
           startKeepAlive();
           updateKeepAliveUI();
           showImmNotice('已切换强保活：会占用音频栏与灵动岛，息屏常驻更稳');
+          if (typeof showOneTimePanelTip === 'function') {
+            showOneTimePanelTip('seenIslandCustomTip_v149', '灵动岛显示提示', '切换强保活后，灵动岛和锁屏会显示上岛封面。你可以去「小狗 -> 设置 -> 互动与提醒」里开关灵动岛显示，或上传本地图片自定义上岛图哦~');
+          }
         } else {
           config.keepAlive = false;
           saveConfig();
