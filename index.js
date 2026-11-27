@@ -8699,7 +8699,7 @@
             <button class="st-px-btn active" data-act-tab="daily" type="button" style="font-size:10px;padding:0 2px;">日常</button>
             <button class="st-px-btn" data-act-tab="wish" type="button" id="st-px-act-wish-btn" style="font-size:10px;padding:0 2px;">心愿</button>
             <button class="st-px-btn" data-act-tab="toy" type="button" style="font-size:10px;padding:0 2px;">玩具</button>
-            <button class="st-px-btn" data-act-tab="garden" type="button" style="font-size:10px;padding:0 2px;">花盆</button>
+            <button class="st-px-btn" data-act-tab="garden" type="button" style="font-size:10px;padding:0 2px;">花园</button>
             <button class="st-px-btn" data-act-tab="kitchen" type="button" style="font-size:10px;padding:0 2px;">厨房</button>
             <button class="st-px-btn" data-act-tab="mail" type="button" id="st-px-act-mail-btn" style="font-size:10px;padding:0 2px;">信箱</button>
             <button class="st-px-btn" data-act-tab="fashion" type="button" style="font-size:10px;padding:0 2px;">穿搭</button>
@@ -8770,7 +8770,7 @@
           </div>
           <div id="st-px-act-garden-view" style="display:none;">
             <div style="margin-top:4px;margin-bottom:6px;padding:5px 6px;background:var(--px-bg-soft,#f7eef2);border:1.5px dashed var(--px-border,#bfa4ae);">
-              <div style="font-size:9px;font-weight:700;opacity:0.8;margin-bottom:4px;letter-spacing:0.5px;">花园功能切换</div>
+              <div id="st-px-garden-mode-title" style="font-size:9.5px;font-weight:700;opacity:0.86;margin-bottom:4px;letter-spacing:0.5px;">小狗的小花园</div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
                 <button class="st-px-btn care" id="st-px-gmode-pot" type="button" style="height:22px;font-size:9.5px;padding:0 4px;">像素花盆</button>
                 <button class="st-px-btn" id="st-px-gmode-diy" type="button" style="height:22px;font-size:9.5px;padding:0 4px;">花束工作台</button>
@@ -44071,11 +44071,27 @@
   let bqRibbonCol = '#e07a94';
   let bqRibbonStyle = 'bow'; // 'bow' | 'double_bow' | 'long_tail' | 'lace_wrap' | 'twine_tag'
   let bqRibbonScale = 1.0;
+  let bqRibbonX = 24;
+  let bqRibbonY = 32;
   let bqFlowerStyle = 'real'; // 'classic' | 'real'
+  let bqFlowerScale = 1.0;
+  let bqFlowerSpread = 1.0;
+  let bqCustomSlots = null; // null = auto from tier & spread, or [{x,y}, ...] dragged by user
   let bqCharmCol = '#e87a98';
   let bqCharms = []; // [{ key, x, y, col }]
   let bqSelectedCharmIdx = -1;
   let bqNoteTxt = '';
+
+  const getDefaultBouquetSlots = (tier, spread = 1.0) => {
+    const raw = tier === 'luxury'
+      ? [[17,13],[24,11],[31,13],[16,18],[24,17],[32,18]]
+      : (tier === 'mix' ? [[18,14],[24,11],[30,14],[24,18]] : [[18,15],[24,12],[30,15]]);
+    const sp = clamp(Number(spread) || 1.0, 0.55, 1.35);
+    return raw.map(([x, y]) => [
+      Math.round(24 + (x - 24) * sp),
+      Math.round(15 + (y - 15) * sp),
+    ]);
+  };
 
   const BQ_RIBBON_STYLES = [
     { id: 'bow',        label: '蝴蝶结' },
@@ -44150,7 +44166,7 @@
     }
   };
 
-  const drawBouquetCanvas = (cvs, tier, flIds, wrapCol, ribbonCol, charms, flStyle = 'real', ribStyle = 'bow', ribScale = 1.0) => {
+  const drawBouquetCanvas = (cvs, tier, flIds, wrapCol, ribbonCol, charms, flStyle = 'real', ribStyle = 'bow', ribScale = 1.0, flScale = 1.0, flSpread = 1.0, customSlots = null, ribX = 24, ribY = 32) => {
     const g = cvs.getContext('2d');
     if (!g) return;
     g.imageSmoothingEnabled = false;
@@ -44176,27 +44192,30 @@
     g.fillRect(24 - Math.floor(backW / 2) + 1, 17, 4, 4);
     g.fillRect(24 + Math.floor(backW / 2) - 5, 17, 4, 4);
 
-    // 3. 花朵（支持经典圆润像素 & 真实花型自由切换）
-    const slots = tier === 'luxury'
-      ? [[14,13],[24,10],[34,13],[13,20],[24,18],[35,20]]
-      : (tier === 'mix' ? [[16,14],[24,11],[32,14],[24,19]] : [[17,15],[24,12],[31,15]]);
+    // 3. 花朵（支持自定义拖动位置、花朵大小缩放、花朵间距缩放、真实/圆润花型切换）
+    const slots = (Array.isArray(customSlots) && customSlots.length) ? customSlots : getDefaultBouquetSlots(tier, flSpread);
     const expandedIds = [];
     if (tier === 'single' && flIds[0]) { expandedIds.push(flIds[0], flIds[0], flIds[0]); }
     else if (tier === 'mix' && flIds[0] && flIds[1]) { expandedIds.push(flIds[0], flIds[1], flIds[0], flIds[1]); }
     else if (tier === 'luxury' && flIds[0] && flIds[1] && flIds[2]) { expandedIds.push(flIds[0], flIds[1], flIds[2], flIds[1], flIds[2], flIds[0]); }
+    const fSc = clamp(Number(flScale) || 1.0, 0.7, 1.45);
     slots.forEach(([fx, fy], idx) => {
       const fid = expandedIds[idx];
       const fObj = fid ? PUP_FLOWERS.find(x => x.id === fid) : null;
       const c1 = fObj ? fObj.col : '#ffd1de';
       const c2 = fObj ? fObj.col2 : '#f09bb4';
       const cc = fObj ? fObj.center : '#ffe478';
+      g.save();
+      g.translate(Math.round(fx), Math.round(fy));
+      g.scale(fSc, fSc);
       if (flStyle === 'real' && fObj) {
-        drawRealPixelFlower(g, fObj.shape, fx, fy, c1, c2, cc);
+        drawRealPixelFlower(g, fObj.shape, 0, 0, c1, c2, cc);
       } else {
-        g.fillStyle = c2; g.fillRect(fx - 3, fy - 2, 7, 5); g.fillRect(fx - 2, fy - 3, 5, 7);
-        g.fillStyle = c1; g.fillRect(fx - 2, fy - 2, 5, 5);
-        g.fillStyle = cc; g.fillRect(fx - 1, fy - 1, 3, 3);
+        g.fillStyle = c2; g.fillRect(-3, -2, 7, 5); g.fillRect(-2, -3, 5, 7);
+        g.fillStyle = c1; g.fillRect(-2, -2, 5, 5);
+        g.fillStyle = cc; g.fillRect(-1, -1, 3, 3);
       }
+      g.restore();
     });
 
     // 4. 前层锥形包装纸
@@ -44212,69 +44231,75 @@
     g.fillStyle = '#5c8c5e';
     g.fillRect(22, 41, 4, 4);
 
-    // 5. 5 种精致丝带样式 + 自由缩放大小（豪华捧花更大方饱满！）
+    // 5. 5 种精致丝带样式 + 自由缩放大小 + 自由拖动位置 (ribX, ribY)
     const sc = clamp(Number(ribScale) || 1.0, 0.75, 1.65);
     const bandW = Math.round((tier === 'luxury' ? 14 : 11) * sc);
     const bandH = Math.max(2, Math.round(3 * sc));
-    const ry = 32;
+    const rx = Math.round(ribX || 24);
+    const ry = Math.round(ribY || 32);
     if (ribStyle === 'double_bow') {
-      // 双层大蝴蝶结：饱满大气
       const lw = Math.round(6 * sc), lh = Math.round(5 * sc);
       g.fillStyle = ribDark;
-      g.fillRect(24 - Math.round(bandW / 2) - lw, ry - 1, lw + 1, lh + 1);
-      g.fillRect(24 + Math.round(bandW / 2) - 1, ry - 1, lw + 1, lh + 1);
+      g.fillRect(rx - Math.round(bandW / 2) - lw, ry - 1, lw + 1, lh + 1);
+      g.fillRect(rx + Math.round(bandW / 2) - 1, ry - 1, lw + 1, lh + 1);
       g.fillStyle = ribCol;
-      g.fillRect(24 - Math.round(bandW / 2) - lw + 1, ry, lw, lh - 1);
-      g.fillRect(24 + Math.round(bandW / 2) - 1, ry, lw, lh - 1);
-      g.fillRect(24 - Math.round(bandW / 2), ry, bandW, bandH);
+      g.fillRect(rx - Math.round(bandW / 2) - lw + 1, ry, lw, lh - 1);
+      g.fillRect(rx + Math.round(bandW / 2) - 1, ry, lw, lh - 1);
+      g.fillRect(rx - Math.round(bandW / 2), ry, bandW, bandH);
       g.fillStyle = ribHi;
-      g.fillRect(24 - Math.round(bandW / 2) - Math.round(lw / 2), ry + 1, Math.max(2, Math.round(lw / 2)), 2);
-      g.fillRect(24 + Math.round(bandW / 2), ry + 1, Math.max(2, Math.round(lw / 2)), 2);
+      g.fillRect(rx - Math.round(bandW / 2) - Math.round(lw / 2), ry + 1, Math.max(2, Math.round(lw / 2)), 2);
+      g.fillRect(rx + Math.round(bandW / 2), ry + 1, Math.max(2, Math.round(lw / 2)), 2);
       g.fillStyle = ribDark;
-      g.fillRect(21 - Math.round(sc), ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(6 * sc));
-      g.fillRect(25, ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(6 * sc));
-      g.fillStyle = '#fffdf7'; g.fillRect(23, ry + 1, 2, 2);
+      g.fillRect(rx - 3 - Math.round(sc), ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(6 * sc));
+      g.fillRect(rx + 1, ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(6 * sc));
+      g.fillStyle = '#fffdf7'; g.fillRect(rx - 1, ry + 1, 2, 2);
     } else if (ribStyle === 'long_tail') {
-      // 长垂飘带：柔美双长尾
       g.fillStyle = ribCol;
-      g.fillRect(24 - Math.round(bandW / 2), ry, bandW, bandH);
+      g.fillRect(rx - Math.round(bandW / 2), ry, bandW, bandH);
       const tLen = Math.round(9 * sc);
       for (let i = 0; i < tLen; i++) {
         const off = i > 4 ? 1 : 0;
         g.fillStyle = i % 2 === 0 ? ribCol : ribDark;
-        g.fillRect(20 - off, ry + bandH + i, Math.max(2, Math.round(2 * sc)), 1);
-        g.fillRect(26 + off, ry + bandH + i, Math.max(2, Math.round(2 * sc)), 1);
+        g.fillRect(rx - 4 - off, ry + bandH + i, Math.max(2, Math.round(2 * sc)), 1);
+        g.fillRect(rx + 2 + off, ry + bandH + i, Math.max(2, Math.round(2 * sc)), 1);
       }
-      g.fillStyle = ribHi; g.fillRect(22, ry, 4, bandH);
+      g.fillStyle = ribHi; g.fillRect(rx - 2, ry, 4, bandH);
     } else if (ribStyle === 'lace_wrap') {
-      // 蕾丝花边带：纯白波浪边+中心宝石扣
       g.fillStyle = '#ffffff';
-      for (let x = 24 - Math.round(bandW / 2) - 2; x <= 24 + Math.round(bandW / 2) + 1; x += 2) {
+      for (let x = rx - Math.round(bandW / 2) - 2; x <= rx + Math.round(bandW / 2) + 1; x += 2) {
         g.fillRect(x, ry - 1, 1, 1); g.fillRect(x, ry + bandH, 1, 1);
       }
       g.fillStyle = ribCol;
-      g.fillRect(24 - Math.round(bandW / 2) - 1, ry, bandW + 2, bandH);
-      g.fillStyle = '#fff8dc'; g.fillRect(23, ry, 2, bandH);
+      g.fillRect(rx - Math.round(bandW / 2) - 1, ry, bandW + 2, bandH);
+      g.fillStyle = '#fff8dc'; g.fillRect(rx - 1, ry, 2, bandH);
     } else if (ribStyle === 'twine_tag') {
-      // 复古麻绳吊牌：交叉绳+斜挂小卡签
-      g.fillStyle = ribDark;
-      g.fillRect(24 - Math.round(bandW / 2), ry, bandW, 2);
-      g.fillRect(24 - Math.round(bandW / 2) + 1, ry + 2, bandW - 2, 1);
-      g.fillStyle = '#fff8eb';
-      const tw = Math.max(5, Math.round(5 * sc)), th = Math.max(6, Math.round(6 * sc));
-      g.fillRect(26, ry + 2, tw, th);
-      g.fillStyle = ribCol; g.fillRect(26, ry + 2, tw, 1); g.fillRect(27, ry + 5, tw - 2, 1);
+      // 精致重绘：麻绳双股编织结 + 复古奶油斜挂吊牌（带金孔环与红心火漆印）
+      const halfB = Math.round(bandW / 2);
+      for (let x = rx - halfB; x < rx + halfB; x++) {
+        g.fillStyle = (x % 2 === 0) ? ribCol : ribDark;
+        g.fillRect(x, ry, 1, 2);
+      }
+      // 绳结与小流苏
+      g.fillStyle = ribHi; g.fillRect(rx - 2, ry - 1, 4, 3);
+      g.fillStyle = ribDark; g.fillRect(rx - 3, ry + 2, 1, 3); g.fillRect(rx - 1, ry + 2, 1, 4);
+      // 奶油复古吊牌（带柔和阴影、金孔眼与小红心戳）
+      const tx = rx + 2, ty = ry + 1;
+      const tw = Math.max(6, Math.round(6 * sc)), th = Math.max(7, Math.round(7 * sc));
+      g.fillStyle = 'rgba(59,42,34,0.18)'; g.fillRect(tx + 1, ty + 1, tw, th);
+      g.fillStyle = '#d4bc9c'; g.fillRect(tx, ty, tw, th);
+      g.fillStyle = '#fffdf7'; g.fillRect(tx + 1, ty + 1, tw - 2, th - 2);
+      g.fillStyle = '#e6be5c'; g.fillRect(tx + Math.floor(tw / 2) - 1, ty + 1, 2, 1);
+      g.fillStyle = '#e06c84'; g.fillRect(tx + Math.floor(tw / 2) - 1, ty + Math.floor(th / 2), 2, 2);
     } else {
-      // 经典蝴蝶结（支持大小缩放）
       const wingW = Math.max(3, Math.round(4 * sc)), wingH = Math.max(4, Math.round(4 * sc));
       g.fillStyle = ribCol;
-      g.fillRect(24 - Math.round(bandW / 2), ry, bandW, bandH);
-      g.fillRect(24 - Math.round(bandW / 2) - wingW + 1, ry - 1, wingW, wingH);
-      g.fillRect(24 + Math.round(bandW / 2) - 1, ry - 1, wingW, wingH);
+      g.fillRect(rx - Math.round(bandW / 2), ry, bandW, bandH);
+      g.fillRect(rx - Math.round(bandW / 2) - wingW + 1, ry - 1, wingW, wingH);
+      g.fillRect(rx + Math.round(bandW / 2) - 1, ry - 1, wingW, wingH);
       g.fillStyle = ribDark;
-      g.fillRect(21, ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(5 * sc));
-      g.fillRect(25, ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(5 * sc));
-      g.fillStyle = '#fffdf7'; g.fillRect(23, ry + 1, 2, 1);
+      g.fillRect(rx - 3, ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(5 * sc));
+      g.fillRect(rx + 1, ry + bandH, Math.max(2, Math.round(2 * sc)), Math.round(5 * sc));
+      g.fillStyle = '#fffdf7'; g.fillRect(rx - 1, ry + 1, 2, 1);
     }
 
     // 6. 12 种可自由选色+拖动的小装饰
@@ -44415,6 +44440,9 @@
       b.addEventListener('click', () => {
         bqTier = t.id;
         bqPicked = [];
+        bqCustomSlots = null;
+        bqFlowerSpread = 1.0;
+        bqRibbonX = 24; bqRibbonY = 32;
         bqRibbonScale = t.id === 'luxury' ? 1.3 : 1.0;
         renderBouquetWorkbench();
       });
@@ -44422,18 +44450,18 @@
     });
     card.appendChild(tierBar);
 
-    const redrawPreview = (cvsEl) => drawBouquetCanvas(cvsEl, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlowerStyle, bqRibbonStyle, bqRibbonScale);
+    const redrawPreview = (cvsEl) => drawBouquetCanvas(cvsEl, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlowerStyle, bqRibbonStyle, bqRibbonScale, bqFlowerScale, bqFlowerSpread, bqCustomSlots, bqRibbonX, bqRibbonY);
 
-    // 预览画布（支持拖动小装饰 + 点击放大） + 右侧外观控制
+    // 预览画布（支持直接按住拖动：小装饰 / 丝带 / 任意单朵花！）
     const topBox = doc.createElement('div');
     topBox.style.cssText = 'display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;';
     const prevWrap = doc.createElement('div');
     prevWrap.style.cssText = 'flex-shrink:0;text-align:center;';
     const cvs = doc.createElement('canvas');
     cvs.width = 48; cvs.height = 48;
-    cvs.style.cssText = 'width:110px;height:110px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;touch-action:none;cursor:grab;';
+    cvs.style.cssText = 'width:112px;height:112px;image-rendering:pixelated;border:2px solid var(--px-border,#bfa4ae);display:block;touch-action:none;cursor:grab;';
     redrawPreview(cvs);
-    let dragIdx = -1;
+    let dragTarget = null; // { type: 'charm'|'ribbon'|'flower', idx }
     const toCvsPos = (ev) => {
       const rc = cvs.getBoundingClientRect();
       return [
@@ -44442,34 +44470,76 @@
       ];
     };
     cvs.addEventListener('pointerdown', (ev) => {
-      if (!bqCharms.length) return;
       const [cx, cy] = toCvsPos(ev);
-      let best = -1, bestD = 9;
+      // 1. 优先命中顶层小装饰
+      let bestCh = -1, bestChD = 7.5;
       bqCharms.forEach((ch, idx) => {
         const d = Math.hypot(ch.x - cx, ch.y - cy);
-        if (d < bestD) { bestD = d; best = idx; }
+        if (d < bestChD) { bestChD = d; bestCh = idx; }
       });
-      if (best >= 0) {
-        dragIdx = best;
-        bqSelectedCharmIdx = best;
+      if (bestCh >= 0) {
+        dragTarget = { type: 'charm', idx: bestCh };
+        bqSelectedCharmIdx = bestCh;
+        try { cvs.setPointerCapture(ev.pointerId); } catch (_) {}
+        ev.stopPropagation();
+        return;
+      }
+      // 2. 命中丝带
+      if (Math.hypot(bqRibbonX - cx, bqRibbonY - cy) < 8.5) {
+        dragTarget = { type: 'ribbon', idx: 0 };
+        try { cvs.setPointerCapture(ev.pointerId); } catch (_) {}
+        ev.stopPropagation();
+        return;
+      }
+      // 3. 命中任意一朵花，自由调整花朵摆位！
+      const curSlots = (Array.isArray(bqCustomSlots) && bqCustomSlots.length) ? bqCustomSlots : getDefaultBouquetSlots(bqTier, bqFlowerSpread);
+      let bestFl = -1, bestFlD = 7.5;
+      curSlots.forEach(([fx, fy], idx) => {
+        const d = Math.hypot(fx - cx, fy - cy);
+        if (d < bestFlD) { bestFlD = d; bestFl = idx; }
+      });
+      if (bestFl >= 0) {
+        if (!Array.isArray(bqCustomSlots) || !bqCustomSlots.length) {
+          bqCustomSlots = curSlots.map(([x, y]) => [x, y]);
+        }
+        dragTarget = { type: 'flower', idx: bestFl };
         try { cvs.setPointerCapture(ev.pointerId); } catch (_) {}
         ev.stopPropagation();
       }
     });
     cvs.addEventListener('pointermove', (ev) => {
-      if (dragIdx < 0 || !bqCharms[dragIdx]) return;
+      if (!dragTarget) return;
       const [cx, cy] = toCvsPos(ev);
-      bqCharms[dragIdx].x = Math.round(cx);
-      bqCharms[dragIdx].y = Math.round(cy);
+      if (dragTarget.type === 'charm' && bqCharms[dragTarget.idx]) {
+        bqCharms[dragTarget.idx].x = Math.round(cx);
+        bqCharms[dragTarget.idx].y = Math.round(cy);
+      } else if (dragTarget.type === 'ribbon') {
+        bqRibbonX = Math.round(clamp(cx, 10, 38));
+        bqRibbonY = Math.round(clamp(cy, 18, 42));
+      } else if (dragTarget.type === 'flower' && bqCustomSlots && bqCustomSlots[dragTarget.idx]) {
+        bqCustomSlots[dragTarget.idx] = [Math.round(clamp(cx, 6, 42)), Math.round(clamp(cy, 5, 34))];
+      }
       redrawPreview(cvs);
     });
-    const stopDragCh = () => { dragIdx = -1; };
+    const stopDragCh = () => { dragTarget = null; };
     cvs.addEventListener('pointerup', stopDragCh);
     cvs.addEventListener('pointercancel', stopDragCh);
     const dragHint = doc.createElement('div');
     dragHint.style.cssText = 'font-size:8.5px;opacity:0.78;margin-top:2px;';
-    dragHint.textContent = '小装饰可按住拖动';
-    prevWrap.append(cvs, dragHint);
+    dragHint.textContent = '花/丝带/装饰均可拖动';
+    const resetAllBtn = doc.createElement('button');
+    resetAllBtn.type = 'button'; resetAllBtn.className = 'st-px-btn';
+    resetAllBtn.style.cssText = 'width:100%;height:20px;font-size:8.5px;margin-top:4px;';
+    resetAllBtn.textContent = '恢复默认排版';
+    resetAllBtn.addEventListener('click', () => {
+      bqWrapCol = '#f2d9c2'; bqRibbonCol = '#e07a94'; bqCharmCol = '#e87a98';
+      bqRibbonStyle = 'bow'; bqRibbonScale = bqTier === 'luxury' ? 1.3 : 1.0;
+      bqRibbonX = 24; bqRibbonY = 32;
+      bqFlowerScale = 1.0; bqFlowerSpread = 1.0; bqCustomSlots = null;
+      bqCharms = []; bqSelectedCharmIdx = -1;
+      renderBouquetWorkbench();
+    });
+    prevWrap.append(cvs, dragHint, resetAllBtn);
 
     const ctrlCol = doc.createElement('div');
     ctrlCol.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;';
@@ -44527,6 +44597,33 @@
     });
     ctrlCol.appendChild(ribSizeRow);
 
+    // 保留 8 款包装纸快捷预设色块
+    const swRow = doc.createElement('div');
+    swRow.style.cssText = 'display:flex;gap:3px;flex-wrap:wrap;align-items:center;';
+    ['#f2d9c2', '#fff6fa', '#d8ecff', '#d9edd8', '#e6d8f5', '#ffe5d9', '#7a2538', '#2c354d'].forEach(hex => {
+      const sw = doc.createElement('button');
+      sw.type = 'button';
+      sw.style.cssText = `width:14px;height:14px;padding:0;border:1.5px solid #6b5446;background:${hex};cursor:pointer;`;
+      sw.addEventListener('click', () => { bqWrapCol = hex; const inp = colRow.querySelector('#st-bq-wrap-col'); if (inp) inp.value = hex; redrawPreview(cvs); });
+      swRow.appendChild(sw);
+    });
+    ctrlCol.appendChild(swRow);
+
+    // 花朵大小 & 花朵间距滑块
+    const flSizeRow = doc.createElement('div');
+    flSizeRow.style.cssText = 'display:flex;align-items:center;gap:4px;font-size:9px;';
+    flSizeRow.innerHTML = `<span>花朵大小</span><input type="range" min="0.7" max="1.4" step="0.1" value="${bqFlowerScale}" style="flex:1;min-width:0;" /><span id="st-bq-fscale-val">${bqFlowerScale.toFixed(1)}x</span>`;
+    const fsRange = flSizeRow.querySelector('input'), fsVal = flSizeRow.querySelector('#st-bq-fscale-val');
+    fsRange.addEventListener('input', () => { bqFlowerScale = parseFloat(fsRange.value) || 1.0; if (fsVal) fsVal.textContent = `${bqFlowerScale.toFixed(1)}x`; redrawPreview(cvs); });
+    ctrlCol.appendChild(flSizeRow);
+
+    const flSpRow = doc.createElement('div');
+    flSpRow.style.cssText = 'display:flex;align-items:center;gap:4px;font-size:9px;';
+    flSpRow.innerHTML = `<span>花朵间距</span><input type="range" min="0.6" max="1.3" step="0.1" value="${bqFlowerSpread}" style="flex:1;min-width:0;" /><span id="st-bq-fsp-val">${bqFlowerSpread.toFixed(1)}x</span>`;
+    const spRange = flSpRow.querySelector('input'), spVal = flSpRow.querySelector('#st-bq-fsp-val');
+    spRange.addEventListener('input', () => { bqFlowerSpread = parseFloat(spRange.value) || 1.0; bqCustomSlots = null; if (spVal) spVal.textContent = `${bqFlowerSpread.toFixed(1)}x`; redrawPreview(cvs); });
+    ctrlCol.appendChild(flSpRow);
+
     topBox.append(prevWrap, ctrlCol);
     card.appendChild(topBox);
 
@@ -44550,7 +44647,7 @@
       chRow.appendChild(cb);
     });
     const clrCh = doc.createElement('button');
-    clrCh.type = 'button'; clrCh.className = 'st-px-btn'; clrCh.style.cssText = 'height:19px;padding:0 5px;font-size:8.5px;'; clrCh.textContent = '清空装饰';
+    clrCh.type = 'button'; clrCh.className = 'st-px-btn'; clrCh.style.cssText = 'height:19px;padding:0 5px;font-size:8.5px;'; clrCh.textContent = '一键清空装饰';
     clrCh.addEventListener('click', () => { bqCharms = []; bqSelectedCharmIdx = -1; redrawPreview(cvs); });
     chRow.appendChild(clrCh);
     card.appendChild(chRow);
@@ -44596,7 +44693,7 @@
     packBtn.type = 'button'; packBtn.className = 'st-px-btn care';
     packBtn.style.cssText = 'width:100%;height:26px;font-size:10.5px;';
     packBtn.disabled = bqPicked.length < needKinds;
-    packBtn.textContent = bqPicked.length < needKinds ? `请先选满 ${needKinds} 种花材` : '打包花束（可自定义名字 / 送好友）';
+    packBtn.textContent = bqPicked.length < needKinds ? `请先选满 ${needKinds} 种花材` : '打包花束';
     packBtn.addEventListener('click', (ev) => {
       ev.stopPropagation();
       if (bqPicked.length < needKinds) return;
@@ -44743,6 +44840,8 @@
   };
 
   const syncGardenSubView = () => {
+    const gt = root.querySelector('#st-px-garden-mode-title');
+    if (gt) gt.textContent = `${getPupName()}的小花园`;
     const potW = root.querySelector('#st-px-garden-pot-wrap');
     const diyW = root.querySelector('#st-px-garden-diy-wrap');
     const bqdW = root.querySelector('#st-px-garden-bqd-wrap');
@@ -44763,7 +44862,7 @@
   root.querySelector('#st-px-gmode-bqd')?.addEventListener('click', () => { gardenViewMode = 'bqd'; syncGardenSubView(); });
 
   const renderGarden = () => {
-    try { if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
+    try { const gt = root.querySelector('#st-px-garden-mode-title'); if (gt) gt.textContent = `${getPupName()}的小花园`; if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
     if (!gardenGridEl) return;
     if (!config.puppyGarden) config.puppyGarden = { stage: 0, flowerId: '', lastWaterAt: 0, blooms: 0, unlocked: {} };
     const st = config.puppyGarden;
@@ -45204,13 +45303,7 @@
     let gardenReady = false;
     try {
       const gst = config.puppyGarden || {};
-      if (gst.stage === 3) {
-        gardenReady = true;
-      } else if (gst.stage === 1 || gst.stage === 2) {
-        const potObj = (typeof GARDEN_POT_TIERS !== 'undefined' && GARDEN_POT_TIERS[gst.potLv || 0]) ? GARDEN_POT_TIERS[gst.potLv || 0] : { cdMult: 1 };
-        const waitMs = Math.round((gst.stage === 1 ? 30000 : 60000) * (potObj.cdMult || 1));
-        if (now - (gst.lastWaterAt || 0) >= waitMs) gardenReady = true;
-      }
+      if (gst.stage === 3) gardenReady = true;
     } catch (_) {}
     const setDot = (el, show) => {
       if (!el) return;
