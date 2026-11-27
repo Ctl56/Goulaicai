@@ -6060,9 +6060,9 @@
     #st-tb-root #st-tb-pup-bag input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
     #st-tb-root #st-tb-pup-bag select,
     #st-tb-root #st-tb-pup-bag textarea,
-    #st-tb-root [id^="st-tb-"][id$="-mask"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
-    #st-tb-root [id^="st-tb-"][id$="-mask"] select,
-    #st-tb-root [id^="st-tb-"][id$="-mask"] textarea,
+    #st-tb-root [id^="st-tb-"][id$="-mask"]:not(#st-tb-qd-cfg-mask):not(#st-tb-jumpfloor-mask):not(#st-tb-draftrescue-mask) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+    #st-tb-root [id^="st-tb-"][id$="-mask"]:not(#st-tb-qd-cfg-mask):not(#st-tb-jumpfloor-mask):not(#st-tb-draftrescue-mask) select,
+    #st-tb-root [id^="st-tb-"][id$="-mask"]:not(#st-tb-qd-cfg-mask):not(#st-tb-jumpfloor-mask):not(#st-tb-draftrescue-mask) textarea,
     #st-tb-root [id^="st-tb-"][id$="-modal"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
     #st-tb-root [id^="st-tb-"][id$="-modal"] select,
     #st-tb-root [id^="st-tb-"][id$="-modal"] textarea,
@@ -6790,6 +6790,17 @@
     .st-vph-round-col::-webkit-color-swatch-wrapper { padding: 0; }
     .st-vph-round-col::-webkit-color-swatch { border: none; border-radius: 50%; }
     .st-vph-round-col::-moz-color-swatch { border: none; border-radius: 50%; }
+    #st-tb-root input[type="color"] {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      border-radius: 50% !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      cursor: pointer;
+    }
+    #st-tb-root input[type="color"]::-webkit-color-swatch-wrapper { padding: 0 !important; }
+    #st-tb-root input[type="color"]::-webkit-color-swatch { border: none !important; border-radius: 50% !important; }
+    #st-tb-root input[type="color"]::-moz-color-swatch { border: none !important; border-radius: 50% !important; }
     .st-px-new-tag {
       display: inline-block;
       padding: 1px 4px;
@@ -9561,7 +9572,7 @@
       <button class="st-tb-mini-btn" id="st-se-act-copy" type="button">复制本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-multi" type="button">多选段落</button>
       <button class="st-tb-mini-btn active" id="st-se-act-edit" type="button">编辑本段</button>
-      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button" style="color:var(--tb-accent,#6b8cff) !important;opacity:1 !important;filter:none !important;pointer-events:auto !important;">roll本条</button>
+      <button class="st-tb-mini-btn" id="st-se-act-reroll" type="button">roll本条</button>
       <button class="st-tb-mini-btn" id="st-se-act-del" type="button">删本段</button>
       <button class="st-tb-mini-btn" id="st-se-act-del-floor" type="button" style="color:#d9534f;">删整层</button>
     </div>
@@ -41603,7 +41614,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
           <span style="font-weight:700;">私聊背景颜色</span>
           <div style="display:flex;align-items:center;gap:4px;">
-            <input type="color" id="st-dm-bg-col" value="${escapeHtmlSimple(config.puppyDmBgCol || '#faf6f7')}" style="width:24px;height:20px;padding:0;border:1.5px solid var(--px-border,#bfa4ae);background:none;cursor:pointer;" />
+            <input type="color" id="st-dm-bg-col" value="${escapeHtmlSimple(config.puppyDmBgCol || '#faf6f7')}" style="width:20px;height:20px;padding:0;border:1.5px solid var(--px-border,#bfa4ae);border-radius:50%;background:none;cursor:pointer;flex-shrink:0;" />
             <button type="button" id="st-dm-bg-reset" class="st-px-btn" style="height:20px;padding:0 6px;font-size:9px;">默认</button>
           </div>
         </div>
@@ -53717,7 +53728,7 @@
           stRegexPausedByGenEvent = true;
           beginReplyTrack();
           pauseStRegexDuringStream();
-          try { if (typeof onDraftRescueGenStart === 'function') onDraftRescueGenStart(); } catch (_) {}
+          try { if (typeof onDraftRescueGenStart === 'function') onDraftRescueGenStart(type, options); } catch (_) {}
         });
       }
       if (ctxEv.eventTypes.STREAM_TOKEN_RECEIVED) {
@@ -60882,10 +60893,18 @@
       if (typeof cancelPendingReplyTopJump === 'function') cancelPendingReplyTopJump();
       const chatEl = doc.querySelector('#chat');
       if (!chatEl) return;
+      const mesList = chatEl.querySelectorAll('.mes');
+      const lastMes = mesList.length ? mesList[mesList.length - 1] : null;
+      if (lastMes) {
+        const goTop = (smooth) => {
+          const topOffset = lastMes.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 6;
+          chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: smooth ? 'smooth' : 'auto' });
+        };
+        goTop(true);
+        setTimeout(() => { try { goTop(false); } catch (_) {} }, 160);
+        return;
+      }
       chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: 'smooth' });
-      setTimeout(() => {
-        try { chatEl.scrollTop = chatEl.scrollHeight; } catch (_) {}
-      }, 160);
     } catch (_) {}
   };
   if (chatBottomBtn) chatBottomBtn.addEventListener('click', () => { scrollChatToBottomNow(); });
@@ -69296,15 +69315,42 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         text: txt,
         len: txt.length,
         updatedAt: now,
+        targetMesIdx: drTargetMesIdx,
+        isSwipe: drTargetIsSwipe,
+        genType: drGenType,
       }));
     } catch (_) {}
   };
 
-  var onDraftRescueGenStart = () => {
+  let drTargetMesIdx = -1;
+  let drTargetIsSwipe = false;
+  let drGenType = '';
+  var onDraftRescueGenStart = (type, options) => {
     if (config.streamDraftRescue === false) return;
     drGenerating = true;
     drLiveText = '';
     drLastSaveTs = 0;
+    try {
+      const ctx = getContext();
+      const ch = Array.isArray(ctx?.chat) ? ctx.chat : [];
+      const gType = String(type || '').toLowerCase();
+      drGenType = gType;
+      const lastIdx = ch.length - 1;
+      const lastMsg = lastIdx >= 0 ? ch[lastIdx] : null;
+      if ((gType === 'swipe' || gType === 'regenerate') && lastMsg && !lastMsg.is_user) {
+        drTargetMesIdx = lastIdx;
+        drTargetIsSwipe = (gType === 'swipe');
+      } else if (gType === 'continue' && lastMsg && !lastMsg.is_user) {
+        drTargetMesIdx = lastIdx;
+        drTargetIsSwipe = false;
+      } else {
+        drTargetMesIdx = ch.length;
+        drTargetIsSwipe = false;
+      }
+    } catch (_) {
+      drTargetMesIdx = -1;
+      drTargetIsSwipe = false;
+    }
   };
 
   var onDraftRescueStreamToken = (streamText) => {
@@ -69352,6 +69398,54 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       if (!ctx || !Array.isArray(ctx.chat)) return false;
       const charName = draft.charName || ctx.name2 || 'Assistant';
       const nowStr = new Date().toLocaleString();
+      const tIdx = Number.isFinite(Number(draft.targetMesIdx)) ? Number(draft.targetMesIdx) : -1;
+      const isSwipe = Boolean(draft.isSwipe);
+
+      // 情况 1：原位置是一条分支回复（swipe）-> 作为新分支追加到该楼层，绝不顶掉已有分支！
+      if (isSwipe && tIdx >= 0 && tIdx < ctx.chat.length && ctx.chat[tIdx] && !ctx.chat[tIdx].is_user) {
+        const msg = ctx.chat[tIdx];
+        if (!Array.isArray(msg.swipes) || !msg.swipes.length) {
+          msg.swipes = [String(msg.mes || '')];
+        }
+        let newSwipeIdx;
+        if (msg.swipes.length && String(msg.swipes[msg.swipes.length - 1] || '').trim() === '') {
+          newSwipeIdx = msg.swipes.length - 1;
+          msg.swipes[newSwipeIdx] = draft.text;
+        } else {
+          msg.swipes.push(draft.text);
+          newSwipeIdx = msg.swipes.length - 1;
+        }
+        if (Array.isArray(msg.swipe_info)) {
+          msg.swipe_info[newSwipeIdx] = msg.swipe_info[newSwipeIdx] || { send_date: nowStr };
+        }
+        msg.swipe_id = newSwipeIdx;
+        msg.mes = draft.text;
+        if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+        else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+        if (typeof ctx.reloadCurrentChat === 'function') await ctx.reloadCurrentChat();
+        clearSavedRescueDraft();
+        return true;
+      }
+
+      // 情况 2：原楼层已存在且是 AI 楼层（如重roll整层/续写/半截楼层）-> 直接恢复到该楼层当前分支，不破坏其他分支
+      if (!isSwipe && tIdx >= 0 && tIdx < ctx.chat.length && ctx.chat[tIdx] && !ctx.chat[tIdx].is_user) {
+        const msg = ctx.chat[tIdx];
+        msg.mes = draft.text;
+        if (Array.isArray(msg.swipes) && msg.swipes.length) {
+          const curSw = clamp(Number.isFinite(Number(msg.swipe_id)) ? Number(msg.swipe_id) : 0, 0, msg.swipes.length - 1);
+          msg.swipes[curSw] = draft.text;
+        } else {
+          msg.swipes = [draft.text];
+          msg.swipe_id = 0;
+        }
+        if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+        else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+        if (typeof ctx.reloadCurrentChat === 'function') await ctx.reloadCurrentChat();
+        clearSavedRescueDraft();
+        return true;
+      }
+
+      // 情况 3：原楼层尚未落盘 -> 插入回原楼层位置（若超出则追加到末尾）
       const msgObj = {
         name: charName,
         is_user: false,
@@ -69361,16 +69455,24 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         swipes: [draft.text],
         swipe_id: 0,
       };
-      ctx.chat.push(msgObj);
-      if (typeof ctx.addOneMessage === 'function') {
-        ctx.addOneMessage(msgObj);
-      } else if (typeof win.addOneMessage === 'function') {
-        win.addOneMessage(msgObj);
-      }
-      if (typeof ctx.saveChat === 'function') await ctx.saveChat();
-      else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
-      if (typeof ctx.addOneMessage !== 'function' && typeof win.addOneMessage !== 'function' && typeof ctx.reloadCurrentChat === 'function') {
-        await ctx.reloadCurrentChat();
+      const insertAt = (tIdx >= 0 && tIdx <= ctx.chat.length) ? tIdx : ctx.chat.length;
+      if (insertAt < ctx.chat.length) {
+        ctx.chat.splice(insertAt, 0, msgObj);
+        if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+        else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+        if (typeof ctx.reloadCurrentChat === 'function') await ctx.reloadCurrentChat();
+      } else {
+        ctx.chat.push(msgObj);
+        if (typeof ctx.addOneMessage === 'function') {
+          ctx.addOneMessage(msgObj);
+        } else if (typeof win.addOneMessage === 'function') {
+          win.addOneMessage(msgObj);
+        }
+        if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+        else if (typeof win.saveChatConditional === 'function') await win.saveChatConditional();
+        if (typeof ctx.addOneMessage !== 'function' && typeof win.addOneMessage !== 'function' && typeof ctx.reloadCurrentChat === 'function') {
+          await ctx.reloadCurrentChat();
+        }
       }
       clearSavedRescueDraft();
       return true;
@@ -69400,7 +69502,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       ? `<div style="font-size:11px;opacity:0.85;margin-bottom:6px;line-height:1.45;">检测到中断回复：<b>${escapeHtmlSimple(draft.charName || 'AI')}</b> · ${draft.text.length} 字 · ${fmtAgo(draft.updatedAt)}</div>
          <div style="max-height:190px;overflow-y:auto;padding:8px 9px;background:var(--tb-surface,#fff);border:1px solid var(--tb-border,#ccc);border-radius:6px;font-size:11.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin-bottom:9px;">${escapeHtmlSimple(draft.text)}</div>
          <div style="display:flex;gap:6px;margin-bottom:6px;">
-           <button type="button" id="st-dr-restore" class="st-tb-btn active" style="flex:1.4;">恢复到聊天末尾</button>
+           <button type="button" id="st-dr-restore" class="st-tb-btn active" style="flex:1.4;">恢复到原位置</button>
            <button type="button" id="st-dr-copy" class="st-tb-btn" style="flex:1;">复制全文</button>
          </div>
          <button type="button" id="st-dr-clear" class="st-tb-btn" style="width:100%;opacity:0.8;">清空草稿</button>`
@@ -69496,7 +69598,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'partialreroll', name: '局部重roll', defLabel: '局部重roll' },
     { id: 'jumptop', name: '生成完回开头', defLabel: '回开头' },
     { id: 'jumpfloor', name: '跳转楼层', defLabel: '跳楼层' },
-    { id: 'tobottom',  name: '回到底层', defLabel: '回到底' },
+    { id: 'tobottom',  name: '回到底层', defLabel: '回底' },
     { id: 'draftrescue', name: '防丢草稿', defLabel: '防丢草稿' },
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
