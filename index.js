@@ -319,41 +319,41 @@
     { id: 'acc_head_fox_ears', name: '雪白小狐耳', price: 12, cat: 'head' },
     { id: 'acc_head_star_braids', name: '奶黄麻花辫', price: 12, cat: 'head' },
     // 独立分类：10 款镂空前襟斗篷（中间留空可与任意裙子/衣服叠穿）
-    { id: 'cape_goth_lace', name: '黑纱蕾丝斗篷', price: 12, cat: 'cape' },
-    { id: 'cape_red_riding', name: '小红帽绒斗篷', price: 13, cat: 'cape' },
-    { id: 'cape_ivory_pearl', name: '象牙珍珠披肩', price: 15, cat: 'cape' },
-    { id: 'cape_star_velvet', name: '星夜绒斗篷', price: 16, cat: 'cape' },
-    { id: 'cape_sakura_gauze', name: '樱雾薄纱斗篷', price: 14, cat: 'cape' },
-    { id: 'cape_matcha_plaid', name: '抹茶格纹斗篷', price: 14, cat: 'cape' },
-    { id: 'cape_royal_ermine', name: '宫廷绒毛披风', price: 18, cat: 'cape' },
-    { id: 'cape_sea_jelly', name: '海盐泡泡斗篷', price: 15, cat: 'cape' },
-    { id: 'cape_caramel_bear', name: '焦糖毛绒斗篷', price: 14, cat: 'cape' },
-    { id: 'cape_lavender_bell', name: '丁香铃兰斗篷', price: 16, cat: 'cape' },
+    { id: 'cape_goth_lace', name: '黑纱斗篷', price: 12, cat: 'cape' },
+    { id: 'cape_red_riding', name: '小红帽斗篷', price: 13, cat: 'cape' },
+    { id: 'cape_ivory_pearl', name: '珍珠披肩', price: 15, cat: 'cape' },
+    { id: 'cape_star_velvet', name: '星夜斗篷', price: 16, cat: 'cape' },
+    { id: 'cape_sakura_gauze', name: '樱纱斗篷', price: 14, cat: 'cape' },
+    { id: 'cape_matcha_plaid', name: '抹茶格斗篷', price: 14, cat: 'cape' },
+    { id: 'cape_royal_ermine', name: '酒红绒披风', price: 18, cat: 'cape' },
+    { id: 'cape_sea_jelly', name: '海盐斗篷', price: 15, cat: 'cape' },
+    { id: 'cape_caramel_bear', name: '焦糖毛绒披', price: 14, cat: 'cape' },
+    { id: 'cape_lavender_bell', name: '铃兰斗篷', price: 16, cat: 'cape' },
     // 再加 12 款全新斗篷（含超长拖地款、毛领、流苏、叶形、冰晶等不雷同款式）
-    { id: 'cape_long_bridal', name: '拖地白纱披风', price: 24, cat: 'cape' },
-    { id: 'cape_long_obsidian', name: '暗夜拖地长披风', price: 24, cat: 'cape' },
-    { id: 'cape_long_celeste', name: '银蓝拖地星披风', price: 25, cat: 'cape' },
-    { id: 'cape_mint_ribbon', name: '薄荷缎带披肩', price: 15, cat: 'cape' },
-    { id: 'cape_honey_bee', name: '蜂蜜小熊披风', price: 15, cat: 'cape' },
-    { id: 'cape_cloud_fluff', name: '云朵羊羔绒斗篷', price: 16, cat: 'cape' },
-    { id: 'cape_rose_tassel', name: '玫瑰流苏披肩', price: 17, cat: 'cape' },
-    { id: 'cape_denim_hood', name: '牛仔学院披肩', price: 14, cat: 'cape' },
-    { id: 'cape_angel_feather', name: '羽翼蕾丝斗篷', price: 20, cat: 'cape' },
-    { id: 'cape_strawberry_cream', name: '草莓奶盖披风', price: 18, cat: 'cape' },
-    { id: 'cape_star_witch', name: '星月魔女披风', price: 22, cat: 'cape' },
-    { id: 'cape_emerald_elf', name: '森林精灵叶篷', price: 19, cat: 'cape' },
-    { id: 'cape_royal_swan', name: '天鹅绒毛大披风', price: 24, cat: 'cape' },
-    { id: 'cape_cherry_kimono', name: '落樱流苏羽织', price: 21, cat: 'cape' },
-    { id: 'cape_patchwork_quilt', name: '拼布格子小斗篷', price: 17, cat: 'cape' },
-    { id: 'cape_sailor_ribbon', name: '水手领丝带披肩', price: 16, cat: 'cape' },
-    { id: 'cape_macaron_ruffle', name: '马卡龙多层荷叶披', price: 19, cat: 'cape' },
-    { id: 'cape_fox_fur_autumn', name: '枫叶毛领小披风', price: 20, cat: 'cape' },
-    { id: 'cape_stained_glass', name: '彩窗琉璃披风', price: 22, cat: 'cape' },
-    { id: 'cape_music_notes', name: '琴键乐谱披肩', price: 18, cat: 'cape' },
-    { id: 'cape_peach_cream', name: '蜜桃奶霜披风', price: 15, cat: 'cape' },
-    { id: 'cape_forest_elf', name: '森系绿叶披风', price: 17, cat: 'cape' },
-    { id: 'cape_snow_crystal', name: '雪绒冰晶披风', price: 18, cat: 'cape' },
-    { id: 'cape_sunset_gold', name: '晚霞流金披风', price: 19, cat: 'cape' },
+    { id: 'cape_long_bridal', name: '白纱长披风', price: 24, cat: 'cape' },
+    { id: 'cape_long_obsidian', name: '黑丝绒长披', price: 24, cat: 'cape' },
+    { id: 'cape_long_celeste', name: '银蓝长披风', price: 25, cat: 'cape' },
+    { id: 'cape_mint_ribbon', name: '薄荷披肩', price: 15, cat: 'cape' },
+    { id: 'cape_honey_bee', name: '蜂蜜小披风', price: 15, cat: 'cape' },
+    { id: 'cape_cloud_fluff', name: '云朵绒斗篷', price: 16, cat: 'cape' },
+    { id: 'cape_rose_tassel', name: '玫瑰披肩', price: 17, cat: 'cape' },
+    { id: 'cape_denim_hood', name: '牛仔披肩', price: 14, cat: 'cape' },
+    { id: 'cape_angel_feather', name: '白羽斗篷', price: 20, cat: 'cape' },
+    { id: 'cape_strawberry_cream', name: '草莓奶盖披', price: 18, cat: 'cape' },
+    { id: 'cape_star_witch', name: '星月小披风', price: 22, cat: 'cape' },
+    { id: 'cape_emerald_elf', name: '翠叶小斗篷', price: 19, cat: 'cape' },
+    { id: 'cape_royal_swan', name: '白天鹅披风', price: 24, cat: 'cape' },
+    { id: 'cape_cherry_kimono', name: '樱花流苏披', price: 21, cat: 'cape' },
+    { id: 'cape_patchwork_quilt', name: '拼布小斗篷', price: 17, cat: 'cape' },
+    { id: 'cape_sailor_ribbon', name: '水手领披肩', price: 16, cat: 'cape' },
+    { id: 'cape_macaron_ruffle', name: '马卡龙披风', price: 19, cat: 'cape' },
+    { id: 'cape_fox_fur_autumn', name: '枫叶毛领披', price: 20, cat: 'cape' },
+    { id: 'cape_stained_glass', name: '彩窗披风', price: 22, cat: 'cape' },
+    { id: 'cape_music_notes', name: '琴键披肩', price: 18, cat: 'cape' },
+    { id: 'cape_peach_cream', name: '蜜桃披风', price: 15, cat: 'cape' },
+    { id: 'cape_forest_elf', name: '绿叶披风', price: 17, cat: 'cape' },
+    { id: 'cape_snow_crystal', name: '雪绒披风', price: 18, cat: 'cape' },
+    { id: 'cape_sunset_gold', name: '晚霞披风', price: 19, cat: 'cape' },
   ];
 
   // 独立分类：24 款漂浮像素小跟班
@@ -1753,16 +1753,16 @@
     { id: 'gacha_acc_mini_skateboard', name: '迷你滑板', tier: 'SR' },
     { id: 'gacha_acc_quill_scroll', name: '白羽毛笔', tier: 'SR' },
     // 扭蛋限定 6 款镂空叠穿斗篷（3 SSR 拖地华丽款 + 3 SR 特别款）
-    { id: 'gacha_cape_aurora_train', name: '极光拖地纱披风', tier: 'SSR' },
-    { id: 'gacha_cape_angel_feather', name: '圣羽拖地长披风', tier: 'SSR' },
-    { id: 'gacha_cape_ruby_empress', name: '绯红女皇拖尾披风', tier: 'SSR' },
-    { id: 'gacha_cape_butterfly_shawl', name: '蝶翼轻纱披肩', tier: 'SR' },
-    { id: 'gacha_cape_strawberry_cream', name: '草莓奶油披肩', tier: 'SR' },
-    { id: 'gacha_cape_moon_moth', name: '月影轻纱斗篷', tier: 'SR' },
-    { id: 'gacha_cape_celestial_train', name: '星河拖尾圣披', tier: 'SSR' },
-    { id: 'gacha_cape_wisteria_train', name: '紫藤花瀑长披', tier: 'SSR' },
-    { id: 'gacha_cape_snowqueen_train', name: '冰晶雪后长篷', tier: 'SR' },
-    { id: 'gacha_cape_golden_phoenix', name: '晨曦流金长披', tier: 'SR' },
+    { id: 'gacha_cape_aurora_train', name: '极光长披风', tier: 'SSR' },
+    { id: 'gacha_cape_angel_feather', name: '白羽长披风', tier: 'SSR' },
+    { id: 'gacha_cape_ruby_empress', name: '红丝绒长披', tier: 'SSR' },
+    { id: 'gacha_cape_butterfly_shawl', name: '蝴蝶纱披肩', tier: 'SR' },
+    { id: 'gacha_cape_strawberry_cream', name: '草莓奶油披', tier: 'SR' },
+    { id: 'gacha_cape_moon_moth', name: '月白纱斗篷', tier: 'SR' },
+    { id: 'gacha_cape_celestial_train', name: '星河长披风', tier: 'SSR' },
+    { id: 'gacha_cape_wisteria_train', name: '紫藤长披风', tier: 'SSR' },
+    { id: 'gacha_cape_snowqueen_train', name: '雪花长披风', tier: 'SR' },
+    { id: 'gacha_cape_golden_phoenix', name: '暖金长披风', tier: 'SR' },
   ];
   const GACHA_COMPANIONS = [
     { id: 'gacha_mini_angel', name: '小天使灵', tier: 'SSR' },
@@ -2891,6 +2891,7 @@
     puppyChatPeek: true,
     puppyBgNotify: true,
     puppyIslandArtwork: true,
+    puppyIslandCustomImg: '',
     puppyBarkUrl: '',
     puppyBarkIconUrl: '',
     streamDraftRescue: true,
@@ -9156,6 +9157,15 @@
               <div style="display:flex;gap:3px;">
                 <button class="st-px-btn care" id="st-tb-pup-island-toggle" type="button" style="height:22px;padding:0 8px;font-size:10px;">已开启</button>
                 <button class="st-px-btn" id="st-tb-pup-export-icon" type="button" style="height:22px;padding:0 7px;font-size:10px;" title="导出当前穿搭的 512x512 高清小狗方图">保存头像图</button>
+              </div>
+            </div>
+            <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
+              <span style="width:auto;">上岛自定义图片</span>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <img id="st-tb-pup-island-preview" alt="" style="display:none;width:22px;height:22px;border-radius:4px;object-fit:cover;border:1px solid var(--px-border,#d4b996);" />
+                <input type="file" id="st-tb-pup-island-file" accept="image/*" style="display:none;" />
+                <button class="st-px-btn" id="st-tb-pup-island-upload" type="button" style="height:22px;padding:0 7px;font-size:10px;" title="上传本地图片作为强保活灵动岛/锁屏封面">上传本地图</button>
+                <button class="st-px-btn" id="st-tb-pup-island-clear" type="button" style="display:none;height:22px;padding:0 6px;font-size:10px;" title="清除自定义图片，恢复像素小狗上岛">恢复小狗</button>
               </div>
             </div>
             <div class="st-px-slider-row" style="margin-top:4px;justify-content:space-between;">
@@ -17668,11 +17678,11 @@
       const cy = oy + 8;
       const drawOpenCapeBase = (cMain, cHi, cHem, cHem2, cClasp) => {
         if (isFlatPose) {
-          // 趴下/睡觉：自然披覆在小狗背部 (ox+1..ox+9, oy+7..oy+10)，领口扣精准对齐脖颈右侧
-          for (let x = ox + 2; x <= ox + 9; x++) px(x, oy + 7, (x === ox + 8 || x === ox + 9) ? (cClasp || cMain) : cMain);
-          for (let x = ox + 1; x <= ox + 9; x++) px(x, oy + 8, (x === ox + 4 || x === ox + 6) ? cHi : cMain);
-          for (let x = ox + 1; x <= ox + 9; x++) px(x, oy + 9, (x === ox + 3 || x === ox + 7) ? cHi : cMain);
-          for (let x = ox + 1; x <= ox + 9; x++) px(x, oy + 10, (x % 2 === 0) ? cHem : cHem2);
+          // 趴下/睡觉：严格贴合背部 (ox+1..ox+6, oy+7..oy+10)，绝不越过 ox+6 遮挡小狗头部与眼睛
+          for (let x = ox + 2; x <= ox + 6; x++) px(x, oy + 7, (x === ox + 6) ? (cClasp || cMain) : cMain);
+          for (let x = ox + 1; x <= ox + 6; x++) px(x, oy + 8, (x === ox + 3 || x === ox + 5) ? cHi : cMain);
+          for (let x = ox + 1; x <= ox + 6; x++) px(x, oy + 9, (x === ox + 2 || x === ox + 4) ? cHi : cMain);
+          for (let x = ox + 1; x <= ox + 6; x++) px(x, oy + 10, (x % 2 === 0) ? cHem : cHem2);
           return;
         }
         // 站立/行走 & 坐下：围脖领口严格对齐小狗真实脖子位置 (oy + 7, ox + 6..12，扣饰对齐 ox + 9..10)，背后背部完整覆盖并自然加长垂坠，前胸保留镂空可叠穿任意裙子！
@@ -17738,10 +17748,12 @@
         px(ox + 0, cy + 4, '#c7e9ff'); px(ox + 2, cy + 4, '#ffffff');
         px(ox + 12, cy + 4, '#ffffff'); px(ox + 14, cy + 4, '#c7e9ff');
       } else if (acc === 'cape_caramel_bear') {
-        // 焦糖毛绒斗篷：暖奶茶焦糖绒 + 厚奶霜卷毛下摆 + 可可圆扣
-        drawOpenCapeBase('#c78d5a', '#deab7a', '#fff6e6', '#f2dfc2', '#6b4226'); if (isFlatPose) return;
-        px(ox + 2, cy + 1, '#fff6e6'); px(ox + 12, cy + 1, '#fff6e6');
-        px(ox + 5, cy, '#6b4226'); px(ox + 9, cy, '#6b4226');
+        // 焦糖毛绒披：暖焦糖泰迪绒 + 奶白蓬松羊羔毛领与下摆 + 可可牛角扣与小毛球系带
+        drawOpenCapeBase('#c4814b', '#df9f6b', '#fff7eb', '#f3e1c8', '#6b3e24'); if (isFlatPose) return;
+        px(ox + 4, oy + 7, '#fff7eb'); px(ox + 5, oy + 7, '#fff7eb'); px(ox + 12, oy + 7, '#fff7eb'); px(ox + 13, oy + 7, '#fff7eb');
+        px(ox + 6, oy + 8, '#fff7eb'); px(ox + 12, oy + 8, '#fff7eb');
+        px(ox + 2, oy + 9, '#e8b88a'); px(ox + 4, oy + 10, '#e8b88a');
+        px(ox + 1, oy + 12, '#fff7eb'); px(ox + 5, oy + 12, '#fff7eb');
       } else if (acc === 'cape_lavender_bell') {
         // 丁香铃兰斗篷：柔紫丁香披风 + 浅薄荷藤叶边 + 纯白铃兰花苞垂坠
         drawOpenCapeBase('#b59be3', '#d7c4f7', '#a6d6b0', '#b59be3', '#e8f5eb'); if (isFlatPose) return;
@@ -17786,10 +17798,11 @@
         px(ox + 0, cy + 4, '#f2cc74'); px(ox + 2, cy + 4, '#f2cc74'); px(ox + 12, cy + 4, '#f2cc74'); px(ox + 14, cy + 4, '#f2cc74');
         px(ox + 0, cy + 5, '#ffe599'); px(ox + 14, cy + 5, '#ffe599');
       } else if (acc === 'cape_denim_hood') {
-        // 牛仔学院披肩：水洗丹宁蓝披风 + 背后口袋明黄车线 + 深靛水手双线边 + 铜扣
-        drawOpenCapeBase('#496ea3', '#6c92c7', '#293f63', '#f2c864', '#f2c864'); if (isFlatPose) return;
-        px(ox + 1, oy + 10, '#f2c864'); px(ox + 3, oy + 10, '#f2c864'); px(ox + 5, oy + 10, '#f2c864');
-        px(ox + 12, oy + 9, '#ffffff'); px(ox + 13, oy + 9, '#293f63');
+        // 牛仔披肩：复古水洗丹宁蓝 + 奶白羊羔毛领边 + 明黄口袋车线 + 复古黄铜铆钉扣
+        drawOpenCapeBase('#527ab0', '#7ba2d4', '#fff7e8', '#e8d9c0', '#e8b85a'); if (isFlatPose) return;
+        px(ox + 4, oy + 7, '#fff7e8'); px(ox + 5, oy + 7, '#fff7e8'); px(ox + 12, oy + 7, '#fff7e8'); px(ox + 13, oy + 7, '#fff7e8');
+        px(ox + 2, oy + 9, '#f0c45d'); px(ox + 3, oy + 9, '#33507d'); px(ox + 4, oy + 9, '#f0c45d');
+        px(ox + 3, oy + 10, '#33507d'); px(ox + 13, oy + 8, '#e8b85a');
       } else if (acc === 'cape_angel_feather') {
         // 羽翼蕾丝斗篷：象牙白多层羽毛肩披 + 天蓝金丝领结 + 羽毛锯齿长尾摆
         drawOpenCapeBase('#fcfaff', '#e8f2ff', '#ffffff', '#d4e8ff', '#ffe078'); if (isFlatPose) return;
@@ -17844,10 +17857,12 @@
         px(ox + 5, oy + 7, '#f5e2c8'); px(ox + 6, oy + 7, '#fffdf5'); px(ox + 12, oy + 7, '#fffdf5'); px(ox + 13, oy + 7, '#f5e2c8');
         px(ox + 2, oy + 9, '#ffe078'); px(ox + 3, oy + 9, '#ffb84d'); px(ox + 2, oy + 10, '#ffb84d');
       } else if (acc === 'cape_stained_glass') {
-        // 彩窗琉璃披风：深蓝灰铅框披风 + 玫瑰红/琥珀金/孔雀青菱形彩窗拼花
-        drawOpenCapeBase('#3a4866', '#56688c', '#ffe078', '#78d4e0', '#ffe078'); if (isFlatPose) return;
-        px(ox + 2, oy + 8, '#ff789e'); px(ox + 4, oy + 9, '#ffe078'); px(ox + 2, oy + 10, '#78d4e0');
-        px(ox + 5, oy + 8, '#78d4e0'); px(ox + 13, oy + 9, '#ff789e');
+        // 彩窗披风：暮夜靛蓝底 + 玫红/湖蓝/琥珀金/翡翠绿菱形彩窗拼花 + 复古金边
+        drawOpenCapeBase('#2b3452', '#43527a', '#e6be5c', '#fff2b8', '#f5cf6e'); if (isFlatPose) return;
+        px(ox + 2, oy + 8, '#f06292'); px(ox + 4, oy + 8, '#5cc8ff');
+        px(ox + 1, oy + 9, '#4dd0a8'); px(ox + 3, oy + 9, '#ffd54f'); px(ox + 5, oy + 9, '#b88cff');
+        px(ox + 2, oy + 10, '#5cc8ff'); px(ox + 4, oy + 10, '#f06292');
+        px(ox + 13, oy + 9, '#ffd54f');
       } else if (acc === 'cape_music_notes') {
         // 琴键乐谱披肩：象牙白流线披肩 + 经典黑白钢琴键下摆 + 暖金音符领扣
         drawOpenCapeBase('#fffaf0', '#ffffff', '#2b2630', '#ffffff', '#f2c44c'); if (isFlatPose) return;
@@ -50401,13 +50416,16 @@
         return;
       }
       if (typeof MediaMetadata === 'undefined') return;
-      const artUrl = buildPuppyIslandArtworkUrl();
+      const customImg = (typeof config.puppyIslandCustomImg === 'string' && config.puppyIslandCustomImg.startsWith('data:image/'))
+        ? config.puppyIslandCustomImg : '';
+      const artUrl = customImg || buildPuppyIslandArtworkUrl();
+      const artType = artUrl.startsWith('data:image/jpeg') ? 'image/jpeg' : 'image/png';
       const pname = getPupName();
       win.navigator.mediaSession.metadata = new MediaMetadata({
         title: `${pname}正在陪伴中`,
         artist: '狗来财 · 后台守护',
         album: `${pname}的小窝`,
-        artwork: artUrl ? [{ src: artUrl, sizes: '512x512', type: 'image/png' }] : [],
+        artwork: artUrl ? [{ src: artUrl, sizes: '512x512', type: artType }] : [],
       });
       win.navigator.mediaSession.playbackState = 'playing';
     } catch (_) {}
@@ -50434,6 +50452,16 @@
       pupIslandBtn.classList.toggle('active', on);
       pupIslandBtn.classList.toggle('care', on);
     }
+    const islandPrev = root.querySelector('#st-tb-pup-island-preview');
+    const islandClear = root.querySelector('#st-tb-pup-island-clear');
+    const islandUpload = root.querySelector('#st-tb-pup-island-upload');
+    const hasCustomIsland = typeof config.puppyIslandCustomImg === 'string' && config.puppyIslandCustomImg.startsWith('data:image/');
+    if (islandPrev) {
+      islandPrev.style.display = hasCustomIsland ? 'inline-block' : 'none';
+      if (hasCustomIsland) islandPrev.src = config.puppyIslandCustomImg;
+    }
+    if (islandClear) islandClear.style.display = hasCustomIsland ? 'inline-flex' : 'none';
+    if (islandUpload) islandUpload.textContent = hasCustomIsland ? '更换图片' : '上传本地图';
     const barkBoxEl = root.querySelector('#st-tb-pup-bark-box');
     if (barkBoxEl) {
       barkBoxEl.style.display = (config.puppyBgNotify !== false) ? 'flex' : 'none';
@@ -50447,6 +50475,65 @@
       syncDynamicIslandArtwork();
       if (config.puppyEnabled) {
         showPuppyBubble(config.puppyIslandArtwork ? '强保活时灵动岛会显示我的样子啦~' : '已关闭灵动岛小狗形象显示~', 2200);
+      }
+    });
+  }
+
+  const pupIslandUploadBtn = root.querySelector('#st-tb-pup-island-upload');
+  const pupIslandFileInp = root.querySelector('#st-tb-pup-island-file');
+  const pupIslandClearBtn = root.querySelector('#st-tb-pup-island-clear');
+  if (pupIslandUploadBtn && pupIslandFileInp) {
+    pupIslandUploadBtn.addEventListener('click', () => {
+      pupIslandFileInp.value = '';
+      pupIslandFileInp.click();
+    });
+    pupIslandFileInp.addEventListener('change', (ev) => {
+      const file = ev.target && ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const cv = doc.createElement('canvas');
+            cv.width = 512; cv.height = 512;
+            const c2 = cv.getContext('2d');
+            if (!c2) return;
+            const iw = img.naturalWidth || img.width || 1;
+            const ih = img.naturalHeight || img.height || 1;
+            const scale = Math.max(512 / iw, 512 / ih);
+            const dw = iw * scale, dh = ih * scale;
+            c2.fillStyle = '#ffffff';
+            c2.fillRect(0, 0, 512, 512);
+            c2.drawImage(img, (512 - dw) / 2, (512 - dh) / 2, dw, dh);
+            let dataUrl = cv.toDataURL('image/jpeg', 0.88);
+            if (dataUrl.length > 130000) dataUrl = cv.toDataURL('image/jpeg', 0.72);
+            config.puppyIslandCustomImg = dataUrl;
+            config.puppyIslandArtwork = true;
+            saveConfig();
+            syncBgNotifyUI();
+            syncDynamicIslandArtwork();
+            if (config.puppyEnabled) {
+              showPuppyBubble('已换上你的自定义上岛图片，开启强保活即可生效~', 2400);
+            }
+          } catch (_) {
+            openPixelPupNoticeModal('上传失败', '图片处理失败，请换一张常见格式图片试试~');
+          }
+        };
+        img.onerror = () => openPixelPupNoticeModal('上传失败', '无法读取这张图片，请换一张试试~');
+        img.src = String(reader.result || '');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if (pupIslandClearBtn) {
+    pupIslandClearBtn.addEventListener('click', () => {
+      config.puppyIslandCustomImg = '';
+      saveConfig();
+      syncBgNotifyUI();
+      syncDynamicIslandArtwork();
+      if (config.puppyEnabled) {
+        showPuppyBubble('已恢复默认像素小狗上岛形象~', 2200);
       }
     });
   }
