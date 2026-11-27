@@ -2880,6 +2880,7 @@
     puppyBouquetRecipes: [],
     puppyDmRecentStickers: [],
     puppyDmBgCol: '',
+    puppyPendingBondShows: [],
     puppyBubbleMode: 'wrap',
     puppyGender: '',
     puppyGenderLocked: false,
@@ -37174,6 +37175,42 @@
             fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
             continue;
           }
+          // 收到好友羁绊专属互动页面（碰拳庆贺 / 星光双人舞 / 跨屏烟花告白）
+          if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__bond_show__') {
+            const meta = g.gifts[0];
+            const fromDisp = (config.puppyFriendRemarks && config.puppyFriendRemarks[g.fromId]) || g.fromName || '好友小狗';
+            const frMatch = (typeof getFriendList === 'function' ? getFriendList() : []).find(x => String(x.cloudId || '') === String(g.fromId || ''));
+            const frLk = (meta.fromLook && typeof meta.fromLook === 'object') ? meta.fromLook : (frMatch?.look || {});
+            const actType = String(meta.actType || 'punch');
+            const label = String(meta.label || '碰拳庆贺');
+            const sentAt = Number(meta.sentAt || g.ts || Date.now());
+            const isDelayed = (Date.now() - sentAt) > 120000;
+            const recItem = {
+              gid: g.id,
+              fromId: g.fromId,
+              fromName: fromDisp,
+              actType,
+              label,
+              frLook: frLk,
+              sentAt,
+              wasOffline: Boolean(doc.hidden || isDelayed),
+            };
+            win.__stSeenBondShowGids = win.__stSeenBondShowGids || new Set();
+            if (!win.__stSeenBondShowGids.has(g.id)) {
+              win.__stSeenBondShowGids.add(g.id);
+              config.puppyPendingBondShows = Array.isArray(config.puppyPendingBondShows) ? config.puppyPendingBondShows : [];
+              if (!config.puppyPendingBondShows.some(x => x && x.gid === g.id)) {
+                config.puppyPendingBondShows.push(recItem);
+                if (config.puppyPendingBondShows.length > 10) config.puppyPendingBondShows = config.puppyPendingBondShows.slice(-10);
+                saveConfig();
+              }
+              if (!doc.hidden && typeof flushPendingBondShows === 'function') {
+                setTimeout(() => flushPendingBondShows(), 260);
+              }
+            }
+            fetch(`${baseUrl}/ack`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toId: myId, giftId: g.id }) }).catch(() => {});
+            continue;
+          }
           // 收到好友手工 DIY 花束礼物：在线直接弹窗展示花束，离线/切屏先放桌面礼物盒！
           if (Array.isArray(g.gifts) && g.gifts[0] && g.gifts[0].kind === '__bouquet__') {
             const bq = g.gifts[0];
@@ -37772,6 +37809,173 @@
     rm.addEventListener('pointerdown', (e2) => { e2.stopPropagation(); if (e2.target === rm) e2.preventDefault(); });
     rm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === rm) e2.preventDefault(); });
     root.appendChild(rm); applyPupModalThemeAndTop(rm);
+  };
+
+  var playBondShowDirect = (rec, onAfterClose = null) => {
+    if (!rec) return;
+    const actType = String(rec.actType || 'punch');
+    const label = String(rec.label || '碰拳庆贺');
+    const fromN = String(rec.fromName || '好友小狗');
+    const bub = rec.wasOffline
+      ? `在你离线/切屏期间，「${fromN}」发来了【${label}】~`
+      : `「${fromN}」向你发起了【${label}】！`;
+    if (config.puppyEnabled) {
+      setPuppyState(actType === 'firework' ? 'love_firework' : (actType === 'dance' ? 'music' : 'happy'), 140);
+      for (let i = 0; i < 10; i++) spawnPupFx(i % 2 ? 'heart' : 'sparkle', 6 + (i % 5) * 3, 4 + (i % 2) * 3);
+      showPuppyBubble(bub, 3800);
+    }
+    if (typeof win.__stOpenBondActionShowModal === 'function') {
+      win.__stOpenBondActionShowModal(actType, label, bub, rec.frLook || {}, true, onAfterClose);
+      return;
+    }
+    // 独立兜底渲染（即使对方尚未打开过羁绊弹窗也能完整播放双狗舞台页面）
+    let sm = root.querySelector('#st-tb-bond-show-mask');
+    if (sm) sm.remove();
+    sm = doc.createElement('div');
+    sm.id = 'st-tb-bond-show-mask';
+    sm.className = 'st-px-submodal-keep-bag';
+    sm.style.cssText = 'position:fixed;inset:0;z-index:10045;background:rgba(16,14,26,0.58);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    const card = doc.createElement('div');
+    card.style.cssText = 'width:min(310px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.28);text-align:center;';
+    const titleDiv = doc.createElement('div');
+    titleDiv.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:6px;';
+    titleDiv.textContent = label;
+    const cvs = doc.createElement('canvas');
+    cvs.width = 160; cvs.height = 84;
+    cvs.style.cssText = 'width:100%;height:auto;aspect-ratio:160/84;image-rendering:pixelated;border:1.5px solid var(--px-border,#bfa4ae);display:block;margin-bottom:6px;';
+    const cap = doc.createElement('div');
+    cap.style.cssText = 'font-size:10.5px;line-height:1.45;margin-bottom:8px;';
+    cap.textContent = bub;
+    const btnRow = doc.createElement('div');
+    btnRow.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:6px;';
+    const replayBtn = doc.createElement('button');
+    replayBtn.type = 'button'; replayBtn.className = 'st-px-btn'; replayBtn.style.cssText = 'height:24px;font-size:10px;'; replayBtn.textContent = '重播演出';
+    const closeBtn = doc.createElement('button');
+    closeBtn.type = 'button'; closeBtn.className = 'st-px-btn care'; closeBtn.style.cssText = 'height:24px;font-size:10px;'; closeBtn.textContent = '好耶，收起';
+    btnRow.append(replayBtn, closeBtn);
+    card.append(titleDiv, cvs, cap, btnRow);
+    sm.appendChild(card);
+    root.appendChild(sm); applyPupModalThemeAndTop(sm);
+    const g2 = cvs.getContext('2d');
+    let tick = 0, animId = null;
+    const myLk = { fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline, outfit: config.puppyOutfit, accs: config.puppyAccs || [], comp: config.puppyCompanion || 'none', accOffsets: config.puppyAccOffsets || {}, onesieShowEars: config.puppyOnesieShowEars };
+    const frLk = (rec.frLook && typeof rec.frLook === 'object') ? rec.frLook : {};
+    const drawDogAt = (lk, dx, dy, flipX, pose) => {
+      const pal = { o: lk.outline || '#3b2a22', w: lk.fur || '#fffdf7', s: shadeHex(lk.fur || '#fffdf7', 0.9), e: lk.ear || '#e2ae74', r: lk.collar || '#d66565', g: '#f4c842', k: '#241a15', p: '#ff9eb5', c: '#7a5a4e' };
+      const grid = PUP_SPRITES[pose] || PUP_SPRITES.idle1 || [];
+      const isSit = pose === 'sit1' || pose === 'sit2';
+      g2.save();
+      g2.translate(Math.round(dx), Math.round(dy));
+      if (flipX) { g2.translate(16, 0); g2.scale(-1, 1); }
+      for (let y = 0; y < grid.length; y++) {
+        const row = grid[y];
+        for (let x = 0; x < row.length; x++) {
+          const c = pal[row[x]];
+          if (c) { g2.fillStyle = c; g2.fillRect(x, y, 1, 1); }
+        }
+      }
+      const prevCtx = activePxCtx, prevOff = config.puppyAccOffsets, prevEars = config.puppyOnesieShowEars;
+      try {
+        activePxCtx = g2;
+        config.puppyAccOffsets = lk.accOffsets || {};
+        config.puppyOnesieShowEars = Boolean(lk.onesieShowEars);
+        drawPupOutfit(lk.outfit || 'none', 0, 0, 10, 2, false, false, isSit, false);
+        if (Array.isArray(lk.accs)) lk.accs.forEach(a => drawPupAccessory(a, 10, 2, 0, 0, false, false, isSit));
+      } finally {
+        activePxCtx = prevCtx; config.puppyAccOffsets = prevOff; config.puppyOnesieShowEars = prevEars;
+      }
+      g2.restore();
+    };
+    const renderFrame = () => {
+      if (!g2 || !doc.body.contains(sm)) { if (animId) clearInterval(animId); return; }
+      tick++;
+      const t = tick;
+      g2.clearRect(0, 0, 160, 84);
+      if (actType === 'punch') {
+        g2.fillStyle = '#fff5e4'; g2.fillRect(0, 0, 160, 84);
+        g2.fillStyle = '#f3d8b8'; g2.fillRect(0, 62, 160, 22);
+        const phase = t % 36;
+        const approach = phase < 14 ? phase * 1.4 : (phase < 22 ? 19.6 : Math.max(0, (36 - phase) * 1.4));
+        const hop = (phase >= 12 && phase <= 22) ? -Math.round(Math.sin(((phase - 12) / 10) * Math.PI) * 7) : 0;
+        drawDogAt(myLk, 44 + approach, 48 + hop, false, hop < -2 ? 'happy' : 'idle1');
+        drawDogAt(frLk, 100 - approach, 48 + hop, true, hop < -2 ? 'happy' : 'idle1');
+        if (phase >= 13 && phase <= 23) {
+          const r = (phase - 12) * 2.2;
+          for (let k = 0; k < 8; k++) {
+            const a = (k / 8) * Math.PI * 2;
+            g2.fillStyle = k % 2 ? '#ff7aa8' : '#ffd24c';
+            g2.fillRect(80 + Math.round(Math.cos(a) * r), 46 + Math.round(Math.sin(a) * r), 2, 2);
+          }
+        }
+      } else if (actType === 'dance') {
+        g2.fillStyle = '#1e1b38'; g2.fillRect(0, 0, 160, 84);
+        g2.fillStyle = '#2d2754'; g2.fillRect(0, 62, 160, 22);
+        g2.fillStyle = 'rgba(255,236,168,0.14)';
+        const swayBeam = Math.round(Math.sin(t * 0.12) * 10);
+        g2.fillRect(42 + swayBeam, 0, 26, 66);
+        g2.fillRect(92 - swayBeam, 0, 26, 66);
+        const stepX = Math.round(Math.sin(t * 0.16) * 14);
+        const hop1 = Math.abs(Math.round(Math.sin(t * 0.32) * 6));
+        const hop2 = Math.abs(Math.round(Math.cos(t * 0.32) * 6));
+        drawDogAt(myLk, 52 + stepX, 49 - hop1, stepX < 0, 'happy');
+        drawDogAt(frLk, 92 - stepX, 49 - hop2, stepX >= 0, 'happy');
+        const noteCols = ['#ffe078', '#ffadc4', '#94dcff'];
+        for (let i = 0; i < 7; i++) {
+          const nx = (22 + i * 21 + t) % 156;
+          const ny = 10 + ((i * 13 + Math.round(Math.sin(t * 0.2 + i) * 6)) % 34);
+          g2.fillStyle = noteCols[i % 3];
+          g2.fillRect(nx, ny, 2, 2); g2.fillRect(nx + 1, ny - 2, 1, 2);
+        }
+      } else {
+        g2.fillStyle = '#171d38'; g2.fillRect(0, 0, 160, 84);
+        g2.fillStyle = '#212c52'; g2.fillRect(0, 62, 160, 22);
+        for (let i = 0; i < 6; i++) {
+          g2.fillStyle = 'rgba(180,210,255,0.22)';
+          g2.fillRect((12 + i * 26 + Math.floor(t / 3)) % 152, 68 + (i % 3) * 4, 10, 1);
+        }
+        drawDogAt(myLk, 58, 50, false, 'sit1');
+        drawDogAt(frLk, 86, 50, true, 'sit1');
+        const fws = [
+          { cx: 44, cy: 22, phase: t % 30, col1: '#ff7aa8', col2: '#ffe484' },
+          { cx: 80, cy: 18, phase: (t + 10) % 30, col1: '#7ce0ff', col2: '#ffffff' },
+          { cx: 118, cy: 24, phase: (t + 20) % 30, col1: '#d19eff', col2: '#ffadc4' },
+        ];
+        fws.forEach(fw => {
+          if (fw.phase < 8) {
+            g2.fillStyle = fw.col2; g2.fillRect(fw.cx, 54 - fw.phase * 4, 2, 4);
+          } else {
+            const r = (fw.phase - 8) * 1.15;
+            for (let k = 0; k < 10; k++) {
+              const a = (k / 10) * Math.PI * 2;
+              g2.fillStyle = k % 2 ? fw.col1 : fw.col2;
+              g2.fillRect(fw.cx + Math.round(Math.cos(a) * r), fw.cy + Math.round(Math.sin(a) * r), 2, 2);
+            }
+          }
+        });
+      }
+    };
+    renderFrame();
+    animId = setInterval(renderFrame, 90);
+    const closeShow = (e2) => {
+      if (e2) e2.stopPropagation();
+      if (animId) clearInterval(animId);
+      win.__stSubModalClosedAt = Date.now();
+      sm.remove();
+      if (typeof onAfterClose === 'function') setTimeout(() => { try { onAfterClose(); } catch (_) {} }, 180);
+    };
+    replayBtn.addEventListener('click', (e2) => { e2.stopPropagation(); tick = 0; });
+    closeBtn.addEventListener('click', closeShow);
+    sm.addEventListener('pointerdown', (e2) => { e2.stopPropagation(); if (e2.target === sm) e2.preventDefault(); });
+    sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) e2.preventDefault(); });
+  };
+
+  var flushPendingBondShows = () => {
+    if (doc.hidden) return;
+    if (root.querySelector('#st-tb-bond-show-mask')) return;
+    if (!Array.isArray(config.puppyPendingBondShows) || !config.puppyPendingBondShows.length) return;
+    const nextRec = config.puppyPendingBondShows.shift();
+    saveConfig();
+    playBondShowDirect(nextRec, () => flushPendingBondShows());
   };
 
   const claimNextDeskCloudGift = () => {
@@ -40281,7 +40485,7 @@
     mask.querySelector('#st-bm-close')?.addEventListener('click', closeBm);
     mask.querySelector('#st-bm-ok')?.addEventListener('click', closeBm);
     mask.querySelector('#st-bm-coadv')?.addEventListener('click', () => { closeBm(); startCoopCloudAdventure(fr); });
-    const openBondActionShowModal = (actType, label, bub) => {
+    const openBondActionShowModal = (actType, label, bub, overrideFrLook = null, strictBtnClose = false, onAfterClose = null) => {
       let sm = root.querySelector('#st-tb-bond-show-mask');
       if (sm) sm.remove();
       sm = doc.createElement('div');
@@ -40292,7 +40496,7 @@
       card.style.cssText = 'width:min(310px,92vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:10px;box-shadow:3px 3px 0 rgba(59,42,34,0.28);text-align:center;';
       const titleDiv = doc.createElement('div');
       titleDiv.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:6px;';
-      titleDiv.textContent = `[专属联机演出] ${label}`;
+      titleDiv.textContent = label;
       const cvs = doc.createElement('canvas');
       cvs.width = 160; cvs.height = 84;
       cvs.style.cssText = 'width:100%;height:auto;aspect-ratio:160/84;image-rendering:pixelated;border:1.5px solid var(--px-border,#bfa4ae);display:block;margin-bottom:6px;';
@@ -40314,7 +40518,7 @@
       let tick = 0;
       let animId = null;
       const myLk = { fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline, outfit: config.puppyOutfit, accs: config.puppyAccs || [], comp: config.puppyCompanion || 'none', accOffsets: config.puppyAccOffsets || {}, onesieShowEars: config.puppyOnesieShowEars };
-      const frLk = fr.look || {};
+      const frLk = (overrideFrLook && typeof overrideFrLook === 'object') ? overrideFrLook : ((typeof fr !== 'undefined' && fr && fr.look) ? fr.look : {});
       const drawDogAt = (lk, dx, dy, flipX, pose) => {
         const pal = { o: lk.outline || '#3b2a22', w: lk.fur || '#fffdf7', s: shadeHex(lk.fur || '#fffdf7', 0.9), e: lk.ear || '#e2ae74', r: lk.collar || '#d66565', g: '#f4c842', k: '#241a15', p: '#ff9eb5', c: '#7a5a4e' };
         const grid = PUP_SPRITES[pose] || PUP_SPRITES.idle1 || [];
@@ -40430,12 +40634,16 @@
         if (animId) clearInterval(animId);
         win.__stSubModalClosedAt = Date.now();
         sm.remove();
+        if (typeof onAfterClose === 'function') {
+          setTimeout(() => { try { onAfterClose(); } catch (_) {} }, 180);
+        }
       };
       replayBtn.addEventListener('click', (e2) => { e2.stopPropagation(); tick = 0; });
       closeBtn.addEventListener('click', closeShow);
-      sm.addEventListener('pointerdown', (e2) => e2.stopPropagation());
-      sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === sm) closeShow(e2); });
+      sm.addEventListener('pointerdown', (e2) => { e2.stopPropagation(); if (strictBtnClose && e2.target === sm) e2.preventDefault(); });
+      sm.addEventListener('click', (e2) => { e2.stopPropagation(); if (!strictBtnClose && e2.target === sm) closeShow(e2); });
     };
+    win.__stOpenBondActionShowModal = openBondActionShowModal;
 
     const runBondAction = (needLv, actType, label, bub) => {
       if (info.lv < needLv) { openPixelPupNoticeModal('尚未解锁', `与「${fr.name}」的汪汪羁绊达到 Lv.${needLv} 后即可解锁【${label}】哦~`); return; }
@@ -40445,8 +40653,34 @@
         for (let i = 0; i < 10; i++) spawnPupFx(i % 2 ? 'heart' : 'sparkle', 6 + (i % 5) * 3, 4 + (i % 2) * 3);
         showPuppyBubble(bub, 3800);
       }
-      openBondActionShowModal(actType, label, bub);
-      sendCloudRemotePoke(fr.cloudId, fr.name);
+      openBondActionShowModal(actType, label, bub, fr.look || {}, false);
+      // 发送专属羁绊互动页面给好友（不再发成隔空贴贴通知和回执！）
+      try {
+        const baseUrl = getCloudBaseUrl();
+        const myLkSend = {
+          fur: config.puppyFur, ear: config.puppyEar, collar: config.puppyCollar, outline: config.puppyOutline,
+          outfit: config.puppyOutfit, accs: config.puppyAccs || [], comp: config.puppyCompanion || 'none',
+          accOffsets: config.puppyAccOffsets || {}, onesieShowEars: config.puppyOnesieShowEars,
+        };
+        fetchWithTimeout(`${baseUrl}/gift`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fromId: ensureMyCloudId(),
+            fromName: getPupName(),
+            toId: fr.cloudId,
+            gifts: [{
+              kind: '__bond_show__',
+              actType,
+              label,
+              fromLook: myLkSend,
+              sentAt: Date.now(),
+            }],
+            redPacket: 0,
+            msg: `邀请你一起看【${label}】~`,
+          }),
+        }, 7000).catch(() => {});
+      } catch (_) {}
     };
     mask.querySelector('#st-bm-act1')?.addEventListener('click', () => runBondAction(3, 'punch', '碰拳庆贺', `和「${fr.name}」隔空双爪碰拳庆贺啦！`));
     mask.querySelector('#st-bm-act2')?.addEventListener('click', () => runBondAction(5, 'dance', '星光双人舞', `伴着星光和「${fr.name}」跳了一支双人舞~`));
@@ -53134,6 +53368,7 @@
       if (typeof syncCloudGuestLooks === 'function') setTimeout(() => { if (!doc.hidden) syncCloudGuestLooks(true); }, 1500);
       if (typeof syncDeskDmNoticeStack === 'function') setTimeout(() => { if (!doc.hidden) syncDeskDmNoticeStack(); }, 1650);
       if (typeof checkFinishedCoopAdventures === 'function') setTimeout(() => { if (!doc.hidden) checkFinishedCoopAdventures(); }, 1800);
+      if (typeof flushPendingBondShows === 'function') setTimeout(() => { if (!doc.hidden) flushPendingBondShows(); }, 1950);
       if (pendingJumpToReplyTopMesId !== null) {
         const jumpMid = pendingJumpToReplyTopMesId;
         pendingJumpToReplyTopMesId = null;
