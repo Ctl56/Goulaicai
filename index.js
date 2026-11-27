@@ -339,11 +339,17 @@
     { id: 'cape_rose_tassel', name: '玫瑰流苏披肩', price: 17, cat: 'cape' },
     { id: 'cape_denim_hood', name: '牛仔学院披肩', price: 14, cat: 'cape' },
     { id: 'cape_angel_feather', name: '羽翼蕾丝斗篷', price: 20, cat: 'cape' },
-    { id: 'cape_strawberry_cream', name: '草莓奶油披肩', price: 18, cat: 'cape' },
+    { id: 'cape_strawberry_cream', name: '草莓奶盖披风', price: 18, cat: 'cape' },
     { id: 'cape_star_witch', name: '星月魔女披风', price: 22, cat: 'cape' },
-    { id: 'cape_forest_elf', name: '森林精灵叶篷', price: 19, cat: 'cape' },
+    { id: 'cape_emerald_elf', name: '森林精灵叶篷', price: 19, cat: 'cape' },
     { id: 'cape_royal_swan', name: '天鹅绒毛大披风', price: 24, cat: 'cape' },
     { id: 'cape_cherry_kimono', name: '落樱流苏羽织', price: 21, cat: 'cape' },
+    { id: 'cape_patchwork_quilt', name: '拼布格子小斗篷', price: 17, cat: 'cape' },
+    { id: 'cape_sailor_ribbon', name: '水手领丝带披肩', price: 16, cat: 'cape' },
+    { id: 'cape_macaron_ruffle', name: '马卡龙多层荷叶披', price: 19, cat: 'cape' },
+    { id: 'cape_fox_fur_autumn', name: '枫叶毛领小披风', price: 20, cat: 'cape' },
+    { id: 'cape_stained_glass', name: '彩窗琉璃披风', price: 22, cat: 'cape' },
+    { id: 'cape_music_notes', name: '琴键乐谱披肩', price: 18, cat: 'cape' },
     { id: 'cape_peach_cream', name: '蜜桃奶霜披风', price: 15, cat: 'cape' },
     { id: 'cape_forest_elf', name: '森系绿叶披风', price: 17, cat: 'cape' },
     { id: 'cape_snow_crystal', name: '雪绒冰晶披风', price: 18, cat: 'cape' },
@@ -1753,6 +1759,10 @@
     { id: 'gacha_cape_butterfly_shawl', name: '蝶翼轻纱披肩', tier: 'SR' },
     { id: 'gacha_cape_strawberry_cream', name: '草莓奶油披肩', tier: 'SR' },
     { id: 'gacha_cape_moon_moth', name: '月影轻纱斗篷', tier: 'SR' },
+    { id: 'gacha_cape_celestial_train', name: '星河拖尾圣披', tier: 'SSR' },
+    { id: 'gacha_cape_wisteria_train', name: '紫藤花瀑长披', tier: 'SSR' },
+    { id: 'gacha_cape_snowqueen_train', name: '冰晶雪后长篷', tier: 'SR' },
+    { id: 'gacha_cape_golden_phoenix', name: '晨曦流金长披', tier: 'SR' },
   ];
   const GACHA_COMPANIONS = [
     { id: 'gacha_mini_angel', name: '小天使灵', tier: 'SSR' },
@@ -17691,10 +17701,8 @@
         drawOpenCapeBase('#26232b', '#3a3542', '#26232b', '#ffffff', '#cfd6e6'); if (isFlatPose) return;
         px(ox + 6, cy, '#cfd6e6'); px(ox + 8, cy, '#cfd6e6');
       } else if (acc === 'cape_red_riding') {
-        // 小红帽绒斗篷：暖莓红绒面 + 奶白毛绒包边与下摆 + 金色蝴蝶结扣
+        // 小红帽绒斗篷：纯粹暖莓红绒面披风背 + 奶白毛绒下摆 + 金色领口小扣
         drawOpenCapeBase('#c93848', '#de5060', '#fffaf0', '#f7ead7', '#f5cc6c'); if (isFlatPose) return;
-        px(ox + 3, cy + 1, '#fffaf0'); px(ox + 11, cy + 1, '#fffaf0');
-        px(ox + 3, cy + 2, '#fffaf0'); px(ox + 11, cy + 2, '#fffaf0');
         px(ox + 9, oy + 7, '#f5cc6c');
       } else if (acc === 'cape_ivory_pearl') {
         // 象牙珍珠披肩：温润奶白披肩 + 香槟金肩线 + 垂坠珍珠圆点下摆
@@ -17778,10 +17786,10 @@
         px(ox + 0, cy + 4, '#f2cc74'); px(ox + 2, cy + 4, '#f2cc74'); px(ox + 12, cy + 4, '#f2cc74'); px(ox + 14, cy + 4, '#f2cc74');
         px(ox + 0, cy + 5, '#ffe599'); px(ox + 14, cy + 5, '#ffe599');
       } else if (acc === 'cape_denim_hood') {
-        // 牛仔学院披肩：丹宁蓝 + 明黄车线 + 藏青水手条纹边
-        drawOpenCapeBase('#4d73a6', '#6b91c4', '#2b4266', '#ffffff', '#f0c458'); if (isFlatPose) return;
-        px(ox + 3, cy + 1, '#f0c458'); px(ox + 11, cy + 1, '#f0c458');
-        px(ox + 3, cy + 2, '#f0c458'); px(ox + 11, cy + 2, '#f0c458');
+        // 牛仔学院披肩：水洗丹宁蓝披风 + 背后口袋明黄车线 + 深靛水手双线边 + 铜扣
+        drawOpenCapeBase('#496ea3', '#6c92c7', '#293f63', '#f2c864', '#f2c864'); if (isFlatPose) return;
+        px(ox + 1, oy + 10, '#f2c864'); px(ox + 3, oy + 10, '#f2c864'); px(ox + 5, oy + 10, '#f2c864');
+        px(ox + 12, oy + 9, '#ffffff'); px(ox + 13, oy + 9, '#293f63');
       } else if (acc === 'cape_angel_feather') {
         // 羽翼蕾丝斗篷：象牙白多层羽毛肩披 + 天蓝金丝领结 + 羽毛锯齿长尾摆
         drawOpenCapeBase('#fcfaff', '#e8f2ff', '#ffffff', '#d4e8ff', '#ffe078'); if (isFlatPose) return;
@@ -17798,11 +17806,12 @@
         drawOpenCapeBase('#3b2e66', '#56448c', '#ffe078', '#3b2e66', '#ffe078'); if (isFlatPose) return;
         px(ox + 3, oy + 8, '#ffe078'); px(ox + 2, oy + 9, '#ffe078'); px(ox + 3, oy + 10, '#ffe078');
         px(ox + 0, oy + 12, '#3b2e66'); px(ox + 2, oy + 12, '#ffe078'); px(ox + 5, oy + 12, '#56448c');
-      } else if (acc === 'cape_forest_elf') {
-        // 森林精灵叶篷：翠绿分层尖叶斗篷 + 露珠高光 + 小白花脖扣
-        drawOpenCapeBase('#4ea86e', '#76cc90', '#b8f2c8', '#3a8856', '#ffffff'); if (isFlatPose) return;
-        px(ox + 10, oy + 7, '#ffffff'); px(ox + 11, oy + 7, '#ffe078');
-        px(ox + 1, oy + 12, '#4ea86e'); px(ox + 4, oy + 12, '#76cc90'); px(ox + 2, oy + 9, '#d8ffea');
+      } else if (acc === 'cape_emerald_elf') {
+        // 森林精灵叶篷：深翠松绿精灵披风 + 背部鎏金藤蔓刺绣 + 锯齿尖叶下摆 + 琥珀叶扣
+        drawOpenCapeBase('#2c7a5b', '#429e78', '#ffe484', '#2c7a5b', '#ffe484'); if (isFlatPose) return;
+        px(ox + 2, oy + 8, '#ffe484'); px(ox + 3, oy + 9, '#ffe484'); px(ox + 4, oy + 10, '#ffe484');
+        px(ox + 0, oy + 12, '#2c7a5b'); px(ox + 2, oy + 12, '#429e78'); px(ox + 5, oy + 12, '#2c7a5b');
+        px(ox + 13, oy + 12, '#429e78');
       } else if (acc === 'cape_royal_swan') {
         // 天鹅绒毛大披风：雪白蓬松天鹅绒围领 + 香槟金长拖摆 + 珍珠垂坠流苏
         drawOpenCapeBase('#fffaf2', '#ffffff', '#f2c864', '#ffffff', '#f2c864'); if (isFlatPose) return;
@@ -17813,15 +17822,74 @@
         drawOpenCapeBase('#f08ca4', '#ffb5c8', '#ffe494', '#fff5f8', '#ffe494'); if (isFlatPose) return;
         px(ox + 9, oy + 7, '#ffffff'); px(ox + 10, oy + 7, '#ffe494'); px(ox + 11, oy + 7, '#ffffff');
         px(ox + 1, oy + 9, '#fff5f8'); px(ox + 2, oy + 10, '#ffe494'); px(ox + 0, oy + 12, '#ffe494'); px(ox + 1, oy + 12, '#f08ca4');
+      } else if (acc === 'cape_patchwork_quilt') {
+        // 拼布格子小斗篷：暖陶红、奶杏与鼠尾草绿撞色拼布方块 + 木质牛角扣
+        drawOpenCapeBase('#d9886c', '#f5dcc4', '#72b888', '#f5dcc4', '#8c5a38'); if (isFlatPose) return;
+        px(ox + 1, oy + 8, '#72b888'); px(ox + 2, oy + 8, '#72b888'); px(ox + 4, oy + 9, '#f5dcc4'); px(ox + 5, oy + 9, '#f5dcc4');
+        px(ox + 1, oy + 10, '#f5dcc4'); px(ox + 3, oy + 10, '#72b888'); px(ox + 13, oy + 9, '#72b888');
+      } else if (acc === 'cape_sailor_ribbon') {
+        // 水手领丝带披肩：纯白水手方领披肩 + 海军蓝双条纹边 + 绯红领结丝带
+        drawOpenCapeBase('#fcfdff', '#e6f0ff', '#2b4a7d', '#ffffff', '#e0485e'); if (isFlatPose) return;
+        for (let x = ox + 1; x <= ox + 6; x++) px(x, oy + 9, '#2b4a7d');
+        px(ox + 9, oy + 7, '#e0485e'); px(ox + 12, oy + 9, '#2b4a7d'); px(ox + 13, oy + 9, '#2b4a7d');
+      } else if (acc === 'cape_macaron_ruffle') {
+        // 马卡龙多层荷叶披：三层蜜桃粉、奶油黄、宝宝蓝渐变波浪荷叶披肩 + 珍珠扣
+        drawOpenCapeBase('#ffb8cc', '#ffdce8', '#a8dcff', '#ffe694', '#ffffff'); if (isFlatPose) return;
+        for (let x = ox + 0; x <= ox + 6; x++) px(x, oy + 9, '#ffe694');
+        for (let x = ox + 0; x <= ox + 6; x++) px(x, oy + 10, '#a8dcff');
+        px(ox + 12, oy + 9, '#ffe694'); px(ox + 13, oy + 9, '#ffe694'); px(ox + 12, oy + 10, '#a8dcff'); px(ox + 13, oy + 10, '#a8dcff');
+      } else if (acc === 'cape_fox_fur_autumn') {
+        // 枫叶毛领小披风：暖秋枫糖红棕披风 + 蓬松焦糖奶白毛领 + 金色小枫叶刺绣
+        drawOpenCapeBase('#b85238', '#d46e4e', '#f5e2c8', '#d9a474', '#f5e2c8'); if (isFlatPose) return;
+        px(ox + 5, oy + 7, '#f5e2c8'); px(ox + 6, oy + 7, '#fffdf5'); px(ox + 12, oy + 7, '#fffdf5'); px(ox + 13, oy + 7, '#f5e2c8');
+        px(ox + 2, oy + 9, '#ffe078'); px(ox + 3, oy + 9, '#ffb84d'); px(ox + 2, oy + 10, '#ffb84d');
+      } else if (acc === 'cape_stained_glass') {
+        // 彩窗琉璃披风：深蓝灰铅框披风 + 玫瑰红/琥珀金/孔雀青菱形彩窗拼花
+        drawOpenCapeBase('#3a4866', '#56688c', '#ffe078', '#78d4e0', '#ffe078'); if (isFlatPose) return;
+        px(ox + 2, oy + 8, '#ff789e'); px(ox + 4, oy + 9, '#ffe078'); px(ox + 2, oy + 10, '#78d4e0');
+        px(ox + 5, oy + 8, '#78d4e0'); px(ox + 13, oy + 9, '#ff789e');
+      } else if (acc === 'cape_music_notes') {
+        // 琴键乐谱披肩：象牙白流线披肩 + 经典黑白钢琴键下摆 + 暖金音符领扣
+        drawOpenCapeBase('#fffaf0', '#ffffff', '#2b2630', '#ffffff', '#f2c44c'); if (isFlatPose) return;
+        for (let x = ox + 0; x <= ox + 6; x++) px(x, oy + 10, x % 2 === 0 ? '#2b2630' : '#ffffff');
+        px(ox + 2, oy + 8, '#f2c44c'); px(ox + 3, oy + 8, '#f2c44c'); px(ox + 3, oy + 9, '#f2c44c');
+      } else if (acc === 'gacha_cape_celestial_train') {
+        // [扭蛋SSR·拖地] 星河拖尾圣披：深邃星夜靛蓝超长拖地披风 + 碎金星轨 + 冰蓝流光拖尾至 oy+13
+        drawOpenCapeBase('#262d59', '#3d4885', '#94dcff', '#ffe484', '#ffe484'); if (isFlatPose) return;
+        px(ox + 2, oy + 8, '#ffe484'); px(ox + 4, oy + 9, '#ffffff'); px(ox + 1, oy + 10, '#94dcff');
+        for (let x = ox - 1; x <= ox + 6; x++) px(x, oy + 12, x % 2 === 0 ? '#262d59' : '#3d4885');
+        for (let x = ox - 2; x <= ox + 5; x++) px(x, oy + 13, x % 2 === 0 ? '#94dcff' : '#ffe484');
+        px(ox + 12, oy + 12, '#3d4885'); px(ox + 13, oy + 12, '#94dcff'); px(ox + 14, oy + 12, '#ffe484');
+      } else if (acc === 'gacha_cape_wisteria_train') {
+        // [扭蛋SSR·拖地] 紫藤花瀑长披：渐变丁香至奶白拖地花瀑披风 + 青藤领扣 + 垂坠花穗至 oy+13
+        drawOpenCapeBase('#9e7cd9', '#c8b0f5', '#f5ecff', '#b38ce6', '#72c488'); if (isFlatPose) return;
+        px(ox + 1, oy + 9, '#f5ecff'); px(ox + 3, oy + 10, '#ffffff');
+        for (let x = ox - 1; x <= ox + 6; x++) px(x, oy + 12, x % 2 === 0 ? '#c8b0f5' : '#e6d8ff');
+        for (let x = ox - 2; x <= ox + 5; x++) px(x, oy + 13, x % 2 === 0 ? '#f5ecff' : '#ffffff');
+        px(ox + 12, oy + 12, '#c8b0f5'); px(ox + 13, oy + 12, '#f5ecff'); px(ox + 14, oy + 12, '#ffffff');
+      } else if (acc === 'gacha_cape_snowqueen_train') {
+        // [扭蛋SR·拖地] 冰晶雪后长篷：冰川浅蓝与晶白超长拖地披风 + 冰凌锯齿长尾至 oy+13
+        drawOpenCapeBase('#9ed8f5', '#d6f2ff', '#ffffff', '#78bce6', '#ffffff'); if (isFlatPose) return;
+        px(ox + 2, oy + 8, '#ffffff'); px(ox + 4, oy + 10, '#ffffff');
+        for (let x = ox - 1; x <= ox + 6; x++) px(x, oy + 12, x % 2 === 0 ? '#d6f2ff' : '#9ed8f5');
+        for (let x = ox - 1; x <= ox + 5; x += 2) px(x, oy + 13, '#ffffff');
+        px(ox + 12, oy + 12, '#d6f2ff'); px(ox + 13, oy + 12, '#ffffff');
+      } else if (acc === 'gacha_cape_golden_phoenix') {
+        // [扭蛋SR·拖地] 晨曦流金长披：珊瑚橘粉渐变香槟金羽翼拖地长披至 oy+13 + 珍珠金扣
+        drawOpenCapeBase('#eb7a6c', '#ffaa8a', '#ffe484', '#fff4cc', '#ffe484'); if (isFlatPose) return;
+        px(ox + 1, oy + 9, '#ffe484'); px(ox + 3, oy + 10, '#fff4cc');
+        for (let x = ox - 1; x <= ox + 6; x++) px(x, oy + 12, x % 2 === 0 ? '#ffaa8a' : '#ffe484');
+        for (let x = ox - 2; x <= ox + 5; x++) px(x, oy + 13, x % 2 === 0 ? '#ffe484' : '#fffdf0');
+        px(ox + 12, oy + 12, '#ffaa8a'); px(ox + 13, oy + 12, '#ffe484');
       } else if (acc === 'cape_peach_cream') {
         // 蜜桃奶霜披风：粉橘蜜桃渐变 + 奶油波浪边 + 珊瑚领扣
         drawOpenCapeBase('#ffb8a3', '#ffd9cc', '#fffaf5', '#ffd9cc', '#ff7a6b'); if (isFlatPose) return;
         px(ox + 1, cy + 4, '#fffaf5'); px(ox + 3, cy + 4, '#fffaf5'); px(ox + 11, cy + 4, '#fffaf5'); px(ox + 13, cy + 4, '#fffaf5');
       } else if (acc === 'cape_forest_elf') {
-        // 森系绿叶披风：锯齿尖叶精灵轮廓 + 金藤扣
-        drawOpenCapeBase('#48875a', '#6eb37e', '#366945', '#8cd496', '#f0cf6e'); if (isFlatPose) return;
-        px(ox - 1, cy + 3, '#6eb37e'); px(ox + 1, cy + 4, '#48875a'); px(ox + 3, cy + 4, '#6eb37e');
-        px(ox + 15, cy + 3, '#6eb37e'); px(ox + 13, cy + 4, '#48875a'); px(ox + 11, cy + 4, '#6eb37e');
+        // 森系绿叶披风：清新鼠尾草嫩叶分层披肩 + 晨露高光 + 领口与下摆小白雏菊点缀
+        drawOpenCapeBase('#68b878', '#98de9e', '#d8f7d6', '#4c9c5e', '#fffdf5'); if (isFlatPose) return;
+        px(ox + 2, oy + 9, '#fffdf5'); px(ox + 3, oy + 9, '#ffe078'); px(ox + 5, oy + 10, '#d8f7d6');
+        px(ox + 1, oy + 12, '#68b878'); px(ox + 4, oy + 12, '#98de9e');
       } else if (acc === 'cape_snow_crystal') {
         // 雪绒冰晶披风：冰川浅蓝 + 雪白毛领 + 悬垂冰晶尖坠
         drawOpenCapeBase('#a8d8f5', '#ddf2ff', '#ffffff', '#c7e9ff', '#ffffff'); if (isFlatPose) return;
