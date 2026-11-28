@@ -63430,46 +63430,90 @@
   };
   setInterval(fixRecentDupCardAvatars, 2200);
 
-  const openDupCharPickerForRecent = (targetName, sameNameIdxs, chars, cleanFile, onPick) => {
-    let m = root.querySelector('#st-tb-dupchar-pick-mask');
-    if (m) m.remove();
-    m = doc.createElement('div');
-    m.id = 'st-tb-dupchar-pick-mask';
-    m.style.cssText = 'position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
-    const box = doc.createElement('div');
-    box.style.cssText = 'width:min(300px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;';
-    box.innerHTML = `<div style="font-weight:700;font-size:13px;margin-bottom:4px;">选择对应的重名角色卡</div><div style="font-size:11px;opacity:0.75;margin-bottom:8px;">检测到多张名为「${escapeHtmlSimple(targetName)}」的卡片，选一次后以后会自动记住并修正头像和正则~</div>`;
-    const list = doc.createElement('div');
-    list.style.cssText = 'display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;margin-bottom:8px;';
-    sameNameIdxs.forEach(cid => {
-      const c = chars[cid];
-      if (!c) return;
-      const row = doc.createElement('button');
-      row.type = 'button';
-      row.className = 'st-tb-btn';
-      row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 8px;height:auto;';
-      row.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(c.avatar || '')}" style="width:34px;height:34px;border-radius:6px;object-fit:cover;flex-shrink:0;" /><div style="min-width:0;flex:1;"><div style="font-weight:700;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(c.name || '')}</div><div style="font-size:10px;opacity:0.68;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(c.avatar || '')}</div></div>`;
-      row.addEventListener('click', () => {
-        m.remove();
-        onPick(cid, c);
-      });
-      list.appendChild(row);
-    });
-    const cancelB = doc.createElement('button');
-    cancelB.type = 'button';
-    cancelB.className = 'st-tb-btn';
-    cancelB.style.width = '100%';
-    cancelB.textContent = '取消';
-    cancelB.addEventListener('click', () => m.remove());
-    box.append(list, cancelB);
-    m.appendChild(box);
-    m.addEventListener('click', (e2) => e2.stopPropagation());
-    root.appendChild(m);
+  // 全自动通过聊天内容指纹（original_avatar + 开场白/备选开场白比对）识别重名角色卡的真实归属，无需人工认领！
+  const autoDetectDupChatOwner = async (ctx, chars, sameNameIdxs, cleanWanted, fallbackAvatar) => {
+    const norm = (s) => String(s || '').replace(/\{\{user\}\}|\{\{char\}\}/gi, '').replace(/\s+/g, '').slice(0, 90);
+    // 尝试读取该聊天文件的消息列表（按候选卡的 avatar 逐一拉取）
+    let chatMsgs = null;
+    const candIdxs = fallbackAvatar
+      ? [
+          ...sameNameIdxs.filter(i => String(chars[i]?.avatar || '') === fallbackAvatar),
+          ...sameNameIdxs.filter(i => String(chars[i]?.avatar || '') !== fallbackAvatar),
+        ]
+      : sameNameIdxs;
+    if (cleanWanted && typeof ctx?.getRequestHeaders === 'function') {
+      for (const cid of candIdxs) {
+        const cObj = chars[cid];
+        if (!cObj || !cObj.avatar) continue;
+        try {
+          const res = await fetch('/api/chats/get', {
+            method: 'POST',
+            headers: ctx.getRequestHeaders(),
+            body: JSON.stringify({ ch_name: cObj.name, file_name: cleanWanted, avatar_url: cObj.avatar }),
+          });
+          if (res && res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+              chatMsgs = data;
+              break;
+            }
+          }
+        } catch (_) {}
+      }
+    }
+    if (Array.isArray(chatMsgs) && chatMsgs.length) {
+      // 1) 优先读取消息里记录的 original_avatar / avatar 字段
+      for (let i = 0; i < Math.min(chatMsgs.length, 6); i++) {
+        const m = chatMsgs[i];
+        if (!m || m.is_user) continue;
+        const origAv = String(m.original_avatar || m.force_avatar || '').trim();
+        if (origAv) {
+          const hit = sameNameIdxs.find(cid => String(chars[cid]?.avatar || '') === origAv);
+          if (hit !== undefined) return hit;
+        }
+      }
+      // 2) 比对第 0 层开场白文本与每张重名卡的 first_mes / alternate_greetings 指纹！
+      const firstAi = chatMsgs.find(m => m && !m.is_user && !m.is_system && (m.mes || (Array.isArray(m.swipes) && m.swipes.length)));
+      if (firstAi) {
+        const samples = [];
+        if (firstAi.mes) samples.push(norm(firstAi.mes));
+        if (Array.isArray(firstAi.swipes)) {
+          firstAi.swipes.slice(0, 6).forEach(sw => { if (sw) samples.push(norm(sw)); });
+        }
+        const validSamples = samples.filter(t => t.length >= 10);
+        if (validSamples.length) {
+          let bestCid = -1, bestScore = 0;
+          sameNameIdxs.forEach(cid => {
+            const c = chars[cid];
+            if (!c) return;
+            const greets = [
+              c.first_mes,
+              c.data?.first_mes,
+              ...(Array.isArray(c.data?.alternate_greetings) ? c.data.alternate_greetings : []),
+              ...(Array.isArray(c.alternate_greetings) ? c.alternate_greetings : []),
+            ].map(norm).filter(t => t.length >= 10);
+            let score = 0;
+            validSamples.forEach(sp => {
+              greets.forEach(gr => {
+                if (sp === gr) score += 100;
+                else if (sp.slice(0, 36) === gr.slice(0, 36)) score += 60;
+                else if (gr.includes(sp.slice(0, 24)) || sp.includes(gr.slice(0, 24))) score += 30;
+              });
+            });
+            if (score > bestScore) { bestScore = score; bestCid = cid; }
+          });
+          if (bestCid >= 0 && bestScore >= 30) return bestCid;
+        }
+      }
+    }
+    return candIdxs[0];
   };
 
   try {
     doc.addEventListener('click', async (ev) => {
       try {
+        // 绝不拦截卡片内的删除/编辑/操作按钮！
+        if (ev.target && ev.target.closest && ev.target.closest('button, .delete, .fa-trash, .fa-trash-can, .menu_button, .recentChatDelete, [data-action="delete"]')) return;
         const card = ev.target && ev.target.closest
           ? ev.target.closest('.recentChat, .recent_chat, .recentChatList .chat_card, .welcomePanel .recentChat')
           : null;
@@ -63504,36 +63548,33 @@
         ev.preventDefault();
         ev.stopPropagation();
         ev.stopImmediatePropagation();
+        win.__stSuppressDupChatToastUntil = Date.now() + 4500;
 
         const cleanWanted = rawFile.replace(/\.jsonl$/i, '');
-        const openExactCardAndChat = async (cid, cObj) => {
-          win.__stSuppressDupChatToastUntil = Date.now() + 4000;
-          if (cleanWanted && cObj?.avatar) {
-            if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
-            config.dupChatOwnerMap[cleanWanted] = cObj.avatar;
-            saveConfig();
-          }
-          await ctx.selectCharacterById(String(cid));
-          await new Promise(r => setTimeout(r, 120));
-          if (cleanWanted && typeof ctx.openCharacterChat === 'function') {
-            await ctx.openCharacterChat(cleanWanted);
-          }
-        };
+        let realCid = -1;
 
-        // 1. 优先使用我们记录的真实归属角色卡（彻底避免永远命中第一张重名卡！）
+        // 1. 优先用已记住的真实归属
         const savedAv = cleanWanted && config.dupChatOwnerMap ? config.dupChatOwnerMap[cleanWanted] : '';
         if (savedAv) {
-          const savedIdx = chars.findIndex(c => c && String(c.avatar || '') === savedAv);
-          if (savedIdx >= 0) {
-            await openExactCardAndChat(savedIdx, chars[savedIdx]);
-            return;
-          }
+          realCid = chars.findIndex(c => c && String(c.avatar || '') === savedAv);
         }
+        // 2. 未记住则全自动通过消息 original_avatar + 开场白指纹精准匹配真实角色卡！
+        if (realCid < 0) {
+          realCid = await autoDetectDupChatOwner(ctx, chars, sameNameIdxs, cleanWanted, avatar);
+        }
+        if (realCid < 0) realCid = sameNameIdxs[0];
 
-        // 2. 尚未记录过的历史重名聊天：弹出轻量头像选择器认领一次，之后永久自动匹配正确角色卡、头像和正则！
-        openDupCharPickerForRecent(targetName, sameNameIdxs, chars, cleanWanted, (pickedCid, pickedChar) => {
-          openExactCardAndChat(pickedCid, pickedChar);
-        });
+        const realChar = chars[realCid];
+        if (cleanWanted && realChar?.avatar) {
+          if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
+          config.dupChatOwnerMap[cleanWanted] = realChar.avatar;
+          saveConfig();
+        }
+        await ctx.selectCharacterById(String(realCid));
+        await new Promise(r => setTimeout(r, 140));
+        if (cleanWanted && typeof ctx.openCharacterChat === 'function') {
+          await ctx.openCharacterChat(cleanWanted);
+        }
       } catch (_) {}
     }, true);
   } catch (_) {}
