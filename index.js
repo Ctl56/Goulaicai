@@ -63737,18 +63737,10 @@
       box.style.cssText = 'width:min(308px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:13px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;line-height:1.55;';
       box.innerHTML = `
         <div style="font-weight:700;font-size:13px;margin-bottom:6px;">检测到重名角色卡</div>
-        <div style="font-size:11.5px;margin-bottom:10px;">角色「<b>${escapeHtmlSimple(ch.name || '')}</b>」共有 <b>${dupSiblings.length}</b> 张同名角色卡。如果当前聊天的头像、开场白或正则不对，可点下方按钮直接核对切换，也可以随时在<b>快捷面板 →「本角（当前角色）」→「切同名卡」</b>中手动切换。</div>
-        <div style="display:flex;gap:6px;">
-          <button type="button" id="st-dct-ok" class="st-tb-btn" style="flex:1;">知道了</button>
-          <button type="button" id="st-dct-go" class="st-tb-btn primary" style="flex:1.2;">立即切同名卡</button>
-        </div>
+        <div style="font-size:11.5px;margin-bottom:10px;">角色「<b>${escapeHtmlSimple(ch.name || '')}</b>」共有 <b>${dupSiblings.length}</b> 张同名角色卡。先核对一下当前聊天的头像、开场白或正则；如果不对，请打开<b>快捷面板 →「本角（当前角色）」→「切同名卡」</b>，按头像和开场白预览挑选对应的那一张。建议给不同重名卡换上不同头像，平时更容易一眼区分。</div>
+        <button type="button" id="st-dct-ok" class="st-tb-btn primary" style="width:100%;">知道了</button>
       `;
       box.querySelector('#st-dct-ok').addEventListener('click', () => tm.remove());
-      box.querySelector('#st-dct-go').addEventListener('click', () => {
-        tm.remove();
-        const latestChatId = String(getContext()?.chatId || curChatId || '').trim().replace(/\.jsonl$/i, '');
-        openDupSiblingSwitcherModal(ch, dupSiblings, latestChatId, null);
-      });
       tm.appendChild(box);
       tm.addEventListener('click', (e2) => e2.stopPropagation());
       root.appendChild(tm);
