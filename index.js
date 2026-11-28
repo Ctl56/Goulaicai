@@ -40597,8 +40597,13 @@
     const snacksMap = new Map();
     const photoResults = [];
     const friendNames = new Set();
+    const cdMapOff = getCoopAdvCdMap();
 
     items.forEach(ca => {
+      if (ca.friendCloudId) {
+        const realEnd = Number(ca.endAt) || Date.now();
+        cdMapOff[ca.friendCloudId] = Math.max(Number(cdMapOff[ca.friendCloudId] || 0), realEnd + 30 * 60 * 1000);
+      }
       const fr = getFriendList().find(x => x.cloudId === ca.friendCloudId);
       const bondInfo = fr ? getFriendBondInfo(fr) : { lv: 1 };
       const extraBonus = bondInfo.lv >= 9 ? 8 : (bondInfo.lv >= 7 ? 4 : 0);
@@ -40819,7 +40824,7 @@
     if (!ca || Date.now() < ca.endAt) return;
     closeCoopAdvProgressModal();
     delete advMap[friendCloudId];
-    cdMap[friendCloudId] = Date.now() + 30 * 60 * 1000;
+    cdMap[friendCloudId] = (Number(ca.endAt) || Date.now()) + 30 * 60 * 1000;
     const fr = getFriendList().find(x => x.cloudId === ca.friendCloudId);
     const bondInfo = fr ? getFriendBondInfo(fr) : { lv: 1 };
     const extraBonus = bondInfo.lv >= 9 ? 8 : (bondInfo.lv >= 7 ? 4 : 0);
@@ -40857,10 +40862,19 @@
   const checkFinishedCoopAdventures = () => {
     if (doc.hidden) return;
     const advMap = getCoopAdvMap();
-    const ready = Object.values(advMap).find(ca => ca && ca.endAt <= Date.now());
-    if (ready) {
-      claimCoopCloudAdventure(ready.friendCloudId);
+    const now = Date.now();
+    const readyList = Object.values(advMap).filter(ca => ca && ca.endAt <= now);
+    if (!readyList.length) return;
+    const isOfflineBatch = readyList.length >= 2 || readyList.some(ca => (now - Number(ca.endAt || now)) > 15000);
+    if (isOfflineBatch) {
+      closeCoopAdvProgressModal();
+      readyList.forEach(ca => {
+        if (ca.friendCloudId) delete advMap[ca.friendCloudId];
+      });
+      settleOfflineCoopAdventures(readyList);
+      return;
     }
+    claimCoopCloudAdventure(readyList[0].friendCloudId);
   };
 
   const openFriendBondModal = (cloudId, skipSync = false) => {
