@@ -63637,12 +63637,16 @@
     };
 
     let _dupFixInFlight = false;
+    let _lastDupFixAt = 0;
     let _lastDupFixKey = '';
     const verifyAndFixLoadedDupCharChat = async () => {
       if (_dupFixInFlight) return;
       try {
         const ctx = getContext();
-        const chid = Number(ctx?.characterId);
+        const rawChid = (ctx?.characterId !== undefined && ctx?.characterId !== null && ctx?.characterId !== '')
+          ? ctx.characterId
+          : win.this_chid;
+        const chid = Number(rawChid);
         const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
         if (!Number.isFinite(chid) || chid < 0 || !chars[chid]) return;
         const curChar = chars[chid];
@@ -63656,7 +63660,17 @@
         const msg0 = chat.find(m => m && !m.is_user && !m.is_system && (m.mes || (Array.isArray(m.swipes) && m.swipes.length)));
         if (!msg0) return;
 
-        const norm = (t) => String(t || '').replace(/\{\{user\}\}|\{\{char\}\}/gi, '').replace(/\s+/g, '').slice(0, 90);
+        // 严格消除宏替换差异：同时剥离 {{user}}/{{char}}/<user>/<char>、实际用户名/角色名、HTML标签与空白标点！
+        const uName = String(ctx?.name1 || '').trim();
+        const cName = String(curChar.name || ctx?.name2 || '').trim();
+        const normFull = (t) => {
+          let s = String(t || '');
+          s = s.replace(/<[^>]+>/g, '');
+          s = s.replace(/\{\{user\}\}|\{\{char\}\}|<user>|<char>/gi, '');
+          if (uName.length >= 1) s = s.split(uName).join('');
+          if (cName.length >= 1) s = s.split(cName).join('');
+          return s.replace(/[\s\p{P}\p{S}]+/gu, '');
+        };
         const getCardGreets = (c) => {
           const out = [];
           const f = String(c?.first_mes || c?.data?.first_mes || '');
@@ -63664,44 +63678,53 @@
           const alts = Array.isArray(c?.data?.alternate_greetings)
             ? c.data.alternate_greetings
             : (Array.isArray(c?.alternate_greetings) ? c.alternate_greetings : []);
-          alts.forEach(a => { if (typeof a === 'string') out.push(a); });
+          alts.forEach(a => { if (typeof a === 'string' && a.trim()) out.push(a); });
           return out;
+        };
+        const textSimScore = (a, b) => {
+          if (!a || !b) return 0;
+          if (a === b) return 200;
+          const aHead = a.slice(0, 60), bHead = b.slice(0, 60);
+          if (aHead === bHead && aHead.length >= 12) return 150;
+          // 滑窗切片比对（哪怕开头被微调或包含正则块也能精准命中！）
+          let hits = 0;
+          const step = Math.max(12, Math.floor(a.length / 5));
+          for (let pos = 0; pos + 14 <= a.length && pos < 360; pos += step) {
+            const seg = a.slice(pos, pos + 14);
+            if (b.includes(seg)) hits++;
+          }
+          return hits * 35;
         };
 
         const chatSwipes = (Array.isArray(msg0.swipes) && msg0.swipes.length)
-          ? msg0.swipes.filter(x => typeof x === 'string')
+          ? msg0.swipes.filter(x => typeof x === 'string' && x.trim())
           : (msg0.mes ? [String(msg0.mes)] : []);
         const chatCnt = chatSwipes.length;
-        const curCardCnt = getCardGreets(curChar).length;
+        const normSamples = chatSwipes.map(normFull).filter(t => t.length >= 8);
 
         let targetCid = -1;
-        // 1) 优先按开场白总数比对：若仅有一张重名卡的开场白数量与当前聊天第 0 层 swipes 数量一致，直接锁定！
-        const cntMatches = chatCnt > 0 ? sameNameIdxs.filter(i => getCardGreets(chars[i]).length === chatCnt) : [];
+        // 1) 若 msg0 有多条开场白 (chatCnt >= 2)，先看哪几张同名卡的开场白总数完全一致！
+        const cntMatches = chatCnt >= 2
+          ? sameNameIdxs.filter(i => getCardGreets(chars[i]).length === chatCnt)
+          : [];
         if (cntMatches.length === 1) {
           targetCid = cntMatches[0];
         } else {
-          // 2) 数量不唯一或未命中时，全量比对每一版开场白具体正文内容
+          // 2) 用去宏后的开场白滑窗全文比对每一张同名卡（开场白数量相同的优先加权）
           const pool = cntMatches.length > 1 ? cntMatches : sameNameIdxs;
-          const samples = chatSwipes.map(norm).filter(t => t.length >= 6);
           let bestCid = -1, bestScore = 0;
           pool.forEach(i => {
             const gsRaw = getCardGreets(chars[i]);
-            const gs = gsRaw.map(norm).filter(t => t.length >= 6);
-            let sc = (gsRaw.length === chatCnt) ? 200 : 0;
-            samples.forEach((sp, sIdx) => {
-              if (gs[sIdx] && gs[sIdx] === sp) { sc += 160; return; }
+            const gs = gsRaw.map(normFull).filter(t => t.length >= 8);
+            let sc = (chatCnt >= 2 && gsRaw.length === chatCnt) ? 240 : 0;
+            normSamples.forEach(sp => {
               let bestOne = 0;
-              gs.forEach(gr => {
-                if (sp === gr) bestOne = Math.max(bestOne, 120);
-                else if (sp.slice(0, 40) === gr.slice(0, 40)) bestOne = Math.max(bestOne, 80);
-                else if (sp.slice(0, 20) === gr.slice(0, 20)) bestOne = Math.max(bestOne, 45);
-                else if (gr.includes(sp.slice(0, 18)) || sp.includes(gr.slice(0, 18))) bestOne = Math.max(bestOne, 30);
-              });
+              gs.forEach(gr => { bestOne = Math.max(bestOne, textSimScore(sp, gr)); });
               sc += bestOne;
             });
             if (sc > bestScore) { bestScore = sc; bestCid = i; }
           });
-          if (bestCid >= 0 && bestScore >= 30) targetCid = bestCid;
+          if (bestCid >= 0 && bestScore >= 35) targetCid = bestCid;
         }
 
         if (targetCid < 0 || targetCid === chid) {
@@ -63709,10 +63732,11 @@
           return;
         }
         const fixKey = `${curChatId}=>${targetCid}`;
-        if (_lastDupFixKey === fixKey) return;
+        if (_lastDupFixKey === fixKey && Date.now() - _lastDupFixAt < 10000) return;
         _lastDupFixKey = fixKey;
+        _lastDupFixAt = Date.now();
         _dupFixInFlight = true;
-        win.__stSuppressDupChatToastUntil = Date.now() + 4500;
+        win.__stSuppressDupChatToastUntil = Date.now() + 5000;
         if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
         if (chars[targetCid]?.avatar) {
           config.dupChatOwnerMap[curChatId] = chars[targetCid].avatar;
@@ -63720,20 +63744,31 @@
         }
         if (typeof ctx.selectCharacterById === 'function') {
           await ctx.selectCharacterById(String(targetCid));
-          await new Promise(r => setTimeout(r, 140));
-          if (typeof ctx.openCharacterChat === 'function') {
-            await ctx.openCharacterChat(curChatId);
+          // 等待酒馆真正完成角色切换后再加载该聊天，避免被默认聊天覆盖！
+          for (let w = 0; w < 20; w++) {
+            await new Promise(r => setTimeout(r, 100));
+            const nowCtx = getContext();
+            const nowId = Number((nowCtx?.characterId !== undefined && nowCtx?.characterId !== null && nowCtx?.characterId !== '') ? nowCtx.characterId : win.this_chid);
+            if (nowId === targetCid) break;
           }
+          await new Promise(r => setTimeout(r, 220));
+          if (typeof ctx.openCharacterChat === 'function') {
+            const curAfter = String(getContext()?.chatId || '').trim().replace(/\.jsonl$/i, '');
+            if (curAfter !== curChatId) {
+              await ctx.openCharacterChat(curChatId);
+            }
+          }
+          showImmNotice(`已自动匹配重名卡：${chars[targetCid]?.avatar || curChar.name}`);
         }
       } catch (_) {
       } finally {
-        setTimeout(() => { _dupFixInFlight = false; }, 1200);
+        setTimeout(() => { _dupFixInFlight = false; }, 1600);
       }
     };
     add(eventTypes.CHAT_CHANGED, () => {
       onChatChanged();
-      setTimeout(verifyAndFixLoadedDupCharChat, 260);
-      setTimeout(fixRecentDupCardAvatars, 550);
+      setTimeout(verifyAndFixLoadedDupCharChat, 320);
+      setTimeout(fixRecentDupCardAvatars, 600);
     });
     add(eventTypes.MESSAGE_SENT, () => { onMessageChanged(); recordDupChatOwner(); });
     add(eventTypes.MESSAGE_RECEIVED, onMessageChanged);
