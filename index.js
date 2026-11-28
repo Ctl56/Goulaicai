@@ -11969,17 +11969,18 @@
 
     let left;
     let top;
+    const safeMinTop = 48;
     if (config.panelX !== null && config.panelY !== null) {
       left = clamp(config.panelX, 8, Math.max(8, w - pw - 8));
-      top = clamp(config.panelY, 8, Math.max(8, h - ph - 8));
+      top = clamp(config.panelY, safeMinTop, Math.max(safeMinTop, h - ph - 8));
     } else if (w < 520) {
       left = clamp(Math.round((w - pw) / 2), 8, Math.max(8, w - pw - 8));
-      top = clamp(Math.round(h * 0.1), 10, Math.max(10, h - ph - 10));
+      top = clamp(Math.round(h * 0.1), safeMinTop, Math.max(safeMinTop, h - ph - 10));
     } else {
       const bx = config.posX ?? (w - 90);
       const by = config.posY ?? 54;
       left = clamp(bx + 76 - pw, 10, Math.max(10, w - pw - 10));
-      top = clamp(by + 38, 10, Math.max(10, h - ph - 10));
+      top = clamp(by + 38, safeMinTop, Math.max(safeMinTop, h - ph - 10));
     }
     panel.style.left = `${left}px`;
     panel.style.top = `${top}px`;
@@ -12015,7 +12016,7 @@
   panelHeader.addEventListener('pointermove', (e) => {
     if (!panelDrag || panelDrag.id !== e.pointerId) return;
     const left = clamp(panelDrag.origLeft + (e.clientX - panelDrag.startX), 8, Math.max(8, win.innerWidth - panelDrag.width - 8));
-    const top = clamp(panelDrag.origTop + (e.clientY - panelDrag.startY), 8, Math.max(8, win.innerHeight - panelDrag.height - 8));
+    const top = clamp(panelDrag.origTop + (e.clientY - panelDrag.startY), 48, Math.max(48, win.innerHeight - Math.min(panelDrag.height, 80) - 8));
     panel.style.left = `${Math.round(left)}px`;
     panel.style.top = `${Math.round(top)}px`;
   });
@@ -42500,7 +42501,7 @@
       const onMove = (ev) => {
         if (ev.pointerId !== pid) return;
         panel.style.left = `${Math.round(clamp(ox + (ev.clientX - sx), 4, Math.max(4, win.innerWidth - rect.width - 4)))}px`;
-        panel.style.top = `${Math.round(clamp(oy + (ev.clientY - sy), 4, Math.max(4, win.innerHeight - rect.height - 4)))}px`;
+        panel.style.top = `${Math.round(clamp(oy + (ev.clientY - sy), 48, Math.max(48, win.innerHeight - Math.min(rect.height, 80) - 4)))}px`;
       };
       const onUp = (ev) => {
         if (ev.pointerId !== pid) return;
@@ -62016,7 +62017,7 @@
       }
       if (ed.includes('n')) {
         const nh = clamp(rs.oh - dy, minH, maxH());
-        boxEl.style.top = `${Math.round(clamp(rs.ot + (rs.oh - nh), 4, win.innerHeight - minH - 4))}px`;
+        boxEl.style.top = `${Math.round(clamp(rs.ot + (rs.oh - nh), safeTop, Math.max(safeTop, win.innerHeight - minH - 4)))}px`;
         boxEl.style.height = `${Math.round(nh)}px`;
       }
     });
@@ -62037,12 +62038,13 @@
     boxEl.dataset.stMovableBound = '1';
     const minW = Number(opts.minW) || 230;
     const minH = Number(opts.minH) || 140;
+    const safeTop = 52;
     const maxW = () => Math.max(minW, win.innerWidth - 16);
-    const maxH = () => Math.max(minH, win.innerHeight - 24);
+    const maxH = () => Math.max(minH, win.innerHeight - safeTop - 16);
     boxEl.style.position = 'fixed';
     boxEl.style.margin = '0';
     boxEl.style.maxWidth = 'calc(100vw - 16px)';
-    boxEl.style.maxHeight = 'calc(100vh - 24px)';
+    boxEl.style.maxHeight = 'calc(100vh - 68px)';
     boxEl.style.overflow = 'auto';
     boxEl.style.pointerEvents = 'auto';
 
@@ -62052,7 +62054,7 @@
       const w = r.width || Number(opts.defW) || 300;
       const h = r.height || 260;
       const l = Math.max(8, Math.round((win.innerWidth - w) / 2));
-      const t = Math.max(12, Math.round((win.innerHeight - h) / 2));
+      const t = Math.max(safeTop, Math.round((win.innerHeight - h) / 2));
       boxEl.style.left = `${l}px`;
       boxEl.style.top = `${t}px`;
       boxEl.style.transform = 'none';
@@ -62079,7 +62081,7 @@
         ev.preventDefault();
         const r = boxEl.getBoundingClientRect();
         const nl = clamp(dg.ol + (ev.clientX - dg.sx), 4, Math.max(4, win.innerWidth - r.width - 4));
-        const nt = clamp(dg.ot + (ev.clientY - dg.sy), 4, Math.max(4, win.innerHeight - Math.min(r.height, 80) - 4));
+        const nt = clamp(dg.ot + (ev.clientY - dg.sy), safeTop, Math.max(safeTop, win.innerHeight - Math.min(r.height, 80) - 4));
         boxEl.style.left = `${Math.round(nl)}px`;
         boxEl.style.top = `${Math.round(nt)}px`;
       });
@@ -65878,10 +65880,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select:first-child::bef
 }
 html.st-tb-char-ig #rm_print_characters_block .character_select::after { content: "" !important; position: absolute !important; left: 0 !important; right: 0 !important; bottom: 0 !important; height: 45% !important; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent) !important; pointer-events: none !important; }
 html.st-tb-char-ig #rm_print_characters_block .character_select .character_select_container,
-html.st-tb-char-ig #rm_print_characters_block .character_select .character_name_block { position: static !important; width: 0 !important; height: 0 !important; overflow: visible !important; }
+html.st-tb-char-ig #rm_print_characters_block .character_select .character_name_block,
+html.st-tb-char-ig #rm_print_characters_block .character_select .ch_name_block { position: static !important; width: 0 !important; height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
 html.st-tb-char-ig #rm_print_characters_block .character_select .ch_name {
-  position: absolute !important; left: 7px !important; right: 7px !important; bottom: 7px !important;
+  position: absolute !important; left: 7px !important; right: 7px !important; bottom: 7px !important; z-index: 6 !important;
+  display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: none !important;
   font-family: ${PF_FONT} !important; font-style: normal !important; font-size: 11px !important; font-weight: 600 !important; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85) !important;
   text-align: left !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
 }
 html.st-tb-char-ig #rm_print_characters_block .character_select .ch_description,
