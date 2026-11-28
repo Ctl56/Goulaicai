@@ -24919,7 +24919,7 @@
     );
   };
 
-  const renderPupWardrobe = () => {
+  const renderPupWardrobe = (focusItemId = null) => {
     if (typeof drawPupAvatarPhoto === 'function') drawPupAvatarPhoto();
     const ownedAccSet = new Set(config.puppyOwnedAccs || []);
     const ownedOutfitSet = new Set(config.puppyOwnedOutfits || []);
@@ -24991,6 +24991,10 @@
       const list = sortWardListWithNewFirst(curSub === 'all' ? allAccOwned : allAccOwned.filter(i => i._wcats.includes(curSub)));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
+      if (focusItemId) {
+        const _fi = list.findIndex(x => x && x.id === focusItemId);
+        if (_fi >= 0) wardPage.acc = Math.floor(_fi / perPage);
+      }
       wardPage.acc = clamp(wardPage.acc, 0, totalPages - 1);
       const slice = list.slice(wardPage.acc * perPage, (wardPage.acc + 1) * perPage);
       const grid = doc.createElement('div');
@@ -25021,7 +25025,7 @@
               d.accs.push(item.id);
             }
           }
-          renderPupWardrobe();
+          renderPupWardrobe(wasNew ? item.id : null);
           if (wasNew) scrollWardItemIntoView(item.id);
         });
         grid.appendChild(btn);
@@ -25178,6 +25182,10 @@
       const list = sortWardListWithNewFirst(curSub === 'all' ? allOutfitOwned : allOutfitOwned.filter(i => i._wcats.includes(curSub)));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
+      if (focusItemId) {
+        const _fi = list.findIndex(x => x && x.id === focusItemId);
+        if (_fi >= 0) wardPage.outfit = Math.floor(_fi / perPage);
+      }
       wardPage.outfit = clamp(wardPage.outfit, 0, totalPages - 1);
       const slice = list.slice(wardPage.outfit * perPage, (wardPage.outfit + 1) * perPage);
       const grid = doc.createElement('div');
@@ -25198,7 +25206,7 @@
           const wasNew = clearWardItemNew(item.id);
           const d = ensureWardDraft();
           d.outfit = item.id;
-          renderPupWardrobe();
+          renderPupWardrobe(wasNew ? item.id : null);
           if (wasNew) scrollWardItemIntoView(item.id);
         });
         grid.appendChild(btn);
@@ -25218,6 +25226,10 @@
       const list = sortWardListWithNewFirst(curSub === 'all' ? allCompOwned : allCompOwned.filter(i => i._wcat === curSub));
       const perPage = 20;
       totalPages = Math.max(1, Math.ceil(list.length / perPage));
+      if (focusItemId) {
+        const _fi = list.findIndex(x => x && x.id === focusItemId);
+        if (_fi >= 0) wardPage.comp = Math.floor(_fi / perPage);
+      }
       wardPage.comp = clamp(wardPage.comp, 0, totalPages - 1);
       const slice = list.slice(wardPage.comp * perPage, (wardPage.comp + 1) * perPage);
       const grid = doc.createElement('div');
@@ -25238,7 +25250,7 @@
           const wasNew = clearWardItemNew(item.id);
           const d = ensureWardDraft();
           d.comp = item.id;
-          renderPupWardrobe();
+          renderPupWardrobe(wasNew ? item.id : null);
           if (wasNew) scrollWardItemIntoView(item.id);
         });
         grid.appendChild(btn);
@@ -37539,6 +37551,7 @@
                   dir: 'them',
                   text: String(meta.text || '').slice(0, 300),
                   sticker: String(meta.sticker || ''),
+                  quote: (meta.quote && typeof meta.quote === 'object') ? { sender: String(meta.quote.sender || '').slice(0, 32), text: String(meta.quote.text || '').slice(0, 90), ts: Number(meta.quote.ts) || 0 } : null,
                   stickerLook: (meta.stickerLook && typeof meta.stickerLook === 'object') ? meta.stickerLook : null,
                   bubbleId: String(meta.bubbleId || 'bub_default'),
                   bubBg: String(meta.bubBg || ''),
@@ -42151,6 +42164,22 @@
         const bar = doc.createElement('div');
         bar.className = 'st-dm-msg-actbar';
         bar.style.cssText = 'display:inline-flex;gap:3px;margin-top:2px;';
+        const qtBtn = doc.createElement('button');
+        qtBtn.type = 'button';
+        qtBtn.className = 'st-px-btn';
+        qtBtn.style.cssText = 'height:17px;padding:0 5px;font-size:8.5px;';
+        qtBtn.textContent = '引用';
+        qtBtn.addEventListener('click', (e2) => {
+          e2.stopPropagation();
+          const stName = m.sticker ? (PUP_DM_STICKERS.find(s => s.id === m.sticker)?.name || '表情包') : '';
+          const previewTxt = m.text ? String(m.text).trim() : (stName ? `[${stName}]` : '[消息]');
+          const senderNm = isMe ? getPupName() : (typeof getFriendDisplayName === 'function' ? getFriendDisplayName(fid) : (fr.name || '好友'));
+          if (typeof panel._setDmQuoteTarget === 'function') {
+            panel._setDmQuoteTarget({ id: m.id, sender: senderNm, text: previewTxt.slice(0, 80), ts: m.ts || Date.now() });
+          }
+          bar.remove();
+        });
+        bar.appendChild(qtBtn);
         if (m.text) {
           const cpBtn = doc.createElement('button');
           cpBtn.type = 'button';
@@ -42192,6 +42221,22 @@
       bub.style.fontSize = `${lay.fontSize}px`;
       const dObj = new Date(m.ts || Date.now());
       const tmTxt = `${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
+      let quoteChip = null;
+      if (m.quote && (m.quote.text || m.quote.sender)) {
+        quoteChip = doc.createElement('div');
+        quoteChip.className = 'st-dm-quote-chip';
+        const qFs = Math.max(8.5, Math.min(11, Number(lay.fontSize || 11) - 2));
+        quoteChip.style.cssText = `max-width:196px;padding:2px 6px;border-left:2px solid var(--px-border,rgba(128,128,128,0.55));background:rgba(128,128,128,0.11);color:var(--px-custom-fg,var(--px-fg,inherit));opacity:0.84;font-size:${qFs}px;line-height:1.32;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;`;
+        const qSender = String(m.quote.sender || '').trim();
+        const qTxt = String(m.quote.text || '').trim();
+        let qTimeStr = '';
+        if (lay.showTime !== false && m.quote.ts) {
+          const qd = new Date(m.quote.ts);
+          qTimeStr = ` ${String(qd.getHours()).padStart(2, '0')}:${String(qd.getMinutes()).padStart(2, '0')}`;
+        }
+        quoteChip.textContent = `${qSender ? qSender + '：' : ''}${qTxt}`;
+        quoteChip.title = `${qSender ? qSender + '：' : ''}${qTxt}${qTimeStr}`;
+      }
       if (lay.showTime !== false) {
         const tm = doc.createElement('div');
         tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;flex-shrink:0;';
@@ -42199,16 +42244,21 @@
         if (lay.timePos === 'below_av') {
           avCol.appendChild(tm);
           bubCol.appendChild(bub);
+          if (quoteChip) bubCol.appendChild(quoteChip);
         } else if (lay.timePos === 'beside_bub') {
           const line = doc.createElement('div');
           line.style.cssText = `display:flex;align-items:flex-end;gap:5px;${isMe ? 'flex-direction:row-reverse;' : ''}`;
           line.append(bub, tm);
           bubCol.appendChild(line);
+          if (quoteChip) bubCol.appendChild(quoteChip);
         } else {
-          bubCol.append(bub, tm);
+          bubCol.appendChild(bub);
+          if (quoteChip) bubCol.appendChild(quoteChip);
+          bubCol.appendChild(tm);
         }
       } else {
         bubCol.appendChild(bub);
+        if (quoteChip) bubCol.appendChild(quoteChip);
       }
       row.append(avCol, bubCol);
       listEl.appendChild(row);
@@ -42245,7 +42295,7 @@
   };
   win.addEventListener('pagehide', () => { Array.from(dmOutQueue.keys()).forEach(fid => flushDmBatch(fid)); });
 
-  const sendFriendDmMessage = async (fid, fname, text, sticker = '', stickerLook = null) => {
+  const sendFriendDmMessage = async (fid, fname, text, sticker = '', stickerLook = null, quote = null) => {
     const cleanTxt = String(text || '').trim().slice(0, 300);
     if (!cleanTxt && !sticker) return;
     const nowTs = Date.now();
@@ -42261,9 +42311,12 @@
       accs: Array.isArray(stickerLook.accs) ? stickerLook.accs.filter(isHeadAccessoryId) : [],
       accOffsets: stickerLook.accOffsets || {},
     } : null;
-    const payloadItem = { kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs };
+    const cleanQuote = (quote && typeof quote === 'object' && (quote.text || quote.sender))
+      ? { sender: String(quote.sender || '').slice(0, 32), text: String(quote.text || '').slice(0, 90), ts: Number(quote.ts) || 0 }
+      : null;
+    const payloadItem = { kind: '__dm_chat__', id: msgId, text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, quote: cleanQuote, ts: nowTs };
     config.puppyDmHistory[fid].push({
-      id: msgId, dir: 'me', text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, ts: nowTs,
+      id: msgId, dir: 'me', text: cleanTxt, sticker, stickerLook: stLkCompact, bubbleId: bubId, bubBg, bubBd, bubFg, quote: cleanQuote, ts: nowTs,
     });
     if (config.puppyDmHistory[fid].length > 80) config.puppyDmHistory[fid] = config.puppyDmHistory[fid].slice(-80);
     saveConfig();
@@ -42422,6 +42475,10 @@
         <div id="st-dm-st-toast" style="display:none;font-size:9px;text-align:center;padding:1px 6px;opacity:0.85;"></div>
         <div id="st-dm-sticker-box" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px 6px 6px;max-height:156px;overflow-y:auto;"></div>
       </div>
+      <div id="st-dm-quote-bar" style="display:none;align-items:center;justify-content:space-between;gap:6px;padding:4px 8px;border-top:1px dashed var(--px-border,#bfa4ae);background:var(--px-card,rgba(255,255,255,0.65));font-size:10px;flex-shrink:0;">
+        <span id="st-dm-quote-txt" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:0.85;"></span>
+        <button type="button" id="st-dm-quote-clr" class="st-px-btn" style="height:17px;padding:0 5px;font-size:9px;flex-shrink:0;">×</button>
+      </div>
       <div style="display:flex;align-items:center;gap:4px;padding:6px 7px;border-top:2px dashed var(--px-border,#bfa4ae);flex-shrink:0;">
         <button type="button" id="st-dm-sticker-btn" class="st-px-btn" style="height:26px;padding:0 6px;font-size:10px;flex-shrink:0;">表情</button>
         <input type="text" id="st-dm-inp" maxlength="300" placeholder="发条私聊消息..." style="flex:1;min-width:0;" />
@@ -42532,7 +42589,7 @@
           config.puppyDmRecentStickers = [st.id, ...(Array.isArray(config.puppyDmRecentStickers) ? config.puppyDmRecentStickers.filter(x => x !== st.id) : [])].slice(0, 16);
           saveConfig();
           if (stWrap) stWrap.style.display = 'none';
-          sendFriendDmMessage(fid, fname, '', st.id, useLk);
+          sendFriendDmMessage(fid, fname, '', st.id, useLk, panel._consumeDmQuoteTarget ? panel._consumeDmQuoteTarget() : null);
         });
         stBox.appendChild(b);
       });
@@ -42875,11 +42932,34 @@
     });
 
     const inpEl = panel.querySelector('#st-dm-inp');
+    const qBar = panel.querySelector('#st-dm-quote-bar');
+    const qTxt = panel.querySelector('#st-dm-quote-txt');
+    let activeDmQuote = null;
+    const setDmQuoteTarget = (qt) => {
+      activeDmQuote = qt || null;
+      if (!qBar || !qTxt) return;
+      if (activeDmQuote) {
+        qTxt.textContent = `回复 ${activeDmQuote.sender ? activeDmQuote.sender + '：' : ''}${activeDmQuote.text || ''}`;
+        qBar.style.display = 'flex';
+        setTimeout(() => { try { inpEl?.focus(); } catch (_) {} }, 20);
+      } else {
+        qBar.style.display = 'none';
+        qTxt.textContent = '';
+      }
+    };
+    panel._setDmQuoteTarget = setDmQuoteTarget;
+    panel._consumeDmQuoteTarget = () => {
+      const q = activeDmQuote;
+      setDmQuoteTarget(null);
+      return q;
+    };
+    panel.querySelector('#st-dm-quote-clr')?.addEventListener('click', (e) => { e.stopPropagation(); setDmQuoteTarget(null); });
     const doSend = () => {
       const val = (inpEl?.value || '').trim();
       if (!val) return;
       if (inpEl) inpEl.value = '';
-      sendFriendDmMessage(fid, fname, val, '');
+      const qObj = panel._consumeDmQuoteTarget ? panel._consumeDmQuoteTarget() : null;
+      sendFriendDmMessage(fid, fname, val, '', null, qObj);
     };
     panel.querySelector('#st-dm-send')?.addEventListener('click', (e) => { e.stopPropagation(); doSend(); });
     inpEl?.addEventListener('keydown', (e) => {
@@ -54664,6 +54744,7 @@
         r.disabled = true;
       } catch (_) {}
     });
+    if (pausedRegexRefs.length) win.__stTbNeedRegexReformat = true;
     clearTimeout(regexSafetyTimer);
     regexSafetyTimer = setTimeout(() => restoreStRegexAfterStream(true), 120000);
   };
@@ -54672,47 +54753,60 @@
     stRegexPausedByGenEvent = false;
     clearTimeout(regexSafetyTimer);
     regexSafetyTimer = null;
-    if (!pausedRegexRefs.length) return;
-    const toRestore = pausedRegexRefs;
-    pausedRegexRefs = [];
-    toRestore.forEach(r => {
-      try {
-        r.disabled = false;
-        if (Object.prototype.hasOwnProperty.call(r, '__stTbOrigToJSON')) {
-          const orig = r.__stTbOrigToJSON;
-          delete r.toJSON;
-          if (typeof orig === 'function') {
-            Object.defineProperty(r, 'toJSON', { value: orig, configurable: true, writable: true, enumerable: false });
-          }
-          delete r.__stTbOrigToJSON;
-        }
-      } catch (_) {}
-    });
-    if (refreshLastMsg) {
-      // 仅在全部内容生成完毕后，对最后一条 AI 消息单独执行一次正则格式化（防抖确保只跑一次，且只恢复原本已开启的正则）
-      clearTimeout(win.__stTbRegexRefreshTimer);
-      win.__stTbRegexRefreshTimer = setTimeout(() => {
+    const hadPaused = pausedRegexRefs.length > 0;
+    if (hadPaused) {
+      const toRestore = pausedRegexRefs;
+      pausedRegexRefs = [];
+      toRestore.forEach(r => {
         try {
-          const ctx = getContext();
-          const chatArr = Array.isArray(ctx?.chat) ? ctx.chat : [];
-          const lastIdx = chatArr.length - 1;
-          if (lastIdx < 0) return;
-          const mesObj = chatArr[lastIdx];
-          if (!mesObj || mesObj.is_user) return;
-          if (typeof ctx?.updateMessageBlock === 'function') {
-            ctx.updateMessageBlock(lastIdx, mesObj);
-          } else if (typeof win.updateMessageBlock === 'function') {
-            win.updateMessageBlock(lastIdx, mesObj);
-          } else if (typeof ctx?.messageFormatting === 'function') {
-            const mesEl = doc.querySelector(`#chat .mes[mesid="${lastIdx}"] .mes_text`);
-            if (mesEl) {
-              mesEl.innerHTML = ctx.messageFormatting(mesObj.mes || '', mesObj.name || '', Boolean(mesObj.is_system), false, lastIdx);
+          r.disabled = false;
+          if (Object.prototype.hasOwnProperty.call(r, '__stTbOrigToJSON')) {
+            const orig = r.__stTbOrigToJSON;
+            delete r.toJSON;
+            if (typeof orig === 'function') {
+              Object.defineProperty(r, 'toJSON', { value: orig, configurable: true, writable: true, enumerable: false });
             }
-          } else if (ctx?.eventSource && ctx?.eventTypes?.MESSAGE_UPDATED) {
-            ctx.eventSource.emit(ctx.eventTypes.MESSAGE_UPDATED, lastIdx);
+            delete r.__stTbOrigToJSON;
           }
         } catch (_) {}
-      }, 90);
+      });
+    }
+    if (refreshLastMsg && (hadPaused || win.__stTbNeedRegexReformat)) {
+      // 双时机补刷（120ms + 460ms），覆盖 MESSAGE_RECEIVED 先于 GENERATION_ENDED 渲染完毕的竞态，并同时补刷最近 2 层 AI 消息，确保不再有楼层漏掉正则
+      const runReformatPass = (clearFlag) => {
+        try {
+          if (clearFlag) win.__stTbNeedRegexReformat = false;
+          const ctx = getContext();
+          const chatArr = Array.isArray(ctx?.chat) ? ctx.chat : [];
+          if (!chatArr.length) return;
+          const targets = [];
+          for (let i = chatArr.length - 1; i >= 0 && targets.length < 2; i--) {
+            const m = chatArr[i];
+            if (m && !m.is_user && !m.is_system) targets.push(i);
+          }
+          targets.forEach((idx) => {
+            const mesObj = chatArr[idx];
+            if (!mesObj) return;
+            if (!doc.querySelector(`#chat .mes[mesid="${idx}"]`)) return;
+            if (typeof ctx?.updateMessageBlock === 'function') {
+              ctx.updateMessageBlock(idx, mesObj);
+            } else if (typeof win.updateMessageBlock === 'function') {
+              win.updateMessageBlock(idx, mesObj);
+            } else if (typeof ctx?.messageFormatting === 'function') {
+              const mesEl = doc.querySelector(`#chat .mes[mesid="${idx}"] .mes_text`);
+              if (mesEl) {
+                mesEl.innerHTML = ctx.messageFormatting(mesObj.mes || '', mesObj.name || '', Boolean(mesObj.is_system), false, idx);
+              }
+            } else if (ctx?.eventSource && ctx?.eventTypes?.MESSAGE_UPDATED) {
+              ctx.eventSource.emit(ctx.eventTypes.MESSAGE_UPDATED, idx);
+            }
+          });
+        } catch (_) {}
+      };
+      clearTimeout(win.__stTbRegexRefreshTimer);
+      clearTimeout(win.__stTbRegexRefreshTimer2);
+      win.__stTbRegexRefreshTimer = setTimeout(() => runReformatPass(false), 120);
+      win.__stTbRegexRefreshTimer2 = setTimeout(() => runReformatPass(true), 460);
     }
   };
 
