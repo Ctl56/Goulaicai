@@ -4472,6 +4472,8 @@
       transform: translate(-50%, -50%);
       z-index: 9995;
       width: min(300px, calc(100vw - 28px));
+      max-height: 86vh;
+      box-sizing: border-box;
       background: var(--tb-bg, #ffffff);
       color: var(--tb-text, #222222);
       border: 1px solid var(--tb-border, rgba(0,0,0,0.14));
@@ -6379,7 +6381,7 @@
     .st-tb-qd-modal-title { font-weight: 700; font-size: calc(var(--tb-fs, 12px) + 1.5px); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .st-tb-qd-list {
       overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
-      max-height: 210px; min-height: 44px; padding-right: 2px;
+      flex: 1 1 auto; max-height: none; min-height: 60px; padding-right: 2px;
       -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y;
     }
     .st-tb-qd-item {
@@ -13273,26 +13275,114 @@
       return;
     }
     found.forEach(item => {
-      const row = doc.createElement('div');
-      row.className = 'st-tb-wb-item';
-      const nameEl = doc.createElement('span');
-      nameEl.style.overflow = 'hidden';
-      nameEl.style.textOverflow = 'ellipsis';
-      nameEl.style.whiteSpace = 'nowrap';
-      nameEl.textContent = item.name;
-      nameEl.title = item.name;
-      const tag = doc.createElement('span');
-      tag.className = 'st-tb-wb-tag';
-      tag.textContent = item.source;
-      row.style.cursor = 'pointer';
-      row.title = '点击跳转到世界书编辑：' + item.name;
-      row.addEventListener('click', () => {
-        if (typeof openWorldbookInEditor === 'function') openWorldbookInEditor(item.name);
-      });
-      row.append(nameEl, tag);
-      wbListEl.appendChild(row);
+      wbListEl.appendChild(createExpandableWorldbookCard(item.name, item.source));
     });
   };
+
+  function createExpandableWorldbookCard(wbName, wbSource) {
+    const wrap = doc.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);overflow:hidden;flex-shrink:0;';
+    const head = doc.createElement('div');
+    head.style.cssText = 'display:flex;align-items:center;gap:5px;padding:6px 8px;cursor:pointer;';
+    const nameEl = doc.createElement('span');
+    nameEl.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+    nameEl.textContent = wbName;
+    nameEl.title = wbName;
+    const tag = doc.createElement('span');
+    tag.style.cssText = 'font-size:10px;opacity:0.72;flex-shrink:0;padding:1px 5px;border:1px solid var(--tb-border);border-radius:4px;';
+    tag.textContent = wbSource;
+    const expB = doc.createElement('button');
+    expB.type = 'button';
+    expB.className = 'st-tb-mini-btn';
+    expB.textContent = '展开';
+    const jumpB = doc.createElement('button');
+    jumpB.type = 'button';
+    jumpB.className = 'st-tb-mini-btn';
+    jumpB.textContent = '跳转';
+    jumpB.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      if (typeof openWorldbookInEditor === 'function') openWorldbookInEditor(wbName);
+    });
+    head.append(nameEl, tag, expB, jumpB);
+
+    const body = doc.createElement('div');
+    body.style.cssText = 'display:none;flex-direction:column;gap:4px;padding:6px 7px;border-top:1px solid var(--tb-border);background:var(--tb-bg,#fff);';
+    let loaded = false;
+    let isOpen = false;
+
+    const toggleExpand = async () => {
+      isOpen = !isOpen;
+      expB.textContent = isOpen ? '收起' : '展开';
+      body.style.display = isOpen ? 'flex' : 'none';
+      if (!isOpen || loaded) return;
+      loaded = true;
+      body.innerHTML = '<div style="font-size:11px;opacity:0.7;padding:4px 2px;">正在读取世界书条目...</div>';
+      try {
+        const ctx = getContext();
+        const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+        const res = await win.fetch('/api/worldinfo/get', {
+          method: 'POST',
+          headers: hdrs,
+          body: JSON.stringify({ name: wbName }),
+        });
+        if (!res || !res.ok) throw new Error('fetch failed');
+        const data = await res.json();
+        const rawEntries = data && typeof data.entries === 'object' && data.entries ? Object.values(data.entries) : [];
+        if (!rawEntries.length) {
+          body.innerHTML = '<div style="font-size:11px;opacity:0.7;padding:4px 2px;">该世界书暂无条目</div>';
+          return;
+        }
+        rawEntries.sort((a, b) => Number(a?.order ?? a?.uid ?? 0) - Number(b?.order ?? b?.uid ?? 0));
+        body.innerHTML = '';
+        rawEntries.forEach((ent, eIdx) => {
+          const keys = Array.isArray(ent?.key) ? ent.key.filter(Boolean) : [];
+          const title = String(ent?.comment || '').trim() || (keys.length ? keys.slice(0, 3).join(' / ') : `条目 #${ent?.uid ?? eIdx}`);
+          const content = String(ent?.content || '').trim();
+          const isDis = Boolean(ent?.disable);
+          const isConst = Boolean(ent?.constant);
+          const stTxt = isDis ? '禁用' : (isConst ? '常驻' : '绿灯');
+          const stCol = isDis ? 'opacity:0.55;' : (isConst ? 'color:#2d8cf0;' : 'color:#2ca55c;');
+
+          const eCard = doc.createElement('div');
+          eCard.style.cssText = `padding:5px 7px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);${isDis ? 'opacity:0.62;' : ''}`;
+          const eHead = doc.createElement('div');
+          eHead.style.cssText = 'display:flex;align-items:center;gap:5px;cursor:pointer;';
+          eHead.innerHTML = `<span style="font-size:10px;font-weight:700;flex-shrink:0;${stCol}">[${stTxt}]</span>
+            <span style="flex:1;min-width:0;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(title)}</span>`;
+          const eCp = doc.createElement('button');
+          eCp.type = 'button';
+          eCp.className = 'st-tb-mini-btn';
+          eCp.style.cssText = 'font-size:10px;padding:1px 5px;height:20px;min-height:20px;flex-shrink:0;';
+          eCp.textContent = '复制';
+          eCp.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            copyVisitCodeReliable(content || title);
+            showImmNotice('已复制世界书条目内容');
+          });
+          eHead.appendChild(eCp);
+
+          const eDetail = doc.createElement('div');
+          eDetail.style.cssText = 'display:none;margin-top:5px;padding-top:5px;border-top:1px dashed var(--tb-border);font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;';
+          const keyLine = keys.length ? `<div style="font-size:10px;opacity:0.72;margin-bottom:3px;">关键词：${escapeHtmlSimple(keys.join('、'))}</div>` : '';
+          eDetail.innerHTML = `${keyLine}<div>${escapeHtmlSimple(content || '（无正文内容）')}</div>`;
+
+          eHead.addEventListener('click', () => {
+            eDetail.style.display = eDetail.style.display === 'none' ? 'block' : 'none';
+          });
+          eCard.append(eHead, eDetail);
+          body.appendChild(eCard);
+        });
+      } catch (_) {
+        loaded = false;
+        body.innerHTML = '<div style="font-size:11px;opacity:0.7;padding:4px 2px;">读取世界书条目失败，可点右侧「跳转」打开编辑</div>';
+      }
+    };
+
+    head.addEventListener('click', toggleExpand);
+    expB.addEventListener('click', (ev) => { ev.stopPropagation(); toggleExpand(); });
+    wrap.append(head, body);
+    return wrap;
+  }
 
   // ==================== 一键打码系统 ====================
   let chatObserver = null;
@@ -71233,7 +71323,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     };
     const draftBodyHtml = draft
       ? `<div style="font-size:11px;opacity:0.85;margin-bottom:6px;line-height:1.45;">检测到中断回复：<b>${escapeHtmlSimple(draft.charName || 'AI')}</b> · ${draft.text.length} 字 · ${fmtAgo(draft.updatedAt)}</div>
-         <div style="max-height:190px;overflow-y:auto;padding:8px 9px;background:var(--tb-surface,#fff);border:1px solid var(--tb-border,#ccc);border-radius:6px;font-size:11.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin-bottom:9px;">${escapeHtmlSimple(draft.text)}</div>
+         <div style="flex:1 1 auto;min-height:90px;max-height:none;overflow-y:auto;padding:8px 9px;background:var(--tb-surface,#fff);border:1px solid var(--tb-border,#ccc);border-radius:6px;font-size:11.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin-bottom:9px;">${escapeHtmlSimple(draft.text)}</div>
          <div style="display:flex;gap:6px;margin-bottom:6px;">
            <button type="button" id="st-dr-restore" class="st-tb-btn active" style="flex:1.4;">恢复到原位置</button>
            <button type="button" id="st-dr-copy" class="st-tb-btn" style="flex:1;">复制全文</button>
@@ -71241,7 +71331,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
          <button type="button" id="st-dr-clear" class="st-tb-btn" style="width:100%;opacity:0.8;">清空草稿</button>`
       : `<div style="padding:16px 10px;text-align:center;font-size:11.5px;opacity:0.78;line-height:1.55;background:var(--tb-surface,#fff);border:1px dashed var(--tb-border,#ccc);border-radius:6px;margin-bottom:6px;">当前没有未恢复的中断草稿。<br/>开启后，AI 生成回复期间会自动实时暂存，遇到卡死或刷新重进即可一键找回。</div>`;
 
-    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.12);box-sizing:border-box;font-size:var(--tb-fs,12px);">
+    mask.innerHTML = `<div style="display:flex;flex-direction:column;width:316px;max-width:calc(100vw - 24px);max-height:86vh;padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.12);box-sizing:border-box;font-size:var(--tb-fs,12px);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-size:13px;font-weight:700;">防丢草稿</span>
         <div style="display:flex;align-items:center;gap:6px;">
@@ -72051,20 +72141,21 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           cpop.id = 'st-tb-quick-curchar-pop';
           cpop.className = 'st-tb-mini-pop';
           cpop.style.width = '300px';
-          cpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+          cpop.style.height = '380px';
+          cpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;flex-shrink:0;">
               <span>当前角色</span>
               <div style="display:flex;gap:4px;">
                 <button class="st-tb-mini-btn" id="st-qcc-refresh" type="button">刷新</button>
                 <button class="st-tb-mini-btn" id="st-qcc-close" type="button">关闭</button>
               </div>
             </div>
-            <div id="st-qcc-card" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:8px;background:var(--tb-surface);"></div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+            <div id="st-qcc-card" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:8px;background:var(--tb-surface);flex-shrink:0;"></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;flex-shrink:0;">
               <button class="st-tb-pill active st-qcc-tab" data-qcc-tab="chats" type="button">聊天文件</button>
               <button class="st-tb-pill st-qcc-tab" data-qcc-tab="greets" type="button">开场白</button>
               <button class="st-tb-pill st-qcc-tab" data-qcc-tab="wb" type="button">世界书</button>
             </div>
-            <div id="st-qcc-body" style="display:flex;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto;"></div>`;
+            <div id="st-qcc-body" style="display:flex;flex-direction:column;gap:5px;flex:1 1 auto;min-height:110px;max-height:none;overflow-y:auto;"></div>`;
           root.appendChild(cpop);
           makeToolboxBoxMovableResizable(cpop, cpop.firstElementChild, { minW: 250, minH: 200, defW: 300 });
           let qccTab = 'chats';
@@ -72215,15 +72306,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 return;
               }
               found.forEach(wb => {
-                const row = doc.createElement('div');
-                row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);cursor:pointer;';
-                row.title = '点击跳转到世界书编辑：' + wb.name;
-                row.innerHTML = `<span style="font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(wb.name)}</span>
-                  <span style="font-size:10px;opacity:0.72;flex-shrink:0;padding:1px 5px;border:1px solid var(--tb-border);border-radius:4px;">${escapeHtmlSimple(wb.source)}</span>`;
-                row.addEventListener('click', () => {
-                  if (typeof openWorldbookInEditor === 'function') openWorldbookInEditor(wb.name);
-                });
-                bodyEl.appendChild(row);
+                bodyEl.appendChild(createExpandableWorldbookCard(wb.name, wb.source));
               });
             }
           };
@@ -72264,7 +72347,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 <button class="st-tb-mini-btn active" id="st-qp-save" type="button">保存</button>
               </div>
             </div>
-            <div id="st-qp-list" style="display:flex;flex-direction:column;gap:4px;max-height:185px;overflow-y:auto;"></div>`;
+            <div id="st-qp-list" style="display:flex;flex-direction:column;gap:4px;flex:1 1 auto;min-height:90px;max-height:none;overflow-y:auto;"></div>`;
           root.appendChild(ppop);
           makeToolboxBoxMovableResizable(ppop, ppop.firstElementChild, { minW: 230, minH: 150, defW: 264 });
           let qEditId = null;
@@ -72404,7 +72487,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               <input class="st-tb-input" id="st-qrp-to" type="text" placeholder="替换为(1个全换)" style="flex:1;min-width:0;" />
               <button class="st-tb-mini-btn active" id="st-qrp-add" type="button">+加</button>
             </div>
-            <div id="st-qrp-list" style="display:flex;flex-direction:column;gap:4px;max-height:175px;overflow-y:auto;"></div>`;
+            <div id="st-qrp-list" style="display:flex;flex-direction:column;gap:4px;flex:1 1 auto;min-height:90px;max-height:none;overflow-y:auto;"></div>`;
           root.appendChild(rpop);
           makeToolboxBoxMovableResizable(rpop, rpop.firstElementChild, { minW: 230, minH: 150 });
           const qTog = rpop.querySelector('#st-qrp-toggle');
