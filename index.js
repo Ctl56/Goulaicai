@@ -63413,7 +63413,8 @@
         }
       };
 
-      win.fetch = async function(input, init) {
+      const _glcFetchTargetRe = /\/api\/(?:characters\/(?:edit-avatar|edit|create|import)|avatars\/upload|chats\/(?:recent|get))(?:\?|$)/;
+      const _glcHandlePatchedFetch = async (input, init) => {
         let effInit = init;
         let importMissingChara = false;
         try {
@@ -63563,6 +63564,11 @@
           }
         } catch (_) {}
         return res;
+      };
+      win.fetch = function(input, init) {
+        const u = typeof input === 'string' ? input : String(input?.url || '');
+        if (!_glcFetchTargetRe.test(u)) return _origFetch(input, init);
+        return _glcHandlePatchedFetch(input, init);
       };
     }
   } catch (_) {}
