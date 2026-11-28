@@ -40462,7 +40462,26 @@
     }, 240);
   };
 
-  const openCoopAdvResultModal = (friendName, ph, rec, shot, isNewPhoto, coins, randSnack, bondGain) => {
+  const _coAdvModalQueue = [];
+  let _coAdvModalOpen = false;
+  const runOrQueueCoAdvModal = (showFn) => {
+    if (_coAdvModalOpen) {
+      _coAdvModalQueue.push(showFn);
+      return;
+    }
+    _coAdvModalOpen = true;
+    showFn();
+  };
+  const closeCoAdvModalAndNext = (maskEl) => {
+    if (maskEl) maskEl.style.display = 'none';
+    _coAdvModalOpen = false;
+    if (_coAdvModalQueue.length > 0) {
+      const nextFn = _coAdvModalQueue.shift();
+      setTimeout(() => runOrQueueCoAdvModal(nextFn), 60);
+    }
+  };
+
+  const openCoopAdvResultModal = (friendName, ph, rec, shot, isNewPhoto, coins, randSnack, bondGain) => runOrQueueCoAdvModal(() => {
     let mask = root.querySelector('#st-tb-coadv-result-mask');
     if (!mask) {
       mask = doc.createElement('div');
@@ -40545,10 +40564,10 @@
       }
     }
     mask.onclick = (e) => { e.stopPropagation(); };
-    mask.querySelector('#st-car-ok')?.addEventListener('click', () => { mask.style.display = 'none'; });
+    mask.querySelector('#st-car-ok')?.addEventListener('click', () => { closeCoAdvModalAndNext(mask); });
     bringModalFront(mask);
     mask.style.display = 'flex';
-  };
+  });
 
   const settleOfflineCoopAdventures = (items) => {
     if (!Array.isArray(items) || !items.length) return;
@@ -40615,7 +40634,8 @@
       return;
     }
 
-    // 多次离线探险合并为一份清晰可滚动的汇总弹窗，零丢失、不刷屏
+    // 多次离线探险合并为一份清晰可滚动的汇总弹窗，排队展示，绝不顶掉未点击收下的弹窗
+    runOrQueueCoAdvModal(() => {
     let mask = root.querySelector('#st-tb-coadv-result-mask');
     if (!mask) {
       mask = doc.createElement('div');
@@ -40709,9 +40729,10 @@
     }
 
     mask.onclick = (e) => { e.stopPropagation(); };
-    mask.querySelector('#st-car-ok')?.addEventListener('click', () => { mask.style.display = 'none'; });
+    mask.querySelector('#st-car-ok')?.addEventListener('click', () => { closeCoAdvModalAndNext(mask); });
     bringModalFront(mask);
     mask.style.display = 'flex';
+    });
   };
 
   let coAdvBusy = false;
@@ -56982,12 +57003,15 @@
         claimBtn.className = 'st-px-btn care';
         claimBtn.style.width = '100%';
         claimBtn.textContent = '领取工资与打工小剧场';
-        claimBtn.addEventListener('click', (eClick) => {
-          if (eClick) eClick.stopPropagation();
-          if (!config.puppyJob || claimBtn.dataset.claimed === '1') return;
+        claimBtn.style.touchAction = 'manipulation';
+        const runClaimJobWage = (eClick) => {
+          if (eClick) { eClick.stopPropagation(); }
+          if (claimBtn.dataset.claimed === '1') return;
+          if (!config.puppyJob) { renderJobPanel(); return; }
           claimBtn.dataset.claimed = '1';
           claimBtn.disabled = true;
           if (jobAnimTimer) { clearInterval(jobAnimTimer); jobAnimTimer = null; }
+          try {
           const JOB_EXTRA_EVENTS = {
             boba: [
               { star: true, tip: 4, msg: '一位常客一口气点了十杯四季春奶盖，夸{self}摇得又匀又快，大手一挥塞了丰厚小费!' },
@@ -57294,7 +57318,36 @@
           setTimeout(() => {
             try { updatePupStatBars(); syncPuppyBagUI(); if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
           }, 16);
-        });
+          } catch (_) {
+            try {
+              const fbWage = 12;
+              config.puppyCoins = (config.puppyCoins || 0) + fbWage;
+              config.puppyJob = null;
+              config.puppyJobCooldownUntil = Date.now() + 600000;
+              saveConfig();
+              updatePupStatBars();
+              renderJobPanel();
+              showPuppyBubble(`领回打工工资 +${fbWage} 币啦~`, 2600);
+            } catch (_2) {}
+          }
+        };
+        let _claimTouchPt = null;
+        claimBtn.addEventListener('touchstart', (eT) => {
+          const t = eT.touches && eT.touches[0];
+          if (t) _claimTouchPt = { x: t.clientX, y: t.clientY };
+        }, { passive: true });
+        claimBtn.addEventListener('touchend', (eT) => {
+          if (!_claimTouchPt) return;
+          const t = eT.changedTouches && eT.changedTouches[0];
+          const dx = t ? Math.abs(t.clientX - _claimTouchPt.x) : 99;
+          const dy = t ? Math.abs(t.clientY - _claimTouchPt.y) : 99;
+          _claimTouchPt = null;
+          if (dx <= 14 && dy <= 14) {
+            eT.preventDefault();
+            runClaimJobWage(eT);
+          }
+        }, { passive: false });
+        claimBtn.addEventListener('click', runClaimJobWage);
         statusEl.appendChild(claimBtn);
         startBtn.disabled = true;
         startBtn.textContent = '请先领取本次工资';
@@ -63971,14 +64024,38 @@
         (async () => {
           try {
             await ctx.selectCharacterById(String(targetIdx));
-            for (let w = 0; w < 22; w++) {
+            for (let w = 0; w < 25; w++) {
               await new Promise(r => setTimeout(r, 100));
-              const nowId = Number((getContext()?.characterId ?? win.this_chid));
-              if (nowId === targetIdx) break;
+              const nowCtx = getContext();
+              const nowId = Number((nowCtx?.characterId ?? win.this_chid));
+              if (nowId === targetIdx && Array.isArray(nowCtx?.chat) && nowCtx.chat.length > 0) break;
             }
             await new Promise(r => setTimeout(r, 180));
-            if (typeof ctx.openCharacterChat === 'function') {
-              await ctx.openCharacterChat(fn);
+            const afterCtx = getContext();
+            const curLoadedId = String(afterCtx?.chatId || '').trim().replace(/\.jsonl$/i, '');
+            const curLoadedLen = Array.isArray(afterCtx?.chat) ? afterCtx.chat.length : 0;
+            // 若选卡后已经自动加载出目标聊天（且有消息），无需再次 openCharacterChat
+            if (curLoadedId === fn && curLoadedLen > 0) return;
+            // 仅当目标卡目录里确实存在 fn 时才切换，绝不强行打开不存在的空聊天
+            if (fn && typeof ctx.openCharacterChat === 'function') {
+              const hdrs = typeof afterCtx?.getRequestHeaders === 'function' ? afterCtx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+              let existsInTarget = false;
+              try {
+                const rC = await win.fetch('/api/characters/chats', {
+                  method: 'POST',
+                  headers: hdrs,
+                  body: JSON.stringify({ avatar_url: targetAv }),
+                });
+                if (rC && rC.ok) {
+                  const arrC = await rC.json();
+                  if (Array.isArray(arrC)) {
+                    existsInTarget = arrC.some(it => String(it?.file_name || '').trim().replace(/\.jsonl$/i, '') === fn);
+                  }
+                }
+              } catch (_) {}
+              if (existsInTarget) {
+                await ctx.openCharacterChat(fn);
+              }
             }
           } catch (_) {}
         })();
