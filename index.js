@@ -36782,11 +36782,6 @@
     mask.querySelector('#st-pxn-ok')?.addEventListener('click', closeN);
     bringModalFront(mask);
     mask.style.display = 'flex';
-    const drBox = mask.firstElementChild;
-    if (drBox && drBox.firstElementChild) {
-      drBox.dataset.stMovableBound = '';
-      makeToolboxBoxMovableResizable(drBox, drBox.firstElementChild, { minW: 250, minH: 160, defW: 316 });
-    }
   };
 
   // 联机离线/在线消息严格确认：单条逐条确认；离线累积 2 条及以上时合并为「离线联机动态总结」弹窗，必须点击确认才会消失！
@@ -61630,7 +61625,7 @@
     if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
     showImmNotice(config.maskEnabled ? '已开启打码' : '已关闭打码');
   };
-  var makeToolboxBoxMovableResizable = (boxEl, headEl, opts = {}) => {
+  function makeToolboxBoxMovableResizable(boxEl, headEl, opts = {}) {
     if (!boxEl || boxEl.dataset.stMovableBound === '1') return;
     boxEl.dataset.stMovableBound = '1';
     const minW = Number(opts.minW) || 230;
@@ -61727,7 +61722,7 @@
       grip.addEventListener('pointerup', endRs);
       grip.addEventListener('pointercancel', endRs);
     }
-  };
+  }
 
   var openQuickMaskPanel = () => {
     let qm = root.querySelector('#st-tb-quick-mask-pop');
@@ -70697,6 +70692,11 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     });
     bringModalFront(mask);
     mask.style.display = 'flex';
+    const drBox = mask.firstElementChild;
+    if (drBox && drBox.firstElementChild) {
+      drBox.dataset.stMovableBound = '';
+      makeToolboxBoxMovableResizable(drBox, drBox.firstElementChild, { minW: 250, minH: 160, defW: 316 });
+    }
   };
 
   const chatDraftRescueBtn = root.querySelector('#st-tb-chat-draftrescue-btn');
@@ -71480,6 +71480,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             </div>
             <div id="st-qp-list" style="display:flex;flex-direction:column;gap:4px;max-height:185px;overflow-y:auto;"></div>`;
           root.appendChild(ppop);
+          makeToolboxBoxMovableResizable(ppop, ppop.firstElementChild, { minW: 230, minH: 150, defW: 264 });
           let qEditId = null;
           const qForm = ppop.querySelector('#st-qp-form');
           const qTtl = ppop.querySelector('#st-qp-ttl');
@@ -71619,6 +71620,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             </div>
             <div id="st-qrp-list" style="display:flex;flex-direction:column;gap:4px;max-height:175px;overflow-y:auto;"></div>`;
           root.appendChild(rpop);
+          makeToolboxBoxMovableResizable(rpop, rpop.firstElementChild, { minW: 230, minH: 150 });
           const qTog = rpop.querySelector('#st-qrp-toggle');
           const qFrom = rpop.querySelector('#st-qrp-from');
           const qTo = rpop.querySelector('#st-qrp-to');
@@ -71719,6 +71721,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               <span>首行缩进</span>
             </label>`;
           root.appendChild(pop);
+          makeToolboxBoxMovableResizable(pop, pop.firstElementChild, { minW: 230, minH: 150 });
           pop.querySelector('#st-qr-close')?.addEventListener('click', () => pop.classList.remove('open'));
           pop.querySelector('#st-qr-reset')?.addEventListener('click', () => {
             root.querySelector('#st-tb-read-reset')?.click();
@@ -71787,6 +71790,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               <button class="st-tb-mini-btn" id="st-qt-del" type="button" style="color:#c94c5a;">删除</button>
             </div>`;
           root.appendChild(tpop);
+          makeToolboxBoxMovableResizable(tpop, tpop.firstElementChild, { minW: 230, minH: 150 });
           const qtClose = tpop.querySelector('#st-qt-close');
           const qtSearch = tpop.querySelector('#st-qt-search');
           const qtClear = tpop.querySelector('#st-qt-search-clear');
@@ -71933,6 +71937,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               <button class="st-tb-mini-btn" id="st-qf-import" type="button">导入新字体</button>
             </div>`;
           root.appendChild(fpop);
+          makeToolboxBoxMovableResizable(fpop, fpop.firstElementChild, { minW: 230, minH: 150 });
           fpop.querySelector('#st-qf-close')?.addEventListener('click', () => fpop.classList.remove('open'));
           fpop.querySelector('#st-qf-import')?.addEventListener('click', () => {
             fpop.classList.remove('open');
