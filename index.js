@@ -32300,6 +32300,47 @@
     ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click'].forEach(evtName => {
       guestPopEl.addEventListener(evtName, (e) => { e.stopPropagation(); });
     });
+    attachInvisibleEdgeResize(guestPopEl, { minW: 220, minH: 180 });
+  }
+  if (pupBagEl) {
+    attachInvisibleEdgeResize(pupBagEl, {
+      minW: 256,
+      minH: 260,
+      onResizeEnd: (r) => {
+        config.pupBagW = Math.round(r.width);
+        config.pupBagH = Math.round(r.height);
+        config.pupBagX = Math.round(r.left);
+        config.pupBagY = Math.round(r.top);
+        scheduleSaveConfig();
+      },
+    });
+  }
+  if (panel) {
+    attachInvisibleEdgeResize(panel, {
+      minW: 260,
+      minH: 260,
+      onResizeEnd: (r) => {
+        config.panelW = Math.round(r.width);
+        config.panelH = Math.round(r.height);
+        config.panelX = Math.round(r.left);
+        config.panelY = Math.round(r.top);
+        scheduleSaveConfig();
+      },
+    });
+  }
+  if (readerEl) {
+    attachInvisibleEdgeResize(readerEl, {
+      minW: 250,
+      minH: 220,
+      shouldSkip: () => readerEl.classList.contains('fullscreen'),
+      onResizeEnd: (r) => {
+        config.readerW = Math.round(r.width);
+        config.readerH = Math.round(r.height);
+        config.readerX = Math.round(r.left);
+        config.readerY = Math.round(r.top);
+        scheduleSaveConfig();
+      },
+    });
   }
 
   // 兼容迁移旧版单只 guestPuppy -> guestPuppies 数组
@@ -41932,6 +41973,19 @@
       panel = doc.createElement('div');
       panel.id = 'st-tb-dm-panel';
       root.appendChild(panel);
+      attachInvisibleEdgeResize(panel, {
+        minW: 240,
+        minH: 260,
+        onResizeEnd: (r) => {
+          config.puppyDmRect = {
+            left: Math.round(r.left),
+            top: Math.round(r.top),
+            width: Math.round(r.width),
+            height: Math.round(r.height),
+          };
+          scheduleSaveConfig();
+        },
+      });
     }
     panel.dataset.fid = fid;
     panel.dataset.fname = fname;
@@ -61625,6 +61679,93 @@
     if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
     showImmNotice(config.maskEnabled ? '已开启打码' : '已关闭打码');
   };
+  function attachInvisibleEdgeResize(boxEl, opts = {}) {
+    if (!boxEl || boxEl.dataset.stEdgeResizeBound === '1') return;
+    boxEl.dataset.stEdgeResizeBound = '1';
+    const minW = Number(opts.minW) || 220;
+    const minH = Number(opts.minH) || 150;
+    const maxW = () => Math.max(minW, win.innerWidth - 12);
+    const maxH = () => Math.max(minH, win.innerHeight - 16);
+    const shouldSkip = typeof opts.shouldSkip === 'function' ? opts.shouldSkip : null;
+    const onResizeEnd = typeof opts.onResizeEnd === 'function' ? opts.onResizeEnd : null;
+
+    let rs = null;
+    const detectEdge = (ev) => {
+      if (shouldSkip && shouldSkip()) return '';
+      const r = boxEl.getBoundingClientRect();
+      if (r.width < 20 || r.height < 20) return '';
+      const dxL = ev.clientX - r.left;
+      const dxR = r.right - ev.clientX;
+      const dyT = ev.clientY - r.top;
+      const dyB = r.bottom - ev.clientY;
+      if (dxR >= -4 && dxR <= 22 && dyB >= -4 && dyB <= 22) return 'se';
+      if (dxL >= -4 && dxL <= 20 && dyB >= -4 && dyB <= 20) return 'sw';
+      if (dyB >= -4 && dyB <= 12) return 's';
+      if (dyT >= -4 && dyT <= 9) return 'n';
+      if (dxR >= -4 && dxR <= 12) return 'e';
+      if (dxL >= -4 && dxL <= 12) return 'w';
+      return '';
+    };
+    boxEl.addEventListener('pointerdown', (ev) => {
+      if (ev.target && ev.target.closest && ev.target.closest('button, input, select, textarea, a, canvas')) return;
+      const edge = detectEdge(ev);
+      if (!edge) return;
+      ev.stopPropagation();
+      ev.preventDefault();
+      const r = boxEl.getBoundingClientRect();
+      boxEl.style.left = `${Math.round(r.left)}px`;
+      boxEl.style.top = `${Math.round(r.top)}px`;
+      boxEl.style.right = 'auto';
+      boxEl.style.bottom = 'auto';
+      boxEl.style.width = `${Math.round(r.width)}px`;
+      boxEl.style.height = `${Math.round(r.height)}px`;
+      boxEl.style.maxHeight = 'calc(100vh - 16px)';
+      boxEl.style.transform = 'none';
+      rs = { id: ev.pointerId, edge, sx: ev.clientX, sy: ev.clientY, ol: r.left, ot: r.top, ow: r.width, oh: r.height };
+      try { boxEl.setPointerCapture(ev.pointerId); } catch (_) {}
+    }, true);
+    boxEl.addEventListener('pointermove', (ev) => {
+      if (!rs) {
+        if (ev.pointerType === 'mouse') {
+          const ed = detectEdge(ev);
+          boxEl.style.cursor = ed === 'se' ? 'nwse-resize' : (ed === 'sw' ? 'nesw-resize' : ((ed === 'n' || ed === 's') ? 'ns-resize' : ((ed === 'e' || ed === 'w') ? 'ew-resize' : '')));
+        }
+        return;
+      }
+      if (rs.id !== ev.pointerId) return;
+      ev.preventDefault();
+      const dx = ev.clientX - rs.sx;
+      const dy = ev.clientY - rs.sy;
+      const ed = rs.edge;
+      if (ed.includes('e')) {
+        boxEl.style.width = `${Math.round(clamp(rs.ow + dx, minW, maxW()))}px`;
+      }
+      if (ed.includes('w')) {
+        const nw = clamp(rs.ow - dx, minW, maxW());
+        boxEl.style.left = `${Math.round(clamp(rs.ol + (rs.ow - nw), 4, win.innerWidth - minW - 4))}px`;
+        boxEl.style.width = `${Math.round(nw)}px`;
+      }
+      if (ed.includes('s')) {
+        boxEl.style.height = `${Math.round(clamp(rs.oh + dy, minH, maxH()))}px`;
+      }
+      if (ed.includes('n')) {
+        const nh = clamp(rs.oh - dy, minH, maxH());
+        boxEl.style.top = `${Math.round(clamp(rs.ot + (rs.oh - nh), 4, win.innerHeight - minH - 4))}px`;
+        boxEl.style.height = `${Math.round(nh)}px`;
+      }
+    });
+    const endRs = (ev) => {
+      if (!rs || rs.id !== ev.pointerId) return;
+      rs = null;
+      try { boxEl.releasePointerCapture(ev.pointerId); } catch (_) {}
+      if (onResizeEnd) {
+        try { onResizeEnd(boxEl.getBoundingClientRect()); } catch (_) {}
+      }
+    };
+    boxEl.addEventListener('pointerup', endRs);
+    boxEl.addEventListener('pointercancel', endRs);
+  }
+
   function makeToolboxBoxMovableResizable(boxEl, headEl, opts = {}) {
     if (!boxEl || boxEl.dataset.stMovableBound === '1') return;
     boxEl.dataset.stMovableBound = '1';
@@ -66417,10 +66558,57 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     const pu = getPowerUser();
     const targetName = String(pu?.personas?.[avatar] || '').trim();
 
+    // 切换面具前锁定当前聊天位置与可见楼层，绝不让酒馆切面具后跳回开场白或别处！
+    const chatEl = doc.querySelector('#chat');
+    const savedScrollTop = chatEl ? chatEl.scrollTop : null;
+    let anchorMesId = null;
+    let anchorOffset = 0;
+    if (chatEl) {
+      try {
+        const cRect = chatEl.getBoundingClientRect();
+        const mesEls = chatEl.querySelectorAll('.mes[mesid]');
+        for (let i = 0; i < mesEls.length; i++) {
+          const r = mesEls[i].getBoundingClientRect();
+          if (r.bottom > cRect.top + 8) {
+            anchorMesId = mesEls[i].getAttribute('mesid');
+            anchorOffset = r.top - cRect.top;
+            break;
+          }
+        }
+      } catch (_) {}
+    }
+    const keepCurrentPosition = () => {
+      if (!chatEl || savedScrollTop === null) return;
+      let userTouched = false;
+      const onTouch = () => { userTouched = true; };
+      chatEl.addEventListener('wheel', onTouch, { once: true, passive: true });
+      chatEl.addEventListener('touchstart', onTouch, { once: true, passive: true });
+      const restore = () => {
+        if (userTouched) return;
+        try {
+          if (anchorMesId !== null) {
+            const mEl = chatEl.querySelector(`.mes[mesid="${anchorMesId}"]`);
+            if (mEl) {
+              const cRect = chatEl.getBoundingClientRect();
+              const mRect = mEl.getBoundingClientRect();
+              const delta = (mRect.top - cRect.top) - anchorOffset;
+              if (Math.abs(delta) > 2) chatEl.scrollTop = Math.max(0, chatEl.scrollTop + delta);
+              return;
+            }
+          }
+          if (Math.abs(chatEl.scrollTop - savedScrollTop) > 4) {
+            chatEl.scrollTop = savedScrollTop;
+          }
+        } catch (_) {}
+      };
+      [50, 160, 380, 750].forEach(ms => setTimeout(restore, ms));
+    };
+
     // 1. 若酒馆面具列表 DOM 已渲染，直接触发原生点击（完整走酒馆 setUserAvatar 流程）
     const domItem = doc.querySelector(`#user_avatar_block .avatar-container[imgfile="${CSS.escape(avatar)}"]`);
     if (domItem) {
       domItem.click();
+      keepCurrentPosition();
       markPersonaActiveLive(avatar);
       cmNotify('已切换面具：' + (targetName || avatar));
       return true;
@@ -66431,6 +66619,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const exec = ctx?.executeSlashCommandsWithOptions || ctx?.executeSlashCommands || win.executeSlashCommands;
       if (typeof exec === 'function' && targetName) {
         await exec(`/persona-set mode=lookup ${targetName}`, { showOutput: false });
+        keepCurrentPosition();
         markPersonaActiveLive(avatar);
         cmNotify('已切换面具：' + targetName);
         return true;
@@ -66442,6 +66631,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       const fn = ctx?.setUserAvatar || win.setUserAvatar;
       if (typeof fn === 'function') {
         await fn(avatar);
+        keepCurrentPosition();
         cmNotify('已切换面具：' + (targetName || avatar));
         setTimeout(renderPersonaPanel, 150); setTimeout(renderPersonaPanel, 550);
         return true;
@@ -66457,7 +66647,8 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         const item2 = doc.querySelector(`#user_avatar_block .avatar-container[imgfile="${CSS.escape(avatar)}"]`);
         if (item2) {
           item2.click();
-          setTimeout(() => pBtn.click(), 80);
+          setTimeout(() => { pBtn.click(); keepCurrentPosition(); }, 80);
+          keepCurrentPosition();
           cmNotify('已切换面具：' + (targetName || avatar));
           setTimeout(renderPersonaPanel, 180); setTimeout(renderPersonaPanel, 600);
           return true;
