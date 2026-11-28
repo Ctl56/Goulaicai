@@ -63487,7 +63487,61 @@
       }
     }
     if (Array.isArray(chatMsgs) && chatMsgs.length) {
-      // 1) 优先读取消息里记录的 original_avatar / avatar 字段
+      const getCardAllGreets = (c) => {
+        if (!c) return [];
+        const first = String(c.first_mes || c.data?.first_mes || '');
+        const alts = Array.isArray(c.data?.alternate_greetings)
+          ? c.data.alternate_greetings
+          : (Array.isArray(c.alternate_greetings) ? c.alternate_greetings : []);
+        const list = [];
+        if (first) list.push(first);
+        alts.forEach(a => { if (typeof a === 'string') list.push(a); });
+        return list;
+      };
+
+      const firstAi = chatMsgs.find(m => m && !m.is_user && !m.is_system && (m.mes || (Array.isArray(m.swipes) && m.swipes.length)));
+      if (firstAi) {
+        const chatSwipes = (Array.isArray(firstAi.swipes) && firstAi.swipes.length)
+          ? firstAi.swipes.filter(x => typeof x === 'string')
+          : (firstAi.mes ? [String(firstAi.mes)] : []);
+        const chatGreetCount = chatSwipes.length;
+
+        // 1) 先看开场白有几个！若只有唯一一张同名卡的开场白总数完全一致，直接 100% 锁定！
+        const countMatchedIdxs = chatGreetCount > 0
+          ? sameNameIdxs.filter(cid => getCardAllGreets(chars[cid]).length === chatGreetCount)
+          : [];
+        if (countMatchedIdxs.length === 1) return countMatchedIdxs[0];
+
+        // 2) 再在候选卡中（数量一致的优先）全量比对每一版开场白具体内容！
+        const poolIdxs = countMatchedIdxs.length > 1 ? countMatchedIdxs : sameNameIdxs;
+        const normSamples = chatSwipes.map(norm).filter(t => t.length >= 6);
+        if (normSamples.length) {
+          let bestCid = -1, bestScore = 0;
+          poolIdxs.forEach(cid => {
+            const c = chars[cid];
+            if (!c) return;
+            const greetsRaw = getCardAllGreets(c);
+            const greets = greetsRaw.map(norm).filter(t => t.length >= 6);
+            let score = (greetsRaw.length === chatGreetCount) ? 200 : 0;
+            normSamples.forEach((sp, sIdx) => {
+              // 优先同索引直接比对
+              if (greets[sIdx] && greets[sIdx] === sp) { score += 160; return; }
+              let bestOne = 0;
+              greets.forEach(gr => {
+                if (sp === gr) bestOne = Math.max(bestOne, 120);
+                else if (sp.slice(0, 40) === gr.slice(0, 40)) bestOne = Math.max(bestOne, 80);
+                else if (sp.slice(0, 20) === gr.slice(0, 20)) bestOne = Math.max(bestOne, 45);
+                else if (gr.includes(sp.slice(0, 18)) || sp.includes(gr.slice(0, 18))) bestOne = Math.max(bestOne, 30);
+              });
+              score += bestOne;
+            });
+            if (score > bestScore) { bestScore = score; bestCid = cid; }
+          });
+          if (bestCid >= 0 && bestScore >= 30) return bestCid;
+        }
+      }
+
+      // 3) 兜底：读取消息里记录的 original_avatar / force_avatar
       for (let i = 0; i < Math.min(chatMsgs.length, 6); i++) {
         const m = chatMsgs[i];
         if (!m || m.is_user) continue;
@@ -63495,39 +63549,6 @@
         if (origAv) {
           const hit = sameNameIdxs.find(cid => String(chars[cid]?.avatar || '') === origAv);
           if (hit !== undefined) return hit;
-        }
-      }
-      // 2) 比对第 0 层开场白文本与每张重名卡的 first_mes / alternate_greetings 指纹！
-      const firstAi = chatMsgs.find(m => m && !m.is_user && !m.is_system && (m.mes || (Array.isArray(m.swipes) && m.swipes.length)));
-      if (firstAi) {
-        const samples = [];
-        if (firstAi.mes) samples.push(norm(firstAi.mes));
-        if (Array.isArray(firstAi.swipes)) {
-          firstAi.swipes.slice(0, 6).forEach(sw => { if (sw) samples.push(norm(sw)); });
-        }
-        const validSamples = samples.filter(t => t.length >= 10);
-        if (validSamples.length) {
-          let bestCid = -1, bestScore = 0;
-          sameNameIdxs.forEach(cid => {
-            const c = chars[cid];
-            if (!c) return;
-            const greets = [
-              c.first_mes,
-              c.data?.first_mes,
-              ...(Array.isArray(c.data?.alternate_greetings) ? c.data.alternate_greetings : []),
-              ...(Array.isArray(c.alternate_greetings) ? c.alternate_greetings : []),
-            ].map(norm).filter(t => t.length >= 10);
-            let score = 0;
-            validSamples.forEach(sp => {
-              greets.forEach(gr => {
-                if (sp === gr) score += 100;
-                else if (sp.slice(0, 36) === gr.slice(0, 36)) score += 60;
-                else if (gr.includes(sp.slice(0, 24)) || sp.includes(gr.slice(0, 24))) score += 30;
-              });
-            });
-            if (score > bestScore) { bestScore = score; bestCid = cid; }
-          });
-          if (bestCid >= 0 && bestScore >= 30) return bestCid;
         }
       }
     }
@@ -63576,16 +63597,11 @@
         win.__stSuppressDupChatToastUntil = Date.now() + 4500;
 
         const cleanWanted = rawFile.replace(/\.jsonl$/i, '');
-        let realCid = -1;
-
-        // 1. 优先用已记住的真实归属
-        const savedAv = cleanWanted && config.dupChatOwnerMap ? config.dupChatOwnerMap[cleanWanted] : '';
-        if (savedAv) {
-          realCid = chars.findIndex(c => c && String(c.avatar || '') === savedAv);
-        }
-        // 2. 未记住则全自动通过消息 original_avatar + 开场白指纹精准匹配真实角色卡！
+        // 每次点击重名最近聊天都先实时按「目录 + 开场白数量 + 开场白全文」核验，彻底纠正旧错缓存！
+        let realCid = await autoDetectDupChatOwner(ctx, chars, sameNameIdxs, cleanWanted, avatar);
         if (realCid < 0) {
-          realCid = await autoDetectDupChatOwner(ctx, chars, sameNameIdxs, cleanWanted, avatar);
+          const savedAv = cleanWanted && config.dupChatOwnerMap ? config.dupChatOwnerMap[cleanWanted] : '';
+          if (savedAv) realCid = chars.findIndex(c => c && String(c.avatar || '') === savedAv);
         }
         if (realCid < 0) realCid = sameNameIdxs[0];
 
@@ -71129,6 +71145,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     { id: 'ambient',   name: '屏幕氛围',   defLabel: '氛围' },
     { id: 'storyedit', name: '正文编辑',   defLabel: '编辑' },
     { id: 'fold',      name: '折叠楼层',   defLabel: '折楼' },
+    { id: 'curchar',   name: '当前角色',   defLabel: '本角' },
     { id: 'chars',     name: '角色卡管理', defLabel: '角色' },
     { id: 'persona',   name: 'User面具',   defLabel: '面具' },
     { id: 'preset',    name: '预设管理',   defLabel: '预设' },
@@ -71830,6 +71847,185 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             setTimeout(() => { sec.style.outline = oldOut; sec.style.borderRadius = oldRad; }, 1200);
           }, 60);
         }
+      } else if (act === 'curchar') {
+        toggleQuickDock(false);
+        let cpop = root.querySelector('#st-tb-quick-curchar-pop');
+        if (!cpop) {
+          cpop = doc.createElement('div');
+          cpop.id = 'st-tb-quick-curchar-pop';
+          cpop.className = 'st-tb-mini-pop';
+          cpop.style.width = '300px';
+          cpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;">
+              <span>当前角色</span>
+              <div style="display:flex;gap:4px;">
+                <button class="st-tb-mini-btn" id="st-qcc-refresh" type="button">刷新</button>
+                <button class="st-tb-mini-btn" id="st-qcc-close" type="button">关闭</button>
+              </div>
+            </div>
+            <div id="st-qcc-card" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:8px;background:var(--tb-surface);"></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+              <button class="st-tb-pill active st-qcc-tab" data-qcc-tab="chats" type="button">聊天文件</button>
+              <button class="st-tb-pill st-qcc-tab" data-qcc-tab="greets" type="button">开场白</button>
+              <button class="st-tb-pill st-qcc-tab" data-qcc-tab="wb" type="button">世界书</button>
+            </div>
+            <div id="st-qcc-body" style="display:flex;flex-direction:column;gap:5px;max-height:240px;overflow-y:auto;"></div>`;
+          root.appendChild(cpop);
+          makeToolboxBoxMovableResizable(cpop, cpop.firstElementChild, { minW: 250, minH: 200, defW: 300 });
+          let qccTab = 'chats';
+          let qccExpandedGreet = -1;
+          const cardEl = cpop.querySelector('#st-qcc-card');
+          const bodyEl = cpop.querySelector('#st-qcc-body');
+
+          const renderQcc = async (forceFetchChats = false) => {
+            const ctx = getContext();
+            const ch = getCurrentCharacter();
+            const chatArr = Array.isArray(ctx?.chat) ? ctx.chat.filter(m => m && !m.is_system) : [];
+            if (!ch) {
+              cardEl.innerHTML = '<div style="font-size:11.5px;opacity:0.75;">当前未在单人角色聊天中</div>';
+            } else {
+              cardEl.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(ch.avatar || '')}" style="width:36px;height:36px;border-radius:7px;object-fit:cover;flex-shrink:0;" />
+                <div style="min-width:0;flex:1;">
+                  <div style="font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(ch.name || '')}</div>
+                  <div style="font-size:10.5px;opacity:0.72;">当前聊天 ${chatArr.length} 层 · 归属 ${escapeHtmlSimple(ch.avatar || '')}</div>
+                </div>`;
+            }
+            cpop.querySelectorAll('.st-qcc-tab').forEach(b => b.classList.toggle('active', b.dataset.qccTab === qccTab));
+            bodyEl.innerHTML = '';
+
+            if (qccTab === 'chats') {
+              if (!ch || !ch.avatar) {
+                bodyEl.innerHTML = '<div class="st-tb-empty">请先进入一个角色聊天</div>';
+                return;
+              }
+              if (forceFetchChats || !Array.isArray(chatListCache) || !chatListCache.length) {
+                bodyEl.innerHTML = '<div class="st-tb-empty">正在读取聊天文件...</div>';
+                await fetchCharacterChats();
+                bodyEl.innerHTML = '';
+              }
+              const list = Array.isArray(chatListCache) ? chatListCache : [];
+              if (!list.length) {
+                bodyEl.innerHTML = '<div class="st-tb-empty">暂无聊天文件</div>';
+                return;
+              }
+              const curChatId = String(ctx?.chatId || '').replace(/\.jsonl$/i, '');
+              list.forEach(item => {
+                const fn = String(item.file_name || '');
+                const cleanFn = fn.replace(/\.jsonl$/i, '');
+                const isCur = curChatId && cleanFn === curChatId;
+                const row = doc.createElement('div');
+                row.style.cssText = `display:flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid var(--tb-border);border-radius:7px;background:${isCur ? 'var(--tb-surface-hover)' : 'var(--tb-surface)'};`;
+                const info = doc.createElement('div');
+                info.style.cssText = 'flex:1;min-width:0;cursor:pointer;';
+                info.innerHTML = `<div style="font-size:11.5px;font-weight:${isCur ? '700' : '600'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${isCur ? '[当前] ' : ''}${escapeHtmlSimple(cleanFn)}</div>
+                  <div style="font-size:10px;opacity:0.68;">${item.chat_items || 0} 条 · ${escapeHtmlSimple(item.last_mes || '')}</div>`;
+                info.addEventListener('click', async () => {
+                  if (typeof ctx?.openCharacterChat === 'function') {
+                    await ctx.openCharacterChat(cleanFn);
+                    setTimeout(() => renderQcc(false), 300);
+                  }
+                });
+                const delB = doc.createElement('button');
+                delB.type = 'button';
+                delB.className = 'st-tb-mini-btn';
+                delB.style.color = '#d9534f';
+                delB.textContent = '删';
+                delB.addEventListener('click', (ev) => {
+                  ev.stopPropagation();
+                  openGuardConfirm('确认删除聊天文件？', `确定永久删除「${cleanFn}」吗？删除后无法恢复。`, async () => {
+                    try {
+                      const headers = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+                      await win.fetch('/api/chats/delete', { method: 'POST', headers, body: JSON.stringify({ chatfile: fn, avatar_url: ch.avatar }) });
+                      showImmNotice('已删除聊天文件');
+                      await renderQcc(true);
+                    } catch (_) { showImmNotice('删除失败'); }
+                  }, '确认删除', true);
+                });
+                row.append(info, delB);
+                bodyEl.appendChild(row);
+              });
+            } else if (qccTab === 'greets') {
+              const greets = getCharacterGreetings();
+              if (!greets.length) {
+                bodyEl.innerHTML = '<div class="st-tb-empty">当前角色暂无开场白</div>';
+                return;
+              }
+              const msg0 = ctx?.chat?.[0];
+              const curIdx = Number.isFinite(msg0?.swipe_id) ? msg0.swipe_id : 0;
+              const canSwitch = chatArr.length <= 1 && Boolean(msg0);
+              greets.forEach((raw, idx) => {
+                const isExp = qccExpandedGreet === idx;
+                const gCard = doc.createElement('div');
+                gCard.style.cssText = `padding:6px 8px;border:1px solid ${idx === curIdx ? 'var(--tb-accent,#6b8cff)' : 'var(--tb-border)'};border-radius:7px;background:var(--tb-surface);`;
+                const head = doc.createElement('div');
+                head.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;';
+                head.innerHTML = `<span style="font-size:11px;font-weight:700;">第 ${idx + 1}/${greets.length} 版${idx === curIdx ? '（当前）' : ''}</span>`;
+                const acts = doc.createElement('div');
+                acts.style.cssText = 'display:flex;gap:4px;';
+                const cpB = doc.createElement('button');
+                cpB.type = 'button'; cpB.className = 'st-tb-mini-btn'; cpB.textContent = '复制';
+                cpB.addEventListener('click', (ev) => { ev.stopPropagation(); copyVisitCodeReliable(String(raw || '')); showImmNotice('已复制该版开场白'); });
+                const swB = doc.createElement('button');
+                swB.type = 'button'; swB.className = 'st-tb-mini-btn' + (idx === curIdx ? ' active' : ''); swB.textContent = idx === curIdx ? '当前' : '切换';
+                swB.addEventListener('click', async (ev) => {
+                  ev.stopPropagation();
+                  if (!canSwitch) { showImmNotice('已有后续对话，无法直接切换开场白'); return; }
+                  try {
+                    if (!Array.isArray(msg0.swipes) || msg0.swipes.length < greets.length) msg0.swipes = [...greets];
+                    msg0.swipe_id = idx;
+                    msg0.mes = greets[idx];
+                    if (typeof ctx.saveChat === 'function') await ctx.saveChat();
+                    if (typeof ctx.reloadCurrentChat === 'function') await ctx.reloadCurrentChat();
+                    renderQcc(false);
+                    showImmNotice(`已切换到第 ${idx + 1} 版开场白`);
+                  } catch (_) {}
+                });
+                acts.append(cpB, swB);
+                head.appendChild(acts);
+                const prev = doc.createElement('div');
+                prev.style.cssText = `font-size:11px;line-height:1.45;opacity:0.86;cursor:pointer;white-space:pre-wrap;word-break:break-word;${isExp ? '' : 'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;'}`;
+                prev.textContent = String(raw || '').trim();
+                prev.addEventListener('click', () => { qccExpandedGreet = isExp ? -1 : idx; renderQcc(false); });
+                gCard.append(head, prev);
+                bodyEl.appendChild(gCard);
+              });
+            } else {
+              const found = [];
+              const seen = new Set();
+              const addB = (nm, srcLabel) => {
+                const cl = String(nm || '').trim();
+                if (!cl) return;
+                const k = `${srcLabel}::${cl}`;
+                if (seen.has(k)) return;
+                seen.add(k);
+                found.push({ name: cl, source: srcLabel });
+              };
+              if (ch?.data?.extensions?.world) addB(ch.data.extensions.world, '角色绑定');
+              if (Array.isArray(ch?.data?.extensions?.extra_books)) ch.data.extensions.extra_books.forEach(b => addB(b, '角色附加'));
+              if (ctx?.chatMetadata?.world_info) addB(ctx.chatMetadata.world_info, '当前聊天');
+              try {
+                doc.querySelectorAll('#world_info option:checked').forEach(opt => { if (opt.textContent) addB(opt.textContent, '全局开启'); });
+              } catch (_) {}
+              if (!found.length) {
+                bodyEl.innerHTML = '<div class="st-tb-empty">当前角色暂未绑定或启用世界书</div>';
+                return;
+              }
+              found.forEach(wb => {
+                const row = doc.createElement('div');
+                row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);';
+                row.innerHTML = `<span style="font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(wb.name)}</span>
+                  <span style="font-size:10px;opacity:0.72;flex-shrink:0;padding:1px 5px;border:1px solid var(--tb-border);border-radius:4px;">${escapeHtmlSimple(wb.source)}</span>`;
+                bodyEl.appendChild(row);
+              });
+            }
+          };
+
+          cpop.querySelectorAll('.st-qcc-tab').forEach(b => b.addEventListener('click', () => { qccTab = b.dataset.qccTab || 'chats'; renderQcc(false); }));
+          cpop.querySelector('#st-qcc-refresh')?.addEventListener('click', () => renderQcc(true));
+          cpop.querySelector('#st-qcc-close')?.addEventListener('click', () => cpop.classList.remove('open'));
+          cpop._renderQcc = renderQcc;
+        }
+        cpop.classList.add('open');
+        if (typeof cpop._renderQcc === 'function') cpop._renderQcc(true);
       } else if (act === 'imgswap') {
         toggleQuickDock(false);
         togglePanel(true);
