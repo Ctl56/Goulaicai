@@ -4488,6 +4488,14 @@
       font-size: 12px;
     }
     .st-tb-mini-pop.open { display: flex; }
+    #st-tb-root #st-tb-quick-read-pop .st-tb-input,
+    #st-tb-root .st-tb-field-box .st-tb-input {
+      height: 30px !important;
+      min-height: 30px !important;
+      padding: 0 8px !important;
+      line-height: 28px !important;
+      box-sizing: border-box !important;
+    }
     #st-tb-quick-dock.open {
       flex-direction: row !important;
       flex-wrap: wrap;
@@ -13022,9 +13030,11 @@
           if (!isCurrent) switchChatFile(item.file_name);
         });
 
+        const chatActBtnCss = 'height:24px !important;min-height:24px !important;line-height:22px !important;font-size:10px;padding:0 7px !important;margin:0 !important;align-self:center;box-sizing:border-box;flex-shrink:0;';
         const renameBtn = doc.createElement('button');
         renameBtn.className = 'st-tb-mini-btn';
         renameBtn.type = 'button';
+        renameBtn.style.cssText = chatActBtnCss;
         renameBtn.textContent = '重命名';
         renameBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -13043,7 +13053,7 @@
         delChatBtn.className = 'st-tb-mini-btn';
         delChatBtn.type = 'button';
         delChatBtn.textContent = '删除';
-        delChatBtn.style.color = '#d9534f';
+        delChatBtn.style.cssText = chatActBtnCss + 'color:#d9534f;';
         delChatBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           openConfirmModal({
@@ -13384,23 +13394,24 @@
         const orderVal = Number.isFinite(Number(ent?.order)) ? Number(ent.order) : 100;
         const roleVal = Number.isFinite(Number(ent?.role)) ? Number(ent.role) : 0;
 
+        const wbFieldCss = 'height:28px !important;min-height:28px !important;padding:0 7px !important;line-height:26px !important;font-size:11.5px;box-sizing:border-box;margin:0 !important;vertical-align:middle;';
         eForm.innerHTML = `
-          <div style="display:flex;align-items:center;gap:4px;">
-            <span style="opacity:0.75;flex-shrink:0;">标题</span>
-            <input type="text" class="st-tb-input st-wb-in-comment" style="flex:1;min-width:0;height:24px;font-size:11px;" value="${escapeHtmlSimple(ent?.comment || '')}" placeholder="条目备注名" />
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">标题</span>
+            <input type="text" class="st-tb-input st-wb-in-comment" style="flex:1;min-width:0;${wbFieldCss}" value="${escapeHtmlSimple(ent?.comment || '')}" placeholder="条目备注名" />
           </div>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <span style="opacity:0.75;flex-shrink:0;">模式</span>
-            <select class="st-tb-select st-wb-in-mode" style="flex:1;min-width:0;height:24px;font-size:11px;">
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">模式</span>
+            <select class="st-tb-select st-wb-in-mode" style="flex:1;min-width:0;${wbFieldCss}">
               <option value="green"${!isConst ? ' selected' : ''}>绿灯（关键词触发）</option>
               <option value="blue"${isConst ? ' selected' : ''}>蓝灯（常驻生效）</option>
             </select>
-            <span style="opacity:0.75;flex-shrink:0;">顺序</span>
-            <input type="number" class="st-tb-input st-wb-in-order" style="width:54px;height:24px;font-size:11px;" value="${orderVal}" />
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">顺序</span>
+            <input type="number" class="st-tb-input st-wb-in-order" style="width:56px;${wbFieldCss}" value="${orderVal}" />
           </div>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <span style="opacity:0.75;flex-shrink:0;">位置</span>
-            <select class="st-tb-select st-wb-in-pos" style="flex:1;min-width:0;height:24px;font-size:11px;">
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">位置</span>
+            <select class="st-tb-select st-wb-in-pos" style="flex:1;min-width:0;${wbFieldCss}">
               <option value="0"${posVal === 0 ? ' selected' : ''}>角色定义之前</option>
               <option value="1"${posVal === 1 ? ' selected' : ''}>角色定义之后</option>
               <option value="5"${posVal === 5 ? ' selected' : ''}>示例消息之前</option>
@@ -13410,21 +13421,21 @@
               <option value="4"${posVal === 4 ? ' selected' : ''}>@D 指定深度插入</option>
             </select>
           </div>
-          <div class="st-wb-depth-row" style="display:${posVal === 4 ? 'flex' : 'none'};align-items:center;gap:4px;">
-            <span style="opacity:0.75;flex-shrink:0;">深度</span>
-            <input type="number" class="st-tb-input st-wb-in-depth" style="width:52px;height:24px;font-size:11px;" min="0" value="${depthVal}" />
-            <span style="opacity:0.75;flex-shrink:0;">身份</span>
-            <select class="st-tb-select st-wb-in-role" style="flex:1;min-width:0;height:24px;font-size:11px;">
+          <div class="st-wb-depth-row" style="display:${posVal === 4 ? 'flex' : 'none'};align-items:center;gap:5px;">
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">深度</span>
+            <input type="number" class="st-tb-input st-wb-in-depth" style="width:54px;${wbFieldCss}" min="0" value="${depthVal}" />
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">身份</span>
+            <select class="st-tb-select st-wb-in-role" style="flex:1;min-width:0;${wbFieldCss}">
               <option value="0"${roleVal === 0 ? ' selected' : ''}>System</option>
               <option value="1"${roleVal === 1 ? ' selected' : ''}>User</option>
               <option value="2"${roleVal === 2 ? ' selected' : ''}>Assistant</option>
             </select>
           </div>
-          <div style="display:flex;align-items:center;gap:4px;">
-            <span style="opacity:0.75;flex-shrink:0;">词条</span>
-            <input type="text" class="st-tb-input st-wb-in-keys" style="flex:1;min-width:0;height:24px;font-size:11px;" value="${escapeHtmlSimple(keys.join(', '))}" placeholder="关键词，用逗号分隔" />
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="opacity:0.78;flex-shrink:0;line-height:28px;">词条</span>
+            <input type="text" class="st-tb-input st-wb-in-keys" style="flex:1;min-width:0;${wbFieldCss}" value="${escapeHtmlSimple(keys.join(', '))}" placeholder="关键词，用逗号分隔" />
           </div>
-          <textarea class="st-tb-textarea st-wb-in-content" rows="4" style="width:100%;box-sizing:border-box;font-size:11px;line-height:1.45;" placeholder="条目正文内容...">${escapeHtmlSimple(ent?.content || '')}</textarea>
+          <textarea class="st-tb-textarea st-wb-in-content" rows="9" style="width:100%;min-height:165px;resize:vertical;box-sizing:border-box;padding:7px 8px;font-size:11.5px;line-height:1.52;" placeholder="条目正文内容...">${escapeHtmlSimple(ent?.content || '')}</textarea>
           <div style="display:flex;gap:5px;justify-content:flex-end;">
             <button type="button" class="st-tb-mini-btn st-wb-btn-copy" style="${smallBtnCss}">复制正文</button>
             <button type="button" class="st-tb-mini-btn active st-wb-btn-save" style="${smallBtnCss}">保存并同步</button>
@@ -61581,6 +61592,7 @@
       renderBookmarks();
       renderDrafts();
       attachDraftListener();
+      try { renderActiveWorldBooks(); renderGreetingsList(); } catch (_) {}
       if (config.activeTab === 'chats' || statChats.textContent === '-') {
         fetchCharacterChats();
       }
@@ -64061,6 +64073,8 @@
     updateStats();
     renderBookmarks();
     fetchCharacterChats();
+    try { renderActiveWorldBooks(); renderGreetingsList(); } catch (_) {}
+    setTimeout(() => { try { renderActiveWorldBooks(); renderGreetingsList(); } catch (_) {} }, 900);
     if (config.maskEnabled) setTimeout(applyMasks, 300);
     if (config.textReplaceEnabled) setTimeout(applyTextReplaces, 340);
   };
@@ -72387,11 +72401,12 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 head.innerHTML = `<span style="font-size:11px;font-weight:700;">第 ${idx + 1}/${greets.length} 版${idx === curIdx ? '（当前）' : ''}</span>`;
                 const acts = doc.createElement('div');
                 acts.style.cssText = 'display:flex;gap:4px;';
+                const gBtnCss = 'font-size:10px;padding:1px 6px;height:19px;min-height:19px;line-height:17px;flex-shrink:0;';
                 const cpB = doc.createElement('button');
-                cpB.type = 'button'; cpB.className = 'st-tb-mini-btn'; cpB.textContent = '复制';
+                cpB.type = 'button'; cpB.className = 'st-tb-mini-btn'; cpB.style.cssText = gBtnCss; cpB.textContent = '复制';
                 cpB.addEventListener('click', (ev) => { ev.stopPropagation(); copyVisitCodeReliable(String(raw || '')); showImmNotice('已复制该版开场白'); });
                 const swB = doc.createElement('button');
-                swB.type = 'button'; swB.className = 'st-tb-mini-btn' + (idx === curIdx ? ' active' : ''); swB.textContent = idx === curIdx ? '当前' : '切换';
+                swB.type = 'button'; swB.className = 'st-tb-mini-btn' + (idx === curIdx ? ' active' : ''); swB.style.cssText = gBtnCss; swB.textContent = idx === curIdx ? '当前' : '切换';
                 swB.addEventListener('click', async (ev) => {
                   ev.stopPropagation();
                   if (!canSwitch) { showImmNotice('已有后续对话，无法直接切换开场白'); return; }
