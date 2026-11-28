@@ -63533,27 +63533,7 @@
     } catch (_) {}
   };
 
-  const fixRecentDupCardAvatars = () => {
-    try {
-      const map = config.dupChatOwnerMap;
-      if (!map || typeof map !== 'object' || !Object.keys(map).length) return;
-      const cards = doc.querySelectorAll('.recentChat, .recent_chat, .recentChatList .chat_card, .welcomePanel .recentChat');
-      if (!cards.length) return;
-      cards.forEach(card => {
-        const jqData = (typeof win.jQuery === 'function') ? (win.jQuery(card).data() || {}) : {};
-        const rawF = String(card.getAttribute('data-file') || card.getAttribute('data-chat') || card.dataset?.file || card.dataset?.chat || jqData.file || jqData.chat || '').trim();
-        const cleanF = rawF.replace(/\.jsonl$/i, '');
-        if (!cleanF || !map[cleanF]) return;
-        const realAv = map[cleanF];
-        card.setAttribute('data-avatar', realAv);
-        const img = card.querySelector('img');
-        if (img && !String(img.getAttribute('src') || '').includes(encodeURIComponent(realAv))) {
-          img.src = `/thumbnail?type=avatar&file=${encodeURIComponent(realAv)}`;
-        }
-      });
-    } catch (_) {}
-  };
-  setInterval(fixRecentDupCardAvatars, 2200);
+  const fixRecentDupCardAvatars = () => {};
 
   // 全自动四级识别重名角色卡真实归属：
   // 1) /api/characters/chats 唯一归属文件夹核对 -> 2) original_avatar -> 3) 开场白/备选开场白指纹 -> 4) 兜底
