@@ -4473,7 +4473,7 @@
       color: var(--tb-text, #222222);
       border: 1px solid var(--tb-border, rgba(0,0,0,0.14));
       border-radius: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.22);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
       padding: 12px 13px;
       display: none;
       flex-direction: column;
@@ -6368,7 +6368,7 @@
       width: min(350px, calc(100vw - 28px)); max-height: min(82vh, 540px);
       background: var(--tb-bg, #ffffff); color: var(--tb-text, #222222);
       border: 1px solid var(--tb-border, rgba(0,0,0,0.12)); border-radius: 14px;
-      box-shadow: 0 12px 34px rgba(0,0,0,0.24); padding: 14px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12); padding: 14px;
       display: flex; flex-direction: column; gap: 10px; overflow: hidden;
       font-size: var(--tb-fs, 12px); line-height: 1.55;
       pointer-events: auto !important; touch-action: auto;
@@ -61685,43 +61685,74 @@
       headEl.addEventListener('pointercancel', endDg);
     }
 
-    // 右下角缩放手柄
-    let grip = boxEl.querySelector('.st-tb-pop-resize-grip');
-    if (!grip) {
-      grip = doc.createElement('div');
-      grip.className = 'st-tb-pop-resize-grip';
-      grip.title = '拖动缩放窗口大小';
-      grip.style.cssText = 'position:sticky;bottom:0;left:100%;width:16px;height:16px;margin-left:auto;margin-top:-12px;cursor:nwse-resize;touch-action:none;z-index:20;opacity:0.55;background:linear-gradient(135deg,transparent 50%,var(--tb-border,#999) 50%,var(--tb-border,#999) 62%,transparent 62%,transparent 74%,var(--tb-border,#999) 74%);';
-      boxEl.appendChild(grip);
-      let rs = null;
-      grip.addEventListener('pointerdown', (ev) => {
-        ev.stopPropagation();
-        ev.preventDefault();
-        const r = boxEl.getBoundingClientRect();
-        boxEl.style.left = `${Math.round(r.left)}px`;
-        boxEl.style.top = `${Math.round(r.top)}px`;
-        boxEl.style.width = `${Math.round(r.width)}px`;
-        boxEl.style.height = `${Math.round(r.height)}px`;
-        boxEl.style.transform = 'none';
-        rs = { id: ev.pointerId, sx: ev.clientX, sy: ev.clientY, ow: r.width, oh: r.height };
-        try { grip.setPointerCapture(ev.pointerId); } catch (_) {}
-      });
-      grip.addEventListener('pointermove', (ev) => {
-        if (!rs || rs.id !== ev.pointerId) return;
-        ev.preventDefault();
-        const nw = clamp(rs.ow + (ev.clientX - rs.sx), minW, maxW());
-        const nh = clamp(rs.oh + (ev.clientY - rs.sy), minH, maxH());
+    // 隐形全边缩放热区（无任何可见标记：拉上边/下边/右边/左边/右下角都可轻松缩放）
+    let rs = null;
+    const detectEdge = (ev) => {
+      const r = boxEl.getBoundingClientRect();
+      const dxL = ev.clientX - r.left;
+      const dxR = r.right - ev.clientX;
+      const dyT = ev.clientY - r.top;
+      const dyB = r.bottom - ev.clientY;
+      if (dxR >= -4 && dxR <= 24 && dyB >= -4 && dyB <= 24) return 'se';
+      if (dxL >= -4 && dxL <= 20 && dyB >= -4 && dyB <= 20) return 'sw';
+      if (dyB >= -4 && dyB <= 14) return 's';
+      if (dyT >= -4 && dyT <= 10) return 'n';
+      if (dxR >= -4 && dxR <= 14) return 'e';
+      if (dxL >= -4 && dxL <= 12) return 'w';
+      return '';
+    };
+    boxEl.addEventListener('pointerdown', (ev) => {
+      if (ev.target && ev.target.closest && ev.target.closest('button, input, select, textarea, a')) return;
+      const edge = detectEdge(ev);
+      if (!edge) return;
+      ev.stopPropagation();
+      ev.preventDefault();
+      const r = boxEl.getBoundingClientRect();
+      boxEl.style.left = `${Math.round(r.left)}px`;
+      boxEl.style.top = `${Math.round(r.top)}px`;
+      boxEl.style.width = `${Math.round(r.width)}px`;
+      boxEl.style.height = `${Math.round(r.height)}px`;
+      boxEl.style.transform = 'none';
+      rs = { id: ev.pointerId, edge, sx: ev.clientX, sy: ev.clientY, ol: r.left, ot: r.top, ow: r.width, oh: r.height };
+      try { boxEl.setPointerCapture(ev.pointerId); } catch (_) {}
+    }, true);
+    boxEl.addEventListener('pointermove', (ev) => {
+      if (!rs) {
+        if (ev.pointerType === 'mouse') {
+          const ed = detectEdge(ev);
+          boxEl.style.cursor = ed === 'se' ? 'nwse-resize' : (ed === 'sw' ? 'nesw-resize' : ((ed === 'n' || ed === 's') ? 'ns-resize' : ((ed === 'e' || ed === 'w') ? 'ew-resize' : '')));
+        }
+        return;
+      }
+      if (rs.id !== ev.pointerId) return;
+      ev.preventDefault();
+      const dx = ev.clientX - rs.sx;
+      const dy = ev.clientY - rs.sy;
+      const ed = rs.edge;
+      if (ed.includes('e')) {
+        boxEl.style.width = `${Math.round(clamp(rs.ow + dx, minW, maxW()))}px`;
+      }
+      if (ed.includes('w')) {
+        const nw = clamp(rs.ow - dx, minW, maxW());
+        boxEl.style.left = `${Math.round(clamp(rs.ol + (rs.ow - nw), 4, win.innerWidth - minW - 4))}px`;
         boxEl.style.width = `${Math.round(nw)}px`;
+      }
+      if (ed.includes('s')) {
+        boxEl.style.height = `${Math.round(clamp(rs.oh + dy, minH, maxH()))}px`;
+      }
+      if (ed.includes('n')) {
+        const nh = clamp(rs.oh - dy, minH, maxH());
+        boxEl.style.top = `${Math.round(clamp(rs.ot + (rs.oh - nh), 4, win.innerHeight - minH - 4))}px`;
         boxEl.style.height = `${Math.round(nh)}px`;
-      });
-      const endRs = (ev) => {
-        if (!rs || rs.id !== ev.pointerId) return;
-        rs = null;
-        try { grip.releasePointerCapture(ev.pointerId); } catch (_) {}
-      };
-      grip.addEventListener('pointerup', endRs);
-      grip.addEventListener('pointercancel', endRs);
-    }
+      }
+    });
+    const endRs = (ev) => {
+      if (!rs || rs.id !== ev.pointerId) return;
+      rs = null;
+      try { boxEl.releasePointerCapture(ev.pointerId); } catch (_) {}
+    };
+    boxEl.addEventListener('pointerup', endRs);
+    boxEl.addEventListener('pointercancel', endRs);
   }
 
   var openQuickMaskPanel = () => {
@@ -61731,7 +61762,7 @@
     qm.id = 'st-tb-quick-mask-pop';
     qm.style.cssText = 'position:fixed;inset:0;z-index:10040;background:transparent;pointer-events:none;';
     const box = doc.createElement('div');
-    box.style.cssText = 'width:min(310px,92vw);background:var(--tb-bg,#faf6f7);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 8px 26px rgba(0,0,0,0.24);box-sizing:border-box;font-size:12px;pointer-events:auto;';
+    box.style.cssText = 'width:min(310px,92vw);background:var(--tb-bg,#faf6f7);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.12);box-sizing:border-box;font-size:12px;pointer-events:auto;';
     const curBlur = clamp(Number(config.maskBlurPx) || 6, 2, 14);
     box.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
@@ -63130,6 +63161,21 @@
 
   // 底层网络兜底：拦截失败的 POST /api/chats/get，若存在重名角色卡则自动查找真正包含该聊天文件的 avatar_url 并无缝重试！
   try {
+    if (!win.__stGlDupToastPatched && win.toastr && typeof win.toastr.error === 'function') {
+      win.__stGlDupToastPatched = true;
+      const _origToastErr = win.toastr.error.bind(win.toastr);
+      win.toastr.error = function(msg, title, opts) {
+        try {
+          if (Date.now() < (win.__stSuppressDupChatToastUntil || 0)) {
+            const combined = `${String(msg || '')} ${String(title || '')}`;
+            if (/后端|backend|chat|file|not found|错误|failed|error/i.test(combined)) {
+              return;
+            }
+          }
+        } catch (_) {}
+        return _origToastErr(msg, title, opts);
+      };
+    }
     if (!win.__stGlDupChatFetchPatched && typeof win.fetch === 'function') {
       win.__stGlDupChatFetchPatched = true;
       const _origFetch = win.fetch.bind(win);
@@ -63178,6 +63224,7 @@
                   if (r2 && r2.ok) {
                     const t2 = await r2.clone().text();
                     if (t2 && t2.trim().startsWith('[') && t2.trim().length > 4) {
+                      win.__stSuppressDupChatToastUntil = Date.now() + 3000;
                       return r2;
                     }
                   }
@@ -63231,6 +63278,7 @@
         ev.preventDefault();
         ev.stopPropagation();
         ev.stopImmediatePropagation();
+        win.__stSuppressDupChatToastUntil = Date.now() + 3500;
 
         // 排序候选：卡片上的 avatar 优先，其余同名卡依次兜底
         const candIdxs = exactIdx >= 0
@@ -70649,7 +70697,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
          <button type="button" id="st-dr-clear" class="st-tb-btn" style="width:100%;opacity:0.8;">清空草稿</button>`
       : `<div style="padding:16px 10px;text-align:center;font-size:11.5px;opacity:0.78;line-height:1.55;background:var(--tb-surface,#fff);border:1px dashed var(--tb-border,#ccc);border-radius:6px;margin-bottom:6px;">当前没有未恢复的中断草稿。<br/>开启后，AI 生成回复期间会自动实时暂存，遇到卡死或刷新重进即可一键找回。</div>`;
 
-    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,0.22);box-sizing:border-box;font-size:var(--tb-fs,12px);">
+    mask.innerHTML = `<div style="width:316px;max-width:calc(100vw - 24px);padding:14px;background:var(--tb-bg,#faf6f7);color:var(--tb-fg,#333);border:1.5px solid var(--tb-border,#bfa4ae);border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.12);box-sizing:border-box;font-size:var(--tb-fs,12px);">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-size:13px;font-weight:700;">防丢草稿</span>
         <div style="display:flex;align-items:center;gap:6px;">
