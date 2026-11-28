@@ -42123,15 +42123,26 @@
       listEl.innerHTML = `<div style="text-align:center;font-size:10.5px;opacity:0.65;padding:24px 8px;">${q ? '没有搜到包含该关键词的聊天记录~' : '还没有聊天记录，发句话或小狗表情包打个招呼吧~'}</div>`;
       return;
     }
-    const lay = Object.assign({ avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub' }, config.puppyDmLayout || {});
-    msgs.forEach(m => {
+    const lay = Object.assign({ avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub', timeMode: 'all', avMode: 'all' }, config.puppyDmLayout || {});
+    const isGroupMode = (lay.avMode && lay.avMode !== 'all') || lay.timeMode === 'last';
+    msgs.forEach((m, mIdx) => {
       const isMe = m.dir === 'me';
+      const prevM = mIdx > 0 ? msgs[mIdx - 1] : null;
+      const nextM = mIdx < msgs.length - 1 ? msgs[mIdx + 1] : null;
+      const samePrev = Boolean(prevM && prevM.dir === m.dir);
+      const sameNext = Boolean(nextM && nextM.dir === m.dir);
+      const showAvThis = lay.avMode === 'first' ? !samePrev : (lay.avMode === 'last' ? !sameNext : true);
+      const showTimeThis = (lay.showTime !== false) && (lay.timeMode === 'last' ? !sameNext : true);
+      const rowBottomGap = (isGroupMode && sameNext) ? Math.max(4, Math.round(lay.rowGap * 0.42)) : lay.rowGap;
+      const rowTopPad = (isGroupMode && samePrev) ? 0 : 4;
       const senderLook = isMe ? myLook : (fr.look || {});
       const row = doc.createElement('div');
-      row.style.cssText = `display:flex;align-items:flex-start;gap:${lay.bubGap}px;margin-bottom:${lay.rowGap}px;padding:4px ${lay.avPad}px 0;${isMe ? 'flex-direction:row-reverse;' : ''}`;
+      row.style.cssText = `display:flex;align-items:flex-start;gap:${lay.bubGap}px;margin-bottom:${rowBottomGap}px;padding:${rowTopPad}px ${lay.avPad}px 0;${isMe ? 'flex-direction:row-reverse;' : ''}`;
       const avCol = doc.createElement('div');
-      avCol.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0;';
-      avCol.appendChild(makeDmHeadAvatar(senderLook, 34));
+      avCol.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:2px;width:34px;min-width:34px;flex-shrink:0;';
+      if (showAvThis) {
+        avCol.appendChild(makeDmHeadAvatar(senderLook, 34));
+      }
       const bubCol = doc.createElement('div');
       bubCol.style.cssText = `display:flex;flex-direction:column;gap:2px;margin-top:${lay.bubTop}px;${isMe ? 'align-items:flex-end;' : 'align-items:flex-start;'}`;
       const bub = doc.createElement('div');
@@ -42226,7 +42237,7 @@
         quoteChip = doc.createElement('div');
         quoteChip.className = 'st-dm-quote-chip';
         const qFs = Math.max(8.5, Math.min(11, Number(lay.fontSize || 11) - 2));
-        quoteChip.style.cssText = `max-width:196px;padding:2px 6px;border-left:2px solid var(--px-border,rgba(128,128,128,0.55));background:rgba(128,128,128,0.11);color:var(--px-custom-fg,var(--px-fg,inherit));opacity:0.84;font-size:${qFs}px;line-height:1.32;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;`;
+        quoteChip.style.cssText = `max-width:196px;padding:2px 6px;margin-top:2px;border:1.5px solid var(--px-border,#bfa4ae);border-radius:0;background:var(--px-card,rgba(255,255,255,0.78));color:var(--px-custom-fg,var(--px-fg,#54444a));box-shadow:1.5px 1.5px 0 rgba(59,42,34,0.14);opacity:0.88;font-size:${qFs}px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-sizing:border-box;`;
         const qSender = String(m.quote.sender || '').trim();
         const qTxt = String(m.quote.text || '').trim();
         let qTimeStr = '';
@@ -42237,7 +42248,7 @@
         quoteChip.textContent = `${qSender ? qSender + '：' : ''}${qTxt}`;
         quoteChip.title = `${qSender ? qSender + '：' : ''}${qTxt}${qTimeStr}`;
       }
-      if (lay.showTime !== false) {
+      if (showTimeThis) {
         const tm = doc.createElement('div');
         tm.style.cssText = 'font-size:8.5px;opacity:0.55;padding:0 2px;flex-shrink:0;';
         tm.textContent = tmTxt;
@@ -42448,6 +42459,21 @@
               <button type="button" class="st-px-btn st-dm-tpos-btn" data-tpos="below_bub" style="height:18px;padding:0 5px;font-size:8.5px;">气泡下</button>
               <button type="button" class="st-px-btn st-dm-tpos-btn" data-tpos="beside_bub" style="height:18px;padding:0 5px;font-size:8.5px;">气泡旁</button>
               <button type="button" class="st-px-btn st-dm-tpos-btn" data-tpos="below_av" style="height:18px;padding:0 5px;font-size:8.5px;">头像下</button>
+            </div>
+          </div>
+          <div id="st-dm-lay-timemode-row" style="display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:9.5px;">
+            <span>时间频率</span>
+            <div style="display:flex;gap:3px;">
+              <button type="button" class="st-px-btn st-dm-tmode-btn" data-tmode="all" style="height:18px;padding:0 5px;font-size:8.5px;">每条</button>
+              <button type="button" class="st-px-btn st-dm-tmode-btn" data-tmode="last" style="height:18px;padding:0 5px;font-size:8.5px;">仅末条</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:9.5px;">
+            <span>连续头像</span>
+            <div style="display:flex;gap:3px;">
+              <button type="button" class="st-px-btn st-dm-avmode-btn" data-avmode="all" style="height:18px;padding:0 5px;font-size:8.5px;">每条</button>
+              <button type="button" class="st-px-btn st-dm-avmode-btn" data-avmode="first" style="height:18px;padding:0 5px;font-size:8.5px;">仅首条</button>
+              <button type="button" class="st-px-btn st-dm-avmode-btn" data-avmode="last" style="height:18px;padding:0 5px;font-size:8.5px;">仅末条</button>
             </div>
           </div>
         </div>
@@ -42751,7 +42777,7 @@
       openPixelPupNoticeModal('已复制聊天记录', `共复制 ${list.length} 条与「${taN}」的私聊记录到剪贴板~`, '好哒');
     });
     const layBox = panel.querySelector('#st-dm-lay-box');
-    const layDefs = { avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub' };
+    const layDefs = { avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub', timeMode: 'all', avMode: 'all' };
     const syncLayInputs = () => {
       const cur = Object.assign({}, layDefs, config.puppyDmLayout || {});
       const pairs = [
@@ -42771,8 +42797,12 @@
       const tg = panel.querySelector('#st-dm-lay-time-tg');
       const tpRow = panel.querySelector('#st-dm-lay-timepos-row');
       if (tg) { tg.textContent = cur.showTime !== false ? '开' : '关'; tg.classList.toggle('active', cur.showTime !== false); }
+      const tmRow = panel.querySelector('#st-dm-lay-timemode-row');
       if (tpRow) tpRow.style.display = cur.showTime !== false ? 'flex' : 'none';
+      if (tmRow) tmRow.style.display = cur.showTime !== false ? 'flex' : 'none';
       panel.querySelectorAll('.st-dm-tpos-btn').forEach(b => b.classList.toggle('active', (b.dataset.tpos || 'below_bub') === (cur.timePos || 'below_bub')));
+      panel.querySelectorAll('.st-dm-tmode-btn').forEach(b => b.classList.toggle('active', (b.dataset.tmode || 'all') === (cur.timeMode || 'all')));
+      panel.querySelectorAll('.st-dm-avmode-btn').forEach(b => b.classList.toggle('active', (b.dataset.avmode || 'all') === (cur.avMode || 'all')));
     };
     syncLayInputs();
     panel.querySelector('#st-dm-lay-toggle')?.addEventListener('click', (e) => {
@@ -42784,10 +42814,12 @@
     });
     panel.querySelector('#st-dm-lay-reset')?.addEventListener('click', (e) => {
       e.stopPropagation();
-      config.puppyDmLayout = { ...layDefs };
-      saveConfig();
-      syncLayInputs();
-      renderFriendDmMessages(fid);
+      openGuardConfirm('恢复私聊默认排版？', '确定将私聊边距、字号、时间戳和连续头像样式全部恢复为默认吗？', () => {
+        config.puppyDmLayout = { ...layDefs };
+        saveConfig();
+        syncLayInputs();
+        renderFriendDmMessages(fid);
+      }, '确认恢复', true);
     });
     [
       ['#st-dm-lay-avpad', '#st-dm-lay-avpad-v', 'avPad'],
@@ -42819,6 +42851,24 @@
       tb.addEventListener('click', (e) => {
         e.stopPropagation();
         config.puppyDmLayout = Object.assign({}, layDefs, config.puppyDmLayout || {}, { timePos: tb.dataset.tpos || 'below_bub' });
+        saveConfig();
+        syncLayInputs();
+        renderFriendDmMessages(fid);
+      });
+    });
+    panel.querySelectorAll('.st-dm-tmode-btn').forEach(tb => {
+      tb.addEventListener('click', (e) => {
+        e.stopPropagation();
+        config.puppyDmLayout = Object.assign({}, layDefs, config.puppyDmLayout || {}, { timeMode: tb.dataset.tmode || 'all' });
+        saveConfig();
+        syncLayInputs();
+        renderFriendDmMessages(fid);
+      });
+    });
+    panel.querySelectorAll('.st-dm-avmode-btn').forEach(tb => {
+      tb.addEventListener('click', (e) => {
+        e.stopPropagation();
+        config.puppyDmLayout = Object.assign({}, layDefs, config.puppyDmLayout || {}, { avMode: tb.dataset.avmode || 'all' });
         saveConfig();
         syncLayInputs();
         renderFriendDmMessages(fid);
