@@ -10003,7 +10003,9 @@
               <div class="st-tb-label" style="margin-top:6px;">
                 <span>打码词汇 · <span id="st-tb-mask-count">0 个词</span></span>
                 <div style="display:flex;gap:4px;align-items:center;">
-                  <button class="st-tb-mini-btn" id="st-tb-fill-names" type="button">+ 角色/用户名</button>
+                  <button class="st-tb-mini-btn" id="st-tb-fill-char" type="button">+角色</button>
+                  <button class="st-tb-mini-btn" id="st-tb-fill-user" type="button">+用户</button>
+                  <button class="st-tb-mini-btn" id="st-tb-fill-names" type="button">+双名</button>
                   <button class="st-tb-mini-btn" id="st-tb-clear-mask-words" type="button">清空</button>
                 </div>
               </div>
@@ -36780,6 +36782,11 @@
     mask.querySelector('#st-pxn-ok')?.addEventListener('click', closeN);
     bringModalFront(mask);
     mask.style.display = 'flex';
+    const drBox = mask.firstElementChild;
+    if (drBox && drBox.firstElementChild) {
+      drBox.dataset.stMovableBound = '';
+      makeToolboxBoxMovableResizable(drBox, drBox.firstElementChild, { minW: 250, minH: 160, defW: 316 });
+    }
   };
 
   // 联机离线/在线消息严格确认：单条逐条确认；离线累积 2 条及以上时合并为「离线联机动态总结」弹窗，必须点击确认才会消失！
@@ -61490,6 +61497,11 @@
       if (e.target === jumpFloorMask) closeJumpFloorModal();
     });
   }
+  const jfBoxEl = root.querySelector('#st-tb-jumpfloor-box');
+  if (jfBoxEl) {
+    const jfHead = jfBoxEl.querySelector('.st-tb-confirm-title');
+    if (jfHead) makeToolboxBoxMovableResizable(jfBoxEl, jfHead, { minW: 230, minH: 150, defW: 276 });
+  }
   if (jfTopBtn) jfTopBtn.addEventListener('click', () => { closeJumpFloorModal(); jumpToChatFloor(0); });
   var scrollChatToBottomNow = () => {
     try {
@@ -61618,14 +61630,113 @@
     if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
     showImmNotice(config.maskEnabled ? '已开启打码' : '已关闭打码');
   };
+  var makeToolboxBoxMovableResizable = (boxEl, headEl, opts = {}) => {
+    if (!boxEl || boxEl.dataset.stMovableBound === '1') return;
+    boxEl.dataset.stMovableBound = '1';
+    const minW = Number(opts.minW) || 230;
+    const minH = Number(opts.minH) || 140;
+    const maxW = () => Math.max(minW, win.innerWidth - 16);
+    const maxH = () => Math.max(minH, win.innerHeight - 24);
+    boxEl.style.position = 'fixed';
+    boxEl.style.margin = '0';
+    boxEl.style.maxWidth = 'calc(100vw - 16px)';
+    boxEl.style.maxHeight = 'calc(100vh - 24px)';
+    boxEl.style.overflow = 'auto';
+    boxEl.style.pointerEvents = 'auto';
+
+    // 居中初始化（只算一次）
+    const initCenter = () => {
+      const r = boxEl.getBoundingClientRect();
+      const w = r.width || Number(opts.defW) || 300;
+      const h = r.height || 260;
+      const l = Math.max(8, Math.round((win.innerWidth - w) / 2));
+      const t = Math.max(12, Math.round((win.innerHeight - h) / 2));
+      boxEl.style.left = `${l}px`;
+      boxEl.style.top = `${t}px`;
+      boxEl.style.transform = 'none';
+    };
+    requestAnimationFrame(initCenter);
+
+    if (headEl) {
+      headEl.style.cursor = 'grab';
+      headEl.style.userSelect = 'none';
+      headEl.style.touchAction = 'none';
+      let dg = null;
+      headEl.addEventListener('pointerdown', (ev) => {
+        if (ev.target && ev.target.closest && ev.target.closest('button, input, select, textarea, a')) return;
+        ev.stopPropagation();
+        const r = boxEl.getBoundingClientRect();
+        boxEl.style.left = `${Math.round(r.left)}px`;
+        boxEl.style.top = `${Math.round(r.top)}px`;
+        boxEl.style.transform = 'none';
+        dg = { id: ev.pointerId, sx: ev.clientX, sy: ev.clientY, ol: r.left, ot: r.top };
+        try { headEl.setPointerCapture(ev.pointerId); } catch (_) {}
+      });
+      headEl.addEventListener('pointermove', (ev) => {
+        if (!dg || dg.id !== ev.pointerId) return;
+        ev.preventDefault();
+        const r = boxEl.getBoundingClientRect();
+        const nl = clamp(dg.ol + (ev.clientX - dg.sx), 4, Math.max(4, win.innerWidth - r.width - 4));
+        const nt = clamp(dg.ot + (ev.clientY - dg.sy), 4, Math.max(4, win.innerHeight - Math.min(r.height, 80) - 4));
+        boxEl.style.left = `${Math.round(nl)}px`;
+        boxEl.style.top = `${Math.round(nt)}px`;
+      });
+      const endDg = (ev) => {
+        if (!dg || dg.id !== ev.pointerId) return;
+        dg = null;
+        try { headEl.releasePointerCapture(ev.pointerId); } catch (_) {}
+      };
+      headEl.addEventListener('pointerup', endDg);
+      headEl.addEventListener('pointercancel', endDg);
+    }
+
+    // 右下角缩放手柄
+    let grip = boxEl.querySelector('.st-tb-pop-resize-grip');
+    if (!grip) {
+      grip = doc.createElement('div');
+      grip.className = 'st-tb-pop-resize-grip';
+      grip.title = '拖动缩放窗口大小';
+      grip.style.cssText = 'position:sticky;bottom:0;left:100%;width:16px;height:16px;margin-left:auto;margin-top:-12px;cursor:nwse-resize;touch-action:none;z-index:20;opacity:0.55;background:linear-gradient(135deg,transparent 50%,var(--tb-border,#999) 50%,var(--tb-border,#999) 62%,transparent 62%,transparent 74%,var(--tb-border,#999) 74%);';
+      boxEl.appendChild(grip);
+      let rs = null;
+      grip.addEventListener('pointerdown', (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        const r = boxEl.getBoundingClientRect();
+        boxEl.style.left = `${Math.round(r.left)}px`;
+        boxEl.style.top = `${Math.round(r.top)}px`;
+        boxEl.style.width = `${Math.round(r.width)}px`;
+        boxEl.style.height = `${Math.round(r.height)}px`;
+        boxEl.style.transform = 'none';
+        rs = { id: ev.pointerId, sx: ev.clientX, sy: ev.clientY, ow: r.width, oh: r.height };
+        try { grip.setPointerCapture(ev.pointerId); } catch (_) {}
+      });
+      grip.addEventListener('pointermove', (ev) => {
+        if (!rs || rs.id !== ev.pointerId) return;
+        ev.preventDefault();
+        const nw = clamp(rs.ow + (ev.clientX - rs.sx), minW, maxW());
+        const nh = clamp(rs.oh + (ev.clientY - rs.sy), minH, maxH());
+        boxEl.style.width = `${Math.round(nw)}px`;
+        boxEl.style.height = `${Math.round(nh)}px`;
+      });
+      const endRs = (ev) => {
+        if (!rs || rs.id !== ev.pointerId) return;
+        rs = null;
+        try { grip.releasePointerCapture(ev.pointerId); } catch (_) {}
+      };
+      grip.addEventListener('pointerup', endRs);
+      grip.addEventListener('pointercancel', endRs);
+    }
+  };
+
   var openQuickMaskPanel = () => {
     let qm = root.querySelector('#st-tb-quick-mask-pop');
     if (qm) { qm.remove(); return; }
     qm = doc.createElement('div');
     qm.id = 'st-tb-quick-mask-pop';
-    qm.style.cssText = 'position:fixed;inset:0;z-index:10040;background:rgba(0,0,0,0.36);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    qm.style.cssText = 'position:fixed;inset:0;z-index:10040;background:transparent;pointer-events:none;';
     const box = doc.createElement('div');
-    box.style.cssText = 'width:min(310px,92vw);background:var(--tb-bg,#faf6f7);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 8px 26px rgba(0,0,0,0.22);box-sizing:border-box;font-size:12px;';
+    box.style.cssText = 'width:min(310px,92vw);background:var(--tb-bg,#faf6f7);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 8px 26px rgba(0,0,0,0.24);box-sizing:border-box;font-size:12px;pointer-events:auto;';
     const curBlur = clamp(Number(config.maskBlurPx) || 6, 2, 14);
     box.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
@@ -61676,9 +61787,9 @@
       <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;flex-wrap:wrap;">
         <span style="font-size:11px;opacity:0.8;">打码词</span>
         <div style="display:flex;gap:3px;flex-wrap:wrap;">
-          <button type="button" id="st-qm-add-char" class="st-tb-mini-btn">+角色名</button>
-          <button type="button" id="st-qm-add-user" class="st-tb-mini-btn">+用户名</button>
-          <button type="button" id="st-qm-add-both" class="st-tb-mini-btn">+都加</button>
+          <button type="button" id="st-qm-add-char" class="st-tb-mini-btn">+角色</button>
+          <button type="button" id="st-qm-add-user" class="st-tb-mini-btn">+用户</button>
+          <button type="button" id="st-qm-add-both" class="st-tb-mini-btn">+双名</button>
           <button type="button" id="st-qm-clr-words" class="st-tb-mini-btn">清空</button>
         </div>
       </div>
@@ -61816,9 +61927,9 @@
       if (config.maskEnabled) applyMasks();
     });
     qm.appendChild(box);
-    qm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === qm) qm.remove(); });
     box.addEventListener('click', (e2) => e2.stopPropagation());
     root.appendChild(qm);
+    makeToolboxBoxMovableResizable(box, box.firstElementChild, { minW: 240, minH: 180, defW: 306 });
   };
   quickMaskBtn.addEventListener('click', toggleMaskState);
   maskToggleBtn.addEventListener('click', toggleMaskState);
@@ -63022,6 +63133,69 @@
     }
   };
 
+  // 底层网络兜底：拦截失败的 POST /api/chats/get，若存在重名角色卡则自动查找真正包含该聊天文件的 avatar_url 并无缝重试！
+  try {
+    if (!win.__stGlDupChatFetchPatched && typeof win.fetch === 'function') {
+      win.__stGlDupChatFetchPatched = true;
+      const _origFetch = win.fetch.bind(win);
+      win.fetch = async function(input, init) {
+        const res = await _origFetch(input, init);
+        try {
+          const urlStr = typeof input === 'string' ? input : String(input?.url || '');
+          const method = String(init?.method || (typeof input === 'object' ? input?.method : '') || 'GET').toUpperCase();
+          if (method === 'POST' && /\/api\/chats\/get(?:\?|$)/.test(urlStr) && typeof init?.body === 'string') {
+            let needRetry = !res.ok;
+            let clonedText = '';
+            if (!needRetry) {
+              try {
+                clonedText = await res.clone().text();
+                if (!clonedText || clonedText.trim() === '{}' || clonedText.trim() === '[]' || /"error"\s*:/i.test(clonedText)) {
+                  needRetry = true;
+                }
+              } catch (_) {}
+            }
+            if (needRetry) {
+              const reqBody = JSON.parse(init.body);
+              const chName = String(reqBody?.ch_name || '').trim();
+              const fileName = String(reqBody?.file_name || '').trim();
+              const origAv = String(reqBody?.avatar_url || '').trim();
+              const ctx = getContext();
+              const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+              const sameNameChars = chars
+                .map((c, idx) => ({ c, idx }))
+                .filter(({ c }) => c && ((chName && String(c.name || '') === chName) || (origAv && String(c.avatar || '') === origAv)));
+              // 如果按 avatar 命中了某张卡，也把与该卡同名的所有卡都纳入候选
+              let allSameName = sameNameChars;
+              if (sameNameChars.length && sameNameChars[0].c?.name) {
+                const nm = String(sameNameChars[0].c.name);
+                allSameName = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === nm);
+              }
+              if (allSameName.length >= 2 && fileName) {
+                const cleanWanted = fileName.replace(/\.jsonl$/i, '');
+                for (const { c } of allSameName) {
+                  if (!c.avatar || c.avatar === origAv) continue;
+                  // 尝试直接用另一张同名卡的 avatar_url 请求 /api/chats/get
+                  const retryInit = {
+                    ...init,
+                    body: JSON.stringify({ ...reqBody, ch_name: c.name || chName, avatar_url: c.avatar, file_name: cleanWanted }),
+                  };
+                  const r2 = await _origFetch(input, retryInit);
+                  if (r2 && r2.ok) {
+                    const t2 = await r2.clone().text();
+                    if (t2 && t2.trim().startsWith('[') && t2.trim().length > 4) {
+                      return r2;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        } catch (_) {}
+        return res;
+      };
+    }
+  } catch (_) {}
+
   // 自动修复重名角色卡在首页「最近聊天」点进去报后端错误：
   // 兼容 HTML data-*、jQuery .data() 与头像 src，并通过 /api/characters/chats 核对真正拥有该聊天文件的唯一角色卡
   try {
@@ -64068,6 +64242,22 @@
 
   // ==================== 卸载清理 ====================
   // ==================== 打码清空/折叠 与 角色卡/世界书管理模块 ====================
+  const fillCharMaskBtn = root.querySelector('#st-tb-fill-char');
+  const fillUserMaskBtn = root.querySelector('#st-tb-fill-user');
+  const appendToolboxMaskName = (which) => {
+    const ctx = getContext();
+    const nm = String(which === 'char' ? (ctx?.name2 || '') : (ctx?.name1 || '')).trim();
+    if (!nm) { showImmNotice(which === 'char' ? '当前未读取到角色名' : '当前未读取到用户名'); return; }
+    const arr = String(config.maskWords || '').split(/[\n,，]+/).map(x => x.trim()).filter(Boolean);
+    if (!arr.includes(nm)) arr.push(nm);
+    config.maskWords = arr.join('\n');
+    if (maskWordsEl) maskWordsEl.value = config.maskWords;
+    saveConfig();
+    syncUI();
+    if (config.maskEnabled) applyMasks();
+  };
+  if (fillCharMaskBtn) fillCharMaskBtn.addEventListener('click', () => appendToolboxMaskName('char'));
+  if (fillUserMaskBtn) fillUserMaskBtn.addEventListener('click', () => appendToolboxMaskName('user'));
   const clearMaskWordsBtn = root.querySelector('#st-tb-clear-mask-words');
   const maskFoldBtn = root.querySelector('#st-tb-mask-fold-btn');
   const maskBodyWrap = root.querySelector('#st-tb-mask-body-wrap');
@@ -70697,6 +70887,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
         </div>
       </div>`;
       root.appendChild(qdCfgMask);
+      const qdBox = qdCfgMask.querySelector('.st-tb-qd-modal');
+      const qdTitle = qdCfgMask.querySelector('.st-tb-qd-modal-title');
+      if (qdBox && qdTitle) makeToolboxBoxMovableResizable(qdBox, qdTitle, { minW: 260, minH: 220, defW: 320 });
       const closeCfg = () => qdCfgMask.classList.remove('open');
       qdCfgMask.querySelector('#st-tb-qd-cfg-close')?.addEventListener('click', closeCfg);
       qdCfgMask.querySelector('#st-tb-qd-cfg-done')?.addEventListener('click', closeCfg);
