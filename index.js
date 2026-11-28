@@ -14123,11 +14123,23 @@
       const ctx = getContext();
       const chat = ctx?.chat;
       if (!Array.isArray(chat) || !chat.length) return;
+      let lastUserIdx = -1;
+      let lastAiIdx = -1;
+      for (let i = chat.length - 1; i >= 0; i--) {
+        const m = chat[i];
+        if (!m || m.is_system) continue;
+        if (lastAiIdx < 0 && !m.is_user) lastAiIdx = i;
+        if (lastUserIdx < 0 && m.is_user) lastUserIdx = i;
+        if (lastAiIdx >= 0 && lastUserIdx >= 0) break;
+      }
       const lastIdx = (typeof forcedMesId === 'number' && forcedMesId >= 0 && forcedMesId < chat.length)
         ? forcedMesId
-        : (chat.length - 1);
+        : lastAiIdx;
+      if (lastIdx < 0) return;
       const lastMsg = chat[lastIdx];
       if (!lastMsg || lastMsg.is_user || lastMsg.is_system) return;
+      // 严禁往上跳到用户最新发出消息“上面”的旧 AI 回复，只定位在用户新消息“下面”的最新 AI 回复
+      if (lastUserIdx >= 0 && lastIdx < lastUserIdx) return;
       if (doc.hidden) {
         pendingJumpToReplyTopMesId = lastIdx;
         return;
@@ -14140,12 +14152,11 @@
         const chatEl = doc.querySelector('#chat');
         const mesEl = doc.querySelector(`#chat .mes[mesid="${lastIdx}"]`);
         if (!chatEl || !mesEl) return;
-        if (forcedMesId === null && typeof stGenBaselineAiMesId === 'number' && stGenBaselineAiMesId >= 0 && lastIdx <= stGenBaselineAiMesId) return;
         const topOffset = mesEl.getBoundingClientRect().top - chatEl.getBoundingClientRect().top + chatEl.scrollTop - 6;
         chatEl.scrollTo({ top: Math.max(0, topOffset), behavior: smooth ? 'smooth' : 'auto' });
       };
-      jumpReplyTimer1 = setTimeout(() => doJump(true), 240);
-      jumpReplyTimer2 = setTimeout(() => doJump(false), 640);
+      jumpReplyTimer1 = setTimeout(() => doJump(true), 220);
+      jumpReplyTimer2 = setTimeout(() => doJump(false), 620);
     } catch (_) {}
   };
 
@@ -36365,9 +36376,14 @@
         });
       });
 
-      // 5 种成片形态各自的「恢复默认」
+      // 5 种成片形态各自的「恢复默认」（均带像素风二次确认）
       const setVal = (id, v) => { const el = winEl.querySelector(id); if (el) el.value = v; };
-      winEl.querySelector('#st-vph-rst-polaroid')?.addEventListener('click', () => {
+      const bindVphReset = (sel, label, fn) => {
+        winEl.querySelector(sel)?.addEventListener('click', () => {
+          openGuardConfirm(`恢复${label}默认样式？`, `确定将${label}的配色、边框与圆角参数恢复为默认吗？`, fn, '确认恢复', true);
+        });
+      };
+      bindVphReset('#st-vph-rst-polaroid', '拍立得', () => {
         st.paperCol = '#ffffff'; st.borderCol = '#d6ccc8'; st.radius = 0; st.dots = true; st.showHeart = true;
         st.padX = 7; st.padTop = 7; st.padBot = 10; st.frameBw = 3;
         config.photoRadius = 0; config.photoDots = true; config.photoShowHeart = true;
@@ -36376,26 +36392,26 @@
         setVal('#st-vph-padx', 7); setVal('#st-vph-padt', 7); setVal('#st-vph-padb', 10); setVal('#st-vph-fbw', 3);
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
-      winEl.querySelector('#st-vph-rst-photo')?.addEventListener('click', () => {
+      bindVphReset('#st-vph-rst-photo', '照片', () => {
         st.photoRatio = '3:4'; st.photoOrient = 'land'; st.photoBorder = false; st.borderCol = '#d6ccc8'; st.radius = 0; st.showHeart = true;
         config.photoRatio = '3:4'; config.photoOrient = 'land'; config.photoRawBorder = false; config.photoRadius = 0; config.photoShowHeart = true;
         setVal('#st-vph-rawbd-col', st.borderCol); setVal('#st-vph-raw-rad', 0);
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
-      winEl.querySelector('#st-vph-rst-film')?.addEventListener('click', () => {
+      bindVphReset('#st-vph-rst-film', '胶片', () => {
         st.filmCol = '#1f1d24'; st.filmInk = '#f0c975'; st.showHeart = true;
         config.photoFilmCol = st.filmCol; config.photoFilmInk = st.filmInk; config.photoShowHeart = true;
         setVal('#st-vph-film-col', st.filmCol); setVal('#st-vph-film-ink', st.filmInk);
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
-      winEl.querySelector('#st-vph-rst-postcard')?.addEventListener('click', () => {
+      bindVphReset('#st-vph-rst-postcard', '明信片', () => {
         st.paperCol = '#fffdf8'; st.borderCol = '#c9a690'; st.pcTextCol = '#4a342a'; st.radius = 0; st.showHeart = true;
         st.pcBorderStyle = 'dashed'; st.pcBorderWidth = 2;
         config.photoRadius = 0; config.photoShowHeart = true; config.photoPcBorderStyle = 'dashed'; config.photoPcBorderWidth = 2; config.photoPcTextCol = '#4a342a';
         setVal('#st-vph-pc-paper', st.paperCol); setVal('#st-vph-pc-bd', st.borderCol); setVal('#st-vph-pc-txt', st.pcTextCol); setVal('#st-vph-pc-rad', 0); setVal('#st-vph-pc-bw', 2);
         scheduleSaveConfig(); syncCardStyle(); redrawCv();
       });
-      winEl.querySelector('#st-vph-rst-frame')?.addEventListener('click', () => {
+      bindVphReset('#st-vph-rst-frame', '相框', () => {
         st.paperCol = '#faf5ec'; st.borderCol = '#8c6b54'; st.pcTextCol = '#4a342a'; st.showHeart = true;
         config.photoShowHeart = true; config.photoPcTextCol = '#4a342a';
         setVal('#st-vph-st-paper', st.paperCol); setVal('#st-vph-st-bd', st.borderCol); setVal('#st-vph-fr-txt', st.pcTextCol);
@@ -45574,12 +45590,14 @@
     resetAllBtn.style.cssText = 'width:100%;height:20px;font-size:8.5px;margin-top:4px;';
     resetAllBtn.textContent = '恢复默认排版';
     resetAllBtn.addEventListener('click', () => {
-      bqWrapCol = '#f2d9c2'; bqRibbonCol = '#e07a94'; bqCharmCol = '#e87a98';
-      bqRibbonStyle = 'bow'; bqRibbonScale = bqTier === 'luxury' ? 1.3 : 1.0;
-      bqRibbonX = 24; bqRibbonY = 32;
-      bqFlowerScale = 1.0; bqFlowerSpread = 1.0; bqCustomSlots = null;
-      bqCharms = []; bqSelectedCharmIdx = -1;
-      renderBouquetWorkbench();
+      openGuardConfirm('恢复默认花束排版？', '确定将当前花束的包装纸、丝带、小饰品与花材位置全部恢复为默认排版吗？', () => {
+        bqWrapCol = '#f2d9c2'; bqRibbonCol = '#e07a94'; bqCharmCol = '#e87a98';
+        bqRibbonStyle = 'bow'; bqRibbonScale = bqTier === 'luxury' ? 1.3 : 1.0;
+        bqRibbonX = 24; bqRibbonY = 32;
+        bqFlowerScale = 1.0; bqFlowerSpread = 1.0; bqCustomSlots = null;
+        bqCharms = []; bqSelectedCharmIdx = -1;
+        renderBouquetWorkbench();
+      }, '确认恢复', true);
     });
     const zoomEditBtn = doc.createElement('button');
     zoomEditBtn.type = 'button'; zoomEditBtn.className = 'st-px-btn care';
@@ -54172,7 +54190,7 @@
       stGenStartedAt = Date.now();
       stGenGotMessage = false;
       stGenBaselineSig = getLastAiMsgSig();
-      stGenBaselineAiMesId = getDomLastAiMesId();
+      if (stGenBaselineAiMesId < 0) stGenBaselineAiMesId = getDomLastAiMesId();
       if (typeof cancelPendingReplyTopJump === 'function') cancelPendingReplyTopJump();
     }
   };
@@ -54182,6 +54200,7 @@
     stGenStartedAt = 0;
     stGenGotMessage = false;
     stGenBaselineSig = '';
+    stGenBaselineAiMesId = -1;
     clearTimeout(chatStreamSettleTimer);
   };
 
@@ -54647,7 +54666,20 @@
           if (typeof finalizePendingSingleSwipeReroll === 'function') {
             await finalizePendingSingleSwipeReroll();
           }
-          if (stGenGotMessage && typeof scrollToLastReplyTop === 'function') scrollToLastReplyTop();
+          if ((stGenGotMessage || hasVerifiedNewReply()) && typeof scrollToLastReplyTop === 'function') {
+            const cChat = getContext()?.chat;
+            let lAi = -1, lUsr = -1;
+            if (Array.isArray(cChat)) {
+              for (let i = cChat.length - 1; i >= 0; i--) {
+                const m = cChat[i];
+                if (!m || m.is_system) continue;
+                if (lAi < 0 && !m.is_user) lAi = i;
+                if (lUsr < 0 && m.is_user) lUsr = i;
+                if (lAi >= 0 && lUsr >= 0) break;
+              }
+            }
+            if (lAi >= 0 && lAi > lUsr) scrollToLastReplyTop(lAi);
+          }
           setTimeout(() => {
             try {
               if (stWasGenerating) {
@@ -62834,20 +62866,28 @@
   });
 
   readResetBtn.addEventListener('click', () => {
-    config.fontSize = '';
-    config.lineHeight = '';
-    config.paraGap = '';
-    config.sidePadding = '';
-    config.letterSpacing = '';
-    config.textIndent = false;
-    fontSizeInput.value = '';
-    lineHeightInput.value = '';
-    paraGapInput.value = '';
-    sidePadInput.value = '';
-    if (letterSpacingInput) letterSpacingInput.value = '';
-    textIndentCheck.checked = false;
-    saveConfig();
-    applyReadingStyle();
+    openGuardConfirm('重置正文阅读微调？', '确定清空字号、行距、段距、边距、字距与首行缩进并恢复默认吗？', () => {
+      config.fontSize = '';
+      config.lineHeight = '';
+      config.paraGap = '';
+      config.sidePadding = '';
+      config.letterSpacing = '';
+      config.textIndent = false;
+      fontSizeInput.value = '';
+      lineHeightInput.value = '';
+      paraGapInput.value = '';
+      sidePadInput.value = '';
+      if (letterSpacingInput) letterSpacingInput.value = '';
+      textIndentCheck.checked = false;
+      saveConfig();
+      applyReadingStyle();
+      const qPop = root.querySelector('#st-tb-quick-read-pop');
+      if (qPop) {
+        ['#st-qr-fs', '#st-qr-lh', '#st-qr-pg', '#st-qr-sp', '#st-qr-ls'].forEach(sel => { const el = qPop.querySelector(sel); if (el) el.value = ''; });
+        const qi = qPop.querySelector('#st-qr-indent'); if (qi) qi.checked = false;
+      }
+      showImmNotice('已重置正文阅读微调');
+    }, '确认重置', false);
   });
 
   const AMBIENT_PUP_TALK = {
@@ -65248,12 +65288,14 @@
     if (imgResetAllBtn) {
       imgResetAllBtn.addEventListener('click', () => {
         const isUi = imgActiveScopeTab === 'ui';
-        const cur = getBucketByTab(imgActiveScopeTab).bucket;
-        cur.map = {};
-        saveConfig();
-        applyAllImgSwaps();
-        renderImgSwapUI();
-        showToast(isUi ? '已恢复当前美化的默认图片' : '已恢复当前聊天的默认图片');
+        openGuardConfirm('本页恢复默认图片？', isUi ? '确定清空当前美化的全部替换图片并恢复默认吗？' : '确定清空当前聊天的全部替换图片并恢复默认吗？', () => {
+          const cur = getBucketByTab(imgActiveScopeTab).bucket;
+          cur.map = {};
+          saveConfig();
+          applyAllImgSwaps();
+          renderImgSwapUI();
+          showToast(isUi ? '已恢复当前美化的默认图片' : '已恢复当前聊天的默认图片');
+        }, '确认恢复', false);
       });
     }
     if (imgScopeRow) {
@@ -71406,11 +71448,14 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
   }
   if (rsetColReset) {
     rsetColReset.addEventListener('click', () => {
-      config.readerBgColor = '';
-      config.readerTextColor = '';
-      config.readerBgOpacity = 1.0;
-      saveConfig();
-      applyReaderTypoSettings(false);
+      openGuardConfirm('重置阅读器配色？', '确定将阅读器底色、字色和背景透明度恢复为默认吗？', () => {
+        config.readerBgColor = '';
+        config.readerTextColor = '';
+        config.readerBgOpacity = 1.0;
+        saveConfig();
+        applyReaderTypoSettings(false);
+        showImmNotice('已重置阅读器配色');
+      }, '确认重置', false);
     });
   }
   if (rsetBgOp) {
@@ -72092,13 +72137,16 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
       }
       qdCfgMask._syncGestureModeUI = syncGestureModeUI;
       qdCfgMask.querySelector('#st-tb-qd-cfg-reset')?.addEventListener('click', () => {
-        config.quickDockItems = QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
-        config.badgeGesturePanel = 'tap';
-        config.badgeGestureQd = 'hold';
-        saveConfig();
-        syncGestureModeUI();
-        renderQuickDock();
-        renderQdCfgBody();
+        openGuardConfirm('恢复快捷面板默认设置？', '将把快捷面板按钮列表、改名和悬浮球手势恢复为默认配置，确定吗？', () => {
+          config.quickDockItems = QUICK_DOCK_DEFAULT.map(x => ({ ...x }));
+          config.badgeGesturePanel = 'tap';
+          config.badgeGestureQd = 'hold';
+          saveConfig();
+          syncGestureModeUI();
+          renderQuickDock();
+          renderQdCfgBody();
+          showImmNotice('已恢复快捷面板默认设置');
+        }, '确认恢复', false);
       });
     }
     const renderQdCfgBody = () => {
