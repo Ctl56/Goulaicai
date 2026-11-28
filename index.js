@@ -47521,6 +47521,23 @@
         setPuppyState('idle', 100);
       }
       drawPuppyScene();
+      if (typeof getGuestList === 'function' && typeof guestRuntimes !== 'undefined' && typeof drawSingleGuestScene === 'function') {
+        try {
+          getGuestList().forEach(g => {
+            const rt = guestRuntimes.get(g.id);
+            if (!rt || g.onDesktop === false) return;
+            if (typeof rt._toyBaseY === 'number') {
+              rt.y = rt._toyBaseY;
+              delete rt._toyBaseY;
+            }
+            rt._toyVx = 0;
+            rt._toyVy = 0;
+            rt.state = enterPant ? 'happy' : 'idle';
+            rt.timer = 70;
+            drawSingleGuestScene(g, rt);
+          });
+        } catch (_) {}
+      }
     }
   };
 
@@ -47936,6 +47953,136 @@
         lg.addColorStop(1, 'rgba(255,42,68,0)');
         toyCtx.fillStyle = lg;
         toyCtx.beginPath(); toyCtx.arc(ls.x, ls.y, 13, 0, Math.PI * 2); toyCtx.fill();
+      }
+
+      // 串门小狗一起参与争抢逗狗玩具（不限只数、自带防重叠间距分离）
+      if (typeof getGuestList === 'function' && typeof guestRuntimes !== 'undefined' && typeof drawSingleGuestScene === 'function') {
+        try {
+          const gList = getGuestList().filter(g => g && g.onDesktop !== false);
+          const activePairs = [];
+          const pSpdG = clamp(Number(config.puppySpeed) || 1.0, 0.3, 2.4);
+          const scrambleLines = ['我抢到啦!', '别跟我抢~', '看我飞扑!', '这球归本汪!', '嘿嘿我先碰到!', '等等我呀!'];
+
+          gList.forEach((g, gIdx) => {
+            const rt = guestRuntimes.get(g.id);
+            if (!rt || rt.drag) return;
+            if (typeof rt._toyBaseY !== 'number') rt._toyBaseY = typeof rt.y === 'number' ? rt.y : defaultPupY();
+            if (typeof rt._toyVx !== 'number') rt._toyVx = 0;
+            if (typeof rt._toyVy !== 'number') rt._toyVy = 0;
+            if (typeof rt._toyLastActAt !== 'number') rt._toyLastActAt = 0;
+
+            const baseGY = rt._toyBaseY;
+            const gCx = rt.x + 36;
+            const gCy = rt.y + 34;
+
+            // 为每只串门小狗分配左右错开的目标偏移，避免扎堆抢同一点
+            const sideSign = (gIdx % 2 === 0) ? -1 : 1;
+            const ringTier = Math.floor(gIdx / 2) + 1;
+            const slotOffset = sideSign * (56 + (ringTier - 1) * 52);
+
+            let tgtX = (toyActive.x || pupCx) + slotOffset;
+            let tgtY = toyActive.y || baseGY;
+
+            if (toyActive.kind === 'bubbles' && Array.isArray(toyActive.bubbles) && toyActive.bubbles.length) {
+              // 泡泡模式：每只串门小狗各自挑离自己最近的泡泡追着戳
+              let bestB = null, bestD = 1e9;
+              toyActive.bubbles.forEach((b, bIdx) => {
+                const d = Math.hypot(b.x - gCx, b.y - gCy) + ((bIdx % Math.max(1, gList.length)) === (gIdx % Math.max(1, gList.length)) ? -35 : 0);
+                if (d < bestD) { bestD = d; bestB = b; }
+              });
+              if (bestB) { tgtX = bestB.x; tgtY = bestB.y; }
+            }
+
+            if (g.pinned) {
+              // 固定位置的小狗原地转头围观+开心蹦跶
+              rt.dir = tgtX >= gCx ? 1 : -1;
+              if (rt.y >= baseGY - 1 && Math.abs(tgtX - gCx) < 110 && t - rt._toyLastActAt > 1600) {
+                rt._toyVy = -5.8;
+                rt._toyLastActAt = t;
+              }
+              rt._toyVy += 0.45 * dt;
+              rt.y = Math.min(baseGY, rt.y + rt._toyVy * dt);
+              if (rt.y >= baseGY) rt._toyVy = 0;
+              rt.state = rt.y < baseGY - 2 ? 'happy' : 'idle';
+            } else {
+              const gSpeedMul = (0.86 + ((gIdx * 17) % 10) * 0.03) * Math.min(1.4, pSpdG);
+              const dxG = tgtX - gCx;
+              const desiredVx = Math.abs(dxG) > 10 ? clamp(dxG * 0.14 * gSpeedMul, -5.8 * gSpeedMul, 5.8 * gSpeedMul) : 0;
+              rt._toyVx += (desiredVx - rt._toyVx) * Math.min(1, 0.22 * dt);
+              rt.x = clamp(rt.x + rt._toyVx * dt, 12, maxX);
+              if (Math.abs(rt._toyVx) > 0.3) rt.dir = rt._toyVx >= 0 ? 1 : -1;
+
+              // 重力与飞扑跳跃
+              rt._toyVy += 0.46 * dt;
+              rt.y = Math.min(baseGY, rt.y + rt._toyVy * dt);
+              if (rt.y >= baseGY) rt._toyVy = 0;
+
+              const realToyX = toyActive.kind === 'bubbles' ? tgtX : (toyActive.x || tgtX);
+              const realToyY = toyActive.kind === 'bubbles' ? tgtY : (toyActive.y || tgtY);
+              const distToy = Math.hypot(realToyX - (rt.x + 36), realToyY - (rt.y + 30));
+
+              if (distToy < 56 && rt.y >= baseGY - 2 && t - rt._toyLastActAt > 900) {
+                rt._toyVy = -7.6;
+                rt._toyLastActAt = t;
+                // 串门小狗碰到网球/飞盘/泡泡时真的能拍飞或戳破！
+                if (toyActive.kind === 'tennis' && distToy < 46) {
+                  toyActive.vy = -(7.2 + Math.random() * 2.5);
+                  toyActive.vx = (rt.dir || 1) * (4.2 + Math.random() * 2.4);
+                  toyActive.hits = (toyActive.hits || 0) + 1;
+                  if (Math.random() < 0.45 && typeof showGuestBubbleById === 'function') showGuestBubbleById(g.id, pick(scrambleLines), 1800);
+                } else if (toyActive.kind === 'frisbee' && toyActive.phase === 'fly' && distToy < 48) {
+                  toyActive.vx = -toyActive.vx * 0.95;
+                  toyActive.vy = -4.2;
+                  toyActive.hits = (toyActive.hits || 0) + 1;
+                  if (Math.random() < 0.5 && typeof showGuestBubbleById === 'function') showGuestBubbleById(g.id, pick(scrambleLines), 1800);
+                } else if (toyActive.kind === 'bubbles' && Array.isArray(toyActive.bubbles)) {
+                  const hitIdx = toyActive.bubbles.findIndex(b => Math.hypot(b.x - (rt.x + 36), b.y - (rt.y + 28)) < b.r + 30);
+                  if (hitIdx >= 0) {
+                    const popped = toyActive.bubbles.splice(hitIdx, 1)[0];
+                    if (Array.isArray(toyActive.pops)) toyActive.pops.push({ x: popped.x, y: popped.y, r: popped.r, life: 12 });
+                    toyActive.hits = (toyActive.hits || 0) + 1;
+                    if (Math.random() < 0.35 && typeof showGuestBubbleById === 'function') showGuestBubbleById(g.id, pick(scrambleLines), 1600);
+                  }
+                } else if (toyActive.kind === 'laser' && distToy < 42 && Math.random() < 0.3) {
+                  if (typeof showGuestBubbleById === 'function') showGuestBubbleById(g.id, pick(scrambleLines), 1600);
+                }
+              }
+              rt.state = rt.y < baseGY - 3 ? 'happy' : (Math.abs(rt._toyVx) > 0.45 ? 'walk' : 'idle');
+            }
+            activePairs.push({ g, rt });
+          });
+
+          // 严格防重叠分离（2 轮成对排斥，覆盖自家小狗 + 全部串门小狗，绝不叠在一起）
+          const MIN_SEP_X = 62;
+          const allBodies = [{ isOwn: true, pinned: false, ref: pup }, ...activePairs.map(p => ({ isOwn: false, pinned: Boolean(p.g.pinned), ref: p.rt }))];
+          for (let pass = 0; pass < 2; pass++) {
+            for (let i = 0; i < allBodies.length; i++) {
+              for (let j = i + 1; j < allBodies.length; j++) {
+                const a = allBodies[i], b = allBodies[j];
+                if (Math.abs((a.ref.y || 0) - (b.ref.y || 0)) >= 44) continue;
+                const diffX = b.ref.x - a.ref.x;
+                const absX = Math.abs(diffX);
+                if (absX < MIN_SEP_X) {
+                  const pushDir = diffX === 0 ? ((i + j) % 2 === 0 ? 1 : -1) : (diffX > 0 ? 1 : -1);
+                  const need = (MIN_SEP_X - absX) + 1;
+                  if (a.pinned && !b.pinned) {
+                    b.ref.x = clamp(b.ref.x + pushDir * need, 12, maxX);
+                  } else if (!a.pinned && b.pinned) {
+                    a.ref.x = clamp(a.ref.x - pushDir * need, 12, maxX);
+                  } else if (!a.pinned && !b.pinned) {
+                    a.ref.x = clamp(a.ref.x - pushDir * (need * 0.5), 12, maxX);
+                    b.ref.x = clamp(b.ref.x + pushDir * (need * 0.5), 12, maxX);
+                  }
+                }
+              }
+            }
+          }
+
+          activePairs.forEach(({ g, rt }) => {
+            rt.tick += 1;
+            drawSingleGuestScene(g, rt);
+          });
+        } catch (_) {}
       }
 
       pup.tick += 1;
