@@ -13703,6 +13703,7 @@
     }
     pendingConfirmAction = onConfirm;
     if (typeof bringModalFront === 'function') bringModalFront(confirmMask);
+    if (typeof nextPupTopZ === 'function') confirmMask.style.zIndex = String(nextPupTopZ());
     confirmMask.classList.add('open');
   };
 
@@ -61723,6 +61724,7 @@
       ev.stopPropagation();
       ev.preventDefault();
       const r = boxEl.getBoundingClientRect();
+      if (typeof nextPupTopZ === 'function') boxEl.style.zIndex = String(nextPupTopZ());
       boxEl.style.left = `${Math.round(r.left)}px`;
       boxEl.style.top = `${Math.round(r.top)}px`;
       boxEl.style.right = 'auto';
@@ -63634,7 +63636,105 @@
       boundEvents.push({ eventSource, evt, fn });
     };
 
-    add(eventTypes.CHAT_CHANGED, () => { onChatChanged(); setTimeout(recordDupChatOwner, 260); setTimeout(fixRecentDupCardAvatars, 500); });
+    let _dupFixInFlight = false;
+    let _lastDupFixKey = '';
+    const verifyAndFixLoadedDupCharChat = async () => {
+      if (_dupFixInFlight) return;
+      try {
+        const ctx = getContext();
+        const chid = Number(ctx?.characterId);
+        const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+        if (!Number.isFinite(chid) || chid < 0 || !chars[chid]) return;
+        const curChar = chars[chid];
+        const curChatId = String(ctx?.chatId || '').trim().replace(/\.jsonl$/i, '');
+        if (!curChatId) return;
+        const sameNameIdxs = [];
+        chars.forEach((c, i) => { if (c && String(c.name || '') === String(curChar.name || '')) sameNameIdxs.push(i); });
+        if (sameNameIdxs.length < 2) return;
+
+        const chat = Array.isArray(ctx?.chat) ? ctx.chat : [];
+        const msg0 = chat.find(m => m && !m.is_user && !m.is_system && (m.mes || (Array.isArray(m.swipes) && m.swipes.length)));
+        if (!msg0) return;
+
+        const norm = (t) => String(t || '').replace(/\{\{user\}\}|\{\{char\}\}/gi, '').replace(/\s+/g, '').slice(0, 90);
+        const getCardGreets = (c) => {
+          const out = [];
+          const f = String(c?.first_mes || c?.data?.first_mes || '');
+          if (f) out.push(f);
+          const alts = Array.isArray(c?.data?.alternate_greetings)
+            ? c.data.alternate_greetings
+            : (Array.isArray(c?.alternate_greetings) ? c.alternate_greetings : []);
+          alts.forEach(a => { if (typeof a === 'string') out.push(a); });
+          return out;
+        };
+
+        const chatSwipes = (Array.isArray(msg0.swipes) && msg0.swipes.length)
+          ? msg0.swipes.filter(x => typeof x === 'string')
+          : (msg0.mes ? [String(msg0.mes)] : []);
+        const chatCnt = chatSwipes.length;
+        const curCardCnt = getCardGreets(curChar).length;
+
+        let targetCid = -1;
+        // 1) 优先按开场白总数比对：若仅有一张重名卡的开场白数量与当前聊天第 0 层 swipes 数量一致，直接锁定！
+        const cntMatches = chatCnt > 0 ? sameNameIdxs.filter(i => getCardGreets(chars[i]).length === chatCnt) : [];
+        if (cntMatches.length === 1) {
+          targetCid = cntMatches[0];
+        } else {
+          // 2) 数量不唯一或未命中时，全量比对每一版开场白具体正文内容
+          const pool = cntMatches.length > 1 ? cntMatches : sameNameIdxs;
+          const samples = chatSwipes.map(norm).filter(t => t.length >= 6);
+          let bestCid = -1, bestScore = 0;
+          pool.forEach(i => {
+            const gsRaw = getCardGreets(chars[i]);
+            const gs = gsRaw.map(norm).filter(t => t.length >= 6);
+            let sc = (gsRaw.length === chatCnt) ? 200 : 0;
+            samples.forEach((sp, sIdx) => {
+              if (gs[sIdx] && gs[sIdx] === sp) { sc += 160; return; }
+              let bestOne = 0;
+              gs.forEach(gr => {
+                if (sp === gr) bestOne = Math.max(bestOne, 120);
+                else if (sp.slice(0, 40) === gr.slice(0, 40)) bestOne = Math.max(bestOne, 80);
+                else if (sp.slice(0, 20) === gr.slice(0, 20)) bestOne = Math.max(bestOne, 45);
+                else if (gr.includes(sp.slice(0, 18)) || sp.includes(gr.slice(0, 18))) bestOne = Math.max(bestOne, 30);
+              });
+              sc += bestOne;
+            });
+            if (sc > bestScore) { bestScore = sc; bestCid = i; }
+          });
+          if (bestCid >= 0 && bestScore >= 30) targetCid = bestCid;
+        }
+
+        if (targetCid < 0 || targetCid === chid) {
+          recordDupChatOwner();
+          return;
+        }
+        const fixKey = `${curChatId}=>${targetCid}`;
+        if (_lastDupFixKey === fixKey) return;
+        _lastDupFixKey = fixKey;
+        _dupFixInFlight = true;
+        win.__stSuppressDupChatToastUntil = Date.now() + 4500;
+        if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
+        if (chars[targetCid]?.avatar) {
+          config.dupChatOwnerMap[curChatId] = chars[targetCid].avatar;
+          saveConfig();
+        }
+        if (typeof ctx.selectCharacterById === 'function') {
+          await ctx.selectCharacterById(String(targetCid));
+          await new Promise(r => setTimeout(r, 140));
+          if (typeof ctx.openCharacterChat === 'function') {
+            await ctx.openCharacterChat(curChatId);
+          }
+        }
+      } catch (_) {
+      } finally {
+        setTimeout(() => { _dupFixInFlight = false; }, 1200);
+      }
+    };
+    add(eventTypes.CHAT_CHANGED, () => {
+      onChatChanged();
+      setTimeout(verifyAndFixLoadedDupCharChat, 260);
+      setTimeout(fixRecentDupCardAvatars, 550);
+    });
     add(eventTypes.MESSAGE_SENT, () => { onMessageChanged(); recordDupChatOwner(); });
     add(eventTypes.MESSAGE_RECEIVED, onMessageChanged);
     add(eventTypes.MESSAGE_DELETED, onMessageChanged);
@@ -71938,7 +72038,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                       showImmNotice('已删除聊天文件');
                       await renderQcc(true);
                     } catch (_) { showImmNotice('删除失败'); }
-                  }, '确认删除', true);
+                  }, '确认删除', false);
                 });
                 row.append(info, delB);
                 bodyEl.appendChild(row);
@@ -72011,9 +72111,13 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               }
               found.forEach(wb => {
                 const row = doc.createElement('div');
-                row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);';
+                row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:6px;padding:6px 8px;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);cursor:pointer;';
+                row.title = '点击跳转到世界书编辑：' + wb.name;
                 row.innerHTML = `<span style="font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(wb.name)}</span>
                   <span style="font-size:10px;opacity:0.72;flex-shrink:0;padding:1px 5px;border:1px solid var(--tb-border);border-radius:4px;">${escapeHtmlSimple(wb.source)}</span>`;
+                row.addEventListener('click', () => {
+                  if (typeof openWorldbookInEditor === 'function') openWorldbookInEditor(wb.name);
+                });
                 bodyEl.appendChild(row);
               });
             }
@@ -72024,6 +72128,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           cpop.querySelector('#st-qcc-close')?.addEventListener('click', () => cpop.classList.remove('open'));
           cpop._renderQcc = renderQcc;
         }
+        if (typeof nextPupTopZ === 'function') cpop.style.zIndex = String(nextPupTopZ());
         cpop.classList.add('open');
         if (typeof cpop._renderQcc === 'function') cpop._renderQcc(true);
       } else if (act === 'imgswap') {
