@@ -5203,8 +5203,8 @@
 
     #chat .mes_text .st-tb-mask[data-style="custom"] {
       display: inline !important;
-      padding: 0 2px;
-      background: rgba(128, 128, 128, 0.16);
+      padding: 0 !important;
+      background: transparent !important;
     }
 
     #chat .mes_text .st-tb-mask.revealed {
@@ -61616,6 +61616,7 @@
     syncUI();
     applyMasks();
     if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+    showImmNotice(config.maskEnabled ? '已开启打码' : '已关闭打码');
   };
   var openQuickMaskPanel = () => {
     let qm = root.querySelector('#st-tb-quick-mask-pop');
@@ -61672,8 +61673,16 @@
         <span style="flex-shrink:0;">替换字符</span>
         <input id="st-qm-cust" class="st-tb-input" type="text" maxlength="10" value="${escapeHtmlSimple(config.maskCustomText || '○')}" style="flex:1;min-width:0;height:26px;" />
       </div>
-      <div style="font-size:11px;opacity:0.8;margin-bottom:4px;">打码词（每行一个，或用逗号/空格分隔）</div>
-      <textarea id="st-qm-words" class="st-tb-textarea" rows="3" placeholder="输入需要遮挡的词..." style="width:100%;box-sizing:border-box;margin-bottom:4px;">${escapeHtmlSimple(config.maskWords || '')}</textarea>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;flex-wrap:wrap;">
+        <span style="font-size:11px;opacity:0.8;">打码词</span>
+        <div style="display:flex;gap:3px;flex-wrap:wrap;">
+          <button type="button" id="st-qm-add-char" class="st-tb-mini-btn">+角色名</button>
+          <button type="button" id="st-qm-add-user" class="st-tb-mini-btn">+用户名</button>
+          <button type="button" id="st-qm-add-both" class="st-tb-mini-btn">+都加</button>
+          <button type="button" id="st-qm-clr-words" class="st-tb-mini-btn">清空</button>
+        </div>
+      </div>
+      <textarea id="st-qm-words" class="st-tb-textarea" rows="3" placeholder="每行一个，或用逗号/空格分隔..." style="width:100%;box-sizing:border-box;margin-bottom:4px;">${escapeHtmlSimple(config.maskWords || '')}</textarea>
     `;
     const syncQm = () => {
       const tb = box.querySelector('#st-qm-toggle');
@@ -61776,10 +61785,34 @@
       if (config.maskEnabled) applyMasks();
     });
     const wordsInp = box.querySelector('#st-qm-words');
+    const applyQmWords = (nextStr) => {
+      config.maskWords = nextStr;
+      if (wordsInp) wordsInp.value = nextStr;
+      scheduleSaveConfig();
+      syncUI();
+      if (config.maskEnabled) applyMasks();
+    };
+    const appendQmNames = (mode) => {
+      const ctx = getContext();
+      const cName = String(ctx?.name2 || '').trim();
+      const uName = String(ctx?.name1 || '').trim();
+      const toAdd = [];
+      if ((mode === 'char' || mode === 'both') && cName) toAdd.push(cName);
+      if ((mode === 'user' || mode === 'both') && uName) toAdd.push(uName);
+      if (!toAdd.length) { showImmNotice('当前未读取到角色或用户名称'); return; }
+      const existing = String(config.maskWords || '').split(/[\n,，]+/).map(x => x.trim()).filter(Boolean);
+      toAdd.forEach(nm => { if (!existing.includes(nm)) existing.push(nm); });
+      applyQmWords(existing.join('\n'));
+    };
+    box.querySelector('#st-qm-add-char')?.addEventListener('click', () => appendQmNames('char'));
+    box.querySelector('#st-qm-add-user')?.addEventListener('click', () => appendQmNames('user'));
+    box.querySelector('#st-qm-add-both')?.addEventListener('click', () => appendQmNames('both'));
+    box.querySelector('#st-qm-clr-words')?.addEventListener('click', () => { applyQmWords(''); showImmNotice('已清空打码词'); });
     if (wordsInp) wordsInp.addEventListener('input', () => {
       config.maskWords = wordsInp.value;
       scheduleSaveConfig();
-      syncUI();
+      if (maskWordsEl && doc.activeElement !== maskWordsEl) maskWordsEl.value = wordsInp.value;
+      if (maskCountEl) maskCountEl.textContent = `${getMaskWordList().length} 个词`;
       if (config.maskEnabled) applyMasks();
     });
     qm.appendChild(box);
@@ -62989,30 +63022,89 @@
     }
   };
 
-  // 自动修复重名角色卡在首页「最近聊天」点进去报后端错误（按唯一 avatar 文件名精准定位角色卡再打开对应聊天）
+  // 自动修复重名角色卡在首页「最近聊天」点进去报后端错误：
+  // 兼容 HTML data-*、jQuery .data() 与头像 src，并通过 /api/characters/chats 核对真正拥有该聊天文件的唯一角色卡
   try {
     doc.addEventListener('click', async (ev) => {
       try {
-        const card = ev.target && ev.target.closest ? ev.target.closest('.recentChat[data-avatar][data-file], .recent_chat[data-avatar][data-file]') : null;
+        const card = ev.target && ev.target.closest
+          ? ev.target.closest('.recentChat, .recent_chat, .recentChatList .chat_card, .welcomePanel .recentChat')
+          : null;
         if (!card) return;
-        const avatar = String(card.getAttribute('data-avatar') || '').trim();
-        const rawFile = String(card.getAttribute('data-file') || '').trim();
-        if (!avatar || !rawFile) return;
+        const jqData = (typeof win.jQuery === 'function') ? (win.jQuery(card).data() || {}) : {};
+        let avatar = String(card.getAttribute('data-avatar') || card.dataset?.avatar || jqData.avatar || '').trim();
+        let rawFile = String(card.getAttribute('data-file') || card.getAttribute('data-chat') || card.dataset?.file || card.dataset?.chat || jqData.file || jqData.chat || '').trim();
+        if (!avatar) {
+          const imgEl = card.querySelector('img');
+          const srcAttr = String(imgEl?.getAttribute('src') || '');
+          const mAv = srcAttr.match(/(?:characters|thumbnail[^=]*=)([^?&/#]+\.(?:png|webp|jpg|jpeg|gif))/i);
+          if (mAv && mAv[1]) {
+            try { avatar = decodeURIComponent(mAv[1]); } catch (_) { avatar = mAv[1]; }
+          }
+        }
         const ctx = getContext();
         const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
         if (!chars.length) return;
-        const exactIdx = chars.findIndex(c => c && String(c.avatar || '') === avatar);
-        if (exactIdx < 0) return;
-        const targetName = String(chars[exactIdx].name || '');
-        const dupCount = chars.filter(c => c && String(c.name || '') === targetName).length;
-        if (dupCount < 2) return; // 非重名卡直接走酒馆原逻辑
-        if (typeof ctx.selectCharacterById !== 'function' || typeof ctx.openCharacterChat !== 'function') return;
+
+        // 找出同名候选角色卡列表
+        let exactIdx = avatar ? chars.findIndex(c => c && String(c.avatar || '') === avatar) : -1;
+        let targetName = exactIdx >= 0 ? String(chars[exactIdx].name || '') : '';
+        if (!targetName) {
+          const nameEl = card.querySelector('.characterName, .name, .recentChatName');
+          targetName = String(nameEl?.textContent || '').trim();
+        }
+        if (!targetName) return;
+        const sameNameIdxs = [];
+        chars.forEach((c, idx) => { if (c && String(c.name || '') === targetName) sameNameIdxs.push(idx); });
+        if (sameNameIdxs.length < 2) return; // 非重名角色卡完全不干预，走酒馆原逻辑
+        if (typeof ctx.selectCharacterById !== 'function') return;
+
         ev.preventDefault();
         ev.stopPropagation();
         ev.stopImmediatePropagation();
-        await ctx.selectCharacterById(String(exactIdx));
-        const cleanFile = rawFile.replace(/\.jsonl$/i, '');
-        await ctx.openCharacterChat(cleanFile);
+
+        // 排序候选：卡片上的 avatar 优先，其余同名卡依次兜底
+        const candIdxs = exactIdx >= 0
+          ? [exactIdx, ...sameNameIdxs.filter(i => i !== exactIdx)]
+          : sameNameIdxs;
+
+        let matchedChid = candIdxs[0];
+        let matchedFile = rawFile;
+        const cleanWanted = rawFile.replace(/\.jsonl$/i, '');
+
+        // 若有明确聊天文件名，通过后端 /api/characters/chats 精准核实该文件实际归属哪张重名卡
+        if (cleanWanted && typeof ctx.getRequestHeaders === 'function') {
+          for (const cid of candIdxs) {
+            const cObj = chars[cid];
+            if (!cObj || !cObj.avatar) continue;
+            try {
+              const res = await fetch('/api/characters/chats', {
+                method: 'POST',
+                headers: ctx.getRequestHeaders(),
+                body: JSON.stringify({ avatar_url: cObj.avatar, simple: true }),
+              });
+              if (res && res.ok) {
+                const list = await res.json();
+                if (Array.isArray(list)) {
+                  const hit = list.find(item => {
+                    const fn = String((typeof item === 'string' ? item : item?.file_name) || '');
+                    return fn === rawFile || fn.replace(/\.jsonl$/i, '') === cleanWanted;
+                  });
+                  if (hit) {
+                    matchedChid = cid;
+                    matchedFile = String((typeof hit === 'string' ? hit : hit?.file_name) || rawFile);
+                    break;
+                  }
+                }
+              }
+            } catch (_) {}
+          }
+        }
+
+        await ctx.selectCharacterById(String(matchedChid));
+        if (matchedFile && typeof ctx.openCharacterChat === 'function') {
+          await ctx.openCharacterChat(matchedFile.replace(/\.jsonl$/i, ''));
+        }
       } catch (_) {}
     }, true);
   } catch (_) {}
