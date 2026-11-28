@@ -64288,13 +64288,14 @@
         const doSwitchSibling = async () => {
           dm.remove();
           win.__stSuppressDupChatToastUntil = Date.now() + 5000;
+          const snapMsgs = Array.isArray(ctx?.chat) && ctx.chat.length ? JSON.parse(JSON.stringify(ctx.chat)) : null;
           try {
-            if (cleanChatId && Array.isArray(ctx?.chat) && ctx.chat.length && typeof saveChatBackupToIDB === 'function') {
+            if (cleanChatId && snapMsgs && typeof saveChatBackupToIDB === 'function') {
               await saveChatBackupToIDB({
                 charName: ch?.name || '',
                 avatar: ch?.avatar || '',
                 fileName: cleanChatId,
-                messages: JSON.parse(JSON.stringify(ctx.chat)),
+                messages: snapMsgs,
                 reason: '切同名卡前备份',
               });
             }
@@ -64313,6 +64314,30 @@
             if (nowId === idx) break;
           }
           await new Promise(r => setTimeout(r, 200));
+          // 检查目标卡自己的后台目录里是否已有这份聊天文件；若还没有，把原消息快照真正写入目标卡目录，防止移走/清理旧卡后最近聊天点进去变空
+          if (!isNow && cleanChatId && snapMsgs && c.avatar) {
+            try {
+              const rList = await win.fetch('/api/characters/chats', {
+                method: 'POST',
+                headers: hdrs,
+                body: JSON.stringify({ avatar_url: c.avatar }),
+              });
+              let hasInTarget = false;
+              if (rList && rList.ok) {
+                const arrList = await rList.json();
+                if (Array.isArray(arrList)) {
+                  hasInTarget = arrList.some(it => String(it?.file_name || '').trim().replace(/\.jsonl$/i, '') === cleanChatId);
+                }
+              }
+              if (!hasInTarget) {
+                await win.fetch('/api/chats/save', {
+                  method: 'POST',
+                  headers: hdrs,
+                  body: JSON.stringify({ ch_name: c.name, file_name: cleanChatId, chat: snapMsgs, avatar_url: c.avatar, force: true }),
+                });
+              }
+            } catch (_) {}
+          }
           if (cleanChatId && typeof ctx.openCharacterChat === 'function') {
             try {
               await ctx.openCharacterChat(cleanChatId);
