@@ -63430,17 +63430,42 @@
   };
   setInterval(fixRecentDupCardAvatars, 2200);
 
-  // 全自动通过聊天内容指纹（original_avatar + 开场白/备选开场白比对）识别重名角色卡的真实归属，无需人工认领！
+  // 全自动四级识别重名角色卡真实归属：
+  // 1) /api/characters/chats 唯一归属文件夹核对 -> 2) original_avatar -> 3) 开场白/备选开场白指纹 -> 4) 兜底
   const autoDetectDupChatOwner = async (ctx, chars, sameNameIdxs, cleanWanted, fallbackAvatar) => {
     const norm = (s) => String(s || '').replace(/\{\{user\}\}|\{\{char\}\}/gi, '').replace(/\s+/g, '').slice(0, 90);
-    // 尝试读取该聊天文件的消息列表（按候选卡的 avatar 逐一拉取）
-    let chatMsgs = null;
     const candIdxs = fallbackAvatar
       ? [
           ...sameNameIdxs.filter(i => String(chars[i]?.avatar || '') === fallbackAvatar),
           ...sameNameIdxs.filter(i => String(chars[i]?.avatar || '') !== fallbackAvatar),
         ]
       : sameNameIdxs;
+
+    // 0) 先查 /api/characters/chats：如果该聊天文件只存在于其中唯一一张同名卡的目录里，直接 100% 锁定！
+    if (cleanWanted && typeof ctx?.getRequestHeaders === 'function') {
+      const folderHits = [];
+      for (const cid of candIdxs) {
+        const cObj = chars[cid];
+        if (!cObj || !cObj.avatar) continue;
+        try {
+          const rList = await fetch('/api/characters/chats', {
+            method: 'POST',
+            headers: ctx.getRequestHeaders(),
+            body: JSON.stringify({ avatar_url: cObj.avatar, simple: true }),
+          });
+          if (rList && rList.ok) {
+            const arr = await rList.json();
+            if (Array.isArray(arr) && arr.some(it => String((typeof it === 'string' ? it : it?.file_name) || '').replace(/\.jsonl$/i, '') === cleanWanted)) {
+              folderHits.push(cid);
+            }
+          }
+        } catch (_) {}
+      }
+      if (folderHits.length === 1) return folderHits[0];
+    }
+
+    // 尝试读取该聊天文件的消息列表（按候选卡的 avatar 逐一拉取）
+    let chatMsgs = null;
     if (cleanWanted && typeof ctx?.getRequestHeaders === 'function') {
       for (const cid of candIdxs) {
         const cObj = chars[cid];
