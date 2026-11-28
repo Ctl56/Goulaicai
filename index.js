@@ -63332,8 +63332,132 @@
     if (!win.__stGlDupChatFetchPatched && typeof win.fetch === 'function') {
       win.__stGlDupChatFetchPatched = true;
       const _origFetch = win.fetch.bind(win);
+      const transcodeAvatarBlobToCleanPng = async (fileObj) => {
+        if (!fileObj || !(fileObj instanceof Blob) || fileObj.size <= 0) return null;
+        return new Promise((resolve) => {
+          try {
+            const url = URL.createObjectURL(fileObj);
+            const img = new Image();
+            img.onload = () => {
+              try {
+                const maxDim = 1024;
+                let w = img.naturalWidth || img.width || 512;
+                let h = img.naturalHeight || img.height || 512;
+                if (w > maxDim || h > maxDim) {
+                  const ratio = Math.min(maxDim / w, maxDim / h);
+                  w = Math.max(1, Math.round(w * ratio));
+                  h = Math.max(1, Math.round(h * ratio));
+                }
+                const cv = doc.createElement('canvas');
+                cv.width = w;
+                cv.height = h;
+                const ctx2 = cv.getContext('2d');
+                ctx2.drawImage(img, 0, 0, w, h);
+                cv.toBlob((blob) => {
+                  URL.revokeObjectURL(url);
+                  if (!blob) { resolve(null); return; }
+                  const origName = String(fileObj.name || 'avatar').replace(/\.[^.]+$/, '');
+                  resolve(new File([blob], `${origName}.png`, { type: 'image/png' }));
+                }, 'image/png');
+              } catch (_) { URL.revokeObjectURL(url); resolve(null); }
+            };
+            img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+            img.src = url;
+          } catch (_) { resolve(null); }
+        });
+      };
+
+      const sanitizePngCardFile = async (fileObj) => {
+        if (!fileObj || !(fileObj instanceof Blob) || fileObj.size < 32) return { file: fileObj, missingChara: false };
+        try {
+          const buf = await fileObj.arrayBuffer();
+          const u8 = new Uint8Array(buf);
+          // 检查 PNG 魔数 89 50 4E 47 0D 0A 1A 0A
+          const isPng = u8.length >= 8 && u8[0] === 0x89 && u8[1] === 0x50 && u8[2] === 0x4E && u8[3] === 0x47;
+          if (!isPng) {
+            // 若是 JSON，清理 UTF-8 BOM
+            const nameL = String(fileObj.name || '').toLowerCase();
+            if (nameL.endsWith('.json') || (u8[0] === 0xEF && u8[1] === 0xBB && u8[2] === 0xBF)) {
+              const txt = new TextDecoder('utf-8').decode(u8).replace(/^\uFEFF/, '');
+              return { file: new File([txt], fileObj.name || 'card.json', { type: 'application/json' }), missingChara: false };
+            }
+            // 非 PNG/JSON/ZIP（如被转成 JPG/WEBP 的图）检查是否含 chara/ccv3
+            const ascii = new TextDecoder('latin1').decode(u8);
+            const hasMeta = ascii.includes('chara') || ascii.includes('ccv3');
+            return { file: fileObj, missingChara: !hasMeta && !nameL.endsWith('.zip') && !nameL.endsWith('.charx') && !nameL.endsWith('.yaml') };
+          }
+          // 扫描 PNG chunks：检查是否有 chara/ccv3，并在 IEND 后若有垃圾尾部字节时自动裁剪修复！
+          let off = 8;
+          let hasChara = false;
+          let iendEnd = -1;
+          while (off + 12 <= u8.length) {
+            const len = ((u8[off] << 24) | (u8[off + 1] << 16) | (u8[off + 2] << 8) | u8[off + 3]) >>> 0;
+            const type = String.fromCharCode(u8[off + 4], u8[off + 5], u8[off + 6], u8[off + 7]);
+            const nextOff = off + 12 + len;
+            if (nextOff > u8.length) break;
+            if (type === 'tEXt' || type === 'iTXt' || type === 'zTXt') {
+              const headTxt = String.fromCharCode(...u8.slice(off + 8, Math.min(off + 20, nextOff - 4)));
+              if (/^(?:chara|ccv3)\0?/i.test(headTxt)) hasChara = true;
+            }
+            if (type === 'IEND') { iendEnd = nextOff; break; }
+            off = nextOff;
+          }
+          let outFile = fileObj;
+          if (iendEnd > 0 && iendEnd < u8.length) {
+            outFile = new File([u8.slice(0, iendEnd)], fileObj.name || 'card.png', { type: 'image/png' });
+          }
+          return { file: outFile, missingChara: !hasChara };
+        } catch (_) {
+          return { file: fileObj, missingChara: false };
+        }
+      };
+
       win.fetch = async function(input, init) {
-        const res = await _origFetch(input, init);
+        let effInit = init;
+        let importMissingChara = false;
+        try {
+          const urlStrPre = typeof input === 'string' ? input : String(input?.url || '');
+          const methodPre = String(init?.method || (typeof input === 'object' ? input?.method : '') || 'GET').toUpperCase();
+          if (methodPre === 'POST' && init?.body instanceof FormData) {
+            // 1) 换头像 / 编辑角色头像 / 上传用户头像：自动将 HEIC/AVIF/伪后缀/超大图无感重编码为酒馆 100% 兼容的标准 PNG！
+            if (/\/api\/(?:characters\/(?:edit-avatar|edit|create)|avatars\/upload)(?:\?|$)/.test(urlStrPre)) {
+              const avFile = init.body.get('avatar');
+              if (avFile && avFile instanceof Blob && avFile.size > 0) {
+                const cleanPng = await transcodeAvatarBlobToCleanPng(avFile);
+                if (cleanPng) {
+                  const nextFd = new FormData();
+                  for (const [k, v] of init.body.entries()) {
+                    nextFd.append(k, k === 'avatar' ? cleanPng : v);
+                  }
+                  effInit = { ...init, body: nextFd };
+                }
+              }
+            }
+            // 2) 导入角色卡：自动清理 PNG IEND 尾部垃圾字节与 JSON BOM（完整保留 chara 元数据）
+            if (/\/api\/characters\/import(?:\?|$)/.test(urlStrPre)) {
+              const cardFile = init.body.get('avatar');
+              if (cardFile && cardFile instanceof Blob && cardFile.size > 0) {
+                const checked = await sanitizePngCardFile(cardFile);
+                importMissingChara = Boolean(checked.missingChara);
+                if (checked.file && checked.file !== cardFile) {
+                  const nextFd = new FormData();
+                  for (const [k, v] of init.body.entries()) {
+                    nextFd.append(k, k === 'avatar' ? checked.file : v);
+                  }
+                  effInit = { ...init, body: nextFd };
+                }
+              }
+            }
+          }
+        } catch (_) {}
+
+        const res = await _origFetch(input, effInit);
+        try {
+          const urlStrPost = typeof input === 'string' ? input : String(input?.url || '');
+          if (!res.ok && /\/api\/characters\/import(?:\?|$)/.test(urlStrPost) && importMissingChara) {
+            showImmNotice('导入失败：这张图片不含角色卡数据（可能被相册或聊天软件压缩过），请用原图或 .zip/.json 导入');
+          }
+        } catch (_) {}
         try {
           const urlStr = typeof input === 'string' ? input : String(input?.url || '');
           const method = String(init?.method || (typeof input === 'object' ? input?.method : '') || 'GET').toUpperCase();
