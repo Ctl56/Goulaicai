@@ -63456,6 +63456,26 @@
           if (!res.ok && /\/api\/characters\/import(?:\?|$)/.test(urlStrPost) && importMissingChara) {
             showImmNotice('导入失败：这张图片不含角色卡数据（可能被相册或聊天软件压缩过），请用原图或 .zip/.json 导入');
           }
+          if (res.ok && /\/api\/characters\/(?:edit-avatar|edit)(?:\?|$)/.test(urlStrPost) && effInit?.body instanceof FormData) {
+            const targetAv = String(effInit.body.get('avatar_url') || '').trim();
+            if (targetAv) {
+              const bust = Date.now();
+              setTimeout(() => {
+                try {
+                  const enc = encodeURIComponent(targetAv);
+                  doc.querySelectorAll('img').forEach(img => {
+                    const s = String(img.getAttribute('src') || '');
+                    if (s.includes(enc) || s.includes(targetAv)) {
+                      const cleanS = s.replace(/([?&])v=\d+/g, '$1').replace(/[?&]$/, '');
+                      img.src = cleanS + (cleanS.includes('?') ? '&' : '?') + 'v=' + bust;
+                    }
+                  });
+                  const ctxNow = getContext();
+                  if (typeof ctxNow?.getCharacters === 'function') ctxNow.getCharacters();
+                } catch (_) {}
+              }, 160);
+            }
+          }
         } catch (_) {}
         try {
           const urlStr = typeof input === 'string' ? input : String(input?.url || '');
@@ -63774,7 +63794,28 @@
           if (cName.length >= 1) s = s.split(cName).join('');
           return s.replace(/[\s\p{P}\p{S}]+/gu, '');
         };
-        const getCardGreets = (c) => {
+        // 主动向 /api/characters/get 拉取每张重名卡的完整 JSON（避免酒馆懒加载导致未选中卡的 alternate_greetings 为空！）
+        const fullCardMap = new Map();
+        const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+        await Promise.all(sameNameIdxs.map(async (i) => {
+          const baseC = chars[i];
+          if (!baseC) return;
+          fullCardMap.set(i, baseC);
+          if (!baseC.avatar) return;
+          try {
+            const rFull = await win.fetch('/api/characters/get', {
+              method: 'POST',
+              headers: hdrs,
+              body: JSON.stringify({ avatar_url: baseC.avatar }),
+            });
+            if (rFull && rFull.ok) {
+              const fullObj = await rFull.json();
+              if (fullObj && typeof fullObj === 'object') fullCardMap.set(i, fullObj);
+            }
+          } catch (_) {}
+        }));
+        const getCardGreets = (cOrIdx) => {
+          const c = typeof cOrIdx === 'number' ? (fullCardMap.get(cOrIdx) || chars[cOrIdx]) : cOrIdx;
           const out = [];
           const f = String(c?.first_mes || c?.data?.first_mes || '');
           if (f) out.push(f);
@@ -63808,7 +63849,7 @@
         let targetCid = -1;
         // 1) 若 msg0 有多条开场白 (chatCnt >= 2)，先看哪几张同名卡的开场白总数完全一致！
         const cntMatches = chatCnt >= 2
-          ? sameNameIdxs.filter(i => getCardGreets(chars[i]).length === chatCnt)
+          ? sameNameIdxs.filter(i => getCardGreets(i).length === chatCnt)
           : [];
         if (cntMatches.length === 1) {
           targetCid = cntMatches[0];
@@ -63817,7 +63858,7 @@
           const pool = cntMatches.length > 1 ? cntMatches : sameNameIdxs;
           let bestCid = -1, bestScore = 0;
           pool.forEach(i => {
-            const gsRaw = getCardGreets(chars[i]);
+            const gsRaw = getCardGreets(i);
             const gs = gsRaw.map(normFull).filter(t => t.length >= 8);
             let sc = (chatCnt >= 2 && gsRaw.length === chatCnt) ? 240 : 0;
             normSamples.forEach(sp => {
