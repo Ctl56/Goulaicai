@@ -5178,6 +5178,22 @@
       -webkit-user-select: none;
     }
 
+    #chat .mes_text .st-tb-mask[data-style="frosted"] {
+      display: inline-block !important;
+      vertical-align: baseline;
+      color: transparent !important;
+      -webkit-text-fill-color: transparent !important;
+      text-shadow: 0 0 8px rgba(128, 128, 138, 0.72) !important;
+      background: rgba(255, 255, 255, 0.28) !important;
+      backdrop-filter: blur(7px) saturate(135%) !important;
+      -webkit-backdrop-filter: blur(7px) saturate(135%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.36) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+      padding: 0 4px !important;
+      border-radius: 5px !important;
+      user-select: none;
+    }
+
     #chat .mes_text .st-tb-mask[data-style="custom"] {
       display: inline !important;
       padding: 0 2px;
@@ -5187,6 +5203,11 @@
     #chat .mes_text .st-tb-mask.revealed {
       filter: none !important;
       -webkit-filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      text-shadow: none !important;
+      border: none !important;
+      box-shadow: none !important;
       background: transparent !important;
       color: inherit !important;
       -webkit-text-fill-color: inherit !important;
@@ -9918,8 +9939,9 @@
             </div>
             <div id="st-tb-mask-body-wrap" style="display:none;">
               <div class="st-tb-label" style="margin-top:6px;"><span>遮挡样式</span></div>
-              <div class="st-tb-grid-3" id="st-tb-mask-styles" style="margin-bottom:6px;">
+              <div class="st-tb-grid-3" id="st-tb-mask-styles" style="grid-template-columns:repeat(4,1fr);margin-bottom:6px;">
                 <button class="st-tb-pill" data-mask-style="blur" type="button">模糊</button>
+                <button class="st-tb-pill" data-mask-style="frosted" type="button">毛玻璃</button>
                 <button class="st-tb-pill" data-mask-style="bar" type="button">黑条</button>
                 <button class="st-tb-pill" data-mask-style="custom" type="button">自定义</button>
               </div>
@@ -32223,6 +32245,11 @@
   // ==================== 小狗「名片串门」+ 多狗同屏共存与互动系统 ====================
   const guestLayerEl = root.querySelector('#st-tb-guest-layer');
   const guestPopEl = root.querySelector('#st-tb-guest-pop');
+  if (guestPopEl) {
+    ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'click'].forEach(evtName => {
+      guestPopEl.addEventListener(evtName, (e) => { e.stopPropagation(); });
+    });
+  }
 
   // 兼容迁移旧版单只 guestPuppy -> guestPuppies 数组
   const getGuestList = () => {
@@ -33143,7 +33170,7 @@
       rt.drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: rt.x, oy: rt.y || defaultPupY(), moved: false };
     });
     ['mousedown', 'mouseup', 'touchstart', 'touchend', 'click'].forEach(evtName => {
-      el.addEventListener(evtName, (e) => { e.stopPropagation(); });
+      el.addEventListener(evtName, (e) => { e.stopPropagation(); e.stopImmediatePropagation(); });
     });
     el.addEventListener('pointermove', (e) => {
       if (!rt.drag || rt.drag.id !== e.pointerId) return;
@@ -36601,6 +36628,8 @@
     'st-tb-bq-del-confirm-mask',
     'st-tb-bag-pal-del-mask',
     'st-tb-bag-pal-paste-mask',
+    'st-tb-bq-rec-save-mask',
+    'st-tb-bq-rec-rename-mask',
     'st-tb-job-promo-mask',
     'st-tb-px-notice-mask',
     'st-tb-friends-mask',
@@ -44909,21 +44938,21 @@
       const cFlip = Boolean(ch.flip);
       const gh = def.grid.length;
       const gw = def.grid[0] ? def.grid[0].length : 5;
-      const halfW = (gw * cSc) / 2;
-      const halfH = (gh * cSc) / 2;
+      g.save();
+      g.translate(ch.x, ch.y);
+      g.scale(cFlip ? -cSc : cSc, cSc);
+      const ox = -gw / 2;
+      const oy = -gh / 2;
       for (let y = 0; y < gh; y++) {
         const r = def.grid[y];
         for (let x = 0; x < r.length; x++) {
           const c = pal[r[x]];
           if (!c) continue;
-          const sx = cFlip ? (gw - 1 - x) : x;
-          const px = Math.round(ch.x - halfW + sx * cSc);
-          const py = Math.round(ch.y - halfH + y * cSc);
-          const pw = Math.max(1, Math.ceil(cSc));
           g.fillStyle = c;
-          g.fillRect(px, py, pw, pw);
+          g.fillRect(ox + x, oy + y, 1, 1);
         }
       }
+      g.restore();
     });
   };
 
@@ -45628,36 +45657,56 @@
     saveRecBtn.style.cssText = 'height:26px;padding:0 9px;font-size:10px;flex-shrink:0;';
     saveRecBtn.textContent = '保存配方';
     saveRecBtn.addEventListener('click', () => {
-      config.puppyBouquetRecipes = Array.isArray(config.puppyBouquetRecipes) ? config.puppyBouquetRecipes : [];
       const flNames = bqPicked.map(id => (PUP_FLOWERS.find(f => f.id === id)?.name || id));
-      const recName = (flNames.length ? flNames.join('+') : '自定风格') + '配方';
-      const bigC = doc.createElement('canvas'); bigC.width = 48; bigC.height = 48;
-      drawBouquetCanvas(bigC, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlStyle, bqRibStyle, bqRibScale, bqFlScale, bqFlSpread, bqCustomSlots, bqRibX, bqRibY);
-      const outC = doc.createElement('canvas'); outC.width = 96; outC.height = 96;
-      const og = outC.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(bigC, 0, 0, 96, 96);
-      config.puppyBouquetRecipes.unshift({
-        id: 'bqr_' + Date.now(),
-        name: recName,
-        tier: bqTier,
-        flIds: [...bqPicked],
-        wrapCol: bqWrapCol,
-        ribbonCol: bqRibbonCol,
-        flStyle: bqFlStyle,
-        ribStyle: bqRibStyle,
-        ribScale: bqRibScale,
-        flScale: bqFlScale,
-        flSpread: bqFlSpread,
-        ribX: bqRibX,
-        ribY: bqRibY,
-        customSlots: bqCustomSlots ? bqCustomSlots.map(s => ({ ...s })) : null,
-        charms: bqCharms.map(c => ({ ...c })),
-        note: bqNoteTxt || '',
-        img: outC.toDataURL('image/png'),
+      const defRecName = (flNames.length ? flNames.join('+') : '自定风格') + '配方';
+      let sm = root.querySelector('#st-tb-bq-rec-save-mask');
+      if (sm) sm.remove();
+      sm = doc.createElement('div');
+      sm.id = 'st-tb-bq-rec-save-mask';
+      sm.className = 'st-px-submodal-keep-bag';
+      sm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+      const closeSm = (e3) => { if (e3) e3.stopPropagation(); win.__stSubModalClosedAt = Date.now(); sm.remove(); };
+      const sc = doc.createElement('div');
+      sc.style.cssText = 'width:min(276px,88vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+      sc.innerHTML = `<div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">保存花束配方</div><input type="text" id="st-bq-rsave-inp" maxlength="16" value="${escapeHtmlSimple(defRecName.slice(0, 16))}" placeholder="输入自定义配方名..." style="width:100%;box-sizing:border-box;height:26px;font-size:10.5px;padding:0 6px;margin-bottom:8px;" /><div style="display:flex;gap:6px;"><button type="button" id="st-bq-rsave-no" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">取消</button><button type="button" id="st-bq-rsave-ok" class="st-px-btn care" style="flex:1;height:24px;font-size:10px;">确认保存</button></div>`;
+      sc.querySelector('#st-bq-rsave-no').addEventListener('click', closeSm);
+      sc.querySelector('#st-bq-rsave-ok').addEventListener('click', (e3) => {
+        const recName = String(sc.querySelector('#st-bq-rsave-inp')?.value || '').trim() || defRecName;
+        config.puppyBouquetRecipes = Array.isArray(config.puppyBouquetRecipes) ? config.puppyBouquetRecipes : [];
+        const bigC = doc.createElement('canvas'); bigC.width = 48; bigC.height = 48;
+        drawBouquetCanvas(bigC, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlStyle, bqRibStyle, bqRibScale, bqFlScale, bqFlSpread, bqCustomSlots, bqRibX, bqRibY);
+        const outC = doc.createElement('canvas'); outC.width = 96; outC.height = 96;
+        const og = outC.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(bigC, 0, 0, 96, 96);
+        config.puppyBouquetRecipes.unshift({
+          id: 'bqr_' + Date.now(),
+          name: recName,
+          tier: bqTier,
+          flIds: [...bqPicked],
+          wrapCol: bqWrapCol,
+          ribbonCol: bqRibbonCol,
+          flStyle: bqFlStyle,
+          ribStyle: bqRibStyle,
+          ribScale: bqRibScale,
+          flScale: bqFlScale,
+          flSpread: bqFlSpread,
+          ribX: bqRibX,
+          ribY: bqRibY,
+          customSlots: bqCustomSlots ? bqCustomSlots.map(s => ({ ...s })) : null,
+          charms: bqCharms.map(c => ({ ...c })),
+          note: bqNoteTxt || '',
+          img: outC.toDataURL('image/png'),
+        });
+        if (config.puppyBouquetRecipes.length > 20) config.puppyBouquetRecipes = config.puppyBouquetRecipes.slice(0, 20);
+        saveConfig();
+        closeSm(e3);
+        renderBouquetWorkbench();
+        showPuppyBubble(`已保存花束配方【${recName}】啦~`, 2200);
       });
-      if (config.puppyBouquetRecipes.length > 20) config.puppyBouquetRecipes = config.puppyBouquetRecipes.slice(0, 20);
-      saveConfig();
-      renderBouquetWorkbench();
-      showPuppyBubble(`已保存花束配方【${recName}】啦~`, 2200);
+      sm.appendChild(sc);
+      sm.addEventListener('pointerdown', (e3) => e3.stopPropagation());
+      sm.addEventListener('click', (e3) => e3.stopPropagation());
+      root.appendChild(sm);
+      applyPupModalThemeAndTop(sm);
     });
     actRow.append(packBtn, saveRecBtn);
     card.appendChild(actRow);
@@ -45721,7 +45770,33 @@
           root.appendChild(dm);
           applyPupModalThemeAndTop(dm);
         });
-        row.append(useB, delB);
+        const renB = doc.createElement('button');
+        renB.type = 'button'; renB.className = 'st-px-btn'; renB.style.cssText = 'height:18px;padding:0 5px;font-size:8.5px;flex-shrink:0;'; renB.textContent = '改名';
+        renB.addEventListener('click', () => {
+          let rm2 = root.querySelector('#st-tb-bq-rec-rename-mask');
+          if (rm2) rm2.remove();
+          rm2 = doc.createElement('div');
+          rm2.id = 'st-tb-bq-rec-rename-mask';
+          rm2.className = 'st-px-submodal-keep-bag';
+          rm2.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+          const closeRm2 = (e3) => { if (e3) e3.stopPropagation(); win.__stSubModalClosedAt = Date.now(); rm2.remove(); };
+          const rc2 = doc.createElement('div');
+          rc2.style.cssText = 'width:min(266px,88vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
+          rc2.innerHTML = `<div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">修改配方名称</div><input type="text" id="st-bq-rren-inp" maxlength="16" value="${escapeHtmlSimple(rc.name || '花束配方')}" style="width:100%;box-sizing:border-box;height:26px;font-size:10.5px;padding:0 6px;margin-bottom:8px;" /><div style="display:flex;gap:6px;"><button type="button" id="st-bq-rren-no" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">取消</button><button type="button" id="st-bq-rren-ok" class="st-px-btn care" style="flex:1;height:24px;font-size:10px;">保存</button></div>`;
+          rc2.querySelector('#st-bq-rren-no').addEventListener('click', closeRm2);
+          rc2.querySelector('#st-bq-rren-ok').addEventListener('click', (e3) => {
+            const nv = String(rc2.querySelector('#st-bq-rren-inp')?.value || '').trim();
+            if (nv) { rc.name = nv; saveConfig(); }
+            closeRm2(e3);
+            renderBouquetWorkbench();
+          });
+          rm2.appendChild(rc2);
+          rm2.addEventListener('pointerdown', (e3) => e3.stopPropagation());
+          rm2.addEventListener('click', (e3) => e3.stopPropagation());
+          root.appendChild(rm2);
+          applyPupModalThemeAndTop(rm2);
+        });
+        row.append(useB, renB, delB);
         rList.appendChild(row);
       });
       recBox.appendChild(rList);
@@ -54228,11 +54303,12 @@
         clearTimeout(chatStreamSettleTimer);
         chatStreamSettleTimer = setTimeout(() => {
           if (!isStopBtnVisible() && stWasGenerating) {
+            const durMs = stGenStartedAt ? Math.max(500, Date.now() - stGenStartedAt) : 1200;
             const shouldAlert = hasVerifiedNewReply();
             resetReplyTrack();
             flushAllStreamPending();
             applyChatFold();
-            if (shouldAlert) triggerAlertOnce();
+            if (shouldAlert) triggerAlertOnce(durMs);
           }
         }, 500);
       }
@@ -54247,10 +54323,11 @@
     if (isGen) {
       beginReplyTrack();
     } else if (stWasGenerating) {
+      const durMs = stGenStartedAt ? Math.max(500, Date.now() - stGenStartedAt) : 1200;
       const shouldAlert = hasVerifiedNewReply();
       resetReplyTrack();
       applyChatFold();
-      if (shouldAlert) triggerAlertOnce();
+      if (shouldAlert) triggerAlertOnce(durMs);
     }
   }, 1200);
 
