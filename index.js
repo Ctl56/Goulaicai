@@ -63465,15 +63465,27 @@
                 const rawJson = await res.clone().json();
                 if (Array.isArray(rawJson) && rawJson.length) {
                   let patchedAny = false;
-                  const nextArr = rawJson.map(item => {
-                    if (!item || typeof item !== 'object') return item;
+                  const seenMapped = new Set();
+                  const nextArr = [];
+                  for (const item of rawJson) {
+                    if (!item || typeof item !== 'object') { nextArr.push(item); continue; }
                     const fn = String(item.file_name || item.file || '').trim().replace(/\.jsonl$/i, '');
-                    if (fn && ownerMap[fn] && item.avatar !== ownerMap[fn]) {
-                      patchedAny = true;
-                      return { ...item, avatar: ownerMap[fn] };
+                    if (fn && ownerMap[fn]) {
+                      if (seenMapped.has(fn)) {
+                        patchedAny = true;
+                        continue;
+                      }
+                      seenMapped.add(fn);
+                      if (item.avatar !== ownerMap[fn]) {
+                        patchedAny = true;
+                        nextArr.push({ ...item, avatar: ownerMap[fn] });
+                      } else {
+                        nextArr.push(item);
+                      }
+                    } else {
+                      nextArr.push(item);
                     }
-                    return item;
-                  });
+                  }
                   if (patchedAny) {
                     const hdrsNew = new Headers(res.headers);
                     hdrsNew.set('content-type', 'application/json; charset=utf-8');
@@ -63530,9 +63542,89 @@
     }
   } catch (_) {}
 
+  // 共享：同步已渲染的「最近聊天」卡片头像/去重，并在点击时按 dupChatOwnerMap 直接打开正确同名卡（解决退出重进首屏早于插件加载的问题）
+  const extractRecentChatFileStem = (el) => {
+    if (!el) return '';
+    const raw = el.dataset?.file || el.dataset?.chat || el.getAttribute('data-file_name') || el.getAttribute('data-file') || el.getAttribute('data-chat') || el.querySelector('.chatName, .chat_name')?.textContent || '';
+    return String(raw || '').trim().replace(/\.jsonl$/i, '');
+  };
+
+  const syncRecentChatDomByOwnerMap = () => {
+    try {
+      const ownerMap = config.dupChatOwnerMap;
+      if (!ownerMap || typeof ownerMap !== 'object' || !Object.keys(ownerMap).length) return;
+      const items = doc.querySelectorAll('.recentChat, .recent_chat');
+      if (!items.length) return;
+      const seenMapped = new Set();
+      items.forEach((el) => {
+        const fn = extractRecentChatFileStem(el);
+        const targetAv = fn ? ownerMap[fn] : '';
+        if (!targetAv) return;
+        if (seenMapped.has(fn)) {
+          el.style.display = 'none';
+          el.dataset.stGlDupHidden = '1';
+          return;
+        }
+        seenMapped.add(fn);
+        if (el.dataset.stGlDupHidden === '1') {
+          el.style.display = '';
+          delete el.dataset.stGlDupHidden;
+        }
+        el.setAttribute('data-avatar', targetAv);
+        const img = el.querySelector('img.avatar, .avatar img, img');
+        if (img) {
+          const enc = encodeURIComponent(targetAv);
+          const curSrc = String(img.getAttribute('src') || '');
+          if (!curSrc.includes(enc) && !curSrc.includes(targetAv)) {
+            img.src = `/thumbnail?type=avatar&file=${enc}`;
+          }
+        }
+      });
+    } catch (_) {}
+  };
+
+  if (!win.__stGlRecentDupClickPatched) {
+    win.__stGlRecentDupClickPatched = true;
+    doc.addEventListener('click', (e) => {
+      try {
+        const ownerMap = config.dupChatOwnerMap;
+        if (!ownerMap || typeof ownerMap !== 'object' || !Object.keys(ownerMap).length) return;
+        const itemEl = e.target?.closest?.('.recentChat, .recent_chat');
+        if (!itemEl) return;
+        if (e.target?.closest?.('button, .delete, .fa-trash, .fa-trash-can, .menu_button, .recentChatDelete, [data-action]')) return;
+        const fn = extractRecentChatFileStem(itemEl);
+        const targetAv = fn ? ownerMap[fn] : '';
+        if (!targetAv) return;
+        const ctx = getContext();
+        const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+        const targetIdx = chars.findIndex(c => c && String(c.avatar || '') === String(targetAv));
+        if (targetIdx < 0 || typeof ctx?.selectCharacterById !== 'function') return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        win.__stSuppressDupChatToastUntil = Date.now() + 5000;
+        (async () => {
+          try {
+            await ctx.selectCharacterById(String(targetIdx));
+            for (let w = 0; w < 22; w++) {
+              await new Promise(r => setTimeout(r, 100));
+              const nowId = Number((getContext()?.characterId ?? win.this_chid));
+              if (nowId === targetIdx) break;
+            }
+            await new Promise(r => setTimeout(r, 180));
+            if (typeof ctx.openCharacterChat === 'function') {
+              await ctx.openCharacterChat(fn);
+            }
+          } catch (_) {}
+        })();
+      } catch (_) {}
+    }, true);
+  }
+
   // 共享：重名角色卡提醒弹窗 + 「切同名卡」选择器（同步到 dupChatOwnerMap 与最近聊天）
   async function openDupSiblingSwitcherModal(ch, dupSiblings, curChatId, onSwitched) {
     const ctx = getContext();
+    const cleanChatId = String(curChatId || ctx?.chatId || '').trim().replace(/\.jsonl$/i, '');
     const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
     const detailed = await Promise.all(dupSiblings.map(async ({ c, idx }) => {
       let full = c;
@@ -63549,7 +63641,7 @@
     if (dm) dm.remove();
     dm = doc.createElement('div');
     dm.id = 'st-tb-qcc-dupswitch-mask';
-    dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;z-index:10065;';
     if (typeof nextPupTopZ === 'function') dm.style.zIndex = String(nextPupTopZ());
     const box = doc.createElement('div');
     box.style.cssText = 'width:min(312px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;';
@@ -63566,38 +63658,39 @@
       row.addEventListener('click', async () => {
         dm.remove();
         win.__stSuppressDupChatToastUntil = Date.now() + 5000;
-        if (curChatId && c.avatar) {
+        if (cleanChatId && c.avatar) {
           if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
-          config.dupChatOwnerMap[curChatId] = c.avatar;
+          config.dupChatOwnerMap[cleanChatId] = c.avatar;
           saveConfig();
+          _lastDupTipKey = `${c.avatar}|${cleanChatId}`;
         }
         const snapMsgs = Array.isArray(ctx?.chat) && ctx.chat.length ? JSON.parse(JSON.stringify(ctx.chat)) : null;
         if (typeof ctx.selectCharacterById === 'function') {
           await ctx.selectCharacterById(String(idx));
-          for (let w = 0; w < 20; w++) {
+          for (let w = 0; w < 22; w++) {
             await new Promise(r => setTimeout(r, 100));
             const nowId = Number((getContext()?.characterId ?? win.this_chid));
             if (nowId === idx) break;
           }
           await new Promise(r => setTimeout(r, 200));
-          if (curChatId && typeof ctx.openCharacterChat === 'function') {
+          if (cleanChatId && typeof ctx.openCharacterChat === 'function') {
             try {
-              await ctx.openCharacterChat(curChatId);
+              await ctx.openCharacterChat(cleanChatId);
             } catch (_) {}
-            // 若目标重名卡目录下没有该聊天文件，用原消息快照直接保存到目标卡下，确保以后原生就能点开！
             const afterCtx = getContext();
             const afterChatId = String(afterCtx?.chatId || '').trim().replace(/\.jsonl$/i, '');
-            if (snapMsgs && afterChatId !== curChatId && c.avatar) {
+            if (snapMsgs && afterChatId !== cleanChatId && c.avatar) {
               try {
                 await win.fetch('/api/chats/save', {
                   method: 'POST',
                   headers: hdrs,
-                  body: JSON.stringify({ ch_name: c.name, file_name: curChatId, chat: snapMsgs, avatar_url: c.avatar, force: true }),
+                  body: JSON.stringify({ ch_name: c.name, file_name: cleanChatId, chat: snapMsgs, avatar_url: c.avatar, force: true }),
                 });
-                await ctx.openCharacterChat(curChatId);
+                await ctx.openCharacterChat(cleanChatId);
               } catch (_) {}
             }
           }
+          setTimeout(syncRecentChatDomByOwnerMap, 300);
           showImmNotice(`已切换到「${gCnt}版开场白」的重名卡`);
           if (typeof onSwitched === 'function') setTimeout(onSwitched, 350);
         }
@@ -63620,13 +63713,21 @@
       const rawId = (ctx?.characterId !== undefined && ctx?.characterId !== null && ctx?.characterId !== '') ? ctx.characterId : win.this_chid;
       const chid = Number(rawId);
       const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
-      if (!Number.isFinite(chid) || chid < 0 || !chars[chid]) return;
+      if (!Number.isFinite(chid) || chid < 0 || !chars[chid]) {
+        _lastDupTipKey = '';
+        setTimeout(syncRecentChatDomByOwnerMap, 260);
+        setTimeout(syncRecentChatDomByOwnerMap, 800);
+        return;
+      }
       const ch = chars[chid];
+      const chNameTrim = String(ch.name || '').trim();
+      const dupSiblings = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '').trim() === chNameTrim);
+      if (dupSiblings.length < 2) {
+        _lastDupTipKey = '';
+        return;
+      }
       const curChatId = String(ctx?.chatId || '').trim().replace(/\.jsonl$/i, '');
-      if (!curChatId) return;
-      const dupSiblings = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === String(ch.name || ''));
-      if (dupSiblings.length < 2) return;
-      const tipKey = `${ch.avatar || ''}|${curChatId}`;
+      const tipKey = `${ch.avatar || ''}|${curChatId || 'nochat'}`;
       if (_lastDupTipKey === tipKey) return;
       _lastDupTipKey = tipKey;
 
@@ -63634,7 +63735,7 @@
       if (tm) tm.remove();
       tm = doc.createElement('div');
       tm.id = 'st-tb-dupchar-tip-mask';
-      tm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+      tm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;z-index:10065;';
       if (typeof nextPupTopZ === 'function') tm.style.zIndex = String(nextPupTopZ());
       const box = doc.createElement('div');
       box.style.cssText = 'width:min(308px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:13px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;line-height:1.55;';
@@ -63649,7 +63750,8 @@
       box.querySelector('#st-dct-ok').addEventListener('click', () => tm.remove());
       box.querySelector('#st-dct-go').addEventListener('click', () => {
         tm.remove();
-        openDupSiblingSwitcherModal(ch, dupSiblings, curChatId, null);
+        const latestChatId = String(getContext()?.chatId || curChatId || '').trim().replace(/\.jsonl$/i, '');
+        openDupSiblingSwitcherModal(ch, dupSiblings, latestChatId, null);
       });
       tm.appendChild(box);
       tm.addEventListener('click', (e2) => e2.stopPropagation());
@@ -63671,7 +63773,19 @@
       boundEvents.push({ eventSource, evt, fn });
     };
 
-    add(eventTypes.CHAT_CHANGED, () => { onChatChanged(); setTimeout(checkAndPromptDupCharTip, 420); });
+    const scheduleDupCheck = () => {
+      setTimeout(checkAndPromptDupCharTip, 300);
+      setTimeout(checkAndPromptDupCharTip, 950);
+      setTimeout(syncRecentChatDomByOwnerMap, 350);
+    };
+
+    add(eventTypes.CHAT_CHANGED, () => { onChatChanged(); scheduleDupCheck(); });
+    if (eventTypes.CHARACTER_SELECTED) add(eventTypes.CHARACTER_SELECTED, scheduleDupCheck);
+    setTimeout(checkAndPromptDupCharTip, 800);
+    setTimeout(checkAndPromptDupCharTip, 1800);
+    setTimeout(syncRecentChatDomByOwnerMap, 350);
+    setTimeout(syncRecentChatDomByOwnerMap, 1100);
+    setTimeout(syncRecentChatDomByOwnerMap, 2400);
     add(eventTypes.MESSAGE_SENT, onMessageChanged);
     add(eventTypes.MESSAGE_RECEIVED, onMessageChanged);
     add(eventTypes.MESSAGE_DELETED, onMessageChanged);
@@ -71921,7 +72035,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
               cardEl.innerHTML = '<div style="font-size:11.5px;opacity:0.75;">当前未在单人角色聊天中</div>';
             } else {
               const allChars = Array.isArray(ctx?.characters) ? ctx.characters : [];
-              const dupSiblings = allChars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === String(ch.name || ''));
+              const dupSiblings = allChars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '').trim() === String(ch.name || '').trim());
               cardEl.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(ch.avatar || '')}" style="width:36px;height:36px;border-radius:7px;object-fit:cover;flex-shrink:0;" />
                 <div style="min-width:0;flex:1;">
                   <div style="font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(ch.name || '')}</div>
