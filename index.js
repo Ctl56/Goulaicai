@@ -3533,7 +3533,7 @@
       letter-spacing: 0.15px !important;
     }
     html.st-tb-char-gallery #rm_print_characters_block .character_select.is_fav .avatar::after {
-      content: "\u2605" !important;
+      content: "★" !important;
       position: absolute !important;
       top: 5px !important;
       left: 6px !important;
@@ -65887,7 +65887,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select .ch_name {
 html.st-tb-char-ig #rm_print_characters_block .character_select .ch_description,
 html.st-tb-char-ig #rm_print_characters_block .character_select .tags,
 html.st-tb-char-ig #rm_print_characters_block .character_select.selected { display: none !important; outline: none !important; }
-html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::after { content: "\\u2605" !important; position: absolute !important; top: 6px !important; left: 7px !important; color: #ffffff !important; font-family: ${PF_FONT} !important; font-size: 13px !important; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important; }
+html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::after { content: "★" !important; position: absolute !important; top: 6px !important; left: 7px !important; color: #ffffff !important; font-family: ${PF_FONT} !important; font-size: 13px !important; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) !important; }
 @media (prefers-color-scheme: dark) {
   html.st-tb-char-ig body #rm_characters_block .paginationjs .paginationjs-pages li > a,
   html.st-tb-char-ig body #rm_characters_block > :nth-child(2) > :nth-child(1) > :nth-child(3),
