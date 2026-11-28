@@ -14687,7 +14687,16 @@
       const hasDomChange = mutations.some(m => m.addedNodes.length > 0 || m.removedNodes.length > 0);
       if (hasDomChange) {
         clearTimeout(_chatFloorSyncTimer);
-        _chatFloorSyncTimer = setTimeout(() => { try { updateStats(); } catch (_) {} }, 120);
+        _chatFloorSyncTimer = setTimeout(() => {
+          try { updateStats(); } catch (_) {}
+          try {
+            if (chatEl.querySelector('.recentChat, .recent_chat')) {
+              if (typeof syncRecentChatDomByOwnerMap === 'function') syncRecentChatDomByOwnerMap();
+            } else if (chatEl.querySelector('.mes')) {
+              if (typeof checkAndPromptDupCharTip === 'function') checkAndPromptDupCharTip();
+            }
+          } catch (_) {}
+        }, 180);
       }
       if (!config.maskEnabled && !config.textReplaceEnabled) return;
       const relevant = mutations.some(m =>
@@ -63549,7 +63558,7 @@
     return String(raw || '').trim().replace(/\.jsonl$/i, '');
   };
 
-  const syncRecentChatDomByOwnerMap = () => {
+  function syncRecentChatDomByOwnerMap() {
     try {
       const ownerMap = config.dupChatOwnerMap;
       if (!ownerMap || typeof ownerMap !== 'object' || !Object.keys(ownerMap).length) return;
@@ -63664,7 +63673,6 @@
           saveConfig();
           _lastDupTipKey = `${c.avatar}|${cleanChatId}`;
         }
-        const snapMsgs = Array.isArray(ctx?.chat) && ctx.chat.length ? JSON.parse(JSON.stringify(ctx.chat)) : null;
         if (typeof ctx.selectCharacterById === 'function') {
           await ctx.selectCharacterById(String(idx));
           for (let w = 0; w < 22; w++) {
@@ -63677,18 +63685,6 @@
             try {
               await ctx.openCharacterChat(cleanChatId);
             } catch (_) {}
-            const afterCtx = getContext();
-            const afterChatId = String(afterCtx?.chatId || '').trim().replace(/\.jsonl$/i, '');
-            if (snapMsgs && afterChatId !== cleanChatId && c.avatar) {
-              try {
-                await win.fetch('/api/chats/save', {
-                  method: 'POST',
-                  headers: hdrs,
-                  body: JSON.stringify({ ch_name: c.name, file_name: cleanChatId, chat: snapMsgs, avatar_url: c.avatar, force: true }),
-                });
-                await ctx.openCharacterChat(cleanChatId);
-              } catch (_) {}
-            }
           }
           setTimeout(syncRecentChatDomByOwnerMap, 300);
           showImmNotice(`已切换到「${gCnt}版开场白」的重名卡`);
@@ -63707,7 +63703,7 @@
   }
 
   let _lastDupTipKey = '';
-  const checkAndPromptDupCharTip = () => {
+  function checkAndPromptDupCharTip() {
     try {
       const ctx = getContext();
       const rawId = (ctx?.characterId !== undefined && ctx?.characterId !== null && ctx?.characterId !== '') ? ctx.characterId : win.this_chid;
@@ -63774,12 +63770,14 @@
     };
 
     const scheduleDupCheck = () => {
-      setTimeout(checkAndPromptDupCharTip, 300);
-      setTimeout(checkAndPromptDupCharTip, 950);
+      setTimeout(checkAndPromptDupCharTip, 350);
+      setTimeout(checkAndPromptDupCharTip, 1200);
+      setTimeout(checkAndPromptDupCharTip, 2500);
       setTimeout(syncRecentChatDomByOwnerMap, 350);
     };
 
     add(eventTypes.CHAT_CHANGED, () => { onChatChanged(); scheduleDupCheck(); });
+    if (eventTypes.CHAT_LOADED) add(eventTypes.CHAT_LOADED, scheduleDupCheck);
     if (eventTypes.CHARACTER_SELECTED) add(eventTypes.CHARACTER_SELECTED, scheduleDupCheck);
     setTimeout(checkAndPromptDupCharTip, 800);
     setTimeout(checkAndPromptDupCharTip, 1800);
