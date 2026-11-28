@@ -63313,271 +63313,110 @@
     }
   };
 
-  // 底层网络兜底：拦截失败的 POST /api/chats/get，若存在重名角色卡则自动查找真正包含该聊天文件的 avatar_url 并无缝重试！
-  try {
-    if (!win.__stGlDupToastPatched && win.toastr && typeof win.toastr.error === 'function') {
-      win.__stGlDupToastPatched = true;
-      const _origToastErr = win.toastr.error.bind(win.toastr);
-      win.toastr.error = function(msg, title, opts) {
-        try {
-          if (Date.now() < (win.__stSuppressDupChatToastUntil || 0)) {
-            const combined = `${String(msg || '')} ${String(title || '')}`;
-            if (/后端|backend|chat|file|not found|错误|failed|error/i.test(combined)) {
-              return;
-            }
+  // 共享：重名角色卡提醒弹窗 + 「切同名卡」选择器（纯工具箱风格，不拦截任何网络请求）
+  async function openDupSiblingSwitcherModal(ch, dupSiblings, curChatId, onSwitched) {
+    const ctx = getContext();
+    const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+    const detailed = await Promise.all(dupSiblings.map(async ({ c, idx }) => {
+      let full = c;
+      try {
+        const r = await win.fetch('/api/characters/get', { method: 'POST', headers: hdrs, body: JSON.stringify({ avatar_url: c.avatar }) });
+        if (r && r.ok) { const j = await r.json(); if (j && typeof j === 'object') full = j; }
+      } catch (_) {}
+      const f = String(full?.first_mes || full?.data?.first_mes || '');
+      const alts = Array.isArray(full?.data?.alternate_greetings) ? full.data.alternate_greetings : (Array.isArray(full?.alternate_greetings) ? full.alternate_greetings : []);
+      const gCnt = (f ? 1 : 0) + alts.filter(a => typeof a === 'string' && a.trim()).length;
+      return { c, idx, gCnt, prev: f.replace(/\s+/g, ' ').slice(0, 34) };
+    }));
+    let dm = root.querySelector('#st-tb-qcc-dupswitch-mask');
+    if (dm) dm.remove();
+    dm = doc.createElement('div');
+    dm.id = 'st-tb-qcc-dupswitch-mask';
+    dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    if (typeof nextPupTopZ === 'function') dm.style.zIndex = String(nextPupTopZ());
+    const box = doc.createElement('div');
+    box.style.cssText = 'width:min(312px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;';
+    box.innerHTML = '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">切换当前聊天对应的重名卡</div><div style="font-size:11px;opacity:0.74;margin-bottom:8px;">按开场白版数与首句区分，切卡绝不删改你的任何聊天记录：</div>';
+    const listEl = doc.createElement('div');
+    listEl.style.cssText = 'display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;margin-bottom:8px;';
+    detailed.forEach(({ c, idx, gCnt, prev }) => {
+      const isNow = String(c.avatar || '') === String(ch.avatar || '');
+      const row = doc.createElement('button');
+      row.type = 'button';
+      row.className = 'st-tb-btn' + (isNow ? ' primary' : '');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 8px;height:auto;';
+      row.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(c.avatar || '')}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;" /><div style="min-width:0;flex:1;"><div style="font-weight:700;font-size:11.5px;">${isNow ? '[当前] ' : ''}${gCnt} 版开场白 · ${escapeHtmlSimple(c.avatar || '')}</div><div style="font-size:10px;opacity:0.75;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(prev || '无开场白预览')}</div></div>`;
+      row.addEventListener('click', async () => {
+        dm.remove();
+        if (typeof ctx.selectCharacterById === 'function') {
+          await ctx.selectCharacterById(String(idx));
+          for (let w = 0; w < 20; w++) {
+            await new Promise(r => setTimeout(r, 100));
+            const nowId = Number((getContext()?.characterId ?? win.this_chid));
+            if (nowId === idx) break;
           }
-        } catch (_) {}
-        return _origToastErr(msg, title, opts);
-      };
-    }
-    if (!win.__stGlDupChatFetchPatched && typeof win.fetch === 'function') {
-      win.__stGlDupChatFetchPatched = true;
-      const _origFetch = win.fetch.bind(win);
-      const transcodeAvatarBlobToCleanPng = async (fileObj) => {
-        if (!fileObj || !(fileObj instanceof Blob) || fileObj.size <= 0) return null;
-        return new Promise((resolve) => {
-          try {
-            const url = URL.createObjectURL(fileObj);
-            const img = new Image();
-            img.onload = () => {
-              try {
-                const maxDim = 1024;
-                let w = img.naturalWidth || img.width || 512;
-                let h = img.naturalHeight || img.height || 512;
-                if (w > maxDim || h > maxDim) {
-                  const ratio = Math.min(maxDim / w, maxDim / h);
-                  w = Math.max(1, Math.round(w * ratio));
-                  h = Math.max(1, Math.round(h * ratio));
-                }
-                const cv = doc.createElement('canvas');
-                cv.width = w;
-                cv.height = h;
-                const ctx2 = cv.getContext('2d');
-                ctx2.drawImage(img, 0, 0, w, h);
-                cv.toBlob((blob) => {
-                  URL.revokeObjectURL(url);
-                  if (!blob) { resolve(null); return; }
-                  const origName = String(fileObj.name || 'avatar').replace(/\.[^.]+$/, '');
-                  resolve(new File([blob], `${origName}.png`, { type: 'image/png' }));
-                }, 'image/png');
-              } catch (_) { URL.revokeObjectURL(url); resolve(null); }
-            };
-            img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
-            img.src = url;
-          } catch (_) { resolve(null); }
-        });
-      };
-
-      const sanitizePngCardFile = async (fileObj) => {
-        if (!fileObj || !(fileObj instanceof Blob) || fileObj.size < 32) return { file: fileObj, missingChara: false };
-        try {
-          const buf = await fileObj.arrayBuffer();
-          const u8 = new Uint8Array(buf);
-          // 检查 PNG 魔数 89 50 4E 47 0D 0A 1A 0A
-          const isPng = u8.length >= 8 && u8[0] === 0x89 && u8[1] === 0x50 && u8[2] === 0x4E && u8[3] === 0x47;
-          if (!isPng) {
-            // 若是 JSON，清理 UTF-8 BOM
-            const nameL = String(fileObj.name || '').toLowerCase();
-            if (nameL.endsWith('.json') || (u8[0] === 0xEF && u8[1] === 0xBB && u8[2] === 0xBF)) {
-              const txt = new TextDecoder('utf-8').decode(u8).replace(/^\uFEFF/, '');
-              return { file: new File([txt], fileObj.name || 'card.json', { type: 'application/json' }), missingChara: false };
-            }
-            // 非 PNG/JSON/ZIP（如被转成 JPG/WEBP 的图）检查是否含 chara/ccv3
-            const ascii = new TextDecoder('latin1').decode(u8);
-            const hasMeta = ascii.includes('chara') || ascii.includes('ccv3');
-            return { file: fileObj, missingChara: !hasMeta && !nameL.endsWith('.zip') && !nameL.endsWith('.charx') && !nameL.endsWith('.yaml') };
+          await new Promise(r => setTimeout(r, 200));
+          if (curChatId && typeof ctx.openCharacterChat === 'function') {
+            await ctx.openCharacterChat(curChatId);
           }
-          // 扫描 PNG chunks：检查是否有 chara/ccv3，并在 IEND 后若有垃圾尾部字节时自动裁剪修复！
-          let off = 8;
-          let hasChara = false;
-          let iendEnd = -1;
-          while (off + 12 <= u8.length) {
-            const len = ((u8[off] << 24) | (u8[off + 1] << 16) | (u8[off + 2] << 8) | u8[off + 3]) >>> 0;
-            const type = String.fromCharCode(u8[off + 4], u8[off + 5], u8[off + 6], u8[off + 7]);
-            const nextOff = off + 12 + len;
-            if (nextOff > u8.length) break;
-            if (type === 'tEXt' || type === 'iTXt' || type === 'zTXt') {
-              const headTxt = String.fromCharCode(...u8.slice(off + 8, Math.min(off + 20, nextOff - 4)));
-              if (/^(?:chara|ccv3)\0?/i.test(headTxt)) hasChara = true;
-            }
-            if (type === 'IEND') { iendEnd = nextOff; break; }
-            off = nextOff;
-          }
-          let outFile = fileObj;
-          if (iendEnd > 0 && iendEnd < u8.length) {
-            outFile = new File([u8.slice(0, iendEnd)], fileObj.name || 'card.png', { type: 'image/png' });
-          }
-          return { file: outFile, missingChara: !hasChara };
-        } catch (_) {
-          return { file: fileObj, missingChara: false };
+          showImmNotice(`已切换到「${gCnt}版开场白」的重名卡`);
+          if (typeof onSwitched === 'function') setTimeout(onSwitched, 350);
         }
-      };
-
-      const _glcFetchTargetRe = /\/api\/(?:characters\/(?:edit-avatar|edit|create|import)|avatars\/upload|chats\/(?:recent|get))(?:\?|$)/;
-      const _glcHandlePatchedFetch = async (input, init) => {
-        let effInit = init;
-        let importMissingChara = false;
-        try {
-          const urlStrPre = typeof input === 'string' ? input : String(input?.url || '');
-          const methodPre = String(init?.method || (typeof input === 'object' ? input?.method : '') || 'GET').toUpperCase();
-          if (methodPre === 'POST' && init?.body instanceof FormData) {
-            // 1) 换头像 / 编辑角色头像 / 上传用户头像：自动将 HEIC/AVIF/伪后缀/超大图无感重编码为酒馆 100% 兼容的标准 PNG！
-            if (/\/api\/(?:characters\/(?:edit-avatar|edit|create)|avatars\/upload)(?:\?|$)/.test(urlStrPre)) {
-              const avFile = init.body.get('avatar');
-              if (avFile && avFile instanceof Blob && avFile.size > 0) {
-                const cleanPng = await transcodeAvatarBlobToCleanPng(avFile);
-                if (cleanPng) {
-                  const nextFd = new FormData();
-                  for (const [k, v] of init.body.entries()) {
-                    nextFd.append(k, k === 'avatar' ? cleanPng : v);
-                  }
-                  effInit = { ...init, body: nextFd };
-                }
-              }
-            }
-            // 2) 导入角色卡：自动清理 PNG IEND 尾部垃圾字节与 JSON BOM（完整保留 chara 元数据）
-            if (/\/api\/characters\/import(?:\?|$)/.test(urlStrPre)) {
-              const cardFile = init.body.get('avatar');
-              if (cardFile && cardFile instanceof Blob && cardFile.size > 0) {
-                const checked = await sanitizePngCardFile(cardFile);
-                importMissingChara = Boolean(checked.missingChara);
-                if (checked.file && checked.file !== cardFile) {
-                  const nextFd = new FormData();
-                  for (const [k, v] of init.body.entries()) {
-                    nextFd.append(k, k === 'avatar' ? checked.file : v);
-                  }
-                  effInit = { ...init, body: nextFd };
-                }
-              }
-            }
-          }
-        } catch (_) {}
-
-        const res = await _origFetch(input, effInit);
-        try {
-          const urlStrPost = typeof input === 'string' ? input : String(input?.url || '');
-          if (!res.ok && /\/api\/characters\/import(?:\?|$)/.test(urlStrPost) && importMissingChara) {
-            showImmNotice('导入失败：这张图片不含角色卡数据（可能被相册或聊天软件压缩过），请用原图或 .zip/.json 导入');
-          }
-          if (res.ok && /\/api\/characters\/(?:edit-avatar|edit)(?:\?|$)/.test(urlStrPost) && effInit?.body instanceof FormData) {
-            const targetAv = String(effInit.body.get('avatar_url') || '').trim();
-            if (targetAv) {
-              const bust = Date.now();
-              setTimeout(() => {
-                try {
-                  const enc = encodeURIComponent(targetAv);
-                  doc.querySelectorAll('img').forEach(img => {
-                    const s = String(img.getAttribute('src') || '');
-                    if (s.includes(enc) || s.includes(targetAv)) {
-                      const cleanS = s.replace(/([?&])v=\d+/g, '$1').replace(/[?&]$/, '');
-                      img.src = cleanS + (cleanS.includes('?') ? '&' : '?') + 'v=' + bust;
-                    }
-                  });
-                  const ctxNow = getContext();
-                  if (typeof ctxNow?.getCharacters === 'function') ctxNow.getCharacters();
-                } catch (_) {}
-              }, 160);
-            }
-          }
-        } catch (_) {}
-        try {
-          const urlStr = typeof input === 'string' ? input : String(input?.url || '');
-          const method = String(init?.method || (typeof input === 'object' ? input?.method : '') || 'GET').toUpperCase();
-          // 同步用户手动「切同名卡」指定的归属到酒馆原生 /api/chats/recent 返回数据中！
-          if (res.ok && /\/api\/chats\/recent(?:\?|$)/.test(urlStr)) {
-            const ownerMap = config.dupChatOwnerMap;
-            if (ownerMap && typeof ownerMap === 'object' && Object.keys(ownerMap).length > 0) {
-              try {
-                const rawJson = await res.clone().json();
-                if (Array.isArray(rawJson) && rawJson.length) {
-                  let patchedAny = false;
-                  const nextArr = rawJson.map(item => {
-                    if (!item || typeof item !== 'object') return item;
-                    const fn = String(item.file_name || item.file || '').trim().replace(/\.jsonl$/i, '');
-                    if (fn && ownerMap[fn] && item.avatar !== ownerMap[fn]) {
-                      patchedAny = true;
-                      return { ...item, avatar: ownerMap[fn] };
-                    }
-                    return item;
-                  });
-                  if (patchedAny) {
-                    const hdrsNew = new Headers(res.headers);
-                    hdrsNew.set('content-type', 'application/json; charset=utf-8');
-                    hdrsNew.delete('content-length');
-                    return new Response(JSON.stringify(nextArr), {
-                      status: res.status,
-                      statusText: res.statusText,
-                      headers: hdrsNew,
-                    });
-                  }
-                }
-              } catch (_) {}
-            }
-          }
-          if (method === 'POST' && /\/api\/chats\/get(?:\?|$)/.test(urlStr) && typeof init?.body === 'string') {
-            let needRetry = !res.ok;
-            let clonedText = '';
-            if (!needRetry) {
-              try {
-                clonedText = await res.clone().text();
-                if (!clonedText || clonedText.trim() === '{}' || clonedText.trim() === '[]' || /"error"\s*:/i.test(clonedText)) {
-                  needRetry = true;
-                }
-              } catch (_) {}
-            }
-            if (needRetry) {
-              const reqBody = JSON.parse(init.body);
-              const chName = String(reqBody?.ch_name || '').trim();
-              const fileName = String(reqBody?.file_name || '').trim();
-              const origAv = String(reqBody?.avatar_url || '').trim();
-              const ctx = getContext();
-              const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
-              const sameNameChars = chars
-                .map((c, idx) => ({ c, idx }))
-                .filter(({ c }) => c && ((chName && String(c.name || '') === chName) || (origAv && String(c.avatar || '') === origAv)));
-              // 如果按 avatar 命中了某张卡，也把与该卡同名的所有卡都纳入候选
-              let allSameName = sameNameChars;
-              if (sameNameChars.length && sameNameChars[0].c?.name) {
-                const nm = String(sameNameChars[0].c.name);
-                allSameName = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === nm);
-              }
-              if (allSameName.length >= 2 && fileName) {
-                const cleanWanted = fileName.replace(/\.jsonl$/i, '');
-                for (const { c } of allSameName) {
-                  if (!c.avatar || c.avatar === origAv) continue;
-                  // 尝试直接用另一张同名卡的 avatar_url 请求 /api/chats/get
-                  const retryInit = {
-                    ...init,
-                    body: JSON.stringify({ ...reqBody, ch_name: c.name || chName, avatar_url: c.avatar, file_name: cleanWanted }),
-                  };
-                  const r2 = await _origFetch(input, retryInit);
-                  if (r2 && r2.ok) {
-                    const t2 = await r2.clone().text();
-                    if (t2 && t2.trim().startsWith('[') && t2.trim().length > 4) {
-                      win.__stSuppressDupChatToastUntil = Date.now() + 3000;
-                      return r2;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        } catch (_) {}
-        return res;
-      };
-      win.fetch = function(input, init) {
-        const u = typeof input === 'string' ? input : String(input?.url || '');
-        if (!_glcFetchTargetRe.test(u)) return _origFetch(input, init);
-        return _glcHandlePatchedFetch(input, init);
-      };
-    }
-  } catch (_) {}
-
-  if (!config.dupChatOwnerMapResetV3) {
-    config.dupChatOwnerMap = {};
-    config.dupChatOwnerMapResetV3 = true;
-    scheduleSaveConfig();
+      });
+      listEl.appendChild(row);
+    });
+    const cancelB = doc.createElement('button');
+    cancelB.type = 'button'; cancelB.className = 'st-tb-btn'; cancelB.style.width = '100%'; cancelB.textContent = '取消';
+    cancelB.addEventListener('click', () => dm.remove());
+    box.append(listEl, cancelB);
+    dm.appendChild(box);
+    dm.addEventListener('click', (e2) => e2.stopPropagation());
+    root.appendChild(dm);
   }
+
+  let _lastDupTipKey = '';
+  const checkAndPromptDupCharTip = () => {
+    try {
+      const ctx = getContext();
+      const rawId = (ctx?.characterId !== undefined && ctx?.characterId !== null && ctx?.characterId !== '') ? ctx.characterId : win.this_chid;
+      const chid = Number(rawId);
+      const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+      if (!Number.isFinite(chid) || chid < 0 || !chars[chid]) return;
+      const ch = chars[chid];
+      const curChatId = String(ctx?.chatId || '').trim().replace(/\.jsonl$/i, '');
+      if (!curChatId) return;
+      const dupSiblings = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === String(ch.name || ''));
+      if (dupSiblings.length < 2) return;
+      const tipKey = `${ch.avatar || ''}|${curChatId}`;
+      if (_lastDupTipKey === tipKey) return;
+      _lastDupTipKey = tipKey;
+
+      let tm = root.querySelector('#st-tb-dupchar-tip-mask');
+      if (tm) tm.remove();
+      tm = doc.createElement('div');
+      tm.id = 'st-tb-dupchar-tip-mask';
+      tm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+      if (typeof nextPupTopZ === 'function') tm.style.zIndex = String(nextPupTopZ());
+      const box = doc.createElement('div');
+      box.style.cssText = 'width:min(308px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:13px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;line-height:1.55;';
+      box.innerHTML = `
+        <div style="font-weight:700;font-size:13px;margin-bottom:6px;">检测到重名角色卡</div>
+        <div style="font-size:11.5px;margin-bottom:10px;">角色「<b>${escapeHtmlSimple(ch.name || '')}</b>」共有 <b>${dupSiblings.length}</b> 张同名角色卡。如果当前聊天的头像、开场白或正则不对，可点下方按钮直接核对切换，也可以随时在<b>快捷面板 →「本角（当前角色）」→「切同名卡」</b>中手动切换。</div>
+        <div style="display:flex;gap:6px;">
+          <button type="button" id="st-dct-ok" class="st-tb-btn" style="flex:1;">知道了</button>
+          <button type="button" id="st-dct-go" class="st-tb-btn primary" style="flex:1.2;">立即切同名卡</button>
+        </div>
+      `;
+      box.querySelector('#st-dct-ok').addEventListener('click', () => tm.remove());
+      box.querySelector('#st-dct-go').addEventListener('click', () => {
+        tm.remove();
+        openDupSiblingSwitcherModal(ch, dupSiblings, curChatId, null);
+      });
+      tm.appendChild(box);
+      tm.addEventListener('click', (e2) => e2.stopPropagation());
+      root.appendChild(tm);
+    } catch (_) {}
+  };
 
   const bindSillyTavernEvents = () => {
     const ctx = getContext();
@@ -63593,7 +63432,7 @@
       boundEvents.push({ eventSource, evt, fn });
     };
 
-    add(eventTypes.CHAT_CHANGED, onChatChanged);
+    add(eventTypes.CHAT_CHANGED, () => { onChatChanged(); setTimeout(checkAndPromptDupCharTip, 420); });
     add(eventTypes.MESSAGE_SENT, onMessageChanged);
     add(eventTypes.MESSAGE_RECEIVED, onMessageChanged);
     add(eventTypes.MESSAGE_DELETED, onMessageChanged);
@@ -71851,70 +71690,9 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
                 </div>${dupSiblings.length >= 2 ? '<button type="button" id="st-qcc-dup-fix" class="st-tb-mini-btn" style="flex-shrink:0;">切同名卡</button>' : ''}`;
               const dupFixBtn = cardEl.querySelector('#st-qcc-dup-fix');
               if (dupFixBtn) {
-                dupFixBtn.addEventListener('click', async () => {
+                dupFixBtn.addEventListener('click', () => {
                   const curChatId = String(ctx?.chatId || '').trim().replace(/\.jsonl$/i, '');
-                  const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
-                  const detailed = await Promise.all(dupSiblings.map(async ({ c, idx }) => {
-                    let full = c;
-                    try {
-                      const r = await win.fetch('/api/characters/get', { method: 'POST', headers: hdrs, body: JSON.stringify({ avatar_url: c.avatar }) });
-                      if (r && r.ok) { const j = await r.json(); if (j && typeof j === 'object') full = j; }
-                    } catch (_) {}
-                    const f = String(full?.first_mes || full?.data?.first_mes || '');
-                    const alts = Array.isArray(full?.data?.alternate_greetings) ? full.data.alternate_greetings : (Array.isArray(full?.alternate_greetings) ? full.alternate_greetings : []);
-                    const gCnt = (f ? 1 : 0) + alts.filter(a => typeof a === 'string' && a.trim()).length;
-                    return { c, idx, gCnt, prev: f.replace(/\s+/g, ' ').slice(0, 34) };
-                  }));
-                  let dm = root.querySelector('#st-tb-qcc-dupswitch-mask');
-                  if (dm) dm.remove();
-                  dm = doc.createElement('div');
-                  dm.id = 'st-tb-qcc-dupswitch-mask';
-                  dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
-                  if (typeof nextPupTopZ === 'function') dm.style.zIndex = String(nextPupTopZ());
-                  const box = doc.createElement('div');
-                  box.style.cssText = 'width:min(312px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;';
-                  box.innerHTML = '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">切换当前聊天对应的重名卡</div><div style="font-size:11px;opacity:0.74;margin-bottom:8px;">选定后会同步更新首页「最近聊天」的归属头像与打开目标，绝不删改你的聊天记录：</div>';
-                  const listEl = doc.createElement('div');
-                  listEl.style.cssText = 'display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;margin-bottom:8px;';
-                  detailed.forEach(({ c, idx, gCnt, prev }) => {
-                    const isNow = String(c.avatar || '') === String(ch.avatar || '');
-                    const row = doc.createElement('button');
-                    row.type = 'button';
-                    row.className = 'st-tb-btn' + (isNow ? ' primary' : '');
-                    row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 8px;height:auto;';
-                    row.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(c.avatar || '')}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;" /><div style="min-width:0;flex:1;"><div style="font-weight:700;font-size:11.5px;">${isNow ? '[当前] ' : ''}${gCnt} 版开场白 · ${escapeHtmlSimple(c.avatar || '')}</div><div style="font-size:10px;opacity:0.75;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(prev || '无开场白预览')}</div></div>`;
-                    row.addEventListener('click', async () => {
-                      dm.remove();
-                      win.__stSuppressDupChatToastUntil = Date.now() + 5000;
-                      if (curChatId && c.avatar) {
-                        if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
-                        config.dupChatOwnerMap[curChatId] = c.avatar;
-                        saveConfig();
-                      }
-                      if (typeof ctx.selectCharacterById === 'function') {
-                        await ctx.selectCharacterById(String(idx));
-                        for (let w = 0; w < 20; w++) {
-                          await new Promise(r => setTimeout(r, 100));
-                          const nowId = Number((getContext()?.characterId ?? win.this_chid));
-                          if (nowId === idx) break;
-                        }
-                        await new Promise(r => setTimeout(r, 200));
-                        if (curChatId && typeof ctx.openCharacterChat === 'function') {
-                          await ctx.openCharacterChat(curChatId);
-                        }
-                        showImmNotice(`已绑定到「${gCnt}版开场白」的重名卡，并已同步到最近聊天`);
-                        setTimeout(() => renderQcc(true), 350);
-                      }
-                    });
-                    listEl.appendChild(row);
-                  });
-                  const cancelB = doc.createElement('button');
-                  cancelB.type = 'button'; cancelB.className = 'st-tb-btn'; cancelB.style.width = '100%'; cancelB.textContent = '取消';
-                  cancelB.addEventListener('click', () => dm.remove());
-                  box.append(listEl, cancelB);
-                  dm.appendChild(box);
-                  dm.addEventListener('click', (e2) => e2.stopPropagation());
-                  root.appendChild(dm);
+                  openDupSiblingSwitcherModal(ch, dupSiblings, curChatId, () => renderQcc(true));
                 });
               }
             }
