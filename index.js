@@ -3018,7 +3018,8 @@
     panelW: 316,
     panelH: 520,
     maskEnabled: false,
-    maskStyle: 'blur', // 'blur' | 'bar' | 'custom'
+    maskStyle: 'blur', // 'blur' | 'frosted' | 'bar' | 'custom'
+    maskBlurPx: 6,
     maskCustomText: '○',
     maskRepeat: false,
     maskWords: '',
@@ -5159,8 +5160,9 @@
     #chat .mes_text .st-tb-mask[data-style="blur"] {
       display: inline-block !important;
       vertical-align: baseline;
-      filter: blur(5.5px) !important;
-      -webkit-filter: blur(5.5px) !important;
+      filter: blur(var(--st-mask-blur, 6px)) !important;
+      -webkit-filter: blur(var(--st-mask-blur, 6px)) !important;
+      opacity: 0.55 !important;
       padding: 0 2px;
       user-select: none;
       -webkit-user-select: none;
@@ -5183,12 +5185,12 @@
       vertical-align: baseline;
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
-      text-shadow: 0 0 8px rgba(128, 128, 138, 0.72) !important;
-      background: rgba(255, 255, 255, 0.28) !important;
-      backdrop-filter: blur(7px) saturate(135%) !important;
-      -webkit-backdrop-filter: blur(7px) saturate(135%) !important;
-      border: 1px solid rgba(255, 255, 255, 0.36) !important;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+      text-shadow: 0 0 var(--st-mask-blur, 6px) rgba(145, 145, 158, 0.45) !important;
+      background: rgba(255, 255, 255, 0.26) !important;
+      backdrop-filter: blur(var(--st-mask-blur, 6px)) saturate(135%) !important;
+      -webkit-backdrop-filter: blur(var(--st-mask-blur, 6px)) saturate(135%) !important;
+      border: none !important;
+      box-shadow: none !important;
       padding: 0 4px !important;
       border-radius: 5px !important;
       user-select: none;
@@ -5203,6 +5205,7 @@
     #chat .mes_text .st-tb-mask.revealed {
       filter: none !important;
       -webkit-filter: none !important;
+      opacity: 1 !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
       text-shadow: none !important;
@@ -9945,6 +9948,11 @@
                 <button class="st-tb-pill" data-mask-style="bar" type="button">黑条</button>
                 <button class="st-tb-pill" data-mask-style="custom" type="button">自定义</button>
               </div>
+              <div id="st-tb-mask-blur-box" style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:11px;">
+                <span style="flex-shrink:0;opacity:0.85;">模糊程度</span>
+                <input id="st-tb-mask-blur-range" type="range" min="2" max="14" step="0.5" value="6" style="flex:1;min-width:0;" />
+                <span id="st-tb-mask-blur-val" style="width:34px;text-align:right;font-variant-numeric:tabular-nums;">6px</span>
+              </div>
               <div id="st-tb-custom-mask-box" style="margin-bottom:6px;">
                 <div class="st-tb-row">
                   <input class="st-tb-input" id="st-tb-mask-custom-input" type="text" placeholder="例如：○ / ██ / *** / ——" />
@@ -10789,6 +10797,9 @@
 
   const maskToggleBtn = root.querySelector('#st-tb-mask-toggle-btn');
   const maskStyleBtns = Array.from(root.querySelectorAll('[data-mask-style]'));
+  const maskBlurBox = root.querySelector('#st-tb-mask-blur-box');
+  const maskBlurRange = root.querySelector('#st-tb-mask-blur-range');
+  const maskBlurVal = root.querySelector('#st-tb-mask-blur-val');
   const customMaskBox = root.querySelector('#st-tb-custom-mask-box');
   const maskCustomInput = root.querySelector('#st-tb-mask-custom-input');
   const maskPresetBtns = Array.from(root.querySelectorAll('[data-preset]'));
@@ -44663,7 +44674,9 @@
   let bqCharms = []; // [{ key, x, y, col }]
   let bqSelectedCharmIdx = -1;
   let bqNoteTxt = '';
-  const bqTierDrafts = { single: null, mix: null, luxury: null };
+  const bqTierDrafts = (config.puppyBqTierDrafts && typeof config.puppyBqTierDrafts === 'object')
+    ? { single: config.puppyBqTierDrafts.single || null, mix: config.puppyBqTierDrafts.mix || null, luxury: config.puppyBqTierDrafts.luxury || null }
+    : { single: null, mix: null, luxury: null };
   const saveCurBqTierDraft = () => {
     bqTierDrafts[bqTier] = {
       picked: [...bqPicked],
@@ -44675,6 +44688,8 @@
       charms: bqCharms.map(c => ({ ...c })),
       noteTxt: bqNoteTxt,
     };
+    config.puppyBqTierDrafts = bqTierDrafts;
+    scheduleSaveConfig();
   };
   const restoreBqTierDraft = (nextTier) => {
     const d = bqTierDrafts[nextTier];
@@ -44694,10 +44709,8 @@
       bqCharms = Array.isArray(d.charms) ? d.charms.map(c => ({ ...c })) : [];
       bqNoteTxt = d.noteTxt || '';
     } else {
-      bqPicked = [];
+      // 首次切到该档位时保留当前选好的花材、包装纸、丝带和贴纸，不清空！
       bqCustomSlots = null;
-      bqFlowerSpread = 1.0;
-      bqRibbonX = 24; bqRibbonY = 32;
       bqRibbonScale = nextTier === 'luxury' ? 1.3 : 1.0;
     }
   };
@@ -44938,20 +44951,27 @@
       const cFlip = Boolean(ch.flip);
       const gh = def.grid.length;
       const gw = def.grid[0] ? def.grid[0].length : 5;
-      g.save();
-      g.translate(ch.x, ch.y);
-      g.scale(cFlip ? -cSc : cSc, cSc);
-      const ox = -gw / 2;
-      const oy = -gh / 2;
+      const tmpC = doc.createElement('canvas');
+      tmpC.width = gw;
+      tmpC.height = gh;
+      const tg = tmpC.getContext('2d');
+      tg.imageSmoothingEnabled = false;
       for (let y = 0; y < gh; y++) {
         const r = def.grid[y];
         for (let x = 0; x < r.length; x++) {
           const c = pal[r[x]];
           if (!c) continue;
-          g.fillStyle = c;
-          g.fillRect(ox + x, oy + y, 1, 1);
+          tg.fillStyle = c;
+          tg.fillRect(x, y, 1, 1);
         }
       }
+      const dw = Math.max(2, Math.round(gw * cSc));
+      const dh = Math.max(2, Math.round(gh * cSc));
+      g.save();
+      g.imageSmoothingEnabled = false;
+      g.translate(Math.round(ch.x), Math.round(ch.y));
+      if (cFlip) g.scale(-1, 1);
+      g.drawImage(tmpC, -Math.floor(dw / 2), -Math.floor(dh / 2), dw, dh);
       g.restore();
     });
   };
@@ -45668,39 +45688,51 @@
       const closeSm = (e3) => { if (e3) e3.stopPropagation(); win.__stSubModalClosedAt = Date.now(); sm.remove(); };
       const sc = doc.createElement('div');
       sc.style.cssText = 'width:min(276px,88vw);background:var(--px-bg,#fff9fb);color:var(--px-custom-fg,var(--px-fg,#4a3a40));border:2px solid var(--px-border,#bfa4ae);border-radius:0;padding:12px;text-align:center;box-shadow:3px 3px 0 rgba(59,42,34,0.28);';
-      sc.innerHTML = `<div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">保存花束配方</div><input type="text" id="st-bq-rsave-inp" maxlength="16" value="${escapeHtmlSimple(defRecName.slice(0, 16))}" placeholder="输入自定义配方名..." style="width:100%;box-sizing:border-box;height:26px;font-size:10.5px;padding:0 6px;margin-bottom:8px;" /><div style="display:flex;gap:6px;"><button type="button" id="st-bq-rsave-no" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">取消</button><button type="button" id="st-bq-rsave-ok" class="st-px-btn care" style="flex:1;height:24px;font-size:10px;">确认保存</button></div>`;
+      sc.innerHTML = `<div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">保存花束配方</div><input type="text" id="st-bq-rsave-inp" maxlength="16" value="" placeholder="留空默认「${escapeHtmlSimple(defRecName.slice(0, 12))}」" style="width:100%;box-sizing:border-box;height:26px;font-size:10.5px;padding:0 6px;margin-bottom:8px;" /><div style="display:flex;gap:6px;"><button type="button" id="st-bq-rsave-no" class="st-px-btn" style="flex:1;height:24px;font-size:10px;">取消</button><button type="button" id="st-bq-rsave-ok" class="st-px-btn care" style="flex:1;height:24px;font-size:10px;">确认保存</button></div>`;
       sc.querySelector('#st-bq-rsave-no').addEventListener('click', closeSm);
       sc.querySelector('#st-bq-rsave-ok').addEventListener('click', (e3) => {
-        const recName = String(sc.querySelector('#st-bq-rsave-inp')?.value || '').trim() || defRecName;
-        config.puppyBouquetRecipes = Array.isArray(config.puppyBouquetRecipes) ? config.puppyBouquetRecipes : [];
-        const bigC = doc.createElement('canvas'); bigC.width = 48; bigC.height = 48;
-        drawBouquetCanvas(bigC, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlStyle, bqRibStyle, bqRibScale, bqFlScale, bqFlSpread, bqCustomSlots, bqRibX, bqRibY);
-        const outC = doc.createElement('canvas'); outC.width = 96; outC.height = 96;
-        const og = outC.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(bigC, 0, 0, 96, 96);
-        config.puppyBouquetRecipes.unshift({
-          id: 'bqr_' + Date.now(),
-          name: recName,
-          tier: bqTier,
-          flIds: [...bqPicked],
-          wrapCol: bqWrapCol,
-          ribbonCol: bqRibbonCol,
-          flStyle: bqFlStyle,
-          ribStyle: bqRibStyle,
-          ribScale: bqRibScale,
-          flScale: bqFlScale,
-          flSpread: bqFlSpread,
-          ribX: bqRibX,
-          ribY: bqRibY,
-          customSlots: bqCustomSlots ? bqCustomSlots.map(s => ({ ...s })) : null,
-          charms: bqCharms.map(c => ({ ...c })),
-          note: bqNoteTxt || '',
-          img: outC.toDataURL('image/png'),
-        });
-        if (config.puppyBouquetRecipes.length > 20) config.puppyBouquetRecipes = config.puppyBouquetRecipes.slice(0, 20);
-        saveConfig();
-        closeSm(e3);
-        renderBouquetWorkbench();
-        showPuppyBubble(`已保存花束配方【${recName}】啦~`, 2200);
+        if (e3) e3.stopPropagation();
+        try {
+          const recName = String(sc.querySelector('#st-bq-rsave-inp')?.value || '').trim() || defRecName;
+          config.puppyBouquetRecipes = Array.isArray(config.puppyBouquetRecipes) ? config.puppyBouquetRecipes : [];
+          let thumbUrl = '';
+          try {
+            const bigC = doc.createElement('canvas'); bigC.width = 48; bigC.height = 48;
+            drawBouquetCanvas(bigC, bqTier, bqPicked, bqWrapCol, bqRibbonCol, bqCharms, bqFlowerStyle, bqRibbonStyle, bqRibbonScale, bqFlowerScale, bqFlowerSpread, bqCustomSlots, bqRibbonX, bqRibbonY);
+            const outC = doc.createElement('canvas'); outC.width = 96; outC.height = 96;
+            const og = outC.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(bigC, 0, 0, 96, 96);
+            thumbUrl = outC.toDataURL('image/png');
+          } catch (_) {}
+          const safeSlots = Array.isArray(bqCustomSlots)
+            ? bqCustomSlots.map(s => Array.isArray(s) ? [s[0], s[1]] : [Number(s?.x) || 24, Number(s?.y) || 20])
+            : null;
+          config.puppyBouquetRecipes.unshift({
+            id: 'bqr_' + Date.now(),
+            name: recName,
+            tier: bqTier,
+            flIds: [...bqPicked],
+            wrapCol: bqWrapCol,
+            ribbonCol: bqRibbonCol,
+            flStyle: bqFlowerStyle,
+            ribStyle: bqRibbonStyle,
+            ribScale: bqRibbonScale,
+            flScale: bqFlowerScale,
+            flSpread: bqFlowerSpread,
+            ribX: bqRibbonX,
+            ribY: bqRibbonY,
+            customSlots: safeSlots,
+            charms: (bqCharms || []).map(c => ({ ...c })),
+            note: bqNoteTxt || '',
+            img: thumbUrl,
+          });
+          if (config.puppyBouquetRecipes.length > 20) config.puppyBouquetRecipes = config.puppyBouquetRecipes.slice(0, 20);
+          saveConfig();
+          closeSm(e3);
+          renderBouquetWorkbench();
+          showPuppyBubble(`已保存花束配方【${recName}】啦~`, 2200);
+        } catch (err) {
+          showImmNotice('保存配方出错：' + (err?.message || '请重试'));
+        }
       });
       sm.appendChild(sc);
       sm.addEventListener('pointerdown', (e3) => e3.stopPropagation());
@@ -45725,21 +45757,23 @@
         const useB = doc.createElement('button');
         useB.type = 'button'; useB.className = 'st-px-btn care'; useB.style.cssText = 'height:18px;padding:0 5px;font-size:8.5px;flex-shrink:0;'; useB.textContent = '套用';
         useB.addEventListener('click', () => {
+          saveCurBqTierDraft();
           bqTier = rc.tier || 'single';
           bqWrapCol = rc.wrapCol || '#f2d9c2';
           bqRibbonCol = rc.ribbonCol || '#e07a94';
-          bqFlStyle = rc.flStyle || 'real';
-          bqRibStyle = rc.ribStyle || 'bow';
-          bqRibScale = Number(rc.ribScale) || 1.0;
-          bqFlScale = Number(rc.flScale) || 1.0;
-          bqFlSpread = Number(rc.flSpread) || 1.0;
-          bqRibX = Number(rc.ribX) || 24;
-          bqRibY = Number(rc.ribY) || 32;
-          bqCustomSlots = Array.isArray(rc.customSlots) ? rc.customSlots.map(s => ({ ...s })) : null;
+          bqFlowerStyle = rc.flStyle || 'real';
+          bqRibbonStyle = rc.ribStyle || 'bow';
+          bqRibbonScale = Number(rc.ribScale) || 1.0;
+          bqFlowerScale = Number(rc.flScale) || 1.0;
+          bqFlowerSpread = Number(rc.flSpread) || 1.0;
+          bqRibbonX = Number(rc.ribX) || 24;
+          bqRibbonY = Number(rc.ribY) || 32;
+          bqCustomSlots = Array.isArray(rc.customSlots) ? rc.customSlots.map(s => Array.isArray(s) ? [s[0], s[1]] : [24, 20]) : null;
           bqCharms = Array.isArray(rc.charms) ? rc.charms.map(c => ({ ...c })) : [];
           bqNoteTxt = rc.note || '';
-          const needE = bqTier === 'luxury' ? 1 : (bqTier === 'mix' ? 2 : 3);
+          const needE = bqTier === 'single' ? 3 : 2;
           bqPicked = (Array.isArray(rc.flIds) ? rc.flIds : []).filter(fid => (inv[fid] || 0) >= needE);
+          saveCurBqTierDraft();
           renderBouquetWorkbench();
           const miss = (Array.isArray(rc.flIds) ? rc.flIds.length : 0) - bqPicked.length;
           showPuppyBubble(miss > 0 ? `已套用配方【${rc.name}】！有 ${miss} 种花库存不足，请换选花材~` : `已套用配方【${rc.name}】啦~`, 2400);
@@ -61160,6 +61194,11 @@
 
     maskStyleBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.maskStyle === config.maskStyle));
     customMaskBox.style.display = config.maskStyle === 'custom' ? 'block' : 'none';
+    const curBlurPx = clamp(Number(config.maskBlurPx) || 6, 2, 14);
+    doc.documentElement.style.setProperty('--st-mask-blur', `${curBlurPx}px`);
+    if (maskBlurBox) maskBlurBox.style.display = (config.maskStyle === 'blur' || config.maskStyle === 'frosted') ? 'flex' : 'none';
+    if (maskBlurRange && doc.activeElement !== maskBlurRange) maskBlurRange.value = String(curBlurPx);
+    if (maskBlurVal) maskBlurVal.textContent = `${curBlurPx}px`;
     if (doc.activeElement !== maskCustomInput) maskCustomInput.value = config.maskCustomText;
     maskRepeatCheck.checked = Boolean(config.maskRepeat);
 
@@ -61457,11 +61496,106 @@
   });
 
 
+  if (maskBlurRange) {
+    maskBlurRange.addEventListener('input', () => {
+      const v = clamp(Number(maskBlurRange.value) || 6, 2, 14);
+      config.maskBlurPx = v;
+      doc.documentElement.style.setProperty('--st-mask-blur', `${v}px`);
+      if (maskBlurVal) maskBlurVal.textContent = `${v}px`;
+      scheduleSaveConfig();
+    });
+  }
   const toggleMaskState = () => {
     config.maskEnabled = !config.maskEnabled;
     saveConfig();
     syncUI();
     applyMasks();
+    if (typeof syncQuickDockUI === 'function') syncQuickDockUI();
+  };
+  var openQuickMaskPanel = () => {
+    let qm = root.querySelector('#st-tb-quick-mask-pop');
+    if (qm) { qm.remove(); return; }
+    qm = doc.createElement('div');
+    qm.id = 'st-tb-quick-mask-pop';
+    qm.style.cssText = 'position:fixed;inset:0;z-index:10040;background:rgba(0,0,0,0.36);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+    const box = doc.createElement('div');
+    box.style.cssText = 'width:min(310px,92vw);background:var(--tb-bg,#faf6f7);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 8px 26px rgba(0,0,0,0.22);box-sizing:border-box;font-size:12px;';
+    const curBlur = clamp(Number(config.maskBlurPx) || 6, 2, 14);
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-weight:700;font-size:13px;">一键打码设置</span>
+        <button type="button" id="st-qm-close" class="st-tb-mini-btn">关闭</button>
+      </div>
+      <button type="button" id="st-qm-toggle" class="st-tb-btn ${config.maskEnabled ? '' : 'primary'}" style="width:100%;margin-bottom:8px;">${config.maskEnabled ? '关闭打码（已开启）' : '开启打码'}</button>
+      <div style="font-size:11px;opacity:0.8;margin-bottom:4px;">遮挡效果</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px;">
+        <button type="button" class="st-tb-pill st-qm-st" data-ms="blur">模糊</button>
+        <button type="button" class="st-tb-pill st-qm-st" data-ms="frosted">毛玻璃</button>
+        <button type="button" class="st-tb-pill st-qm-st" data-ms="bar">黑条</button>
+        <button type="button" class="st-tb-pill st-qm-st" data-ms="custom">自定义</button>
+      </div>
+      <div id="st-qm-blur-row" style="display:${(config.maskStyle === 'blur' || config.maskStyle === 'frosted') ? 'flex' : 'none'};align-items:center;gap:6px;margin-bottom:8px;font-size:11px;">
+        <span style="flex-shrink:0;">模糊程度</span>
+        <input id="st-qm-blur" type="range" min="2" max="14" step="0.5" value="${curBlur}" style="flex:1;min-width:0;" />
+        <span id="st-qm-blur-v" style="width:34px;text-align:right;">${curBlur}px</span>
+      </div>
+      <div id="st-qm-cust-row" style="display:${config.maskStyle === 'custom' ? 'flex' : 'none'};align-items:center;gap:6px;margin-bottom:8px;font-size:11px;">
+        <span style="flex-shrink:0;">替换字符</span>
+        <input id="st-qm-cust" class="st-tb-input" type="text" maxlength="10" value="${escapeHtmlSimple(config.maskCustomText || '○')}" style="flex:1;min-width:0;height:26px;" />
+      </div>
+      <div style="font-size:11px;opacity:0.8;margin-bottom:4px;">打码词（每行一个，或用逗号/空格分隔）</div>
+      <textarea id="st-qm-words" class="st-tb-textarea" rows="3" placeholder="输入需要遮挡的词..." style="width:100%;box-sizing:border-box;margin-bottom:4px;">${escapeHtmlSimple(config.maskWords || '')}</textarea>
+    `;
+    const syncQm = () => {
+      const tb = box.querySelector('#st-qm-toggle');
+      if (tb) {
+        tb.textContent = config.maskEnabled ? '关闭打码（已开启）' : '开启打码';
+        tb.classList.toggle('primary', !config.maskEnabled);
+      }
+      box.querySelectorAll('.st-qm-st').forEach(b => b.classList.toggle('active', b.dataset.ms === config.maskStyle));
+      const br = box.querySelector('#st-qm-blur-row');
+      if (br) br.style.display = (config.maskStyle === 'blur' || config.maskStyle === 'frosted') ? 'flex' : 'none';
+      const cr = box.querySelector('#st-qm-cust-row');
+      if (cr) cr.style.display = config.maskStyle === 'custom' ? 'flex' : 'none';
+    };
+    syncQm();
+    box.querySelector('#st-qm-close').addEventListener('click', () => qm.remove());
+    box.querySelector('#st-qm-toggle').addEventListener('click', () => { toggleMaskState(); syncQm(); });
+    box.querySelectorAll('.st-qm-st').forEach(b => b.addEventListener('click', () => {
+      config.maskStyle = b.dataset.ms;
+      saveConfig();
+      syncUI();
+      applyMasks();
+      syncQm();
+    }));
+    const blurInp = box.querySelector('#st-qm-blur');
+    const blurV = box.querySelector('#st-qm-blur-v');
+    if (blurInp) blurInp.addEventListener('input', () => {
+      const v = clamp(Number(blurInp.value) || 6, 2, 14);
+      config.maskBlurPx = v;
+      doc.documentElement.style.setProperty('--st-mask-blur', `${v}px`);
+      if (blurV) blurV.textContent = `${v}px`;
+      syncUI();
+      scheduleSaveConfig();
+    });
+    const custInp = box.querySelector('#st-qm-cust');
+    if (custInp) custInp.addEventListener('input', () => {
+      config.maskCustomText = custInp.value || '○';
+      scheduleSaveConfig();
+      syncUI();
+      if (config.maskEnabled) applyMasks();
+    });
+    const wordsInp = box.querySelector('#st-qm-words');
+    if (wordsInp) wordsInp.addEventListener('input', () => {
+      config.maskWords = wordsInp.value;
+      scheduleSaveConfig();
+      syncUI();
+      if (config.maskEnabled) applyMasks();
+    });
+    qm.appendChild(box);
+    qm.addEventListener('click', (e2) => { e2.stopPropagation(); if (e2.target === qm) qm.remove(); });
+    box.addEventListener('click', (e2) => e2.stopPropagation());
+    root.appendChild(qm);
   };
   quickMaskBtn.addEventListener('click', toggleMaskState);
   maskToggleBtn.addEventListener('click', toggleMaskState);
@@ -70692,12 +70826,15 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
     quickDockEl.addEventListener('click', (e) => {
       const btn = e.target && e.target.closest ? e.target.closest('[data-qd]') : null;
       if (!btn) return;
+      e.stopPropagation();
       const act = btn.dataset.qd;
       if (act === 'imm') {
         toggleImmersive();
         syncQuickDockUI();
       } else if (act === 'mask') {
-        toggleMaskState();
+        toggleQuickDock(false);
+        if (typeof openQuickMaskPanel === 'function') openQuickMaskPanel();
+        else toggleMaskState();
         syncQuickDockUI();
       } else if (act === 'reader') {
         toggleQuickDock(false);
