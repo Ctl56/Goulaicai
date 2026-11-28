@@ -3020,6 +3020,10 @@
     maskEnabled: false,
     maskStyle: 'blur', // 'blur' | 'frosted' | 'bar' | 'custom'
     maskBlurPx: 6,
+    maskBarColor: '',
+    maskBarRadius: 3,
+    maskBarPadY: 0,
+    maskBarPadX: 3,
     maskCustomText: '○',
     maskRepeat: false,
     maskWords: '',
@@ -5171,10 +5175,11 @@
     #chat .mes_text .st-tb-mask[data-style="bar"] {
       display: inline-block !important;
       vertical-align: baseline;
-      background: var(--SmartThemeBodyColor, #2c2c30) !important;
+      background: var(--st-mask-bar-bg, var(--SmartThemeBodyColor, #2c2c30)) !important;
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
-      padding: 0 3px;
+      border-radius: var(--st-mask-bar-rad, 3px) !important;
+      padding: var(--st-mask-bar-py, 0px) var(--st-mask-bar-px, 3px) !important;
       line-height: 1.25;
       user-select: none;
       -webkit-user-select: none;
@@ -9949,9 +9954,33 @@
                 <button class="st-tb-pill" data-mask-style="custom" type="button">自定义</button>
               </div>
               <div id="st-tb-mask-blur-box" style="display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:11px;">
-                <span style="flex-shrink:0;opacity:0.85;">模糊程度</span>
+                <span style="flex-shrink:0;opacity:0.85;">模糊强度</span>
                 <input id="st-tb-mask-blur-range" type="range" min="2" max="14" step="0.5" value="6" style="flex:1;min-width:0;" />
                 <span id="st-tb-mask-blur-val" style="width:34px;text-align:right;font-variant-numeric:tabular-nums;">6px</span>
+              </div>
+              <div id="st-tb-mask-bar-box" style="display:none;flex-direction:column;gap:5px;margin-bottom:6px;font-size:11px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                  <span style="opacity:0.85;">黑条颜色</span>
+                  <div style="display:flex;align-items:center;gap:5px;">
+                    <input id="st-tb-mask-bar-col" class="st-vph-round-col" type="color" value="#2c2c30" style="width:20px;height:20px;" />
+                    <button id="st-tb-mask-bar-col-reset" class="st-tb-mini-btn" type="button">默认</button>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="width:52px;flex-shrink:0;opacity:0.85;">圆角</span>
+                  <input id="st-tb-mask-bar-rad" type="range" min="0" max="14" step="1" value="3" style="flex:1;min-width:0;" />
+                  <span id="st-tb-mask-bar-rad-val" style="width:32px;text-align:right;">3px</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="width:52px;flex-shrink:0;opacity:0.85;">上下内距</span>
+                  <input id="st-tb-mask-bar-py" type="range" min="0" max="8" step="1" value="0" style="flex:1;min-width:0;" />
+                  <span id="st-tb-mask-bar-py-val" style="width:32px;text-align:right;">0px</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="width:52px;flex-shrink:0;opacity:0.85;">左右内距</span>
+                  <input id="st-tb-mask-bar-px" type="range" min="0" max="14" step="1" value="3" style="flex:1;min-width:0;" />
+                  <span id="st-tb-mask-bar-px-val" style="width:32px;text-align:right;">3px</span>
+                </div>
               </div>
               <div id="st-tb-custom-mask-box" style="margin-bottom:6px;">
                 <div class="st-tb-row">
@@ -10800,6 +10829,15 @@
   const maskBlurBox = root.querySelector('#st-tb-mask-blur-box');
   const maskBlurRange = root.querySelector('#st-tb-mask-blur-range');
   const maskBlurVal = root.querySelector('#st-tb-mask-blur-val');
+  const maskBarBox = root.querySelector('#st-tb-mask-bar-box');
+  const maskBarCol = root.querySelector('#st-tb-mask-bar-col');
+  const maskBarColReset = root.querySelector('#st-tb-mask-bar-col-reset');
+  const maskBarRad = root.querySelector('#st-tb-mask-bar-rad');
+  const maskBarRadVal = root.querySelector('#st-tb-mask-bar-rad-val');
+  const maskBarPy = root.querySelector('#st-tb-mask-bar-py');
+  const maskBarPyVal = root.querySelector('#st-tb-mask-bar-py-val');
+  const maskBarPx = root.querySelector('#st-tb-mask-bar-px');
+  const maskBarPxVal = root.querySelector('#st-tb-mask-bar-px-val');
   const customMaskBox = root.querySelector('#st-tb-custom-mask-box');
   const maskCustomInput = root.querySelector('#st-tb-mask-custom-input');
   const maskPresetBtns = Array.from(root.querySelectorAll('[data-preset]'));
@@ -61195,10 +61233,26 @@
     maskStyleBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.maskStyle === config.maskStyle));
     customMaskBox.style.display = config.maskStyle === 'custom' ? 'block' : 'none';
     const curBlurPx = clamp(Number(config.maskBlurPx) || 6, 2, 14);
+    const curBarRad = clamp(Number(config.maskBarRadius ?? 3), 0, 14);
+    const curBarPy = clamp(Number(config.maskBarPadY ?? 0), 0, 8);
+    const curBarPx = clamp(Number(config.maskBarPadX ?? 3), 0, 14);
     doc.documentElement.style.setProperty('--st-mask-blur', `${curBlurPx}px`);
+    if (config.maskBarColor) doc.documentElement.style.setProperty('--st-mask-bar-bg', config.maskBarColor);
+    else doc.documentElement.style.removeProperty('--st-mask-bar-bg');
+    doc.documentElement.style.setProperty('--st-mask-bar-rad', `${curBarRad}px`);
+    doc.documentElement.style.setProperty('--st-mask-bar-py', `${curBarPy}px`);
+    doc.documentElement.style.setProperty('--st-mask-bar-px', `${curBarPx}px`);
     if (maskBlurBox) maskBlurBox.style.display = (config.maskStyle === 'blur' || config.maskStyle === 'frosted') ? 'flex' : 'none';
     if (maskBlurRange && doc.activeElement !== maskBlurRange) maskBlurRange.value = String(curBlurPx);
     if (maskBlurVal) maskBlurVal.textContent = `${curBlurPx}px`;
+    if (maskBarBox) maskBarBox.style.display = config.maskStyle === 'bar' ? 'flex' : 'none';
+    if (maskBarCol && doc.activeElement !== maskBarCol) maskBarCol.value = config.maskBarColor || '#2c2c30';
+    if (maskBarRad && doc.activeElement !== maskBarRad) maskBarRad.value = String(curBarRad);
+    if (maskBarRadVal) maskBarRadVal.textContent = `${curBarRad}px`;
+    if (maskBarPy && doc.activeElement !== maskBarPy) maskBarPy.value = String(curBarPy);
+    if (maskBarPyVal) maskBarPyVal.textContent = `${curBarPy}px`;
+    if (maskBarPx && doc.activeElement !== maskBarPx) maskBarPx.value = String(curBarPx);
+    if (maskBarPxVal) maskBarPxVal.textContent = `${curBarPx}px`;
     if (doc.activeElement !== maskCustomInput) maskCustomInput.value = config.maskCustomText;
     maskRepeatCheck.checked = Boolean(config.maskRepeat);
 
@@ -61496,14 +61550,65 @@
   });
 
 
+  let _maskVarRaf = 0;
+  const setMaskCssVarSmooth = (prop, val) => {
+    if (_maskVarRaf) cancelAnimationFrame(_maskVarRaf);
+    _maskVarRaf = requestAnimationFrame(() => {
+      _maskVarRaf = 0;
+      if (val === null) doc.documentElement.style.removeProperty(prop);
+      else doc.documentElement.style.setProperty(prop, val);
+    });
+  };
   if (maskBlurRange) {
     maskBlurRange.addEventListener('input', () => {
       const v = clamp(Number(maskBlurRange.value) || 6, 2, 14);
       config.maskBlurPx = v;
-      doc.documentElement.style.setProperty('--st-mask-blur', `${v}px`);
       if (maskBlurVal) maskBlurVal.textContent = `${v}px`;
+      setMaskCssVarSmooth('--st-mask-blur', `${v}px`);
+    });
+    maskBlurRange.addEventListener('change', () => scheduleSaveConfig());
+  }
+  if (maskBarCol) {
+    maskBarCol.addEventListener('input', () => {
+      config.maskBarColor = maskBarCol.value;
+      setMaskCssVarSmooth('--st-mask-bar-bg', config.maskBarColor);
+    });
+    maskBarCol.addEventListener('change', () => scheduleSaveConfig());
+  }
+  if (maskBarColReset) {
+    maskBarColReset.addEventListener('click', () => {
+      config.maskBarColor = '';
+      if (maskBarCol) maskBarCol.value = '#2c2c30';
+      setMaskCssVarSmooth('--st-mask-bar-bg', null);
       scheduleSaveConfig();
     });
+  }
+  if (maskBarRad) {
+    maskBarRad.addEventListener('input', () => {
+      const v = clamp(Number(maskBarRad.value) || 0, 0, 14);
+      config.maskBarRadius = v;
+      if (maskBarRadVal) maskBarRadVal.textContent = `${v}px`;
+      setMaskCssVarSmooth('--st-mask-bar-rad', `${v}px`);
+    });
+    maskBarRad.addEventListener('change', () => scheduleSaveConfig());
+  }
+  if (maskBarPy) {
+    maskBarPy.addEventListener('input', () => {
+      const v = clamp(Number(maskBarPy.value) || 0, 0, 8);
+      config.maskBarPadY = v;
+      if (maskBarPyVal) maskBarPyVal.textContent = `${v}px`;
+      setMaskCssVarSmooth('--st-mask-bar-py', `${v}px`);
+    });
+    maskBarPy.addEventListener('change', () => scheduleSaveConfig());
+  }
+  if (maskBarPx) {
+    maskBarPx.addEventListener('input', () => {
+      const v = clamp(Number(maskBarPx.value) || 0, 0, 14);
+      config.maskBarPadX = v;
+      if (maskBarPxVal) maskBarPxVal.textContent = `${v}px`;
+      setMaskCssVarSmooth('--st-mask-bar-px', `${v}px`);
+    });
+    maskBarPx.addEventListener('change', () => scheduleSaveConfig());
   }
   const toggleMaskState = () => {
     config.maskEnabled = !config.maskEnabled;
@@ -61535,9 +61640,33 @@
         <button type="button" class="st-tb-pill st-qm-st" data-ms="custom">自定义</button>
       </div>
       <div id="st-qm-blur-row" style="display:${(config.maskStyle === 'blur' || config.maskStyle === 'frosted') ? 'flex' : 'none'};align-items:center;gap:6px;margin-bottom:8px;font-size:11px;">
-        <span style="flex-shrink:0;">模糊程度</span>
+        <span style="flex-shrink:0;">模糊强度</span>
         <input id="st-qm-blur" type="range" min="2" max="14" step="0.5" value="${curBlur}" style="flex:1;min-width:0;" />
         <span id="st-qm-blur-v" style="width:34px;text-align:right;">${curBlur}px</span>
+      </div>
+      <div id="st-qm-bar-box" style="display:${config.maskStyle === 'bar' ? 'flex' : 'none'};flex-direction:column;gap:5px;margin-bottom:8px;font-size:11px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span>黑条颜色</span>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <input id="st-qm-bar-col" class="st-vph-round-col" type="color" value="${escapeHtmlSimple(config.maskBarColor || '#2c2c30')}" style="width:20px;height:20px;" />
+            <button type="button" id="st-qm-bar-col-reset" class="st-tb-mini-btn">默认</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="width:48px;flex-shrink:0;">圆角</span>
+          <input id="st-qm-bar-rad" type="range" min="0" max="14" step="1" value="${clamp(Number(config.maskBarRadius ?? 3), 0, 14)}" style="flex:1;min-width:0;" />
+          <span id="st-qm-bar-rad-v" style="width:30px;text-align:right;">${clamp(Number(config.maskBarRadius ?? 3), 0, 14)}px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="width:48px;flex-shrink:0;">上下内距</span>
+          <input id="st-qm-bar-py" type="range" min="0" max="8" step="1" value="${clamp(Number(config.maskBarPadY ?? 0), 0, 8)}" style="flex:1;min-width:0;" />
+          <span id="st-qm-bar-py-v" style="width:30px;text-align:right;">${clamp(Number(config.maskBarPadY ?? 0), 0, 8)}px</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="width:48px;flex-shrink:0;">左右内距</span>
+          <input id="st-qm-bar-px" type="range" min="0" max="14" step="1" value="${clamp(Number(config.maskBarPadX ?? 3), 0, 14)}" style="flex:1;min-width:0;" />
+          <span id="st-qm-bar-px-v" style="width:30px;text-align:right;">${clamp(Number(config.maskBarPadX ?? 3), 0, 14)}px</span>
+        </div>
       </div>
       <div id="st-qm-cust-row" style="display:${config.maskStyle === 'custom' ? 'flex' : 'none'};align-items:center;gap:6px;margin-bottom:8px;font-size:11px;">
         <span style="flex-shrink:0;">替换字符</span>
@@ -61555,6 +61684,8 @@
       box.querySelectorAll('.st-qm-st').forEach(b => b.classList.toggle('active', b.dataset.ms === config.maskStyle));
       const br = box.querySelector('#st-qm-blur-row');
       if (br) br.style.display = (config.maskStyle === 'blur' || config.maskStyle === 'frosted') ? 'flex' : 'none';
+      const bb = box.querySelector('#st-qm-bar-box');
+      if (bb) bb.style.display = config.maskStyle === 'bar' ? 'flex' : 'none';
       const cr = box.querySelector('#st-qm-cust-row');
       if (cr) cr.style.display = config.maskStyle === 'custom' ? 'flex' : 'none';
     };
@@ -61570,14 +61701,73 @@
     }));
     const blurInp = box.querySelector('#st-qm-blur');
     const blurV = box.querySelector('#st-qm-blur-v');
-    if (blurInp) blurInp.addEventListener('input', () => {
-      const v = clamp(Number(blurInp.value) || 6, 2, 14);
-      config.maskBlurPx = v;
-      doc.documentElement.style.setProperty('--st-mask-blur', `${v}px`);
-      if (blurV) blurV.textContent = `${v}px`;
-      syncUI();
+    if (blurInp) {
+      blurInp.addEventListener('input', () => {
+        const v = clamp(Number(blurInp.value) || 6, 2, 14);
+        config.maskBlurPx = v;
+        if (blurV) blurV.textContent = `${v}px`;
+        if (maskBlurRange) maskBlurRange.value = String(v);
+        if (maskBlurVal) maskBlurVal.textContent = `${v}px`;
+        setMaskCssVarSmooth('--st-mask-blur', `${v}px`);
+      });
+      blurInp.addEventListener('change', () => scheduleSaveConfig());
+    }
+    const qmBarCol = box.querySelector('#st-qm-bar-col');
+    const qmBarColReset = box.querySelector('#st-qm-bar-col-reset');
+    const qmBarRad = box.querySelector('#st-qm-bar-rad');
+    const qmBarRadV = box.querySelector('#st-qm-bar-rad-v');
+    const qmBarPy = box.querySelector('#st-qm-bar-py');
+    const qmBarPyV = box.querySelector('#st-qm-bar-py-v');
+    const qmBarPx = box.querySelector('#st-qm-bar-px');
+    const qmBarPxV = box.querySelector('#st-qm-bar-px-v');
+    if (qmBarCol) {
+      qmBarCol.addEventListener('input', () => {
+        config.maskBarColor = qmBarCol.value;
+        if (maskBarCol) maskBarCol.value = config.maskBarColor;
+        setMaskCssVarSmooth('--st-mask-bar-bg', config.maskBarColor);
+      });
+      qmBarCol.addEventListener('change', () => scheduleSaveConfig());
+    }
+    if (qmBarColReset) qmBarColReset.addEventListener('click', () => {
+      config.maskBarColor = '';
+      if (qmBarCol) qmBarCol.value = '#2c2c30';
+      if (maskBarCol) maskBarCol.value = '#2c2c30';
+      setMaskCssVarSmooth('--st-mask-bar-bg', null);
       scheduleSaveConfig();
     });
+    if (qmBarRad) {
+      qmBarRad.addEventListener('input', () => {
+        const v = clamp(Number(qmBarRad.value) || 0, 0, 14);
+        config.maskBarRadius = v;
+        if (qmBarRadV) qmBarRadV.textContent = `${v}px`;
+        if (maskBarRad) maskBarRad.value = String(v);
+        if (maskBarRadVal) maskBarRadVal.textContent = `${v}px`;
+        setMaskCssVarSmooth('--st-mask-bar-rad', `${v}px`);
+      });
+      qmBarRad.addEventListener('change', () => scheduleSaveConfig());
+    }
+    if (qmBarPy) {
+      qmBarPy.addEventListener('input', () => {
+        const v = clamp(Number(qmBarPy.value) || 0, 0, 8);
+        config.maskBarPadY = v;
+        if (qmBarPyV) qmBarPyV.textContent = `${v}px`;
+        if (maskBarPy) maskBarPy.value = String(v);
+        if (maskBarPyVal) maskBarPyVal.textContent = `${v}px`;
+        setMaskCssVarSmooth('--st-mask-bar-py', `${v}px`);
+      });
+      qmBarPy.addEventListener('change', () => scheduleSaveConfig());
+    }
+    if (qmBarPx) {
+      qmBarPx.addEventListener('input', () => {
+        const v = clamp(Number(qmBarPx.value) || 0, 0, 14);
+        config.maskBarPadX = v;
+        if (qmBarPxV) qmBarPxV.textContent = `${v}px`;
+        if (maskBarPx) maskBarPx.value = String(v);
+        if (maskBarPxVal) maskBarPxVal.textContent = `${v}px`;
+        setMaskCssVarSmooth('--st-mask-bar-px', `${v}px`);
+      });
+      qmBarPx.addEventListener('change', () => scheduleSaveConfig());
+    }
     const custInp = box.querySelector('#st-qm-cust');
     if (custInp) custInp.addEventListener('input', () => {
       config.maskCustomText = custInp.value || '○';
@@ -62798,6 +62988,34 @@
       showPuppyBubble(getPersIdle('newMsg'), 1800, true);
     }
   };
+
+  // 自动修复重名角色卡在首页「最近聊天」点进去报后端错误（按唯一 avatar 文件名精准定位角色卡再打开对应聊天）
+  try {
+    doc.addEventListener('click', async (ev) => {
+      try {
+        const card = ev.target && ev.target.closest ? ev.target.closest('.recentChat[data-avatar][data-file], .recent_chat[data-avatar][data-file]') : null;
+        if (!card) return;
+        const avatar = String(card.getAttribute('data-avatar') || '').trim();
+        const rawFile = String(card.getAttribute('data-file') || '').trim();
+        if (!avatar || !rawFile) return;
+        const ctx = getContext();
+        const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+        if (!chars.length) return;
+        const exactIdx = chars.findIndex(c => c && String(c.avatar || '') === avatar);
+        if (exactIdx < 0) return;
+        const targetName = String(chars[exactIdx].name || '');
+        const dupCount = chars.filter(c => c && String(c.name || '') === targetName).length;
+        if (dupCount < 2) return; // 非重名卡直接走酒馆原逻辑
+        if (typeof ctx.selectCharacterById !== 'function' || typeof ctx.openCharacterChat !== 'function') return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        await ctx.selectCharacterById(String(exactIdx));
+        const cleanFile = rawFile.replace(/\.jsonl$/i, '');
+        await ctx.openCharacterChat(cleanFile);
+      } catch (_) {}
+    }, true);
+  } catch (_) {}
 
   const bindSillyTavernEvents = () => {
     const ctx = getContext();
