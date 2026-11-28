@@ -42125,14 +42125,50 @@
     }
     const lay = Object.assign({ avPad: 2, bubGap: 11, bubPad: 6, rowGap: 13, fontSize: 11, bubTop: 0, showTime: true, timePos: 'below_bub', timeMode: 'all', avMode: 'all' }, config.puppyDmLayout || {});
     const isGroupMode = (lay.avMode && lay.avMode !== 'all') || lay.timeMode === 'last';
+    const TIME_GAP_MS = 5 * 60 * 1000;
+    const fmtDmCenterTime = (tsVal) => {
+      const d = new Date(tsVal || Date.now());
+      const nowD = new Date();
+      const pad2 = n => String(n).padStart(2, '0');
+      const hm = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+      const sameDay = d.getFullYear() === nowD.getFullYear() && d.getMonth() === nowD.getMonth() && d.getDate() === nowD.getDate();
+      if (sameDay) return hm;
+      const yest = new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate() - 1);
+      const isYest = d.getFullYear() === yest.getFullYear() && d.getMonth() === yest.getMonth() && d.getDate() === yest.getDate();
+      if (isYest) return `昨天 ${hm}`;
+      return `${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${hm}`;
+    };
+    const isSameGroupPair = (a, b) => {
+      if (!a || !b || a.dir !== b.dir) return false;
+      const tA = Number(a.ts || 0), tB = Number(b.ts || 0);
+      if (tA && tB && Math.abs(tB - tA) >= TIME_GAP_MS) return false;
+      return true;
+    };
+
     msgs.forEach((m, mIdx) => {
       const isMe = m.dir === 'me';
       const prevM = mIdx > 0 ? msgs[mIdx - 1] : null;
       const nextM = mIdx < msgs.length - 1 ? msgs[mIdx + 1] : null;
-      const samePrev = Boolean(prevM && prevM.dir === m.dir);
-      const sameNext = Boolean(nextM && nextM.dir === m.dir);
+      const needCenterTime = mIdx === 0 || (prevM && Number(m.ts || 0) - Number(prevM.ts || 0) >= TIME_GAP_MS);
+      if (needCenterTime && m.ts) {
+        const divT = doc.createElement('div');
+        divT.style.cssText = `text-align:center;font-size:9px;opacity:0.58;margin:${mIdx === 0 ? '2px' : '10px'} 0 7px;letter-spacing:0.3px;user-select:none;`;
+        divT.textContent = fmtDmCenterTime(m.ts);
+        listEl.appendChild(divT);
+      }
+      const samePrev = isSameGroupPair(prevM, m);
+      const sameNext = isSameGroupPair(m, nextM);
       const showAvThis = lay.avMode === 'first' ? !samePrev : (lay.avMode === 'last' ? !sameNext : true);
-      const showTimeThis = (lay.showTime !== false) && (lay.timeMode === 'last' ? !sameNext : true);
+      const putLastTimeUnderFirstAv = lay.showTime !== false && lay.timePos === 'below_av' && lay.avMode === 'first' && lay.timeMode === 'last';
+      let groupEndTs = m.ts || Date.now();
+      if (putLastTimeUnderFirstAv && showAvThis) {
+        let k = mIdx;
+        while (k < msgs.length - 1 && isSameGroupPair(msgs[k], msgs[k + 1])) k++;
+        groupEndTs = msgs[k]?.ts || groupEndTs;
+      }
+      const showTimeThis = putLastTimeUnderFirstAv
+        ? showAvThis
+        : ((lay.showTime !== false) && (lay.timeMode === 'last' ? !sameNext : true));
       const rowBottomGap = (isGroupMode && sameNext) ? Math.max(4, Math.round(lay.rowGap * 0.42)) : lay.rowGap;
       const rowTopPad = (isGroupMode && samePrev) ? 0 : 4;
       const senderLook = isMe ? myLook : (fr.look || {});
@@ -42230,7 +42266,7 @@
       });
       bub.style.padding = m.sticker ? `${Math.max(3, lay.bubPad - 1)}px ${lay.bubPad + 1}px` : `${lay.bubPad}px ${lay.bubPad + 4}px`;
       bub.style.fontSize = `${lay.fontSize}px`;
-      const dObj = new Date(m.ts || Date.now());
+      const dObj = new Date(putLastTimeUnderFirstAv ? groupEndTs : (m.ts || Date.now()));
       const tmTxt = `${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
       let quoteChip = null;
       if (m.quote && (m.quote.text || m.quote.sender)) {
