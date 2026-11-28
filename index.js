@@ -56949,7 +56949,12 @@
         claimBtn.className = 'st-px-btn care';
         claimBtn.style.width = '100%';
         claimBtn.textContent = '领取工资与打工小剧场';
-        claimBtn.addEventListener('click', () => {
+        claimBtn.addEventListener('click', (eClick) => {
+          if (eClick) eClick.stopPropagation();
+          if (!config.puppyJob || claimBtn.dataset.claimed === '1') return;
+          claimBtn.dataset.claimed = '1';
+          claimBtn.disabled = true;
+          if (jobAnimTimer) { clearInterval(jobAnimTimer); jobAnimTimer = null; }
           const JOB_EXTRA_EVENTS = {
             boba: [
               { star: true, tip: 4, msg: '一位常客一口气点了十杯四季春奶盖，夸{self}摇得又匀又快，大手一挥塞了丰厚小费!' },
@@ -57253,7 +57258,9 @@
             <div style="font-size:11px;font-weight:700;">基础 +${effBaseWage}币${bonusParts.length ? ' · ' + bonusParts.join(' · ') : ''} → 实发入账 +${totalWage}币${failType === 'pause' ? ' · 停工反省 1 小时' : (failType === 'deduct' ? ' · 休息 20 分钟' : '')}</div>
             ${coopHtml}${revHtml}${promoHtml}${masterHtml}
           `;
-          updatePupStatBars(); syncPuppyBagUI(); if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges();
+          setTimeout(() => {
+            try { updatePupStatBars(); syncPuppyBagUI(); if (typeof updateAdvJobTabBadges === 'function') updateAdvJobTabBadges(); } catch (_) {}
+          }, 16);
         });
         statusEl.appendChild(claimBtn);
         startBtn.disabled = true;
@@ -57277,6 +57284,8 @@
           }
           jobAnimTick++;
           if (Date.now() >= config.puppyJob.endAt) {
+            clearInterval(jobAnimTimer);
+            jobAnimTimer = null;
             renderJobPanel();
             return;
           }
@@ -63777,6 +63786,10 @@
               const chName = String(reqBody?.ch_name || '').trim();
               const fileName = String(reqBody?.file_name || '').trim();
               const origAv = String(reqBody?.avatar_url || '').trim();
+              const cleanWantedPre = fileName.replace(/\.jsonl$/i, '');
+              const isMappedDup = Boolean(cleanWantedPre && config.dupChatOwnerMap && config.dupChatOwnerMap[cleanWantedPre]);
+              const isActiveSwitch = Date.now() < (win.__stSuppressDupChatToastUntil || 0);
+              if (!isMappedDup && !isActiveSwitch) return res;
               const ctx = getContext();
               const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
               let allSameName = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && ((chName && String(c.name || '') === chName) || (origAv && String(c.avatar || '') === origAv)));
@@ -63785,7 +63798,7 @@
                 allSameName = chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === nm);
               }
               if (allSameName.length >= 2 && fileName) {
-                const cleanWanted = fileName.replace(/\.jsonl$/i, '');
+                const cleanWanted = cleanWantedPre;
                 const nameVariants = cleanWanted === fileName ? [cleanWanted] : [cleanWanted, fileName];
                 for (const { c } of allSameName) {
                   if (!c.avatar || c.avatar === origAv) continue;
