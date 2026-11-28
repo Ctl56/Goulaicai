@@ -11850,6 +11850,20 @@
     deferredSaveTimer = setTimeout(saveConfig, 120);
   };
 
+  const getBadgeMinTop = () => {
+    let minY = 52;
+    try {
+      const tb = doc.querySelector('#top-settings-holder, #top-bar');
+      if (tb) {
+        const r = tb.getBoundingClientRect();
+        if (r && r.height > 10 && r.bottom > 0 && r.bottom < 120) {
+          minY = Math.max(minY, Math.ceil(r.bottom) + 6);
+        }
+      }
+    } catch (_) {}
+    return Math.min(minY, 110);
+  };
+
   const applyBadgePosition = (measureNow = false) => {
     const w = win.innerWidth;
     const h = win.innerHeight;
@@ -11860,13 +11874,19 @@
       if (mh > 0) cachedBadgeH = mh;
     }
 
+    const minY = getBadgeMinTop();
     if (config.posX === null) config.posX = w - cachedBadgeW - 14;
-    config.posX = clamp(config.posX, 8, Math.max(8, w - cachedBadgeW - 8));
-    config.posY = clamp(config.posY, 8, Math.max(8, h - cachedBadgeH - 8));
+    const drawX = clamp(config.posX, 8, Math.max(8, w - cachedBadgeW - 8));
+    const drawY = clamp(config.posY, minY, Math.max(minY, h - cachedBadgeH - 8));
+    // 键盘弹出等极矮视口瞬间仅临时限制显示，不覆盖用户原本保存的 posY；正常视口才同步回写并自动把卡进顶栏的旧坐标拉回安全区
+    if (h >= 280) {
+      config.posX = drawX;
+      config.posY = drawY;
+    }
 
-    badge.style.transform = `translate3d(${Math.round(config.posX)}px, ${Math.round(config.posY)}px, 0)`;
+    badge.style.transform = `translate3d(${Math.round(drawX)}px, ${Math.round(drawY)}px, 0)`;
 
-    edgeTab.style.top = `${clamp(config.posY, 40, h - 84)}px`;
+    edgeTab.style.top = `${clamp(drawY, minY, Math.max(minY, h - 84))}px`;
     edgeTab.classList.toggle('side-left', config.dockSide === 'left');
     edgeTab.classList.toggle('side-right', config.dockSide === 'right');
 
@@ -12181,7 +12201,7 @@
     }
     if (dragState.moved) {
       config.posX = clamp(dragState.origX + dx, 8, win.innerWidth - cachedBadgeW - 8);
-      config.posY = clamp(dragState.origY + dy, 8, win.innerHeight - cachedBadgeH - 8);
+      const _bMinY = getBadgeMinTop(); config.posY = clamp(dragState.origY + dy, _bMinY, Math.max(_bMinY, win.innerHeight - cachedBadgeH - 8));
       badge.style.transform = `translate3d(${Math.round(config.posX)}px, ${Math.round(config.posY)}px, 0)`;
     }
   });
