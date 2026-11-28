@@ -54258,7 +54258,6 @@
     if (adaptOn) {
       rules.push('#chat { will-change: scroll-position; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }');
       rules.push('#chat .mes { contain: style; }');
-      rules.push('#chat .mes:not(.last_mes) { content-visibility: auto; contain-intrinsic-size: auto 220px; }');
     }
     if (noBlur) {
       rules.push('#sheld, #chat .mes, #send_form, #top-bar { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }');
