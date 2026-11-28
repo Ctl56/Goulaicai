@@ -63917,24 +63917,93 @@
     }
   } catch (_) {}
 
-  // 共享：同步已渲染的「最近聊天」卡片头像/去重，并在点击时按 dupChatOwnerMap 直接打开正确同名卡（解决退出重进首屏早于插件加载的问题）
+  // 共享：多张重名卡（2/3/4+张）真实归属核验 + 「最近聊天」头像同步 + 点击直达正确卡（彻底防止点进空聊天）
   const extractRecentChatFileStem = (el) => {
     if (!el) return '';
     const raw = el.dataset?.file || el.dataset?.chat || el.getAttribute('data-file_name') || el.getAttribute('data-file') || el.getAttribute('data-chat') || el.querySelector('.chatName, .chat_name')?.textContent || '';
     return String(raw || '').trim().replace(/\.jsonl$/i, '');
   };
 
+  const extractRecentChatAvatar = (el) => {
+    if (!el) return '';
+    const da = String(el.dataset?.avatar || el.getAttribute('data-avatar') || '').trim();
+    if (da) return da;
+    const img = el.querySelector('img.avatar, .avatar img, img');
+    const srcStr = String(img?.getAttribute('src') || '');
+    const m = srcStr.match(/[?&]file=([^&]+)/);
+    if (m && m[1]) {
+      try { return decodeURIComponent(m[1]); } catch (_) { return m[1]; }
+    }
+    return '';
+  };
+
+  const _dupVerifyInFlight = new Set();
+  const _dupVerifyChecked = new Set();
+
+  // 并行查询所有同名角色卡各自真实后台目录，找出真正拥有 fileStem 这份聊天文件的卡（支持 2/3/4/N 张重名卡）
+  async function findRealDupChatOwners(dupSiblings, fileStem) {
+    if (!Array.isArray(dupSiblings) || dupSiblings.length < 2 || !fileStem) return [];
+    const ctx = getContext();
+    const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+    const checks = await Promise.all(dupSiblings.map(async (item) => {
+      try {
+        const av = String(item?.c?.avatar || '').trim();
+        if (!av) return null;
+        const r = await win.fetch('/api/characters/chats', {
+          method: 'POST',
+          headers: hdrs,
+          body: JSON.stringify({ avatar_url: av }),
+        });
+        if (!r || !r.ok) return null;
+        const arr = await r.json();
+        if (Array.isArray(arr) && arr.some(it => String(it?.file_name || '').trim().replace(/\.jsonl$/i, '') === fileStem)) {
+          return item;
+        }
+      } catch (_) {}
+      return null;
+    }));
+    return checks.filter(Boolean);
+  }
+
   function syncRecentChatDomByOwnerMap() {
     try {
-      const ownerMap = config.dupChatOwnerMap;
-      if (!ownerMap || typeof ownerMap !== 'object' || !Object.keys(ownerMap).length) return;
+      const ctx = getContext();
+      const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+      const ownerMap = (config.dupChatOwnerMap && typeof config.dupChatOwnerMap === 'object') ? config.dupChatOwnerMap : {};
       const items = doc.querySelectorAll('.recentChat, .recent_chat');
       if (!items.length) return;
       const seenMapped = new Set();
       items.forEach((el) => {
         const fn = extractRecentChatFileStem(el);
-        const targetAv = fn ? ownerMap[fn] : '';
-        if (!targetAv) return;
+        const curAv = extractRecentChatAvatar(el);
+        const mappedAv = fn ? ownerMap[fn] : '';
+
+        // 如果这条最近聊天属于重名角色（2/3/4+张），后台静默核验真实文件到底在哪张卡目录里，自动修正显示头像
+        if (fn && chars.length) {
+          const matchedCh = curAv ? chars.find(c => c && String(c.avatar || '') === curAv) : null;
+          const nm = String(matchedCh?.name || '').trim();
+          const dupSiblings = nm ? chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '').trim() === nm) : [];
+          if (dupSiblings.length >= 2 && !_dupVerifyInFlight.has(fn) && !_dupVerifyChecked.has(fn)) {
+            _dupVerifyInFlight.add(fn);
+            findRealDupChatOwners(dupSiblings, fn).then((realOwners) => {
+              _dupVerifyInFlight.delete(fn);
+              _dupVerifyChecked.add(fn);
+              if (realOwners.length === 1 && realOwners[0].c?.avatar) {
+                const realAv = realOwners[0].c.avatar;
+                if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
+                if (config.dupChatOwnerMap[fn] !== realAv) {
+                  config.dupChatOwnerMap[fn] = realAv;
+                  saveConfig();
+                }
+                el.setAttribute('data-avatar', realAv);
+                const img2 = el.querySelector('img.avatar, .avatar img, img');
+                if (img2) img2.src = `/thumbnail?type=avatar&file=${encodeURIComponent(realAv)}`;
+              }
+            }).catch(() => { _dupVerifyInFlight.delete(fn); });
+          }
+        }
+
+        if (!mappedAv) return;
         if (seenMapped.has(fn)) {
           el.style.display = 'none';
           el.dataset.stGlDupHidden = '1';
@@ -63945,12 +64014,12 @@
           el.style.display = '';
           delete el.dataset.stGlDupHidden;
         }
-        el.setAttribute('data-avatar', targetAv);
+        el.setAttribute('data-avatar', mappedAv);
         const img = el.querySelector('img.avatar, .avatar img, img');
         if (img) {
-          const enc = encodeURIComponent(targetAv);
+          const enc = encodeURIComponent(mappedAv);
           const curSrc = String(img.getAttribute('src') || '');
-          if (!curSrc.includes(enc) && !curSrc.includes(targetAv)) {
+          if (!curSrc.includes(enc) && !curSrc.includes(mappedAv)) {
             img.src = `/thumbnail?type=avatar&file=${enc}`;
           }
         }
@@ -64008,54 +64077,67 @@
         _enteredFromRecentChatUntil = Date.now() + 9000;
         _lastDupTipKey = '';
 
-        const ownerMap = config.dupChatOwnerMap;
-        if (!ownerMap || typeof ownerMap !== 'object' || !Object.keys(ownerMap).length) return;
         const fn = extractRecentChatFileStem(itemEl);
-        const targetAv = fn ? ownerMap[fn] : '';
-        if (!targetAv) return;
+        const curAv = extractRecentChatAvatar(itemEl);
         const ctx = getContext();
         const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
-        const targetIdx = chars.findIndex(c => c && String(c.avatar || '') === String(targetAv));
-        if (targetIdx < 0 || typeof ctx?.selectCharacterById !== 'function') return;
+        if (!fn || !chars.length || typeof ctx?.selectCharacterById !== 'function') return;
+
+        const ownerMap = (config.dupChatOwnerMap && typeof config.dupChatOwnerMap === 'object') ? config.dupChatOwnerMap : {};
+        const mappedAv = ownerMap[fn] || '';
+        const refAv = mappedAv || curAv;
+        const refCh = refAv ? chars.find(c => c && String(c.avatar || '') === String(refAv)) : null;
+        const refName = String(refCh?.name || '').trim();
+        const dupSiblings = refName
+          ? chars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '').trim() === refName)
+          : [];
+
+        // 只要是重名角色（2/3/4+张），无论是否切过卡，统一先查所有同名卡真实后台目录，绝不让酒馆点进错卡空聊天
+        if (dupSiblings.length < 2) return;
+
         e.preventDefault();
         e.stopPropagation();
         if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
-        win.__stSuppressDupChatToastUntil = Date.now() + 5000;
+        win.__stSuppressDupChatToastUntil = Date.now() + 6000;
+
         (async () => {
           try {
-            await ctx.selectCharacterById(String(targetIdx));
-            for (let w = 0; w < 25; w++) {
+            const realOwners = await findRealDupChatOwners(dupSiblings, fn);
+            let chosen = null;
+            if (realOwners.length === 1) {
+              chosen = realOwners[0];
+            } else if (realOwners.length > 1) {
+              chosen = (mappedAv && realOwners.find(x => String(x.c.avatar || '') === mappedAv))
+                || (curAv && realOwners.find(x => String(x.c.avatar || '') === curAv))
+                || realOwners[0];
+            } else {
+              // 极端情况：所有同名卡目录里都没找到 fn，退回 mappedAv 或 curAv（不强行开空文件）
+              chosen = (mappedAv && dupSiblings.find(x => String(x.c.avatar || '') === mappedAv))
+                || (curAv && dupSiblings.find(x => String(x.c.avatar || '') === curAv))
+                || dupSiblings[0];
+            }
+            if (!chosen) return;
+            const chosenAv = String(chosen.c.avatar || '');
+            if (realOwners.length === 1 && chosenAv) {
+              if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
+              config.dupChatOwnerMap[fn] = chosenAv;
+              saveConfig();
+            }
+
+            await ctx.selectCharacterById(String(chosen.idx));
+            for (let w = 0; w < 26; w++) {
               await new Promise(r => setTimeout(r, 100));
               const nowCtx = getContext();
               const nowId = Number((nowCtx?.characterId ?? win.this_chid));
-              if (nowId === targetIdx && Array.isArray(nowCtx?.chat) && nowCtx.chat.length > 0) break;
+              if (nowId === chosen.idx && Array.isArray(nowCtx?.chat) && nowCtx.chat.length > 0) break;
             }
-            await new Promise(r => setTimeout(r, 180));
+            await new Promise(r => setTimeout(r, 160));
             const afterCtx = getContext();
             const curLoadedId = String(afterCtx?.chatId || '').trim().replace(/\.jsonl$/i, '');
             const curLoadedLen = Array.isArray(afterCtx?.chat) ? afterCtx.chat.length : 0;
-            // 若选卡后已经自动加载出目标聊天（且有消息），无需再次 openCharacterChat
             if (curLoadedId === fn && curLoadedLen > 0) return;
-            // 仅当目标卡目录里确实存在 fn 时才切换，绝不强行打开不存在的空聊天
-            if (fn && typeof ctx.openCharacterChat === 'function') {
-              const hdrs = typeof afterCtx?.getRequestHeaders === 'function' ? afterCtx.getRequestHeaders() : { 'Content-Type': 'application/json' };
-              let existsInTarget = false;
-              try {
-                const rC = await win.fetch('/api/characters/chats', {
-                  method: 'POST',
-                  headers: hdrs,
-                  body: JSON.stringify({ avatar_url: targetAv }),
-                });
-                if (rC && rC.ok) {
-                  const arrC = await rC.json();
-                  if (Array.isArray(arrC)) {
-                    existsInTarget = arrC.some(it => String(it?.file_name || '').trim().replace(/\.jsonl$/i, '') === fn);
-                  }
-                }
-              } catch (_) {}
-              if (existsInTarget) {
-                await ctx.openCharacterChat(fn);
-              }
+            if (realOwners.some(x => x.idx === chosen.idx) && typeof ctx.openCharacterChat === 'function') {
+              await ctx.openCharacterChat(fn);
             }
           } catch (_) {}
         })();
