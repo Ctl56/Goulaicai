@@ -10501,6 +10501,9 @@
     </div>
   `;
   doc.body.appendChild(root);
+  ['click', 'mousedown', 'touchstart', 'touchend'].forEach((evName) => {
+    root.addEventListener(evName, (ev) => { ev.stopPropagation(); }, false);
+  });
 
   // ==================== DOM 引用 ====================
   const backdrop = root.querySelector('#st-tb-backdrop');
@@ -13283,21 +13286,24 @@
     const wrap = doc.createElement('div');
     wrap.style.cssText = 'display:flex;flex-direction:column;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);overflow:hidden;flex-shrink:0;';
     const head = doc.createElement('div');
-    head.style.cssText = 'display:flex;align-items:center;gap:5px;padding:6px 8px;cursor:pointer;';
+    head.style.cssText = 'display:flex;align-items:center;gap:4px;padding:5px 7px;cursor:pointer;';
     const nameEl = doc.createElement('span');
     nameEl.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
     nameEl.textContent = wbName;
     nameEl.title = wbName;
     const tag = doc.createElement('span');
-    tag.style.cssText = 'font-size:10px;opacity:0.72;flex-shrink:0;padding:1px 5px;border:1px solid var(--tb-border);border-radius:4px;';
+    tag.style.cssText = 'font-size:9.5px;opacity:0.72;flex-shrink:0;padding:1px 4px;border:1px solid var(--tb-border);border-radius:4px;';
     tag.textContent = wbSource;
+    const smallBtnCss = 'font-size:10px;padding:1px 5px;height:19px;min-height:19px;line-height:17px;flex-shrink:0;';
     const expB = doc.createElement('button');
     expB.type = 'button';
     expB.className = 'st-tb-mini-btn';
+    expB.style.cssText = smallBtnCss;
     expB.textContent = '展开';
     const jumpB = doc.createElement('button');
     jumpB.type = 'button';
     jumpB.className = 'st-tb-mini-btn';
+    jumpB.style.cssText = smallBtnCss;
     jumpB.textContent = '跳转';
     jumpB.addEventListener('click', (ev) => {
       ev.stopPropagation();
@@ -13306,9 +13312,177 @@
     head.append(nameEl, tag, expB, jumpB);
 
     const body = doc.createElement('div');
-    body.style.cssText = 'display:none;flex-direction:column;gap:4px;padding:6px 7px;border-top:1px solid var(--tb-border);background:var(--tb-bg,#fff);';
+    body.style.cssText = 'display:none;flex-direction:column;gap:5px;padding:6px 7px;border-top:1px solid var(--tb-border);background:var(--tb-bg,#fff);';
     let loaded = false;
     let isOpen = false;
+    let wbData = null;
+
+    const saveWbData = async (okMsg = '已同步保存到世界书') => {
+      const ctx = getContext();
+      const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+      const res = await win.fetch('/api/worldinfo/edit', {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ name: wbName, data: wbData }),
+      });
+      if (!res || !res.ok) throw new Error('save failed');
+      showImmNotice(okMsg);
+    };
+
+    const renderEntries = () => {
+      const rawMap = wbData && typeof wbData.entries === 'object' && wbData.entries ? wbData.entries : {};
+      const entryPairs = Object.entries(rawMap);
+      if (!entryPairs.length) {
+        body.innerHTML = '<div style="font-size:11px;opacity:0.7;padding:4px 2px;">该世界书暂无条目</div>';
+        return;
+      }
+      entryPairs.sort(([, a], [, b]) => Number(a?.order ?? a?.uid ?? 0) - Number(b?.order ?? b?.uid ?? 0));
+      body.innerHTML = '';
+
+      entryPairs.forEach(([eKey, ent], eIdx) => {
+        const keys = Array.isArray(ent?.key) ? ent.key.filter(Boolean) : [];
+        const title = String(ent?.comment || '').trim() || (keys.length ? keys.slice(0, 3).join(' / ') : `条目 #${ent?.uid ?? eIdx}`);
+        const isDis = Boolean(ent?.disable);
+        const isConst = Boolean(ent?.constant);
+        const stTxt = isDis ? '禁用' : (isConst ? '蓝灯' : '绿灯');
+        const stCol = isDis ? 'opacity:0.55;' : (isConst ? 'color:#2d8cf0;' : 'color:#2ca55c;');
+
+        const eCard = doc.createElement('div');
+        eCard.style.cssText = `padding:5px 7px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);${isDis ? 'opacity:0.65;' : ''}`;
+        const eHead = doc.createElement('div');
+        eHead.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;';
+        const stSpan = doc.createElement('span');
+        stSpan.style.cssText = `font-size:10px;font-weight:700;flex-shrink:0;${stCol}`;
+        stSpan.textContent = `[${stTxt}]`;
+        const ttlSpan = doc.createElement('span');
+        ttlSpan.style.cssText = 'flex:1;min-width:0;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+        ttlSpan.textContent = title;
+        const togB = doc.createElement('button');
+        togB.type = 'button';
+        togB.className = 'st-tb-mini-btn';
+        togB.style.cssText = smallBtnCss;
+        togB.textContent = isDis ? '启用' : '禁用';
+        togB.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const prev = Boolean(ent.disable);
+          ent.disable = !prev;
+          try {
+            await saveWbData(ent.disable ? '已禁用该条目并同步' : '已启用该条目并同步');
+            renderEntries();
+          } catch (_) {
+            ent.disable = prev;
+            showImmNotice('同步失败，请稍后重试');
+          }
+        });
+        eHead.append(stSpan, ttlSpan, togB);
+
+        const eForm = doc.createElement('div');
+        eForm.style.cssText = 'display:none;flex-direction:column;gap:5px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--tb-border);font-size:11px;';
+
+        const posVal = Number.isFinite(Number(ent?.position)) ? Number(ent.position) : 0;
+        const depthVal = Number.isFinite(Number(ent?.depth)) ? Number(ent.depth) : 4;
+        const orderVal = Number.isFinite(Number(ent?.order)) ? Number(ent.order) : 100;
+        const roleVal = Number.isFinite(Number(ent?.role)) ? Number(ent.role) : 0;
+
+        eForm.innerHTML = `
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="opacity:0.75;flex-shrink:0;">标题</span>
+            <input type="text" class="st-tb-input st-wb-in-comment" style="flex:1;min-width:0;height:24px;font-size:11px;" value="${escapeHtmlSimple(ent?.comment || '')}" placeholder="条目备注名" />
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="opacity:0.75;flex-shrink:0;">模式</span>
+            <select class="st-tb-select st-wb-in-mode" style="flex:1;min-width:0;height:24px;font-size:11px;">
+              <option value="green"${!isConst ? ' selected' : ''}>绿灯（关键词触发）</option>
+              <option value="blue"${isConst ? ' selected' : ''}>蓝灯（常驻生效）</option>
+            </select>
+            <span style="opacity:0.75;flex-shrink:0;">顺序</span>
+            <input type="number" class="st-tb-input st-wb-in-order" style="width:54px;height:24px;font-size:11px;" value="${orderVal}" />
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="opacity:0.75;flex-shrink:0;">位置</span>
+            <select class="st-tb-select st-wb-in-pos" style="flex:1;min-width:0;height:24px;font-size:11px;">
+              <option value="0"${posVal === 0 ? ' selected' : ''}>角色定义之前</option>
+              <option value="1"${posVal === 1 ? ' selected' : ''}>角色定义之后</option>
+              <option value="5"${posVal === 5 ? ' selected' : ''}>示例消息之前</option>
+              <option value="6"${posVal === 6 ? ' selected' : ''}>示例消息之后</option>
+              <option value="2"${posVal === 2 ? ' selected' : ''}>作者注释之前</option>
+              <option value="3"${posVal === 3 ? ' selected' : ''}>作者注释之后</option>
+              <option value="4"${posVal === 4 ? ' selected' : ''}>@D 指定深度插入</option>
+            </select>
+          </div>
+          <div class="st-wb-depth-row" style="display:${posVal === 4 ? 'flex' : 'none'};align-items:center;gap:4px;">
+            <span style="opacity:0.75;flex-shrink:0;">深度</span>
+            <input type="number" class="st-tb-input st-wb-in-depth" style="width:52px;height:24px;font-size:11px;" min="0" value="${depthVal}" />
+            <span style="opacity:0.75;flex-shrink:0;">身份</span>
+            <select class="st-tb-select st-wb-in-role" style="flex:1;min-width:0;height:24px;font-size:11px;">
+              <option value="0"${roleVal === 0 ? ' selected' : ''}>System</option>
+              <option value="1"${roleVal === 1 ? ' selected' : ''}>User</option>
+              <option value="2"${roleVal === 2 ? ' selected' : ''}>Assistant</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <span style="opacity:0.75;flex-shrink:0;">词条</span>
+            <input type="text" class="st-tb-input st-wb-in-keys" style="flex:1;min-width:0;height:24px;font-size:11px;" value="${escapeHtmlSimple(keys.join(', '))}" placeholder="关键词，用逗号分隔" />
+          </div>
+          <textarea class="st-tb-textarea st-wb-in-content" rows="4" style="width:100%;box-sizing:border-box;font-size:11px;line-height:1.45;" placeholder="条目正文内容...">${escapeHtmlSimple(ent?.content || '')}</textarea>
+          <div style="display:flex;gap:5px;justify-content:flex-end;">
+            <button type="button" class="st-tb-mini-btn st-wb-btn-copy" style="${smallBtnCss}">复制正文</button>
+            <button type="button" class="st-tb-mini-btn active st-wb-btn-save" style="${smallBtnCss}">保存并同步</button>
+          </div>
+        `;
+
+        const posSel = eForm.querySelector('.st-wb-in-pos');
+        const depthRow = eForm.querySelector('.st-wb-depth-row');
+        if (posSel && depthRow) {
+          posSel.addEventListener('change', () => {
+            depthRow.style.display = Number(posSel.value) === 4 ? 'flex' : 'none';
+          });
+        }
+        eForm.querySelector('.st-wb-btn-copy')?.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const txt = eForm.querySelector('.st-wb-in-content')?.value || '';
+          copyVisitCodeReliable(txt);
+          showImmNotice('已复制世界书条目内容');
+        });
+        eForm.querySelector('.st-wb-btn-save')?.addEventListener('click', async (ev) => {
+          ev.stopPropagation();
+          const nextComment = String(eForm.querySelector('.st-wb-in-comment')?.value || '');
+          const nextConst = eForm.querySelector('.st-wb-in-mode')?.value === 'blue';
+          const nextOrder = Number(eForm.querySelector('.st-wb-in-order')?.value);
+          const nextPos = Number(eForm.querySelector('.st-wb-in-pos')?.value);
+          const nextDepth = Number(eForm.querySelector('.st-wb-in-depth')?.value);
+          const nextRole = Number(eForm.querySelector('.st-wb-in-role')?.value);
+          const nextKeysRaw = String(eForm.querySelector('.st-wb-in-keys')?.value || '');
+          const nextKeys = nextKeysRaw.split(/[,，\n]/).map(s => s.trim()).filter(Boolean);
+          const nextContent = String(eForm.querySelector('.st-wb-in-content')?.value || '');
+
+          ent.comment = nextComment;
+          ent.constant = nextConst;
+          if (Number.isFinite(nextOrder)) ent.order = nextOrder;
+          if (Number.isFinite(nextPos)) ent.position = nextPos;
+          if (Number.isFinite(nextDepth)) ent.depth = nextDepth;
+          if (Number.isFinite(nextRole)) ent.role = nextRole;
+          ent.key = nextKeys;
+          ent.content = nextContent;
+          wbData.entries[eKey] = ent;
+
+          try {
+            await saveWbData('已同步保存到酒馆世界书');
+            ttlSpan.textContent = nextComment.trim() || (nextKeys.length ? nextKeys.slice(0, 3).join(' / ') : `条目 #${ent?.uid ?? eIdx}`);
+            stSpan.textContent = ent.disable ? '[禁用]' : (nextConst ? '[蓝灯]' : '[绿灯]');
+            stSpan.style.cssText = `font-size:10px;font-weight:700;flex-shrink:0;${ent.disable ? 'opacity:0.55;' : (nextConst ? 'color:#2d8cf0;' : 'color:#2ca55c;')}`;
+          } catch (_) {
+            showImmNotice('同步失败，请稍后重试');
+          }
+        });
+
+        eHead.addEventListener('click', () => {
+          eForm.style.display = eForm.style.display === 'none' ? 'flex' : 'none';
+        });
+        eCard.append(eHead, eForm);
+        body.appendChild(eCard);
+      });
+    };
 
     const toggleExpand = async () => {
       isOpen = !isOpen;
@@ -13326,52 +13500,8 @@
           body: JSON.stringify({ name: wbName }),
         });
         if (!res || !res.ok) throw new Error('fetch failed');
-        const data = await res.json();
-        const rawEntries = data && typeof data.entries === 'object' && data.entries ? Object.values(data.entries) : [];
-        if (!rawEntries.length) {
-          body.innerHTML = '<div style="font-size:11px;opacity:0.7;padding:4px 2px;">该世界书暂无条目</div>';
-          return;
-        }
-        rawEntries.sort((a, b) => Number(a?.order ?? a?.uid ?? 0) - Number(b?.order ?? b?.uid ?? 0));
-        body.innerHTML = '';
-        rawEntries.forEach((ent, eIdx) => {
-          const keys = Array.isArray(ent?.key) ? ent.key.filter(Boolean) : [];
-          const title = String(ent?.comment || '').trim() || (keys.length ? keys.slice(0, 3).join(' / ') : `条目 #${ent?.uid ?? eIdx}`);
-          const content = String(ent?.content || '').trim();
-          const isDis = Boolean(ent?.disable);
-          const isConst = Boolean(ent?.constant);
-          const stTxt = isDis ? '禁用' : (isConst ? '常驻' : '绿灯');
-          const stCol = isDis ? 'opacity:0.55;' : (isConst ? 'color:#2d8cf0;' : 'color:#2ca55c;');
-
-          const eCard = doc.createElement('div');
-          eCard.style.cssText = `padding:5px 7px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);${isDis ? 'opacity:0.62;' : ''}`;
-          const eHead = doc.createElement('div');
-          eHead.style.cssText = 'display:flex;align-items:center;gap:5px;cursor:pointer;';
-          eHead.innerHTML = `<span style="font-size:10px;font-weight:700;flex-shrink:0;${stCol}">[${stTxt}]</span>
-            <span style="flex:1;min-width:0;font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(title)}</span>`;
-          const eCp = doc.createElement('button');
-          eCp.type = 'button';
-          eCp.className = 'st-tb-mini-btn';
-          eCp.style.cssText = 'font-size:10px;padding:1px 5px;height:20px;min-height:20px;flex-shrink:0;';
-          eCp.textContent = '复制';
-          eCp.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            copyVisitCodeReliable(content || title);
-            showImmNotice('已复制世界书条目内容');
-          });
-          eHead.appendChild(eCp);
-
-          const eDetail = doc.createElement('div');
-          eDetail.style.cssText = 'display:none;margin-top:5px;padding-top:5px;border-top:1px dashed var(--tb-border);font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;';
-          const keyLine = keys.length ? `<div style="font-size:10px;opacity:0.72;margin-bottom:3px;">关键词：${escapeHtmlSimple(keys.join('、'))}</div>` : '';
-          eDetail.innerHTML = `${keyLine}<div>${escapeHtmlSimple(content || '（无正文内容）')}</div>`;
-
-          eHead.addEventListener('click', () => {
-            eDetail.style.display = eDetail.style.display === 'none' ? 'block' : 'none';
-          });
-          eCard.append(eHead, eDetail);
-          body.appendChild(eCard);
-        });
+        wbData = await res.json();
+        renderEntries();
       } catch (_) {
         loaded = false;
         body.innerHTML = '<div style="font-size:11px;opacity:0.7;padding:4px 2px;">读取世界书条目失败，可点右侧「跳转」打开编辑</div>';
