@@ -3025,6 +3025,7 @@
     maskBarPadY: 0,
     maskBarPadX: 3,
     dupChatOwnerMap: {},
+    dupChatOwnerMapResetV2: false,
     maskCustomText: '○',
     maskRepeat: false,
     maskWords: '',
@@ -63534,6 +63535,13 @@
     }
   } catch (_) {}
 
+  // 一次性清理旧版插件存错的重名识别映射缓存（只清插件映射表，绝不删改任何聊天文件！）
+  if (!config.dupChatOwnerMapResetV2) {
+    config.dupChatOwnerMap = {};
+    config.dupChatOwnerMapResetV2 = true;
+    scheduleSaveConfig();
+  }
+
   // 重名角色卡「最近聊天」归属记忆与自动纠偏系统
   const recordDupChatOwner = () => {
     try {
@@ -63612,7 +63620,35 @@
       }
     }
     if (Array.isArray(chatMsgs) && chatMsgs.length) {
-      const getCardAllGreets = (c) => {
+      const fullMap = new Map();
+      const hdrs2 = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+      await Promise.all(sameNameIdxs.map(async (cid) => {
+        const baseC = chars[cid];
+        if (!baseC) return;
+        fullMap.set(cid, baseC);
+        if (!baseC.avatar) return;
+        try {
+          const rf = await win.fetch('/api/characters/get', {
+            method: 'POST',
+            headers: hdrs2,
+            body: JSON.stringify({ avatar_url: baseC.avatar }),
+          });
+          if (rf && rf.ok) {
+            const fo = await rf.json();
+            if (fo && typeof fo === 'object') fullMap.set(cid, fo);
+          }
+        } catch (_) {}
+      }));
+      const uName2 = String(ctx?.name1 || '').trim();
+      const cName2 = String(chars[sameNameIdxs[0]]?.name || ctx?.name2 || '').trim();
+      const norm2 = (t) => {
+        let s = String(t || '').replace(/<[^>]+>/g, '').replace(/\{\{user\}\}|\{\{char\}\}|<user>|<char>/gi, '');
+        if (uName2.length >= 1) s = s.split(uName2).join('');
+        if (cName2.length >= 1) s = s.split(cName2).join('');
+        return s.replace(/[\s\p{P}\p{S}]+/gu, '');
+      };
+      const getCardAllGreets = (cOrCid) => {
+        const c = typeof cOrCid === 'number' ? (fullMap.get(cOrCid) || chars[cOrCid]) : cOrCid;
         if (!c) return [];
         const first = String(c.first_mes || c.data?.first_mes || '');
         const alts = Array.isArray(c.data?.alternate_greetings)
@@ -63620,7 +63656,7 @@
           : (Array.isArray(c.alternate_greetings) ? c.alternate_greetings : []);
         const list = [];
         if (first) list.push(first);
-        alts.forEach(a => { if (typeof a === 'string') list.push(a); });
+        alts.forEach(a => { if (typeof a === 'string' && a.trim()) list.push(a); });
         return list;
       };
 
@@ -63632,21 +63668,21 @@
         const chatGreetCount = chatSwipes.length;
 
         // 1) 先看开场白有几个！若只有唯一一张同名卡的开场白总数完全一致，直接 100% 锁定！
-        const countMatchedIdxs = chatGreetCount > 0
-          ? sameNameIdxs.filter(cid => getCardAllGreets(chars[cid]).length === chatGreetCount)
+        const countMatchedIdxs = chatGreetCount >= 2
+          ? sameNameIdxs.filter(cid => getCardAllGreets(cid).length === chatGreetCount)
           : [];
         if (countMatchedIdxs.length === 1) return countMatchedIdxs[0];
 
-        // 2) 再在候选卡中（数量一致的优先）全量比对每一版开场白具体内容！
+        // 2) 再在候选卡中（数量一致的优先）去宏全量比对每一版开场白具体内容！
         const poolIdxs = countMatchedIdxs.length > 1 ? countMatchedIdxs : sameNameIdxs;
-        const normSamples = chatSwipes.map(norm).filter(t => t.length >= 6);
+        const normSamples = chatSwipes.map(norm2).filter(t => t.length >= 6);
         if (normSamples.length) {
           let bestCid = -1, bestScore = 0;
           poolIdxs.forEach(cid => {
-            const c = chars[cid];
+            const c = fullMap.get(cid) || chars[cid];
             if (!c) return;
-            const greetsRaw = getCardAllGreets(c);
-            const greets = greetsRaw.map(norm).filter(t => t.length >= 6);
+            const greetsRaw = getCardAllGreets(cid);
+            const greets = greetsRaw.map(norm2).filter(t => t.length >= 6);
             let score = (greetsRaw.length === chatGreetCount) ? 200 : 0;
             normSamples.forEach((sp, sIdx) => {
               // 优先同索引直接比对
@@ -72162,11 +72198,81 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
             if (!ch) {
               cardEl.innerHTML = '<div style="font-size:11.5px;opacity:0.75;">当前未在单人角色聊天中</div>';
             } else {
+              const allChars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+              const dupSiblings = allChars.map((c, idx) => ({ c, idx })).filter(({ c }) => c && String(c.name || '') === String(ch.name || ''));
               cardEl.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(ch.avatar || '')}" style="width:36px;height:36px;border-radius:7px;object-fit:cover;flex-shrink:0;" />
                 <div style="min-width:0;flex:1;">
                   <div style="font-weight:700;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(ch.name || '')}</div>
-                  <div style="font-size:10.5px;opacity:0.72;">当前聊天 ${chatArr.length} 层 · 归属 ${escapeHtmlSimple(ch.avatar || '')}</div>
-                </div>`;
+                  <div style="font-size:10.5px;opacity:0.72;">当前聊天 ${chatArr.length} 层 · ${escapeHtmlSimple(ch.avatar || '')}</div>
+                </div>${dupSiblings.length >= 2 ? '<button type="button" id="st-qcc-dup-fix" class="st-tb-mini-btn" style="flex-shrink:0;">切同名卡</button>' : ''}`;
+              const dupFixBtn = cardEl.querySelector('#st-qcc-dup-fix');
+              if (dupFixBtn) {
+                dupFixBtn.addEventListener('click', async () => {
+                  const curChatId = String(ctx?.chatId || '').trim().replace(/\.jsonl$/i, '');
+                  const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+                  const detailed = await Promise.all(dupSiblings.map(async ({ c, idx }) => {
+                    let full = c;
+                    try {
+                      const r = await win.fetch('/api/characters/get', { method: 'POST', headers: hdrs, body: JSON.stringify({ avatar_url: c.avatar }) });
+                      if (r && r.ok) { const j = await r.json(); if (j && typeof j === 'object') full = j; }
+                    } catch (_) {}
+                    const f = String(full?.first_mes || full?.data?.first_mes || '');
+                    const alts = Array.isArray(full?.data?.alternate_greetings) ? full.data.alternate_greetings : (Array.isArray(full?.alternate_greetings) ? full.alternate_greetings : []);
+                    const gCnt = (f ? 1 : 0) + alts.filter(a => typeof a === 'string' && a.trim()).length;
+                    return { c, idx, gCnt, prev: f.replace(/\s+/g, ' ').slice(0, 32) };
+                  }));
+                  let dm = root.querySelector('#st-tb-qcc-dupswitch-mask');
+                  if (dm) dm.remove();
+                  dm = doc.createElement('div');
+                  dm.id = 'st-tb-qcc-dupswitch-mask';
+                  dm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;';
+                  if (typeof nextPupTopZ === 'function') dm.style.zIndex = String(nextPupTopZ());
+                  const box = doc.createElement('div');
+                  box.style.cssText = 'width:min(310px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;';
+                  box.innerHTML = '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">切换当前聊天对应的重名卡</div><div style="font-size:11px;opacity:0.74;margin-bottom:8px;">按开场白数量与首句区分，切卡不会删除你的任何聊天记录：</div>';
+                  const listEl = doc.createElement('div');
+                  listEl.style.cssText = 'display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto;margin-bottom:8px;';
+                  detailed.forEach(({ c, idx, gCnt, prev }) => {
+                    const isNow = String(c.avatar || '') === String(ch.avatar || '');
+                    const row = doc.createElement('button');
+                    row.type = 'button';
+                    row.className = 'st-tb-btn' + (isNow ? ' primary' : '');
+                    row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 8px;height:auto;';
+                    row.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(c.avatar || '')}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;" /><div style="min-width:0;flex:1;"><div style="font-weight:700;font-size:11.5px;">${isNow ? '[当前] ' : ''}${gCnt} 版开场白 · ${escapeHtmlSimple(c.avatar || '')}</div><div style="font-size:10px;opacity:0.75;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(prev || '无开场白预览')}</div></div>`;
+                    row.addEventListener('click', async () => {
+                      dm.remove();
+                      win.__stSuppressDupChatToastUntil = Date.now() + 5000;
+                      if (curChatId && c.avatar) {
+                        if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
+                        config.dupChatOwnerMap[curChatId] = c.avatar;
+                        saveConfig();
+                      }
+                      if (typeof ctx.selectCharacterById === 'function') {
+                        await ctx.selectCharacterById(String(idx));
+                        for (let w = 0; w < 20; w++) {
+                          await new Promise(r => setTimeout(r, 100));
+                          const nowId = Number((getContext()?.characterId ?? win.this_chid));
+                          if (nowId === idx) break;
+                        }
+                        await new Promise(r => setTimeout(r, 200));
+                        if (curChatId && typeof ctx.openCharacterChat === 'function') {
+                          await ctx.openCharacterChat(curChatId);
+                        }
+                        showImmNotice(`已切换到「${gCnt}版开场白」的重名卡`);
+                        setTimeout(() => renderQcc(true), 350);
+                      }
+                    });
+                    listEl.appendChild(row);
+                  });
+                  const cancelB = doc.createElement('button');
+                  cancelB.type = 'button'; cancelB.className = 'st-tb-btn'; cancelB.style.width = '100%'; cancelB.textContent = '取消';
+                  cancelB.addEventListener('click', () => dm.remove());
+                  box.append(listEl, cancelB);
+                  dm.appendChild(box);
+                  dm.addEventListener('click', (e2) => e2.stopPropagation());
+                  root.appendChild(dm);
+                });
+              }
             }
             cpop.querySelectorAll('.st-qcc-tab').forEach(b => b.classList.toggle('active', b.dataset.qccTab === qccTab));
             bodyEl.innerHTML = '';
