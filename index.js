@@ -5136,13 +5136,13 @@
       display: flex;
     }
     .st-tb-wb-box {
-      padding: 7px 9px;
-      border-radius: 7px;
-      background: var(--tb-surface);
-      border: 1px solid var(--tb-border);
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      border: none;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
       font-size: calc(var(--tb-fs) - 1px);
     }
     .st-tb-wb-item {
@@ -10050,7 +10050,10 @@
           <div class="st-tb-section">
             <div class="st-tb-chat-meta">
               <span id="st-tb-chat-char-info">正在读取...</span>
-              <button class="st-tb-mini-btn" id="st-tb-chat-refresh" type="button">刷新</button>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <button class="st-tb-mini-btn" id="st-tb-chat-backups" type="button">备份找回</button>
+                <button class="st-tb-mini-btn" id="st-tb-chat-refresh" type="button">刷新</button>
+              </div>
             </div>
             <div class="st-tb-row">
               <input class="st-tb-input" id="st-tb-chat-filter" type="text" placeholder="筛选聊天名称" />
@@ -13294,9 +13297,9 @@
 
   function createExpandableWorldbookCard(wbName, wbSource) {
     const wrap = doc.createElement('div');
-    wrap.style.cssText = 'display:flex;flex-direction:column;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);overflow:hidden;flex-shrink:0;';
+    wrap.style.cssText = 'display:flex;flex-direction:column;width:100%;max-width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);overflow:hidden;flex-shrink:0;';
     const head = doc.createElement('div');
-    head.style.cssText = 'display:flex;align-items:center;gap:4px;padding:5px 7px;cursor:pointer;';
+    head.style.cssText = 'display:flex;align-items:center;gap:4px;padding:6px 8px;width:100%;min-width:0;box-sizing:border-box;cursor:pointer;';
     const nameEl = doc.createElement('span');
     nameEl.style.cssText = 'flex:1;min-width:0;font-size:11.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
     nameEl.textContent = wbName;
@@ -13322,7 +13325,7 @@
     head.append(nameEl, tag, expB, jumpB);
 
     const body = doc.createElement('div');
-    body.style.cssText = 'display:none;flex-direction:column;gap:5px;padding:6px 7px;border-top:1px solid var(--tb-border);background:var(--tb-bg,#fff);';
+    body.style.cssText = 'display:none;flex-direction:column;gap:5px;padding:6px 8px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;border-top:1px solid var(--tb-border);background:var(--tb-bg,#fff);';
     let loaded = false;
     let isOpen = false;
     let wbData = null;
@@ -13358,7 +13361,7 @@
         const stCol = isDis ? 'opacity:0.55;' : (isConst ? 'color:#2d8cf0;' : 'color:#2ca55c;');
 
         const eCard = doc.createElement('div');
-        eCard.style.cssText = `padding:5px 7px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);${isDis ? 'opacity:0.65;' : ''}`;
+        eCard.style.cssText = `width:100%;max-width:100%;min-width:0;box-sizing:border-box;padding:5px 7px;border:1px solid var(--tb-border);border-radius:6px;background:var(--tb-surface);${isDis ? 'opacity:0.65;' : ''}`;
         const eHead = doc.createElement('div');
         eHead.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;';
         const stSpan = doc.createElement('span');
@@ -13387,7 +13390,7 @@
         eHead.append(stSpan, ttlSpan, togB);
 
         const eForm = doc.createElement('div');
-        eForm.style.cssText = 'display:none;flex-direction:column;gap:5px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--tb-border);font-size:11px;';
+        eForm.style.cssText = 'display:none;flex-direction:column;gap:5px;width:100%;max-width:100%;min-width:0;box-sizing:border-box;margin-top:6px;padding-top:6px;border-top:1px dashed var(--tb-border);font-size:11px;';
 
         const posVal = Number.isFinite(Number(ent?.position)) ? Number(ent.position) : 0;
         const depthVal = Number.isFinite(Number(ent?.depth)) ? Number(ent.depth) : 4;
@@ -13398,11 +13401,11 @@
         eForm.innerHTML = `
           <div style="display:flex;align-items:center;gap:5px;">
             <span style="opacity:0.78;flex-shrink:0;line-height:28px;">标题</span>
-            <input type="text" class="st-tb-input st-wb-in-comment" style="flex:1;min-width:0;${wbFieldCss}" value="${escapeHtmlSimple(ent?.comment || '')}" placeholder="条目备注名" />
+            <input type="text" class="st-tb-input st-wb-in-comment" style="flex:1 1 0;width:0;max-width:100%;min-width:0;${wbFieldCss}" value="${escapeHtmlSimple(ent?.comment || '')}" placeholder="条目备注名" />
           </div>
           <div style="display:flex;align-items:center;gap:5px;">
             <span style="opacity:0.78;flex-shrink:0;line-height:28px;">模式</span>
-            <select class="st-tb-select st-wb-in-mode" style="flex:1;min-width:0;${wbFieldCss}">
+            <select class="st-tb-select st-wb-in-mode" style="flex:1 1 0;width:0;max-width:100%;min-width:0;${wbFieldCss}">
               <option value="green"${!isConst ? ' selected' : ''}>绿灯（关键词触发）</option>
               <option value="blue"${isConst ? ' selected' : ''}>蓝灯（常驻生效）</option>
             </select>
@@ -13411,7 +13414,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:5px;">
             <span style="opacity:0.78;flex-shrink:0;line-height:28px;">位置</span>
-            <select class="st-tb-select st-wb-in-pos" style="flex:1;min-width:0;${wbFieldCss}">
+            <select class="st-tb-select st-wb-in-pos" style="flex:1 1 0;width:0;max-width:100%;min-width:0;${wbFieldCss}">
               <option value="0"${posVal === 0 ? ' selected' : ''}>角色定义之前</option>
               <option value="1"${posVal === 1 ? ' selected' : ''}>角色定义之后</option>
               <option value="5"${posVal === 5 ? ' selected' : ''}>示例消息之前</option>
@@ -13425,7 +13428,7 @@
             <span style="opacity:0.78;flex-shrink:0;line-height:28px;">深度</span>
             <input type="number" class="st-tb-input st-wb-in-depth" style="width:54px;${wbFieldCss}" min="0" value="${depthVal}" />
             <span style="opacity:0.78;flex-shrink:0;line-height:28px;">身份</span>
-            <select class="st-tb-select st-wb-in-role" style="flex:1;min-width:0;${wbFieldCss}">
+            <select class="st-tb-select st-wb-in-role" style="flex:1 1 0;width:0;max-width:100%;min-width:0;${wbFieldCss}">
               <option value="0"${roleVal === 0 ? ' selected' : ''}>System</option>
               <option value="1"${roleVal === 1 ? ' selected' : ''}>User</option>
               <option value="2"${roleVal === 2 ? ' selected' : ''}>Assistant</option>
@@ -13433,7 +13436,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:5px;">
             <span style="opacity:0.78;flex-shrink:0;line-height:28px;">词条</span>
-            <input type="text" class="st-tb-input st-wb-in-keys" style="flex:1;min-width:0;${wbFieldCss}" value="${escapeHtmlSimple(keys.join(', '))}" placeholder="关键词，用逗号分隔" />
+            <input type="text" class="st-tb-input st-wb-in-keys" style="flex:1 1 0;width:0;max-width:100%;min-width:0;${wbFieldCss}" value="${escapeHtmlSimple(keys.join(', '))}" placeholder="关键词，用逗号分隔" />
           </div>
           <textarea class="st-tb-textarea st-wb-in-content" rows="9" style="width:100%;min-height:165px;resize:vertical;box-sizing:border-box;padding:7px 8px;font-size:11.5px;line-height:1.52;" placeholder="条目正文内容...">${escapeHtmlSimple(ent?.content || '')}</textarea>
           <div style="display:flex;gap:5px;justify-content:flex-end;">
@@ -63048,6 +63051,7 @@
   });
 
   chatRefreshBtn.addEventListener('click', () => { fetchCharacterChats(); renderGreetingsList(); renderActiveWorldBooks(); });
+  root.querySelector('#st-tb-chat-backups')?.addEventListener('click', () => { if (typeof openChatBackupModal === 'function') openChatBackupModal(); });
   chatFilterInput.addEventListener('input', () => {
     chatFilterText = chatFilterInput.value;
     renderChatList();
@@ -63658,6 +63662,18 @@
                 }
               }
             }
+          }
+          if (methodPre === 'POST' && /\/api\/chats\/delete(?:\?|$)/.test(urlStrPre) && typeof init?.body === 'string') {
+            try {
+              const delBody = JSON.parse(init.body);
+              const delFile = String(delBody?.chatfile || '').trim().replace(/\.jsonl$/i, '');
+              const delAv = String(delBody?.avatar_url || '').trim();
+              if (delFile && delAv && typeof backupChatFileFromServer === 'function') {
+                await backupChatFileFromServer(delAv, delFile, '删除前自动备份', _origFetch);
+              }
+            } catch (_) {}
+          }
+          if (methodPre === 'POST' && init?.body instanceof FormData) {
             if (/\/api\/characters\/import(?:\?|$)/.test(urlStrPre)) {
               const cardFile = init.body.get('avatar');
               if (cardFile && cardFile instanceof Blob && cardFile.size > 0) {
@@ -63915,6 +63931,270 @@
     }, true);
   }
 
+  // ==================== 聊天文件自动备份与误删找回（IndexedDB，最多保留最近12份） ====================
+  const CHAT_BACKUP_DB = 'st_goulaicai_chat_backup_v1';
+  const CHAT_BACKUP_STORE = 'backups';
+  const _recentBackupDedup = new Map();
+
+  function openChatBackupDB() {
+    return new Promise((resolve, reject) => {
+      if (!win.indexedDB) { reject(new Error('no idb')); return; }
+      const req = win.indexedDB.open(CHAT_BACKUP_DB, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(CHAT_BACKUP_STORE)) {
+          db.createObjectStore(CHAT_BACKUP_STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function listChatBackupsFromIDB() {
+    try {
+      const db = await openChatBackupDB();
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(CHAT_BACKUP_STORE, 'readonly');
+        const req = tx.objectStore(CHAT_BACKUP_STORE).getAll();
+        req.onsuccess = () => {
+          db.close();
+          const arr = Array.isArray(req.result) ? req.result : [];
+          arr.sort((a, b) => Number(b.savedAt || 0) - Number(a.savedAt || 0));
+          resolve(arr);
+        };
+        req.onerror = () => { db.close(); reject(req.error); };
+      });
+    } catch (_) { return []; }
+  }
+
+  async function deleteChatBackupFromIDB(id) {
+    try {
+      const db = await openChatBackupDB();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(CHAT_BACKUP_STORE, 'readwrite');
+        tx.objectStore(CHAT_BACKUP_STORE).delete(id);
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => { db.close(); reject(tx.error); };
+      });
+    } catch (_) {}
+  }
+
+  async function saveChatBackupToIDB({ charName, avatar, fileName, messages, reason }) {
+    try {
+      if (!Array.isArray(messages) || !messages.length) return false;
+      const cleanFn = String(fileName || 'chat').trim().replace(/\.jsonl$/i, '');
+      const dedupKey = `${avatar || charName}|${cleanFn}|${messages.length}`;
+      const lastTs = _recentBackupDedup.get(dedupKey) || 0;
+      if (Date.now() - lastTs < 4000) return false;
+      _recentBackupDedup.set(dedupKey, Date.now());
+
+      const item = {
+        id: `cb_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        charName: String(charName || '').trim() || '未知角色',
+        avatar: String(avatar || '').trim(),
+        fileName: cleanFn,
+        msgCount: messages.filter(m => m && !m.chat_metadata && !m.user_name).length || messages.length,
+        reason: String(reason || '自动备份'),
+        savedAt: Date.now(),
+        messages,
+      };
+      const db = await openChatBackupDB();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(CHAT_BACKUP_STORE, 'readwrite');
+        tx.objectStore(CHAT_BACKUP_STORE).put(item);
+        tx.oncomplete = () => { db.close(); resolve(); };
+        tx.onerror = () => { db.close(); reject(tx.error); };
+      });
+      // 按角色卡（avatar 优先，其次 charName）独立隔离保留，每张角色卡最多保留最新 50 份，互不挤占
+      const ownerKey = String(item.avatar || item.charName || '').trim();
+      const all = await listChatBackupsFromIDB();
+      const sameOwner = all.filter(x => String(x.avatar || x.charName || '').trim() === ownerKey);
+      if (sameOwner.length > 50) {
+        for (const old of sameOwner.slice(50)) {
+          await deleteChatBackupFromIDB(old.id);
+        }
+      }
+      return true;
+    } catch (_) { return false; }
+  }
+
+  async function backupChatFileFromServer(avatarUrl, fileName, reason, fetchFn) {
+    try {
+      const ctx = getContext();
+      const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+      const foundCh = chars.find(c => c && String(c.avatar || '') === String(avatarUrl || ''));
+      const chName = foundCh?.name || String(avatarUrl || '').replace(/\.[^.]+$/, '');
+      const cleanFn = String(fileName || '').trim().replace(/\.jsonl$/i, '');
+      const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+      const f = fetchFn || win.fetch.bind(win);
+      const res = await f('/api/chats/get', {
+        method: 'POST',
+        headers: hdrs,
+        body: JSON.stringify({ ch_name: chName, file_name: cleanFn, avatar_url: avatarUrl }),
+      });
+      if (!res || !res.ok) return false;
+      const arr = await res.json();
+      if (!Array.isArray(arr) || !arr.length) return false;
+      return await saveChatBackupToIDB({ charName: chName, avatar: avatarUrl, fileName: cleanFn, messages: arr, reason });
+    } catch (_) { return false; }
+  }
+
+  async function openChatBackupModal() {
+    let bm = root.querySelector('#st-tb-chatbackup-mask');
+    if (bm) bm.remove();
+    bm = doc.createElement('div');
+    bm.id = 'st-tb-chatbackup-mask';
+    bm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.44);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;z-index:10068;';
+    if (typeof nextPupTopZ === 'function') bm.style.zIndex = String(nextPupTopZ());
+    const curChInit = getCurrentCharacter();
+    let viewScope = curChInit ? 'cur' : 'all';
+
+    const box = doc.createElement('div');
+    box.style.cssText = 'display:flex;flex-direction:column;width:min(340px,94vw);height:min(450px,82vh);max-height:86vh;background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:12px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;box-sizing:border-box;';
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-shrink:0;">
+        <span style="font-weight:700;font-size:13px;">聊天文件备份与误删找回</span>
+        <button type="button" id="st-cb-close" class="st-tb-mini-btn">关闭</button>
+      </div>
+      <div style="font-size:10.5px;opacity:0.74;margin-bottom:7px;flex-shrink:0;">每张角色卡独立分库备份（各自最多保留最近 50 份，互不混在一起），误删可一键恢复回原角色卡或导出 .jsonl。</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px;flex-shrink:0;">
+        <button type="button" class="st-tb-pill st-cb-scope${viewScope === 'cur' ? ' active' : ''}" data-scope="cur">仅当前角色卡</button>
+        <button type="button" class="st-tb-pill st-cb-scope${viewScope === 'all' ? ' active' : ''}" data-scope="all">全部角色（分组）</button>
+      </div>
+      <div id="st-cb-list" style="flex:1 1 auto;min-height:100px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;"></div>
+    `;
+    bm.appendChild(box);
+    bm.addEventListener('click', (e2) => e2.stopPropagation());
+    root.appendChild(bm);
+    box.querySelector('#st-cb-close')?.addEventListener('click', () => bm.remove());
+    makeToolboxBoxMovableResizable(box, box.firstElementChild, { minW: 265, minH: 230, defW: 340 });
+
+    const listEl = box.querySelector('#st-cb-list');
+    const pad = n => String(n).padStart(2, '0');
+    const smallCss = 'font-size:10px;padding:1px 6px;height:21px;min-height:21px;line-height:19px;flex-shrink:0;';
+
+    const buildBackupCard = (it) => {
+      const d = new Date(it.savedAt || Date.now());
+      const tsStr = `${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      const card = doc.createElement('div');
+      card.style.cssText = 'padding:6px 8px;border:1px solid var(--tb-border);border-radius:7px;background:var(--tb-surface);display:flex;flex-direction:column;gap:4px;flex-shrink:0;';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:5px;">
+          <span style="font-weight:700;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(it.fileName)}</span>
+          <span style="font-size:9.5px;opacity:0.72;flex-shrink:0;padding:1px 4px;border:1px solid var(--tb-border);border-radius:4px;">${escapeHtmlSimple(it.reason)}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <span style="font-size:10px;opacity:0.72;">${it.msgCount || 0} 条 · ${tsStr}</span>
+          <div style="display:flex;gap:4px;">
+            <button type="button" class="st-tb-mini-btn active st-cb-restore" style="${smallCss}">恢复</button>
+            <button type="button" class="st-tb-mini-btn st-cb-dl" style="${smallCss}">下载</button>
+            <button type="button" class="st-tb-mini-btn st-cb-del" style="${smallCss}color:#d9534f;">删</button>
+          </div>
+        </div>
+      `;
+      card.querySelector('.st-cb-restore')?.addEventListener('click', async () => {
+        try {
+          const ctx = getContext();
+          const curCh = getCurrentCharacter();
+          const chars = Array.isArray(ctx?.characters) ? ctx.characters : [];
+          // 优先严格恢复回该备份原本所属的那张角色卡（按 avatar 匹配），避免串卡
+          const origCh = it.avatar ? chars.find(c => c && String(c.avatar || '') === String(it.avatar)) : null;
+          const targetCh = origCh || curCh;
+          if (!targetCh) { showImmNotice('未找到原角色卡，请先进入目标角色后再恢复'); return; }
+          const hdrs = typeof ctx?.getRequestHeaders === 'function' ? ctx.getRequestHeaders() : { 'Content-Type': 'application/json' };
+          const nowD = new Date();
+          const restoreName = `${it.fileName}_恢复_${pad(nowD.getHours())}${pad(nowD.getMinutes())}`;
+          const res = await win.fetch('/api/chats/save', {
+            method: 'POST',
+            headers: hdrs,
+            body: JSON.stringify({ ch_name: targetCh.name, file_name: restoreName, chat: it.messages, avatar_url: targetCh.avatar, force: true }),
+          });
+          if (!res || !res.ok) throw new Error('save failed');
+          showImmNotice(`已恢复回「${targetCh.name}」：${restoreName}`);
+          if (typeof fetchCharacterChats === 'function') fetchCharacterChats();
+        } catch (_) {
+          showImmNotice('恢复失败，可点「下载」导出 .jsonl 手动导入');
+        }
+      });
+      card.querySelector('.st-cb-dl')?.addEventListener('click', () => {
+        try {
+          const lines = (it.messages || []).map(m => JSON.stringify(m)).join('\n');
+          const blob = new Blob([lines], { type: 'application/jsonl;charset=utf-8' });
+          const u = URL.createObjectURL(blob);
+          const a = doc.createElement('a');
+          a.href = u;
+          a.download = `${it.fileName}.jsonl`;
+          doc.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(u), 1500);
+          showImmNotice('已开始下载 .jsonl 备份文件');
+        } catch (_) { showImmNotice('下载失败'); }
+      });
+      card.querySelector('.st-cb-del')?.addEventListener('click', () => {
+        openGuardConfirm('删除这条备份？', `确定移除备份「${it.fileName}」吗？`, async () => {
+          await deleteChatBackupFromIDB(it.id);
+          renderList();
+        }, '确认移除', false);
+      });
+      return card;
+    };
+
+    const renderList = async () => {
+      box.querySelectorAll('.st-cb-scope').forEach(b => b.classList.toggle('active', b.dataset.scope === viewScope));
+      listEl.innerHTML = '<div style="font-size:11px;opacity:0.7;text-align:center;padding:18px 0;">正在读取本地备份...</div>';
+      const allItems = await listChatBackupsFromIDB();
+      const curCh = getCurrentCharacter();
+      if (viewScope === 'cur') {
+        if (!curCh) {
+          listEl.innerHTML = '<div style="font-size:11.5px;opacity:0.72;text-align:center;padding:24px 8px;">当前未在角色聊天中，可切换到「全部角色（分组）」查看各角色独立备份。</div>';
+          return;
+        }
+        const curKey = String(curCh.avatar || curCh.name || '').trim();
+        const mine = allItems.filter(x => String(x.avatar || x.charName || '').trim() === curKey);
+        if (!mine.length) {
+          listEl.innerHTML = `<div style="font-size:11.5px;opacity:0.72;text-align:center;padding:24px 8px;">角色「${escapeHtmlSimple(curCh.name || '')}」暂无备份记录。<br/>删除聊天或切同名卡时会自动独立备份到这里。</div>`;
+          return;
+        }
+        listEl.innerHTML = '';
+        mine.forEach(it => listEl.appendChild(buildBackupCard(it)));
+        return;
+      }
+
+      if (!allItems.length) {
+        listEl.innerHTML = '<div style="font-size:11.5px;opacity:0.72;text-align:center;padding:24px 8px;">暂无聊天备份记录。<br/>以后删除聊天文件或切同名卡时会按角色卡独立备份到这里。</div>';
+        return;
+      }
+      const groups = new Map();
+      allItems.forEach(it => {
+        const k = String(it.avatar || it.charName || 'unknown').trim();
+        if (!groups.has(k)) groups.set(k, { charName: it.charName, avatar: it.avatar, list: [] });
+        groups.get(k).list.push(it);
+      });
+      listEl.innerHTML = '';
+      groups.forEach((grp) => {
+        const gWrap = doc.createElement('div');
+        gWrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;flex-shrink:0;';
+        const gHdr = doc.createElement('div');
+        gHdr.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 2px;font-size:11px;font-weight:700;';
+        const avHtml = grp.avatar ? `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(grp.avatar)}" style="width:20px;height:20px;border-radius:4px;object-fit:cover;flex-shrink:0;" />` : '';
+        gHdr.innerHTML = `${avHtml}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(grp.charName || '未知角色')}</span><span style="font-size:10px;font-weight:400;opacity:0.65;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${grp.avatar ? escapeHtmlSimple(grp.avatar) : ''}（${grp.list.length}份）</span>`;
+        gWrap.appendChild(gHdr);
+        grp.list.forEach(it => gWrap.appendChild(buildBackupCard(it)));
+        listEl.appendChild(gWrap);
+      });
+    };
+
+    box.querySelectorAll('.st-cb-scope').forEach(b => {
+      b.addEventListener('click', () => {
+        viewScope = b.dataset.scope || 'cur';
+        renderList();
+      });
+    });
+    renderList();
+  }
+
   // 共享：重名角色卡提醒弹窗 + 「切同名卡」选择器（同步到 dupChatOwnerMap 与最近聊天）
   async function openDupSiblingSwitcherModal(ch, dupSiblings, curChatId, onSwitched) {
     const ctx = getContext();
@@ -63949,9 +64229,21 @@
       row.className = 'st-tb-btn' + (isNow ? ' primary' : '');
       row.style.cssText = 'display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:6px 8px;height:auto;';
       row.innerHTML = `<img src="/thumbnail?type=avatar&file=${encodeURIComponent(c.avatar || '')}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;" /><div style="min-width:0;flex:1;"><div style="font-weight:700;font-size:11.5px;">${isNow ? '[当前] ' : ''}${gCnt} 版开场白 · ${escapeHtmlSimple(c.avatar || '')}</div><div style="font-size:10px;opacity:0.75;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtmlSimple(prev || '无开场白预览')}</div></div>`;
-      row.addEventListener('click', async () => {
-        dm.remove();
-        win.__stSuppressDupChatToastUntil = Date.now() + 5000;
+      row.addEventListener('click', () => {
+        const doSwitchSibling = async () => {
+          dm.remove();
+          win.__stSuppressDupChatToastUntil = Date.now() + 5000;
+          try {
+            if (cleanChatId && Array.isArray(ctx?.chat) && ctx.chat.length && typeof saveChatBackupToIDB === 'function') {
+              await saveChatBackupToIDB({
+                charName: ch?.name || '',
+                avatar: ch?.avatar || '',
+                fileName: cleanChatId,
+                messages: JSON.parse(JSON.stringify(ctx.chat)),
+                reason: '切同名卡前备份',
+              });
+            }
+          } catch (_) {}
         if (cleanChatId && c.avatar) {
           if (!config.dupChatOwnerMap || typeof config.dupChatOwnerMap !== 'object') config.dupChatOwnerMap = {};
           config.dupChatOwnerMap[cleanChatId] = c.avatar;
@@ -63975,6 +64267,32 @@
           showImmNotice(`已切换到「${gCnt}版开场白」的重名卡`);
           if (typeof onSwitched === 'function') setTimeout(onSwitched, 350);
         }
+        };
+        if (isNow) {
+          doSwitchSibling();
+          return;
+        }
+        let cm = root.querySelector('#st-tb-qcc-dupconfirm-mask');
+        if (cm) cm.remove();
+        cm = doc.createElement('div');
+        cm.id = 'st-tb-qcc-dupconfirm-mask';
+        cm.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.48);display:flex;align-items:center;justify-content:center;padding:12px;pointer-events:auto;z-index:10070;';
+        if (typeof nextPupTopZ === 'function') cm.style.zIndex = String(nextPupTopZ());
+        const cbox = doc.createElement('div');
+        cbox.style.cssText = 'width:min(304px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:13px;box-shadow:0 3px 10px rgba(0,0,0,0.16);font-size:12px;line-height:1.55;';
+        cbox.innerHTML = `
+          <div style="font-weight:700;font-size:13px;margin-bottom:6px;">确认切换同名角色卡？</div>
+          <div style="font-size:11.5px;margin-bottom:10px;">将把当前聊天移到「<b>${gCnt} 版开场白 · ${escapeHtmlSimple(c.avatar || '')}</b>」名下。切换和删除聊天前都会按每张角色卡独立自动备份一份到本地，旧卡里若仍留有原聊天文件，建议确认新卡记录正常后再按需清理，万一误删随时可在<b>「本角 / 聊天文件 → 备份找回」</b>里一键恢复。</div>
+          <div style="display:flex;gap:6px;">
+            <button type="button" id="st-dc-cancel" class="st-tb-btn" style="flex:1;">取消</button>
+            <button type="button" id="st-dc-ok" class="st-tb-btn primary" style="flex:1.1;">确认切换</button>
+          </div>
+        `;
+        cbox.querySelector('#st-dc-cancel').addEventListener('click', () => cm.remove());
+        cbox.querySelector('#st-dc-ok').addEventListener('click', () => { cm.remove(); doSwitchSibling(); });
+        cm.appendChild(cbox);
+        cm.addEventListener('click', (e2) => e2.stopPropagation());
+        root.appendChild(cm);
       });
       listEl.appendChild(row);
     });
@@ -64023,7 +64341,7 @@
       box.style.cssText = 'width:min(308px,92vw);background:var(--tb-bg,#fff);color:var(--tb-text,#333);border:1px solid var(--tb-border,#ccc);border-radius:10px;padding:13px;box-shadow:0 3px 10px rgba(0,0,0,0.14);font-size:12px;line-height:1.55;';
       box.innerHTML = `
         <div style="font-weight:700;font-size:13px;margin-bottom:6px;">检测到重名角色卡</div>
-        <div style="font-size:11.5px;margin-bottom:10px;">角色「<b>${escapeHtmlSimple(ch.name || '')}</b>」共有 <b>${dupSiblings.length}</b> 张同名角色卡。先核对一下当前聊天的头像、开场白或正则；如果不对，请打开<b>快捷面板 →「本角（当前角色）」→「切同名卡」</b>，按头像和开场白预览挑选对应的那一张。建议给不同重名卡换上不同头像，平时更容易一眼区分。</div>
+        <div style="font-size:11.5px;margin-bottom:10px;">角色「<b>${escapeHtmlSimple(ch.name || '')}</b>」共有 <b>${dupSiblings.length}</b> 张同名角色卡。先核对一下当前聊天的头像、开场白或正则；如果不对，请打开<b>快捷面板 →「本角（当前角色）」→「切同名卡」</b>，按头像和开场白预览挑选对应的那一张。建议给不同重名卡换上不同头像方便区分；切卡或删文件前都会按每张卡独立自动备份，误删可在「备份找回」里恢复。</div>
         <button type="button" id="st-dct-ok" class="st-tb-btn primary" style="width:100%;">知道了</button>
       `;
       box.querySelector('#st-dct-ok').addEventListener('click', () => tm.remove());
@@ -72289,6 +72607,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           cpop.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px;flex-shrink:0;">
               <span>当前角色</span>
               <div style="display:flex;gap:4px;">
+                <button class="st-tb-mini-btn" id="st-qcc-backups" type="button">备份找回</button>
                 <button class="st-tb-mini-btn" id="st-qcc-refresh" type="button">刷新</button>
                 <button class="st-tb-mini-btn" id="st-qcc-close" type="button">关闭</button>
               </div>
@@ -72457,6 +72776,7 @@ html.st-tb-char-ig #rm_print_characters_block .character_select.is_fav .avatar::
           };
 
           cpop.querySelectorAll('.st-qcc-tab').forEach(b => b.addEventListener('click', () => { qccTab = b.dataset.qccTab || 'chats'; renderQcc(false); }));
+          cpop.querySelector('#st-qcc-backups')?.addEventListener('click', () => { if (typeof openChatBackupModal === 'function') openChatBackupModal(); });
           cpop.querySelector('#st-qcc-refresh')?.addEventListener('click', () => renderQcc(true));
           cpop.querySelector('#st-qcc-close')?.addEventListener('click', () => cpop.classList.remove('open'));
           cpop._renderQcc = renderQcc;
