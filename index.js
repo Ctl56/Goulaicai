@@ -63448,23 +63448,33 @@
             showImmNotice('导入失败：这张图片不含角色卡数据（可能被相册或聊天软件压缩过），请用原图或 .zip/.json 导入');
           }
           if (res.ok && /\/api\/characters\/(?:edit-avatar|edit)(?:\?|$)/.test(urlStrPost) && effInit?.body instanceof FormData) {
-            const targetAv = String(effInit.body.get('avatar_url') || '').trim();
+            const targetAv = String(effInit.body.get('avatar_url') || getCurrentCharacter()?.avatar || '').trim();
             if (targetAv) {
               const bust = Date.now();
-              setTimeout(() => {
+              try {
+                if (!win.__stGlAvatarBustMap || typeof win.__stGlAvatarBustMap !== 'object') win.__stGlAvatarBustMap = {};
+                win.__stGlAvatarBustMap[targetAv] = bust;
+                win.sessionStorage?.setItem?.('st_gl_avatar_bust_v1', JSON.stringify(win.__stGlAvatarBustMap));
+              } catch (_) {}
+              const enc = encodeURIComponent(targetAv);
+              // 强制刷新浏览器 HTTP 缓存（同时清缩略图与原图缓存），避免切回或重渲染时又显示旧图
+              try { _origFetch(`/thumbnail?type=avatar&file=${enc}`, { cache: 'reload' }).catch(() => {}); } catch (_) {}
+              try { _origFetch(`/characters/${enc}`, { cache: 'reload' }).catch(() => {}); } catch (_) {}
+              const refreshAvImgs = () => {
                 try {
-                  const enc = encodeURIComponent(targetAv);
-                  doc.querySelectorAll('img').forEach(img => {
-                    const s = String(img.getAttribute('src') || '');
-                    if (s.includes(enc) || s.includes(targetAv)) {
-                      const cleanS = s.replace(/([?&])v=\d+/g, '$1').replace(/[?&]$/, '');
-                      img.src = cleanS + (cleanS.includes('?') ? '&' : '?') + 'v=' + bust;
-                    }
-                  });
+                  if (typeof applyAvatarBustToImgs === 'function') applyAvatarBustToImgs(targetAv);
+                } catch (_) {}
+              };
+              setTimeout(refreshAvImgs, 80);
+              setTimeout(() => {
+                refreshAvImgs();
+                try {
                   const ctxNow = getContext();
                   if (typeof ctxNow?.getCharacters === 'function') ctxNow.getCharacters();
                 } catch (_) {}
-              }, 160);
+              }, 260);
+              setTimeout(refreshAvImgs, 750);
+              setTimeout(refreshAvImgs, 1600);
             }
           }
           if (res.ok && /\/api\/chats\/recent(?:\?|$)/.test(urlStrPost)) {
@@ -63589,18 +63599,61 @@
           }
         }
       });
+      applyAvatarBustToImgs();
     } catch (_) {}
   };
+
+  function applyAvatarBustToImgs(onlyAvatar = '') {
+    try {
+      if (!win.__stGlAvatarBustMap || typeof win.__stGlAvatarBustMap !== 'object') {
+        try {
+          const saved = win.sessionStorage?.getItem?.('st_gl_avatar_bust_v1');
+          win.__stGlAvatarBustMap = saved ? (JSON.parse(saved) || {}) : {};
+        } catch (_) { win.__stGlAvatarBustMap = {}; }
+      }
+      const bMap = win.__stGlAvatarBustMap;
+      const keys = onlyAvatar ? (bMap[onlyAvatar] ? [onlyAvatar] : []) : Object.keys(bMap);
+      if (!keys.length) return;
+      doc.querySelectorAll('img').forEach(img => {
+        const rawS = String(img.getAttribute('src') || '');
+        if (!rawS || rawS.startsWith('data:') || rawS.startsWith('blob:')) return;
+        let decS = rawS;
+        try { decS = decodeURIComponent(rawS); } catch (_) {}
+        for (const av of keys) {
+          const ts = bMap[av];
+          if (!ts) continue;
+          const enc = encodeURIComponent(av);
+          if (rawS.includes(enc) || rawS.includes(av) || decS.includes(av)) {
+            if (rawS.includes(`v=${ts}`)) break;
+            const cleanS = rawS.replace(/([?&])v=\d+/g, '$1').replace(/[?&]$/, '');
+            img.src = cleanS + (cleanS.includes('?') ? '&' : '?') + 'v=' + ts;
+            break;
+          }
+        }
+      });
+    } catch (_) {}
+  }
+
+  let _enteredFromRecentChatUntil = 0;
 
   if (!win.__stGlRecentDupClickPatched) {
     win.__stGlRecentDupClickPatched = true;
     doc.addEventListener('click', (e) => {
       try {
+        const itemEl = e.target?.closest?.('.recentChat, .recent_chat');
+        if (!itemEl) {
+          if (e.target?.closest?.('#rm_print_characters_block, .character_select, #character_popup')) {
+            _enteredFromRecentChatUntil = 0;
+          }
+          return;
+        }
+        if (e.target?.closest?.('button, .delete, .fa-trash, .fa-trash-can, .menu_button, .recentChatDelete, [data-action]')) return;
+        // 标记：本次是从「最近聊天」点进去的，允许弹出重名卡提醒
+        _enteredFromRecentChatUntil = Date.now() + 9000;
+        _lastDupTipKey = '';
+
         const ownerMap = config.dupChatOwnerMap;
         if (!ownerMap || typeof ownerMap !== 'object' || !Object.keys(ownerMap).length) return;
-        const itemEl = e.target?.closest?.('.recentChat, .recent_chat');
-        if (!itemEl) return;
-        if (e.target?.closest?.('button, .delete, .fa-trash, .fa-trash-can, .menu_button, .recentChatDelete, [data-action]')) return;
         const fn = extractRecentChatFileStem(itemEl);
         const targetAv = fn ? ownerMap[fn] : '';
         if (!targetAv) return;
@@ -63705,6 +63758,7 @@
   let _lastDupTipKey = '';
   function checkAndPromptDupCharTip() {
     try {
+      if (Date.now() > _enteredFromRecentChatUntil) return;
       const ctx = getContext();
       const rawId = (ctx?.characterId !== undefined && ctx?.characterId !== null && ctx?.characterId !== '') ? ctx.characterId : win.this_chid;
       const chid = Number(rawId);
@@ -63744,6 +63798,7 @@
       tm.appendChild(box);
       tm.addEventListener('click', (e2) => e2.stopPropagation());
       root.appendChild(tm);
+      _enteredFromRecentChatUntil = 0;
     } catch (_) {}
   };
 
@@ -63766,16 +63821,16 @@
       setTimeout(checkAndPromptDupCharTip, 1200);
       setTimeout(checkAndPromptDupCharTip, 2500);
       setTimeout(syncRecentChatDomByOwnerMap, 350);
+      setTimeout(applyAvatarBustToImgs, 380);
     };
 
     add(eventTypes.CHAT_CHANGED, () => { onChatChanged(); scheduleDupCheck(); });
     if (eventTypes.CHAT_LOADED) add(eventTypes.CHAT_LOADED, scheduleDupCheck);
     if (eventTypes.CHARACTER_SELECTED) add(eventTypes.CHARACTER_SELECTED, scheduleDupCheck);
-    setTimeout(checkAndPromptDupCharTip, 800);
-    setTimeout(checkAndPromptDupCharTip, 1800);
     setTimeout(syncRecentChatDomByOwnerMap, 350);
     setTimeout(syncRecentChatDomByOwnerMap, 1100);
     setTimeout(syncRecentChatDomByOwnerMap, 2400);
+    setTimeout(applyAvatarBustToImgs, 500);
     add(eventTypes.MESSAGE_SENT, onMessageChanged);
     add(eventTypes.MESSAGE_RECEIVED, onMessageChanged);
     add(eventTypes.MESSAGE_DELETED, onMessageChanged);
